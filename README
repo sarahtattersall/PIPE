@@ -1,0 +1,12 @@
+Bugs fixed in 4.2.2:
+
+[Examples]
+	- When loading an example petri net, the loading process is disrupted by an exception pop-up window
+	
+
+[Copy and paste]
+	- Pasting method only apply to places and transitions. Now pasting supports arcs.
+
+Modification:
+
+	-Block modules: steady state analysis, passage time analysis, passage time analysis for tagged nets. These modules use web servers for calculations. The code for server communication is buggy and time and resource consuming. New version of PIPE2 that support local steady state analysis is being built.

@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<!-- definition of attributes -->
+<xs:attribute name="id" type="xs:token" use="required"/>
+<xs:attribute name="x" type="xs:decimal" use="required"/>
+<xs:attribute name="y" type="xs:decimal" use="required"/>
+<xs:attribute name="label" type="xs:token"/>
+
+<!-- definition of elements -->
+
+<xs:element name="ptml">	
+	<xs:complexType>
+	<xs:sequence>
+		<xs:element ref="tree" minOccurs="0" maxOccurs="unbounded"/>
+	</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="tree">	
+	<xs:complexType>
+	<xs:sequence>
+		<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>
+	</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="node">	
+	<xs:complexType>
+	<xs:sequence>
+		<xs:attribute ref="id"/>
+		<xs:attribute name="type" type="xs:token" use="required"/>
+		<xs:attribute name="operation" type="xs:token"/>
+		<xs:attribute ref="label"/>
+		<xs:attribute ref="x"/>
+		<xs:attribute ref="y"/>
+		<xs:element name="incomingArc" type="xs:token"/>
+		<xs:element name="outgoingArcs">
+			<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="arc" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="childNodes">
+			<xs:complexType>
+				<xs:element ref="node" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:complexType>
+		</xs:element>
+	</xs:sequence>
+	</xs:complexType>
+</xs:element>
+	
+<xs:element name="arc">	
+	<xs:complexType>
+	<xs:sequence>
+		<xs:attribute ref="id"/>
+		<xs:attribute ref="label"/>
+		<xs:attribute name="source" type="xs:token"/>
+		<xs:attribute name="target" type="xs:token"/>
+		<xs:attribute name="required" type="xs:token"/>
+		<xs:attribute name="startX" type="xs:decimal"/>
+		<xs:attribute name="startY" type="xs:decimal"/>
+		<xs:attribute name="endX" type="xs:decimal"/>
+		<xs:attribute name="endY" type="xs:decimal"/>
+			<xs:sequence>
+				<xs:element ref="arcpathpoint" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+	</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+<xs:element name="arcpathpoint">	
+	<xs:complexType>
+	<xs:sequence>
+		<xs:attribute ref="id"/>
+		<xs:attribute name="type" type="xs:token"/>
+		<xs:attribute ref="x"/>
+		<xs:attribute ref="y"/>
+	</xs:sequence>
+	</xs:complexType>
+</xs:element>
+
+</xs:schema>
