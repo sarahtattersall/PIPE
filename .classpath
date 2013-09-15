@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="src/lib/hadoop-0.13.1-dev-core.jar"/>
 	<classpathentry kind="lib" path="src/lib/Jama-1.0.2.jar"/>
 	<classpathentry kind="lib" path="src/lib/jcommon-1.0.10.jar"/>
-	<classpathentry kind="lib" path="src/lib/jfreechart-1.0.6-swt.jar"/>
 	<classpathentry kind="lib" path="src/lib/jfreechart-1.0.6.jar"/>
 	<classpathentry kind="lib" path="src/lib/jpowergraph-0.2-common.jar"/>
 	<classpathentry kind="lib" path="src/lib/jpowergraph-0.2-swing.jar"/>
