@@ -134,15 +134,27 @@ public class NormalArcView extends ArcView implements Serializable
 		return type;
 	}
 
+	// Steve Doubleday (Oct 2013): add observer to track Marking Views; refactor for testing	
 	public HistoryItem setWeight(LinkedList<MarkingView> weightInput) {
 		removeLabelsFromArc();
 		repaint();
 		LinkedList<MarkingView> oldWeight = Copier.mediumCopy(_weight);
 		_weight = weightInput;
+		addThisAsObserverToWeight(_weight);
 
 		// Now set new arc labels
-		int size = weightInput.size();
-        for(MarkingView aWeightInput : weightInput)
+        buildNameLabels(weightInput);
+
+		setWeightLabelPosition();
+		updateWeightLabel();
+		repaint();
+		_weight = weightInput;
+		return new ArcWeight(this, oldWeight, _weight);
+	}
+
+	protected void buildNameLabels(LinkedList<MarkingView> weightInput)
+	{
+		for(MarkingView aWeightInput : weightInput)
         {
             NameLabel nameLabel = new NameLabel(_zoomPercentage);
             MarkingView weight = aWeightInput;
@@ -165,12 +177,6 @@ public class NormalArcView extends ArcView implements Serializable
                 parent.add(nameLabel);
             }
         }
-
-		setWeightLabelPosition();
-		updateWeightLabel();
-		repaint();
-		_weight = weightInput;
-		return new ArcWeight(this, oldWeight, _weight);
 	}
 
 	/** Accessor function to set whether or not the Arc is tagged

@@ -45,6 +45,7 @@ public class PlaceTransitionObjectHandler
    private void createArc(ArcView newArcView, ConnectableView currentObject){
        TokenView tc = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getActiveTokenView();
 	   MarkingView m = new MarkingView(tc, 1+"");
+	   m.addObserver(newArcView);  // Steve Doubleday:  ArcView tracks updates to MarkingView 
 	   LinkedList<MarkingView> markingViews = new LinkedList<MarkingView>();
 	   markingViews.add(m);
 	   newArcView.setWeight(markingViews);

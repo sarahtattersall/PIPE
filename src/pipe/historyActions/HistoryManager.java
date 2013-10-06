@@ -150,7 +150,8 @@ public class HistoryManager
 
 
     public void addEdit(HistoryItem historyItem)
-    {
+    {  //FIXME can throw if edits list is not yet full of compoundEdits (still has nulls)
+    	
         ArrayList<HistoryItem> compoundEdit = edits.get(currentIndex());
         compoundEdit.add(historyItem);
         //debug();

@@ -1,16 +1,39 @@
 package pipe.views;
 
+import java.awt.Color;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
+
+import org.apache.log4j.TTCCLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import pipe.common.dataLayer.StateGroup;
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.InfiniteServerWithFunctionalArcException;
+import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Grid;
-import pipe.models.*;
+import pipe.models.InhibitorArc;
+import pipe.models.Marking;
+import pipe.models.NormalArc;
+import pipe.models.PetriNet;
+import pipe.models.Transition;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
 import pipe.utilities.transformers.PNMLTransformer;
@@ -19,21 +42,15 @@ import pipe.views.viewComponents.Note;
 import pipe.views.viewComponents.Parameter;
 import pipe.views.viewComponents.RateParameter;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.Serializable;
-import java.util.*;
-import java.util.Observable;
-
 
 /*
  * @author yufei wang(minor change)
+ * 		Steve Doubleday (Oct 2013):  refactored to use TokenSetController for access to TokenViews
  */
-public class PetriNetView extends Observable implements Cloneable, IObserver, Serializable
+public class PetriNetView extends Observable implements Cloneable, IObserver, Serializable, Observer
 {
     //MOVED END
-    private ArrayList<PlaceView> _placeViews;
+    protected ArrayList<PlaceView> _placeViews; // Steve Doubleday:  protected to simplify testing
     private ArrayList<TransitionView> _transitionViews;
     private ArrayList<ArcView> _arcViews;
     private ArrayList<InhibitorArcView> _inhibitorViews;
@@ -56,15 +73,13 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private Hashtable _inhibitorsMap;
     private ArrayList _stateGroups;
     private final HashSet _rateParameterHashSet = new HashSet();
-    private TokenView _activeTokenView;
-    private LinkedList<TokenView> _tokenViews;
     private PetriNetController _petriNetController;
     private PetriNet _model;
+	private TokenSetController _tokenSetController;
 
 
     public PetriNetView(String pnmlFileName)
     {
-        _tokenViews = null;
         _model = new PetriNet();
         _petriNetController = ApplicationSettings.getPetriNetController();
         _model.registerObserver(this);
@@ -74,7 +89,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         _model.setPnmlName(temp.getName());
         createFromPNML(transform.transformPNML(pnmlFileName));
     }
-
+    
     public PetriNetView(PetriNetController petriNetController, PetriNet model)
     {
         initializeMatrices();
@@ -86,7 +101,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
 
-    public PetriNetView clone()
+	@SuppressWarnings("unchecked")
+	public PetriNetView clone()
     {
         PetriNetView newClone;
         try
@@ -97,7 +113,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             newClone._arcViews = deepCopy(_arcViews);
             newClone._inhibitorViews = deepCopy(_inhibitorViews);
             newClone._labels = deepCopy(_labels);
-            newClone._tokenViews = (LinkedList<TokenView>) Copier.deepCopy(_tokenViews);
+            newClone._tokenSetController = (TokenSetController) Copier.deepCopy(_tokenSetController); //TODO test this SJD
+//            newClone._tokenViews = (LinkedList<TokenView>) Copier.deepCopy(_tokenViews); // SJD
         }
         catch(CloneNotSupportedException e)
         {
@@ -105,120 +122,52 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
         return newClone;
     }
-
-    public void setTokenViews(LinkedList<TokenView> tokenViews)
+    public boolean updateOrReplaceTokenViews(LinkedList<TokenView> tokenViews) throws TokenLockedException
     {
-        if(this._tokenViews == null)
-        {
-            this._tokenViews = tokenViews;
-        }
-        else
-        {
-            int currentSize = this._tokenViews.size();
-            for(int i = 0; i < tokenViews.size(); i++)
-            {
-            	
-                if(i < currentSize)
-                {
-                    this._tokenViews.get(i).setColor(
-                            tokenViews.get(i).getColor());
-                    this._tokenViews.get(i).setID(tokenViews.get(i).getID());
-                    this._tokenViews.get(i).setEnabled(tokenViews.get(i).isEnabled());
-                }
-                else
-                {
-                    this._tokenViews.add(tokenViews.get(i));
-                }
-                if(this._tokenViews.get(i).isEnabled())
-                {
-                    for(Object p : _placeViews)
-                    {
-                        int pos = positionInTheList(this._tokenViews.get(i).getID(), ((PlaceView) p).getCurrentMarkingView());
-                        if(pos == -1)
-                        {
-                            ((PlaceView) p).getCurrentMarkingView().add(new MarkingView(this._tokenViews.get(i), 0+""));
-                        }
-                    }
-                    for(Object a : _arcViews)
-                    {
-                        int pos = positionInTheList(this._tokenViews.get(i).getID(), ((ArcView) a).getWeight());
-                        if(pos == -1)
-                        {
-                            ((ArcView) a).getWeight().add(new MarkingView(this._tokenViews.get(i), 0+""));
-                        }
-                    }
-                }
-                else
-                {
-                    for(Object p : _placeViews)
-                    {
-                        int pos = positionInTheList(this._tokenViews.get(i).getID(), ((PlaceView) p).getCurrentMarkingView());
-                        if(pos != -1)
-                        {
-                            ((PlaceView) p).getCurrentMarkingView().remove(pos);
-                        }
-                    }
-                    for(Object a : _arcViews)
-                    {
-                        int pos = positionInTheList(this._tokenViews.get(i).getID(), ((ArcView) a).getWeight());
-                        if(pos != -1)
-                        {
-                            ((ArcView) a).getWeight().remove(pos);
-                        }
-                    }
-                }
-            }
-        }
-        _selectedTokenTypeNumber=tokenViews.size();
+    	return _tokenSetController.updateOrReplaceTokenViews(tokenViews);
     }
-
     public LinkedList<TokenView> getTokenViews()
     {
-        if(_tokenViews == null)
-        {
-            _tokenViews = new LinkedList<TokenView>();
-            _tokenViews.add(new TokenView(true, "Default", Color.black));
-            this.setActiveTokenView(_tokenViews.get(0));
-        }
-        return _tokenViews;
+    	return (LinkedList<TokenView>) _tokenSetController.getTokenViews(); 
     }
+	public LinkedList<TokenView> getAllTokenViews()
+	{
+		return (LinkedList<TokenView>) _tokenSetController.getAllTokenViews(); 
+	}
 
     public TokenView getActiveTokenView()
     {
-        return _activeTokenView;
+        return _tokenSetController.getActiveTokenView();
     }
-
     public void setActiveTokenView(TokenView tc)
-    {
-        this._activeTokenView = tc;
-        for(Object p : _placeViews)
-        {
-            ((PlaceView) p).setActiveTokenView(tc);
-        }
+    {  
+    	_tokenSetController.setActiveTokenView(tc.getID());
+        updatePlaceViewsWithActiveToken(tc);
     }
-
+	protected void updatePlaceViewsWithActiveToken(TokenView tc)
+	{
+		for(PlaceView p : _placeViews)
+        {
+            p.setActiveTokenView(tc);
+        }
+	}
     public void lockTokenClass(String id)
     {
-        for(TokenView tc : _tokenViews)
-        {
-            if(tc.getID().equals(id))
-            {
-                tc.incrementLock();
-            }
-        }
+    	lockToken(id, true); 
     }
-
     public void unlockTokenClass(String id)
     {
-        for(TokenView tc : _tokenViews)
-        {
-            if(tc.getID().equals(id))
-            {
-                tc.decrementLock();
-            }
-        }
+    	lockToken(id, false); 
     }
-
+	private void lockToken(String id, boolean lock)
+	{
+		TokenView tc = _tokenSetController.getTokenView(id);
+    	if (tc != null) 
+    	{
+    		if (lock) tc.incrementLock();
+    		else tc.decrementLock(); 
+    	}
+	}
     public int positionInTheList(String tokenClassID, LinkedList<MarkingView> markingViews)
     {
         int size = markingViews.size();
@@ -226,22 +175,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         {
             MarkingView m = markingViews.get(i);
             if(m.getToken().getID().equals(tokenClassID))
-                return i;
+                return i;  // SJD update
         }
         return -1;
     }
 
     public TokenView getTokenClassFromID(String id)
-    {
-    	if(_tokenViews==null){
-    		return null;
-    	}
-        for(TokenView tc : _tokenViews)
-        {
-            if(tc.getID().equals(id))
-                return tc;
-        }
-        return null;
+    { 
+    	return _tokenSetController.getTokenView(id); 	
     }
 
     private static ArrayList deepCopy(ArrayList original)
@@ -256,8 +197,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
         return result;
     }
-
-    private void initializeMatrices()
+    // Steve Doubleday (Oct 2013):  protected to simplify unit testing
+    protected void initializeMatrices()
     {
         _placeViews = new ArrayList();
         _transitionViews = new ArrayList();
@@ -269,6 +210,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         _initialMarkingVector = null;
         _arcsMap = new Hashtable();
         _inhibitorsMap = new Hashtable();
+        _tokenSetController = new TokenSetController(); 
+        _tokenSetController.addObserver(this); 
     }
 
     private void addPlace(PlaceView placeView)
@@ -329,15 +272,12 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     placeView.setId("error");
                 }
             }
-            placeView.setActiveTokenView(_activeTokenView);
+            placeView.setActiveTokenView(_tokenSetController.getActiveTokenView());
+//            placeView.setActiveTokenView(_activeTokenView); // SJD
             _placeViews.add(placeView);
             setChanged();
-
-//          this is where goes wrong
             setMatrixChanged();
-//            
             notifyObservers(placeView);
-            
         }
     }
 
@@ -668,19 +608,20 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     private void addToken(TokenView tokenViewInput)
     {
-        boolean firstEntry = false;
-        if(_tokenViews == null)
-        {
-            _tokenViews = new LinkedList<TokenView>();
-            firstEntry = true;
-        }
+//        boolean firstEntry = false;
+//        if(_tokenViews == null)
+//        {
+//            _tokenViews = new LinkedList<TokenView>();
+//            firstEntry = true;
+//        }
         boolean unique = true;
 
         if(tokenViewInput != null)
         {
             if(tokenViewInput.getID() != null && tokenViewInput.getID().length() > 0)
             {
-                for(TokenView _tokenView : _tokenViews)
+//                for(TokenView _tokenView : _tokenViews)
+               	for(TokenView _tokenView : _tokenSetController.getAllTokenViews())
                 {
                     if(tokenViewInput.getID().equals(
                             _tokenView.getID()))
@@ -692,12 +633,15 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             else
             {
                 String id = null;
-                if(_tokenViews != null && _tokenViews.size() > 0)
+//                	if(_tokenViews != null && _tokenViews.size() > 0)
+                if(_tokenSetController.getAllTokenViews() != null && _tokenSetController.getAllTokenViews().size() > 0)
                 {
-                    int no = _tokenViews.size();
+//                    int no = _tokenViews.size();
+                    int no = _tokenSetController.getAllTokenViews().size();
                     do
                     {
-                        for(TokenView _tokenView : _tokenViews)
+//                    	for(TokenView _tokenView : _tokenViews)
+                        for(TokenView _tokenView : _tokenSetController.getAllTokenViews())
                         {
                             id = "token" + no;
                             if(_tokenView != null)
@@ -730,11 +674,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     tokenViewInput.setID("error");
                 }
             }
-            _tokenViews.add(tokenViewInput);
-            if(firstEntry)
-            {
-                this.setActiveTokenView(tokenViewInput);
-            }
+            try
+			{
+				_tokenSetController.updateOrAddTokenView(tokenViewInput);
+			}
+			catch (TokenLockedException e)
+			{
+				e.printStackTrace();  // should not happen when PetriNet is first being populated
+			}
             setChanged();
             setMatrixChanged();
             notifyObservers(tokenViewInput);
@@ -1246,19 +1193,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             // Backward compatibility for pnmls without many _tokens
             if(stringArray.length == 1)
             {
-                if(getActiveTokenView() == null)
-                {
-                    Color c = new Color(0, 0, 0);
-                    TokenView tc = new TokenView(true, "Default", c);
-                    addToken(tc);
-                    MarkingView markingView = new MarkingView(tc, Integer.valueOf(stringArray[0])+"");
-                    initialMarkingViewInput.add(markingView);
-                }
-                else
-                {
-                    MarkingView markingView = new MarkingView(getActiveTokenView(), Integer.valueOf(stringArray[0])+"");
-                    initialMarkingViewInput.add(markingView);
-                }
+                MarkingView markingView = new MarkingView(getActiveTokenView(), Integer.valueOf(stringArray[0])+"");
+                initialMarkingViewInput.add(markingView);
             }
             else
             {
@@ -1267,10 +1203,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 {
                     // In case for some reason there are commas between markings
                     stringArray[i] = stringArray[i].trim();
-                    MarkingView markingView = new MarkingView(
-                    		this.getTokenClassFromID(stringArray[i]), 
-                    		Integer.valueOf(stringArray[i + 1])+"");
-                    initialMarkingViewInput.add(markingView);
+                    MarkingView markingView = buildMarkingView(stringArray, i);  // SJD update
+                    if (markingView != null) initialMarkingViewInput.add(markingView);
                     i += 2;
                 }
             }
@@ -1289,9 +1223,31 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         {
             capacityInput = Integer.valueOf(capacityTempStorage).intValue();
         }
-        return new PlaceView(positionXInput, positionYInput, idInput, nameInput, nameOffsetXInput, nameOffsetYInput, initialMarkingViewInput, markingOffsetXInput, markingOffsetYInput, capacityInput);
+        PlaceView placeView = new PlaceView(positionXInput, positionYInput, idInput, nameInput, nameOffsetXInput, nameOffsetYInput, initialMarkingViewInput, markingOffsetXInput, markingOffsetYInput, capacityInput); 
+        for (MarkingView markingView : initialMarkingViewInput)
+		{
+			if (markingView.getCurrentMarking() > 0) lockTokenClass(markingView.getToken().getID());
+		}
+        return placeView; 
         
     }
+
+	protected MarkingView buildMarkingView(String[] stringArray, int i)
+	{
+		int marking = 0; 
+		try 
+		{
+			marking = Integer.valueOf(stringArray[i + 1]); 
+		}
+		catch (NumberFormatException e) {}
+
+		TokenView tokenView = getTokenClassFromID(stringArray[i]);
+		if (tokenView == null) return null;
+		else 
+		{
+			return new MarkingView(tokenView, marking+"");
+		}
+	}
 
 
     private TokenView createToken(Element inputTokenElement)
@@ -1310,13 +1266,10 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       */
     public void createMatrixes()
     {
-        for(TokenView tc : _tokenViews)
+        for(TokenView tc : _tokenSetController.getTokenViews())
         {
-            if(tc.isEnabled())
-            {
-                tc.createIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
-                tc.createInhibitionMatrix(_inhibitorViews, _transitionViews, _placeViews);
-            }
+            tc.createIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
+            tc.createInhibitionMatrix(_inhibitorViews, _transitionViews, _placeViews);
         }
         createInitialMarkingVector();
         createCurrentMarkingVector();
@@ -1447,7 +1400,9 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                         int oldMarking = _currentMarkingVector[placeNo].get(oldMarkingPositionInTheList).getCurrentMarking();
                       //  tokenView.createIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
                         
-                        int markingToBeAdded = tokenView.getIncidenceMatrix().get(placeNo, transitionNo);
+                        int markingToBeAdded = tokenView.
+                        		getIncidenceMatrix().
+                        		get(placeNo, transitionNo);
                         markingView.setCurrentMarking(oldMarking + markingToBeAdded);
                     }
                     _placeViews.get(placeNo).repaint();
@@ -1555,20 +1510,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
         setMatrixChanged();
     }
-
-    /*
-      * Method not used * / public void fireRandomTransitionBackwards() {
-      * setEnabledTransitionsBackwards(); int transitionsSize =
-      * _transitions.size() * _transitions.size() *
-      * _transitions.size(); int randomTransitionNumber = 0; Transition
-      * randomTransition = null; do { randomTransitionNumber =
-      * _randomNumber.nextInt(_transitions.size()); randomTransition =
-      * (Transition)_transitions.get(randomTransitionNumber);
-      * transitionsSize--; if(transitionsSize <= 0){ break; } } while(!
-      * randomTransition.isEnabled()); fireTransitionBackwards(randomTransition);
-      * // System.out.println("Random Fired Transition Backwards" +
-      * ((Transition)_transitions.get(randonTransition)).getId()); }
-      */
 
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#resetEnabledTransitions()
@@ -1952,8 +1893,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         _labels = null;
         _rateParameters = null;
         _initialMarkingVector = null;
-        _tokenViews = null;
         _arcsMap = null;
+        _tokenSetController = null;
         initializeMatrices();
     }
 
@@ -2055,15 +1996,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     
-    public TokenView[] getTokenViewsArray(){
-    	TokenView[] returnArray = new TokenView[_tokenViews.size()];
-
-        for(int i = 0; i < _tokenViews.size(); i++)
-        {
-            returnArray[i] = _tokenViews.get(i);
-        }
-        return returnArray;
-    }
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#getTransitionsArrayList()
       */
@@ -2190,13 +2122,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void setMatrixChanged()
-    {
-
-    	
-    	//bug found: _tokenViews could be null if the first item in nodelist is a place.
-        
-    	if(_tokenViews!=null){
-    	for(TokenView tc : _tokenViews)
+    { // Steve Doubleday:  checks both enabled and disabled TokenViews; do we just need the enabled ones? 
+    	for(TokenView tc : _tokenSetController.getAllTokenViews())
         {
             if(tc.getForwardsIncidenceMatrix() != null)
             {
@@ -2217,7 +2144,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
         _initialMarkingVectorChanged = true;
         _currentMarkingVectorChanged = true;
-    	}
     }
 
     /* (non-Javadoc)
@@ -2233,14 +2159,11 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         try
         {
             nodeList = PNMLDoc.getDocumentElement().getChildNodes();
-            System.out.println(nodeList);
             if(ApplicationSettings.getApplicationView() != null)
             {
                 // Notifies used to indicate new instances.
                 ApplicationSettings.getApplicationModel().setMode(Constants.CREATING);
             }
-            System.out.println("Loading...");
-            
             for(int i = 0; i < nodeList.getLength(); i++)
             {
                 node = nodeList.item(i);
@@ -2303,7 +2226,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             {
                 ApplicationSettings.getApplicationModel().restoreMode();
             }
-            System.out.println("Done");
         }
         catch(Exception e)
         {
@@ -2884,7 +2806,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         String sourceInput;
         String targetInput;
         LinkedList<MarkingView> weightInput = new LinkedList<MarkingView>();
-        LinkedList<Marking> weightModel = new LinkedList<Marking>();
+        LinkedList<Marking> weightModel = new LinkedList<Marking>();  //TODO appears unused; delete? 
         boolean taggedArc;
         sourceInput = inputArcElement.getAttribute("source");
         targetInput = inputArcElement.getAttribute("target");
@@ -2954,7 +2876,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         {
             tempArcView = new NormalArcView((double) aStartx, (double) aStarty, (double) aEndx, (double) aEndy, sourceIn, targetIn, weightInput, idInput, taggedArc, new NormalArc(sourceIn.getModel(), targetIn.getModel()));//, weightModel));
         }
-
+        tempArcView.addThisAsObserverToWeight(weightInput);
         getPlaceTransitionObject(sourceInput).addOutbound(tempArcView);
         getPlaceTransitionObject(targetInput).addInbound(tempArcView);
 
@@ -3078,32 +3000,10 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 		return result;
 		
 	}
-
-//	public void setSelectedTokenTypeNumber(int size) {
-//		_selectedTokenTypeNumber=size;
-//		
-//	}
-//	
-//	public int getSelectedTokenTypeNumber() {
-//		return _selectedTokenTypeNumber;
-//		
-//	}
-	
 	public int getEnabledTokenClassNumber(){
-		int count =0;
-		if (_tokenViews==null){
-			return 0;
-		}
-		for(TokenView token : _tokenViews){
-			if(token.isEnabled()){
-				count++;
-			}
-		}
-		return count;
+		return _tokenSetController.getTokenViews().size(); 
 	}
-
 	public boolean hasFunctionalRatesOrWeights() {
-		// TODO Auto-generated method stub
 		for(ArcView arc : _arcViews){
 			LinkedList<MarkingView> weights = arc.getWeightSimple();
 			for(MarkingView weight : weights){
@@ -3122,9 +3022,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 			}
 		}
 		return false;
-		
 	}
-	
 	public int getEnablingDegree(TransitionView tran){
 		
 		int enablingDegree=Integer.MAX_VALUE;
@@ -3166,7 +3064,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 		}
 		
 	}
-
 	public void deleteTransition(String id) {
 		for(int i=0;i<_transitionViews.size();i++){
 			if(_transitionViews.get(i).getId().equals(id)){
@@ -3175,7 +3072,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 		}
 		
 	}
-
 	public void deleteArc(String id) {
 		for(int i=0;i<_arcViews.size();i++){
 			if(_arcViews.get(i).getId().equals(id)){
@@ -3183,29 +3079,11 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 			}
 		}
 	}
+
+	@Override
+	public void update(Observable arg0, Object arg1)
+	{
+		if ((arg0.equals(_tokenSetController)) && (arg1 instanceof TokenView)) updatePlaceViewsWithActiveToken((TokenView) arg1); 
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

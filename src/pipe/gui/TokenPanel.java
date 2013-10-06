@@ -19,12 +19,12 @@ public class TokenPanel extends JPanel {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	public final JTable table;
+	public JTable table; // Steve Doubleday changed from final to simplify testing
 	private final LinkedList<TokenView> _tokenViews;
 
 	public TokenPanel() {
 		// super(new GridLayout(1,0));
-        this._tokenViews = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenViews();
+        this._tokenViews = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getAllTokenViews();
 		table = new JTable(new TableModel());
 		table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 		table.setFillsViewportHeight(true);

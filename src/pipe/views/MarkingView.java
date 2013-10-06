@@ -4,6 +4,7 @@ import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
 import pipe.controllers.MarkingController;
 import pipe.models.Marking;
+import pipe.models.PipeObservable;
 import pipe.models.interfaces.IObserver;
 
 import javax.swing.*;
@@ -12,29 +13,37 @@ import net.sourceforge.jeval.EvaluationException;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MarkingView extends JComponent implements Serializable, IObserver
+//  Steve Doubleday:  changed from IObserver to Observer interface to make use of 
+//  the update(Observable Object) method for TokenViews
+
+public class MarkingView extends JComponent implements Serializable, Observer
 {
     private TokenView _tokenView;
     private final Marking _model;
     private MarkingController _controller;
-    
+    private PipeObservable _pipeObservable; 
    
 
     public MarkingView(MarkingController controller, Marking model)
     {
         _controller = controller;
         _model = model;
-        _model.registerObserver(this);
         _tokenView = new TokenView(_controller.getTokenController(), _model.getToken());
+        _tokenView.addObserver(this);
+        _pipeObservable = new PipeObservable(this);
     }
 
     public MarkingView(TokenView tokenView, String marking)
     {
         _tokenView = tokenView;
+        _tokenView.addObserver(this);
         _model = new Marking(
         		tokenView.getModel()
         		, marking);
+        _pipeObservable = new PipeObservable(this);
     }
     
 
@@ -42,6 +51,8 @@ public class MarkingView extends JComponent implements Serializable, IObserver
     {
         _tokenView = tokenView;
         _model = new Marking(tokenView.getModel(), marking);
+        _tokenView.addObserver(this); 
+        _pipeObservable = new PipeObservable(this);
     }
 
     public TokenView getToken()
@@ -52,7 +63,11 @@ public class MarkingView extends JComponent implements Serializable, IObserver
     public void setToken(TokenView tokenView)
     {
         _tokenView = tokenView;
-        _model.setToken(tokenView.getModel());
+        if (_tokenView != null) 
+        {
+        	_tokenView.addObserver(this); 
+        	_model.setToken(tokenView.getModel());
+        }
     }
 
     public void setCurrentMarking(int marking)
@@ -97,14 +112,38 @@ public class MarkingView extends JComponent implements Serializable, IObserver
     	return _model.getCurrentMarking();
     }
 
-    @Override
-    public void update()
-    {
-       // paint()
-    }
 
     public void update(Graphics canvas, Insets insets, int count, int tempTotalMarking)
     {
         _tokenView.update(canvas,insets,count, tempTotalMarking, getCurrentMarking());
     }
+
+	@Override
+	public void update(Observable oldObj, Object newObj)
+	{
+		if (oldObj instanceof TokenView) 
+		{
+			if (newObj == null) setToken(null);  
+			else if (newObj instanceof TokenView) setToken((TokenView) newObj);  
+			setChanged(); 
+			notifyObservers(null); 
+		}
+	}
+	// Delegate to Observable
+	public void addObserver(Observer observer)
+	{
+		_pipeObservable.addObserver(observer);
+	}
+	public void notifyObservers(Object arg)
+	{
+		_pipeObservable.notifyObservers(arg); 
+	}
+	public void setChanged()
+	{
+		_pipeObservable.setChanged(); 
+	}
+	protected PipeObservable getObservable()
+	{
+		return _pipeObservable; 
+	}
 }

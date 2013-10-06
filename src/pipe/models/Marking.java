@@ -1,6 +1,9 @@
 package pipe.models;
 
 import java.io.Serializable;
+import java.util.Observable;
+
+
 
 public class Marking extends Observable implements Serializable
 {

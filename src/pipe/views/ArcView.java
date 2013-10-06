@@ -1,6 +1,17 @@
 package pipe.views;
 
-import parser.ExprEvaluator;
+import java.awt.Container;
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List; 
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -10,20 +21,14 @@ import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryItem;
 import pipe.models.Arc;
+import pipe.models.PipeObservable;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.ArcPathPoint;
 import pipe.views.viewComponents.NameLabel;
 
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.Serializable;
-import java.util.LinkedList;
-
-public abstract class ArcView extends PetriNetViewComponent implements Cloneable, IObserver,Serializable
+public abstract class ArcView extends PetriNetViewComponent implements Cloneable, IObserver,Serializable, Observer
 {
     private static final long serialVersionUID = 1L;
     LinkedList<NameLabel> weightLabel = new LinkedList<NameLabel>();
@@ -151,10 +156,15 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
                 label.setPosition(x + label.getWidth() / 2 - 4, y);
                 y += 10;
             }
-            getParent().remove(label);
+            removeLabelFromParentContainer(label);
         }
         weightLabel.clear();
     }
+
+	protected void removeLabelFromParentContainer(NameLabel label)
+	{
+		getParent().remove(label);
+	}
 
     public String getId()
     {
@@ -323,7 +333,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         {
             for(NameLabel label : weightLabel)
             {
-                getParent().remove(label);
+                removeLabelFromParentContainer(label);
             }
             myPath.forceHidePoints();
             super.delete();
@@ -368,7 +378,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         {
             for(NameLabel label : weightLabel)
             {
-                getParent().remove(label);
+                removeLabelFromParentContainer(label);
             }
         }
         myPath.forceHidePoints();
@@ -645,4 +655,35 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             }
         }
 	}
+	//TODO determine which lists really need to be updated, and remove the argument.  
+	public void addThisAsObserverToWeight(List<MarkingView> weights) 
+	{ 
+		for (MarkingView markingView : weights)
+		{
+			markingView.addObserver(this);
+		}
+	}
+	// Steve Doubleday (Oct 2013): cascading clean up of Marking Views if Token View is disabled
+	@Override
+	public void update(Observable observable, Object obj)
+	{
+		if ((observable instanceof PipeObservable) && (obj == null))
+		{
+			// if multiple cases are added, consider creating specific subclasses of Observable
+			Object originalObject = ((PipeObservable) observable).getObservable();
+			if (originalObject instanceof MarkingView)
+			{
+				MarkingView viewToDelete = (MarkingView) originalObject;
+				_weight.remove(viewToDelete);
+				HistoryItem historyItem = this.setWeight(_weight);
+				updateHistory(historyItem);
+			}
+		}
+	}
+
+	protected void updateHistory(HistoryItem historyItem)
+	{ // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls 
+		ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(historyItem);  
+	}
+
 }

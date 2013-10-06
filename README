@@ -1,3 +1,17 @@
+Bugs fixed in 4.3
+
+[Examples]
+	- After opening a non-coloured PetriNet, an immediate attempt to enter Animation node gets Null Pointer Exception.
+	- List in the token drop-down box is inconsistent with the token editor options when PetriNet is initially loaded. 
+	- Tokens not locked for update in the token editor when PetriNet is loaded.  When tokens are edited, initial markings are lost.  
+	 
+	Fixes involved consolidating logic regarding TokenViews into a new controller:  TokenSetController
+	Several classes refactored to use the new controller and to simplify the logic.
+	Unit tests added to support these changes.  
+	 To run the unit tests:  Run / Run Configurations / New Configuration icon / select "run all tests in project...." [search for PIPEv4.3.0]
+	 Or import allTests.launch in the root of the project: File / Import / Run/Debug / Launch Configurations / navigate to the project root, and select allTests.launch.  Run / Run configurations to run the tests.  	
+    Questions on this refactor:  stevedoubleday [at] gmail.com
+    
 Bugs fixed in 4.2.2:
 
 [Examples]
@@ -10,3 +24,4 @@ Bugs fixed in 4.2.2:
 Modification:
 
 	-Block modules: steady state analysis, passage time analysis, passage time analysis for tagged nets. These modules use web servers for calculations. The code for server communication is buggy and time and resource consuming. New version of PIPE2 that support local steady state analysis is being built.
+	

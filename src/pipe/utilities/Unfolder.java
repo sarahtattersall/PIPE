@@ -2,6 +2,7 @@ package pipe.utilities;
 
 import org.w3c.dom.DOMException;
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
@@ -86,6 +87,8 @@ class Unfolder
 
     // Will iterate through each transition, analyse its input and output arcs
     // and create new places and connecting arcs as necessary.
+    
+    // Steve Doubleday (Oct 2013):  added PlaceViews and ArcViews as observers to new MarkingViews
     private void unfoldTransitions()
     {
         // Get current transitions. These should remain as is (remember they are
@@ -165,8 +168,9 @@ class Unfolder
                     Double nameOffsetXInput = oldPlaceView.getNameOffsetX();
                     Double nameOffsetYInput = oldPlaceView.getNameOffsetYObject();
                     LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
+                    MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
                     markingViewInput
-                            .add(new MarkingView(_defaultTokenView, newMarking+""));
+                            .add(placeMarkingView);
                     double markingOffsetXInput = oldPlaceView
                             .getMarkingOffsetXObject();
                     double markingOffsetYInput = oldPlaceView
@@ -176,6 +180,7 @@ class Unfolder
                     newPlaceView = new PlaceView(positionXInput, positionYInput, newPlaceName, newPlaceName,
                                                  nameOffsetXInput, nameOffsetYInput, markingViewInput,
                                                  markingOffsetXInput, markingOffsetYInput, capacityInput);
+                    placeMarkingView.addObserver(newPlaceView); 
                     _newPlaceViews.add(newPlaceView);
                 }
 
@@ -186,7 +191,8 @@ class Unfolder
                 double endPositionYInput = newPlaceView.getPositionY();
                 ConnectableView target = newPlaceView;
                 LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
-                weight.add(new MarkingView(_defaultTokenView, newArcWeight+""));
+                MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+""); 
+                weight.add(arcMarkingView);
                 LinkedList<Marking> weightModel = new LinkedList<Marking>();
                 weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
                 String idInput = outboundArcView.getId();
@@ -194,7 +200,7 @@ class Unfolder
                 ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,
                                                        endPositionXInput, endPositionYInput, newTransitionView, target,
                                                        weight, idInput, false, new NormalArc(newTransitionView.getModel(), target.getModel()));//, weightModel));
-
+                arcMarkingView.addObserver(newPlaceView);
                 // Join arc, place and transition and add all to appropriate
                 // lists
                 newPlaceView.addInbound(newArcView);
@@ -245,8 +251,9 @@ class Unfolder
                     Double nameOffsetXInput = oldPlaceView.getNameOffsetX();
                     Double nameOffsetYInput = oldPlaceView.getNameOffsetYObject();
                     LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
+                    MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
                     markingViewInput
-                            .add(new MarkingView(_defaultTokenView, newMarking+""));
+                            .add(placeMarkingView);
                     double markingOffsetXInput = oldPlaceView
                             .getMarkingOffsetXObject();
                     double markingOffsetYInput = oldPlaceView
@@ -256,6 +263,7 @@ class Unfolder
                     newPlaceView = new PlaceView(positionXInput, positionYInput, newPlaceName, newPlaceName,
                                                  nameOffsetXInput, nameOffsetYInput, markingViewInput,
                                                  markingOffsetXInput, markingOffsetYInput, capacityInput);
+                    placeMarkingView.addObserver(newPlaceView); 
                     _newPlaceViews.add(newPlaceView);
                 }
 
@@ -266,13 +274,14 @@ class Unfolder
                 double endPositionYInput = inboundArcView.getStartPositionY();
                 ConnectableView source = newPlaceView;
                 LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
-                weight.add(new MarkingView(_defaultTokenView, newArcWeight+""));
+                MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+""); 
+                weight.add(arcMarkingView);
                 LinkedList<Marking> weightModel = new LinkedList<Marking>();
                 weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
                 String idInput = inboundArcView.getId();
 
                 ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,endPositionXInput, endPositionYInput, source, newTransitionView,weight, idInput, false, new NormalArc(source.getModel(), newTransitionView.getModel()));//, weightModel));
-
+                arcMarkingView.addObserver(newArcView); 
                 // Join arc, place and transition and add all to appropriate
                 // lists
                 newPlaceView.addOutbound(newArcView);
@@ -287,9 +296,16 @@ class Unfolder
     {
         PetriNetController controller = ApplicationSettings.getPetriNetController();
         PetriNetView petriNetView = new PetriNetView(controller, new PetriNet());
-        LinkedList<TokenView> tokenViews = new LinkedList<TokenView>();
+        LinkedList<TokenView> tokenViews = new LinkedList<TokenView>(); //TODO replace with TokenSetController 
         tokenViews.add(_defaultTokenView);
-        petriNetView.setTokenViews(tokenViews);
+        try
+		{
+			petriNetView.updateOrReplaceTokenViews(tokenViews);
+		}
+		catch (TokenLockedException e)
+		{
+			e.printStackTrace(); // should not throw at initial creation
+		}
         petriNetView.setActiveTokenView(_defaultTokenView);
         for(TransitionView t : _newTransitionViews)
         {

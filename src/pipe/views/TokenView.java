@@ -1,6 +1,7 @@
 package pipe.views;
 
 import pipe.controllers.TokenController;
+import pipe.exceptions.TokenLockedException;
 import pipe.models.Token;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.math.Matrix;
@@ -8,11 +9,14 @@ import pipe.utilities.math.Matrix;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class TokenView implements Serializable, IObserver
+public class TokenView extends Observable implements Serializable, IObserver
 {
-    private final Token _model;
+    private Token _model;  // Steve Doubleday was final, but changed for replace(tokenView)
     private TokenController _controller;
 	private Matrix previousIncidenceMatrix;
 
@@ -239,8 +243,12 @@ public class TokenView implements Serializable, IObserver
     {
         return _model.isEnabled();
     }
-
-    public void setEnabled(boolean enabled)
+    /**
+     * Disabling a TokenView should be done through disableAndNotifyObservers() 
+     * @param enabled
+     * @throws TokenLockedException
+     */
+    protected void setEnabled(boolean enabled) throws TokenLockedException
     {
         _model.setEnabled(enabled);
     }
@@ -269,5 +277,71 @@ public class TokenView implements Serializable, IObserver
     {
         _model.createInhibitionMatrix(inhibitorsArray, transitionsArray, placesArray);
     }
+
+	protected String getNormalizedID()
+	{
+		return normalize(getID());
+	}
+	private String normalize(String target)
+	{
+		if (target == null) return ""; 
+		else return target.trim().toLowerCase();	
+	}
+	/**
+	 * Sets enabled = false, and notifies any observers.  Observers should delete references to this TokenView.
+	 * @throws TokenLockedException 
+	 */
+	public void disableAndNotifyObservers() throws TokenLockedException
+	{
+		setEnabled(false); 
+		setChanged(); 
+		notifyObservers(null);
+	}
+
+	/**
+	 * Update the Token model in this TokenView from the argument tokenView. 
+	 * <p>
+	 * Used to preserve updates in this TokenView to ID and Color, while re-using the Token model from the argument tokenView.  Observers on the argument tokenView are notified so that they may update their reference to point to this tokenView.
+	 * <p>
+	 * Use case:  If a set of new TokenViews replace existing TokenViews (TokenSetController#updateOrReplaceTokenViews(List<TokenView>)), each tokenView in the argument list will replace its counterpart in the original list.  
+	 * <p>
+	 * If this tokenView is disabled and the source TokenView is locked, TokenLockedException is thrown.
+	 * If this tokenView is disabled and the source TokenView is not locked, observers are notified with null, indicating that the argument tokenView is no longer valid and is not being replaced; observers should update their reference to null.  
+	 * @param tokenView
+	 * @throws TokenLockedException 
+	 */
+	 //TODO consider use cases for this method; currently only used in tests, so should probably be deleted. 
+	public void updateModelFromPrevious(TokenView tokenView) throws TokenLockedException
+	{
+		boolean enabled = isEnabled();
+		String ID = getID(); 
+		Color color = getColor(); 
+		this._model = tokenView._model; 
+		this.previousIncidenceMatrix = tokenView.previousIncidenceMatrix; 
+		setID(ID); 
+		setEnabled(enabled); 
+		setColor(color);
+		tokenView.setChanged(); 
+		if (enabled) tokenView.notifyObservers(this);
+		else tokenView.notifyObservers(null);
+	}
+
+	/**
+	 * Returns false if this TokenView is invalid.
+	 * An invalid TokenView is disabled (isEnabled() == false), with a blank or null Id.
+	 * <p>
+	 * All other TokenViews are valid.      
+	 * @return
+	 */
+	public boolean isValid()
+	{
+		if ((getNormalizedID().equals("")) && (!isEnabled())) return false;
+		else return true; 
+	}
+	@Override
+	public String toString()
+	{
+		return _model.toString(); 
+	}
 
 }

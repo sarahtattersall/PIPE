@@ -11,6 +11,7 @@ import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.PlaceCapacity;
 import pipe.historyActions.PlaceMarking;
+import pipe.models.PipeObservable;
 import pipe.models.Place;
 import pipe.utilities.Copier;
 
@@ -20,8 +21,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.io.Serializable;
 import java.util.LinkedList;
-
-public class PlaceView extends ConnectableView implements Serializable
+import java.util.Observable;
+import java.util.Observer;
+// Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
+public class PlaceView extends ConnectableView implements Serializable, Observer
 {
 
     //transferred
@@ -81,6 +84,7 @@ public class PlaceView extends ConnectableView implements Serializable
         super(positionXInput,positionYInput,idInput,nameInput,nameOffsetXInput,nameOffsetYInput, new Place(idInput, nameInput));
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
+        addObserver(_currentMarkingView); 
         totalMarking = getTotalMarking();
         markingOffsetX = new Double(markingOffsetXInput);
         markingOffsetY = new Double(markingOffsetYInput);
@@ -94,7 +98,15 @@ public class PlaceView extends ConnectableView implements Serializable
 
     }
 
-    public PlaceView(PlaceController placeController, Place model)
+    private void addObserver(LinkedList<MarkingView> markingViews)
+	{
+    	for (MarkingView markingView : markingViews)
+		{
+			markingView.addObserver(this);
+		}
+	}
+
+	public PlaceView(PlaceController placeController, Place model)
     {
         super(0,0,model);
 
@@ -153,6 +165,7 @@ public class PlaceView extends ConnectableView implements Serializable
         if(markingListPos == -1)
         {
             MarkingView m = new MarkingView(tokenView, 0);
+            m.addObserver(this); 
             _currentMarkingView.add(m);
         }
     }
@@ -361,6 +374,7 @@ public class PlaceView extends ConnectableView implements Serializable
             // Now update the current marking if such a marking exists, otherwise create a new one
             if(oldMarkingPos == -1)
             {
+            	m.addObserver(this); 
                 _currentMarkingView.add(m);
             }
             else
@@ -376,6 +390,7 @@ public class PlaceView extends ConnectableView implements Serializable
                 if(getMarkingListPos(tc.getID(), _currentMarkingView) == -1)
                 {
                     MarkingView m = new MarkingView(tc, 0);
+                    m.addObserver(this); 
                     _currentMarkingView.add(m);
                 }
             }
@@ -576,6 +591,21 @@ public class PlaceView extends ConnectableView implements Serializable
 		_initialMarkingView = initBackUp;
 		_currentMarkingView= currentBackUp;
 		update();
+	}
+
+	@Override
+	public void update(Observable observable, Object obj)
+	{
+		if ((observable instanceof PipeObservable) && (obj == null))
+		{
+			// if multiple cases are added, consider creating specific subclasses of Observable
+			Object originalObject = ((PipeObservable) observable).getObservable();
+			if (originalObject instanceof MarkingView)
+			{
+				MarkingView viewToDelete = (MarkingView) originalObject;
+				_currentMarkingView.remove(viewToDelete); 
+			}
+		}
 	}
 }
 

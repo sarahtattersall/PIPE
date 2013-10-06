@@ -2,6 +2,7 @@ package pipe.utilities;
 
 import org.w3c.dom.DOMException;
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
@@ -121,7 +122,7 @@ public class Expander
         }
 
     }
-
+    // Steve Doubleday:  added PlaceViews and ArcViews as observers for new MarkingViews
     public void analyseArcs(TransitionView transitionView, TransitionView newTransitionView, LinkedList<ArcView> arcViews)
     {
         for(ArcView arcView : arcViews)
@@ -156,13 +157,16 @@ public class Expander
             if(newPlaceView == null)
             {
                 LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
-                markingViewInput.add(new MarkingView(_defaultTokenView, newMarking+""));
+                MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
+                markingViewInput.add(placeMarkingView);
                 newPlaceView = new PlaceView(transitionView.getPositionX(), oldPlaceView.getPositionY(), newPlaceName, newPlaceName, oldPlaceView.getNameOffsetX(), oldPlaceView.getNameOffsetYObject(), markingViewInput, oldPlaceView.getMarkingOffsetXObject(), oldPlaceView.getMarkingOffsetYObject(), oldPlaceView.getCapacity());
+                placeMarkingView.addObserver(newPlaceView);
                 _newPlaceViews.add(newPlaceView);
             }
             LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
             LinkedList<Marking> weightModel = new LinkedList<Marking>();
-            weight.add(new MarkingView(_defaultTokenView, newArcWeight+""));
+            MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+"");
+            weight.add(arcMarkingView);
             weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
 
             ArcView newArcView;
@@ -172,6 +176,7 @@ public class Expander
                 newArcView = new NormalArcView(newPlaceView.getPositionX(), newPlaceView.getPositionY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel()));//, weightModel));
             newPlaceView.addInboundOrOutbound(newArcView);
             newTransitionView.addInboundOrOutbound(newArcView);
+            arcMarkingView.addObserver(newArcView); 
             _newArcViews.add(newArcView);
         }
     }
@@ -182,7 +187,14 @@ public class Expander
         PetriNetView petriNetView = new PetriNetView(controllet, new PetriNet());
         LinkedList<TokenView> tokenViews = new LinkedList<TokenView>();
         tokenViews.add(_defaultTokenView);
-        petriNetView.setTokenViews(tokenViews);
+        try
+		{
+			petriNetView.updateOrReplaceTokenViews(tokenViews);
+		}
+		catch (TokenLockedException e)
+		{
+			e.printStackTrace(); // should not throw at initial creation
+		}
         petriNetView.setActiveTokenView(_defaultTokenView);
         for(TransitionView t : _newTransitionViews)
         {

@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+//
+// Steve Doubleday (Sept 2013):  refactored to simplify testing of TokenSetController changes
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer,Serializable
 {
@@ -48,8 +50,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final PipeApplicationController _applicationController;
     private final PipeApplicationModel _applicationModel;
-
-    public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel)
+    /**
+     * Constructor for unit testing only
+     * @author stevedoubleday (Oct 2013)
+     */
+	public PipeApplicationView()
+	{
+		statusBar = null;
+		_moduleAndAnimationHistoryFrame = null;
+		_frameForPetriNetTabs = null;
+		_petriNetTabs = null; 
+		_animator = null;
+		_applicationController = null; 	
+		_applicationModel = null; 
+	}
+	public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel)
     {
         ApplicationSettings.register(this);
         _applicationController = applicationController;
@@ -478,41 +493,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * @param action
      * @author Alex Charalambous (June 2010): Creates a combo box used to choose
      * the current token class to be used.
+     * @author	Steve Doubleday (Sept 2013): refactored to simplify testing
+     *   Initially populated with a single option:  "Default"  
      */
-    private void addTokenClassComboBox(JToolBar toolBar, Action action)
+    protected void addTokenClassComboBox(JToolBar toolBar, Action action)
     {
-        LinkedList<TokenView> tokenViews;
-        if(getCurrentPetriNetView() == null)
-        {
-            tokenViews = new LinkedList<TokenView>();
-            TokenView tc = new TokenView(true, "Default", Color.black);
-            tokenViews.add(tc);
-        }
-        else
-        {
-            tokenViews = getCurrentPetriNetView().getTokenViews();
-        }
-        int noEnabledTokenClasses = 0;
-        for(TokenView tc : tokenViews)
-        {
-            if(tc.isEnabled())
-                noEnabledTokenClasses++;
-        }
-
-        // Create an array that can be passed to DefaultComboBox below
-        // The array contains any specified token classes so they can be
-        // displayed as options in the combo box
-        String[] tokenClassChoices = new String[noEnabledTokenClasses];
-        int noTokenClasses = tokenViews.size();
-        int arrayPos = 0;
-        for(TokenView tokenView : tokenViews)
-        {
-            if(tokenView.isEnabled())
-            {
-                tokenClassChoices[arrayPos] = tokenView.getID();
-                arrayPos++;
-            }
-        }
+//        String[] tokenClassChoices = buildTokenClassChoices(); // Steve Doubleday: can't be used until we have an active PetriNetView
+        String[] tokenClassChoices = new String[]{"Default"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
         tokenClassComboBox = new JComboBox(model);
         tokenClassComboBox.setEditable(true);
@@ -523,6 +510,17 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         tokenClassComboBox.setAction(action);
         toolBar.add(tokenClassComboBox);
     }
+	protected String[] buildTokenClassChoices()
+	{
+		LinkedList<TokenView> tokenViews = getCurrentPetriNetView().getTokenViews();
+		int size = tokenViews.size(); 
+		String[] tokenClassChoices = new String[size];
+		for (int i = 0; i < size; i++)
+		{
+			tokenClassChoices[i] = tokenViews.get(i).getID();
+		}
+		return tokenClassChoices;
+	}
 
     private void addMenuItem(JMenu menu, Action action)
     {
@@ -663,8 +661,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             }
         }
     }
-
-    private void saveNet(File outFile, boolean saveFunctional)
+    // Steve Doubleday:  public to simplify testing
+    public void saveNet(File outFile, boolean saveFunctional)
     {
         try
         {
@@ -761,7 +759,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 return;
             }
         }
-
+        refreshTokenClassChoices(); // Steve Doubleday: ensure combo box reflects tokens that were loaded
         setTitle(name);// Change the program caption
         _frameForPetriNetTabs.setTitleAt(freeSpace, name);
         _applicationModel.selectAction.actionPerformed(null);
@@ -961,41 +959,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             System.exit(0);
         }
     }
-
+    /**
+     * Refreshes the combo box that presents the Tokens available for use. 
+     */
+    // stevedoubleday (Sept 2013):  refactored as part of TokenSetController implementation 
     public void refreshTokenClassChoices()
     {
-        LinkedList<TokenView> tokenViews = getCurrentPetriNetView().getTokenViews();
-        int noEnabledTokenClasses = 0;
-        boolean refreshedActiveTokenClass = false;
-        // Find out how many token classes are enabled and set the
-        // first enabled token class as the default combo box selection
-        for(TokenView tc : tokenViews)
-        {
-            if(tc.isEnabled())
-            {
-                noEnabledTokenClasses++;
-                if(!refreshedActiveTokenClass)
-                {
-                    refreshedActiveTokenClass = true;
-                    getCurrentPetriNetView().setActiveTokenView(tc);
-                }
-            }
-        }
-
-        // Options for choosing token class are based on all enabled token
-        // classes
-        String[] tokenClassChoices = new String[noEnabledTokenClasses];
-        int noTokenClasses = tokenViews.size();
-        int arrayPos = 0;
-        for(TokenView tokenView : tokenViews)
-        {
-            if(tokenView.isEnabled())
-            {
-                tokenClassChoices[arrayPos] = tokenView.getID();
-                arrayPos++;
-            }
-        }
-        // Update tokenClassComboBox choices to reflect user changes
+        getCurrentPetriNetView().setActiveTokenView(getCurrentPetriNetView().getTokenViews().get(0));
+        String[] tokenClassChoices = buildTokenClassChoices();
         DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
         tokenClassComboBox.setModel(model);
     }

@@ -498,7 +498,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 		}
         ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addEdit(
 				_arcView.setWeight(newWeight));
-		
+		_arcView.addThisAsObserverToWeight(newWeight); // Steve Doubleday
 		_arcView.repaint();
 		exit();
 	}

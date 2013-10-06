@@ -15,6 +15,7 @@ import java.io.File;
 public class FileAction extends GuiAction
 {
     private String _userPath;
+	private File fileForTesting;
 
     // constructor
     public FileAction(String name, String tooltip, String keystroke)
@@ -38,7 +39,7 @@ public class FileAction extends GuiAction
         }
         else if(this == pipeApplicationModel.openAction)
         { // code for Open operation
-            File filePath = new FileBrowser(_userPath).openFile();
+            File filePath = getFile();
             if((filePath != null) && filePath.exists() && filePath.isFile() && filePath.canRead())
             {
                 _userPath = filePath.getParent();
@@ -113,4 +114,12 @@ public class FileAction extends GuiAction
         }
     }
 
+	protected File getFile()
+	{
+		return (fileForTesting != null) ? fileForTesting : new FileBrowser(_userPath).openFile();
+	}
+	public void setFileForTesting(File file)
+	{
+		fileForTesting = file; 
+	}
 }

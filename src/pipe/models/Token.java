@@ -1,5 +1,6 @@
 package pipe.models;
 
+import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.math.Matrix;
@@ -64,10 +65,27 @@ public class Token extends Observable implements Serializable
         return _enabled;
     }
 
-    public void setEnabled(boolean enabled)
+    public void setEnabled(boolean enabled) throws TokenLockedException
     {
-        _enabled = enabled;
+    	if (!isLocked()) _enabled = enabled;
+    	else throw new TokenLockedException("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for "+getLockCount()+" Places.  It may not be disabled unless markings are removed from those Places.\n" +
+				"Details: "+toString());
     }
+	@Override
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer(); 
+		sb.append("TokenView:");
+		sb.append(" Enabled=");
+		sb.append(isEnabled());
+		sb.append(", Id=");
+		sb.append(getId());
+		sb.append(", Color=");
+		sb.append(getColor().toString());
+		sb.append(", Lock count=");
+		sb.append(getLockCount());
+		return sb.toString();
+	}
 
 
 

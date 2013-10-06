@@ -58,7 +58,7 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
 
         return popup;
     }
-
+    // Steve Doubleday: refactored to simplify testing
     public void mouseClicked(MouseEvent e)
     {
         if(SwingUtilities.isLeftMouseButton(e))
@@ -76,32 +76,11 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
                 switch(ApplicationSettings.getApplicationModel().getMode())
                 {
                     case Constants.ADDTOKEN:
-                        for(MarkingView m : oldMarkingViews)
-                        {
-                            if(m.getToken().hasSameId(((PlaceView) my).getActiveTokenView()))
-                            {
-                                m.setCurrentMarking(m.getCurrentMarking() + 1);
-                                m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(m.getToken().getID()));
-                                historyManager.addNewEdit(((PlaceView) my).setCurrentMarking(oldMarkingViews));
-                                break;
-                            }
-                        }
+					addToken(oldMarkingViews, historyManager);
                         updateArcAndTran();
                         break;
                     case Constants.DELTOKEN:
-                        for(MarkingView currentMarkingView : oldMarkingViews)
-                        {
-                            if(currentMarkingView.getToken().hasSameId(
-                                    ((PlaceView) my).getActiveTokenView()))
-                            {
-                                if(currentMarkingView.getCurrentMarking() > 0)
-                                {
-                                    currentMarkingView.setCurrentMarking(currentMarkingView.getCurrentMarking() - 1);
-                                    historyManager.addNewEdit(((PlaceView) my)
-                                                                   .setCurrentMarking(oldMarkingViews));
-                                }
-                            }
-                        }
+					deleteToken(oldMarkingViews, historyManager);
                         updateArcAndTran();
                         break;
                     default:
@@ -129,6 +108,39 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
 		 * else if (SwingUtilities.isMiddleMouseButton(e)){ ; }
 		 */
     }
+
+	protected void deleteToken(LinkedList<MarkingView> oldMarkingViews,
+			HistoryManager historyManager)
+	{
+		for(MarkingView currentMarkingView : oldMarkingViews)
+		{
+		    if(currentMarkingView.getToken().hasSameId(
+		            ((PlaceView) my).getActiveTokenView()))
+		    {
+		        if(currentMarkingView.getCurrentMarking() > 0)
+		        {
+		            currentMarkingView.setCurrentMarking(currentMarkingView.getCurrentMarking() - 1);
+		            historyManager.addNewEdit(((PlaceView) my)
+		                                           .setCurrentMarking(oldMarkingViews));
+		        }
+		    }
+		}
+	}
+
+	protected void addToken(LinkedList<MarkingView> oldMarkingViews,
+			HistoryManager historyManager)
+	{
+		for(MarkingView m : oldMarkingViews)
+		{
+		    if(m.getToken().hasSameId(((PlaceView) my).getActiveTokenView()))
+		    {
+		        m.setCurrentMarking(m.getCurrentMarking() + 1);
+		        m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(m.getToken().getID()));
+		        historyManager.addNewEdit(((PlaceView) my).setCurrentMarking(oldMarkingViews));
+		        break;
+		    }
+		}
+	}
     
     private void updateArcAndTran(){
    	 ArrayList<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
