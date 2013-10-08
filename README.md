@@ -23,12 +23,50 @@ code efficiency improvements and added zoom to the GUI and reachability graph ge
 
 
 ## Installation ##
-In order to run PIPE tool execute the following for your operating system from within the PIPE root directory
+### Once only ###
+PIPEv4.3.0 makes use of Maven as a dependency manager and build system. Currently it makes use of a few
+internal libraries located in ```src/libs```. To install these for use with Maven there is a Python script 
+```mvn_libs/add_maven_dependencies.py``` to install these to your Maven local repository. It takes one command line
+argument which is the path to the ```jar``` files.
+It makes use of the libs declared in ```mvn_libs/internal_libs.json``` which is a JSON object of the format:
 
-### Linux ###
+    {
+        ...
+    	<jar_basename> : {
+    		"artifactId" : <artifact_name>,
+    		"version" : <version_number>
+    	},
+    	...
+    }
 
-    ./launch.sh
+For example
 
-### Windows ###
+    {
+    	"Jama-1.0.2" : {
+    		"artifactId" : "jama",
+    		"version" : "1.0.2"
+    	},
+    	...
+    }
+    
+If you add any other internal ```jar``` files. Make sure they follow the same format as this.
+To run this script execute the following:
 
-    ./launch.bat
+    $ cd mvn_libs
+    $ python add_maven_dependencies.py  ../src/lib/
+    
+
+    
+### Build jar ###
+To build the ```jar``` library execute the following from within the PIPE root directory:
+
+    $ mvn install
+    
+Once finished you should see the file ```target/PIPE-4.3.0.jar```.
+
+
+### Execution ###
+In order to run PIPE tool execute the following from within the PIPE root directory:
+
+    $ mvn exec:java
+
