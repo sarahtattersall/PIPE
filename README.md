@@ -23,12 +23,15 @@ code efficiency improvements and added zoom to the GUI and reachability graph ge
 
 
 ## Installation ##
-In order to run PIPE tool execute the following for your operating system from within the PIPE root directory
+PIPEv4.3.0 makes use of the Maven build system tool.
 
-### Linux ###
+In order to run PIPE tool execute the following from within the PIPE root directory:
 
-    ./launch.sh
+    $ mvn exec:java
+    
+    
+To build the ```jar``` library execute the following from within the PIPE root directory:
 
-### Windows ###
-
-    ./launch.bat
+    $ mvn install
+    
+Once finished you should see the file ```target/PIPE-4.3.0.jar```.
