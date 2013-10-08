@@ -8,6 +8,10 @@
     <artifactId>PIPE</artifactId>
     <version>4.3.0</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
