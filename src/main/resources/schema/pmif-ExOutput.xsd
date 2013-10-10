@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.uib.es/PMIF" targetNamespace="http://www.uib.es/PMIF" elementFormDefault="qualified">
+<xsd:element name="Output" type="tns:OutputFormatType"/>
+
+<xsd:complexType name="OutputFormatType">
+    <xsd:sequence maxOccurs="unbounded">
+                <xsd:element name="Solution" type="tns:SolutionType"/>
+    </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="SolutionType">
+	<xsd:choice maxOccurs="unbounded">
+		<xsd:element name="ValueUsed" type="tns:ValueUsedType" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="OutputWorkload" type="tns:OutputWorkloadType" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="OutputNode" type="tns:OutputNodeType" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="OutputNodeWorkload" type="tns:OutputNodeWorkloadType" minOccurs="0" maxOccurs="unbounded"/>
+		<!--<xsd:element name="ToolCommand" type="tns:BlobType" minOccurs="0" maxOccurs="unbounded"/>-->
+	</xsd:choice>
+        <xsd:attribute name="ID" type="xsd:string"/>
+</xsd:complexType>
+<xsd:complexType name="OutputWorkloadType">
+	<xsd:attribute name="WorkloadName" type="xsd:string" use="required"/>
+	<xsd:attribute name="Throughput" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="ResponseTime" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="TimeUnits" type="tns:TimeUnitsType" use="optional"/>
+</xsd:complexType>
+<xsd:complexType name="OutputNodeType">
+	<xsd:attribute name="ServerID" type="xsd:string" use="required"/>
+	<xsd:attribute name="Throughput" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="Utilization" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="QueueLength" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="ServiceTime" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="TimeUnits" type="tns:TimeUnitsType" use="optional"/>
+</xsd:complexType>
+<xsd:complexType name="OutputNodeWorkloadType">
+	<xsd:attribute name="ServerID" type="xsd:string" use="required"/>
+	<xsd:attribute name="WorkloadName" type="xsd:string" use="required"/>
+	<xsd:attribute name="Throughput" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="ResidenceTime" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="Utilization" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="QueueLength" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="ServiceTime" type="tns:nonNegativeFloat" use="optional"/>
+	<xsd:attribute name="TimeUnits" type="tns:TimeUnitsType" use="optional"/>
+</xsd:complexType>
+<xsd:complexType name="ValueUsedType">
+	<xsd:attribute name="VariableName" type="xsd:string" use="required"/>
+	<xsd:attribute name="VariableValue" type="xsd:float" use="required"/>
+	<!--Depending of what things we want to change we might want sring instead -->
+		</xsd:complexType>
+		<xsd:simpleType name="nonNegativeFloat">
+			<xsd:restriction base="xsd:float">
+				<xsd:minInclusive value="0.0"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+		<xsd:simpleType name="TimeUnitsType">
+			<xsd:annotation>
+				<xsd:documentation>
+					If time units are omitted, all specifications are assumed to be the same relative units.
+				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="day"/>
+				<xsd:enumeration value="Day"/>
+				<xsd:enumeration value="hr"/>
+				<xsd:enumeration value="Hr"/>
+				<xsd:enumeration value="min"/>
+				<xsd:enumeration value="Min"/>
+				<xsd:enumeration value="sec"/>
+				<xsd:enumeration value="Sec"/>
+				<xsd:enumeration value="ms"/>
+				<xsd:enumeration value="Ms"/>
+				<xsd:enumeration value="ns"/>
+				<xsd:enumeration value="Ns"/>
+			</xsd:restriction>
+                </xsd:simpleType>
+</xsd:schema>
