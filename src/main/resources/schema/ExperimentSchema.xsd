@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xml.netbeans.org/schema/ExperimentSchema" targetNamespace="http://xml.netbeans.org/schema/ExperimentSchema" elementFormDefault="qualified">
+	<xsd:element name="Experiment" type="tns:ExperimentType"/>
+	<xsd:complexType name="ExperimentType">
+		<xsd:sequence>
+			<xsd:element name="Variable" type="tns:VariableType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputVariable" type="tns:OutputVariableType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="LocalVariable" type="tns:LocalVariableType" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- 25/10/07 : Changed order LocalVariables go last because they initial value can be a expression depending on Variables or OutputVariables -->
+			<xsd:element name="SolutionSpec" type="tns:SolutionSpecType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="Name" type="xsd:string" use="optional"/>
+		<xsd:attribute name="Description" type="xsd:string" use="optional"/>
+		<xsd:attribute name="Date-Time" type="xsd:dateTime" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="VariableType">
+		<xsd:attribute name="Name" type="xsd:ID" use="required"/>
+		<xsd:attribute name="PlaceID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="TransitionID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="ArcID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="AttributeToChange" type="tns:AttributeToChangeType" use="required"/>
+		<!-- Need to also specify AttributeToChangeType that is different in PN than in QN-->
+	</xsd:complexType>
+	<!-- We assume it refers to the last result -->
+	<xsd:complexType name="OutputVariableType">
+		<xsd:attribute name="Name" type="xsd:ID" use="required"/>
+		<xsd:attribute name="PlaceID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="TransitionID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="ResultToUse" type="xsd:string" use="optional"/>
+		<xsd:attribute name="InitialValue" type="xsd:string" use="required"/>
+		<!--<xsd:attribute name="Expression" type="xsd:string" use="optional"/>-->
+		<!--10/08/07: Changed to just Initial value because it can be an expression -->
+		<!--05/09/07): Semantics changed, we now won't use expressions like this for OutputVariables because then it
+        could even be recursive. It's the user that has to assign values to the variables when needed -->
+		<!-- The initialValue apllies only to the very first time the Output var is used -->
+	</xsd:complexType>
+	<xsd:complexType name="LocalVariableType">
+		<xsd:attribute name="Name" type="xsd:ID" use="required"/>
+		<xsd:attribute name="InitialValue" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="SolutionSpecType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="Assign" type="tns:AssignType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Iteration" type="tns:IterationType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Alt" type="tns:AltType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Solve" type="tns:SolveType" minOccurs="0"/>
+			<xsd:element name="OutputSpec" type="tns:OutputSpecType" minOccurs="0"/>
+		</xsd:choice>
+		<!-- CATI: 08/03/07 changed from Sequence to Choice with MaxOccurs=unbounded-->
+	</xsd:complexType>
+	<!--	<xsd:complexType name="SolutionType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="SolutionAnalytic" type="AnalyticType" maxOccurs="unbounded"/>
+			<xsd:element name="SolutionSimulation" type="SimulationType" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType> -->
+	<xsd:complexType name="AltType">
+		<xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="Guard" type="xsd:string" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:choice maxOccurs="unbounded">
+				<!-- Cati: changed from sequence to choice, otherwise it could be empty, which does not make sense (alternation to do nothing) -->
+				<!--<xsd:element name="Sequence" type="SequenceType" minOccurs="0" maxOccurs="unbounded"/> -->
+				<xsd:element name="Assign" type="tns:AssignType" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Iteration" type="tns:IterationType" maxOccurs="unbounded"/>
+				<!-- Cati: without minOccurs=0, important -->
+				<xsd:element name="Alt" type="tns:AltType" maxOccurs="unbounded"/>
+				<xsd:element name="Solve" type="tns:SolveType" minOccurs="0"/>
+				<!-- Cati: without minOccurs=0, important -->
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="IterationType">
+		<xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="Range" type="tns:RangeType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<!-- CHANGED to choice 12/03/07 The way it was we could not do StopWhen and then Solve inside an iteration-->
+			<xsd:choice maxOccurs="unbounded">
+				<!--<xsd:element name="Sequence" type="SequenceType" minOccurs="0" maxOccurs="unbounded"/> -->
+				<xsd:element name="Assign" type="tns:AssignType" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Iteration" type="tns:IterationType" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Alt" type="tns:AltType" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Solve" type="tns:SolveType" minOccurs="0"/>
+				<xsd:element name="StopWhen" type="tns:StopWhenType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:choice>
+			<!-- CHANGED 12/03/07 The way it was we could not do StopWhen and then Solve inside an iteration-->
+			<!-- <xsd:sequence>
+				 This sequence can have 1 or more of these. Would like to specify in any order?? 
+				 Cati: remember the order will have to be this one exactly 
+				<xsd:element name="StopWhen" type="StopWhenType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence> -->
+			<!-- May want to define allowable strings like '>' ">=" etc -->
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Deleted 02/08/07 : We don't need it, the Guard is a string -->
+	<!-- We have  to put the Test separated because xml does not allow to use "<" on its strings -->
+	<!--	<xsd:complexType name="GuardType">
+		<xsd:attribute name="VariableName" type="xsd:IDREF" use="required"/>
+		<xsd:attribute name="Test" type="TestType" use="required"/>
+		<xsd:attribute name="Value" type="xsd:string" use="required"/>
+	</xsd:complexType> -->
+	<xsd:complexType name="AssignType">
+		<xsd:attribute name="VariableName" type="xsd:IDREF" use="required"/>
+		<xsd:attribute name="Value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="RangeType">
+		<xsd:attribute name="VariableName" type="xsd:IDREF" use="required"/>
+		<xsd:attribute name="Start" type="xsd:string" use="optional"/>
+		<xsd:attribute name="End" type="tns:nonNegativeFloat" use="optional"/>
+		<xsd:attribute name="Step" type="xsd:float" use="optional"/>
+		<xsd:attribute name="StepPercent" type="xsd:float" use="optional"/>
+		<xsd:attribute name="Vector" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<!-- 02/08/07:   Since expressions can be handled I think a string with the test is enough -->
+	<xsd:complexType name="StopWhenType">
+		<xsd:attribute name="Test" type="xsd:string" use="required"/>
+		<!-- <xsd:attribute name="OutputVariableName" type="xsd:IDREF" use="required"/> -->
+	</xsd:complexType>
+	<xsd:complexType name="SolveType">
+		<xsd:choice>
+			<xsd:element name="SolutionAnalytic" type="tns:GeneralSolutionType"/>
+			<xsd:element name="SolutionSimulation" type="tns:SimulationType"/>
+			<xsd:element name="TransitionInvariantAnalysis" type="tns:GeneralSolutionType"/>
+			<xsd:element name="PlaceInvariantAnalysis" type="tns:GeneralSolutionType"/>
+			<xsd:element name="MinimalSiphons" type="tns:GeneralSolutionType"/>
+			<xsd:element name="MinimalTraps" type="tns:GeneralSolutionType"/>
+			<xsd:element name="StructuralPropertiesCheck" type="tns:GeneralSolutionType"/>
+			<!-- 15/11/07: As all the types but Simulation had the same specification, I've changed it for only one type called GeneralSolutionType -->
+		</xsd:choice>
+		<xsd:attribute name="SolutionID" type="xsd:string" use="required"/>
+		<xsd:attribute name="Description" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="GeneralSolutionType">
+		<xsd:sequence>
+			<xsd:element name="ToolCommand" type="tns:BlobType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SimulationType">
+		<xsd:sequence>
+			<xsd:element name="ToolCommand" type="tns:BlobType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="StartInterval" type="tns:nonNegativeFloat" use="optional"/>
+		<xsd:attribute name="StopTime" type="tns:nonNegativeFloat" use="optional"/>
+		<xsd:attribute name="RandomSeed" type="xsd:nonNegativeInteger" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="BlobType">
+		<xsd:attribute name="Tool" type="xsd:string" use="required"/>
+		<xsd:attribute name="Commands" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="OutputSpecType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="WriteVariable" type="tns:WriteVariableType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="WriteOutput" type="tns:WriteOutputType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="ToolCommand" type="tns:BlobType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="WriteVariableType">
+		<xsd:attribute name="VariableName" type="xsd:IDREF"/>
+	</xsd:complexType>
+	<xsd:complexType name="WriteOutputType">
+		<xsd:attribute name="Metric" type="tns:MetricType" use="optional"/>
+		<xsd:attribute name="StructuralAnalysis" type="tns:StructuralAnalysisType" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="OutputFormatType">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="SolutionId" type="tns:SolveType" minOccurs="0"/>
+			<xsd:element name="ValueUsed" type="tns:ValueUsedType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Variable" type="tns:ValueUsedType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputPlace" type="tns:OutputPlaceType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputTransition" type="tns:OutputTransitionType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputPlaceInvariants" type="tns:OutputPlaceInvariantsType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputTransitionInvariants" type="tns:OutputTransitionInvariantsType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputMinimalSiphons" type="tns:OutputMinimalSiphonsType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputMinimalTraps" type="tns:OutputMinimalTrapsType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="OutputStructuralProperties" type="tns:OutputStructuralPropertiesType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="ToolCommand" type="tns:BlobType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="OutputPlaceType">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="TokenProbabilityDensity" type="tns:TokenProbabilityDensityType"/>
+		</xsd:sequence>
+		<xsd:attribute name="PlaceID" type="xsd:string" use="required"/>
+		<xsd:attribute name="AverageNumberOfTokens" type="tns:nonNegativeFloat" use="optional"/>
+		<xsd:attribute name="TimeUnits" type="tns:TimeUnitsType" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="OutputTransitionType">
+		<xsd:attribute name="TransitionID" type="xsd:string" use="required"/>
+		<xsd:attribute name="Throughput" type="tns:nonNegativeFloat" use="optional"/>
+		<xsd:attribute name="TimeUnits" type="tns:TimeUnitsType" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="ValueUsedType">
+		<xsd:attribute name="VariableName" type="xsd:IDREF" use="required"/>
+		<xsd:attribute name="VariableValue" type="xsd:float" use="required"/>
+		<!--Depending of what things we want to change we might want sring instead -->
+	</xsd:complexType>
+	<!-- 06/10/07:  NEW-->
+	<xsd:complexType name="TokenProbabilityDensityType">
+		<xsd:attribute name="NumberOfTokens" type="xsd:nonNegativeInteger"/>
+		<xsd:attribute name="Probability" type="tns:nonNegativeFloat"/>
+	</xsd:complexType>
+	
+	<!-- 23/10/07: NEW  -->
+	<xsd:complexType name="OutputPlaceInvariantsType">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		   <xsd:element name="PlaceInvariant" type="tns:PlaceInvariantType"/>
+		</xsd:sequence>
+		<xsd:attribute name="InvariantEquations" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="PlaceInvariantType">
+	   <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+		   <xsd:element name="Place" type="tns:PlaceValueType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PlaceValueType">
+		<xsd:attribute name="PlaceID" type="xsd:string" use="required"/>
+		<xsd:attribute name="Value" type="xsd:integer" use="required"/>
+		<!-- 23/10/07: NEW not sure if the value is always integer, though I think so -->
+	</xsd:complexType>
+
+	<xsd:complexType name="OutputTransitionInvariantsType">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		   <xsd:element name="TransitionInvariant" type="tns:TransitionInvariantType"/>
+		</xsd:sequence>
+		<xsd:attribute name="InvariantEquations" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="TransitionInvariantType">
+	   <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+		   <xsd:element name="Transition" type="tns:TransitionValueType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="TransitionValueType">
+		<xsd:attribute name="TransitionID" type="xsd:string" use="required"/>
+		<xsd:attribute name="Value" type="xsd:integer" use="required"/>
+		<!-- 23/10/07: NEW not sure if the value is always integer, though I think so -->
+	</xsd:complexType>
+		
+		
+	<!-- 23/10/07: NEW -->
+	<xsd:complexType name="OutputMinimalSiphonsType">
+	   <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		   <xsd:element name="MinimalSyphon" type="tns:MinimalSyphonType"/>
+  	   </xsd:sequence>
+   	</xsd:complexType>
+  	
+    <xsd:complexType name="MinimalSyphonType">
+	   <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		   <xsd:element name="Place" type="tns:ExperimentPlaceType"/>
+  	   </xsd:sequence>  	
+    </xsd:complexType>
+  	
+	<xsd:complexType name="OutputMinimalTrapsType">
+	   <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		   <xsd:element name="MinimalTrap" type="tns:MinimalTrapType"/>
+  	    </xsd:sequence>
+  	</xsd:complexType>
+
+    <xsd:complexType name="MinimalTrapType">
+	   <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+		   <xsd:element name="Place" type="tns:ExperimentPlaceType"/>
+  	   </xsd:sequence>  	  	
+  	</xsd:complexType>
+
+  	<xsd:complexType name="ExperimentPlaceType">
+         <xsd:attribute name="PlaceID" type="xsd:string" use="required"/>
+  	</xsd:complexType>
+  	
+	<xsd:complexType name="OutputStructuralPropertiesType">
+		<xsd:attribute name="Property" type="xsd:string" use="required"/>
+		<xsd:attribute name="Value" type="xsd:boolean" use="required"/>
+	</xsd:complexType>
+	<!-- Simple Type Definitions -->
+	<xsd:simpleType name="nonNegativeFloat">
+		<xsd:restriction base="xsd:float">
+			<xsd:minInclusive value="0.0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TimeUnitsType">
+		<xsd:annotation>
+			<xsd:documentation>
+				If time units are omitted, all specifications are assumed to be the same relative units.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="day"/>
+			<xsd:enumeration value="Day"/>
+			<xsd:enumeration value="hr"/>
+			<xsd:enumeration value="Hr"/>
+			<xsd:enumeration value="min"/>
+			<xsd:enumeration value="Min"/>
+			<xsd:enumeration value="sec"/>
+			<xsd:enumeration value="Sec"/>
+			<xsd:enumeration value="ms"/>
+			<xsd:enumeration value="Ms"/>
+			<xsd:enumeration value="ns"/>
+			<xsd:enumeration value="Ns"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SchedulingType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="FCFS"/>
+			<xsd:enumeration value="IS"/>
+			<xsd:enumeration value="PS"/>
+			<xsd:enumeration value="LCFSPR"/>
+			<!-- Lifo preemptive-->
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- 02/08/07: Deleted because don't need id -->
+	<!-- <xsd:simpleType name="TestType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="LT"/>
+			<xsd:enumeration value="GT"/>
+			<xsd:enumeration value="LE"/>
+			<xsd:enumeration value="GE"/>
+			<xsd:enumeration value="EQ"/>
+			<xsd:enumeration value="NE"/>
+		</xsd:restriction>
+	</xsd:simpleType> -->
+	<xsd:simpleType name="AttributeToChangeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delay"/>
+			<xsd:enumeration value="serverType"/>
+			<xsd:enumeration value="preemptionPolicy"/>
+			<xsd:enumeration value="DTSPNpriority"/>
+			<xsd:enumeration value="priority"/>
+			<xsd:enumeration value="weight"/>
+			<xsd:enumeration value="enablingFunction"/>
+			<xsd:enumeration value="initialMarking"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MetricType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="AverageNumberOfTokens"/>
+			<xsd:enumeration value="TokenProbabilityDensity"/>
+			<xsd:enumeration value="Throughput"/>
+			<xsd:enumeration value="Utilization"/>
+			<xsd:enumeration value="Delay"/>
+			<xsd:enumeration value="TimeUnits"/>
+			<!-- We might not even want the delay, could be usefull in case of simulation -->
+			<!-- Throughput means by server and workload-->
+			<!-- ServerThroughput means overall by server-->
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StructuralAnalysisType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="PlaceInvariants"/>
+			<xsd:enumeration value="TransitionInvariants"/>
+			<xsd:enumeration value="MinimalSiphons"/>
+			<xsd:enumeration value="MinimalTraps"/>
+			<xsd:enumeration value="StructuralProperties"/>
+			<!-- We might not even want the delay, could be usefull in case of simulation -->
+			<!-- Throughput means by server and workload-->
+			<!-- ServerThroughput means overall by server-->
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
