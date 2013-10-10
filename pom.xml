@@ -6,7 +6,7 @@
 
     <groupId>uk.ac.imperial</groupId>
     <artifactId>PIPE</artifactId>
-    <version>4.3.0</version>
+    <version>4.3.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
