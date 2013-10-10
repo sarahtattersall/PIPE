@@ -185,9 +185,16 @@
          <xsl:attribute name="target">
             <xsl:value-of select="@target"/>
          </xsl:attribute>
-         <xsl:attribute name="inscription">
-            <xsl:value-of select="inscription/value"/>
-         </xsl:attribute>
+         <xsl:choose>
+             <xsl:when test="inscription/value">
+                 <xsl:attribute name="inscription">
+                     <xsl:value-of select="inscription/value"/>
+                 </xsl:attribute>
+             </xsl:when>
+             <xsl:otherwise>
+                 <xsl:attribute name="inscription">1</xsl:attribute>
+             </xsl:otherwise>
+         </xsl:choose>
          <xsl:attribute name="inscriptionOffsetX">
             <xsl:value-of select="inscription/graphics/offset/@x"/>
          </xsl:attribute>
