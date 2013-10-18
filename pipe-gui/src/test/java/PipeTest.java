@@ -76,6 +76,7 @@ public class PipeTest {
 	{
     	applicationView = ApplicationSettings.getApplicationView();  
 	}
+
 	@Test
 	public void verifyMenusAddedToGui() throws Exception
 	{
