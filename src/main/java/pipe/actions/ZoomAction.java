@@ -24,7 +24,7 @@ public class ZoomAction extends GuiAction
             String actionName = (String) getValue(NAME);
             PetriNetTab appView = _pipeApplicationView.getCurrentTab();
             ZoomController zoomer = appView.getZoomController();
-            JViewport thisView = ((JScrollPane) _pipeApplicationView._frameForPetriNetTabs.getSelectedComponent()).getViewport();
+            JViewport thisView = ((JScrollPane) _pipeApplicationView.getFrameForPetriNetTabs().getSelectedComponent()).getViewport();
             String selection = null, strToTest = null;
 
             double midpointX = ZoomController.getUnzoomedValue(thisView

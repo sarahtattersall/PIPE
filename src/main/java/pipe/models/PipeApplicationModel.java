@@ -1,146 +1,101 @@
 package pipe.models;
 
 import pipe.actions.*;
+import pipe.actions.file.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.views.PipeApplicationView;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PipeApplicationModel implements Serializable
 {
-    public FileAction createAction;
-    public FileAction openAction;
-    public FileAction closeAction;
-    public FileAction saveAction;
-    public FileAction saveAsAction;
-    public FileAction exitAction;
-    public FileAction printAction;
-    public FileAction exportPNGAction;
-    public FileAction exportTNAction;
-    public FileAction exportPSAction;
-    public FileAction importAction;
+    public FileAction createAction = new CreateAction();
+    public FileAction openAction = new OpenAction();
+    public FileAction closeAction = new CloseAction();
+    public FileAction saveAction = new SaveAction();
+    public FileAction saveAsAction = new SaveAsAction();
+    public FileAction printAction = new PrintAction();
+    public FileAction exportPNGAction = new ExportPNGAction();
+    public FileAction exportTNAction = new ExportTNAction();
+    public FileAction exportPSAction = new ExportPSAction();
+    public FileAction importAction = new ImportAction();
 
-    public EditAction copyAction;
-    public EditAction cutAction;
-    public EditAction pasteAction;
-    public EditAction undoAction;
-    public EditAction redoAction;
-    public GridAction toggleGrid;
-    public ZoomAction zoomOutAction, zoomInAction, zoomAction;
-    public DeleteAction deleteAction;
-    public TypeAction annotationAction;
-    public TypeAction arcAction;
-    public TypeAction inhibarcAction;
-    public TypeAction placeAction;
-    public TypeAction transAction;
-    public TypeAction timedtransAction;
-    public TypeAction tokenAction;
-    public TypeAction selectAction;
-    public TypeAction rateAction;
-    public TypeAction deleteTokenAction;
-    public TypeAction dragAction;
-    public AnimateAction startAction;
-    public AnimateAction stepforwardAction;
-    public AnimateAction stepbackwardAction;
-    public AnimateAction randomAction;
-    public AnimateAction randomAnimateAction;
-    public TokenAction _specifyTokenClasses;
-    public GroupTransitionsAction groupTransitions;
-    public UnfoldAction unfoldAction;
-    public UngroupTransitionsAction ungroupTransitions;
-    public ChooseTokenClassAction chooseTokenClassAction;
-    private ArrayList<ZoomAction> _zoomActions;
+    public GuiAction exitAction = new ExitAction();
 
+    public EditAction undoAction = new EditAction("Undo", "Undo (Ctrl-Z)", "ctrl Z");
+    public EditAction redoAction = new EditAction("Redo", "Redo (Ctrl-Y)", "ctrl Y");
+    public EditAction cutAction = new EditAction("Cut", "Cut (Ctrl-X)", "ctrl X");
+    public EditAction copyAction = new EditAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+    public EditAction pasteAction = new EditAction("Paste", "Paste (Ctrl-V)", "ctrl V");
+
+    public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
+
+    public TypeAction selectAction = new TypeAction("Select", Constants.SELECT, "Select components", "S", true);
+    public TypeAction placeAction = new TypeAction("Place", Constants.PLACE, "Add a place", "P", true);
+    public TypeAction transAction = new TypeAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I", true);
+    public TypeAction timedtransAction = new TypeAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T", true);
+    public TypeAction arcAction = new TypeAction("Arc", Constants.ARC, "Add an arc", "A", true);
+    public TypeAction inhibarcAction = new TypeAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", true);
+    public TypeAction annotationAction = new TypeAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N", true);
+    public TypeAction tokenAction = new TypeAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD", true);
+    public TypeAction deleteTokenAction = new TypeAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT", true);
+    public TypeAction dragAction = new TypeAction("Drag", Constants.DRAG, "Drag the drawing", "D", true);
+    public TypeAction rateAction = new TypeAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
+
+    public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");;
+
+    public ZoomAction zoomOutAction = new ZoomAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS");
+    public ZoomAction zoomInAction = new ZoomAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS");
+
+    public ZoomAction zoomAction;
+
+    public AnimateAction startAction = new AnimateAction("Animation mode", Constants.START, "Toggle Animation Mode", "Ctrl A");
+    public AnimateAction stepbackwardAction = new AnimateAction("Back", Constants.STEPBACKWARD, "Step backward a firing", "4");
+    public AnimateAction stepforwardAction = new AnimateAction("Forward", Constants.STEPFORWARD, "Step forward a firing", "6");
+    public AnimateAction randomAction = new AnimateAction("Random", Constants.RANDOM, "Randomly fire a transition", "5");
+    public AnimateAction randomAnimateAction = new AnimateAction("Animate", Constants.ANIMATE, "Randomly fire a number of transitions", "7");
+
+    public TokenAction specifyTokenClasses = new TokenAction();
+
+    public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
+
+    public UnfoldAction unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U");
+
+    public UngroupTransitionsAction ungroupTransitions = new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
+
+    public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
+
+
+
+    private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%","120%", "140%", "160%", "180%", "200%", "300%"};
+    private List<ZoomAction> zoomActions = new ArrayList<ZoomAction>();
     private final String _name;
-    private final String[] _zoomExamples;
-    private boolean _editionAllowed;
-    private int mode, prev_mode, old_mode;
+    private boolean editionAllowed = true;
+    private int mode;
+    private int prev_mode;
+    private int old_mode;
     private PipeApplicationView _observer;
-
-    private int newNameCounter;
+    private int newNameCounter = 0;
 
     public PipeApplicationModel(String version)
     {
         ApplicationSettings.register(this);
-
         _name = "PIPE: Platform Independent Petri Net Editor " + version;
-        _zoomExamples = new String[]{"40%", "60%", "80%", "100%","120%", "140%", "160%", "180%", "200%", "300%"};
-        _editionAllowed = true;
-        boolean dragging = false;
-        newNameCounter = 0;
-        registerActions();
-        ArrayList<PetriNet> petriNets = new ArrayList<PetriNet>();
-
+        registerZoomActions();
     }
 
-    private void registerActions()
+    private void registerZoomActions()
     {
-        createAction = new FileAction("New", "Create a new Petri net", "ctrl N");
-        openAction = new FileAction("Open", "Open", "ctrl O");
-        closeAction = new FileAction("Close", "Close the current tab", "ctrl W");
-        saveAction = new FileAction("Save", "Save", "ctrl S");
-        saveAsAction = new FileAction("Save as", "Save as...", "shift ctrl S");
-        importAction = new FileAction("Import", "Import from eDSPN", "ctrl I");
-        exportPNGAction = new FileAction("PNG", "Export the net to PNG format", "ctrl G");
-        exportPSAction = new FileAction("PostScript", "Export the net to PostScript format", "ctrl T");
-        exportTNAction = new FileAction("eDSPN", "Export the net to Timenet format", "ctrl E");
-        printAction = new FileAction("Print", "Print", "ctrl P");
-        undoAction = new EditAction("Undo", "Undo (Ctrl-Z)", "ctrl Z");
-        redoAction = new EditAction("Redo", "Redo (Ctrl-Y)", "ctrl Y");
-        cutAction = new EditAction("Cut", "Cut (Ctrl-X)", "ctrl X");
-        copyAction = new EditAction("Copy", "Copy (Ctrl-C)", "ctrl C");
-        pasteAction = new EditAction("Paste", "Paste (Ctrl-V)", "ctrl V");
-        deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
-        selectAction = new TypeAction("Select", Constants.SELECT, "Select components", "S", true);
-
-        Action actionListener = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                if(isEditionAllowed())
-                {
-                    selectAction.actionPerformed(null);
-                }
-            }
-        };
-
-        placeAction = new TypeAction("Place", Constants.PLACE, "Add a place", "P", true);
-        transAction = new TypeAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I", true);
-        timedtransAction = new TypeAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T", true);
-        arcAction = new TypeAction("Arc", Constants.ARC, "Add an arc", "A", true);
-        inhibarcAction = new TypeAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", true);
-        annotationAction = new TypeAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N", true);
-        tokenAction = new TypeAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD", true);
-        deleteTokenAction = new TypeAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT", true);
-        _specifyTokenClasses = new TokenAction();
-        groupTransitions = new GroupTransitionsAction();
-        ungroupTransitions = new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
-        unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U");
-        rateAction = new TypeAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
-        zoomOutAction = new ZoomAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS");
-        zoomInAction = new ZoomAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS");
-        toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");
-        dragAction = new TypeAction("Drag", Constants.DRAG, "Drag the drawing", "D", true);
-        startAction = new AnimateAction("Animation mode", Constants.START, "Toggle Animation Mode", "Ctrl A");
-        stepbackwardAction = new AnimateAction("Back", Constants.STEPBACKWARD, "Step backward a firing", "4");
-        stepforwardAction = new AnimateAction("Forward", Constants.STEPFORWARD, "Step forward a firing", "6");
-        randomAction = new AnimateAction("Random", Constants.RANDOM, "Randomly fire a transition", "5");
-        randomAnimateAction = new AnimateAction("Animate", Constants.ANIMATE, "Randomly fire a number of transitions", "7");
-        chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
-        exitAction = new FileAction("Exit", "Close the program", "ctrl Q");
-
-        _zoomActions = new ArrayList<ZoomAction>();
-        for(int i=0; i<_zoomExamples.length; i++)
-            _zoomActions.add(new ZoomAction(_zoomExamples[i], "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
+        for(int i = 0; i < zoomExamples.length; i++)
+            zoomActions.add(new ZoomAction(zoomExamples[i], "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
     }
 
     public String[] getZoomExamples()
     {
-        return _zoomExamples;
+        return zoomExamples;
     }
 
     public String getName()
@@ -150,12 +105,12 @@ public class PipeApplicationModel implements Serializable
 
     public boolean isEditionAllowed()
     {
-        return _editionAllowed;
+        return editionAllowed;
     }
 
     public void setEditionAllowed(boolean flag)
     {
-        _editionAllowed = flag;
+        editionAllowed = flag;
     }
 
     public void resetMode()
@@ -260,9 +215,9 @@ public class PipeApplicationModel implements Serializable
         _observer = observer;
     }
 
-    public ArrayList<ZoomAction> getZoomActions()
+    public List<ZoomAction> getZoomActions()
     {
-        return _zoomActions;
+        return zoomActions;
     }
 
     public void setUndoActionEnabled(boolean flag)
