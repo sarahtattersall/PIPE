@@ -1,8 +1,7 @@
 package pipe.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class PetriNet extends Observable implements Serializable
 {
@@ -10,10 +9,11 @@ public class PetriNet extends Observable implements Serializable
     private boolean _validated = false;
     private ArrayList _changeArrayList;
 
-    private ArrayList<Transition> _transitions;
-    private ArrayList<Place> _places;
-    private ArrayList<Marking> _markings;
-    private ArrayList<Arc> _arcs;
+    private Set<Transition> transitions = new HashSet<Transition>();
+    private Set<Place> places = new HashSet<Place>();
+    private Set<Token> tokens = new HashSet<Token>();
+    //private Set<Marking> markings = new HashSet<Marking>();
+    private Set<Arc> arcs = new HashSet<Arc>();
 
     public String getPnmlName()
     {
@@ -35,13 +35,34 @@ public class PetriNet extends Observable implements Serializable
         _validated = validated;
     }
 
-    public ArrayList<Transition> getTransitions()
-    {
-        return _transitions;
-    }
-
     public void resetPNML()
     {
         _pnmlName = null;
     }
+
+    public void addPlace(Place place)
+    {
+        places.add(place);
+    }
+
+    public void addTransition(Transition transition)
+    {
+        transitions.add(transition);
+    }
+
+    public void addArc(Arc arc)
+    {
+        arcs.add(arc);
+    }
+
+    public void addToken(Token token)
+    {
+        tokens.add(token);
+    }
+
+    public Collection<Place> getPlaces()
+    {
+        return places;
+    }
+
 }

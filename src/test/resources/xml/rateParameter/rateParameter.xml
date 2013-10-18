@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><pnml>
+    <net id="Net-One" type="P/T net">
+        <definition>
+            <graphics name="rate0" type="rate" expression="expression">
+                <position x="400" y="219"/>
+            </graphics>
+        </definition>
+    </net>
+</pnml>
