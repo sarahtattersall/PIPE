@@ -20,19 +20,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import pipe.actions.AnimateAction;
-import pipe.actions.ChooseTokenClassAction;
-import pipe.actions.DeleteAction;
-import pipe.actions.EditAction;
-import pipe.actions.FileAction;
-import pipe.actions.GridAction;
-import pipe.actions.GroupTransitionsAction;
-import pipe.actions.GuiAction;
-import pipe.actions.TokenAction;
-import pipe.actions.TypeAction;
-import pipe.actions.UnfoldAction;
-import pipe.actions.UngroupTransitionsAction;
-import pipe.actions.ZoomAction;
+import pipe.actions.*;
+import pipe.actions.file.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TestingPlaceHandler;
 import pipe.gui.TokenPanel;
@@ -88,16 +77,16 @@ public class PipeTest {
     public void verifyActionsAddedToGui() throws Exception
     {
     	PipeApplicationModel model = ApplicationSettings.getApplicationModel();  
-    	checkAction("New", model.createAction, FileAction.class); 
-    	checkAction("Open", model.openAction, FileAction.class); 
-    	checkAction("Close", model.closeAction, FileAction.class); 
-    	checkAction("Save", model.saveAction, FileAction.class); 
-    	checkAction("Save as", model.saveAsAction, FileAction.class); 
-    	checkAction("Import", model.importAction, FileAction.class); 
-    	checkAction("PNG", model.exportPNGAction, FileAction.class); 
-    	checkAction("PostScript", model.exportPSAction, FileAction.class); 
-    	checkAction("eDSPN", model.exportTNAction, FileAction.class); 
-    	checkAction("Print", model.printAction, FileAction.class); 
+    	checkAction("New", model.createAction, CreateAction.class);
+    	checkAction("Open", model.openAction, OpenAction.class);
+    	checkAction("Close", model.closeAction, CloseAction.class);
+    	checkAction("Save", model.saveAction, SaveAction.class);
+    	checkAction("Save as", model.saveAsAction, SaveAsAction.class);
+    	checkAction("Import", model.importAction, ImportAction.class);
+    	checkAction("PNG", model.exportPNGAction, ExportPNGAction.class);
+    	checkAction("PostScript", model.exportPSAction, ExportPSAction.class);
+    	checkAction("eDSPN", model.exportTNAction, ExportTNAction.class);
+    	checkAction("Print", model.printAction, PrintAction.class);
     	checkAction("Undo", model.undoAction, EditAction.class); 
     	checkAction("Redo", model.redoAction, EditAction.class); 
     	checkAction("Cut", model.cutAction, EditAction.class); 
@@ -113,7 +102,7 @@ public class PipeTest {
     	checkAction("Annotation", model.annotationAction, TypeAction.class); 
     	checkAction("Add token", model.tokenAction, TypeAction.class); 
     	checkAction("Delete token", model.deleteTokenAction, TypeAction.class); 
-    	checkAction("SpecifyTokenClasses", model._specifyTokenClasses, TokenAction.class); 
+    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, TokenAction.class);
     	checkAction("groupTransitions", model.groupTransitions, GroupTransitionsAction.class); 
     	checkAction("ungroupTransitions", model.ungroupTransitions, UngroupTransitionsAction.class); 
     	checkAction("unfoldAction", model.unfoldAction, UnfoldAction.class); 
@@ -128,7 +117,7 @@ public class PipeTest {
     	checkAction("Random", model.randomAction, AnimateAction.class); 
     	checkAction("Animate", model.randomAnimateAction, AnimateAction.class); 
     	checkAction("chooseTokenClass", model.chooseTokenClassAction, ChooseTokenClassAction.class); 
-    	checkAction("Exit", model.exitAction, FileAction.class); 
+    	checkAction("Exit", model.exitAction, ExitAction.class);
     	for (int i = 0; i < model.getZoomActions().size(); i++)
 		{
     		checkAction(model.getZoomExamples()[i], model.getZoomActions().get(i), ZoomAction.class); 
@@ -383,8 +372,8 @@ public class PipeTest {
 		menu = applicationView.getJMenuBar().getMenu(0);
 		savePetriNet();
 		
-		selectMenuItem(menu, CLOSE); 
-		
+		selectMenuItem(menu, CLOSE);
+
 		reloadPetriNet();
 		petriNetView = applicationView.getCurrentPetriNetView();
 		placeViews = petriNetView.getPlacesArrayList();
@@ -434,9 +423,9 @@ public class PipeTest {
 	}
 	private void reloadPetriNet()
 	{
-		FileAction action = (FileAction) getActionForMenuItem(menu,OPEN);
-		action.setFileForTesting(fileForTesting); 
-		action.actionPerformed(null); 
+        OpenAction action = (OpenAction) getActionForMenuItem(menu,OPEN);
+		action.setFileForTesting(fileForTesting);
+		action.actionPerformed(null);
 	}
 	private void savePetriNet()
 	{

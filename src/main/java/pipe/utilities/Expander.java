@@ -171,9 +171,9 @@ public class Expander
 
             ArcView newArcView;
             if(transitionView.outboundArcs() == arcViews)
-                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getPositionX(), newPlaceView.getPositionY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel()));//, weightModel));
+                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getPositionX(), newPlaceView.getPositionY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel));
             else
-                newArcView = new NormalArcView(newPlaceView.getPositionX(), newPlaceView.getPositionY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel()));//, weightModel));
+                newArcView = new NormalArcView(newPlaceView.getPositionX(), newPlaceView.getPositionY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel));
             newPlaceView.addInboundOrOutbound(newArcView);
             newTransitionView.addInboundOrOutbound(newArcView);
             arcMarkingView.addObserver(newArcView); 

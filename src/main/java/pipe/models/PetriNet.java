@@ -6,8 +6,6 @@ import java.util.Random;
 
 public class PetriNet extends Observable implements Serializable
 {
-    private static Random _randomNumber = new Random();
-
     public String _pnmlName;
     private boolean _validated = false;
     private ArrayList _changeArrayList;
@@ -35,26 +33,6 @@ public class PetriNet extends Observable implements Serializable
     public void setValidated(boolean validated)
     {
         _validated = validated;
-    }
-
-    public ArrayList getChangeArrayList()
-    {
-        return _changeArrayList;
-    }
-
-    public void setChangeArrayList(ArrayList changeArrayList)
-    {
-        _changeArrayList = changeArrayList;
-    }
-
-    public static Random getRandomNumber()
-    {
-        return _randomNumber;
-    }
-
-    public static void setRandomNumber(Random randomNumber)
-    {
-        _randomNumber = randomNumber;
     }
 
     public ArrayList<Transition> getTransitions()

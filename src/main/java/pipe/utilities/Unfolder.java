@@ -199,7 +199,7 @@ class Unfolder
 
                 ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,
                                                        endPositionXInput, endPositionYInput, newTransitionView, target,
-                                                       weight, idInput, false, new NormalArc(newTransitionView.getModel(), target.getModel()));//, weightModel));
+                                                       weight, idInput, false, new NormalArc(newTransitionView.getModel(), target.getModel(), weightModel));
                 arcMarkingView.addObserver(newPlaceView);
                 // Join arc, place and transition and add all to appropriate
                 // lists
@@ -280,7 +280,7 @@ class Unfolder
                 weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
                 String idInput = inboundArcView.getId();
 
-                ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,endPositionXInput, endPositionYInput, source, newTransitionView,weight, idInput, false, new NormalArc(source.getModel(), newTransitionView.getModel()));//, weightModel));
+                ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,endPositionXInput, endPositionYInput, source, newTransitionView,weight, idInput, false, new NormalArc(source.getModel(), newTransitionView.getModel(), weightModel));
                 arcMarkingView.addObserver(newArcView); 
                 // Join arc, place and transition and add all to appropriate
                 // lists

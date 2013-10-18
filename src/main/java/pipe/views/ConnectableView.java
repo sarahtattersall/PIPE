@@ -1,9 +1,6 @@
 package pipe.views;
 
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.gui.ZoomController;
+import pipe.gui.*;
 import pipe.models.Connectable;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.NameLabel;
@@ -38,9 +35,12 @@ public abstract class ConnectableView extends PetriNetViewComponent implements C
         super(id, name, positionX, positionY, nameOffsetX, nameOffsetY);
         _model = model;
 
-        if(ApplicationSettings.getApplicationView() != null)
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        if(view != null)
         {
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
+            PetriNetTab tab = view.getCurrentTab();
+            ZoomController zoomController = tab.getZoomController();
+            addZoomController(zoomController);
         }
     }
 

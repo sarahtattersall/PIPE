@@ -1,70 +1,57 @@
 package pipe.models;
 
-import pipe.models.interfaces.IObserver;
-
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.Vector;
+import java.util.List;
 
-public abstract class Arc implements Serializable
+public abstract class Arc extends Observable implements PetriNetComponent, Serializable
 {
-	private String _type;
-
-    //LinkedList<Marking> _weight = new LinkedList<Marking>();
-    private Connectable _source = null;
-    private Connectable _target = null;
-    
-    private IObserver _observer;
-
-	private LinkedList<Marking> _weight;
+    private Connectable source;
+    private Connectable target;
 
 
-    public Arc(String type)
+    //TODO: Does this need to be a List?
+	private List<Marking> weight;
+
+    public Arc(Connectable source, Connectable target, List<Marking> weight)
     {
-        _type = type;
+        this.source = source;
+        this.target = target;
+        this.weight = weight;
     }
 
-//    public Arc(Connectable source, Connectable target, LinkedList<Marking> weight)
-//    {
-//        _source = source;
-//        _target = target;
-//        _weight=weight;
-//    }
-    public Arc(Connectable source, Connectable target)
+    public List<Marking> getWeight()
     {
-        _source = source;
-        _target = target;
+        return weight;
     }
-
-    public void registerObserver(IObserver observer)
-    {
-        _observer = observer;
-    }
-
-//    public LinkedList<Marking> getWeight()
-//    {
-//        return _weight;
-//    }
 
     public Connectable getSource()
     {
-        return _source;
+        return source;
     }
 
     public void setSource(Connectable source)
     {
-        _source = source;
+        this.source = source;
     }
 
     public Connectable getTarget()
     {
-        return _target;
+        return target;
     }
 
     public void setTarget(Connectable target)
     {
-        _target = target;
+        this.target = target;
     }
-    
-   
+
+    /**
+     *
+     * @return true - Arcs are always selectable
+     */
+    @Override
+    public boolean isSelectable()
+    {
+        return true;
+    }
 }

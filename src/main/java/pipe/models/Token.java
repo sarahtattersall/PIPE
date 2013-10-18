@@ -13,17 +13,17 @@ import java.util.ArrayList;
 
 public class Token extends Observable implements Serializable
 {
-    private String _id;
-    private boolean _enabled;
-    private int _currentMarking;
-    private int _lockCount; // So that users cannot change this class while
+    private String id;
+    private boolean enabled;
+    private int currentMarking;
+    private int lockCount = 0; // So that users cannot change this class while
     // places are marked with it
 
-    private Color _color;
-    private Matrix _incidenceMatrix = null;
-    private Matrix _forwardsIncidenceMatrix = null;
-    private Matrix _backwardsIncidenceMatrix = null;
-    private Matrix _inhibitionMatrix = null;
+    private Color color;
+    private Matrix incidenceMatrix;
+    private Matrix forwardsIncidenceMatrix;
+    private Matrix backwardsIncidenceMatrix;
+    private Matrix inhibitionMatrix;
 
     public Token()
     {
@@ -32,45 +32,59 @@ public class Token extends Observable implements Serializable
 
     public Token(String id, boolean enabled, int currentMarking, Color color)
     {
-        _id =id;
-        _enabled = enabled;
-        _lockCount = 0;
-        _currentMarking = currentMarking;
-        ArrayList<IObserver> observers = new ArrayList<IObserver>();
-        _color = color;
+        this.id = id;
+        this.enabled = enabled;
+        this.currentMarking = currentMarking;
+        this.color = color;
     }
 
     public String getId()
     {
-        return _id;
+        return id;
     }
 
     public void setId(String id)
     {
-        _id = id;
+        this.id = id;
     }
 
     public int getCurrentMarking()
     {
-        return _currentMarking;
+        return currentMarking;
     }
 
     public void setCurrentMarking(int currentMarking)
     {
-        _currentMarking = currentMarking;
+        this.currentMarking = currentMarking;
     }
 
     public boolean isEnabled()
     {
-        return _enabled;
+        return enabled;
     }
 
+    /**
+     *
+     * @param enabled
+     * @throws TokenLockedException if the Token is locked
+     */
     public void setEnabled(boolean enabled) throws TokenLockedException
     {
-    	if (!isLocked()) _enabled = enabled;
-    	else throw new TokenLockedException("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for "+getLockCount()+" Places.  It may not be disabled unless markings are removed from those Places.\n" +
-				"Details: "+toString());
+    	if (!isLocked()) {
+            this.enabled = enabled;
+        }
+    	else {
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.append("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for ")
+                          .append(getLockCount())
+                          .append(" Places.  It may not be disabled unless markings are removed from those Places.\n")
+                          .append("Details: ")
+                          .append(this.toString());
+
+            throw new TokenLockedException(messageBuilder.toString());
+        }
     }
+
 	@Override
 	public String toString()
 	{
@@ -81,159 +95,157 @@ public class Token extends Observable implements Serializable
 		sb.append(", Id=");
 		sb.append(getId());
 		sb.append(", Color=");
-		sb.append(getColor().toString());
+		sb.append(getColor());
 		sb.append(", Lock count=");
 		sb.append(getLockCount());
 		return sb.toString();
 	}
 
-
-
     public Color getColor()
     {
-        return _color;
+        return color;
     }
 
     public void setColor(Color color)
     {
-        _color = color;
+        this.color = color;
     }
 
     public void incrementLock()
     {
-        _lockCount++;
+        lockCount++;
     }
 
     public void decrementLock()
     {
-        _lockCount--;
+        lockCount--;
     }
 
     public boolean isLocked()
     {
-        return _lockCount > 0;
+        return lockCount > 0;
     }
 
     public int getLockCount()
     {
-        return _lockCount;
+        return lockCount;
     }
 
     public void setLockCount(int newLockCount)
     {
-        _lockCount = newLockCount;
+        lockCount = newLockCount;
     }
 
     public Matrix getIncidenceMatrix()
     {
-        return _incidenceMatrix;
+        return incidenceMatrix;
     }
 
     public int[][] getIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
     {
-        if(_incidenceMatrix == null || _incidenceMatrix.matrixChanged)
+        if(incidenceMatrix == null || incidenceMatrix.matrixChanged)
         {
             createIncidenceMatrix(arcsArray, transitionsArray, placesArray);
         }
-        return (_incidenceMatrix != null ? _incidenceMatrix.getArrayCopy() : null);
+        return (incidenceMatrix != null ? incidenceMatrix.getArrayCopy() : null);
     }
 
     // New method for TransModel.java
     public int[][] simpleMatrix()
     {
-        return _incidenceMatrix.getArrayCopy();
+        return incidenceMatrix.getArrayCopy();
     }
 
     public void setIncidenceMatrix(Matrix incidenceMatrix)
     {
-        this._incidenceMatrix = incidenceMatrix;
+        this.incidenceMatrix = incidenceMatrix;
     }
 
     public void createIncidenceMatrix(ArrayList<ArcView> arcsArray,ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
     {
         createForwardIncidenceMatrix(arcsArray, transitionsArray, placesArray);
         createBackwardsIncidenceMatrix(arcsArray, transitionsArray, placesArray);
-        _incidenceMatrix = new Matrix(_forwardsIncidenceMatrix);
-        _incidenceMatrix = _incidenceMatrix.minus(_backwardsIncidenceMatrix);
-        _incidenceMatrix.matrixChanged = false;
+        incidenceMatrix = new Matrix(forwardsIncidenceMatrix);
+        incidenceMatrix = incidenceMatrix.minus(backwardsIncidenceMatrix);
+        incidenceMatrix.matrixChanged = false;
     }
 
     public Matrix getForwardsIncidenceMatrix()
     {
-        return _forwardsIncidenceMatrix;
+        return forwardsIncidenceMatrix;
     }
 
     public int[][] getForwardsIncidenceMatrix(ArrayList<ArcView> arcsArray,
                                               ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
     {
-        if(_forwardsIncidenceMatrix == null
-                || _forwardsIncidenceMatrix.matrixChanged)
+        if(forwardsIncidenceMatrix == null
+                || forwardsIncidenceMatrix.matrixChanged)
         {
             createForwardIncidenceMatrix(arcsArray, transitionsArray,
                                          placesArray);
         }
-        return (_forwardsIncidenceMatrix != null ? _forwardsIncidenceMatrix
+        return (forwardsIncidenceMatrix != null ? forwardsIncidenceMatrix
                 .getArrayCopy() : null);
     }
 
     public int[][] simpleForwardsIncidenceMatrix()
     {
-        return _forwardsIncidenceMatrix.getArrayCopy();
+        return forwardsIncidenceMatrix.getArrayCopy();
     }
 
     public void setForwardsIncidenceMatrix(Matrix forwardsIncidenceMatrix)
     {
-        this._forwardsIncidenceMatrix = forwardsIncidenceMatrix;
+        this.forwardsIncidenceMatrix = forwardsIncidenceMatrix;
     }
 
     public Matrix getBackwardsIncidenceMatrix()
     {
-        return _backwardsIncidenceMatrix;
+        return backwardsIncidenceMatrix;
     }
 
     public int[][] getBackwardsIncidenceMatrix(ArrayList<ArcView> arcsArray,
                                                ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
     {
-        if(_backwardsIncidenceMatrix == null
-                || _backwardsIncidenceMatrix.matrixChanged)
+        if(backwardsIncidenceMatrix == null
+                || backwardsIncidenceMatrix.matrixChanged)
         {
             createBackwardsIncidenceMatrix(arcsArray, transitionsArray,
                                            placesArray);
         }
-        return (_backwardsIncidenceMatrix != null ? _backwardsIncidenceMatrix
+        return (backwardsIncidenceMatrix != null ? backwardsIncidenceMatrix
                 .getArrayCopy() : null);
     }
 
     public int[][] simpleBackwardsIncidenceMatrix()
     {
-        return _backwardsIncidenceMatrix.getArrayCopy();
+        return backwardsIncidenceMatrix.getArrayCopy();
     }
 
     public void setBackwardsIncidenceMatrix(Matrix backwardsIncidenceMatrix)
     {
-        this._backwardsIncidenceMatrix = backwardsIncidenceMatrix;
+        this.backwardsIncidenceMatrix = backwardsIncidenceMatrix;
     }
 
     public Matrix getInhibitionMatrix()
     {
-        return _inhibitionMatrix;
+        return inhibitionMatrix;
     }
 
     public int[][] getInhibitionMatrix(ArrayList<InhibitorArcView> inhibitorArrayView,
                                        ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
     {
-        if(_inhibitionMatrix == null || _inhibitionMatrix.matrixChanged)
+        if(inhibitionMatrix == null || inhibitionMatrix.matrixChanged)
         {
             createInhibitionMatrix(inhibitorArrayView, transitionsArray,
                                    placesArray);
         }
-        return (_inhibitionMatrix != null ? _inhibitionMatrix.getArrayCopy()
+        return (inhibitionMatrix != null ? inhibitionMatrix.getArrayCopy()
                 : null);
     }
 
     public void setInhibitionMatrix(Matrix inhibitionMatrix)
     {
-        this._inhibitionMatrix = inhibitionMatrix;
+        this.inhibitionMatrix = inhibitionMatrix;
     }
 
     void createForwardIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
@@ -241,7 +253,7 @@ public class Token extends Observable implements Serializable
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
 
-        _forwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
+        forwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
 
         for(ArcView arcView : arcsArray)
         {
@@ -264,7 +276,7 @@ public class Token extends Observable implements Serializable
                                 int placeNo = placesArray.indexOf(placeView);
                                 for(MarkingView token : arcView.getWeight())
                                 {
-                                    if(token.getToken().getID().equals(_id))
+                                    if(token.getToken().getID().equals(id))
                                     {
                                     	int marking=token.getCurrentMarking();
                                     	if(marking==0){
@@ -273,8 +285,10 @@ public class Token extends Observable implements Serializable
                                         try
                                         {
                                         	//System.out.println("compare: "+ token.getCurrentMarking()+ " raw: "+ token.getCurrentFunctionalMarking());
-                                            _forwardsIncidenceMatrix.set(placeNo, transitionNo, marking);//arcView.getWeightOfTokenClass(_id));
-                                           // System.out.println(arcView.getWeightFunctionOfTokenClass(_id));
+                                            forwardsIncidenceMatrix.set(
+                                                    placeNo, transitionNo,
+                                                    marking);//arcView.getWeightOfTokenClass(id));
+                                           // System.out.println(arcView.getWeightFunctionOfTokenClass(id));
                                         }
                                         catch(Exception e)
                                         {
@@ -302,7 +316,7 @@ public class Token extends Observable implements Serializable
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
 
-        _backwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
+        backwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
 
         for(ArcView arcView : arcsArray)
         {
@@ -329,7 +343,7 @@ public class Token extends Observable implements Serializable
                                 int placeNo = placesArray.indexOf(placeView);
                                 for(MarkingView token : arcView.getWeight())
                                 {
-                                    if(token.getToken().getID().equals(_id))
+                                    if(token.getToken().getID().equals(id))
                                     {
                                         try
                                         {
@@ -339,13 +353,17 @@ public class Token extends Observable implements Serializable
                                         	}
                                         	if(isTransitionInfiniteServer){
                                         		
-                                        		_backwardsIncidenceMatrix.set(placeNo, transitionNo, marking*enablingDegree);
+                                        		backwardsIncidenceMatrix.set(
+                                                        placeNo, transitionNo,
+                                                        marking * enablingDegree);
                                         	}else{
-                                        		_backwardsIncidenceMatrix.set(placeNo, transitionNo, marking);//arcView.getWeightOfTokenClass(_id));
+                                        		backwardsIncidenceMatrix.set(
+                                                        placeNo, transitionNo,
+                                                        marking);//arcView.getWeightOfTokenClass(id));
                                         	}
-                                        //	System.out.println("compare: "+ token.getCurrentMarking()+ " raw: "+ token.getCurrentFunctionalMarking()+"   "+arcView.getWeightFunctionOfTokenClass(_id));
+                                        //	System.out.println("compare: "+ token.getCurrentMarking()+ " raw: "+ token.getCurrentFunctionalMarking()+"   "+arcView.getWeightFunctionOfTokenClass(id));
                                             
-                                       //     System.out.println(arcView.getWeightFunctionOfTokenClass(_id));
+                                       //     System.out.println(arcView.getWeightFunctionOfTokenClass(id));
                                         }
                                         catch(Exception e)
                                         {
@@ -366,7 +384,7 @@ public class Token extends Observable implements Serializable
     {
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
-        _inhibitionMatrix = new Matrix(placeSize, transitionSize);
+        inhibitionMatrix = new Matrix(placeSize, transitionSize);
 
         for(InhibitorArcView inhibitorArcView : inhibitorsArray)
         {
@@ -389,7 +407,7 @@ public class Token extends Observable implements Serializable
                                 int placeNo = placesArray.indexOf(placeView);
                                 try
                                 {
-                                    _inhibitionMatrix.set(placeNo, transitionNo,
+                                    inhibitionMatrix.set(placeNo, transitionNo,
                                                           1);
                                 }
                                 catch(Exception e)

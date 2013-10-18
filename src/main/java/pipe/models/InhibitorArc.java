@@ -2,22 +2,14 @@ package pipe.models;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 public class InhibitorArc extends Arc implements Serializable
 {
-    public InhibitorArc()
+    public InhibitorArc(Connectable source, Connectable target, List<Marking> weight)
     {
-        super("inhibitor");
+        super(source, target, weight);
     }
-
-    public InhibitorArc(Connectable source, Connectable target)
-    {
-        super(source, target);
-    }
-//    public InhibitorArc(Connectable source, Connectable target, LinkedList<Marking> weight)
-//    {
-//        super(source, target, weight);
-//    }
 
 }
 

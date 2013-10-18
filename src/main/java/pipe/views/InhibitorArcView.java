@@ -3,6 +3,7 @@ package pipe.views;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.InhibitorArc;
+import pipe.models.Marking;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 
@@ -103,7 +104,9 @@ public class InhibitorArcView extends ArcView implements Serializable
          }
       }
 
-       InhibitorArcView copy = new InhibitorArcView((double) 0, (double) 0,(double) 0, (double) 0, source, target,this.getWeight(), source.getId() + " to " + target.getId(), new InhibitorArc());
+       //TODO: NEEDS ACTUAL WEIGHTS
+        InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new LinkedList<Marking>());
+       InhibitorArcView copy = new InhibitorArcView((double) 0, (double) 0,(double) 0, (double) 0, source, target,this.getWeight(), source.getId() + " to " + target.getId(), arc);
 
       copy.myPath.delete();
       for (int i = 0; i <= this.myPath.getEndIndex(); i++){

@@ -965,14 +965,14 @@ public class TransitionView extends ConnectableView implements Serializable
 
         for(ArcView tempArcView : inboundArcs())
         {
-            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(), tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(), tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false, new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel()));//, new LinkedList<Marking>()));
+            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(), tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(), tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false, new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(), new LinkedList<Marking>()));
             newGroupTransitionView.addInbound(newArcView);
             tempArcView.getSource().addOutbound(newArcView);
             newArcView.addToView(view);
         }
         for(ArcView tempArcView : outboundArcs())
         {
-            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(), tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(), newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false, new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel()));//, new LinkedList<Marking>()));
+            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(), tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(), newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false, new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(), new LinkedList<Marking>()));
             newGroupTransitionView.addOutbound(newArcView);
             tempArcView.getTarget().addInbound(newArcView);
             newArcView.addToView(view);

@@ -11,8 +11,8 @@ import java.util.LinkedList;
  */
 public class Connectable extends Observable implements Serializable
 {
-    private final LinkedList<ArcView> _inboundArcViews;
-    private final LinkedList<ArcView> _outboundArcViews;
+    private final LinkedList<ArcView> _inboundArcViews =  new LinkedList<ArcView>();
+    private final LinkedList<ArcView> _outboundArcViews = new LinkedList<ArcView>();
     private String _id;
     private String _name;
 
@@ -20,8 +20,6 @@ public class Connectable extends Observable implements Serializable
     {
         _id = id;
         _name = name;
-        _inboundArcViews = new LinkedList<ArcView>();
-        _outboundArcViews = new LinkedList<ArcView>();
     }
 
     public LinkedList<ArcView> outboundArcs()

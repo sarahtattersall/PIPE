@@ -107,7 +107,7 @@ public class NormalArcView extends ArcView implements Serializable
                                        (double) 0, (double) 0, source, target, getWeight(), source.getId() + " to "+ 
         target.getId(), false, 
         new NormalArc(source.getModel(), 
-        		target.getModel()));//, _model.getWeight()));
+        		target.getModel(), _model.getWeight()));
 
 		copy.myPath.delete();
 		for (int i = 0; i <= this.myPath.getEndIndex(); i++) {

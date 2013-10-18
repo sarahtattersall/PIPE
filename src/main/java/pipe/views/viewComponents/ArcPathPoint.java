@@ -15,6 +15,7 @@ import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.HistoryItem;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
+import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -48,9 +49,12 @@ public static final boolean STRAIGHT = false;
    private ArcPathPoint() {
       _copyPasteable = false; //we can't copy & paste indivial arc points!
       _zoomPercentage = 100;
-       if (ApplicationSettings.getApplicationView() != null)
+       PipeApplicationView view = ApplicationSettings.getApplicationView();
+       if (view != null)
 		{
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
+            PetriNetTab tab = view.getCurrentTab();
+            ZoomController controller = tab.getZoomController();
+            this.addZoomController(controller);
 		}
    }
    

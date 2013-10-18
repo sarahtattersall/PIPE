@@ -4,53 +4,48 @@ import java.io.Serializable;
 import java.util.Observable;
 
 
-
+// TODO: Explain what marking is in comment
 public class Marking extends Observable implements Serializable
 {
-    private Token _token;
-    private String _currentMarking;
-
-    public Marking()
-    {
-        _token = new Token();
-    }
+    private Token token;
+    private String marking;
 
     public Marking(Token token, String marking)
     {
-        _token = token;
-        _currentMarking = marking;
+        this.token = token;
+        this.marking = marking;
     }
     
     public Marking(Token token, int marking){
-    	_token = token;
-        _currentMarking = marking+"";
+    	this.token = token;
+        this.marking = Integer.toString(marking);
     }
 
     public Token getToken()
     {
-        return _token;
+        return token;
     }
 
     public void setToken(Token token)
     {
-        _token = token;
+        this.token = token;
         notifyObservers();
     }
 
     public void setCurrentMarking(String marking)
     {
-        _currentMarking = marking;
+        this.marking = marking;
         notifyObservers();
     }
     
     public void setCurrentMarking(int marking)
     {
-        _currentMarking = marking+"";
+        this.marking = marking+"";
         notifyObservers();
     }
 
     public String getCurrentMarking()
     {
-        return _currentMarking;
+        return marking;
     }
 }

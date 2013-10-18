@@ -42,7 +42,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final JSplitPane _moduleAndAnimationHistoryFrame;
     private static JScrollPane _scroller;
 
-    public final JTabbedPane _frameForPetriNetTabs;
+    private final JTabbedPane _frameForPetriNetTabs = new JTabbedPane();
     private final ArrayList<PetriNetTab> _petriNetTabs;
     
     private static AnimationHistory _animationHistory;
@@ -58,7 +58,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 	{
 		statusBar = null;
 		_moduleAndAnimationHistoryFrame = null;
-		_frameForPetriNetTabs = null;
 		_petriNetTabs = null; 
 		_animator = null;
 		_applicationController = null; 	
@@ -103,7 +102,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         Grid.enableGrid();
 
-        _frameForPetriNetTabs = new JTabbedPane();
         _animator = new Animator();
         setTab();
 
@@ -127,6 +125,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         //_applicationController.createNewPetriNet();
         createNewTab(null, false);
     }
+
+    public JTabbedPane getFrameForPetriNetTabs() {
+        return _frameForPetriNetTabs;
+    }
+
 
     public int numberOfTabs()
     {
@@ -307,7 +310,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         drawMenu.addSeparator();
         addMenuItem(drawMenu, _applicationModel.tokenAction);
         addMenuItem(drawMenu, _applicationModel.deleteTokenAction);
-        addMenuItem(drawMenu, _applicationModel._specifyTokenClasses);
+        addMenuItem(drawMenu, _applicationModel.specifyTokenClasses);
         addMenuItem(drawMenu, _applicationModel.groupTransitions);
         addMenuItem(drawMenu, _applicationModel.ungroupTransitions);
         addMenuItem(drawMenu, _applicationModel.unfoldAction);
@@ -408,7 +411,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addButton(drawingToolBar, _applicationModel.tokenAction);
         addButton(drawingToolBar, _applicationModel.deleteTokenAction);
         addTokenClassComboBox(drawingToolBar,_applicationModel.chooseTokenClassAction);
-        addButton(drawingToolBar, _applicationModel._specifyTokenClasses);
+        addButton(drawingToolBar, _applicationModel.specifyTokenClasses);
         addButton(drawingToolBar, _applicationModel.groupTransitions);
         addButton(drawingToolBar, _applicationModel.ungroupTransitions);
         addButton(drawingToolBar, _applicationModel.unfoldAction);

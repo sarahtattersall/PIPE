@@ -8,4 +8,6 @@ package pipe.models;
  * To change this template use File | Settings | File Templates.
  */
 public interface PetriNetComponent {
+
+    public boolean isSelectable();
 }

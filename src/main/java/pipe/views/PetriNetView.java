@@ -36,6 +36,7 @@ import pipe.models.PetriNet;
 import pipe.models.Transition;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
+import pipe.utilities.math.RandomNumberGenerator;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.viewComponents.AnnotationNote;
 import pipe.views.viewComponents.Note;
@@ -1437,7 +1438,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             return (TransitionView) enabledTransitions.get(0);
         }
 
-        double random = _model.getRandomNumber().nextDouble();
+        double random = RandomNumberGenerator.getRandomNumber();
         double x = 0;
         for(Object enabledTransition : enabledTransitions)
         {
@@ -2870,11 +2871,11 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if(type.equals("inhibitor"))
         {
-            tempArcView = new InhibitorArcView((double) aStartx, (double) aStarty, (double) aEndx, (double) aEndy, sourceIn, targetIn, weightInput, idInput, new InhibitorArc(sourceIn.getModel(), targetIn.getModel()));//, weightModel));
+            tempArcView = new InhibitorArcView((double) aStartx, (double) aStarty, (double) aEndx, (double) aEndy, sourceIn, targetIn, weightInput, idInput, new InhibitorArc(sourceIn.getModel(), targetIn.getModel(), weightModel));
         }
         else
         {
-            tempArcView = new NormalArcView((double) aStartx, (double) aStarty, (double) aEndx, (double) aEndy, sourceIn, targetIn, weightInput, idInput, taggedArc, new NormalArc(sourceIn.getModel(), targetIn.getModel()));//, weightModel));
+            tempArcView = new NormalArcView((double) aStartx, (double) aStarty, (double) aEndx, (double) aEndy, sourceIn, targetIn, weightInput, idInput, taggedArc, new NormalArc(sourceIn.getModel(), targetIn.getModel(), weightModel));
         }
         tempArcView.addThisAsObserverToWeight(weightInput);
         getPlaceTransitionObject(sourceInput).addOutbound(tempArcView);
