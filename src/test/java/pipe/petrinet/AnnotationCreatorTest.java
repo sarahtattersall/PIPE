@@ -33,7 +33,7 @@ public class AnnotationCreatorTest {
     @Test
     public void createsAnnotaiton() {
         creator = new AnnotationCreator();
-        Annotation annotation = creator.createAnnotation(annotationElement);
+        Annotation annotation = creator.create(annotationElement);
 
         assertNotNull(annotation);
 

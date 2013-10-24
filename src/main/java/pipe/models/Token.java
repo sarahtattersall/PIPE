@@ -77,7 +77,7 @@ public class Token extends Observable implements Serializable
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for ")
                           .append(getLockCount())
-                          .append(" Places.  It may not be disabled unless markings are removed from those Places.\n")
+                          .append(" Places.  It may not be disabled unless tokens are removed from those Places.\n")
                           .append("Details: ")
                           .append(this.toString());
 

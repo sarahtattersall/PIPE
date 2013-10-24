@@ -11,26 +11,26 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public abstract class ConnectableView extends PetriNetViewComponent implements Cloneable, IObserver,Serializable
+public abstract class ConnectableView<T extends Connectable> extends PetriNetViewComponent implements Cloneable, IObserver,Serializable
 {
     private ConnectableView _lastCopy = null;
     private ConnectableView _original = null;
     private int _copyNumber = 0;
-    public final Connectable _model;
+    public T _model;
 
     boolean _attributesVisible = false;
 
-    ConnectableView(double positionXInput, double positionYInput, Connectable model)
+    ConnectableView(double positionXInput, double positionYInput, T model)
     {
         this(positionXInput, positionYInput, "", model);
     }
 
-    private ConnectableView(double positionX, double positionY, String id, Connectable model)
+    private ConnectableView(double positionX, double positionY, String id, T model)
     {
         this(positionX, positionY, id, "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model);
     }
 
-    ConnectableView(double positionX, double positionY, String id, String name, double nameOffsetX, double nameOffsetY, Connectable model)
+    ConnectableView(double positionX, double positionY, String id, String name, double nameOffsetX, double nameOffsetY, T model)
     {
         super(id, name, positionX, positionY, nameOffsetX, nameOffsetY);
         _model = model;

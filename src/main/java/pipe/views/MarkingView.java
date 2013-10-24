@@ -24,8 +24,7 @@ public class MarkingView extends JComponent implements Serializable, Observer
     private TokenView _tokenView;
     private final Marking _model;
     private MarkingController _controller;
-    private PipeObservable _pipeObservable; 
-   
+    private PipeObservable _pipeObservable;
 
     public MarkingView(MarkingController controller, Marking model)
     {
@@ -81,8 +80,9 @@ public class MarkingView extends JComponent implements Serializable, Observer
 
     public int getCurrentMarking()
     {
-		try {
-			return Integer.parseInt(_model.getCurrentMarking());
+        try {
+			int result = Integer.parseInt(_model.getCurrentMarking());
+            return result;
 		} catch (NumberFormatException e) {
 			
 			ExprEvaluator paser = new ExprEvaluator();

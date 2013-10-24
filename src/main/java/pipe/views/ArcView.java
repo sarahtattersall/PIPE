@@ -2,6 +2,7 @@ package pipe.views;
 
 import java.awt.Container;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -15,13 +16,13 @@ import javax.swing.JOptionPane;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
+import pipe.gui.ZoomController;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryItem;
-import pipe.models.Arc;
-import pipe.models.PipeObservable;
+import pipe.models.*;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.ArcPath;
@@ -56,14 +57,137 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             String idInput, Arc model)
     {
         _model = model;
-        myPath.addPoint((float) startPositionXInput,(float) startPositionYInput, ArcPathPoint.STRAIGHT);
-        myPath.addPoint((float) endPositionXInput, (float) endPositionYInput, ArcPathPoint.STRAIGHT);
+
+        //TODO: THIS DOESNT WORK FOR ZOOMING!!!
+        Pair<Point2D.Double, Point2D.Double> linePoints = getArcStartAndEnd();
+        myPath.addPoint((float) linePoints.first.x, (float) linePoints.first.y, ArcPathPoint.STRAIGHT);
+        myPath.addPoint((float) linePoints.second.x, (float) linePoints.second.y, ArcPathPoint.STRAIGHT);
         myPath.createPath();
+
         updateBounds();
         _id = idInput;
         setSource(sourceInput);
         setTarget(targetInput);
         setWeight(Copier.mediumCopy(weightInput));
+    }
+
+    private Pair<Point2D.Double, Point2D.Double> getArcStartAndEnd()
+    {
+        Connectable source = _model.getSource();
+        Connectable target = _model.getTarget();
+        double deltaX = source.getX() - target.getX();
+        double deltaY = source.getY() -  target.getY();
+        double angle = Math.atan(deltaX / deltaY);
+        if (source.getY() <= target.getY())
+        {
+            angle += Math.PI;
+        }
+
+        Point2D.Double  startCoord;
+        if (source.getClass().equals(Place.class))
+        {
+            startCoord = getPlaceCoordinates(source, angle);
+        } else
+        {
+            startCoord = getTransitionCoordinatesSource(source, angle);
+        }
+
+        Point2D.Double  endCoord;
+        if (target.getClass().equals(Place.class))
+        {
+            endCoord = getPlaceCoordinates(target, angle);
+        } else
+        {
+            endCoord = getTransitionCoordinatesDest(target, angle);
+        }
+        return new Pair<Point2D.Double, Point2D.Double>(startCoord, endCoord);
+    }
+
+    private static class Pair<T, T2>
+    {
+        public final T first;
+        public final T2 second;
+        public Pair(T first, T2 second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
+    private Point2D.Double getPlaceCoordinates(Connectable connectable, double angle)
+    {
+        double radius = connectable.getWidth()/2;
+        double zoomed_centre_x = ZoomController.getZoomedValue(connectable.getX() + radius, _zoomPercentage);
+        double zoomed_sin_angle = ZoomController.getZoomedValue(radius * Math.sin(angle), _zoomPercentage);
+        double x  = zoomed_centre_x + zoomed_sin_angle;
+
+        double zoomed_centre_y = ZoomController.getZoomedValue(connectable.getY() + radius, _zoomPercentage);
+        double zoomed_cos_angle = ZoomController.getZoomedValue(radius * Math.cos(angle), _zoomPercentage);
+        double y = zoomed_centre_y +  zoomed_cos_angle;
+        Point2D.Double  coord = new Point2D.Double(x, y);
+        return coord;
+    }
+
+    private Point2D.Double  getTransitionCoordinatesDest(Connectable connectable, double angle)
+    {
+        double rootThreeOverTwo = 0.5 * Math.sqrt(3);
+        AffineTransform transform = AffineTransform.getRotateInstance(0);
+        Point2D.Double transformed = new Point2D.Double();
+
+        if (Math.cos(angle) > rootThreeOverTwo) //Top
+        {
+            transform.transform(new Point2D.Double(1, 0.5 * connectable.getHeight()), transformed);
+        }
+        else if (Math.cos(angle) < -rootThreeOverTwo)  //Bottom
+        {
+            transform.transform(new Point2D.Double(0, -0.5 * connectable.getHeight()), transformed);
+        }
+        else if (Math.sin(angle) > 0) //Left
+        {
+            transform.transform(new Point2D.Double(-0.5 * connectable.getWidth(), 1), transformed);
+            transformed.x += connectable.getWidth();
+        } else     //Right
+        {
+            transform.transform(new Point2D.Double(0.5 * connectable.getWidth(), 0), transformed);
+            transformed.x -= connectable.getWidth();
+        }
+
+        //double half_width = connectable.getWidth()/2;
+        double half_height = connectable.getHeight()/2;
+        double x  = ZoomController.getZoomedValue(connectable.getX() + half_height + transformed.x, _zoomPercentage);
+        double y = ZoomController.getZoomedValue(connectable.getY() + half_height +  transformed.y, _zoomPercentage);
+
+        Point2D.Double  coord = new Point2D.Double (x, y);
+        return coord;
+    }
+
+    private Point2D.Double  getTransitionCoordinatesSource(Connectable connectable, double angle)
+    {
+        double rootThreeOverTwo = 0.5 * Math.sqrt(3);
+        AffineTransform transform = AffineTransform.getRotateInstance(0);
+        Point2D.Double transformed = new Point2D.Double();
+
+        if (Math.cos(angle) > rootThreeOverTwo)
+        {
+            transform.transform(new Point2D.Double(1, 0.5 * connectable.getHeight()), transformed);
+        }
+        else if (Math.cos(angle) < -rootThreeOverTwo)
+        {
+            transform.transform(new Point2D.Double(0, -0.5 * connectable.getHeight()), transformed);
+        }
+        else if (Math.sin(angle) > 0)
+        {
+            transform.transform(new Point2D.Double(-0.5 * connectable.getWidth(), 1), transformed);
+        } else
+        {
+            transform.transform(new Point2D.Double(0.5 * connectable.getWidth(), 0), transformed);
+        }
+
+        double half_height = connectable.getHeight()/2;
+        double x  = ZoomController.getZoomedValue(connectable.getX() + half_height + transformed.x, _zoomPercentage);
+        double y = ZoomController.getZoomedValue(connectable.getY() + half_height +  transformed.y, _zoomPercentage);
+
+        Point2D.Double  coord = new Point2D.Double (x, y);
+        return coord;
     }
 
     ArcView(ConnectableView newSource)
@@ -214,11 +338,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         return myPath.getPoint(0).getY();
     }
 
-//    public LinkedList<MarkingView> getWeight()
-//    {
-//        return _weight;
-//    }
-
     public int getSimpleWeight()
     {
         return 1;
@@ -226,14 +345,18 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 
     public void updateArcPosition()
     {
-        if(_source != null)
-        {
-            _source.updateEndPoint(this);
-        }
-        if(_target != null)
-        {
-            _target.updateEndPoint(this);
-        }
+        Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
+        setSourceLocation(points.first.x, points.first.y);
+        setTargetLocation(points.second.x, points.second.y);
+
+//        if(_source != null)
+//        {
+//            _source.updateEndPoint(this);
+//        }
+//        if(_target != null)
+//        {
+//            _target.updateEndPoint(this);
+//        }
         myPath.createPath();
     }
 
@@ -465,21 +588,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         return super.clone();
     }
 
-//    public int getWeightOfTokenClass(String id)
-//    {
-//        if(_weight != null)
-//        {
-//            for(MarkingView m : _weight)
-//            {
-//                if(m.getToken().getID().equals(id))
-//                {
-//                    return m.getCurrentMarking();
-//                }
-//            }
-//        }
-//        return 0;
-//    }
-
     public void showEditor()
     {
         // Build interface
@@ -511,19 +619,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     {
         return false;
     }
-    /**
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * @param id
-     * @return
-     */
-    
+
     public LinkedList<MarkingView> getWeightSimple(){
     	return _weight;
     }
@@ -544,49 +640,8 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     
     public LinkedList<MarkingView> getWeight()
     {
-    	// skip the parsing process if all weights are constant
-//    	if(_noFunctionalWeights){
-//    		return _weight;
-//    	}
-
-    	// parse the weight expressions
-//    	int weight;
-//		for(int i=0;i<_weight.size();i++){
-//			if(_weight.get(i).getCurrentMarking()==0){
-//				
-//			}
-//			weightLabel.get(i).setText(_weight.get(i).getCurrentMarking()+"");
-//    	}
-    	
 		return _weight;
     }
-    
-//    public void updateArcWeight(){
-//    	MyParser parser = new MyParser();
-//    	int weight;
-//    	weightLabel=new LinkedList<NameLabel>();
-//		for(int i=0;i<_weight.size();i++){
-//			if(i>=weightLabel.size()){
-//				NameLabel nameLabel = new NameLabel(_zoomPercentage);
-//				if(_weight.get(i).getCurrentMarking() > 0)
-//	            {
-//	                nameLabel.setText(
-//	                        String.valueOf(_weight.get(i).getCurrentMarking()));
-//	            }
-//	            else
-//	            {
-//	                nameLabel.setText("");
-//	            }
-//	            nameLabel.setColor(_weight.get(i).getToken().getColor());
-//	            nameLabel.updateSize();
-//	            weightLabel.add(nameLabel);
-//
-//	           // Container
-//				
-//			}else
-//    			weightLabel.get(i).setText(_weight.get(i).getCurrentMarking()+"");
-//    	}
-//    }
     
     public int getWeightOfTokenClass(String id)
     {
@@ -686,4 +741,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 		ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(historyItem);  
 	}
 
+    public Arc getModel() {
+        return _model;
+    }
 }

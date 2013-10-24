@@ -8,7 +8,9 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
 {
     private Connectable source;
     private Connectable target;
+    private String id;
 
+    private boolean tagged = false;
 
     //TODO: Does this need to be a List?
 	private List<Marking> weight;
@@ -53,5 +55,21 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
     public boolean isSelectable()
     {
         return true;
+    }
+
+    public boolean isTagged() {
+        return tagged;
+    }
+
+    public void setTagged(boolean tagged) {
+        this.tagged = tagged;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

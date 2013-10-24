@@ -188,12 +188,12 @@ public class PerformanceTreeExporter {
 		// Output stream MIME type
 		String psMimeType = DocFlavor.BYTE_ARRAY.POSTSCRIPT.getMimeType();
 
-		// Look up a print service factory that can handle this job
+		// Look up a print service builder that can handle this job
 		StreamPrintServiceFactory[] factories = StreamPrintServiceFactory.lookupStreamPrintServiceFactories(flavour, psMimeType);
-		if (factories.length == 0) throw new RuntimeException("No suitable factory found for export to EPS");
+		if (factories.length == 0) throw new RuntimeException("No suitable builder found for export to EPS");
 
 		FileOutputStream f = new FileOutputStream(filename);
-		// Get a print service from the factory, create a print job and print
+		// Get a print service from the builder, create a print job and print
 		factories[0].getPrintService(f).createPrintJob().print(
 				new SimpleDoc(g, flavour, null), 
 				new HashPrintRequestAttributeSet()

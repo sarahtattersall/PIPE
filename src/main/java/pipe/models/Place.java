@@ -1,21 +1,11 @@
 package pipe.models;
 
-import pipe.gui.Grid;
-
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Place extends Connectable implements PetriNetComponent, Serializable
 {
-    /**
-     * Place position x
-     */
-    double x = 0;
-    /**
-     * Place position y
-     */
-    double y = 0;
     /**
      * Place name x offset relative to its x coordinate
      */
@@ -37,14 +27,40 @@ public class Place extends Connectable implements PetriNetComponent, Serializabl
      * Place capacity
      */
     double capacity = 0;
+
     /**
-     * Place markings
+     * Place diameter
      */
-    List<Marking> markings =  new LinkedList<Marking>();
+    private final static int DIAMETER = 30;
+
+    /**
+     * Place tokens
+     */
+    List<Marking> tokens =  new LinkedList<Marking>();
 
     public Place(String id, String name)
     {
         super(id, name);
+    }
+
+    @Override
+    public int getHeight() {
+        return DIAMETER;
+    }
+
+    @Override
+    public int getWidth() {
+        return DIAMETER;
+    }
+
+    @Override
+    public double getCentreX() {
+        return getX() + getWidth()/2;
+    }
+
+    @Override
+    public double getCentreY() {
+        return getY() + getHeight()/2;
     }
 
     /**
@@ -54,22 +70,6 @@ public class Place extends Connectable implements PetriNetComponent, Serializabl
     @Override
     public boolean isSelectable() {
         return true;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public double getNameXOffset() {
@@ -112,23 +112,23 @@ public class Place extends Connectable implements PetriNetComponent, Serializabl
         this.capacity = capacity;
     }
 
-    public List<Marking> getMarkings() {
-        return markings;
+    public List<Marking> getTokens() {
+        return tokens;
     }
 
-    public void addMarkings(List<Marking> markings) {
-        this.markings.addAll(markings);
+    public void addTokens(List<Marking> markings) {
+        this.tokens.addAll(markings);
     }
 
-    public void addMarking(Marking marking) {
-        this.markings.add(marking);
+    public void addToken(Marking marking) {
+        this.tokens.add(marking);
     }
 
-    public void removeMarking(Marking marking) {
-        this.markings.remove(marking);
+    public void removeToken(Marking marking) {
+        this.tokens.remove(marking);
     }
 
-    public void removeMarkings(List<Marking> markings) {
-        this.markings.remove(markings);
+    public void removeTokens(List<Marking> markings) {
+        this.tokens.remove(markings);
     }
 }

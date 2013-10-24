@@ -6,23 +6,18 @@ import pipe.models.Marking;
 import pipe.models.Place;
 import pipe.models.Token;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class PlaceCreator {
-    private final Map<String, Token> tokens;
+public class PlaceCreator implements ComponentCreator<Place> {
 
-    /**
-     *
-     * @param availableTokens Tokens available when creating a place
-     */
-    PlaceCreator(Map<String, Token> availableTokens)
-    {
-        this.tokens = availableTokens;
+    private Map<String, Token> tokens = new HashMap<String, Token>();
+
+    public void setTokens(Map<String, Token> tokens) {
+        this.tokens = tokens;
     }
-
-
 
     /**
      *
@@ -30,7 +25,7 @@ public class PlaceCreator {
      *              commas e.g. "Default, 1, Another, 2"
      * @return
      */
-    private List<Marking> getMarkings(String markingInput)
+    private List<Marking> getTokens(String markingInput)
     {
         List<Marking> markings = new LinkedList<Marking>();
         if (!markingInput.isEmpty())
@@ -41,6 +36,11 @@ public class PlaceCreator {
             String[] tokens = markingInput.split(",");
 
             //TODO: Handle case where token name is not defined ie. marking.length = 1;
+            if (tokens.length == 1)
+            {
+                Token defaultToken = getDefaultToken();
+                Marking marking = createMarking(defaultToken.getId(), tokens[0]);
+            }
             for(int i = 0; i < tokens.length; i += 2) {
                 String tokenName = tokens[i].trim();
                 Marking marking = createMarking(tokenName, tokens[i+1]);
@@ -49,6 +49,10 @@ public class PlaceCreator {
 
         }
         return markings;
+    }
+
+    private Token getDefaultToken() {
+        return tokens.get(0);
     }
 
     private Marking createMarking(String tokenName, String markingValue) {
@@ -64,7 +68,7 @@ public class PlaceCreator {
         return new Marking(token, marking);
     }
 
-    public Place createPlace(Element element)
+    public Place create(Element element)
     {
         String xInput = element.getAttribute("positionX");
         double x = xInput.isEmpty() ? 0 : Double.valueOf(xInput) + 1;
@@ -82,20 +86,22 @@ public class PlaceCreator {
 
         double markingXOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("markingOffsetX"));
         double markingYOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("markingOffsetY"));
-        List<Marking> markings =  getMarkings(
+
+        List<Marking> tokens =  getTokens(
                 element.getAttribute("initialMarking"));
 
         double capacity =  CreatorUtils.zeroOrValueOf(element.getAttribute("capacity"));
 
         Place place = new Place(id, name);
-        place.setX(x);
-        place.setY(y);
+        //place.setX(x);
+        //place.setY(y);
+        place.setCentre(x, y);
         place.setNameXOffset(nameXOffset);
         place.setNameYOffset(nameYOffset);
         place.setMarkingXOffset(markingXOffset);
         place.setMarkingYOffset(markingYOffset);
         place.setCapacity(capacity);
-        place.addMarkings(markings);
+        place.addTokens(tokens);
 
         return place;
     }

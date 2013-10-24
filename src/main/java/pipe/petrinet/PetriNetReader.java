@@ -4,17 +4,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import pipe.gui.Grid;
-import pipe.models.Marking;
-import pipe.models.PetriNet;
-import pipe.models.Place;
-import pipe.models.Token;
+import pipe.common.dataLayer.StateGroup;
+import pipe.models.*;
+import pipe.views.viewComponents.RateParameter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class PetriNetReader {
@@ -26,14 +22,23 @@ public class PetriNetReader {
 
     private Map<String, Method> elementMethods = new HashMap<String, Method>();
 
+    private Map<String, Connectable> connectables = new HashMap<String, Connectable>();
+
+    private Map<String, RateParameter> rates = new HashMap<String, RateParameter>();
+
+    private final CreatorStruct creators;
+
+
     /**
      * Uses Reflection to add any methods with the ElementParser annotation
      * to the elementMethods token.
      * ElementParser.value() must equal the XML element label.
      */
-    public PetriNetReader()
+    public PetriNetReader(CreatorStruct creators)
     {
-        for (Method method : PetriNetReader.class.getMethods())
+        this.creators = creators;
+
+        for (Method method : PetriNetReader.class.getDeclaredMethods())
         {
             if (method.isAnnotationPresent(ElementParser.class))
             {
@@ -75,9 +80,58 @@ public class PetriNetReader {
     @ElementParser("place")
     private void createPlaceAndAddToNet(Element element, PetriNet net)
     {
-        PlaceCreator creator = new PlaceCreator(tokens);
-        Place place = creator.createPlace(element);
+        creators.placeCreator.setTokens(tokens);
+        Place place = creators.placeCreator.create(element);
+        connectables.put(place.getId(), place);
         net.addPlace(place);
+    }
+
+    @ElementParser("transition")
+    private void createTransitionAndAddToNet(Element element, PetriNet net)
+    {
+        creators.transitionCreator.setRates(rates);
+        Transition transition = creators.transitionCreator.create(element);
+        connectables.put(transition.getId(), transition);
+        net.addTransition(transition);
+    }
+
+    @ElementParser("arc")
+    private void createArcAndAddToNet(Element element, PetriNet net)
+    {
+        creators.arcCreator.setConnectables(connectables);
+        creators.arcCreator.setTokens(tokens);
+        Arc arc = creators.arcCreator.create(element);
+        net.addArc(arc);
+    }
+
+    @ElementParser("labels")
+    private void createAnnotation(Element element, PetriNet net)
+    {
+        Annotation annotation = creators.annotationCreator.create(element);
+        net.addAnnotaiton(annotation);
+    }
+
+    @ElementParser("definition")
+    private void createRateParameter(Element element, PetriNet net)
+    {
+        RateParameter parameter = creators.rateParameterCreator.create(element);
+        rates.put(parameter.getId(), parameter);
+        net.addRate(parameter);
+    }
+
+    @ElementParser("token")
+    private void createToken(Element element, PetriNet net)
+    {
+        Token token = creators.tokenCreator.create(element);
+        tokens.put(token.getId(), token);
+        net.addToken(token);
+    }
+
+    @ElementParser("stategroup")
+    private void createStateGroup(Element element, PetriNet net)
+    {
+        StateGroup group = creators.stateGroupCreator.create(element);
+        net.addStateGroup(group);
     }
 
 

@@ -14,7 +14,7 @@
         	</inscription>
         	<tagged>false</tagged>
         	<arcpath x="40" y="60" curvePoint="false"/>
-        	<type value="normal"/>
+        	<type value="inhibitor"/>
         </arc>
     </net>
 </pnml>

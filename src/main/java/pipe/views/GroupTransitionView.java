@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class GroupTransitionView extends ConnectableView implements Serializable
+public class GroupTransitionView extends ConnectableView<Transition> implements Serializable
 {
     private static final long serialVersionUID = 1L;
     private GeneralPath transition;

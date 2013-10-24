@@ -3,17 +3,8 @@ package pipe.views;
 import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.Observable;
-import java.util.Observer;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -29,15 +20,13 @@ import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Grid;
-import pipe.models.InhibitorArc;
-import pipe.models.Marking;
-import pipe.models.NormalArc;
-import pipe.models.PetriNet;
-import pipe.models.Transition;
+import pipe.models.*;
 import pipe.models.interfaces.IObserver;
+import pipe.petrinet.*;
 import pipe.utilities.Copier;
 import pipe.utilities.math.RandomNumberGenerator;
 import pipe.utilities.transformers.PNMLTransformer;
+import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationNote;
 import pipe.views.viewComponents.Note;
 import pipe.views.viewComponents.Parameter;
@@ -45,6 +34,7 @@ import pipe.views.viewComponents.RateParameter;
 
 
 /*
+
  * @author yufei wang(minor change)
  * 		Steve Doubleday (Oct 2013):  refactored to use TokenSetController for access to TokenViews
  */
@@ -609,12 +599,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     private void addToken(TokenView tokenViewInput)
     {
-//        boolean firstEntry = false;
-//        if(_tokenViews == null)
-//        {
-//            _tokenViews = new LinkedList<TokenView>();
-//            firstEntry = true;
-//        }
         boolean unique = true;
 
         if(tokenViewInput != null)
@@ -1224,6 +1208,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         {
             capacityInput = Integer.valueOf(capacityTempStorage).intValue();
         }
+
         PlaceView placeView = new PlaceView(positionXInput, positionYInput, idInput, nameInput, nameOffsetXInput, nameOffsetYInput, initialMarkingViewInput, markingOffsetXInput, markingOffsetYInput, capacityInput); 
         for (MarkingView markingView : initialMarkingViewInput)
 		{
@@ -2152,19 +2137,29 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       */
     public void createFromPNML(Document PNMLDoc)
     {
+        if(ApplicationSettings.getApplicationView() != null)
+        {
+            // Notifies used to indicate new instances.
+            ApplicationSettings.getApplicationModel().setMode(Constants.CREATING);
+        }
+
+        newDisplayMethod(PNMLDoc);
+
+        if(ApplicationSettings.getApplicationView() != null)
+        {
+            ApplicationSettings.getApplicationModel().restoreMode();
+        }
+    }
+
+    private void oldDisplayMethod(Document PNMLDoc) {
         emptyPNML();
         Element element;
         Node node;
         NodeList nodeList;
-        
+
         try
         {
             nodeList = PNMLDoc.getDocumentElement().getChildNodes();
-            if(ApplicationSettings.getApplicationView() != null)
-            {
-                // Notifies used to indicate new instances.
-                ApplicationSettings.getApplicationModel().setMode(Constants.CREATING);
-            }
             for(int i = 0; i < nodeList.getLength(); i++)
             {
                 node = nodeList.item(i);
@@ -2177,6 +2172,15 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     {
                         addAnnotation(createAnnotation(element));
                     }
+                    else if ("place".equals(element.getNodeName()))
+                    {
+                          addPlace(createPlace(element));
+                    }
+                    else if ("transition".equals(element.getNodeName()))
+                    {
+                        addTransition(createTransition(element));
+                    }
+
                     else if("definition".equals(element.getNodeName()))
                     {
                         Note note = createParameter(element);
@@ -2185,15 +2189,9 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                             addAnnotation((RateParameter) note);
                         }
                     }
-                    else if("place".equals(element.getNodeName()))
+                    else if("stategroup".equals(element.getNodeName()))
                     {
-
-                        addPlace(createPlace(element));
-
-                    }
-                    else if("transition".equals(element.getNodeName()))
-                    {
-                        addTransition(createTransition(element));
+                        addStateGroup(createStateGroup(element));
                     }
                     else if("arc".equals(element.getNodeName()))
                     {
@@ -2208,14 +2206,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                             checkForInverseArc((NormalArcView) newArcView);
                         }
                     }
-                    else if("stategroup".equals(element.getNodeName()))
-                    {
-                        addStateGroup(createStateGroup(element));
-                    }
-                    else if("token".equals(element.getNodeName()))
-                    {
-                        addToken(createToken(element));
-                    }
                     else
                     {
                         System.out.println("!" + element.getNodeName());
@@ -2223,16 +2213,106 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 }
             }
 
-            if(ApplicationSettings.getApplicationView() != null)
-            {
-                ApplicationSettings.getApplicationModel().restoreMode();
-            }
+
         }
         catch(Exception e)
         {
         	e.printStackTrace();
             //throw new RuntimeException(e);
         }
+    }
+
+    private void displayTokens(Collection<Token> tokens)
+    {
+        for (Token token : tokens)
+        {
+            TokenViewBuilder builder = new TokenViewBuilder(token);
+            addToken(builder.build());
+        }
+    }
+
+    private void newDisplayMethod(Document PNMLDoc) {
+        CreatorStruct struct = new CreatorStruct(
+                new PlaceCreator(),
+                new TransitionCreator(),
+                new ArcCreator(),
+                new AnnotationCreator(),
+                new RateParameterCreator(),
+                new TokenCreator(),
+                new StateGroupCreator()
+        );
+        PetriNetReader reader = new PetriNetReader(struct);
+        PetriNet net = reader.createFromFile(PNMLDoc);
+
+        displayTokens(net.getTokens());
+        displayPlaces(net.getPlaces());
+        displayTransitions(net.getTransitions());
+        displayArcs(net.getArcs());
+        displayRateParameters(net.getRateParameters());
+        displayAnnotations(net.getAnnotations());
+        displayStateGroups(net.getStateGroups());
+
+    }
+
+    private void displayStateGroups(Collection<StateGroup> stateGroups) {
+
+        for (StateGroup group : stateGroups)
+        {
+            addStateGroup(group);
+        }
+    }
+
+    private void displayAnnotations(Collection<Annotation> annotations) {
+        for (Annotation annotation : annotations)
+        {
+            AnnotationNodeBuilder builder = new AnnotationNodeBuilder(annotation);
+            addAnnotation(builder.build());
+        }
+    }
+
+    private void displayRateParameters(Collection<RateParameter> rateParameters) {
+        for (RateParameter parameter : rateParameters)
+        {
+            addAnnotation(parameter);
+        }
+    }
+
+    private void displayArcs(Collection<Arc> arcs) {
+        //TODO: Quick and dirty hack, tidy up to not use instanceof!
+        for (Arc arc : arcs)
+        {
+            if (arc instanceof NormalArc)
+            {
+                NormalArc normalArc = NormalArc.class.cast(arc);
+                NormalArcViewBuilder builder = new NormalArcViewBuilder(normalArc);
+                NormalArcView view = builder.build();
+                addArc(view);
+                //TODO: Add back in:
+                //checkForInverseArc(view);
+            } else {
+
+                InhibitorArc inhibitorArc = InhibitorArc.class.cast(arc);
+                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(inhibitorArc);
+                addArc(builder.build());
+            }
+        }
+    }
+
+    private void displayPlaces(Collection<Place> places) {
+        for (Place place : places)
+        {
+            PlaceViewBuilder builder = new PlaceViewBuilder(place);
+            addPlace(builder.build());
+        }
+    }
+
+    private void displayTransitions(Collection<Transition> transitions) {
+        for (Transition transition : transitions)
+        {
+            TransitionViewBuilder builder = new TransitionViewBuilder(transition);
+            addTransition(builder.build());
+        }
+
     }
 
     /**
@@ -2549,7 +2629,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         // be OK!
         if(validStructure)
         {
-            // System.out.println("Tagged arc structure is valid");
             checkResult = "Tagged structure validation result:\n  Tagged arc structure is valid\n";
             JOptionPane.showMessageDialog(null, checkResult,
                                           "Validation Results", JOptionPane.INFORMATION_MESSAGE);
@@ -2615,7 +2694,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 break;
             }
         }
-        //		System.out.println("Returning " + index);
 
         return index;
     }

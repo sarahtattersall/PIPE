@@ -1,5 +1,8 @@
 package pipe.models;
 
+import pipe.common.dataLayer.StateGroup;
+import pipe.views.viewComponents.RateParameter;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -12,8 +15,10 @@ public class PetriNet extends Observable implements Serializable
     private Set<Transition> transitions = new HashSet<Transition>();
     private Set<Place> places = new HashSet<Place>();
     private Set<Token> tokens = new HashSet<Token>();
-    //private Set<Marking> markings = new HashSet<Marking>();
     private Set<Arc> arcs = new HashSet<Arc>();
+    private Set<Annotation> annotations = new HashSet<Annotation>();
+    private Set<RateParameter> rates = new HashSet<RateParameter>();
+    private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
 
     public String getPnmlName()
     {
@@ -65,4 +70,43 @@ public class PetriNet extends Observable implements Serializable
         return places;
     }
 
+    public void addRate(RateParameter parameter)
+    {
+        rates.add(parameter);
+    }
+
+    public Collection<RateParameter> getRateParameters()
+    {
+        return rates;
+    }
+
+    public void addAnnotaiton(Annotation annotation)
+    {
+        annotations.add(annotation);
+    }
+
+    public Collection<Annotation> getAnnotations()
+    {
+        return annotations;
+    }
+
+    public void addStateGroup(StateGroup group) {
+        stateGroups.add(group);
+    }
+
+    public Collection<StateGroup> getStateGroups() {
+        return stateGroups;
+    }
+
+    public Collection<Transition> getTransitions() {
+        return transitions;
+    }
+
+    public Collection<Arc> getArcs() {
+        return arcs;
+    }
+
+    public Collection<Token> getTokens() {
+        return tokens;
+    }
 }

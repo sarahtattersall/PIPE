@@ -11,6 +11,7 @@ import pipe.gui.ZoomController;
 import pipe.gui.widgets.AnnotationPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.historyActions.AnnotationText;
+import pipe.models.Annotation;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
@@ -25,6 +26,7 @@ public class AnnotationNote extends Note
     private boolean fillNote = true;
     private final ResizePoint[] dragPoints = new ResizePoint[8];
     private AffineTransform prova = new AffineTransform();
+    private Annotation model;
 
     public AnnotationNote(int x, int y)
     {
@@ -58,6 +60,15 @@ public class AnnotationNote extends Note
         }
     }
 
+    public void setModel(Annotation model)
+    {
+        this.model = model;
+    }
+
+    public Annotation getModel()
+    {
+        return model;
+    }
 
     private void setDragPoints()
     {

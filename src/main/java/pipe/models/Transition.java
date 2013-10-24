@@ -1,5 +1,6 @@
 package pipe.models;
 
+import pipe.gui.Constants;
 import pipe.views.viewComponents.RateParameter;
 
 import java.io.Serializable;
@@ -11,10 +12,6 @@ public class Transition extends Connectable implements Serializable
 {
     private int priority;
 	private String rateExpr;
-
-
-    private double x = 0;
-    private double y = 0;
     private int orientation = 0;
     private boolean timed = false;
     private boolean infiniteServer = false;
@@ -24,9 +21,32 @@ public class Transition extends Connectable implements Serializable
     private boolean timedTransition;
     private RateParameter rateParameter;
 
+    public static final int TRANSITION_HEIGHT = Constants.PLACE_TRANSITION_HEIGHT;
+    public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
+
     public Transition(String id, String name)
     {
         this(id, name, "1", 1);
+    }
+
+    @Override
+    public int getHeight() {
+        return TRANSITION_HEIGHT;
+    }
+
+    @Override
+    public int getWidth() {
+        return TRANSITION_WIDTH;
+    }
+
+    @Override
+    public double getCentreX() {
+        return getX() + getWidth()/2;
+    }
+
+    @Override
+    public double getCentreY() {
+        return getY() + getHeight()/2;
     }
 
     public Transition(String id, String name, String rateExpr, int priority)
@@ -58,15 +78,7 @@ public class Transition extends Connectable implements Serializable
 	}
 
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getNameXOffset() {
+   public double getNameXOffset() {
         return nameXOffset;
     }
 
@@ -92,14 +104,6 @@ public class Transition extends Connectable implements Serializable
 
     public void setPriority(int priority) {
         this.priority = priority;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public void setOrientation(int orientation) {

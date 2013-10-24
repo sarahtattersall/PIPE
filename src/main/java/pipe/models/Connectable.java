@@ -9,10 +9,19 @@ import java.util.LinkedList;
  * 
  *  @author yufei wang(modification)
  */
-public class Connectable extends Observable implements Serializable
+public abstract class Connectable extends Observable implements Serializable
 {
     private final LinkedList<ArcView> _inboundArcViews =  new LinkedList<ArcView>();
     private final LinkedList<ArcView> _outboundArcViews = new LinkedList<ArcView>();
+
+    /**
+     * Place position x
+     */
+    double x = 0;
+    /**
+     * Place position y
+     */
+    double y = 0;
     private String _id;
     private String _name;
 
@@ -67,4 +76,31 @@ public class Connectable extends Observable implements Serializable
     public String getId(){
     	return _id;
     }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setCentre(double x, double y)
+    {
+        setX(x - (getWidth() / 2.0));
+        setY(y - (getHeight() / 2.0));
+    }
+
+    public abstract int getHeight();
+    public abstract int getWidth();
+    public abstract double getCentreX();
+    public abstract double getCentreY();
 }

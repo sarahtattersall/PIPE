@@ -28,10 +28,10 @@ public class RateParameter extends Parameter
    private final HashSet<TransitionView> _transitionsHashSet;
    
       
-   public RateParameter(String _name, Double _value, int x, int y){
+   public RateParameter(String name, Double value, int x, int y){
       super (x, y);
-      name = _name;
-      value = _value;
+      this.name = name;
+      this.value = value;
       _transitionsHashSet = new HashSet();
       update();
    }

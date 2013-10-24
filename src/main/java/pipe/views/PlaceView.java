@@ -11,9 +11,11 @@ import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.PlaceCapacity;
 import pipe.historyActions.PlaceMarking;
+import pipe.models.Marking;
 import pipe.models.PipeObservable;
 import pipe.models.Place;
 import pipe.utilities.Copier;
+import pipe.views.builder.TokenViewBuilder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,9 +26,8 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 // Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
-public class PlaceView extends ConnectableView implements Serializable, Observer
+public class PlaceView extends ConnectableView<Place> implements Serializable, Observer
 {
-
     //transferred
     private static final long serialVersionUID = 1L;
     //transferred
@@ -46,8 +47,6 @@ public class PlaceView extends ConnectableView implements Serializable, Observer
 
     private static final int DIAMETER = 30;
 
-    public static int tWidth = 4;
-    public static int tHeight = 4;
 
     private static final Ellipse2D.Double place = new Ellipse2D.Double(0, 0,
                                                                  DIAMETER, DIAMETER);
@@ -58,7 +57,6 @@ public class PlaceView extends ConnectableView implements Serializable, Observer
     //transferred
     private TokenView _activeTokenView;
     private PlaceController _placeController;
-    private Place _model;
 	private LinkedList<MarkingView> initBackUp;
 	private LinkedList<MarkingView> currentBackUp;
 
@@ -95,8 +93,27 @@ public class PlaceView extends ConnectableView implements Serializable, Observer
         capacity = capacityInput;
         setCapacity(capacityInput);
         setCentre((int) _positionX, (int) _positionY);
-
     }
+
+    private void createDisplayTokens() {
+        for (Marking marking : _model.getTokens())
+        {
+            TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
+            TokenView tokenView = builder.build();
+            MarkingView markingView = new MarkingView(tokenView, marking.getCurrentMarking());
+            markingView.addObserver(this);
+            _currentMarkingView.add(markingView);
+        }
+    }
+
+    //TODO: This is a temporary method before removing variables above, so that
+    // it doesn't break existing code
+    public void setModel(Place model)
+    {
+        this._model = model;
+        createDisplayTokens();
+    }
+
 
     private void addObserver(LinkedList<MarkingView> markingViews)
 	{
@@ -144,6 +161,7 @@ public class PlaceView extends ConnectableView implements Serializable, Observer
      */
     public int getTotalMarking()
     {
+
         int size = _currentMarkingView.size();
         int totalMarking = 0;
         for(MarkingView a_currentMarkingView : _currentMarkingView){
@@ -166,7 +184,7 @@ public class PlaceView extends ConnectableView implements Serializable, Observer
         {
             MarkingView m = new MarkingView(tokenView, 0);
             m.addObserver(this); 
-            _currentMarkingView.add(m);
+            //_currentMarkingView.add(m);
         }
     }
 
@@ -234,8 +252,6 @@ public class PlaceView extends ConnectableView implements Serializable, Observer
         Graphics2D canvas2D = (Graphics2D) canvas;
 
         Insets insets = getInsets();
-        int x = insets.left;
-        int y = insets.top;
 
         if(hasCapacity())
         {

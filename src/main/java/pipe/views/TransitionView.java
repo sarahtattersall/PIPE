@@ -29,7 +29,7 @@ import java.io.Serializable;
 import java.util.*;
 
 
-public class TransitionView extends ConnectableView implements Serializable
+public class TransitionView extends ConnectableView<Transition> implements Serializable
 {
     @Override
     public boolean isShowing() {
@@ -428,7 +428,9 @@ public class TransitionView extends ConnectableView implements Serializable
     private void constructTransition()
     {
         _path = new GeneralPath();
+        //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
         _path.append(new Rectangle2D.Double((_componentWidth - TRANSITION_WIDTH) / 2, 0, TRANSITION_WIDTH, TRANSITION_HEIGHT), false);
+
         outlineTransition();
     }
 

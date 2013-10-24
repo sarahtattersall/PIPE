@@ -8,6 +8,7 @@
         		</graphics>
         	</name>
         	<inscription>
+                <value>Default,4</value>
         		<graphics>
         			<offset x="10" y="20"/>
         		</graphics>

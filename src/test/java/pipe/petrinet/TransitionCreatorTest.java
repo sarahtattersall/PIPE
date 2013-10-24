@@ -38,8 +38,9 @@ public class TransitionCreatorTest {
 
     @Test
     public void createsTransition() {
-        creator = new TransitionCreator(new HashMap<String, RateParameter>());
-        Transition transition = creator.createTransition(transitionElement);
+        creator = new TransitionCreator();
+        creator.setRates(new HashMap<String, RateParameter>());
+        Transition transition = creator.create(transitionElement);
 
         assertNotNull(transition);
 
@@ -63,8 +64,9 @@ public class TransitionCreatorTest {
         Map<String, RateParameter> rates = new HashMap<String, RateParameter>();
         rates.put(parameter.getName(), parameter);
 
-        creator = new TransitionCreator(rates);
-        Transition transition = creator.createTransition(transitionElement);
+        creator = new TransitionCreator();
+        creator.setRates(rates);
+        Transition transition = creator.create(transitionElement);
         Assert.assertEquals(parameter, transition.getRateParameter());
     }
 }

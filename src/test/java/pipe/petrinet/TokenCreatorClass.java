@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.Token;
 import pipe.utilities.transformers.PNMLTransformer;
-import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
 
@@ -36,7 +35,7 @@ public class TokenCreatorClass {
     @Test
     public void createsToken() {
         creator = new TokenCreator();
-        Token token = creator.createToken(tokenElement);
+        Token token = creator.create(tokenElement);
 
         assertNotNull(token);
 

@@ -5,18 +5,18 @@ import pipe.gui.Grid;
 import pipe.models.Transition;
 import pipe.views.viewComponents.RateParameter;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class TransitionCreator {
-    private final Map<String, RateParameter> rates;
+public class TransitionCreator implements ComponentCreator<Transition> {
 
-    public TransitionCreator(Map<String, RateParameter> rates)
-    {
+    private Map<String, RateParameter> rates = new HashMap<String, RateParameter>();
+
+    public void setRates(Map<String, RateParameter> rates) {
         this.rates = rates;
     }
 
-
-    public Transition createTransition(Element element) {
+    public Transition create(Element element) {
         double x = CreatorUtils.zeroOrValueOf(element.getAttribute("positionX"));
         x = Grid.getModifiedX(x);
 
@@ -66,8 +66,9 @@ public class TransitionCreator {
         transition.setNameXOffset(nameXOffset);
         transition.setNameYOffset(nameYOffset);
         transition.setAngle(angle);
-        transition.setX(x);
-        transition.setY(y);
+        transition.setCentre(x, y);
+        //transition.setX(x);
+        //transition.setY(y);
         transition.setInfiniteServer(infiniteServer);
         transition.setTimedTransition(timedTransition);
         transition.setRateParameter(rateParameter);
