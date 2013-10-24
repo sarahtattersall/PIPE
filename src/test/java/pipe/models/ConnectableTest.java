@@ -25,7 +25,7 @@ public class ConnectableTest {
     @Before
     public void setUp()
     {
-        connectable = new Connectable("test", "test");
+        connectable = new DummyConnectable("test", "test");
         mockView = mock(ArcView.class);
     }
 
@@ -68,6 +68,33 @@ public class ConnectableTest {
         connectable.removeToArc(mockView);
         LinkedList<ArcView> inBoundArcs = connectable.inboundArcs();
         assertFalse(inBoundArcs.contains(mockView));
+    }
+
+    private class DummyConnectable extends Connectable {
+
+        DummyConnectable(String id, String name) {
+            super(id, name);
+        }
+
+        @Override
+        public int getHeight() {
+            return 0;
+        }
+
+        @Override
+        public int getWidth() {
+            return 0;
+        }
+
+        @Override
+        public double getCentreX() {
+            return 0;
+        }
+
+        @Override
+        public double getCentreY() {
+            return 0;
+        }
     }
 
 
