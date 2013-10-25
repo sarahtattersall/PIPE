@@ -11,16 +11,10 @@ public class TransitionViewBuilder {
     }
 
     public TransitionView build() {
-        TransitionView view = new TransitionView(transition.getX(),
-                                                 transition.getY(),
-                                                 transition.getId(),
-                                                 transition.getName(),
-                                                 transition.getNameXOffset(),
-                                                 transition.getNameYOffset(),
-                                                 transition.isTimed(),
-                                                 transition.isInfiniteServer(),
-                                                 transition.getAngle(),
-                                                 transition);
+        TransitionView view =
+                new TransitionView(transition.getX(), transition.getY(), transition.getId(), transition.getName(),
+                        transition.getNameXOffset(), transition.getNameYOffset(), transition.isTimed(),
+                        transition.isInfiniteServer(), transition.getAngle(), transition);
         return view;
     }
 }

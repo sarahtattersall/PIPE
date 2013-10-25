@@ -73,14 +73,11 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
         return _positionY;
     }
 
-
-    @Override
     public void setName(String nameInput) {
         _name = nameInput;
         setText(_text);
         updateSize();
     }
-
 
     @Override
     public void setText(String s) {
@@ -96,6 +93,7 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
     @Override
     public void zoomUpdate(int value) {
         setFont(getFont().deriveFont((float) Constants.LABEL_DEFAULT_FONT_SIZE));
+
         updateSize();
     }
 
