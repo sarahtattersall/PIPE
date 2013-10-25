@@ -2,6 +2,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import pipe.controllers.PipeApplicationController;
 import pipe.models.PipeApplicationModel;
+import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 public class Pipe
@@ -11,10 +12,13 @@ public class Pipe
 	@SuppressWarnings("unused")
 	private PipeApplicationController applicationController;
 
+    private PipeApplicationView applicationView;
+
 	private Pipe(String version)
     {
         applicationModel = new PipeApplicationModel(version);
         applicationController = new PipeApplicationController(applicationModel);
+        applicationView = new PipeApplicationView(applicationController, applicationModel);
     }
     public static void main(String args[])
     {

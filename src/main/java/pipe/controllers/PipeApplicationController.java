@@ -1,11 +1,12 @@
 package pipe.controllers;
 
+import pipe.actions.ActionEnum;
+import pipe.actions.file.FileAction;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.PetriNetTab;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PetriNetView;
-import pipe.views.PipeApplicationView;
 
 import java.util.ArrayList;
 
@@ -13,16 +14,18 @@ public class PipeApplicationController
 {
     private PetriNetController _petriNetController;
     private final CopyPasteManager _copyPasteManager;
-    private final PipeApplicationModel _applicationModel;
-    private PipeApplicationView _applicationView;
+    private final PipeApplicationModel applicationModel;
 
     public PipeApplicationController(PipeApplicationModel applicationModel)
     {
         _petriNetController = new PetriNetController();
-        _applicationModel = applicationModel;
+        this.applicationModel = applicationModel;
         _copyPasteManager = new CopyPasteManager();
         ApplicationSettings.register(this);
-        _applicationView = new PipeApplicationView(this, _applicationModel);
+    }
+
+    public FileAction getFileAction(ActionEnum actionType) {
+        return actionType.get(applicationModel);
     }
 
     public CopyPasteManager getCopyPasteManager()

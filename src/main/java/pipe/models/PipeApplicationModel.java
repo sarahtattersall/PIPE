@@ -12,6 +12,46 @@ import java.util.List;
 
 public class PipeApplicationModel implements Serializable
 {
+    public FileAction getCreateAction() {
+        return createAction;
+    }
+
+    public FileAction getOpenAction() {
+        return openAction;
+    }
+
+    public FileAction getCloseAction() {
+        return closeAction;
+    }
+
+    public FileAction getSaveAction() {
+        return saveAction;
+    }
+
+    public FileAction getSaveAsAction() {
+        return saveAsAction;
+    }
+
+    public FileAction getPrintAction() {
+        return printAction;
+    }
+
+    public FileAction getExportPNGAction() {
+        return exportPNGAction;
+    }
+
+    public FileAction getExportTNAction() {
+        return exportTNAction;
+    }
+
+    public FileAction getExportPSAction() {
+        return exportPSAction;
+    }
+
+    public FileAction getImportAction() {
+        return importAction;
+    }
+
     public FileAction createAction = new CreateAction();
     public FileAction openAction = new OpenAction();
     public FileAction closeAction = new CloseAction();

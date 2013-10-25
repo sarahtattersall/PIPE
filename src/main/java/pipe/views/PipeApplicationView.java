@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.actions.ActionEnum;
 import pipe.actions.ExampleFileAction;
 import pipe.actions.GuiAction;
 import pipe.actions.ZoomAction;
@@ -151,25 +152,28 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
-        addMenuItem(fileMenu, applicationModel.createAction);
-        addMenuItem(fileMenu, applicationModel.openAction);
-        addMenuItem(fileMenu, applicationModel.closeAction);
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.CREATE));
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.OPEN));
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.CLOSE));
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationModel.saveAction);
-        addMenuItem(fileMenu, applicationModel.saveAsAction);
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.SAVE));
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.SAVEAS));
 
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationModel.importAction);
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.IMPORT));
+
         // Export menu
+
+
         JMenu exportMenu = new JMenu("Export");
         exportMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader()
                 .getResource(ApplicationSettings.getImagePath() + "Export.png")));
-        addMenuItem(exportMenu, applicationModel.exportPNGAction);
-        addMenuItem(exportMenu, applicationModel.exportPSAction);
-        addMenuItem(exportMenu, applicationModel.exportTNAction);
+        addMenuItem(exportMenu, applicationController.getFileAction(ActionEnum.EXPORTPNG));
+        addMenuItem(exportMenu, applicationController.getFileAction(ActionEnum.EXPORTPS));
+        addMenuItem(exportMenu, applicationController.getFileAction(ActionEnum.EXPORTTN));
         fileMenu.add(exportMenu);
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationModel.printAction);
+        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.PRINT));
         fileMenu.addSeparator();
 
         // Example files menu
