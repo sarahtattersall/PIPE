@@ -1,10 +1,8 @@
 package pipe.views.builder;
 
 import pipe.models.InhibitorArc;
-import pipe.models.NormalArc;
 import pipe.views.InhibitorArcView;
 import pipe.views.MarkingView;
-import pipe.views.NormalArcView;
 
 import java.util.LinkedList;
 

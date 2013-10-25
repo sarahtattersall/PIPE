@@ -1,16 +1,13 @@
 package pipe.views;
 
+import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
 import pipe.controllers.MarkingController;
 import pipe.models.Marking;
 import pipe.models.PipeObservable;
-import pipe.models.interfaces.IObserver;
 
 import javax.swing.*;
-
-import net.sourceforge.jeval.EvaluationException;
-
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Observable;

@@ -1,23 +1,19 @@
 package pipe.views;
 
+import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import pipe.controllers.TransitionController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
-import pipe.handlers.PetriNetObjectHandler;
 import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.*;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
-import pipe.views.viewComponents.RateParameter;
 import pipe.models.Transition;
+import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
-import javax.swing.Timer;
-
-import net.sourceforge.jeval.EvaluationException;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +22,10 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 
 public class TransitionView extends ConnectableView<Transition> implements Serializable
@@ -59,14 +58,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 	public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
 
     private int _delayForShowingWarnings;
-    private TransitionController _transitionController;
-	private boolean fratetype;
-	private boolean cratetype;
-	private boolean rateExprSet;
-	private String _functionalRateExpr;
-	
-
-//	private MyParser parser = new MyParser();
 
 
     public TransitionView(double positionXInput, double positionYInput)
@@ -103,7 +94,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     public TransitionView(TransitionController transitionController, Transition model)
     {
         super(0,0,model);
-        _transitionController = transitionController;
         _model = model;
         _model.registerObserver(this);
     }
@@ -609,21 +599,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     {
         if(_attributesVisible)
         {
-//            if(isTimed())
-//            {
-//                if(_rateParameter != null)
-//                    return "\nr=" + _rateParameter.getName();
-//                else
-//                    return "\nr=" + getRateExpr() +"="+getRate();
-//            }
-//            else
-//            {
-//                if(_rateParameter != null)
-//                    return "\n" + '\u03c0' + "=" + _model.getPriority() + "\nw=" + _rateParameter.getName();
-//                else
-//                    return "\n" + '\u03c0' + "=" + _model.getPriority() + "\nw=" + getRateExpr()+"="+getRate();
-//            }
-            
             try{
             	Double.parseDouble(getRateExpr());
             	if(isInfiniteServer()){
@@ -1016,47 +991,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         for(ArcView tempArcView : inboundArcs())
             tempArcView.addToView(view);
     }
-    /**
-     * 
-     * 
-     * 
-     * @return
-     */
-//	public String get_functionalRateExpr() {
-//		return _model.getfunctionalRates();
-//	}
-	
-//	public String getFRateExpr(){
-//		if(_functionalRateExpr==null){
-//			return "null";
-//		}else{
-//			return _functionalRateExpr;
-//		}
-//	}
 
-//	public HistoryItem setRateExpr(String frx) {
-//		String oldRate = _model.getfunctionalRates();
-//		_model.setfunctionalRates(frx);
-//		repaint();
-//		return new TransitionRate(this,oldRate, _model.getfunctionalRates());
-//	}
-//	
-//	public void setFRateExpr(String _functionalRateExpr){
-//		_nameLabel.setText(getAttributes());
-//		this._functionalRateExpr=_functionalRateExpr;
-//	}
-
-//	public void setRateType(String string) {
-//		// TODO Auto-generated method stub
-//		if(string.equals("F")){
-//			fratetype=true;
-//			cratetype=false;
-//		}else if(string.equals("C")){
-//			fratetype=false;
-//			cratetype=true;
-//		}
-//	}
-//	
 	public boolean isConst(){
 		try{
     		Double.parseDouble(_model.getRateExpr());
@@ -1065,11 +1000,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     		return false;
     	}
 	}
-
-//	public void setRateExprSet(boolean b) {
-//		// TODO Auto-generated method stub
-//		rateExprSet=b;
-//	}
 	
 	public HistoryItem setRate(double rate)
     {	
@@ -1120,11 +1050,4 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         String title = "Error";
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
     }
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-
 }

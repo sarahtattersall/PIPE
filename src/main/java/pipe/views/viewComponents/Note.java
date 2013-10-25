@@ -1,6 +1,9 @@
 package pipe.views.viewComponents;
 
-import pipe.gui.*;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.Translatable;
+import pipe.gui.ZoomController;
 import pipe.historyActions.AnnotationBorder;
 import pipe.historyActions.HistoryItem;
 import pipe.views.PetriNetViewComponent;

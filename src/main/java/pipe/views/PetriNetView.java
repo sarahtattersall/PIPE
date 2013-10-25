@@ -1,19 +1,9 @@
 package pipe.views;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.Serializable;
-import java.util.*;
-import java.util.Observable;
-
-import javax.swing.JOptionPane;
-
-import org.apache.log4j.TTCCLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import pipe.common.dataLayer.StateGroup;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
@@ -28,9 +18,15 @@ import pipe.utilities.math.RandomNumberGenerator;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationNote;
-import pipe.views.viewComponents.Note;
 import pipe.views.viewComponents.Parameter;
 import pipe.views.viewComponents.RateParameter;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.Serializable;
+import java.util.*;
+import java.util.Observable;
 
 
 /*
@@ -50,7 +46,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
 
     private Vector<Vector<String>> functionRelatedPlaces;
-	private int _selectedTokenTypeNumber;
     
     private LinkedList<MarkingView>[] _initialMarkingVector;
     private LinkedList<MarkingView>[] _currentMarkingVector;
@@ -58,13 +53,11 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private int[] _priorityMatrix;
     private boolean[] _timedMatrix;
     private LinkedList<MarkingView>[] _markingVectorAnimationStorage;
-    private static boolean _initialMarkingVectorChanged = true;
     private static boolean _currentMarkingVectorChanged = true;
     private Hashtable _arcsMap;
     private Hashtable _inhibitorsMap;
     private ArrayList _stateGroups;
     private final HashSet _rateParameterHashSet = new HashSet();
-    private PetriNetController _petriNetController;
     private PetriNet _model;
 	private TokenSetController _tokenSetController;
 
@@ -72,7 +65,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     public PetriNetView(String pnmlFileName)
     {
         _model = new PetriNet();
-        _petriNetController = ApplicationSettings.getPetriNetController();
         _model.registerObserver(this);
         initializeMatrices();
         PNMLTransformer transform = new PNMLTransformer();
@@ -86,7 +78,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         initializeMatrices();
         _model = model;
         model.registerObserver(this);
-        _petriNetController = petriNetController;
         initializeMatrices();
         _model.registerObserver(this);
     }
@@ -2128,7 +2119,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 tc.getInhibitionMatrix().matrixChanged = true;
             }
         }
-        _initialMarkingVectorChanged = true;
         _currentMarkingVectorChanged = true;
     }
 
@@ -2148,77 +2138,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         if(ApplicationSettings.getApplicationView() != null)
         {
             ApplicationSettings.getApplicationModel().restoreMode();
-        }
-    }
-
-    private void oldDisplayMethod(Document PNMLDoc) {
-        emptyPNML();
-        Element element;
-        Node node;
-        NodeList nodeList;
-
-        try
-        {
-            nodeList = PNMLDoc.getDocumentElement().getChildNodes();
-            for(int i = 0; i < nodeList.getLength(); i++)
-            {
-                node = nodeList.item(i);
-
-                if(node instanceof Element)
-                {
-
-                    element = (Element) node;
-                    if("labels".equals(element.getNodeName()))
-                    {
-                        addAnnotation(createAnnotation(element));
-                    }
-                    else if ("place".equals(element.getNodeName()))
-                    {
-                          addPlace(createPlace(element));
-                    }
-                    else if ("transition".equals(element.getNodeName()))
-                    {
-                        addTransition(createTransition(element));
-                    }
-
-                    else if("definition".equals(element.getNodeName()))
-                    {
-                        Note note = createParameter(element);
-                        if(note instanceof RateParameter)
-                        {
-                            addAnnotation((RateParameter) note);
-                        }
-                    }
-                    else if("stategroup".equals(element.getNodeName()))
-                    {
-                        addStateGroup(createStateGroup(element));
-                    }
-                    else if("arc".equals(element.getNodeName()))
-                    {
-                        ArcView newArcView = createArc(element);
-                        if(newArcView instanceof InhibitorArcView)
-                        {
-                            addArc((InhibitorArcView) newArcView);
-                        }
-                        else
-                        {
-                            addArc((NormalArcView) newArcView);
-                            checkForInverseArc((NormalArcView) newArcView);
-                        }
-                    }
-                    else
-                    {
-                        System.out.println("!" + element.getNodeName());
-                    }
-                }
-            }
-
-
-        }
-        catch(Exception e)
-        {
-        	e.printStackTrace();
-            //throw new RuntimeException(e);
         }
     }
 

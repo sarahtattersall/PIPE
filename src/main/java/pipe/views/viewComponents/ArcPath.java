@@ -11,13 +11,12 @@ import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.HistoryItem;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
+import pipe.views.ConnectableView;
 import pipe.views.PlaceView;
 import pipe.views.TransitionView;
-import pipe.views.ConnectableView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.List;

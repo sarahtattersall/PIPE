@@ -1,13 +1,12 @@
 package pipe.views.builder;
 
-import pipe.models.Arc;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
-import pipe.models.Token;
-import pipe.views.*;
+import pipe.views.MarkingView;
+import pipe.views.NormalArcView;
+import pipe.views.TokenView;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class NormalArcViewBuilder {
     private final NormalArc arc;

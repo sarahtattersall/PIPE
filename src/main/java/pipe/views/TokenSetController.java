@@ -1,14 +1,12 @@
 package pipe.views;
   // Although this is a controller, it's currently in the views package because it collaborates closely with TokenView.   
   // It could be moved, if some TokenView methods were changed from protected to public.  
-import java.awt.Color;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
 
 import pipe.exceptions.TokenLockedException;
+
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 
 /**
@@ -352,24 +350,7 @@ public class TokenSetController extends Observable
 	{
 		return getTokenViews().size() != tempController.getTokenViews().size();
 	}
-//	private void replaceCurrentSetFromTempController() throws TokenLockedException
-//	{ 
-//		updateNewTokenViewsFromOriginalTokenViews(); 
-//		this.mapIdsToTokenViews = tempController.mapIdsToTokenViews; 
-//		this.mapColorsToTokenViews = tempController.mapColorsToTokenViews; 
-//		this.enabledTokenViews = tempController.enabledTokenViews; 
-//		this.allTokenViews = tempController.allTokenViews; 
-//		this.activeTokenView = tempController.activeTokenView; 
-//		this.onlyEnabledTokenViewIsInitialDefault = tempController.onlyEnabledTokenViewIsInitialDefault; 
-//	}
-//	private void updateNewTokenViewsFromOriginalTokenViews() throws TokenLockedException
-//	{
-//		int size = tempController.allTokenViews.size(); 
-//		for (int i = 0; i < size; i++)
-//		{
-//			tempController.allTokenViews.get(i).updateModelFromPrevious(allTokenViews.get(i)); 
-//		}
-//	}
+
 	//TODO refactor to some common place; also used by TokenView
 	private String normalize(String target)
 	{

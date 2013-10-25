@@ -1,18 +1,5 @@
 package pipe.views;
 
-import java.awt.Container;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List; 
-import java.util.Observable;
-import java.util.Observer;
-
-import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -22,12 +9,25 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryItem;
-import pipe.models.*;
+import pipe.models.Arc;
+import pipe.models.Connectable;
+import pipe.models.PipeObservable;
+import pipe.models.Place;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.ArcPathPoint;
 import pipe.views.viewComponents.NameLabel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 public abstract class ArcView extends PetriNetViewComponent implements Cloneable, IObserver,Serializable, Observer
 {
@@ -37,7 +37,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 
     private ConnectableView _source = null;
     private ConnectableView _target = null;
-    // private boolean deleted = false; // Used for cleanup purposes
 
     private Arc _model;
 
@@ -58,7 +57,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     {
         _model = model;
 
-        //TODO: THIS DOESNT WORK FOR ZOOMING!!!
+        //TODO: THIS IS MESSY IMPLEMENT BETTER
         Pair<Point2D.Double, Point2D.Double> linePoints = getArcStartAndEnd();
         myPath.addPoint((float) linePoints.first.x, (float) linePoints.first.y, ArcPathPoint.STRAIGHT);
         myPath.addPoint((float) linePoints.second.x, (float) linePoints.second.y, ArcPathPoint.STRAIGHT);
@@ -348,15 +347,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
         setSourceLocation(points.first.x, points.first.y);
         setTargetLocation(points.second.x, points.second.y);
-
-//        if(_source != null)
-//        {
-//            _source.updateEndPoint(this);
-//        }
-//        if(_target != null)
-//        {
-//            _target.updateEndPoint(this);
-//        }
         myPath.createPath();
     }
 
@@ -519,28 +509,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         }
         myPath.showPoints();
         view.add(this);
-    }
-
-    public boolean getsSelected(Rectangle selectionRectangle)
-    {
-        if(_selectable)
-        {
-            ArcPath arcPath = getArcPath();
-            if(arcPath.proximityIntersects(selectionRectangle))
-            {
-                arcPath.showPoints();
-            }
-            else
-            {
-                arcPath.hidePoints();
-            }
-            if(arcPath.intersects(selectionRectangle))
-            {
-                select();
-                return true;
-            }
-        }
-        return false;
     }
 
     public int getLayerOffset()

@@ -1,11 +1,14 @@
 package pipe.views;
 
-import pipe.gui.*;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.Grid;
+import pipe.gui.ZoomController;
+import pipe.gui.widgets.EscapableDialog;
+import pipe.gui.widgets.GroupTransitionEditorPanel;
 import pipe.historyActions.GroupTransitionRotation;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.UngroupTransition;
-import pipe.gui.widgets.EscapableDialog;
-import pipe.gui.widgets.GroupTransitionEditorPanel;
 import pipe.models.Transition;
 
 import javax.swing.*;

@@ -9,9 +9,7 @@ import pipe.utilities.math.Matrix;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
 
 public class TokenView extends Observable implements Serializable, IObserver

@@ -1,9 +1,10 @@
 package pipe.views;
 
+import pipe.gui.*;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.PetriNetObjectName;
-import pipe.gui.*;
 import pipe.views.viewComponents.NameLabel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
