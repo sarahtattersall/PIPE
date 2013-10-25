@@ -1,6 +1,7 @@
 package pipe.controllers;
 
 import pipe.actions.ActionEnum;
+import pipe.actions.GuiAction;
 import pipe.actions.file.FileAction;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.CopyPasteManager;
@@ -24,8 +25,8 @@ public class PipeApplicationController
         ApplicationSettings.register(this);
     }
 
-    public FileAction getFileAction(ActionEnum actionType) {
-        return actionType.get(applicationModel);
+    public GuiAction getAction(ActionEnum actionType) {
+        return applicationModel.getAction(actionType);
     }
 
     public CopyPasteManager getCopyPasteManager()

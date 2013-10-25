@@ -152,15 +152,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.CREATE));
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.OPEN));
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.CLOSE));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.CREATE));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.OPEN));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.CLOSE));
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.SAVE));
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.SAVEAS));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.SAVE));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.SAVEAS));
 
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.IMPORT));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.IMPORT));
 
         // Export menu
 
@@ -168,140 +168,58 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenu exportMenu = new JMenu("Export");
         exportMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader()
                 .getResource(ApplicationSettings.getImagePath() + "Export.png")));
-        addMenuItem(exportMenu, applicationController.getFileAction(ActionEnum.EXPORTPNG));
-        addMenuItem(exportMenu, applicationController.getFileAction(ActionEnum.EXPORTPS));
-        addMenuItem(exportMenu, applicationController.getFileAction(ActionEnum.EXPORTTN));
+        addMenuItem(exportMenu, applicationController.getAction(ActionEnum.EXPORTPNG));
+        addMenuItem(exportMenu, applicationController.getAction(ActionEnum.EXPORTPS));
+        addMenuItem(exportMenu, applicationController.getAction(ActionEnum.EXPORTTN));
         fileMenu.add(exportMenu);
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationController.getFileAction(ActionEnum.PRINT));
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.PRINT));
         fileMenu.addSeparator();
 
         // Example files menu
-        try {
-            URL examplesDirURL = Thread.currentThread().getContextClassLoader()
-                    .getResource(ApplicationSettings.getExamplesDirectoryPath() + System.getProperty("file.separator"));
+        JMenu exampleMenu = createExampleFileMenu();
 
-            if (JarUtilities.isJarFile(examplesDirURL)) {
+        fileMenu.add(exampleMenu);
+        fileMenu.addSeparator();
 
-                JarFile jarFile = new JarFile(JarUtilities.getJarName(examplesDirURL));
-
-                ArrayList<JarEntry> nets =
-                        JarUtilities.getJarEntries(jarFile, ApplicationSettings.getExamplesDirectoryPath());
-
-                Arrays.sort(nets.toArray(), new Comparator() {
-                    public int compare(Object one, Object two) {
-                        return ((JarEntry) one).getName().compareTo(((JarEntry) two).getName());
-                    }
-                });
-
-                if (nets.size() > 0) {
-                    JMenu exampleMenu = new JMenu("Examples");
-                    exampleMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader()
-                            .getResource(ApplicationSettings.getImagePath() + "Example.png")));
-                    int index = 0;
-                    for (JarEntry net : nets) {
-                        if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu,
-                                    new ExampleFileAction(net, (index < 10) ? ("ctrl " + index) : null));
-                            index++;
-                        }
-                    }
-                    fileMenu.add(exampleMenu);
-                    fileMenu.addSeparator();
-                }
-            } else {
-                File examplesDir = new File(examplesDirURL.toURI());
-                /**
-                 * The next block fixes a problem that surfaced on Mac OSX with
-                 * PIPE 2.4. In that environment (and not in Windows) any blanks
-                 * in the project name in Eclipse are property converted to
-                 * '%20' but the blank in "extras.examples" is not. The following
-                 * code will do nothing on a Windows machine or if the logic on
-                 * OSX changess. I also added a stack trace so if the problem
-                 * occurs for another environment (perhaps multiple blanks need
-                 * to be manually changed) it can be easily fixed. DP
-                 */
-                // examplesDir = new File(new URI(examplesDirURL.toString()));
-                String dirURLString = examplesDirURL.toString();
-                int index = dirURLString.indexOf(" ");
-                if (index > 0) {
-                    StringBuffer sb = new StringBuffer(dirURLString);
-                    sb.replace(index, index + 1, "%20");
-                    dirURLString = sb.toString();
-                }
-
-                examplesDir = new File(new URI(dirURLString));
-
-                File[] nets = examplesDir.listFiles();
-
-                Arrays.sort(nets, new Comparator() {
-                    public int compare(Object one, Object two) {
-                        return ((File) one).getName().compareTo(((File) two).getName());
-                    }
-                });
-
-                // Oliver Haggarty - fixed code here so that if folder contains
-                // non
-                // .xml file the Example x counter is not incremented when that
-                // file
-                // is ignored
-                if (nets.length > 0) {
-                    JMenu exampleMenu = new JMenu("Examples");
-                    exampleMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader()
-                            .getResource(ApplicationSettings.getImagePath() + "Example.png")));
-                    int k = 0;
-                    for (File net : nets) {
-                        if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu, new ExampleFileAction(net, (k < 10) ? "ctrl " + (k++) : null));
-                        }
-                    }
-                    fileMenu.add(exampleMenu);
-                    fileMenu.addSeparator();
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error getting example files:" + e);
-            e.printStackTrace();
-        }
-
-        addMenuItem(fileMenu, applicationModel.exitAction);
+        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.EXIT));
 
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
-        addMenuItem(editMenu, applicationModel.undoAction);
-        addMenuItem(editMenu, applicationModel.redoAction);
+        addMenuItem(editMenu, applicationController.getAction(ActionEnum.UNDO));
+        addMenuItem(editMenu, applicationController.getAction(ActionEnum.REDO));
         editMenu.addSeparator();
-        addMenuItem(editMenu, applicationModel.cutAction);
-        addMenuItem(editMenu, applicationModel.copyAction);
-        addMenuItem(editMenu, applicationModel.pasteAction);
-        addMenuItem(editMenu, applicationModel.deleteAction);
+        addMenuItem(editMenu, applicationController.getAction(ActionEnum.CUT));
+        addMenuItem(editMenu, applicationController.getAction(ActionEnum.COPY));
+        addMenuItem(editMenu, applicationController.getAction(ActionEnum.PASTE));
+        addMenuItem(editMenu, applicationController.getAction(ActionEnum.DELETE));
 
         JMenu drawMenu = new JMenu("Draw");
         drawMenu.setMnemonic('D');
-        addMenuItem(drawMenu, applicationModel.selectAction);
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.SELECT));
 
         KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");
         InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(stroke, "ESCAPE");
 
-        rootPane.getActionMap().put("ESCAPE", applicationModel.selectAction);
+        rootPane.getActionMap().put("ESCAPE", applicationController.getAction(ActionEnum.SELECT));
 
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, applicationModel.placeAction);
-        addMenuItem(drawMenu, applicationModel.transAction);
-        addMenuItem(drawMenu, applicationModel.timedtransAction);
-        addMenuItem(drawMenu, applicationModel.arcAction);
-        addMenuItem(drawMenu, applicationModel.inhibarcAction);
-        addMenuItem(drawMenu, applicationModel.annotationAction);
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.PLACE));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.TRANSACTION));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.TIMED_TRANSACTION));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.ARC));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.INHIBITOR_ARC));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.ANNOTATION));
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, applicationModel.tokenAction);
-        addMenuItem(drawMenu, applicationModel.deleteTokenAction);
-        addMenuItem(drawMenu, applicationModel.specifyTokenClasses);
-        addMenuItem(drawMenu, applicationModel.groupTransitions);
-        addMenuItem(drawMenu, applicationModel.ungroupTransitions);
-        addMenuItem(drawMenu, applicationModel.unfoldAction);
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.TOKEN));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.DELETE_TOKEN));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.SPECIFY_TOKEN));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.GROUP_TRANSITIONS));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.UNGROUP_TRANSITIONS));
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.UNFOLD));
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, applicationModel.rateAction);
+        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.RATE_PARAMETER));
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
@@ -311,23 +229,23 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 .getResource(ApplicationSettings.getImagePath() + "Zoom.png")));
         addZoomMenuItems(zoomMenu);
 
-        addMenuItem(viewMenu, applicationModel.zoomOutAction);
+        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.ZOOM_OUT));
 
-        addMenuItem(viewMenu, applicationModel.zoomInAction);
+        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.ZOOM_IN));
         viewMenu.add(zoomMenu);
 
         viewMenu.addSeparator();
-        addMenuItem(viewMenu, applicationModel.toggleGrid);
-        addMenuItem(viewMenu, applicationModel.dragAction);
+        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.TOGGLE_GRID));
+        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.DRAG));
 
         JMenu animateMenu = new JMenu("Animate");
         animateMenu.setMnemonic('A');
-        addMenuItem(animateMenu, applicationModel.startAction);
+        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.START));
         animateMenu.addSeparator();
-        addMenuItem(animateMenu, applicationModel.stepbackwardAction);
-        addMenuItem(animateMenu, applicationModel.stepforwardAction);
-        addMenuItem(animateMenu, applicationModel.randomAction);
-        addMenuItem(animateMenu, applicationModel.randomAnimateAction);
+        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.STEP_BACK));
+        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.STEP_FORWARD));
+        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.RANDOM));
+        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.ANIMATE));
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -352,6 +270,96 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         menuBar.add(helpMenu);
         setJMenuBar(menuBar);
 
+    }
+
+    /**
+     * Creates an example file menu
+     *
+     */
+    private JMenu createExampleFileMenu() {
+        JMenu exampleMenu = new JMenu("Examples");
+        exampleMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader()
+                .getResource(ApplicationSettings.getImagePath() + "Example.png")));
+        try {
+            URL examplesDirURL = Thread.currentThread().getContextClassLoader()
+                    .getResource(ApplicationSettings.getExamplesDirectoryPath() + System.getProperty("file.separator"));
+
+            if (JarUtilities.isJarFile(examplesDirURL)) {
+
+                JarFile jarFile = new JarFile(JarUtilities.getJarName(examplesDirURL));
+
+                ArrayList<JarEntry> nets =
+                        JarUtilities.getJarEntries(jarFile, ApplicationSettings.getExamplesDirectoryPath());
+
+                Arrays.sort(nets.toArray(), new Comparator() {
+                    public int compare(Object one, Object two) {
+                        return ((JarEntry) one).getName().compareTo(((JarEntry) two).getName());
+                    }
+                });
+
+                if (nets.size() > 0) {
+                    int index = 0;
+                    for (JarEntry net : nets) {
+                        if (net.getName().toLowerCase().endsWith(".xml")) {
+                            addMenuItem(exampleMenu,
+                                    new ExampleFileAction(net, (index < 10) ? ("ctrl " + index) : null));
+                            index++;
+                        }
+                    }
+                }
+            } else {
+                /**
+                 * The next block fixes a problem that surfaced on Mac OSX with
+                 * PIPE 2.4. In that environment (and not in Windows) any blanks
+                 * in the project name in Eclipse are property converted to
+                 * '%20' but the blank in "extras.examples" is not. The following
+                 * code will do nothing on a Windows machine or if the logic on
+                 * OSX changess. I also added a stack trace so if the problem
+                 * occurs for another environment (perhaps multiple blanks need
+                 * to be manually changed) it can be easily fixed. DP
+                 */
+                // examplesDir = new File(new URI(examplesDirURL.toString()));
+                String dirURLString = examplesDirURL.toString();
+                int index = dirURLString.indexOf(" ");
+                if (index > 0) {
+                    StringBuffer sb = new StringBuffer(dirURLString);
+                    sb.replace(index, index + 1, "%20");
+                    dirURLString = sb.toString();
+                }
+
+                File examplesDir = new File(new URI(dirURLString));
+
+                File[] nets = examplesDir.listFiles();
+
+                Arrays.sort(nets, new Comparator() {
+                    public int compare(Object one, Object two) {
+                        return ((File) one).getName().compareTo(((File) two).getName());
+                    }
+                });
+
+                // Oliver Haggarty - fixed code here so that if folder contains
+                // non
+                // .xml file the Example x counter is not incremented when that
+                // file
+                // is ignored
+
+                if (nets.length > 0) {
+                    int k = 0;
+                    for (File net : nets) {
+                        if (net.getName().toLowerCase().endsWith(".xml")) {
+                            addMenuItem(exampleMenu, new ExampleFileAction(net, (k < 10) ? "ctrl " + (k++) : null));
+                        }
+                    }
+
+                }
+                return exampleMenu;
+            }
+        } catch (Exception e) {
+            System.err.println("Error getting example files:" + e);
+            e.printStackTrace();
+        } finally {
+            return exampleMenu;
+        }
     }
 
     private void buildToolbar() {

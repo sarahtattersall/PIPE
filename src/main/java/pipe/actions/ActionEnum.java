@@ -14,49 +14,9 @@ import java.lang.reflect.Method;
  * To change this template use File | Settings | File Templates.
  */
 public enum ActionEnum {
-    CREATE ("Create"), OPEN ("Open"), CLOSE ("Close"), SAVE ("Save"), SAVEAS ("SaveAs"), PRINT ("Print"), EXPORTPNG ("ExportPNG"),
-    EXPORTTN ("ExportTN"), EXPORTPS ("ExportPS"), IMPORT ("Import");
+    CREATE, OPEN, CLOSE, SAVE, SAVEAS, PRINT, EXPORTPNG,
+    EXPORTTN, EXPORTPS, IMPORT, EXIT, UNDO, REDO, CUT,
+    COPY, PASTE, DELETE, SELECT, PLACE, TRANSACTION, TIMED_TRANSACTION, ARC, INHIBITOR_ARC, ANNOTATION, TOKEN,
+    DRAG, RATE_PARAMETER, TOGGLE_GRID, ZOOM_OUT, ZOOM_IN, START, STEP_BACK, STEP_FORWARD, RANDOM, ANIMATE, DELETE_TOKEN, SPECIFY_TOKEN, GROUP_TRANSITIONS, UNFOLD, UNGROUP_TRANSITIONS, CHOOSE_TOKEN_CLASS;
 
-
-    /**
-     * camelCase name in getNameAction() method in PipeApplicationModel
-     */
-    private String name;
-
-     ActionEnum(String name) {
-         this.name = name;
-     }
-    //TODO: Is there a nicer way to do this?
-
-    /**
-     *
-     * @param model PipeApplicationModel of Action to get
-     * @return FileAction based on enum type
-     */
-    public FileAction get(PipeApplicationModel model) {
-        String methodName = getMethodName();
-        try {
-            Method method = PipeApplicationModel.class.getMethod(methodName, null);
-            return (FileAction) method.invoke(model);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * @return Java bean method name for action, based on getters in {@link PipeApplicationModel}
-     */
-    private String getMethodName() {
-
-        StringBuilder methodBuilder = new StringBuilder();
-        methodBuilder.append("get");
-        methodBuilder.append(name);
-        methodBuilder.append("Action");
-
-        return methodBuilder.toString();
-    }
 }
