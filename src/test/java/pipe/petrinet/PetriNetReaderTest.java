@@ -2,6 +2,7 @@ package pipe.petrinet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -11,15 +12,14 @@ import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
 
 public class PetriNetReaderTest {
 
@@ -101,6 +101,7 @@ public class PetriNetReaderTest {
     public void createsPlace()
     {
         PetriNet net = reader.createFromFile(doc);
+
         Collection<Place> places = net.getPlaces();
         assertEquals(2, places.size());
         assertTrue(places.contains(place));
@@ -108,21 +109,66 @@ public class PetriNetReaderTest {
     }
 
     @Test
+    public void setsTokensForPlaceCreator()
+    {
+        reader.createFromFile(doc);
+
+        Map<String, Token> tokens = new HashMap<String, Token>();
+        tokens.put(token.getId(), token);
+        verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new MatchesThisMap<Token>(tokens)));
+    }
+
+    @Test
     public void createsTransition()
     {
         PetriNet net = reader.createFromFile(doc);
+
         Collection<Transition> transitions = net.getTransitions();
         assertEquals(1, transitions.size());
         assertTrue(transitions.contains(transition));
     }
 
     @Test
+    public void setsRateParametersForTransition()
+    {
+        PetriNet net = reader.createFromFile(doc);
+
+        Map<String, RateParameter> params = new HashMap<String, RateParameter>();
+        params.put(parameter.getId(), parameter);
+
+        verify(creators.transitionCreator).setRates(argThat(new MatchesThisMap<RateParameter>(params)));
+    }
+
+    @Test
     public void createsArc()
     {
         PetriNet net = reader.createFromFile(doc);
+
         Collection<Arc> arcs = net.getArcs();
         assertEquals(1, arcs.size());
         assertTrue(arcs.contains(arc));
+    }
+
+    @Test
+    public void setsTokensForArcCreator()
+    {
+        reader.createFromFile(doc);
+
+        Map<String, Token> tokens = new HashMap<String, Token>();
+        tokens.put(token.getId(), token);
+        verify(creators.arcCreator, atLeastOnce()).setTokens(argThat(new MatchesThisMap<Token>(tokens)));
+    }
+
+    @Test
+    public void setsConnectablesForArcCreator()
+    {
+        reader.createFromFile(doc);
+
+        Map<String, Connectable> connectables = new HashMap<String, Connectable>();
+        connectables.put(place.getId(), place);
+        connectables.put(otherPlace.getId(), otherPlace);
+        connectables.put(transition.getId(), transition);
+        verify(creators.arcCreator, atLeastOnce()).setConnectables(argThat(new MatchesThisMap<Connectable>(connectables)));
     }
 
     @Test
@@ -162,6 +208,36 @@ public class PetriNetReaderTest {
         assertEquals(1, groups.size());
         assertTrue(groups.contains(group));
 
+    }
+
+    private static class MatchesThisMap<V> extends ArgumentMatcher<Map<String, V>> {
+        private final Map<String, V> map;
+
+        public MatchesThisMap(Map<String, V> map)
+        {
+            this.map = map;
+        }
+
+        /**
+         * Loops over key value pairs in arugment and ensures they are the same in
+         * map.
+         * Then return true if each have the same number of elements. If not argument
+         * is a subset of map
+         * @param argument
+         * @return
+         */
+        @Override
+        public boolean matches(Object argument) {
+            Map<String, V> mapArgument = (Map<String, V>) argument;
+            for (Map.Entry<String, V> entry : mapArgument.entrySet())
+            {
+                if (!map.get(entry.getKey()).equals(entry.getValue()))
+                {
+                    return false;
+                }
+            }
+            return mapArgument.size() == map.size();
+        }
     }
 
 }
