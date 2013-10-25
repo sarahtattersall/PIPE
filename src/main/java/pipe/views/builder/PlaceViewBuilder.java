@@ -15,16 +15,10 @@ public class PlaceViewBuilder {
 
     public PlaceView build() {
         int capacity = new Double(place.getCapacity()).intValue();
-        PlaceView view = new PlaceView(place.getX(),
-                                       place.getY(),
-                                       place.getId(),
-                                       place.getName(),
-                                       place.getNameXOffset(),
-                                       place.getNameYOffset(),
-                                       new LinkedList<MarkingView>(),
-                                       place.getMarkingXOffset(),
-                                       place.getMarkingYOffset(),
-                                       capacity);
+        PlaceView view =
+                new PlaceView(place.getX(), place.getY(), place.getId(), place.getName(), place.getNameXOffset(),
+                        place.getNameYOffset(), new LinkedList<MarkingView>(), place.getMarkingXOffset(),
+                        place.getMarkingYOffset(), capacity);
         view.setModel(place);
         return view;
     }

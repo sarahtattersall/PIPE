@@ -24,9 +24,9 @@ public class InhibitorArcViewBuilder {
         double startY = arc.getSource().getY();
         double endX = arc.getTarget().getX();
         double endY = arc.getTarget().getY();
-        InhibitorArcView view = new InhibitorArcView(startX, startY, endX, endY,
-                                               null, null, new LinkedList<MarkingView>(),
-                                               arc.getId(), arc);
+        InhibitorArcView view =
+                new InhibitorArcView(startX, startY, endX, endY, null, null, new LinkedList<MarkingView>(), arc.getId(),
+                        arc);
         return view;
 
     }

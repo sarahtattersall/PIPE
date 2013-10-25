@@ -14,8 +14,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.EventListener;
 
-public abstract class PetriNetViewComponent extends JComponent implements Zoomable, CopyPasteable, Cloneable, Translatable, Serializable
-{
+public abstract class PetriNetViewComponent extends JComponent implements Zoomable, CopyPasteable, Cloneable, Translatable, Serializable {
     static final int COMPONENT_DRAW_OFFSET = 5;
     public double _positionX;
     public double _positionY;
@@ -39,13 +38,12 @@ public abstract class PetriNetViewComponent extends JComponent implements Zoomab
 
     protected int _zoomPercentage;
 
-    protected PetriNetViewComponent()
-    {
+    protected PetriNetViewComponent() {
         this(null, null, 0, 0, 0, 0);
     }
 
-    PetriNetViewComponent(String id, String name, double positionX, double positionY, double nameOffsetX, double nameOffsetY)
-    {
+    PetriNetViewComponent(String id, String name, double positionX, double positionY, double nameOffsetX,
+            double nameOffsetY) {
         _id = id;
         _positionX = positionX;
         _positionY = positionY;
@@ -61,265 +59,223 @@ public abstract class PetriNetViewComponent extends JComponent implements Zoomab
         _nameLabel = new NameLabel(name, _zoomPercentage, nameOffsetX, nameOffsetY);
     }
 
-    void setNameLabelName(String name)
-    {
+    void setNameLabelName(String name) {
         _nameLabel.setName(name);
     }
 
-    protected void addZoomController(final ZoomController zoomControl2)
-    {
+    protected void addZoomController(final ZoomController zoomControl2) {
         this.zoomControl = zoomControl2;
     }
 
-    public void setId(String idInput)
-    {
+    public void setId(String idInput) {
         _id = idInput;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return _id;
     }
 
-    public NameLabel getNameLabel()
-    {
+    public NameLabel getNameLabel() {
         return _nameLabel;
     }
 
-    void addLabelToContainer()
-    {
-        if(getParent() != null && _nameLabel.getParent() == null)
-        {
+    void addLabelToContainer() {
+        if (getParent() != null && _nameLabel.getParent() == null) {
             getParent().add(_nameLabel);
         }
     }
 
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return _selected;
     }
 
-    public void select()
-    {
-        if(_selectable && !_selected)
-        {
+    public void select() {
+        if (_selectable && !_selected) {
             _selected = true;
             repaint();
         }
     }
 
-    public void deselect()
-    {
-        if(_selected)
-        {
+    public void deselect() {
+        if (_selected) {
             _selected = false;
             repaint();
         }
     }
 
-    public boolean isSelectable()
-    {
+    public boolean isSelectable() {
         return _selectable;
     }
 
-    public void setSelectable(boolean allow)
-    {
+    public void setSelectable(boolean allow) {
         _selectable = allow;
     }
 
-    public static void ignoreSelection(boolean ignore)
-    {
+    public static void ignoreSelection(boolean ignore) {
         _ignoreSelection = ignore;
     }
 
-    public boolean isDraggable()
-    {
+    public boolean isDraggable() {
         return _draggable;
     }
 
-    public void setDraggable(boolean allow)
-    {
+    public void setDraggable(boolean allow) {
         _draggable = allow;
     }
 
     public abstract void addedToGui();
 
-    public void delete()
-    {
+    public void delete() {
         _deleted = true;
         ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);
         removeFromContainer();
         removeAll();
     }
 
-    public void undelete(PetriNetView model, PetriNetTab view)
-    {
+    public void undelete(PetriNetView model, PetriNetTab view) {
         model.addPetriNetObject(this);
         view.add(this);
     }
 
-    protected void removeFromContainer()
-    {
+    protected void removeFromContainer() {
         Container c = getParent();
 
-        if(c != null)
-        {
+        if (c != null) {
             c.remove(this);
         }
     }
 
-    public HistoryItem setPNObjectName(String name)
-    {
+    public HistoryItem setPNObjectName(String name) {
         String oldName = this.getName();
         this.setId(name);
         this.setName(name);
         return new PetriNetObjectName(this, oldName, name);
     }
 
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         return _deleted || _markedAsDeleted;
     }
 
-    public void markAsDeleted()
-    {
+    public void markAsDeleted() {
         _markedAsDeleted = true;
     }
 
-    public void select(Rectangle selectionRectangle)
-    {
-        if(selectionRectangle.intersects(this.getBounds()))
-        {
+    public void select(Rectangle selectionRectangle) {
+        if (selectionRectangle.intersects(this.getBounds())) {
             select();
         }
     }
 
-    public void paintComponent(Graphics g)
-    {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
 
-    public boolean isCopyPasteable()
-    {
+    public boolean isCopyPasteable() {
         return _copyPasteable;
     }
 
     public abstract int getLayerOffset();
 
-    public int getZoomPercentage()
-    {
+    public int getZoomPercentage() {
         return _zoomPercentage;
     }
 
 
-    public PetriNetViewComponent clone()
-    {
-        try
-        {
+    public PetriNetViewComponent clone() {
+        try {
             PetriNetViewComponent pnCopy = (PetriNetViewComponent) super.clone();
 
             EventListener[] mouseListeners = pnCopy.getListeners(MouseListener.class);
-            for(EventListener mouseListener2 : mouseListeners)
-            {
+            for (EventListener mouseListener2 : mouseListeners) {
                 pnCopy.removeMouseListener((MouseListener) mouseListener2);
             }
 
             mouseListeners = pnCopy.getListeners(MouseMotionListener.class);
 
-            for(EventListener mouseListener1 : mouseListeners)
-            {
+            for (EventListener mouseListener1 : mouseListeners) {
                 pnCopy.removeMouseMotionListener((MouseMotionListener) mouseListener1);
             }
 
             mouseListeners = pnCopy.getListeners(MouseWheelListener.class);
 
-            for(EventListener mouseListener : mouseListeners)
-            {
+            for (EventListener mouseListener : mouseListeners) {
                 pnCopy.removeMouseWheelListener((MouseWheelListener) mouseListener);
             }
 
             return pnCopy;
-        }
-        catch(CloneNotSupportedException e)
-        {
+        } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }
     }
 
     public void setPositionX(double positionXInput) {
-		_positionX = positionXInput;
-		_locationX = ZoomController.getUnzoomedValue(_positionX, _zoomPercentage);
-	}
+        _positionX = positionXInput;
+        _locationX = ZoomController.getUnzoomedValue(_positionX, _zoomPercentage);
+    }
 
-	void setPositionY(double positionYInput) {
-		_positionY = positionYInput;
-		_locationY = ZoomController.getUnzoomedValue(_positionY, _zoomPercentage);
-	}
+    void setPositionY(double positionYInput) {
+        _positionY = positionYInput;
+        _locationY = ZoomController.getUnzoomedValue(_positionY, _zoomPercentage);
+    }
 
     public void setNameOffsetX(double nameOffsetXInput) {
-		_nameOffsetX += ZoomController.getUnzoomedValue(nameOffsetXInput, _zoomPercentage);
-	}
+        _nameOffsetX += ZoomController.getUnzoomedValue(nameOffsetXInput, _zoomPercentage);
+    }
 
-	public void setNameOffsetY(double nameOffsetYInput) {
-		_nameOffsetY += ZoomController.getUnzoomedValue(nameOffsetYInput, _zoomPercentage);
-	}
+    public void setNameOffsetY(double nameOffsetYInput) {
+        _nameOffsetY += ZoomController.getUnzoomedValue(nameOffsetYInput, _zoomPercentage);
+    }
 
-	public double getPositionX() {
-		return _positionX;
-	}
+    public double getPositionX() {
+        return _positionX;
+    }
 
-	public double getPositionY() {
-		return _positionY;
-	}
+    public double getPositionY() {
+        return _positionY;
+    }
 
     public double getNameOffsetX() {
-		return _nameOffsetX;
-	}
+        return _nameOffsetX;
+    }
 
-	public double getNameOffsetY() {
-		return _nameOffsetY;
-	}
+    public double getNameOffsetY() {
+        return _nameOffsetY;
+    }
 
-	public Double getNameOffsetXObject() {
-		return this._nameOffsetX;
-	}
+    public Double getNameOffsetXObject() {
+        return this._nameOffsetX;
+    }
 
-	public Double getNameOffsetYObject() {
-		return this._nameOffsetY;
-	}
+    public Double getNameOffsetYObject() {
+        return this._nameOffsetY;
+    }
 
     public Point2D.Double getCentre() {
-		return new Point2D.Double(_positionX + getWidth() / 2.0, _positionY + getHeight() / 2.0);
-	}
+        return new Point2D.Double(_positionX + getWidth() / 2.0, _positionY + getHeight() / 2.0);
+    }
 
-    public Double getPositionXObject()
-    {
+    public Double getPositionXObject() {
         return new Double(_locationX);
     }
 
-    public Double getPositionYObject()
-    {
+    public Double getPositionYObject() {
         return new Double(_locationY);
     }
 
 
-    static int getComponentDrawOffset()
-    {
+    static int getComponentDrawOffset() {
         return COMPONENT_DRAW_OFFSET;
     }
 
-    ZoomController getZoomController()
-    {
+    ZoomController getZoomController() {
         return this.zoomControl;
     }
 
-    String getNameLabelName()
-    {
+    String getNameLabelName() {
         return _nameLabel.getName();
     }
 
-    void setNameLabel(NameLabel nameLabel)
-    {
+    void setNameLabel(NameLabel nameLabel) {
         _nameLabel = nameLabel;
     }
 }
