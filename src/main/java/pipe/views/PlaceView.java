@@ -14,6 +14,7 @@ import pipe.historyActions.PlaceMarking;
 import pipe.models.Marking;
 import pipe.models.PipeObservable;
 import pipe.models.Place;
+import pipe.models.Token;
 import pipe.utilities.Copier;
 import pipe.views.builder.TokenViewBuilder;
 
@@ -95,11 +96,16 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     private void createDisplayTokens() {
         for (Marking marking : _model.getTokens()) {
-            TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
-            TokenView tokenView = builder.build();
-            MarkingView markingView = new MarkingView(tokenView, marking.getCurrentMarking());
-            markingView.addObserver(this);
-            _currentMarkingView.add(markingView);
+            Token token = marking.getToken();
+            //TODO: IF TOKEN HAS NOT BEEN DECLARED POP UP ERROR MESSAGE!
+            if (token != null)
+            {
+                TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
+                TokenView tokenView = builder.build();
+                MarkingView markingView = new MarkingView(tokenView, marking.getCurrentMarking());
+                markingView.addObserver(this);
+                _currentMarkingView.add(markingView);
+            }
         }
     }
 
