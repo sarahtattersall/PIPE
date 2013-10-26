@@ -53,7 +53,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             String idInput, Arc model) {
         _model = model;
 
-        //TODO: THIS IS MESSY IMPLEMENT BETTER
         Pair<Point2D.Double, Point2D.Double> linePoints = getArcStartAndEnd();
         myPath.addPoint((float) linePoints.first.x, (float) linePoints.first.y, ArcPathPoint.STRAIGHT);
         myPath.addPoint((float) linePoints.second.x, (float) linePoints.second.y, ArcPathPoint.STRAIGHT);
@@ -73,10 +72,22 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         double deltaY = source.getY() - target.getY();
         double angle = Math.atan2(deltaX, deltaY);
 
-        Point2D.Double startCoord = source.getArcEdgePoint(angle);
-        Point2D.Double endCoord = target.getArcEdgePoint(Math.PI + angle);
+        Point2D.Double startCoord = zoomPoint(source.getArcEdgePoint(angle));
+        Point2D.Double endCoord = zoomPoint(target.getArcEdgePoint(Math.PI + angle));
 
         return new Pair<Point2D.Double, Point2D.Double>(startCoord, endCoord);
+    }
+
+    private double zoom(double x)
+    {
+        return ZoomController.getZoomedValue(x, _zoomPercentage);
+    }
+
+    private Point2D.Double zoomPoint(Point2D.Double point)
+    {
+        double x = zoom(point.x);
+        double y = zoom(point.y);
+        return new Point2D.Double(x, y);
     }
 
     private static class Pair<T, T2> {
