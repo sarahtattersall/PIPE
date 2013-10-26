@@ -69,4 +69,10 @@ public class TransitionCreatorTest {
         Transition transition = creator.create(transitionElement);
         Assert.assertEquals(parameter, transition.getRateParameter());
     }
+
+    @Test
+    public void foo()
+    {
+
+    }
 }

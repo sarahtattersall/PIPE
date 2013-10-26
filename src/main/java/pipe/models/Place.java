@@ -1,5 +1,8 @@
 package pipe.models;
 
+import pipe.gui.ZoomController;
+
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +64,32 @@ public class Place extends Connectable implements PetriNetComponent, Serializabl
     @Override
     public double getCentreY() {
         return getY() + getHeight()/2;
+    }
+
+    /**
+     * Since Place is a circle, performs basic trigonometry
+     * based on the angle that the other object is from
+     *
+     * Note (0,0) is top left corner of grid.  -------> x
+     *                                        |
+     *                                        |
+     *                                        |
+     *                                      y V
+     * @return
+     */
+    @Override
+    public Point2D.Double getArcEdgePoint(double angle) {
+        double radius = getWidth() / 2;
+        double centreX = x + radius;
+        double opposite = Math.sin(angle);
+        double attachX = centreX - radius * opposite;
+
+        double centreY = y + radius;
+        double adjacent = Math.cos(angle);
+        double attachY = centreY - radius * adjacent;
+
+        Point2D.Double coord = new Point2D.Double(attachX, attachY);
+        return coord;
     }
 
     /**

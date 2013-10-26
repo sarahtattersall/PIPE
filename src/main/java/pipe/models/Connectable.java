@@ -2,6 +2,7 @@ package pipe.models;
 
 import pipe.views.ArcView;
 
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.LinkedList;
 
@@ -103,4 +104,20 @@ public abstract class Connectable extends Observable implements Serializable
     public abstract int getWidth();
     public abstract double getCentreX();
     public abstract double getCentreY();
+
+    /**
+     *
+     * @return coords for an arc to connect to
+     *
+     * x, y are the top left corner so A
+     * would return (4, 1) and B would
+     * return (14, 1)
+     *
+     * +---+         +---+
+     * | A |-------->| B |
+     * +---+         +---+
+     *
+     */
+    public abstract Point2D.Double getArcEdgePoint(double angle);
+
 }

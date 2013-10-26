@@ -1,8 +1,11 @@
 package pipe.models;
 
 import pipe.gui.Constants;
+import pipe.gui.ZoomController;
 import pipe.views.viewComponents.RateParameter;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 /*
@@ -23,6 +26,7 @@ public class Transition extends Connectable implements Serializable
 
     public static final int TRANSITION_HEIGHT = Constants.PLACE_TRANSITION_HEIGHT;
     public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
+    private static final double ROOT_THREE_OVER_TWO = 0.5 * Math.sqrt(3);
 
     public Transition(String id, String name)
     {
@@ -47,6 +51,90 @@ public class Transition extends Connectable implements Serializable
     @Override
     public double getCentreY() {
         return getY() + getHeight()/2;
+    }
+
+    @Override
+    public Point2D.Double getArcEdgePoint(double angle) {
+        double half_height = getHeight()/2;
+        double centre_x = x + half_height; //Use height since the actual object is a square, width is just the displayed width
+        double centre_y = y + half_height;
+
+        Point2D.Double connectionPoint = new Point2D.Double(centre_x, centre_y);
+
+        double half_width = getWidth()/2;
+
+        if (connectToTop(angle)) {
+            connectionPoint.y -= half_height;
+        } else if (connectToBottom(angle)) {
+            connectionPoint.y += half_height;
+        } else if (connectToLeft(angle)) {
+            connectionPoint.x -= half_width;
+        } else { //connectToRight
+            connectionPoint.x += half_width;
+        }
+
+        AffineTransform transform = AffineTransform.getRotateInstance(this.angle);
+        Point2D.Double rotatedPoint = new Point2D.Double();
+        transform.transform(connectionPoint, rotatedPoint);
+        return rotatedPoint;
+
+        //Rotation angle
+//        AffineTransform transform = AffineTransform.getRotateInstance(this.angle);
+//        Point2D.Double transformed = new Point2D.Double();
+//
+//        if (Math.cos(angle) > rootThreeOverTwo) //Top
+//        {
+//            transform.transform(new Point2D.Double(1, 0.5 * connectable.getHeight()), transformed);
+//        } else if (Math.cos(angle) < -rootThreeOverTwo)  //Bottom
+//        {
+//            transform.transform(new Point2D.Double(0, -0.5 * connectable.getHeight()), transformed);
+//        } else if (Math.sin(angle) > 0) //Left
+//        {
+//            transformed.x += connectable.getWidth();
+//            transform.transform(new Point2D.Double(-0.5 * connectable.getWidth(), 1), transformed);
+//        } else     //Right
+//        {
+//            transformed.x -= connectable.getWidth();
+//            transform.transform(new Point2D.Double(0.5 * connectable.getWidth(), 0), transformed);
+//        }
+//
+//        //double half_width = connectable.getWidth()/2;
+//        double half_height = connectable.getHeight() / 2;
+//        double x = ZoomController.getZoomedValue(connectable.getX() + half_height + transformed.x, _zoomPercentage);
+//        double y = ZoomController.getZoomedValue(connectable.getY() + half_height + transformed.y, _zoomPercentage);
+//
+//        Point2D.Double coord = new Point2D.Double(x, y);
+//        return coord;
+    }
+
+    /**
+     * Return true if an arc connecting to this should
+     * connect to the left
+     * @param angle in radians
+     * @return
+     */
+    private boolean connectToLeft(double angle) {
+        return (Math.sin(angle) < 0);
+    }
+
+    /**
+     * Return true if an arc connecting to this should
+     * connect to the bottom
+     * @param angle in radians
+     * @return
+     */
+    private boolean connectToBottom(double angle) {
+        return Math.cos(angle) < -ROOT_THREE_OVER_TWO;
+    }
+
+    /**
+     * Return true if an arc connecting to this should
+     * connect to the top
+     * @param angle in radians
+     * @return
+     */
+    private boolean connectToTop(double angle) {
+        return Math.cos(angle) > ROOT_THREE_OVER_TWO;
     }
 
     public Transition(String id, String name, String rateExpr, int priority)

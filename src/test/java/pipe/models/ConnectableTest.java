@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.views.ArcView;
 
+import java.awt.geom.Point2D;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertFalse;
@@ -94,6 +95,11 @@ public class ConnectableTest {
         @Override
         public double getCentreY() {
             return 0;
+        }
+
+        @Override
+        public Point2D.Double getArcEdgePoint(double angle) {
+            return new Point2D.Double(0,0);
         }
     }
 

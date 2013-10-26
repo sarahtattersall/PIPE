@@ -71,24 +71,11 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         Connectable target = _model.getTarget();
         double deltaX = source.getX() - target.getX();
         double deltaY = source.getY() - target.getY();
-        double angle = Math.atan(deltaX / deltaY);
-        if (source.getY() <= target.getY()) {
-            angle += Math.PI;
-        }
+        double angle = Math.atan2(deltaX, deltaY);
 
-        Point2D.Double startCoord;
-        if (source.getClass().equals(Place.class)) {
-            startCoord = getPlaceCoordinates(source, angle);
-        } else {
-            startCoord = getTransitionCoordinatesSource(source, angle);
-        }
+        Point2D.Double startCoord = source.getArcEdgePoint(angle);
+        Point2D.Double endCoord = target.getArcEdgePoint(Math.PI + angle);
 
-        Point2D.Double endCoord;
-        if (target.getClass().equals(Place.class)) {
-            endCoord = getPlaceCoordinates(target, angle);
-        } else {
-            endCoord = getTransitionCoordinatesDest(target, angle);
-        }
         return new Pair<Point2D.Double, Point2D.Double>(startCoord, endCoord);
     }
 
@@ -100,72 +87,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             this.first = first;
             this.second = second;
         }
-    }
-
-    private Point2D.Double getPlaceCoordinates(Connectable connectable, double angle) {
-        double radius = connectable.getWidth() / 2;
-        double zoomed_centre_x = ZoomController.getZoomedValue(connectable.getX() + radius, _zoomPercentage);
-        double zoomed_sin_angle = ZoomController.getZoomedValue(radius * Math.sin(angle), _zoomPercentage);
-        double x = zoomed_centre_x + zoomed_sin_angle;
-
-        double zoomed_centre_y = ZoomController.getZoomedValue(connectable.getY() + radius, _zoomPercentage);
-        double zoomed_cos_angle = ZoomController.getZoomedValue(radius * Math.cos(angle), _zoomPercentage);
-        double y = zoomed_centre_y + zoomed_cos_angle;
-        Point2D.Double coord = new Point2D.Double(x, y);
-        return coord;
-    }
-
-    private Point2D.Double getTransitionCoordinatesDest(Connectable connectable, double angle) {
-        double rootThreeOverTwo = 0.5 * Math.sqrt(3);
-        AffineTransform transform = AffineTransform.getRotateInstance(0);
-        Point2D.Double transformed = new Point2D.Double();
-
-        if (Math.cos(angle) > rootThreeOverTwo) //Top
-        {
-            transform.transform(new Point2D.Double(1, 0.5 * connectable.getHeight()), transformed);
-        } else if (Math.cos(angle) < -rootThreeOverTwo)  //Bottom
-        {
-            transform.transform(new Point2D.Double(0, -0.5 * connectable.getHeight()), transformed);
-        } else if (Math.sin(angle) > 0) //Left
-        {
-            transform.transform(new Point2D.Double(-0.5 * connectable.getWidth(), 1), transformed);
-            transformed.x += connectable.getWidth();
-        } else     //Right
-        {
-            transform.transform(new Point2D.Double(0.5 * connectable.getWidth(), 0), transformed);
-            transformed.x -= connectable.getWidth();
-        }
-
-        //double half_width = connectable.getWidth()/2;
-        double half_height = connectable.getHeight() / 2;
-        double x = ZoomController.getZoomedValue(connectable.getX() + half_height + transformed.x, _zoomPercentage);
-        double y = ZoomController.getZoomedValue(connectable.getY() + half_height + transformed.y, _zoomPercentage);
-
-        Point2D.Double coord = new Point2D.Double(x, y);
-        return coord;
-    }
-
-    private Point2D.Double getTransitionCoordinatesSource(Connectable connectable, double angle) {
-        double rootThreeOverTwo = 0.5 * Math.sqrt(3);
-        AffineTransform transform = AffineTransform.getRotateInstance(0);
-        Point2D.Double transformed = new Point2D.Double();
-
-        if (Math.cos(angle) > rootThreeOverTwo) {
-            transform.transform(new Point2D.Double(1, 0.5 * connectable.getHeight()), transformed);
-        } else if (Math.cos(angle) < -rootThreeOverTwo) {
-            transform.transform(new Point2D.Double(0, -0.5 * connectable.getHeight()), transformed);
-        } else if (Math.sin(angle) > 0) {
-            transform.transform(new Point2D.Double(-0.5 * connectable.getWidth(), 1), transformed);
-        } else {
-            transform.transform(new Point2D.Double(0.5 * connectable.getWidth(), 0), transformed);
-        }
-
-        double half_height = connectable.getHeight() / 2;
-        double x = ZoomController.getZoomedValue(connectable.getX() + half_height + transformed.x, _zoomPercentage);
-        double y = ZoomController.getZoomedValue(connectable.getY() + half_height + transformed.y, _zoomPercentage);
-
-        Point2D.Double coord = new Point2D.Double(x, y);
-        return coord;
     }
 
     ArcView(ConnectableView newSource) {
