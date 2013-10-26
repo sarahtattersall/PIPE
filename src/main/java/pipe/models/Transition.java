@@ -45,12 +45,29 @@ public class Transition extends Connectable implements Serializable
 
     @Override
     public double getCentreX() {
-        return getX() + getWidth()/2;
+        return getX() + getHeight()/2;
     }
 
     @Override
     public double getCentreY() {
         return getY() + getHeight()/2;
+    }
+
+    /**
+     * AffineRotation assumes coordinate system where x points right and y points
+     * up. Since we are dealing with y pointing down we rotate the object around its
+     * centre at -angle.
+     * @param angle
+     * @param point
+     * @return
+     */
+    private Point2D.Double rotateAroundCenter(double angle, Point2D.Double point)
+    {
+        AffineTransform tx = new AffineTransform();
+        tx.rotate(-angle, getCentreX(), getCentreY());
+        Point2D.Double rotatedPoint = new Point2D.Double();
+        tx.transform(point, rotatedPoint);
+        return rotatedPoint;
     }
 
     @Override
@@ -62,49 +79,18 @@ public class Transition extends Connectable implements Serializable
         Point2D.Double connectionPoint = new Point2D.Double(centre_x, centre_y);
 
         double half_width = getWidth()/2;
-
-        if (connectToTop(angle)) {
+        double rotatedAngle = angle + Math.toRadians(this.angle);
+        if (connectToTop(rotatedAngle)) {
             connectionPoint.y -= half_height;
-        } else if (connectToBottom(angle)) {
+        } else if (connectToBottom(rotatedAngle)) {
             connectionPoint.y += half_height;
-        } else if (connectToLeft(angle)) {
+        } else if (connectToLeft(rotatedAngle)) {
             connectionPoint.x -= half_width;
         } else { //connectToRight
             connectionPoint.x += half_width;
         }
 
-        AffineTransform transform = AffineTransform.getRotateInstance(this.angle);
-        Point2D.Double rotatedPoint = new Point2D.Double();
-        transform.transform(connectionPoint, rotatedPoint);
-        return rotatedPoint;
-
-        //Rotation angle
-//        AffineTransform transform = AffineTransform.getRotateInstance(this.angle);
-//        Point2D.Double transformed = new Point2D.Double();
-//
-//        if (Math.cos(angle) > rootThreeOverTwo) //Top
-//        {
-//            transform.transform(new Point2D.Double(1, 0.5 * connectable.getHeight()), transformed);
-//        } else if (Math.cos(angle) < -rootThreeOverTwo)  //Bottom
-//        {
-//            transform.transform(new Point2D.Double(0, -0.5 * connectable.getHeight()), transformed);
-//        } else if (Math.sin(angle) > 0) //Left
-//        {
-//            transformed.x += connectable.getWidth();
-//            transform.transform(new Point2D.Double(-0.5 * connectable.getWidth(), 1), transformed);
-//        } else     //Right
-//        {
-//            transformed.x -= connectable.getWidth();
-//            transform.transform(new Point2D.Double(0.5 * connectable.getWidth(), 0), transformed);
-//        }
-//
-//        //double half_width = connectable.getWidth()/2;
-//        double half_height = connectable.getHeight() / 2;
-//        double x = ZoomController.getZoomedValue(connectable.getX() + half_height + transformed.x, _zoomPercentage);
-//        double y = ZoomController.getZoomedValue(connectable.getY() + half_height + transformed.y, _zoomPercentage);
-//
-//        Point2D.Double coord = new Point2D.Double(x, y);
-//        return coord;
+        return rotateAroundCenter(Math.toRadians(this.angle), connectionPoint);
     }
 
     /**
