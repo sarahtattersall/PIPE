@@ -40,11 +40,14 @@ public class PlaceCreator implements ComponentCreator<Place> {
             {
                 Token defaultToken = getDefaultToken();
                 Marking marking = createMarking(defaultToken.getId(), tokens[0]);
-            }
-            for(int i = 0; i < tokens.length; i += 2) {
-                String tokenName = tokens[i].trim();
-                Marking marking = createMarking(tokenName, tokens[i+1]);
                 markings.add(marking);
+            }
+            else {
+                for(int i = 0; i < tokens.length; i += 2) {
+                    String tokenName = tokens[i].trim();
+                    Marking marking = createMarking(tokenName, tokens[i+1]);
+                    markings.add(marking);
+                }
             }
 
         }
@@ -52,7 +55,7 @@ public class PlaceCreator implements ComponentCreator<Place> {
     }
 
     private Token getDefaultToken() {
-        return tokens.get(0);
+        return tokens.get("Default");
     }
 
     private Marking createMarking(String tokenName, String markingValue) {

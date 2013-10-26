@@ -8,6 +8,7 @@ import pipe.common.dataLayer.StateGroup;
 import pipe.models.*;
 import pipe.views.viewComponents.RateParameter;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -76,14 +77,29 @@ public class PetriNetReader {
     }
 
 
-
+    /**
+     * If there are no tokens, it creates a default token for Places to use
+     *
+     * Then it creates a token from the element
+     * @param element
+     * @param net
+     */
     @ElementParser("place")
     private void createPlaceAndAddToNet(Element element, PetriNet net)
     {
+        if (tokens.isEmpty())
+        {
+            createDefaultToken();
+        }
         creators.placeCreator.setTokens(tokens);
         Place place = creators.placeCreator.create(element);
         connectables.put(place.getId(), place);
         net.addPlace(place);
+    }
+
+    private void createDefaultToken() {
+        Token defaultToken = new Token("Default", true, 0, Color.BLACK);
+        tokens.put(defaultToken.getId(), defaultToken);
     }
 
     @ElementParser("transition")

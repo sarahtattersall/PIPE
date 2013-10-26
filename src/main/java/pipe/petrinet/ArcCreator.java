@@ -129,10 +129,9 @@ public class ArcCreator implements ComponentCreator<Arc> {
      * @return  the default token to use if no token is specified in the
      * Arc weight XML.
      */
-    //TODO: WORK OUT WHAT THIS SHOULD BE?
     private Token getDefaultToken()
     {
-        return null;
+        return tokens.get("Default");
     }
 
 }

@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.*;
 import pipe.utilities.transformers.PNMLTransformer;
@@ -36,6 +35,8 @@ public class PetriNetReaderTest {
     Token token;
     StateGroup group;
 
+    PNMLTransformer transformer;
+
 
     /**
      * Delta in which to mark doubles equal to each other as.
@@ -44,7 +45,7 @@ public class PetriNetReaderTest {
 
     @Before
     public void setUp() {
-        PNMLTransformer transformer = new PNMLTransformer();
+        transformer = new PNMLTransformer();
         doc = transformer.transformPNML("src/test/resources/xml/petriNet.xml");
 //        Document doc = mock(Document.class);
 
@@ -116,6 +117,15 @@ public class PetriNetReaderTest {
         Map<String, Token> tokens = new HashMap<String, Token>();
         tokens.put(token.getId(), token);
         verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new MatchesThisMap<Token>(tokens)));
+    }
+
+    @Test
+    public void createsDefaultTokenIfNoneSpecified()
+    {
+        Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
+        reader.createFromFile(noTokenDoc);
+
+        verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new ContainsTokenKey("Default")));
     }
 
     @Test
@@ -208,6 +218,22 @@ public class PetriNetReaderTest {
         assertEquals(1, groups.size());
         assertTrue(groups.contains(group));
 
+    }
+
+    private static class ContainsTokenKey extends ArgumentMatcher<Map<String, Token>> {
+
+        private final String key;
+
+        public ContainsTokenKey(String key)
+        {
+            this.key = key;
+        }
+
+        @Override
+        public boolean matches(Object argument) {
+            Map<String, Token> mapArgument = (Map<String, Token>) argument;
+            return mapArgument.containsKey(key);
+        }
     }
 
     private static class MatchesThisMap<V> extends ArgumentMatcher<Map<String, V>> {

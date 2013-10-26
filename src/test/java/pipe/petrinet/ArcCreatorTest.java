@@ -30,11 +30,15 @@ public class ArcCreatorTest {
 
     private Element createNormalArcNoWeight()
     {
-        return createFromFile("src/test/resources/xml/arc/arc.xml");
+        return createFromFile("src/test/resources/xml/arc/arcNoWeight.xml");
     }
 
     private Element createInhibitorArc() {
         return createFromFile("src/test/resources/xml/arc/inhibitorArc.xml");
+    }
+
+    private Element createArcWeightNoToken() {
+        return createFromFile("src/test/resources/xml/arc/arcWeightNoToken.xml");
     }
 
     private Element createFromFile(String path)
@@ -129,5 +133,20 @@ public class ArcCreatorTest {
 
         assertNotNull(arc);
         assertEquals(InhibitorArc.class, arc.getClass());
+    }
+
+    @Test
+    public void createsArcWithDefaultTokenIfNoTokenSpecifiedForWeight() {
+        Element arcElement = createArcWeightNoToken();
+        Map<String, Token> tokens = new HashMap<String, Token>();
+        Token token = new Token("Default", true, 10, new Color(1,0,0));
+        tokens.put(token.getId(), token);
+        creator.setTokens(tokens);
+        Arc arc = creator.create(arcElement);
+
+        assertNotNull(arc);
+        List<Marking> weights = arc.getWeight();
+        Marking weight = weights.get(0);
+        assertEquals(token, weight.getToken());
     }
 }
