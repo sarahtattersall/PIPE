@@ -65,6 +65,14 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         setWeight(Copier.mediumCopy(weightInput));
     }
 
+    /**
+     * Calculates the source start point and target end point for an arc.
+     *
+     * Using pythagoras we calculate the angle between the source and target
+     * By trigonometry the angle between target and source is 180 - angle
+     *
+     * @return
+     */
     private Pair<Point2D.Double, Point2D.Double> getArcStartAndEnd() {
         Connectable source = _model.getSource();
         Connectable target = _model.getTarget();

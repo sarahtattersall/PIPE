@@ -54,9 +54,7 @@ public class Transition extends Connectable implements Serializable
     }
 
     /**
-     * AffineRotation assumes coordinate system where x points right and y points
-     * up. Since we are dealing with y pointing down we rotate the object around its
-     * centre at -angle.
+     * Rotates point on transition around transition center
      * @param angle
      * @param point
      * @return
@@ -64,7 +62,7 @@ public class Transition extends Connectable implements Serializable
     private Point2D.Double rotateAroundCenter(double angle, Point2D.Double point)
     {
         AffineTransform tx = new AffineTransform();
-        tx.rotate(-angle, getCentreX(), getCentreY());
+        tx.rotate(angle, getCentreX(), getCentreY());
         Point2D.Double rotatedPoint = new Point2D.Double();
         tx.transform(point, rotatedPoint);
         return rotatedPoint;
@@ -100,7 +98,7 @@ public class Transition extends Connectable implements Serializable
      * @return
      */
     private boolean connectToLeft(double angle) {
-        return (Math.sin(angle) < 0);
+        return (Math.sin(angle) > 0);
     }
 
     /**
