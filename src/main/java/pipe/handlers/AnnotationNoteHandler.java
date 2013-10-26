@@ -32,13 +32,13 @@
       JPopupMenu popup = super.getPopup(e);
       
       JMenuItem menuItem =
-              new JMenuItem(new EditNoteAction((AnnotationNote) my));
+              new JMenuItem(new EditNoteAction((AnnotationNote) component));
       menuItem.setText("Edit text");
       popup.insert(menuItem, popupIndex++);
       
       menuItem = new JMenuItem(
-              new EditAnnotationBorderAction((AnnotationNote) my));
-      if (((AnnotationNote) my).isShowingBorder()){
+              new EditAnnotationBorderAction((AnnotationNote) component));
+      if (((AnnotationNote) component).isShowingBorder()){
          menuItem.setText("Disable Border");
       } else{
          menuItem.setText("Enable Border");
@@ -46,8 +46,8 @@
       popup.insert(menuItem, popupIndex++);
       
       menuItem = new JMenuItem(
-              new EditAnnotationBackgroundAction((AnnotationNote) my));
-      if (((AnnotationNote) my).isFilled()) {
+              new EditAnnotationBackgroundAction((AnnotationNote) component));
+      if (((AnnotationNote) component).isFilled()) {
          menuItem.setText("Transparent");
       } else {
          menuItem.setText("Solid Background");
@@ -60,10 +60,10 @@
 
    
    public void mouseClicked(MouseEvent e) {
-      if ((e.getComponent() == my || !e.getComponent().isEnabled()) &&
+      if ((e.getComponent() == component || !e.getComponent().isEnabled()) &&
               (SwingUtilities.isLeftMouseButton(e))) { 
          if (e.getClickCount() == 2){
-            ((AnnotationNote) my).enableEditMode();
+            ((AnnotationNote) component).enableEditMode();
          }
       }
    }

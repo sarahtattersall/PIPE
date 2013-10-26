@@ -29,7 +29,7 @@ class ArcKeyboardEventHandler
          case KeyEvent.VK_META:
          case KeyEvent.VK_WINDOWS:
             // I don't know if it's a java's bug or if I have a configuration 
-            // problem with my linux box, but there is an issue with the 
+            // problem with component linux box, but there is an issue with the
             // Windows key under linux, so the space key is used as a provisional
             // solution
          case KeyEvent.VK_SPACE: //provisional

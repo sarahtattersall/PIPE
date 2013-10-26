@@ -41,7 +41,7 @@ public class GroupTransitionHandler
             rotation = e.getWheelRotation() * 45;
          }
        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-                 ((GroupTransitionView) my).rotate(rotation));
+                 ((GroupTransitionView) component).rotate(rotation));
       
    }   
    
@@ -57,7 +57,7 @@ public class GroupTransitionHandler
       JMenuItem menuItem = new JMenuItem("Edit Transition");      
       menuItem.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-            ((GroupTransitionView) my).showEditor();
+            ((GroupTransitionView) component).showEditor();
          }
       });       
       popup.insert(menuItem, index++);             
@@ -66,12 +66,12 @@ public class GroupTransitionHandler
       menuItem = new JMenuItem("Ungroup Transitions");      
       menuItem.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent e) {
-        	HistoryItem edit = ((GroupTransitionView) my).ungroupTransitions();
+        	HistoryItem edit = ((GroupTransitionView) component).ungroupTransitions();
              ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(edit);
 /*    		PetriNet model = Pipe.getCurrentPetriNetView();
-    		model.removePetriNetObject(((GroupTransition)my));
+    		model.removePetriNetObject(((GroupTransition)component));
     		PetriNetTab view = Pipe.getCurrentTab();
-    		view.remove(((GroupTransition)my));*/
+    		view.remove(((GroupTransition)component));*/
          }
       });       
       popup.insert(menuItem, index++);           
@@ -87,19 +87,19 @@ public class GroupTransitionHandler
                  (ApplicationSettings.getApplicationModel().getMode() == Constants.TIMEDTRANS ||
                  ApplicationSettings.getApplicationModel().getMode() == Constants.IMMTRANS ||
                  ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)) {
-            ((GroupTransitionView) my).showEditor();
+            ((GroupTransitionView) component).showEditor();
          } 
       }  else if (SwingUtilities.isRightMouseButton(e)){
           if (ApplicationSettings.getApplicationModel().isEditionAllowed() && enablePopup) {
             JPopupMenu m = getPopup(e);
             if (m != null) {           
                int x = ZoomController.getZoomedValue(
-                       my.getNameOffsetXObject().intValue(),
-                       my.getZoomPercentage());
+                       component.getNameOffsetXObject().intValue(),
+                       component.getZoomPercentage());
                int y = ZoomController.getZoomedValue(
-                       my.getNameOffsetYObject().intValue(),
-                       my.getZoomPercentage());
-               m.show(my, x, y);
+                       component.getNameOffsetYObject().intValue(),
+                       component.getZoomPercentage());
+               m.show(component, x, y);
             }
          }
       }

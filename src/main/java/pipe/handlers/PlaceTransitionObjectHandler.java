@@ -70,14 +70,14 @@ public class PlaceTransitionObjectHandler
          return;
       }
       
-      ConnectableView currentObject = (ConnectableView) my;
+      ConnectableView currentObject = (ConnectableView) component;
        switch (ApplicationSettings.getApplicationModel().getMode()) {
          case Constants.ARC:
             if (e.isControlDown()) {
                // user is holding Ctrl key; switch to fast mode
-               if (this.my instanceof PlaceView) {
+               if (this.component instanceof PlaceView) {
                    ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_TRANSITION);
-               } else if (this.my instanceof TransitionView) {
+               } else if (this.component instanceof TransitionView) {
                    ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_PLACE);
                }
             }
@@ -112,7 +112,7 @@ public class PlaceTransitionObjectHandler
       
       super.mouseReleased(e);
       
-      ConnectableView currentObject = (ConnectableView) my;
+      ConnectableView currentObject = (ConnectableView) component;
       
       switch (app.getMode()) {
          case Constants.INHIBARC:

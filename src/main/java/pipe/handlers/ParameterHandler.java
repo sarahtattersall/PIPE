@@ -27,7 +27,7 @@ public class ParameterHandler
       int index = 0;
       JPopupMenu popup = super.getPopup(e);
       JMenuItem menuItem = 
-               new JMenuItem(new EditNoteAction((Parameter) my));
+               new JMenuItem(new EditNoteAction((Parameter) component));
       menuItem.setText("Edit parameter");
       popup.insert(menuItem, index++);
       
@@ -38,9 +38,9 @@ public class ParameterHandler
    
    
    public void mouseClicked(MouseEvent e) {
-      if ((e.getComponent() == my) || !e.getComponent().isEnabled()){
+      if ((e.getComponent() == component) || !e.getComponent().isEnabled()){
          if ((SwingUtilities.isLeftMouseButton(e)) && (e.getClickCount() == 2)){
-            ((Parameter) my).enableEditMode();
+            ((Parameter) component).enableEditMode();
          }
       }
    }

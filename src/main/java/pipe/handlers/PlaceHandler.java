@@ -38,14 +38,14 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
                                             {
                                                 public void actionPerformed(ActionEvent e)
                                                 {
-                                                    ((PlaceView) my).showEditor();
+                                                    ((PlaceView) component).showEditor();
                                                 }
                                             };
         menuItem.addActionListener(actionListener);
         popup.insert(menuItem, index++);
 
-        menuItem = new JMenuItem(new ShowHideInfoAction((PlaceView) my));
-        if(((PlaceView) my).getAttributesVisible())
+        menuItem = new JMenuItem(new ShowHideInfoAction((PlaceView) component));
+        if(((PlaceView) component).getAttributesVisible())
         {
             menuItem.setText("Hide Attributes");
         }
@@ -67,11 +67,11 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
                     && ApplicationSettings.getApplicationModel().isEditionAllowed()
                     && (ApplicationSettings.getApplicationModel().getMode() == Constants.PLACE || ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT))
             {
-                ((PlaceView) my).showEditor();
+                ((PlaceView) component).showEditor();
             }
             else
             {
-                LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) my).getCurrentMarkingView());
+                LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) component).getCurrentMarkingView());
                 HistoryManager historyManager = ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
                 switch(ApplicationSettings.getApplicationModel().getMode())
                 {
@@ -95,13 +95,13 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
                 JPopupMenu m = getPopup(e);
                 if(m != null)
                 {
-                    int x = ZoomController.getZoomedValue(my
-                                                                  .getNameOffsetXObject().intValue(), my
+                    int x = ZoomController.getZoomedValue(component
+                                                                  .getNameOffsetXObject().intValue(), component
                             .getZoomPercentage());
-                    int y = ZoomController.getZoomedValue(my
-                                                                  .getNameOffsetYObject().intValue(), my
+                    int y = ZoomController.getZoomedValue(component
+                                                                  .getNameOffsetYObject().intValue(), component
                             .getZoomPercentage());
-                    m.show(my, x, y);
+                    m.show(component, x, y);
                 }
             }
         }/*
@@ -115,12 +115,12 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
 		for(MarkingView currentMarkingView : oldMarkingViews)
 		{
 		    if(currentMarkingView.getToken().hasSameId(
-		            ((PlaceView) my).getActiveTokenView()))
+		            ((PlaceView) component).getActiveTokenView()))
 		    {
 		        if(currentMarkingView.getCurrentMarking() > 0)
 		        {
 		            currentMarkingView.setCurrentMarking(currentMarkingView.getCurrentMarking() - 1);
-		            historyManager.addNewEdit(((PlaceView) my)
+		            historyManager.addNewEdit(((PlaceView) component)
 		                                           .setCurrentMarking(oldMarkingViews));
 		        }
 		    }
@@ -132,11 +132,11 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
 	{
 		for(MarkingView m : oldMarkingViews)
 		{
-		    if(m.getToken().hasSameId(((PlaceView) my).getActiveTokenView()))
+		    if(m.getToken().hasSameId(((PlaceView) component).getActiveTokenView()))
 		    {
 		        m.setCurrentMarking(m.getCurrentMarking() + 1);
 		        m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(m.getToken().getID()));
-		        historyManager.addNewEdit(((PlaceView) my).setCurrentMarking(oldMarkingViews));
+		        historyManager.addNewEdit(((PlaceView) component).setCurrentMarking(oldMarkingViews));
 		        break;
 		    }
 		}
@@ -164,8 +164,8 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
         HistoryManager historyManager = ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
         if(e.isShiftDown())
         {
-            int oldCapacity = ((PlaceView) my).getCapacity();
-            LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) my).getCurrentMarkingView());
+            int oldCapacity = ((PlaceView) component).getCapacity();
+            LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) component).getCurrentMarkingView());
 
             int newCapacity = oldCapacity - e.getWheelRotation();
             if(newCapacity < 0)
@@ -177,28 +177,28 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
             for(MarkingView m : oldMarkingViews)
             {
                 if(m.getToken().hasSameId(
-                        ((PlaceView) my).getActiveTokenView()))
+                        ((PlaceView) component).getActiveTokenView()))
                 {
                     if((newCapacity > 0)
                             && (m.getCurrentMarking() > newCapacity))
                     {
-                        historyManager.addEdit(((PlaceView) my)
+                        historyManager.addEdit(((PlaceView) component)
                                                     .setCurrentMarking(oldMarkingViews));
                     }
                     updateArcAndTran();
                 }
             }
             
-            historyManager.addEdit(((PlaceView) my).setCapacity(newCapacity));
+            historyManager.addEdit(((PlaceView) component).setCapacity(newCapacity));
         }
         else
         {
-            LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) my).getCurrentMarkingView());
+            LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) component).getCurrentMarkingView());
             int markingChange = e.getWheelRotation();
             for(MarkingView m : oldMarkingViews)
             {
                 if(m.getToken().hasSameId(
-                        ((PlaceView) my).getActiveTokenView()))
+                        ((PlaceView) component).getActiveTokenView()))
                 {
                     //m.setToken(Pipe.getCurrentPetriNetView().getTokenClassFromID(m.getToken().getID()));
                     int oldMarking = m.getCurrentMarking();
@@ -210,7 +210,7 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
                     if(oldMarking != newMarking)
                     {
                         m.setCurrentMarking(newMarking);
-                        historyManager.addNewEdit(((PlaceView) my)
+                        historyManager.addNewEdit(((PlaceView) component)
                                                        .setCurrentMarking(oldMarkingViews));
                     }
                     updateArcAndTran();

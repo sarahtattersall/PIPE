@@ -27,7 +27,7 @@ public class PetriNetObjectHandler
     //implements java.awt.event.MouseWheelListener {
 
     final Container contentPane;
-    PetriNetViewComponent my = null;
+    PetriNetViewComponent component = null;
 
     // justSelected: set to true on press, and false on release;
     static boolean justSelected = false;
@@ -43,7 +43,7 @@ public class PetriNetObjectHandler
     PetriNetObjectHandler(Container contentpane, PetriNetViewComponent obj)
     {
         contentPane = contentpane;
-        my = obj;
+        component = obj;
     }
 
 
@@ -57,7 +57,7 @@ public class PetriNetObjectHandler
     {
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem =
-                new JMenuItem(new DeletePetriNetObjectAction(my));
+                new JMenuItem(new DeletePetriNetObjectAction(component));
         menuItem.setText("Delete");
         popup.add(menuItem);
         return popup;
@@ -75,7 +75,7 @@ public class PetriNetObjectHandler
             JPopupMenu m = getPopup(e);
             if(m != null)
             {
-                m.show(my, e.getX(), e.getY());
+                m.show(component, e.getX(), e.getY());
             }
         }
     }
@@ -96,13 +96,13 @@ public class PetriNetObjectHandler
 
         if(applicationModel.getMode() == Constants.SELECT)
         {
-            if(!my.isSelected())
+            if(!component.isSelected())
             {
                 if(!e.isShiftDown())
                 {
                     ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
                 }
-                my.select();
+                component.select();
                 justSelected = true;
             }
             dragInit = e.getPoint();
@@ -146,12 +146,12 @@ public class PetriNetObjectHandler
                 {
                     if(e.isShiftDown())
                     {
-                        my.deselect();
+                        component.deselect();
                     }
                     else
                     {
                         ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
-                        my.select();
+                        component.select();
                     }
                 }
             }
@@ -173,7 +173,7 @@ public class PetriNetObjectHandler
 
         if(ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)
         {
-            if(my.isDraggable())
+            if(component.isDraggable())
             {
                 if(!isDragging)
                 {

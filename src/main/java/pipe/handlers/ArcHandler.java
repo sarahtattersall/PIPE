@@ -44,39 +44,39 @@ public class ArcHandler
       JPopupMenu popup = super.getPopup(e);
       
  
-      if (my instanceof InhibitorArcView) {
+      if (component instanceof InhibitorArcView) {
           menuItem = new JMenuItem("Edit Weight");      
           menuItem.addActionListener(new ActionListener(){
              public void actionPerformed(ActionEvent e) {
-                ((ArcView) my).showEditor();
+                ((ArcView) component).showEditor();
              }
           });       
           popup.insert(menuItem, popupIndex++);  
 
-         menuItem = new JMenuItem(new SplitArcAction((ArcView) my,
+         menuItem = new JMenuItem(new SplitArcAction((ArcView) component,
                                                       e.getPoint()));
          menuItem.setText("Split Arc Segment");
          popup.insert(menuItem, popupIndex++);
 
          popup.insert(new JPopupMenu.Separator(), popupIndex++);         
-      } else if (my instanceof NormalArcView) {
-         if (((NormalArcView) my).isJoined()){
+      } else if (component instanceof NormalArcView) {
+         if (((NormalArcView) component).isJoined()){
             NormalArcView PTArc;
             NormalArcView TPArc;
             
-            if (((NormalArcView) my).getSource() instanceof PlaceView){
-               PTArc = (NormalArcView) my;
-               TPArc = ((NormalArcView) my).getInverse();
+            if (((NormalArcView) component).getSource() instanceof PlaceView){
+               PTArc = (NormalArcView) component;
+               TPArc = ((NormalArcView) component).getInverse();
             } else {
-               PTArc = ((NormalArcView) my).getInverse();
-               TPArc = (NormalArcView) my;
+               PTArc = ((NormalArcView) component).getInverse();
+               TPArc = (NormalArcView) component;
             }
 
 //            if (!PTArc.isTagged()) { //pendentnou
             menuItem = new JMenuItem("Edit Weight");      
             menuItem.addActionListener(new ActionListener(){
                public void actionPerformed(ActionEvent e) {
-                  ((ArcView) my).showEditor();
+                  ((ArcView) component).showEditor();
                }
             });       
             popup.insert(menuItem, popupIndex++);  
@@ -106,18 +106,18 @@ public class ArcHandler
 
             popup.insert(new JPopupMenu.Separator(), popupIndex++);
             
-            menuItem = new JMenuItem(new InsertPointAction((ArcView) my,
+            menuItem = new JMenuItem(new InsertPointAction((ArcView) component,
                                                          e.getPoint()));            
             menuItem.setText("Insert Point");
             /*                        
-            menuItem = new JMenuItem(new SplitArcAction((Arc)my,
+            menuItem = new JMenuItem(new SplitArcAction((Arc)component,
                                                          e.getPoint()));
             menuItem.setText("Split Arc Segment");
              */
             popup.insert(menuItem, popupIndex++);
             
             menuItem = new JMenuItem(
-                    new SplitArcsAction((NormalArcView) my, true));
+                    new SplitArcsAction((NormalArcView) component, true));
             menuItem.setText("Split Arcs (PT / TP)");
             popup.insert(menuItem, popupIndex++);            
 
@@ -131,43 +131,43 @@ public class ArcHandler
             menuItem.setText("Delete (TP Arc)");
             popup.insert(menuItem, popupIndex++);
             /*
-            menuItem = new JMenuItem(new DeleteBothAction((NormalArc)my));
+            menuItem = new JMenuItem(new DeleteBothAction((NormalArc)component));
             menuItem.setText("Delete Both");
             popup.insert(menuItem, 8);                                    
             */
          } else {
-//            if(!((NormalArc)my).isTagged()) {
+//            if(!((NormalArc)component).isTagged()) {
              menuItem = new JMenuItem("Edit Weight");      
              menuItem.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                   ((ArcView) my).showEditor();
+                   ((ArcView) component).showEditor();
                 }
              });       
              popup.insert(menuItem, popupIndex++);  
 //            }
             
 //            menuItem = new JMenuItem(
-//                    new EditTaggedAction(contentPane,(NormalArc)my));
-//            if (((NormalArc)my).isTagged()) {
+//                    new EditTaggedAction(contentPane,(NormalArc)component));
+//            if (((NormalArc)component).isTagged()) {
 //               menuItem.setText("Make Non-Tagged");
 //            } else { 
 //               menuItem.setText("Make Tagged");
 //            }
 //            popup.insert(menuItem, popupIndex++);            
 
-            //menuItem = new JMenuItem(new SplitArcAction((Arc)my,
+            //menuItem = new JMenuItem(new SplitArcAction((Arc)component,
             //                                             e.getPoint()));
             //menuItem.setText("Split Arc Segment");
             
             
-            menuItem = new JMenuItem(new SplitArcAction((ArcView) my,
+            menuItem = new JMenuItem(new SplitArcAction((ArcView) component,
                                                          e.getPoint()));            
             menuItem.setText("Insert Point");
             popup.insert(menuItem, popupIndex++);
 
-            if (((NormalArcView) my).hasInverse()){
+            if (((NormalArcView) component).hasInverse()){
                menuItem = new JMenuItem(
-                        new SplitArcsAction((NormalArcView) my, false));
+                        new SplitArcsAction((NormalArcView) component, false));
                
                menuItem.setText("Join Arcs (PT / TP)");
                popup.insert(menuItem, popupIndex++);            
@@ -185,7 +185,7 @@ public class ArcHandler
          return;
       }      
       if (e.getClickCount() == 2){
-         ArcView arcView = (ArcView) my;
+         ArcView arcView = (ArcView) component;
          if (e.isControlDown()){
              ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
                     arcView.getArcPath().insertPointAt(
@@ -206,7 +206,7 @@ public class ArcHandler
             if (!isDragging){
                break;
             }
-            ArcView currentObject = (ArcView) my;
+            ArcView currentObject = (ArcView) component;
             Point oldLocation = currentObject.getLocation();
             // Calculate translation in mouse
             int transX = Grid.getModifiedX(e.getX() - dragInit.x);
