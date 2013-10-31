@@ -37,7 +37,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     private ConnectableView _source = null;
     private ConnectableView _target = null;
 
-    private Arc _model;
+    protected Arc _model;
 
     final ArcPath myPath = new ArcPath(this);
 
@@ -53,10 +53,13 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             String idInput, Arc model) {
         _model = model;
 
-        Pair<Point2D.Double, Point2D.Double> linePoints = getArcStartAndEnd();
-        myPath.addPoint((float) linePoints.first.x, (float) linePoints.first.y, ArcPathPoint.STRAIGHT);
-        myPath.addPoint((float) linePoints.second.x, (float) linePoints.second.y, ArcPathPoint.STRAIGHT);
+        myPath.addPoint(model.getSource().getCentreX(), model.getSource().getCentreY(), ArcPathPoint.STRAIGHT);
+        myPath.addPoint(model.getSource().getCentreX(), model.getSource().getCentreY(), ArcPathPoint.STRAIGHT);
         myPath.createPath();
+//        Pair<Point2D.Double, Point2D.Double> linePoints = getArcStartAndEnd();
+//        myPath.addPoint((float) linePoints.first.x, (float) linePoints.first.y, ArcPathPoint.STRAIGHT);
+//        myPath.addPoint((float) linePoints.second.x, (float) linePoints.second.y, ArcPathPoint.STRAIGHT);
+//        myPath.createPath();
 
         updateBounds();
         _id = idInput;
@@ -91,7 +94,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         return ZoomController.getZoomedValue(x, _zoomPercentage);
     }
 
-    private Point2D.Double zoomPoint(Point2D.Double point)
+    protected Point2D.Double zoomPoint(Point2D.Double point)
     {
         double x = zoom(point.x);
         double y = zoom(point.y);
@@ -241,9 +244,17 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     }
 
     public void updateArcPosition() {
-        Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
-        setSourceLocation(points.first.x, points.first.y);
-        setTargetLocation(points.second.x, points.second.y);
+        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
+//        setSourceLocation(points.first.x, points.first.y);
+//        setTargetLocation(points.second.x, points.second.y);
+        if(_source != null)
+        {
+            _source.updateEndPoint(this);
+        }
+        if(_target != null)
+        {
+            _target.updateEndPoint(this);
+        }
         myPath.createPath();
     }
 
@@ -528,6 +539,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     // Steve Doubleday (Oct 2013): cascading clean up of Marking Views if Token View is disabled
     @Override
     public void update(Observable observable, Object obj) {
+        System.out.println("UPDATE!!!");
         if ((observable instanceof PipeObservable) && (obj == null)) {
             // if multiple cases are added, consider creating specific subclasses of Observable
             Object originalObject = ((PipeObservable) observable).getObservable();

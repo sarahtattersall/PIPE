@@ -322,7 +322,9 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
         double unZoomedX = (x - getComponentDrawOffset()) / (zoomPercentage / 100.0);
         double unZoomedY = (y - getComponentDrawOffset()) / (zoomPercentage / 100.0);
 
-        ArcView someArcView = ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
+
+        //TODO: FIGURE OUT WHAT THIS DOES
+        ArcView someArcView =  null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
         if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
             if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
                     transition.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {

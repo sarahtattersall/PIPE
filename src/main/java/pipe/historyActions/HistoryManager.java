@@ -206,15 +206,16 @@ public class HistoryManager
     // removes the arc currently being drawn if any
     private void checkArcBeingDrawn()
     {
-        ArcView arcBeingDrawn = _view._createArcView;
-        if(arcBeingDrawn != null)
-        {
-            if(arcBeingDrawn.getParent() != null)
-            {
-                arcBeingDrawn.getParent().remove(arcBeingDrawn);
-            }
-            _view._createArcView = null;
-        }
+        //TODO: WORK OUT WAHT THIS DOS
+//        ArcView arcBeingDrawn = _view._createArcView;
+//        if(arcBeingDrawn != null)
+//        {
+//            if(arcBeingDrawn.getParent() != null)
+//            {
+//                arcBeingDrawn.getParent().remove(arcBeingDrawn);
+//            }
+//            _view._createArcView = null;
+//        }
     }
 
 

@@ -1,5 +1,6 @@
 package pipe.actions;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -89,10 +90,11 @@ public class TypeAction extends GuiAction
         StatusBar statusBar = ApplicationSettings.getApplicationView().statusBar;
         statusBar.changeText(typeID);
 
-        if((typeID != Constants.ARC) && (appView._createArcView != null))
+
+        PetriNetController petriNetController = appView.getPetriNetController();
+        if((typeID != Constants.ARC) && (petriNetController.isCurrentlyCreatingArc()))
         {
-            appView._createArcView.delete();
-            appView._createArcView = null;
+            petriNetController.cancelArcCreation();
             appView.repaint();
         }
 

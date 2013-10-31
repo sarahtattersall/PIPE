@@ -415,7 +415,8 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         double unZoomedX = ZoomController.getUnzoomedValue(x - getComponentDrawOffset(), _zoomPercentage);
         double unZoomedY = ZoomController.getUnzoomedValue(y - getComponentDrawOffset(), _zoomPercentage);
 
-        ArcView someArcView = ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
+        //TODO: WORK OUT WHAT THIS DOES
+        ArcView someArcView = null;//ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
         if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
             if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
                     place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {

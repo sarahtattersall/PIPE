@@ -136,6 +136,7 @@ public class Transition extends Connectable implements Serializable
     public void setPriority(Integer priority)
     {
         this.priority = priority;
+        notifyObservers();
     }
 
 	public String getRateExpr() {
@@ -144,9 +145,11 @@ public class Transition extends Connectable implements Serializable
 
 	public void setRateExpr(String string) {
 		rateExpr = string;
+        notifyObservers();
 	}
 	public void setRateExpr(double expr) {
 		rateExpr = Double.toString(expr);
+        notifyObservers();
 	}
 
 
@@ -176,34 +179,42 @@ public class Transition extends Connectable implements Serializable
 
     public void setPriority(int priority) {
         this.priority = priority;
+        notifyObservers();
     }
 
     public void setOrientation(int orientation) {
         this.orientation = orientation;
+        notifyObservers();
     }
 
     public void setTimed(boolean timed) {
         this.timed = timed;
+        notifyObservers();
     }
 
     public void setInfiniteServer(boolean infiniteServer) {
         this.infiniteServer = infiniteServer;
+        notifyObservers();
     }
 
     public void setNameXOffset(double nameXOffset) {
         this.nameXOffset = nameXOffset;
+        notifyObservers();
     }
 
     public void setNameYOffset(double nameYOffset) {
         this.nameYOffset = nameYOffset;
+        notifyObservers();
     }
 
     public void setAngle(int angle) {
         this.angle = angle;
+        notifyObservers();
     }
 
     public void setTimedTransition(boolean timedTransition) {
         this.timedTransition = timedTransition;
+        notifyObservers();
     }
 
     public boolean isTimedTransition() {
@@ -216,5 +227,6 @@ public class Transition extends Connectable implements Serializable
 
     public void setRateParameter(RateParameter rateParameter) {
         this.rateParameter = rateParameter;
+        notifyObservers();
     }
 }

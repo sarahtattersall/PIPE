@@ -48,7 +48,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     private ArrayList _arcAngleList;
     private RateParameter _rateParameter;
     private GroupTransitionView _groupTransitionView;
-    private final Transition _model;
 
 
     /**
@@ -379,7 +378,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         double unZoomedX = (x - getComponentDrawOffset()) / (zoomPercentage / 100.0);
         double unZoomedY = (y - getComponentDrawOffset()) / (zoomPercentage / 100.0);
 
-        ArcView someArcView = ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
+        //TODO: WORK OUT WHAT THIS DOES AND REMOVE DUPLICATED CODE BETWEEN THIS AND PLACE
+        ArcView someArcView = null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
         if (someArcView != null) {
             if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
                     _path.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
@@ -638,6 +638,10 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         }
         ApplicationSettings.getApplicationView().getCurrentPetriNetView().deleteTransition(this.getId());
         super.delete();
+    }
+
+    public void setModel(Transition model) {
+        this._model = model;
     }
 
     class ArcAngleCompare implements Comparable {

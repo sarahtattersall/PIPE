@@ -1,9 +1,13 @@
 package pipe.gui;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.handlers.*;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PipeApplicationModel;
+import pipe.models.Place;
+import pipe.models.Transition;
 import pipe.views.*;
 import pipe.views.viewComponents.*;
 
@@ -28,7 +32,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
 
     public boolean netChanged = false;
     private boolean animationmode = false;
-    public ArcView _createArcView;
+    //public ArcView _createArcView;
     private final AnimationHandler animationHandler = new AnimationHandler();
     private boolean metaDown = false;
     private final SelectionManager selection;
@@ -39,11 +43,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     public boolean _wasNewPertiNetComponentCreated = false;
     private boolean _zoomCalled = true;
     private final Point viewPosition = new Point(0, 0);
+    private final PetriNetController petriNetController;
 
 
-    public PetriNetTab(PetriNetView petriNetView)
+    public PetriNetTab(PetriNetView petriNetView, PetriNetController controller)
     {
         _petriNetView = petriNetView;
+        petriNetController = controller;
+
         _pipeApplicationView = ApplicationSettings.getApplicationView();
         setLayout(null);
         setOpaque(true);
@@ -66,6 +73,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         selection = new SelectionManager(this);
         _historyManager = new HistoryManager(this, _petriNetView);
     }
+
+    public PetriNetController getPetriNetController() {
+        return petriNetController;
+    }
+
 
     public void addNewPetriNetObject(PetriNetViewComponent newPetriNetViewComponent)
     {
@@ -419,8 +431,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         private ConnectableView newPlace(Point p)
         {
             p = adjustPoint(p, _petriNetTab.getZoom());
+            //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
+            Place place = new Place("", "");
+            place.setX(Grid.getModifiedX(p.x));
+            place.setY(Grid.getModifiedX(p.y));
 
             pn = new PlaceView((double) Grid.getModifiedX(p.x), (double) Grid.getModifiedY(p.y));
+            ((PlaceView) pn).setModel(place);
+
             _model.addPetriNetObject(pn);
             _petriNetTab.addNewPetriNetObject(pn);
             return (ConnectableView) pn;
@@ -430,9 +448,18 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         private ConnectableView newTransition(Point p, boolean timed)
         {
             p = adjustPoint(p, _petriNetTab.getZoom());
+            //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
+            Transition transition = new Transition("", "");
+            transition.setX((double) Grid.getModifiedX(p.x));
+            transition.setY((double) Grid.getModifiedY(p.y));
+            transition.setTimed(timed);
+
+            //TODO: ADd observer
+            //transition.registerObserver(pn);
 
             pn = new TransitionView((double) Grid.getModifiedX(p.x), (double) Grid.getModifiedY(p.y));
             ((TransitionView) pn).setTimed(timed);
+            ((TransitionView) pn).setModel(transition);
             _model.addPetriNetObject(pn);
             _petriNetTab.addNewPetriNetObject(pn);
             return (ConnectableView) pn;
@@ -474,8 +501,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
 
                     case Constants.ARC:
                     case Constants.INHIBARC:
-                        if(_createArcView != null)
-                            addPoint(_createArcView, e);
+                        if(petriNetController.isCurrentlyCreatingArc())
+                            addPoint(e);
                         break;
 
                     case Constants.ANNOTATION:
@@ -527,14 +554,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
                         ConnectableView createPTO;
                         if(e.isMetaDown() || metaDown)
                         {
-                            if(_createArcView != null)
+                            if(petriNetController.isCurrentlyCreatingArc())
                             {
-                                addPoint(_createArcView, e);
+                                addPoint(e);
                             }
                         }
                         else
                         {
-                            if(_createArcView == null)
+                            if(!petriNetController.isCurrentlyCreatingArc())
                                 break;
                             _petriNetTab._wasNewPertiNetComponentCreated = true;
                             createPTO = newPlace(e.getPoint());
@@ -553,12 +580,12 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
                     case Constants.FAST_TRANSITION:
                         if(e.isMetaDown() || metaDown)
                         {
-                            if(_createArcView != null)
-                                addPoint(_createArcView, e);
+                            if(petriNetController.isCurrentlyCreatingArc())
+                                addPoint(e);
                         }
                         else
                         {
-                            if(_createArcView == null)
+                            if(!petriNetController.isCurrentlyCreatingArc())
                                 break;
                             _petriNetTab._wasNewPertiNetComponentCreated = true;
                             timed = e.isAltDown();
@@ -594,13 +621,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         }
 
 
-        private void addPoint(final ArcView createArcView, final MouseEvent e)
+        private void addPoint(final MouseEvent e)
         {
             int x = Grid.getModifiedX(e.getX());
             int y = Grid.getModifiedY(e.getY());
             boolean shiftDown = e.isShiftDown();
-            createArcView.setEndPoint(x, y, shiftDown);
-            createArcView.getArcPath().addPoint(x, y, shiftDown);
+            petriNetController.addArcPoint(x, y, shiftDown);
+            //createArcView.setEndPoint(x, y, shiftDown);
+            //createArcView.getArcPath().addPoint(x, y, shiftDown);
         }
 
 
@@ -610,10 +638,18 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         }
 
 
-        public void mouseMoved(MouseEvent e)
+        public void mouseMoved(MouseEvent event)
         {
-            if(_createArcView != null)
-                _createArcView.setEndPoint(Grid.getModifiedX(e.getX()), Grid.getModifiedY(e.getY()), e.isShiftDown());
+            if(petriNetController.isCurrentlyCreatingArc())
+            {
+                petriNetController.addArcPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(
+                        event.getY()), event.isShiftDown());
+            }
+            //TODO: THIS SHOULDNT BE IN PipeApplicationController
+            //PipeApplicationController controller = ApplicationSettings.getApplicationController();
+            //controller.mouseMoved(event);
+            //if(_createArcView != null)
+            //    _createArcView.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(event.getY()), event.isShiftDown());
         }
 
 

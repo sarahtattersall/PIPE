@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
@@ -31,6 +32,7 @@ public class PlaceTransitionObjectHandler
 	public static boolean isMouseDown(){
 		   return mouseDown;
 	}
+
 	
    private ArcKeyboardEventHandler keyHandler = null;
    
@@ -42,23 +44,32 @@ public class PlaceTransitionObjectHandler
    }
    
    
-   private void createArc(ArcView newArcView, ConnectableView currentObject){
-       TokenView tc = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getActiveTokenView();
-	   MarkingView m = new MarkingView(tc, 1+"");
-	   m.addObserver(newArcView);  // Steve Doubleday:  ArcView tracks updates to MarkingView 
-	   LinkedList<MarkingView> markingViews = new LinkedList<MarkingView>();
-	   markingViews.add(m);
-	   newArcView.setWeight(markingViews);
+   private void createArc(ArcView newArcView, ConnectableView source){
+       TokenView tokenView = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getActiveTokenView();
+       MarkingView markingView = new MarkingView(tokenView, 1+"");
+       markingView.addObserver(newArcView);  // Steve Doubleday:  ArcView tracks updates to MarkingView
+
+       LinkedList<MarkingView> markingViews = new LinkedList<MarkingView>();
+	   markingViews.add(markingView);
+
+       newArcView.setWeight(markingViews);
        newArcView.setZoom(ApplicationSettings.getApplicationView().getCurrentTab().getZoom());
-      contentPane.add(newArcView);
-      currentObject.addOutbound(newArcView);
-       ApplicationSettings.getApplicationView().getCurrentTab()._createArcView = newArcView;
-      // addPetriNetObject a handler for shift & esc actions drawing arc
-      // this is removed when the arc is finished drawing:
-      keyHandler = new ArcKeyboardEventHandler(newArcView);
-      newArcView.addKeyListener(keyHandler);
-      newArcView.requestFocusInWindow();
-      newArcView.setSelectable(false);
+
+       contentPane.add(newArcView);
+
+       source.addOutbound(newArcView);
+
+       PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+       PetriNetTab tab = applicationView.getCurrentTab();
+
+       //tab._createArcView = newArcView;
+
+       // addPetriNetObject a handler for shift & esc actions drawing arc
+       // this is removed when the arc is finished drawing:
+       keyHandler = new ArcKeyboardEventHandler(newArcView);
+       newArcView.addKeyListener(keyHandler);
+       newArcView.requestFocusInWindow();
+       newArcView.setSelectable(false);
    }
    
    
@@ -84,13 +95,16 @@ public class PlaceTransitionObjectHandler
          case Constants.INHIBARC:
          case Constants.FAST_PLACE:
          case Constants.FAST_TRANSITION:
-             if (ApplicationSettings.getApplicationView().getCurrentTab()._createArcView == null) {
+             PetriNetController petriNetController = ApplicationSettings.getPetriNetController();
+             if (!petriNetController.isCurrentlyCreatingArc()) {
                  if (ApplicationSettings.getApplicationModel().getMode() == Constants.INHIBARC){
                   if (currentObject instanceof PlaceView) {
-                      createArc(new InhibitorArcView(currentObject), currentObject);
+                      petriNetController.startCreatingArc(currentObject.getModel());
+                      //createArc(new InhibitorArcView(currentObject), currentObject);
                   }
                } else {
-                   createArc(new NormalArcView(currentObject), currentObject);
+                   petriNetController.startCreatingArc(currentObject.getModel());
+                   //createArc(new NormalArcView(currentObject), currentObject);
                }
             }
             break;
@@ -113,17 +127,20 @@ public class PlaceTransitionObjectHandler
       super.mouseReleased(e);
       
       ConnectableView currentObject = (ConnectableView) component;
+      PetriNetController petriNetController = ApplicationSettings.getPetriNetController();
       
       switch (app.getMode()) {
          case Constants.INHIBARC:
-            InhibitorArcView createInhibitorArcView = (InhibitorArcView) view._createArcView;
-            if (createInhibitorArcView != null) {
+
+             //TODO: FIGURE OUT WHAT IT DOES
+            InhibitorArcView createInhibitorArcView = null; //(InhibitorArcView) view._createArcView;
+            if (petriNetController.isCurrentlyCreatingArc()) {
                if (!currentObject.getClass().equals(
                        createInhibitorArcView.getSource().getClass())) {
-                  
+
                   Iterator arcsFrom =
                           createInhibitorArcView.getSource().getConnectFromIterator();
-                  // search for pre-existent arcs from createInhibitorArc's 
+                  // search for pre-existent arcs from createInhibitorArc's
                   // source to createInhibitorArc's target
                   while(arcsFrom.hasNext()) {
                      ArcView someArcView = ((ArcView)arcsFrom.next());
@@ -133,11 +150,11 @@ public class PlaceTransitionObjectHandler
                              someArcView.getSource() == createInhibitorArcView.getSource()) {
                         isNewArc = false;
                         if (someArcView instanceof NormalArcView){
-                           // user has drawn an inhibitor arc where there is 
+                           // user has drawn an inhibitor arc where there is
                            // a normal arc already - nothing to do
                         } else if (someArcView instanceof InhibitorArcView) {
-                           // user has drawn an inhibitor arc where there is 
-                           // an inhibitor arc already - we increment arc's 
+                           // user has drawn an inhibitor arc where there is
+                           // an inhibitor arc already - we increment arc's
                            // weight
                            LinkedList<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
                            for(MarkingView m:weight){
@@ -154,7 +171,7 @@ public class PlaceTransitionObjectHandler
                         break;
                      }
                   }
-                  
+
                   if (isNewArc) {
                      createInhibitorArcView.setSelectable(true);
                      createInhibitorArcView.setTarget(currentObject);
@@ -167,121 +184,26 @@ public class PlaceTransitionObjectHandler
                              new AddPetriNetObject(createInhibitorArcView,
                              view, model));
                   }
-                  
+
                   // arc is drawn, remove handler:
                   createInhibitorArcView.removeKeyListener(keyHandler);
                   keyHandler = null;
-                  view._createArcView = null;
+
+                  petriNetController.finishCreatingArc(currentObject.getModel());
                }
             }
             break;
-            
+
          case Constants.FAST_TRANSITION:
          case Constants.FAST_PLACE:
             fastMode = true;
          case Constants.ARC:
-            ArcView createArcView = view._createArcView;
-            if (createArcView != null) {
-               if (currentObject != createArcView.getSource()) {
-                  createArcView.setSelectable(true);
-                  Iterator arcsFrom = createArcView.getSource().getConnectFromIterator();
-                  // search for pre-existent arcs from createArc's source to 
-                  // createArc's target                  
-                  while(arcsFrom.hasNext()) {
-                     ArcView someArcView = ((ArcView)arcsFrom.next());
-                     if (someArcView == createArcView) {
-                        break;
-                     } else if (someArcView.getSource() == createArcView.getSource() &&
-                             someArcView.getTarget() == currentObject) {
-                        isNewArc = false;
-                        if (someArcView instanceof NormalArcView) {
-                           // user has drawn a normal arc where there is 
-                           // a normal arc already - we increment arc's weight
-                        	
-                            LinkedList<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
-                            for(MarkingView m:weight){
-                         	   m.setCurrentMarking(m.getCurrentMarking()+1);
-                            }
-                            historyManager.addNewEdit(someArcView.setWeight(weight));
-                        } else{
-                           // user has drawn a normal arc where there is 
-                           // an inhibitor arc already - nothing to do
-                           //System.out.println("DEBUG: arc normal i arc inhibidor!");
-                        }
-                        createArcView.delete();
-                        someArcView.getTransition().removeArcCompareObject(createArcView);
-                        someArcView.getTransition().updateConnected();
-                        break; 
-                     }
-                  }
-                  
-                  NormalArcView inverse = null;
-                  if (isNewArc) {
-                     createArcView.setTarget(currentObject);
-                     
-                     //check if there is an inverse arc
-                     Iterator arcsFromTarget =
-                             createArcView.getTarget().getConnectFromIterator();
-                     while (arcsFromTarget.hasNext()) {
-                        ArcView anArcView = (ArcView)arcsFromTarget.next();
-                        if (anArcView.getTarget() == createArcView.getSource()) {
-                           if (anArcView instanceof NormalArcView) {
-                              inverse = (NormalArcView) anArcView;
-                              // inverse arc found
-                              if (inverse.hasInverse()){
-                                 // if inverse arc has an inverse arc, it means
-                                 // that createArc is equal to inverse's inverse
-                                 // arc so we only have to increment its weight
-                                 isNewArc = false;
-                                 
-                                 LinkedList<MarkingView> weightInverse = Copier.mediumCopy(inverse.getInverse().getWeight());
-                                 for(MarkingView m:weightInverse){
-                              	   m.setCurrentMarking(m.getCurrentMarking()+1);
-                                 }
-                                 historyManager.addNewEdit( inverse.getInverse().setWeight(weightInverse));
-                                 
-                                 createArcView.delete();
-                                 inverse.getTransition().removeArcCompareObject(
-                                         createArcView);
-                                 inverse.getTransition().updateConnected();
-                              }
-                              break;
-                           }
-                        }
-                     }
-                  }
-                  
-                  if (isNewArc) {
-                     currentObject.addInbound(createArcView);
-                     
-                     // Evil hack to prevent the arc being added to PetriNetTab twice
-                     contentPane.remove(createArcView);
-                     
-                     model.addArc((NormalArcView) createArcView);
-                     view.addNewPetriNetObject(createArcView);
-                     if (!fastMode) {
-                        // we are not in fast mode so we have to set a new edit
-                        // in historyManager for adding the new arc
-                        historyManager.newEdit(); // new "transaction""
-                     }
-                     historyManager.addEdit(
-                             new AddPetriNetObject(createArcView, view, model));
-                     if (inverse != null) {
-                        historyManager.addEdit(
-                                inverse.setInverse((NormalArcView) createArcView,
-                                Constants.JOIN_ARCS));
-                     }
-                  }
-                  
-                  // arc is drawn, remove handler:
-                  createArcView.removeKeyListener(keyHandler);
-                  keyHandler = null;
-                  /**/
-                  if (!isNewArc){
-                     view.remove(createArcView);
-                  }
-                  /* */
-                  view._createArcView = null;
+             //TODO: WORK OUT WHAT THIS DOES
+            if (petriNetController.isCurrentlyCreatingArc()) {
+               if (petriNetController.isApplicableEndPoint(currentObject.getModel())) {
+                   petriNetController.finishCreatingArc(currentObject.getModel());
+                   //foo(isNewArc, fastMode, view, model, historyManager, currentObject, petriNetController);
+                   break;
                }
             }
             
@@ -297,7 +219,8 @@ public class PlaceTransitionObjectHandler
                      app.setMode(Constants.FAST_TRANSITION);
                   }
                } else {
-                  if (view._createArcView == null) {
+
+                  if (!petriNetController.isCurrentlyCreatingArc()) {
                      // user has clicked on an existent PNO
                      app.resetMode();
                   } else {
@@ -317,5 +240,110 @@ public class PlaceTransitionObjectHandler
       
       mouseDown = false;
    }
-   
+
+    private void foo(boolean newArc, boolean fastMode, PetriNetTab view, PetriNetView model,
+            HistoryManager historyManager, ConnectableView currentObject, PetriNetController petriNetController) {
+        petriNetController.finishCreatingArc(currentObject.getModel());
+        //createArcView.setSelectable(true);
+//        Iterator arcsFrom = createArcView.getSource().getConnectFromIterator();
+//        // search for pre-existent arcs from createArc's source to
+//        // createArc's target
+//        while(arcsFrom.hasNext()) {
+//           ArcView someArcView = ((ArcView)arcsFrom.next());
+//           if (someArcView == createArcView) {
+//              break;
+//           } else if (someArcView.getSource() == createArcView.getSource() &&
+//                   someArcView.getTarget() == currentObject) {
+//              newArc = false;
+//              if (someArcView instanceof NormalArcView) {
+//                 // user has drawn a normal arc where there is
+//                 // a normal arc already - we increment arc's weight
+//
+//                  LinkedList<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
+//                  for(MarkingView m:weight){
+//                      m.setCurrentMarking(m.getCurrentMarking()+1);
+//                  }
+//                  historyManager.addNewEdit(someArcView.setWeight(weight));
+//              } else{
+//                 // user has drawn a normal arc where there is
+//                 // an inhibitor arc already - nothing to do
+//                 //System.out.println("DEBUG: arc normal i arc inhibidor!");
+//              }
+//              createArcView.delete();
+//              someArcView.getTransition().removeArcCompareObject(createArcView);
+//              someArcView.getTransition().updateConnected();
+//              break;
+//           }
+        //}
+
+//        NormalArcView inverse = null;
+//        if (true) {
+//
+//           //check if there is an inverse arc
+//           Iterator arcsFromTarget =
+//                   createArcView.getTarget().getConnectFromIterator();
+//           while (arcsFromTarget.hasNext()) {
+//              ArcView anArcView = (ArcView)arcsFromTarget.next();
+//              if (anArcView.getTarget() == createArcView.getSource()) {
+//                 if (anArcView instanceof NormalArcView) {
+//                    inverse = (NormalArcView) anArcView;
+//                    // inverse arc found
+//                    if (inverse.hasInverse()){
+//                       // if inverse arc has an inverse arc, it means
+//                       // that createArc is equal to inverse's inverse
+//                       // arc so we only have to increment its weight
+//                       newArc = false;
+//
+//                       LinkedList<MarkingView> weightInverse = Copier.mediumCopy(inverse.getInverse().getWeight());
+//                       for(MarkingView m:weightInverse){
+//                           m.setCurrentMarking(m.getCurrentMarking()+1);
+//                       }
+//                       historyManager.addNewEdit( inverse.getInverse().setWeight(weightInverse));
+//
+//                       createArcView.delete();
+//                       inverse.getTransition().removeArcCompareObject(
+//                               createArcView);
+//                       inverse.getTransition().updateConnected();
+//                    }
+//                    break;
+//                 }
+//              }
+//           }
+//        }
+
+//        if (newArc) {
+//           currentObject.addInbound(createArcView);
+//
+//           // Evil hack to prevent the arc being added to PetriNetTab twice
+//           contentPane.remove(createArcView);
+//
+//           model.addArc((NormalArcView) createArcView);
+//           view.addNewPetriNetObject(createArcView);
+//           if (!fastMode) {
+//              // we are not in fast mode so we have to set a new edit
+//              // in historyManager for adding the new arc
+//              historyManager.newEdit(); // new "transaction""
+//           }
+//           historyManager.addEdit(
+//                   new AddPetriNetObject(createArcView, view, model));
+//           if (inverse != null) {
+//              historyManager.addEdit(
+//                      inverse.setInverse((NormalArcView) createArcView,
+//                      Constants.JOIN_ARCS));
+//           }
+//        }
+//
+//        // arc is drawn, remove handler:
+//        createArcView.removeKeyListener(keyHandler);
+//        keyHandler = null;
+//                  /**/
+//        if (!newArc){
+//           view.remove(createArcView);
+//        }
+//                  /* */
+//        //view._createArcView = null;
+//
+//        petriNetController.finishCreatingArc(currentObject.getModel());
+    }
+
 }

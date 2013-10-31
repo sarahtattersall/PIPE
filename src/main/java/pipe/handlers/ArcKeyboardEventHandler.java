@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -13,7 +14,7 @@ import java.awt.event.KeyEvent;
 * @authors Michael Camacho and Tom Barnwell
 *
 */
-class ArcKeyboardEventHandler
+public class ArcKeyboardEventHandler
         extends KeyAdapter {
    
    private final ArcView _arcViewBeingDrawn;
@@ -39,8 +40,11 @@ class ArcKeyboardEventHandler
          case KeyEvent.VK_ESCAPE:
          case KeyEvent.VK_DELETE:
             PetriNetTab aView = ((PetriNetTab) _arcViewBeingDrawn.getParent());
-            aView._createArcView = null;
-            _arcViewBeingDrawn.delete();
+            //TODO: CANCEL ARC
+             PetriNetController controller = ApplicationSettings.getPetriNetController();
+             controller.cancelArcCreation();
+            //aView._createArcView = null;
+            //_arcViewBeingDrawn.delete();
              if ((ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_PLACE) ||
                     (ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_TRANSITION)) {
                  ApplicationSettings.getApplicationModel().resetMode();

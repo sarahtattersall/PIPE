@@ -9,6 +9,7 @@ import pipe.gui.PetriNetTab;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PetriNetView;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class PipeApplicationController
@@ -63,7 +64,7 @@ public class PipeApplicationController
     public int addEmptyPetriNetTo(ArrayList<PetriNetTab> petriNetTabs)
     {
         PetriNetView petriNetView = _petriNetController.addEmptyPetriNet();
-        PetriNetTab petriNetTab = new PetriNetTab(petriNetView);
+        PetriNetTab petriNetTab = new PetriNetTab(petriNetView, _petriNetController);
         petriNetTabs.add(petriNetTab);
         return petriNetTabs.size() - 1;
     }

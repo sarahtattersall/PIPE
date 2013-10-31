@@ -1,5 +1,7 @@
 package pipe.models;
 
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +11,8 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
     private Connectable source;
     private Connectable target;
     private String id;
+
+    private Point2D.Double targetLocation = new Point2D.Double();
 
     private boolean tagged = false;
 
@@ -42,9 +46,19 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
         return target;
     }
 
+    public Point2D.Double getTargetLocation() {
+        return targetLocation;
+    }
+
+    public void setTargetLocation(Point2D.Double targetLocation) {
+        this.targetLocation = targetLocation;
+        notifyObservers();
+    }
+
     public void setTarget(Connectable target)
     {
         this.target = target;
+        setTargetLocation(new Point2D.Double(target.getX(), target.getY()));
     }
 
     /**
