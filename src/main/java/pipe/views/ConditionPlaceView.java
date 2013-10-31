@@ -1,6 +1,7 @@
 package pipe.views;
 
 import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
 import pipe.models.ConditionalPlace;
 
 import java.awt.*;
@@ -94,6 +95,11 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
 
     public PetriNetViewComponent clone() {
         return super.clone();
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setCondition(String operator, String operand) {

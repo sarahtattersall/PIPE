@@ -5,7 +5,9 @@
 package pipe.views.viewComponents;
 
 import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
+import pipe.handlers.ParameterHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.ParameterName;
 
@@ -72,4 +74,14 @@ public abstract class Parameter extends Note {
         g2.draw(noteRect);
     }
 
+    @Override
+
+    public void addToPetriNetTab(PetriNetTab tab){
+        ParameterHandler parameterHandler = new ParameterHandler(tab, this);
+        addMouseListener(parameterHandler);
+        addMouseMotionListener(parameterHandler);
+        getNote().addMouseListener(parameterHandler);
+        getNote().addMouseMotionListener(parameterHandler);
+
+    }
 }

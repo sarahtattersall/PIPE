@@ -4,12 +4,10 @@
  */
 package pipe.views.viewComponents;
 
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.gui.ZoomController;
+import pipe.gui.*;
 import pipe.gui.widgets.AnnotationPanel;
 import pipe.gui.widgets.EscapableDialog;
+import pipe.handlers.AnnotationNoteHandler;
 import pipe.historyActions.AnnotationText;
 import pipe.models.Annotation;
 import pipe.views.PetriNetView;
@@ -347,6 +345,16 @@ public class AnnotationNote extends Note {
                 SIZE = 3;
             }
         }
+    }
+
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(tab, this);
+        addMouseListener(noteHandler);
+        addMouseMotionListener(noteHandler);
+        getNote().addMouseListener(noteHandler);
+        getNote().addMouseMotionListener(noteHandler);
     }
 
 

@@ -6,7 +6,9 @@ import pipe.controllers.TransitionController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
+import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceTransitionObjectHandler;
+import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
@@ -226,6 +228,20 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                         "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
             }
         }
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        LabelHandler labelHandler = new LabelHandler(_nameLabel, this);
+        _nameLabel.addMouseListener(labelHandler);
+        _nameLabel.addMouseMotionListener(labelHandler);
+        _nameLabel.addMouseWheelListener(labelHandler);
+
+        TransitionHandler transitionHandler = new TransitionHandler(tab, this);
+        addMouseListener(transitionHandler);
+        addMouseMotionListener(transitionHandler);
+        addMouseWheelListener(transitionHandler);
+        addMouseListener(tab.getAnimationHandler());
     }
 
     public HistoryItem rotate(int angleInc) {

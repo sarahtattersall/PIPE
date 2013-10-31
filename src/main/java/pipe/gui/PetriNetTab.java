@@ -58,6 +58,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         setAutoscrolls(true);
         setBackground(Constants.ELEMENT_FILL_COLOUR);
         zoomControl = new ZoomController(100);
+
         MouseHandler handler = new MouseHandler(this, _petriNetView);
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         addMouseListener(handler);
@@ -85,63 +86,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         {
             if(newPetriNetViewComponent.getMouseListeners().length == 0)
             {
-                NameLabel nameLabel = newPetriNetViewComponent.getNameLabel();
-                if(newPetriNetViewComponent instanceof PlaceView)
-                {
-                    LabelHandler labelHandler = new LabelHandler(nameLabel,(PlaceView) newPetriNetViewComponent);
-                    nameLabel.addMouseListener(labelHandler);
-                    nameLabel.addMouseMotionListener(labelHandler);
-                    nameLabel.addMouseWheelListener(labelHandler);
-
-                    PlaceHandler placeHandler = new PlaceHandler(this, (PlaceView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(placeHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(placeHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(placeHandler);
-                }
-                else if(newPetriNetViewComponent instanceof TransitionView)
-                {
-                    LabelHandler labelHandler = new LabelHandler(nameLabel,(TransitionView) newPetriNetViewComponent);
-                    nameLabel.addMouseListener(labelHandler);
-                    nameLabel.addMouseMotionListener(labelHandler);
-                    nameLabel.addMouseWheelListener(labelHandler);
-
-                    TransitionHandler transitionHandler = new TransitionHandler(this, (TransitionView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(transitionHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(transitionHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(transitionHandler);
-                    newPetriNetViewComponent.addMouseListener(animationHandler);
-                }
-                else if(newPetriNetViewComponent instanceof GroupTransitionView)
-                {
-                    GroupTransitionHandler groupTransitionHandler = new GroupTransitionHandler(this, (GroupTransitionView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(groupTransitionHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(groupTransitionHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(groupTransitionHandler);
-                    newPetriNetViewComponent.addMouseListener(animationHandler);
-                }
-                else if(newPetriNetViewComponent instanceof ArcView)
-                {
-                    ArcHandler arcHandler = new ArcHandler(this, (ArcView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(arcHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(arcHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(arcHandler);
-                }
-                else if(newPetriNetViewComponent instanceof AnnotationNote)
-                {
-                    AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(this, (AnnotationNote) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(noteHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(noteHandler);
-                    ((Note) newPetriNetViewComponent).getNote().addMouseListener(noteHandler);
-                    ((Note) newPetriNetViewComponent).getNote().addMouseMotionListener(noteHandler);
-                }
-                else if(newPetriNetViewComponent instanceof Parameter)
-                {
-                    ParameterHandler parameterHandler = new ParameterHandler(this, (Parameter) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(parameterHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(parameterHandler);
-                    ((Parameter) newPetriNetViewComponent).getNote().addMouseListener(parameterHandler);
-                    ((Parameter) newPetriNetViewComponent).getNote().addMouseMotionListener(parameterHandler);
-                }
+                newPetriNetViewComponent.addToPetriNetTab(this);
                 add(newPetriNetViewComponent);
                 newPetriNetViewComponent.zoomUpdate(getZoom());
             }
@@ -397,11 +342,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         return zoomControl.getPercent();
     }
 
-    class Handler extends MouseInputAdapter
-    {
-    }
-
-    public class MouseHandler extends MouseInputAdapter
+    private class MouseHandler extends MouseInputAdapter
     {
         private PetriNetViewComponent pn;
         private final PetriNetTab _petriNetTab;

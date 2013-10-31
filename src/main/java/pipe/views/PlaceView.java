@@ -1,12 +1,11 @@
 package pipe.views;
 
 import pipe.controllers.PlaceController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.gui.ZoomController;
+import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
+import pipe.handlers.LabelHandler;
+import pipe.handlers.PlaceHandler;
 import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.PlaceCapacity;
@@ -303,6 +302,19 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
                 tempTotalMarking = tempTotalMarking - m.getCurrentMarking();
             }
         }
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        LabelHandler labelHandler = new LabelHandler(_nameLabel, this);
+        _nameLabel.addMouseListener(labelHandler);
+        _nameLabel.addMouseMotionListener(labelHandler);
+        _nameLabel.addMouseWheelListener(labelHandler);
+
+        PlaceHandler placeHandler = new PlaceHandler(tab, this);
+        this.addMouseListener(placeHandler);
+        this.addMouseWheelListener(placeHandler);
+        this.addMouseMotionListener(placeHandler);
     }
 
     public HistoryItem setCurrentMarking(LinkedList<MarkingView> currentMarkingViewInput) {

@@ -278,4 +278,10 @@ public abstract class PetriNetViewComponent extends JComponent implements Zoomab
     void setNameLabel(NameLabel nameLabel) {
         _nameLabel = nameLabel;
     }
+
+    /**
+     * Each subclass should know how to add itself to a PetriNetTab
+     * @param tab to add itself to
+     */
+    public abstract void addToPetriNetTab(PetriNetTab tab);
 }

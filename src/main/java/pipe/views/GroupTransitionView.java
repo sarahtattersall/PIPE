@@ -1,11 +1,9 @@
 package pipe.views;
 
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.gui.ZoomController;
+import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.GroupTransitionEditorPanel;
+import pipe.handlers.GroupTransitionHandler;
 import pipe.historyActions.GroupTransitionRotation;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.UngroupTransition;
@@ -152,6 +150,15 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
               g2.draw(transition);
               g2.fill(transition);
           }*/
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        GroupTransitionHandler groupTransitionHandler = new GroupTransitionHandler(tab, this);
+        addMouseListener(groupTransitionHandler);
+        addMouseMotionListener(groupTransitionHandler);
+        addMouseWheelListener(groupTransitionHandler);
+        addMouseListener(tab.getAnimationHandler());
     }
 
     /**

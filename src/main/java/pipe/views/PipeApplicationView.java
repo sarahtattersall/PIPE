@@ -648,15 +648,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void createNewTab(File file, boolean isTN) {
         int freeSpace = applicationController.addEmptyPetriNetTo(petriNetTabs);
-        ;
 
         String name = "";
         if (applicationController.isPasteInProgress()) {
             applicationController.cancelPaste();
         }
 
-        PetriNetView petriNetView = getPetriNetView(freeSpace);
-        PetriNetTab petriNetTab = getTab(freeSpace);
+        //TODO: This assumes a 1:1 relationship. Store in map?
+        PetriNetView petriNetView = getPetriNetView(petriNetTabs.size() - 1);
+        PetriNetTab petriNetTab = getTab(petriNetTabs.size() - 1);
 
         petriNetView.addObserver(petriNetTab); // Add the view as Observer
         petriNetView.addObserver(this); // Add the app window as

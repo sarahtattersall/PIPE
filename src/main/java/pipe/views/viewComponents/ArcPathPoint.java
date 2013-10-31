@@ -304,6 +304,11 @@ public class ArcPathPoint extends PetriNetViewComponent {
         return Constants.ARC_POINT_LAYER_OFFSET;
     }
 
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+
+    }
+
 
     public void translate(int x, int y) {
         this.setPointLocation(point.x + x, point.y + y);

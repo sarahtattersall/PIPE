@@ -6,6 +6,7 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
+import pipe.handlers.ArcHandler;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryItem;
@@ -559,5 +560,14 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 
     public Arc getModel() {
         return _model;
+    }
+
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        ArcHandler arcHandler = new ArcHandler(tab, this);
+        addMouseListener(arcHandler);
+        addMouseWheelListener(arcHandler);
+        addMouseMotionListener(arcHandler);
     }
 }
