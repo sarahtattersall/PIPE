@@ -1432,10 +1432,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(),
                 new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
         PetriNetReader reader = new PetriNetReader(struct);
-        PetriNet net = reader.createFromFile(PNMLDoc);
-
+        _model = reader.createFromFile(PNMLDoc);
         update();
-
     }
 
     private void displayStateGroups(Collection<StateGroup> stateGroups) {
