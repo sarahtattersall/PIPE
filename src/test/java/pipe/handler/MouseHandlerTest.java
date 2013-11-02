@@ -1,5 +1,8 @@
-package pipe.handlers;
+package pipe.handler;
 
+import matchers.component.HasMultiple;
+import matchers.component.HasTimed;
+import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -8,6 +11,7 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Grid;
 import pipe.gui.PetriNetTab;
+import pipe.handlers.MouseHandler;
 import pipe.handlers.mouse.MouseUtilities;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
@@ -187,69 +191,4 @@ public class MouseHandlerTest {
         verify(mockController, never()).addArcPoint(anyInt(), anyInt(), anyBoolean());
     }
 
-
-    /**
-     * Interface for Connectable mactchers
-     */
-    private interface Has<T> {
-        public boolean matches(T component);
-    }
-
-    /**
-     * Checks if connectable has given x and y
-     */
-    private class HasXY<T extends Connectable> implements Has<T> {
-
-        double x;
-        double y;
-        HasXY(double x, double y) {
-            this.x = x;
-            this.y =y ;
-        }
-
-        @Override
-        public boolean matches(T component) {
-            return component.getX() == x && component.getY() == y;
-        }
-    }
-
-    /**
-     * Matcher that asserts the x and y values are the same
-     */
-    private class HasMultiple<T extends Connectable> extends ArgumentMatcher<T> {
-        List<Has> has_items = new LinkedList<Has>();
-
-        public HasMultiple(Has... items)
-        {
-            for (Has has : items) {
-                has_items.add(has);
-            }
-        }
-
-        @Override
-        public boolean matches(Object item) {
-            T connectable = (T) item;
-            for (Has has : has_items)
-            {
-                if (!has.matches(connectable))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    private class HasTimed implements Has<Transition> {
-        boolean timed;
-        public HasTimed(boolean timed) {
-            this.timed = timed;
-
-        }
-
-        @Override
-        public boolean matches(Transition component) {
-            return component.isTimed() == timed;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-    }
 }

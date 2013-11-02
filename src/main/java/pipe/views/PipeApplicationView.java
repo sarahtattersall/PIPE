@@ -649,9 +649,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void addNewTab(String name, PetriNetTab tab) {
 
         JScrollPane scroller = new JScrollPane(tab);
-        // make it less bad on XP
         scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
         frameForPetriNetTabs.addTab(name, null, scroller, null);
+        petriNetTabs.add(tab);
 //        frameForPetriNetTabs.setSelectedIndex(freeSpace);
     }
 
@@ -935,7 +935,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         if (frameForPetriNetTabs == null) {
             return null;
         }
-        return getTab(frameForPetriNetTabs.getSelectedIndex());
+        int index = frameForPetriNetTabs.getSelectedIndex();
+        return getTab(index);
     }
 
     public HistoryManager getCurrentHistoryManager() {

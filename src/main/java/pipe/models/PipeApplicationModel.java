@@ -236,7 +236,6 @@ public class PipeApplicationModel implements Serializable
 
     public void setMode(int _mode)
     {
-        System.out.println("SETTING MODE " + _mode);
         // Don't bother unless new mode is different.
         if(mode != _mode)
         {

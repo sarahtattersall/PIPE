@@ -69,13 +69,6 @@ public class MouseHandler extends MouseInputAdapter
         petriNet.addPlace(place);
         petriNet.notifyObservers();
 
-        pn = new PlaceView((double) Grid.getModifiedX(p.x), (double) Grid.getModifiedY(p.y));
-        ((PlaceView) pn).setModel(place);
-
-        //place.registerObserver(pn);
-
-        petriNetView.addPetriNetObject(pn);
-        _petriNetTab.addNewPetriNetObject(pn);
         return (ConnectableView) pn;
     }
 
@@ -92,14 +85,6 @@ public class MouseHandler extends MouseInputAdapter
         petriNet.addTransition(transition);
         petriNet.notifyObservers();
 
-        //TODO: ADd observer
-        //transition.registerObserver(pn);
-
-        pn = new TransitionView((double) Grid.getModifiedX(p.x), (double) Grid.getModifiedY(p.y));
-        ((TransitionView) pn).setTimed(timed);
-        ((TransitionView) pn).setModel(transition);
-        petriNetView.addPetriNetObject(pn);
-        _petriNetTab.addNewPetriNetObject(pn);
         return (ConnectableView) pn;
     }
 

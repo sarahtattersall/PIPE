@@ -1,15 +1,24 @@
 package pipe.views;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import matchers.component.HasModel;
 import org.junit.Before;
 import org.junit.Test;
 
 import pipe.models.PetriNet;
+import pipe.models.Place;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.PNMLTransformerTest;
+
+import java.util.Observer;
 
 public class PetriNetViewTest
 {
@@ -84,4 +93,20 @@ public class PetriNetViewTest
 		assertEquals("Default created",1, petriNetView.getTokenViews().size());
 		assertEquals("Default", petriNetView.getTokenViews().get(0).getID());
 	}
+
+
+    @Test
+    public void displaysPlaceOnTab()
+    {
+        Place place = new Place("id", "name");
+        PetriNet net = new PetriNet();
+        net.addPlace(place);
+
+        PetriNetView view = new PetriNetView(null, net);
+        Observer mockObserver = mock(Observer.class);
+        view.addObserver(mockObserver);
+
+        view.update();
+        verify(mockObserver).update(eq(view), argThat(new HasModel<Place, PlaceView>(place)));
+    }
 }

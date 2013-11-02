@@ -540,7 +540,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     // Steve Doubleday (Oct 2013): cascading clean up of Marking Views if Token View is disabled
     @Override
     public void update(Observable observable, Object obj) {
-        System.out.println("UPDATE!!!");
         if ((observable instanceof PipeObservable) && (obj == null)) {
             // if multiple cases are added, consider creating specific subclasses of Observable
             Object originalObject = ((PipeObservable) observable).getObservable();

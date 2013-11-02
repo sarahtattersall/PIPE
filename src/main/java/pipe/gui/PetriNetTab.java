@@ -80,8 +80,12 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     {
         if((diffObj instanceof PetriNetViewComponent) && (diffObj != null))
         {
-            if(ApplicationSettings.getApplicationModel().getMode() == Constants.CREATING)
-                addNewPetriNetObject((PetriNetViewComponent) diffObj);
+            PetriNetViewComponent component = (PetriNetViewComponent) diffObj;
+            if (petriNetComponents.contains(component))
+            {
+                remove(component);
+            }
+            addNewPetriNetObject(component);
             repaint();
         }
     }

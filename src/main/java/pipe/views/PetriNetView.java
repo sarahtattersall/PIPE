@@ -35,7 +35,6 @@ import java.util.Observable;
  * 		Steve Doubleday (Oct 2013):  refactored to use TokenSetController for access to TokenViews
  */
 public class PetriNetView extends Observable implements Cloneable, IObserver, Serializable, Observer {
-    //MOVED END
     protected ArrayList<PlaceView> _placeViews; // Steve Doubleday:  protected to simplify testing
     private ArrayList<TransitionView> _transitionViews;
     private ArrayList<ArcView> _arcViews;
@@ -1723,13 +1722,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         PetriNetReader reader = new PetriNetReader(struct);
         PetriNet net = reader.createFromFile(PNMLDoc);
 
-        displayTokens(net.getTokens());
-        displayPlaces(net.getPlaces());
-        displayTransitions(net.getTransitions());
-        displayArcs(net.getArcs());
-        displayRateParameters(net.getRateParameters());
-        displayAnnotations(net.getAnnotations());
-        displayStateGroups(net.getStateGroups());
+        update();
 
     }
 
@@ -1773,9 +1766,12 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void displayPlaces(Collection<Place> places) {
+
         for (Place place : places) {
             PlaceViewBuilder builder = new PlaceViewBuilder(place);
-            addPlace(builder.build());
+            PlaceView view = builder.build();
+            addPlace(view);
+
         }
     }
 
@@ -2133,11 +2129,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         _model.setValidated(valid);
     }
 
+
+    /**
+     * Updates view by displaying relevant information
+     */
     @Override
     public void update() {
-        System.out.println("UPDATE!!!");
-        displayTokens(_model.getTokens());
         displayPlaces(_model.getPlaces());
+        displayTokens(_model.getTokens());
         displayTransitions(_model.getTransitions());
         displayArcs(_model.getArcs());
         displayRateParameters(_model.getRateParameters());
