@@ -67,10 +67,7 @@ public class MouseHandlerTest {
 
     @Test
     public void notifyObserversOnPlaceCreation() {
-        when(mockModel.getMode()).thenReturn(Constants.PLACE);
-        handler.mousePressed(mockEvent);
-
-        verify(mockNet).notifyObservers();
+        assertPetrinetNotifiesObservers(Constants.PLACE);
     }
 
     @Test
@@ -123,20 +120,72 @@ public class MouseHandlerTest {
 
     @Test
     public void notifyObserversOnImmediateTransitionCreation() {
-        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
-        handler.mousePressed(mockEvent);
-
-        verify(mockNet).notifyObservers();
+        assertPetrinetNotifiesObservers(Constants.IMMTRANS);
     }
 
     @Test
     public void notifyObserversOnTimedTransitionCreation() {
-        when(mockModel.getMode()).thenReturn(Constants.IMMTRANS);
+        assertPetrinetNotifiesObservers(Constants.TIMEDTRANS);
+    }
+
+    @Test
+    public void addsArcWithShiftDownPoint() {
+       assertCreatesArcPoint(Constants.ARC, true);
+    }
+
+    @Test
+    public void addsArcWithShiftUpPoint() {
+        assertCreatesArcPoint(Constants.ARC, false);
+    }
+
+    @Test
+    public void doesNotAddArcPointIfNotCreating() {
+        assertDoesNotCreateArcPoint(Constants.ARC);
+    }
+
+    @Test
+    public void addsInhibitionArcWithShiftUpPoint() {
+        assertCreatesArcPoint(Constants.INHIBARC, false);
+    }
+
+    @Test
+    public void addsInhibitionArcWithShiftDownPoint() {
+        assertCreatesArcPoint(Constants.INHIBARC, true);
+    }
+
+    @Test
+    public void doesNotAddInhibitionArcPointIfNotCreating() {
+        assertDoesNotCreateArcPoint(Constants.INHIBARC);
+    }
+
+    private void assertPetrinetNotifiesObservers(int arcType)
+    {
+        when(mockModel.getMode()).thenReturn(arcType);
         handler.mousePressed(mockEvent);
 
         verify(mockNet).notifyObservers();
     }
 
+    private void assertCreatesArcPoint(int arcType, boolean shiftDown)
+    {
+        when (mockModel.getMode()).thenReturn(arcType);
+        when(mockController.isCurrentlyCreatingArc()).thenReturn(true);
+
+        when (mockEvent.isShiftDown()).thenReturn(shiftDown);
+        handler.mousePressed(mockEvent);
+
+        verify(mockController).addArcPoint(Grid.getModifiedX(0), Grid.getModifiedY(0), shiftDown);
+    }
+
+    private void assertDoesNotCreateArcPoint(int arcType)
+    {
+        when (mockModel.getMode()).thenReturn(arcType);
+        when(mockController.isCurrentlyCreatingArc()).thenReturn(false);
+
+        handler.mousePressed(mockEvent);
+
+        verify(mockController, never()).addArcPoint(anyInt(), anyInt(), anyBoolean());
+    }
 
 
     /**
