@@ -11,13 +11,13 @@ import pipe.gui.PetriNetTab;
 import pipe.handlers.mouse.MouseUtilities;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.PetriNet;
-import pipe.models.PipeApplicationModel;
-import pipe.models.Place;
+import pipe.models.*;
 import pipe.views.PetriNetView;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -58,7 +58,11 @@ public class MouseHandlerTest {
         when(mockModel.getMode()).thenReturn(Constants.PLACE);
         handler.mousePressed(mockEvent);
 
-        verify(mockNet).addPlace(argThat(new PlaceHasXY(Grid.getModifiedX(0), Grid.getModifiedY(0))));
+        verify(mockNet).addPlace(argThat(
+                new HasMultiple<Place>(
+                        new HasXY(Grid.getModifiedX(0), Grid.getModifiedY(0))
+                )
+        ));
     }
 
     @Test
@@ -77,25 +81,126 @@ public class MouseHandlerTest {
         verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }
 
+    @Test
+    public void createsImmediateTransitionOnClick() {
+        when(mockModel.getMode()).thenReturn(Constants.IMMTRANS);
+        handler.mousePressed(mockEvent);
+
+        verify(mockNet).addTransition(argThat(
+                new HasMultiple<Transition>(
+                        new HasXY(Grid.getModifiedX(0),  Grid.getModifiedY(0)),
+                        new HasTimed(false)))
+        );
+    }
+
+    @Test
+    public void createsTimedTransitionOnClick() {
+        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
+        handler.mousePressed(mockEvent);
+
+        verify(mockNet).addTransition(argThat(
+                new HasMultiple<Transition>(
+                        new HasXY(Grid.getModifiedX(0),  Grid.getModifiedY(0)),
+                        new HasTimed(true)))
+        );
+    }
+
+    @Test
+    public void createsTimedTransitionHistoryOnClick() {
+        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
+        handler.mousePressed(mockEvent);
+
+        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
+    }
+
+    @Test
+    public void createsImmediateTransitionHistoryOnClick() {
+        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
+        handler.mousePressed(mockEvent);
+
+        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
+    }
+
+    @Test
+    public void notifyObserversOnImmediateTransitionCreation() {
+        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
+        handler.mousePressed(mockEvent);
+
+        verify(mockNet).notifyObservers();
+    }
+
+    @Test
+    public void notifyObserversOnTimedTransitionCreation() {
+        when(mockModel.getMode()).thenReturn(Constants.IMMTRANS);
+        handler.mousePressed(mockEvent);
+
+        verify(mockNet).notifyObservers();
+    }
+
+
+
+    /**
+     * Interface for Connectable mactchers
+     */
+    private interface Has<T> {
+        public boolean matches(T component);
+    }
+
+    /**
+     * Checks if connectable has given x and y
+     */
+    private class HasXY<T extends Connectable> implements Has<T> {
+
+        double x;
+        double y;
+        HasXY(double x, double y) {
+            this.x = x;
+            this.y =y ;
+        }
+
+        @Override
+        public boolean matches(T component) {
+            return component.getX() == x && component.getY() == y;
+        }
+    }
 
     /**
      * Matcher that asserts the x and y values are the same
      */
-    private class PlaceHasXY extends ArgumentMatcher<Place> {
-        double x;
-        double y;
+    private class HasMultiple<T extends Connectable> extends ArgumentMatcher<T> {
+        List<Has> has_items = new LinkedList<Has>();
 
-        public PlaceHasXY(double x, double y)
+        public HasMultiple(Has... items)
         {
-            this.x = x;
-            this.y = y;
+            for (Has has : items) {
+                has_items.add(has);
+            }
         }
 
         @Override
         public boolean matches(Object item) {
-            Place place = (Place) item;
-            return place.getX() == x &&
-                   place.getY() == y;
+            T connectable = (T) item;
+            for (Has has : has_items)
+            {
+                if (!has.matches(connectable))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private class HasTimed implements Has<Transition> {
+        boolean timed;
+        public HasTimed(boolean timed) {
+            this.timed = timed;
+
+        }
+
+        @Override
+        public boolean matches(Transition component) {
+            return component.isTimed() == timed;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 }

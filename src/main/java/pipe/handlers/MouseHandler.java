@@ -89,6 +89,9 @@ public class MouseHandler extends MouseInputAdapter
         transition.setY((double) Grid.getModifiedY(p.y));
         transition.setTimed(timed);
 
+        petriNet.addTransition(transition);
+        petriNet.notifyObservers();
+
         //TODO: ADd observer
         //transition.registerObserver(pn);
 
