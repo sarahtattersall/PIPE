@@ -77,25 +77,27 @@ public class TypeAction extends GuiAction
             pipeApplicationView.dragAction.setSelected(false);
         }
 
-        PetriNetTab appView = ApplicationSettings.getApplicationView().getCurrentTab();
-        if(appView == null)
-        {
-            return;
-        }
-
-        appView.getSelectionObject().disableSelection();
-        // _petriNetTabView.getSelectionObject().clearSelection();
-
         pipeApplicationView.setMode(typeID);
         StatusBar statusBar = ApplicationSettings.getApplicationView().statusBar;
         statusBar.changeText(typeID);
 
+        PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
+        if(petriNetTab == null)
+        {
+            return;
+        }
 
-        PetriNetController petriNetController = appView.getPetriNetController();
+        petriNetTab.getSelectionObject().disableSelection();
+        // _petriNetTabView.getSelectionObject().clearSelection();
+
+
+
+
+        PetriNetController petriNetController = petriNetTab.getPetriNetController();
         if((typeID != Constants.ARC) && (petriNetController.isCurrentlyCreatingArc()))
         {
             petriNetController.cancelArcCreation();
-            appView.repaint();
+            petriNetTab.repaint();
         }
 
         if(typeID == Constants.SELECT)
@@ -103,16 +105,16 @@ public class TypeAction extends GuiAction
             // disable drawing to eliminate possiblity of connecting arc to
             // old coord of moved component
             statusBar.changeText(typeID);
-            appView.getSelectionObject().enableSelection();
-            appView.setCursorType("arrow");
+            petriNetTab.getSelectionObject().enableSelection();
+            petriNetTab.setCursorType("arrow");
         }
         else if(typeID == Constants.DRAG)
         {
-            appView.setCursorType("move");
+            petriNetTab.setCursorType("move");
         }
         else
         {
-            appView.setCursorType("crosshair");
+            petriNetTab.setCursorType("crosshair");
         }
     }
     // }

@@ -2135,7 +2135,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     @Override
     public void update() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        System.out.println("UPDATE!!!");
+        displayTokens(_model.getTokens());
+        displayPlaces(_model.getPlaces());
+        displayTransitions(_model.getTransitions());
+        displayArcs(_model.getArcs());
+        displayRateParameters(_model.getRateParameters());
+        displayAnnotations(_model.getAnnotations());
+        displayStateGroups(_model.getStateGroups());
     }
 
 
@@ -2529,4 +2536,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
     }
 
+    public PetriNet getModel() {
+        return _model;
+    }
 }

@@ -123,7 +123,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
 
         //applicationController.createNewPetriNet();
-        createNewTab(null, false);
+//        createNewTabDELETEME(null, false);
+        applicationController.createNewTab(null, false);
     }
 
     public JTabbedPane getFrameForPetriNetTabs() {
@@ -645,8 +646,16 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             JOptionPane.showMessageDialog(this, e.toString(), "File Output Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    public void addNewTab(String name, PetriNetTab tab) {
 
-    public void createNewTab(File file, boolean isTN) {
+        JScrollPane scroller = new JScrollPane(tab);
+        // make it less bad on XP
+        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        frameForPetriNetTabs.addTab(name, null, scroller, null);
+//        frameForPetriNetTabs.setSelectedIndex(freeSpace);
+    }
+
+    public void createNewTabDELETEME(File file, boolean isTN) {
         int freeSpace = applicationController.addEmptyPetriNetTo(petriNetTabs);
 
         String name = "";

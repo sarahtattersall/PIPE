@@ -1,6 +1,8 @@
 import java.lang.reflect.InvocationTargetException;
 
+import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.gui.CopyPasteManager;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
@@ -17,7 +19,10 @@ public class Pipe
 	private Pipe(String version)
     {
         applicationModel = new PipeApplicationModel(version);
-        applicationController = new PipeApplicationController(applicationModel);
+
+        PetriNetController netController = new PetriNetController();
+        CopyPasteManager copyPaste = new CopyPasteManager();
+        applicationController = new PipeApplicationController(applicationModel, netController, copyPaste);
         applicationView = new PipeApplicationView(applicationController, applicationModel);
     }
     public static void main(String args[])

@@ -45,6 +45,13 @@ public class PetriNetController implements IController, Serializable
         return _views.get(_activePetriNet);
     }
 
+    public void addPetriNet(PetriNet model)
+    {
+        _models.add(model);
+        PetriNetView petriNetView = new PetriNetView(this, model);
+        _views.add(petriNetView);
+        changeActivePetriNet();
+    }
 
     public PetriNetView addEmptyPetriNet()
     {

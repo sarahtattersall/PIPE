@@ -27,7 +27,7 @@ public class CreateActionTest {
     public void actionPerformed()
     {
         createAction.actionPerformed(null);
-        verify(mockView).createNewTab(null, false);
+        verify(mockView).createNewTabDELETEME(null, false);
     }
 
     @Test

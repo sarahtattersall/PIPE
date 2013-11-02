@@ -22,7 +22,7 @@ public class ImportAction extends FileAction {
 //                        && filePath.isFile() && filePath.canRead())
 //                {
 //                    _userPath = filePath.getParent();
-//                    pipeApplicationView.createNewTab(filePath, true);
+//                    pipeApplicationView.createNewTabDELETEME(filePath, true);
 //                    appView.getSelectionObject().enableSelection();
 //                }
     }

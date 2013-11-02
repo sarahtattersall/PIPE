@@ -38,6 +38,6 @@ public class UnfoldAction extends GuiAction
         }
         Expander expander = new Expander(ApplicationSettings.getApplicationView().getCurrentPetriNetView());
         PetriNetView unfolded = expander.unfold();
-        pipeApplicationView.createNewTab(expander.saveAsXml(unfolded), false);
+        ApplicationSettings.getApplicationController().createNewTab(expander.saveAsXml(unfolded), false);
     }
 }
