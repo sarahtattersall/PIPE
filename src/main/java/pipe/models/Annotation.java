@@ -1,6 +1,6 @@
 package pipe.models;
 
-public class Annotation {
+public class Annotation implements PetriNetComponent{
     public Annotation(double x, double y, String text,
                       double width,
                       double height, boolean border) {
@@ -41,5 +41,10 @@ public class Annotation {
 
     public double getHeight() {
         return height;
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return  true;
     }
 }

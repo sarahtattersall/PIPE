@@ -65,7 +65,7 @@ public class PetriNetViewTest
 		buildPetriNetViewFromXmlString(PNMLTransformerTest.ONE_TOKEN_TWO_INITIAL_MARKINGS);
 		assertEquals(1, petriNetView.getTokenViews().size());
 		assertEquals(1, petriNetView.getPlacesArrayList().size());
-		placeView = petriNetView.getPlacesArrayList().get(0);
+		placeView = petriNetView.getPlacesArrayList().iterator().next();
 		assertEquals("only one MarkingView created",1, placeView.getCurrentMarkingView().size());
 		markingView = placeView.getCurrentMarkingView().get(0); 
 		assertEquals(petriNetView.getTokenViews().get(0), markingView.getToken());
@@ -76,7 +76,7 @@ public class PetriNetViewTest
 		buildPetriNetViewFromXmlString(PNMLTransformerTest.TWO_TOKENS_TWO_INITIAL_MARKINGS_ONE_NONZERO);
 		assertEquals(2, petriNetView.getTokenViews().size());
 		assertEquals(1, petriNetView.getPlacesArrayList().size());
-		placeView = petriNetView.getPlacesArrayList().get(0);
+		placeView = petriNetView.getPlacesArrayList().iterator().next();
 		assertEquals("two MarkingViews",2, placeView.getCurrentMarkingView().size());
 		markingView = placeView.getCurrentMarkingView().get(0);
 		assertEquals(0, markingView.getCurrentMarking()); 

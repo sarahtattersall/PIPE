@@ -20,7 +20,8 @@ public class PetriNetController implements IController, Serializable
 
     private ArrayList<PetriNetView> _views = new ArrayList<PetriNetView>();
     private ArrayList<PetriNet> _models = new ArrayList<PetriNet>();
-    private List<Integer> _petriNetNumbers = new LinkedList<Integer>();
+    private List<Integer> _placeNumbers = new LinkedList<Integer>();
+    private List<Integer> _transitionNumbers = new LinkedList<Integer>();
     private int _activePetriNet = 0;
     private boolean currentlyCreatingArc = false;
     private NormalArc arc;
@@ -35,7 +36,8 @@ public class PetriNetController implements IController, Serializable
         TransitionController transitionController = new TransitionController();
         TokenController tokenController = new TokenController();
         MarkingController markingController = new MarkingController(tokenController);
-        _petriNetNumbers.add(0);
+        _placeNumbers.add(0);
+        _transitionNumbers.add(0);
     }
 
     public PetriNetView getView()
@@ -48,7 +50,8 @@ public class PetriNetController implements IController, Serializable
         _models.add(model);
         PetriNetView petriNetView = new PetriNetView(this, model);
         _views.add(petriNetView);
-        _petriNetNumbers.add(0);
+        _placeNumbers.add(0);
+        _transitionNumbers.add(0);
         changeActivePetriNet();
     }
 
@@ -58,7 +61,8 @@ public class PetriNetController implements IController, Serializable
         PetriNetView petriNetView = new PetriNetView(this, petriNet);
         _views.add(petriNetView);
         _models.add(petriNet);
-        _petriNetNumbers.add(0);
+        _placeNumbers.add(0);
+        _transitionNumbers.add(0);
         changeActivePetriNet();
         return petriNetView;
     }
@@ -128,8 +132,18 @@ public class PetriNetController implements IController, Serializable
      * @return A unique number for the petrinet in the current tab
      */
     public int getUniquePlaceNumber() {
-        int returnValue = _petriNetNumbers.get(_activePetriNet);
-        _petriNetNumbers.set(_activePetriNet, returnValue + 1);
+        int returnValue = _placeNumbers.get(_activePetriNet);
+        _placeNumbers.set(_activePetriNet, returnValue + 1);
+        return returnValue;
+    }
+
+    /**
+     * Creates unique petri net numbers for each tab
+     * @return A unique number for the petrinet in the current tab
+     */
+    public int getUniqueTransitionNumber() {
+        int returnValue = _transitionNumbers.get(_activePetriNet);
+        _transitionNumbers.set(_activePetriNet, returnValue + 1);
         return returnValue;
     }
 }

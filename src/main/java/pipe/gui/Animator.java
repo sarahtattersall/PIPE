@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 
@@ -284,14 +285,16 @@ public class Animator
     }
 
     public void updateArcAndTran(){
-    	 ArrayList<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
-         for(int i=0;i<arcs.size();i++){
-      	   arcs.get(i).repaint();
-         }
-         ArrayList<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
-         for(int i=0;i<trans.size();i++){
-      	   trans.get(i).update();
-         }
+        Collection<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
+        for (ArcView arc : arcs)
+        {
+            arc.repaint();
+        }
+        Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
+        for (TransitionView transition : trans)
+        {
+            transition.update();
+        }
     }
 
     private void removeStoredTransitions(int start)

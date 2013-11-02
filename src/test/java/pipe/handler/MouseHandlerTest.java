@@ -92,6 +92,7 @@ public class MouseHandlerTest {
         verify(mockNet).addTransition(argThat(
                 new HasMultiple<Transition>(
                         new HasXY(Grid.getModifiedX(0),  Grid.getModifiedY(0)),
+                        new HasId("T0"),
                         new HasTimed(false)))
         );
     }
@@ -104,6 +105,7 @@ public class MouseHandlerTest {
         verify(mockNet).addTransition(argThat(
                 new HasMultiple<Transition>(
                         new HasXY(Grid.getModifiedX(0),  Grid.getModifiedY(0)),
+                        new HasId("T0"),
                         new HasTimed(true)))
         );
     }

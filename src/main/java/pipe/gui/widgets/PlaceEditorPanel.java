@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -461,13 +462,15 @@ private final PlaceView _placeView;
       exit();
    }
    private void updateArcAndTran(){
-  	 ArrayList<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
-       for(int i=0;i<arcs.size();i++){
-    	   arcs.get(i).repaint();
+       Collection<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
+       for (ArcView arc : arcs)
+       {
+           arc.repaint();
        }
-       ArrayList<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
-       for(int i=0;i<trans.size();i++){
-    	   trans.get(i).update();
+       Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
+       for (TransitionView transition : trans)
+       {
+           transition.update();
        }
   }
    

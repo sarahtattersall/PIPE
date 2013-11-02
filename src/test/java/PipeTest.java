@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.AbstractButton;
@@ -44,8 +45,8 @@ public class PipeTest {
 	
 	private PipeApplicationView applicationView;
 	private JToolBar toolbar;
-	private ArrayList<PlaceView> placeViews;
-	private ArrayList<ArcView> arcViews;
+	private Collection<PlaceView> placeViews;
+	private Collection<ArcView> arcViews;
 	private LinkedList<TokenView> tokenViews;
 	private int numTokens;
 	private JMenu menu;
@@ -334,7 +335,7 @@ public class PipeTest {
 		tokenViews = petriNetView.getTokenViews(); 
 		defaultTokenView = tokenViews.get(0);
 		redTokenView = tokenViews.get(1);
-		placeView = placeViews.get(0);
+		placeView = placeViews.iterator().next();
 		markingViews = placeView.getCurrentMarkingView();
 		markingView = markingViews.get(0);
 		assertEquals(defaultTokenView, markingView.getToken()); 
@@ -378,7 +379,7 @@ public class PipeTest {
 		petriNetView = applicationView.getCurrentPetriNetView();
 		placeViews = petriNetView.getPlacesArrayList();
 		assertEquals(2, placeViews.size()); 
-		placeView = placeViews.get(0);
+		placeView = placeViews.iterator().next();
 		markingViews = placeView.getCurrentMarkingView();
 		markingView = markingViews.get(0);
 		tokenViews = petriNetView.getTokenViews(); 

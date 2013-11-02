@@ -89,11 +89,20 @@ public class MouseHandler extends MouseInputAdapter
     }
 
 
+    private String getNetTransitionName() {
+        PipeApplicationModel model = ApplicationSettings.getApplicationModel();
+        int number = petriNetController.getUniqueTransitionNumber();
+        String id = "T" + number;
+        return id;
+
+    }
+
     private ConnectableView newTransition(Point p, boolean timed)
     {
         p = adjustPoint(p, _petriNetTab.getZoom());
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
-        Transition transition = new Transition("", "");
+        String id = getNetTransitionName();
+        Transition transition = new Transition(id, id);
         transition.setX((double) Grid.getModifiedX(p.x));
         transition.setY((double) Grid.getModifiedY(p.y));
         transition.setTimed(timed);

@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 public class PlaceHandler extends PlaceTransitionObjectHandler
@@ -143,13 +144,15 @@ public class PlaceHandler extends PlaceTransitionObjectHandler
 	}
     
     private void updateArcAndTran(){
-   	 ArrayList<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
-        for(int i=0;i<arcs.size();i++){
-     	   arcs.get(i).repaint();
+   	    Collection<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
+        for (ArcView arc : arcs)
+        {
+            arc.repaint();
         }
-        ArrayList<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
-        for(int i=0;i<trans.size();i++){
-     	   trans.get(i).update();
+        Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
+        for (TransitionView transition : trans)
+        {
+            transition.update();
         }
    }
 

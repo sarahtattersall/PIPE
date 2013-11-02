@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Token extends Observable implements Serializable
 {
@@ -141,7 +142,7 @@ public class Token extends Observable implements Serializable
         return incidenceMatrix;
     }
 
-    public int[][] getIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    public int[][] getIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         if(incidenceMatrix == null || incidenceMatrix.matrixChanged)
         {
@@ -161,7 +162,7 @@ public class Token extends Observable implements Serializable
         this.incidenceMatrix = incidenceMatrix;
     }
 
-    public void createIncidenceMatrix(ArrayList<ArcView> arcsArray,ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    public void createIncidenceMatrix(Collection<ArcView> arcsArray,Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         createForwardIncidenceMatrix(arcsArray, transitionsArray, placesArray);
         createBackwardsIncidenceMatrix(arcsArray, transitionsArray, placesArray);
@@ -175,8 +176,8 @@ public class Token extends Observable implements Serializable
         return forwardsIncidenceMatrix;
     }
 
-    public int[][] getForwardsIncidenceMatrix(ArrayList<ArcView> arcsArray,
-                                              ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    public int[][] getForwardsIncidenceMatrix(Collection<ArcView> arcsArray,
+            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         if(forwardsIncidenceMatrix == null
                 || forwardsIncidenceMatrix.matrixChanged)
@@ -203,8 +204,8 @@ public class Token extends Observable implements Serializable
         return backwardsIncidenceMatrix;
     }
 
-    public int[][] getBackwardsIncidenceMatrix(ArrayList<ArcView> arcsArray,
-                                               ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    public int[][] getBackwardsIncidenceMatrix(Collection<ArcView> arcsArray,
+            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         if(backwardsIncidenceMatrix == null
                 || backwardsIncidenceMatrix.matrixChanged)
@@ -231,8 +232,8 @@ public class Token extends Observable implements Serializable
         return inhibitionMatrix;
     }
 
-    public int[][] getInhibitionMatrix(ArrayList<InhibitorArcView> inhibitorArrayView,
-                                       ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    public int[][] getInhibitionMatrix(Collection<InhibitorArcView> inhibitorArrayView,
+            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         if(inhibitionMatrix == null || inhibitionMatrix.matrixChanged)
         {
@@ -248,7 +249,7 @@ public class Token extends Observable implements Serializable
         this.inhibitionMatrix = inhibitionMatrix;
     }
 
-    void createForwardIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    void createForwardIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
@@ -271,9 +272,10 @@ public class Token extends Observable implements Serializable
                             if(pn instanceof TransitionView)
                             {
                                 TransitionView transitionView = (TransitionView) pn;
-                                int transitionNo = transitionsArray
-                                        .indexOf(transitionView);
-                                int placeNo = placesArray.indexOf(placeView);
+
+                                //TODO: Broken transitions
+                                int transitionNo = 0; //transitionsArray.indexOf(transitionView);
+                                int placeNo = 0;//placesArray.indexOf(placeView);
                                 for(MarkingView token : arcView.getWeight())
                                 {
                                     if(token.getToken().getID().equals(id))
@@ -311,7 +313,7 @@ public class Token extends Observable implements Serializable
      * @param transitionsArray
      * @param placesArray
      */
-    void createBackwardsIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    void createBackwardsIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {// Matthew
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
@@ -339,8 +341,9 @@ public class Token extends Observable implements Serializable
                                 if(isTransitionInfiniteServer){
                                 	enablingDegree=ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(transitionView);
                                 }
-                                int transitionNo = transitionsArray.indexOf(transitionView);
-                                int placeNo = placesArray.indexOf(placeView);
+                                //TODO: Broken this
+                                int transitionNo = 0; //transitionsArray.indexOf(transitionView);
+                                int placeNo = 0; //placesArray.indexOf(placeView);
                                 for(MarkingView token : arcView.getWeight())
                                 {
                                     if(token.getToken().getID().equals(id))
@@ -380,7 +383,7 @@ public class Token extends Observable implements Serializable
         }
     }
 
-    public void createInhibitionMatrix(ArrayList<InhibitorArcView> inhibitorsArray,ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray)
+    public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray,Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
     {
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
@@ -402,9 +405,9 @@ public class Token extends Observable implements Serializable
                             if(pn instanceof TransitionView)
                             {
                                 TransitionView transitionView = (TransitionView) pn;
-                                int transitionNo = transitionsArray
-                                        .indexOf(transitionView);
-                                int placeNo = placesArray.indexOf(placeView);
+                                //TODO: Broken this
+                                int transitionNo = 0; //transitionsArray.indexOf(transitionView);
+                                int placeNo = 0; //placesArray.indexOf(placeView);
                                 try
                                 {
                                     inhibitionMatrix.set(placeNo, transitionNo,

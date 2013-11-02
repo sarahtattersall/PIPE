@@ -20,12 +20,7 @@ import pipe.views.PlaceView;
 import pipe.views.TransitionView;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Nadeem
@@ -782,8 +777,9 @@ public class StateSpaceGenerator {
 
 		PetriNetView dataLayer = ApplicationSettings.getApplicationView()
 				.getCurrentPetriNetView();
-		ArrayList<TransitionView> trans = dataLayer.getTransitionsArrayList();
-		TransitionView tran = trans.get(transitionId);
+		Collection<TransitionView> trans = dataLayer.getTransitionsArrayList();
+        //TODO: Fix this
+		TransitionView tran = null; //trans.get(transitionId);
 		Iterator to = tran.getConnectToIterator();
 		Iterator from = tran.getConnectFromIterator();
 		if (to.hasNext()) {

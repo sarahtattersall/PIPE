@@ -35,13 +35,12 @@ import java.util.Observable;
  * 		Steve Doubleday (Oct 2013):  refactored to use TokenSetController for access to TokenViews
  */
 public class PetriNetView extends Observable implements Cloneable, IObserver, Serializable, Observer {
-    private Map<PetriNetComponent, PetriNetViewComponent> modelToViews = new HashMap<PetriNetComponent, PetriNetViewComponent>();
-    protected ArrayList<PlaceView> _placeViews; // Steve Doubleday:  protected to simplify testing
-    private ArrayList<TransitionView> _transitionViews;
-    private ArrayList<ArcView> _arcViews;
-    private ArrayList<InhibitorArcView> _inhibitorViews;
-    private ArrayList<AnnotationNote> _labels;
-    private ArrayList<RateParameter> _rateParameters;
+    protected Map<Place, PlaceView> _placeViews = new HashMap<Place, PlaceView>();
+    private Map<Transition, TransitionView> _transitionViews = new HashMap<Transition, TransitionView>();
+    private Map<Arc, ArcView> _arcViews = new HashMap<Arc, ArcView>();
+    private Map<Arc, InhibitorArcView> _inhibitorViews = new HashMap<Arc, InhibitorArcView>();
+    private Map<Annotation, AnnotationNote> _labels = new HashMap<Annotation, AnnotationNote>();
+    private Set<RateParameter> _rateParameters = new HashSet<RateParameter>();
 
 
     private Vector<Vector<String>> functionRelatedPlaces;
@@ -58,13 +57,12 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private ArrayList _stateGroups;
     private final HashSet _rateParameterHashSet = new HashSet();
     private PetriNet _model;
-    private TokenSetController _tokenSetController;
+    private TokenSetController _tokenSetController = new TokenSetController();
 
 
     public PetriNetView(String pnmlFileName) {
         _model = new PetriNet();
         _model.registerObserver(this);
-        initializeMatrices();
         PNMLTransformer transform = new PNMLTransformer();
         File temp = new File(pnmlFileName);
         _model.setPnmlName(temp.getName());
@@ -72,10 +70,9 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     public PetriNetView(PetriNetController petriNetController, PetriNet model) {
-        initializeMatrices();
+        _tokenSetController.addObserver(this);
         _model = model;
         model.registerObserver(this);
-        initializeMatrices();
         _model.registerObserver(this);
     }
 
@@ -121,7 +118,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     protected void updatePlaceViewsWithActiveToken(TokenView tc) {
-        for (PlaceView p : _placeViews) {
+        for (PlaceView p : _placeViews.values()) {
             p.setActiveTokenView(tc);
         }
     }
@@ -160,31 +157,38 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         return _tokenSetController.getTokenView(id);
     }
 
-    private static ArrayList deepCopy(ArrayList original) {
-        ArrayList result = (ArrayList) original.clone();
-        ListIterator listIter = result.listIterator();
-
-        while (listIter.hasNext()) {
-            PetriNetViewComponent pnObj = (PetriNetViewComponent) listIter.next();
-            listIter.set(pnObj.clone());
+    //TODO: need to clone values!
+    private static <K extends PetriNetComponent, V extends PetriNetViewComponent>  Map<K,V> deepCopy(Map<K,V> original) {
+        Map<K,V> result =  new HashMap<K, V>();
+        for (Map.Entry<K, V> entry : original.entrySet())
+        {
+            result.put(entry.getKey(), entry.getValue());
         }
+
+//        ArrayList result = (ArrayList) original.clone();
+//        ListIterator listIter = result.listIterator();
+//
+//        while (listIter.hasNext()) {
+//            PetriNetViewComponent pnObj = (PetriNetViewComponent) listIter.next();
+//            listIter.set(pnObj.clone());
+//        }
         return result;
     }
 
     // Steve Doubleday (Oct 2013):  protected to simplify unit testing
     protected void initializeMatrices() {
-        _placeViews = new ArrayList();
-        _transitionViews = new ArrayList();
-        _arcViews = new ArrayList();
-        _inhibitorViews = new ArrayList();
-        _labels = new ArrayList();
-        _stateGroups = new ArrayList();
-        _rateParameters = new ArrayList();
-        _initialMarkingVector = null;
-        _arcsMap = new Hashtable();
-        _inhibitorsMap = new Hashtable();
-        _tokenSetController = new TokenSetController();
-        _tokenSetController.addObserver(this);
+//        _placeViews = new ArrayList();
+//        _transitionViews = new ArrayList();
+//        _arcViews = new ArrayList();
+//        _inhibitorViews = new ArrayList();
+//        _labels = new ArrayList();
+//        _stateGroups = new ArrayList();
+//        _rateParameters = new ArrayList();
+//        _initialMarkingVector = null;
+//        _arcsMap = new Hashtable();
+//        _inhibitorsMap = new Hashtable();
+//        _tokenSetController = new TokenSetController();
+//        _tokenSetController.addObserver(this);
     }
 
     private void addPlace(PlaceView placeView) {
@@ -192,7 +196,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (placeView != null) {
             if (placeView.getId() != null && placeView.getId().length() > 0) {
-                for (PlaceView _placeView : _placeViews) {
+                for (PlaceView _placeView : _placeViews.values()) {
                     if (placeView.getId().equals(_placeView.getId())) {
                         unique = false;
                     }
@@ -202,7 +206,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 if (_placeViews != null && _placeViews.size() > 0) {
                     int no = _placeViews.size();
                     do {
-                        for (PlaceView _placeView : _placeViews) {
+                        for (PlaceView _placeView : _placeViews.values()) {
                             id = "P" + no;
                             if (_placeView != null) {
                                 if (id.equals(_placeView.getId())) {
@@ -226,7 +230,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             }
             placeView.setActiveTokenView(_tokenSetController.getActiveTokenView());
 //            placeView.setActiveTokenView(_activeTokenView); // SJD
-            _placeViews.add(placeView);
+//            _placeViews.add(placeView);
             setChanged();
             setMatrixChanged();
             notifyObservers(placeView);
@@ -235,14 +239,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     private void addAnnotation(AnnotationNote labelInput) {
         boolean unique = true;
-        _labels.add(labelInput);
+//        _labels.add(labelInput);
         setChanged();
         notifyObservers(labelInput);
     }
 
     private void addAnnotation(RateParameter rateParameterInput) {
         boolean unique = true;
-        _rateParameters.add(rateParameterInput);
+//        _rateParameters.add(rateParameterInput);
         setChanged();
         notifyObservers(rateParameterInput);
     }
@@ -252,7 +256,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (transitionViewInput != null) {
             if (transitionViewInput.getId() != null && transitionViewInput.getId().length() > 0) {
-                for (TransitionView _transitionView : _transitionViews) {
+                for (TransitionView _transitionView : _transitionViews.values()) {
                     if (transitionViewInput.getId().equals(_transitionView.getId())) {
                         unique = false;
                     }
@@ -262,7 +266,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 if (_transitionViews != null && _transitionViews.size() > 0) {
                     int no = _transitionViews.size();
                     do {
-                        for (TransitionView _transitionView : _transitionViews) {
+                        for (TransitionView _transitionView : _transitionViews.values()) {
                             id = "T" + no;
                             if (_transitionView != null) {
                                 if (id.equals(_transitionView.getId())) {
@@ -284,7 +288,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     transitionViewInput.setId("error");
                 }
             }
-            _transitionViews.add(transitionViewInput);
+//            _transitionViews.add(transitionViewInput);
             setChanged();
             setMatrixChanged();
             notifyObservers(transitionViewInput);
@@ -296,7 +300,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (arcViewInput != null) {
             if (arcViewInput.getId() != null && arcViewInput.getId().length() > 0) {
-                for (ArcView _arcView : _arcViews) {
+                for (ArcView _arcView : _arcViews.values()) {
                     if (arcViewInput.getId().equals(_arcView.getId())) {
                         unique = false;
                     }
@@ -306,7 +310,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 if (_arcViews != null && _arcViews.size() > 0) {
                     int no = _arcViews.size();
                     do {
-                        for (ArcView _arcView : _arcViews) {
+                        for (ArcView _arcView : _arcViews.values()) {
                             id = "A" + no;
                             if (_arcView != null) {
                                 if (id.equals(_arcView.getId())) {
@@ -327,7 +331,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     arcViewInput.setId("error");
                 }
             }
-            _arcViews.add(arcViewInput);
+//            _arcViews.add(arcViewInput);
             addArcToArcsMap(arcViewInput);
 
             setChanged();
@@ -341,7 +345,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (inhibitorArcViewInput != null) {
             if (inhibitorArcViewInput.getId() != null && inhibitorArcViewInput.getId().length() > 0) {
-                for (InhibitorArcView _inhibitorView : _inhibitorViews) {
+                for (InhibitorArcView _inhibitorView : _inhibitorViews.values()) {
                     if (inhibitorArcViewInput.getId().equals(_inhibitorView.getId())) {
                         unique = false;
                     }
@@ -351,7 +355,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 if (_inhibitorViews != null && _inhibitorViews.size() > 0) {
                     int no = _inhibitorViews.size();
                     do {
-                        for (InhibitorArcView _inhibitorView : _inhibitorViews) {
+                        for (InhibitorArcView _inhibitorView : _inhibitorViews.values()) {
                             id = "I" + no;
                             if (_inhibitorView != null) {
                                 if (id.equals(_inhibitorView.getId())) {
@@ -372,7 +376,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     inhibitorArcViewInput.setId("error");
                 }
             }
-            _inhibitorViews.add(inhibitorArcViewInput);
+//            _inhibitorViews.add(inhibitorArcViewInput);
             addInhibitorArcToInhibitorsMap(inhibitorArcViewInput);
 
             setChanged();
@@ -530,7 +534,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         } else if (pn instanceof TransitionView) {
             addTransition((TransitionView) pn);
         } else if (pn instanceof AnnotationNote) {
-            _labels.add((AnnotationNote) pn);
+//            _labels.add((AnnotationNote) pn);
         } else if (pn instanceof RateParameter) {
             _rateParameters.add((RateParameter) pn);
             _rateParameterHashSet.add(pn.getName());
@@ -650,14 +654,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     public Iterator returnTransitions() {
-        return _transitionViews.iterator();
+        return _transitionViews.values().iterator();
     }
 
     public Iterator getPetriNetObjects() {
-        ArrayList all = new ArrayList(_placeViews);
-        all.addAll(_transitionViews);
-        all.addAll(_arcViews);
-        all.addAll(_labels);
+        ArrayList all = new ArrayList(_placeViews.values());
+        all.addAll(_transitionViews.values());
+        all.addAll(_arcViews.values());
+        all.addAll(_labels.values());
         // tokensArray removed
         all.addAll(_rateParameters);
 
@@ -674,8 +678,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       */
     public void createMatrixes() {
         for (TokenView tc : _tokenSetController.getTokenViews()) {
-            tc.createIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
-            tc.createInhibitionMatrix(_inhibitorViews, _transitionViews, _placeViews);
+            tc.createIncidenceMatrix(_arcViews.values(), _transitionViews.values(), _placeViews.values());
+            tc.createInhibitionMatrix(_inhibitorViews.values(), _transitionViews.values(), _placeViews.values());
         }
         createInitialMarkingVector();
         createCurrentMarkingVector();
@@ -769,7 +773,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     public void fireTransition(TransitionView transitionView) {
         if (transitionView != null) {
             if (transitionView.isEnabled() && _placeViews != null) {
-                int transitionNo = _transitionViews.indexOf(transitionView);
+                //TODO: fix this
+                int transitionNo = 0; //_transitionViews.values().indexOf(transitionView);
                 createMatrixes();
                 for (int placeNo = 0; placeNo < _placeViews.size(); placeNo++) {
                     for (MarkingView markingView : _placeViews.get(placeNo).getCurrentMarkingView()) {
@@ -802,7 +807,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         ArrayList enabledTransitions = new ArrayList();
         double rate = 0;
-        for (TransitionView transitionView : _transitionViews) {
+        for (TransitionView transitionView : _transitionViews.values()) {
             if (transitionView.isEnabled()) {
                 enabledTransitions.add(transitionView);
                 rate += transitionView.getRate();
@@ -840,7 +845,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         // b) all are timed _transitions.
 
         ArrayList enabledTransitions = new ArrayList();
-        for (TransitionView transitionView : _transitionViews) {
+        for (TransitionView transitionView : _transitionViews.values()) {
             if (transitionView.isEnabled()) {
                 enabledTransitions.add(transitionView);
             }
@@ -857,7 +862,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         if (transitionView != null) {
             setEnabledTransitionsBackwards();
             if (transitionView.isEnabled() && _placeViews != null) {
-                int transitionNo = _transitionViews.indexOf(transitionView);
+                //TODO: fix this
+                int transitionNo = 0;// _transitionViews.values().indexOf(transitionView);
                 for (int placeNo = 0; placeNo < _placeViews.size(); placeNo++) {
                     for (MarkingView m : _placeViews.get(placeNo).getCurrentMarkingView()) {
                         int oldMarkingPos = positionInTheList(m.getToken().getID(), _currentMarkingVector[placeNo]);
@@ -878,7 +884,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       * @see pipe.models.interfaces.IPetriNet#resetEnabledTransitions()
       */
     public void resetEnabledTransitions() {
-        for (TransitionView transitionView : _transitionViews) {
+        for (TransitionView transitionView : _transitionViews.values()) {
             transitionView.setEnabled(false);
             setChanged();
             notifyObservers(transitionView);
@@ -902,7 +908,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             for (int j = 0; j < placeCount; j++) {
                 boolean allTokenClassesEnabled = true;
                 for (MarkingView m : markings[j]) {
-                    CMinus = (m.getToken()).getBackwardsIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
+                    CMinus = (m.getToken()).getBackwardsIncidenceMatrix(_arcViews.values(), _transitionViews.values(), _placeViews.values());
                     if (m.getCurrentMarking() < CMinus[j][i]) {
                         result[i] = false;
                         break;
@@ -1106,13 +1112,13 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     int[][] CPlus;
                     int[][] inhibition;
                     if (backwards) {
-                        CMinus = m.getToken().getForwardsIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
-                        CPlus = m.getToken().getBackwardsIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
+                        CMinus = m.getToken().getForwardsIncidenceMatrix(_arcViews.values(), _transitionViews.values(), _placeViews.values());
+                        CPlus = m.getToken().getBackwardsIncidenceMatrix(_arcViews.values(), _transitionViews.values(), _placeViews.values());
                     } else {
-                        CPlus = m.getToken().getForwardsIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
-                        CMinus = m.getToken().getBackwardsIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
+                        CPlus = m.getToken().getForwardsIncidenceMatrix(_arcViews.values(), _transitionViews.values(), _placeViews.values());
+                        CMinus = m.getToken().getBackwardsIncidenceMatrix(_arcViews.values(), _transitionViews.values(), _placeViews.values());
                     }
-                    inhibition = m.getToken().getInhibitionMatrix(_inhibitorViews, _transitionViews, _placeViews);
+                    inhibition = m.getToken().getInhibitionMatrix(_inhibitorViews.values(), _transitionViews.values(), _placeViews.values());
 
                     if ((m.getCurrentMarking() < CMinus[j][i]) && (m.getCurrentMarking() != -1)) {
                         allTokenClassesEnabled = false;
@@ -1193,7 +1199,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         _initialMarkingVector = null;
         _arcsMap = null;
         _tokenSetController = null;
-        initializeMatrices();
+//        initializeMatrices();
     }
 
 
@@ -1212,8 +1218,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#getPlacesArrayList()
       */
-    public ArrayList<PlaceView> getPlacesArrayList() {
-        return _placeViews;
+    public Collection<PlaceView> getPlacesArrayList() {
+        return _placeViews.values();
     }
 
 
@@ -1259,10 +1265,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       */
     public RateParameter[] markingRateParameters() {
         RateParameter[] returnArray = new RateParameter[_rateParameters.size()];
-
-        for (int i = 0; i < _rateParameters.size(); i++) {
-            returnArray[i] = _rateParameters.get(i);
-        }
+        _rateParameters.toArray(returnArray);
         return returnArray;
     }
 
@@ -1282,8 +1285,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#getTransitionsArrayList()
       */
-    public ArrayList<TransitionView> getTransitionsArrayList() {
-        return _transitionViews;
+    public Collection<TransitionView> getTransitionsArrayList() {
+        return _transitionViews.values();
     }
 
     /* (non-Javadoc)
@@ -1312,8 +1315,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#getArcsArrayList()
       */
-    public ArrayList<ArcView> getArcsArrayList() {
-        return _arcViews;
+    public Collection<ArcView> getArcsArrayList() {
+        return _arcViews.values();
     }
 
     /* (non-Javadoc)
@@ -1331,8 +1334,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#getInhibitorsArrayList()
       */
-    public ArrayList<InhibitorArcView> getInhibitorsArrayList() {
-        return _inhibitorViews;
+    public Collection<InhibitorArcView> getInhibitorsArrayList() {
+        return _inhibitorViews.values();
     }
 
     /* (non-Javadoc)
@@ -1480,19 +1483,19 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         for (Place place : places) {
             PlaceView view;
-            if (modelToViews.containsKey(place))
+            if (_placeViews.containsKey(place))
             {
-                view = (PlaceView) modelToViews.get(place);
+                view = _placeViews.get(place);
                 view.update(this, place);
             } else
             {
                 PlaceViewBuilder builder = new PlaceViewBuilder(place);
                 view = builder.build();
-                modelToViews.put(place, view);
+                _placeViews.put(place, view);
             }
             view.setActiveTokenView(_tokenSetController.getActiveTokenView());
 //            placeView.setActiveTokenView(_activeTokenView); // SJD
-            _placeViews.add(view);
+//            _placeViews.add(view);
             setChanged();
             setMatrixChanged();
             notifyObservers(view);
@@ -1501,8 +1504,21 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     private void displayTransitions(Collection<Transition> transitions) {
         for (Transition transition : transitions) {
-            TransitionViewBuilder builder = new TransitionViewBuilder(transition);
-            addTransition(builder.build());
+            TransitionView view;
+            if (_transitionViews.containsKey(transition))
+            {
+                view = _transitionViews.get(transition);
+                view.update();
+            } else
+            {
+                TransitionViewBuilder builder = new TransitionViewBuilder(transition);
+                view = builder.build();
+                _transitionViews.put(transition, view);
+            }
+
+            setChanged();
+            setMatrixChanged();
+            notifyObservers(view);
         }
 
     }
@@ -1658,7 +1674,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (_transitionViews != null && _transitionViews.size() > 0) {
             // we need to check all the arcs....
-            for (TransitionView _transitionView : _transitionViews) {
+            for (TransitionView _transitionView : _transitionViews.values()) {
                 currentTrans = _transitionView;
                 taggedTransition = false;
                 taggedInput = false;
@@ -1677,7 +1693,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 // one output arc
 
                 if (_arcViews != null && _arcViews.size() > 0) {
-                    for (ArcView _arcView : _arcViews) {
+                    for (ArcView _arcView : _arcViews.values()) {
                         currentArcView = (NormalArcView) _arcView;
                         if (currentArcView.getSource() == currentTrans) {
                             outputArcsArray.add(currentArcView);
@@ -1743,7 +1759,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       * @see pipe.models.interfaces.IPetriNet#checkTransitionIDAvailability(java.lang.String)
       */
     public boolean checkTransitionIDAvailability(String newName) {
-        for (TransitionView _transitionView : _transitionViews) {
+        for (TransitionView _transitionView : _transitionViews.values()) {
             if (_transitionView.getId().equals(newName)) {
                 // ID/name isn't available
                 return false;
@@ -1757,7 +1773,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       * @see pipe.models.interfaces.IPetriNet#checkPlaceIDAvailability(java.lang.String)
       */
     public boolean checkPlaceIDAvailability(String newName) {
-        for (PlaceView _placeView : _placeViews) {
+        for (PlaceView _placeView : _placeViews.values()) {
             if (_placeView.getId().equals(newName)) {
                 // ID/name isn't available
                 return false;
@@ -1794,7 +1810,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         boolean tagged = false;
 
-        for (ArcView _arcView : this._arcViews) {
+        for (ArcView _arcView : _arcViews.values()) {
             if (_arcView.isTagged()) {
                 tagged = true;
             }
@@ -1838,7 +1854,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (_transitionViews != null) {
             if (transitionID != null) {
-                for (TransitionView _transitionView : _transitionViews) {
+                for (TransitionView _transitionView : _transitionViews.values()) {
                     if (transitionID.equalsIgnoreCase(_transitionView.getId())) {
                         returnTransitionView = _transitionView;
                     }
@@ -1856,7 +1872,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (_transitionViews != null) {
             if (transitionName != null) {
-                for (TransitionView _transitionView : _transitionViews) {
+                for (TransitionView _transitionView : _transitionViews.values()) {
                     if (transitionName.equalsIgnoreCase(_transitionView.getName())) {
                         returnTransitionView = _transitionView;
                     }
@@ -1888,7 +1904,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (_placeViews != null) {
             if (placeID != null) {
-                for (PlaceView _placeView : _placeViews) {
+                for (PlaceView _placeView : _placeViews.values()) {
                     if (placeID.equalsIgnoreCase(_placeView.getId())) {
                         returnPlaceView = _placeView;
                     }
@@ -1906,7 +1922,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
         if (_placeViews != null) {
             if (placeName != null) {
-                for (PlaceView _placeView : _placeViews) {
+                for (PlaceView _placeView : _placeViews.values()) {
                     if (placeName.equalsIgnoreCase(_placeView.getName())) {
                         returnPlaceView = _placeView;
                     }
@@ -1947,20 +1963,20 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
      * @author yufeiwang
      */
     public void backUpPlaceViewsMarking() {
-        for (PlaceView place : _placeViews) {
+        for (PlaceView place : _placeViews.values()) {
             place.backUpMarking();
         }
     }
 
     public void restorePlaceViewsMarking() {
-        for (PlaceView place : _placeViews) {
+        for (PlaceView place : _placeViews.values()) {
             place.restoreMarking();
         }
-        for (ArcView arc : _arcViews) {
+        for (ArcView arc : _arcViews.values()) {
             //arc.updateArcWeight();
             arc.repaint();
         }
-        for (TransitionView tran : _transitionViews) {
+        for (TransitionView tran : _transitionViews.values()) {
             tran.update();
         }
     }
@@ -1971,18 +1987,18 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
      */
     public void setFunctionalExpressionRelatedPlaces() {
         functionRelatedPlaces = new Vector<Vector<String>>();
-        for (PlaceView place : _placeViews) {
+        for (PlaceView place : _placeViews.values()) {
             Vector<String> temp = new Vector<String>();
             temp.add(place.getName());
             temp.add("no");
             functionRelatedPlaces.add(temp);
         }
         //first we check all arc weights
-        for (ArcView arc : _arcViews) {
+        for (ArcView arc : _arcViews.values()) {
             LinkedList<MarkingView> weights = arc.getWeightSimple();
             for (MarkingView weight : weights) {
                 String temp = weight.getCurrentFunctionalMarking();
-                for (PlaceView place : _placeViews) {
+                for (PlaceView place : _placeViews.values()) {
                     if (temp.toLowerCase().contains(place.getName().toLowerCase())) {
                         setFuncRelatedPlace(place.getName().toLowerCase(), "yes");
                     }
@@ -2021,7 +2037,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     public boolean hasFunctionalRatesOrWeights() {
-        for (ArcView arc : _arcViews) {
+        for (ArcView arc : _arcViews.values()) {
             LinkedList<MarkingView> weights = arc.getWeightSimple();
             for (MarkingView weight : weights) {
                 try {
@@ -2031,7 +2047,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 }
             }
         }
-        for (TransitionView tran : _transitionViews) {
+        for (TransitionView tran : _transitionViews.values()) {
             try {
                 Double.parseDouble(tran.getRateExpr());
             } catch (Exception e) {

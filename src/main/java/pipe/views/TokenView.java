@@ -9,6 +9,7 @@ import pipe.utilities.math.Matrix;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Observable;
 
 
@@ -128,8 +129,8 @@ public class TokenView extends Observable implements Serializable, IObserver {
         //return _model.getIncidenceMatrix();
     }
 
-    public int[][] getIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray,
-            ArrayList<PlaceView> placesArray) {
+    public int[][] getIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray,
+            Collection<PlaceView> placesArray) {
 
         return _model.getIncidenceMatrix(arcsArray, transitionsArray, placesArray);
     }
@@ -146,8 +147,8 @@ public class TokenView extends Observable implements Serializable, IObserver {
         return _model.getForwardsIncidenceMatrix();
     }
 
-    public int[][] getForwardsIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray,
-            ArrayList<PlaceView> placesArray) {
+    public int[][] getForwardsIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray,
+            Collection<PlaceView> placesArray) {
         return _model.getForwardsIncidenceMatrix(arcsArray, transitionsArray, placesArray);
     }
 
@@ -163,8 +164,8 @@ public class TokenView extends Observable implements Serializable, IObserver {
         return _model.getBackwardsIncidenceMatrix();
     }
 
-    public int[][] getBackwardsIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray,
-            ArrayList<PlaceView> placesArray) {
+    public int[][] getBackwardsIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray,
+            Collection<PlaceView> placesArray) {
         return _model.getBackwardsIncidenceMatrix(arcsArray, transitionsArray, placesArray);
     }
 
@@ -180,8 +181,8 @@ public class TokenView extends Observable implements Serializable, IObserver {
         return _model.getInhibitionMatrix();
     }
 
-    public int[][] getInhibitionMatrix(ArrayList<InhibitorArcView> inhibitorArrayView,
-            ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray) {
+    public int[][] getInhibitionMatrix(Collection<InhibitorArcView> inhibitorArrayView,
+            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
         return _model.getInhibitionMatrix(inhibitorArrayView, transitionsArray, placesArray);
     }
 
@@ -235,13 +236,13 @@ public class TokenView extends Observable implements Serializable, IObserver {
         return otherTokenView.getID().equals(getID());
     }
 
-    public void createIncidenceMatrix(ArrayList<ArcView> arcsArray, ArrayList<TransitionView> transitionsArray,
-            ArrayList<PlaceView> placesArray) {
+    public void createIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray,
+            Collection<PlaceView> placesArray) {
         _model.createIncidenceMatrix(arcsArray, transitionsArray, placesArray);
     }
 
-    public void createInhibitionMatrix(ArrayList<InhibitorArcView> inhibitorsArray,
-            ArrayList<TransitionView> transitionsArray, ArrayList<PlaceView> placesArray) {
+    public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray,
+            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
         _model.createInhibitionMatrix(inhibitorsArray, transitionsArray, placesArray);
     }
 
