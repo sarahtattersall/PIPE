@@ -35,6 +35,7 @@ import java.util.Observable;
  * 		Steve Doubleday (Oct 2013):  refactored to use TokenSetController for access to TokenViews
  */
 public class PetriNetView extends Observable implements Cloneable, IObserver, Serializable, Observer {
+    private Map<PetriNetComponent, PetriNetViewComponent> modelToViews = new HashMap<PetriNetComponent, PetriNetViewComponent>();
     protected ArrayList<PlaceView> _placeViews; // Steve Doubleday:  protected to simplify testing
     private ArrayList<TransitionView> _transitionViews;
     private ArrayList<ArcView> _arcViews;
@@ -1478,10 +1479,23 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private void displayPlaces(Collection<Place> places) {
 
         for (Place place : places) {
-            PlaceViewBuilder builder = new PlaceViewBuilder(place);
-            PlaceView view = builder.build();
-            addPlace(view);
-
+            PlaceView view;
+            if (modelToViews.containsKey(place))
+            {
+                view = (PlaceView) modelToViews.get(place);
+                view.update(this, place);
+            } else
+            {
+                PlaceViewBuilder builder = new PlaceViewBuilder(place);
+                view = builder.build();
+                modelToViews.put(place, view);
+            }
+            view.setActiveTokenView(_tokenSetController.getActiveTokenView());
+//            placeView.setActiveTokenView(_activeTokenView); // SJD
+            _placeViews.add(view);
+            setChanged();
+            setMatrixChanged();
+            notifyObservers(view);
         }
     }
 
@@ -1808,6 +1822,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
      */
     @Override
     public void update() {
+
         displayPlaces(_model.getPlaces());
         displayTokens(_model.getTokens());
         displayTransitions(_model.getTransitions());

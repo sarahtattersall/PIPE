@@ -89,6 +89,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         _componentWidth = DIAMETER;
         _componentHeight = DIAMETER;
         capacity = capacityInput;
+        setId(_model.getId());
         setCapacity(capacityInput);
         setCentre((int) _positionX, (int) _positionY);
     }

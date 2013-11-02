@@ -13,13 +13,15 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class PetriNetController implements IController, Serializable
 {
 
-    private ArrayList<PetriNetView> _views;
-    private ArrayList<PetriNet> _models;
-    private int _activePetriNet;
+    private ArrayList<PetriNetView> _views = new ArrayList<PetriNetView>();
+    private ArrayList<PetriNet> _models = new ArrayList<PetriNet>();
+    private List<Integer> _petriNetNumbers = new LinkedList<Integer>();
+    private int _activePetriNet = 0;
     private boolean currentlyCreatingArc = false;
     private NormalArc arc;
     private ArcView arcView;
@@ -33,11 +35,7 @@ public class PetriNetController implements IController, Serializable
         TransitionController transitionController = new TransitionController();
         TokenController tokenController = new TokenController();
         MarkingController markingController = new MarkingController(tokenController);
-        
-        if(_views == null)
-            _views = new ArrayList<PetriNetView>();
-        if(_models == null)
-            _models = new ArrayList<PetriNet>();
+        _petriNetNumbers.add(0);
     }
 
     public PetriNetView getView()
@@ -50,6 +48,7 @@ public class PetriNetController implements IController, Serializable
         _models.add(model);
         PetriNetView petriNetView = new PetriNetView(this, model);
         _views.add(petriNetView);
+        _petriNetNumbers.add(0);
         changeActivePetriNet();
     }
 
@@ -59,6 +58,7 @@ public class PetriNetController implements IController, Serializable
         PetriNetView petriNetView = new PetriNetView(this, petriNet);
         _views.add(petriNetView);
         _models.add(petriNet);
+        _petriNetNumbers.add(0);
         changeActivePetriNet();
         return petriNetView;
     }
@@ -121,5 +121,15 @@ public class PetriNetController implements IController, Serializable
      */
     public boolean isApplicableEndPoint(Connectable potentialEnd) {
         return currentlyCreatingArc && potentialEnd.getClass() != arc.getSource().getClass();
+    }
+
+    /**
+     * Creates unique petri net numbers for each tab
+     * @return A unique number for the petrinet in the current tab
+     */
+    public int getUniquePlaceNumber() {
+        int returnValue = _petriNetNumbers.get(_activePetriNet);
+        _petriNetNumbers.set(_activePetriNet, returnValue + 1);
+        return returnValue;
     }
 }

@@ -9,6 +9,7 @@ import pipe.models.PipeApplicationModel;
 import pipe.models.Place;
 import pipe.models.Transition;
 import pipe.views.*;
+import pipe.views.builder.PlaceViewBuilder;
 import pipe.views.viewComponents.AnnotationNote;
 import pipe.views.viewComponents.RateParameter;
 
@@ -57,14 +58,29 @@ public class MouseHandler extends MouseInputAdapter
         return p;
     }
 
+    /**
+     * @return new Place name e.g. P12
+     */
+    private String getNewPetriNetName() {
+        PipeApplicationModel model = ApplicationSettings.getApplicationModel();
+        int number = petriNetController.getUniquePlaceNumber();
+        String id = "P" + number;
+        return id;
+    }
 
     private ConnectableView newPlace(Point p)
     {
         p = adjustPoint(p, _petriNetTab.getZoom());
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
-        Place place = new Place("", "");
+
+        String id = getNewPetriNetName();
+        Place place = new Place(id, id);
         place.setX(Grid.getModifiedX(p.x));
         place.setY(Grid.getModifiedY(p.y));
+
+        PlaceViewBuilder builder = new PlaceViewBuilder(place);
+        PlaceView view = builder.build();
+        place.registerObserver(view);
 
         petriNet.addPlace(place);
         petriNet.notifyObservers();

@@ -1,5 +1,6 @@
 package pipe.handler;
 
+import matchers.component.HasId;
 import matchers.component.HasMultiple;
 import matchers.component.HasTimed;
 import matchers.component.HasXY;
@@ -64,7 +65,8 @@ public class MouseHandlerTest {
 
         verify(mockNet).addPlace(argThat(
                 new HasMultiple<Place>(
-                        new HasXY(Grid.getModifiedX(0), Grid.getModifiedY(0))
+                        new HasXY(Grid.getModifiedX(0), Grid.getModifiedY(0)),
+                        new HasId("P0")
                 )
         ));
     }

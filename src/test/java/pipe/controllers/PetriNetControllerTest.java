@@ -1,11 +1,29 @@
 package pipe.controllers;
 
-/**
- * Created with IntelliJ IDEA.
- * User: st809
- * Date: 26/10/2013
- * Time: 21:51
- * To change this template use File | Settings | File Templates.
- */
+import org.junit.Before;
+import org.junit.Test;
+import pipe.models.PetriNet;
+
+import static org.junit.Assert.assertEquals;
+
 public class PetriNetControllerTest {
+    PetriNetController controller;
+
+    @Before
+    public void setUp() {
+        controller = new PetriNetController();
+    }
+
+    @Test
+    public void returnsUniqueNumberForDifferentTabs()
+    {
+        PetriNet net1 = new PetriNet();
+        controller.addPetriNet(net1);
+        assertEquals(0, controller.getUniquePlaceNumber());
+        assertEquals(1, controller.getUniquePlaceNumber());
+
+        PetriNet net2 = new PetriNet();
+        controller.addPetriNet(net2);
+        assertEquals(0, controller.getUniquePlaceNumber());
+    }
 }
