@@ -92,6 +92,11 @@ public class Place extends Connectable implements PetriNetComponent, Serializabl
         return coord;
     }
 
+    @Override
+    public boolean isEndPoint() {
+        return true;
+    }
+
     /**
      *
      * @return true - Place objects are always selectable

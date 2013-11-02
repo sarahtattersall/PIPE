@@ -12,8 +12,6 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
     private Connectable target;
     private String id;
 
-    private Point2D.Double targetLocation = new Point2D.Double();
-
     private boolean tagged = false;
 
     //TODO: Does this need to be a List?
@@ -39,6 +37,7 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
     public void setSource(Connectable source)
     {
         this.source = source;
+        notifyObservers();
     }
 
     public Connectable getTarget()
@@ -46,20 +45,42 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
         return target;
     }
 
-    public Point2D.Double getTargetLocation() {
-        return targetLocation;
-    }
-
-    public void setTargetLocation(Point2D.Double targetLocation) {
-        this.targetLocation = targetLocation;
-        notifyObservers();
-    }
-
     public void setTarget(Connectable target)
     {
         this.target = target;
-        setTargetLocation(new Point2D.Double(target.getX(), target.getY()));
+        notifyObservers();
     }
+
+    /**
+     *
+     * @return angle in randians between source and target
+     */
+    private double getAngleBetweenSourceAndTarget()
+    {
+        double deltax = source.getX() - target.getX();
+        double deltay = source.getY() - target.getY();
+        return Math.atan2(deltax, deltay);
+    }
+
+    /**
+     *
+     * @return The start coordinate of the arc
+     */
+    public Point2D.Double getStartPoint() {
+        double angle = getAngleBetweenSourceAndTarget();
+        return source.getArcEdgePoint(angle);
+    }
+
+
+    /**
+     *
+     * @return The end coordinate of the arc
+     */
+    public Point2D.Double getEndPoint() {
+        double angle = getAngleBetweenSourceAndTarget();
+        return target.getArcEdgePoint(Math.PI + angle);
+    }
+
 
     /**
      *
@@ -77,6 +98,7 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
 
     public void setTagged(boolean tagged) {
         this.tagged = tagged;
+        notifyObservers();
     }
 
     public String getId() {
@@ -85,5 +107,6 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
 
     public void setId(String id) {
         this.id = id;
+        notifyObservers();
     }
 }

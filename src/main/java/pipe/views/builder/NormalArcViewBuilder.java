@@ -25,17 +25,8 @@ public class NormalArcViewBuilder {
     public NormalArcView build() {
         double startX = arc.getSource().getX();
         double startY = arc.getSource().getY();
-        double endX;
-        double endY;
-        if (arc.getTarget() != null) {
-            endX = arc.getTarget().getX();
-            endY = arc.getTarget().getY();
-        } else
-        {
-            Point2D.Double point = arc.getTargetLocation();
-            endX = point.x;
-            endY = point.y;
-        }
+        double endX = arc.getTarget().getX();
+        double endY = arc.getTarget().getY();
 
         LinkedList<MarkingView> markings = new LinkedList<MarkingView>();
         for (Marking marking : arc.getWeight()) {

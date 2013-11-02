@@ -175,22 +175,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         return result;
     }
 
-    // Steve Doubleday (Oct 2013):  protected to simplify unit testing
-    protected void initializeMatrices() {
-//        _placeViews = new ArrayList();
-//        _transitionViews = new ArrayList();
-//        _arcViews = new ArrayList();
-//        _inhibitorViews = new ArrayList();
-//        _labels = new ArrayList();
-//        _stateGroups = new ArrayList();
-//        _rateParameters = new ArrayList();
-//        _initialMarkingVector = null;
-//        _arcsMap = new Hashtable();
-//        _inhibitorsMap = new Hashtable();
-//        _tokenSetController = new TokenSetController();
-//        _tokenSetController.addObserver(this);
-    }
-
     private void addPlace(PlaceView placeView) {
         boolean unique = true;
 

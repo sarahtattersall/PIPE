@@ -173,8 +173,8 @@ public class InhibitorArcView extends ArcView implements Serializable {
         g2.setTransform(reset);
     }
 
-    @Override
-    public void update() {
-        repaint();
-    }
+//    @Override
+//    public void update() {
+//        repaint();
+//    }
 }

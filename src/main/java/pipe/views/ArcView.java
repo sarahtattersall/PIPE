@@ -54,40 +54,18 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             String idInput, Arc model) {
         _model = model;
 
-        myPath.addPoint(model.getSource().getCentreX(), model.getSource().getCentreY(), ArcPathPoint.STRAIGHT);
-        myPath.addPoint(model.getSource().getCentreX(), model.getSource().getCentreY(), ArcPathPoint.STRAIGHT);
+        Point2D.Double startPoint = model.getStartPoint();
+        myPath.addPoint(startPoint.getX(), startPoint.getY(), ArcPathPoint.STRAIGHT);
+
+        Point2D.Double endPoint = model.getEndPoint();
+        myPath.addPoint(endPoint.getX(), endPoint.getY(), ArcPathPoint.STRAIGHT);
         myPath.createPath();
-//        Pair<Point2D.Double, Point2D.Double> linePoints = getArcStartAndEnd();
-//        myPath.addPoint((float) linePoints.first.x, (float) linePoints.first.y, ArcPathPoint.STRAIGHT);
-//        myPath.addPoint((float) linePoints.second.x, (float) linePoints.second.y, ArcPathPoint.STRAIGHT);
-//        myPath.createPath();
 
         updateBounds();
         _id = idInput;
         setSource(sourceInput);
         setTarget(targetInput);
         setWeight(Copier.mediumCopy(weightInput));
-    }
-
-    /**
-     * Calculates the source start point and target end point for an arc.
-     *
-     * Using pythagoras we calculate the angle between the source and target
-     * By trigonometry the angle between target and source is 180 - angle
-     *
-     * @return
-     */
-    private Pair<Point2D.Double, Point2D.Double> getArcStartAndEnd() {
-        Connectable source = _model.getSource();
-        Connectable target = _model.getTarget();
-        double deltaX = source.getX() - target.getX();
-        double deltaY = source.getY() - target.getY();
-        double angle = Math.atan2(deltaX, deltaY);
-
-        Point2D.Double startCoord = zoomPoint(source.getArcEdgePoint(angle));
-        Point2D.Double endCoord = zoomPoint(target.getArcEdgePoint(Math.PI + angle));
-
-        return new Pair<Point2D.Double, Point2D.Double>(startCoord, endCoord);
     }
 
     private double zoom(double x)
@@ -568,5 +546,16 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
+    }
+
+    @Override
+    public void update() {
+        Point2D.Double startCoord = zoomPoint(_model.getStartPoint());
+        Point2D.Double endCoord = zoomPoint(_model.getEndPoint());
+        setSourceLocation(startCoord.getX(), startCoord.getY());
+        //TODO: THIS FALSE IS MEANT TO BE 'SHIFT UP'
+        setEndPoint(endCoord.getX(), endCoord.getY(), false);
+        updateBounds();
+        repaint();
     }
 }

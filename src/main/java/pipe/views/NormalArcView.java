@@ -354,43 +354,4 @@ public class NormalArcView extends ArcView implements Serializable {
 
         g2.transform(reset);
     }
-
-    @Override
-    public void update() {
-        //TODO: FALSE SHOULD BE IS SHIFT DOWN....
-
-
-        Connectable source = _model.getSource();
-        Connectable target = _model.getTarget();
-
-        //TODO: TIDY THIS HACK UP
-        // This basically sees if target has been defined as a point, if not it uses
-        // targetLocaiton...
-        double x2, y2;
-        if (target != null)
-        {
-            x2 = target.getX();
-            y2 = target.getY();
-        } else {
-            x2 = _model.getTargetLocation().x;
-            y2 = _model.getTargetLocation().y;
-        }
-
-        double deltaX = source.getX() - x2;
-        double deltaY = source.getY() - y2;
-        double angle = Math.atan2(deltaX, deltaY);
-
-        Point2D.Double startCoord = zoomPoint(source.getArcEdgePoint(angle));
-        if (target != null) {
-            Point2D.Double endCoord = zoomPoint(target.getArcEdgePoint(Math.PI + angle));
-            x2 = endCoord.x;
-            y2 = endCoord.y;
-        }
-
-
-        setSourceLocation(startCoord.x, startCoord.y);
-        setEndPoint(x2, y2, false);
-        updateBounds();
-        repaint();
-    }
 }

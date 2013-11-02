@@ -120,4 +120,10 @@ public abstract class Connectable extends Observable implements Serializable
      */
     public abstract Point2D.Double getArcEdgePoint(double angle);
 
+    /**
+     * @return true if the arc can finish at this point.
+     * I.e it is not a temporary connectable
+     */
+    public abstract boolean isEndPoint();
+
 }

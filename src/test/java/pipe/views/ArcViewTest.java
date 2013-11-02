@@ -1,8 +1,11 @@
 package pipe.views;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.LinkedList;
 
 import org.junit.Before;
@@ -10,6 +13,9 @@ import org.junit.Test;
 
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
+import pipe.models.Arc;
+import pipe.models.NormalArc;
+import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 
 public class ArcViewTest
@@ -23,6 +29,24 @@ public class ArcViewTest
 	{
 		tokenView = new TokenView(true, "Default", Color.black);
 	}
+
+    @Test
+    public void ArcViewSetsCorrectPathInConstructor()
+    {
+        NormalArc mockArc = mock(NormalArc.class);
+        Point2D.Double start = new Point2D.Double(50, 39);
+        Point2D.Double end = new Point2D.Double(100, 500);
+        when(mockArc.getStartPoint()).thenReturn(start);
+        when(mockArc.getEndPoint()).thenReturn(end);
+
+        arcView = new NormalArcView(0, 0, 0, 0, null, null, new LinkedList<MarkingView>(),"id", true,  mockArc);
+        ArcPath path = arcView.getArcPath();
+
+        assertEquals(2, path.getNumPoints());
+        assertEquals(start, path.getPoint(0));
+        assertEquals(end, path.getPoint(1));
+    }
+
 	@Test
 	public void verifyDeletesMarkingViewWhenItRequestsUpdate() throws Exception
 	{

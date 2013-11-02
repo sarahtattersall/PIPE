@@ -91,6 +91,11 @@ public class Transition extends Connectable implements Serializable, PetriNetCom
         return rotateAroundCenter(Math.toRadians(this.angle), connectionPoint);
     }
 
+    @Override
+    public boolean isEndPoint() {
+        return true;
+    }
+
     /**
      * Return true if an arc connecting to this should
      * connect to the left

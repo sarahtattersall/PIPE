@@ -74,7 +74,7 @@ public class PetriNetController implements IController, Serializable
 
     public void addArcPoint(double x, double y, boolean shiftDown) {
         if (currentlyCreatingArc) {
-            arc.setTargetLocation(new Point2D.Double(x, y));
+            arc.setTarget(new TemporaryArcTarget(x, y));
             //arc.setTarget(null);
             //_createArcView.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(event.getY()), event.isShiftDown());
         }
@@ -87,7 +87,9 @@ public class PetriNetController implements IController, Serializable
     //TODO: handle different arc types.
     public void startCreatingArc(Connectable source) {
         currentlyCreatingArc = true;
-        this.arc = new NormalArc(source, null, new LinkedList<Marking>());
+        this.arc = new NormalArc(source,
+                new TemporaryArcTarget(source.getX(), source.getY()),
+                new LinkedList<Marking>());
         NormalArcViewBuilder builder = new NormalArcViewBuilder(arc);
         arcView = builder.build();
         PetriNetTab tab = ApplicationSettings.getApplicationView().getCurrentTab();
@@ -124,7 +126,11 @@ public class PetriNetController implements IController, Serializable
      *
      */
     public boolean isApplicableEndPoint(Connectable potentialEnd) {
-        return currentlyCreatingArc && potentialEnd.getClass() != arc.getSource().getClass();
+        if (currentlyCreatingArc && potentialEnd.isEndPoint())
+        {
+            return potentialEnd.getClass() != arc.getSource().getClass();
+        }
+        return false;
     }
 
     /**

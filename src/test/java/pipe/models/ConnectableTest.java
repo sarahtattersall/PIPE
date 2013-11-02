@@ -101,6 +101,11 @@ public class ConnectableTest {
         public Point2D.Double getArcEdgePoint(double angle) {
             return new Point2D.Double(0,0);
         }
+
+        @Override
+        public boolean isEndPoint() {
+            return true;
+        }
     }
 
 
