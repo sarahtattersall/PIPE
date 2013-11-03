@@ -55,7 +55,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private static boolean _currentMarkingVectorChanged = true;
     private Hashtable _arcsMap;
     private Hashtable _inhibitorsMap;
-    private ArrayList _stateGroups;
+    private ArrayList<StateGroup> _stateGroups = new ArrayList<StateGroup>();
     private final HashSet _rateParameterHashSet = new HashSet();
     private PetriNet _model;
     private TokenSetController _tokenSetController = new TokenSetController();

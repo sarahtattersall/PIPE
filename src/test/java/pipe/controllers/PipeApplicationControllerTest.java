@@ -32,13 +32,18 @@ public class PipeApplicationControllerTest {
         ApplicationSettings.register(mockModel);
         PetriNetController netController = new PetriNetController();
         CopyPasteManager copyPaste = new CopyPasteManager();
+
+        //TODO: This is a nasty fix until can remove ApplicationSettings
+        PipeApplicationController nullController = null;
+        ApplicationSettings.register(nullController);
+
         controller = new PipeApplicationController(mockModel, netController, copyPaste);
     }
 
     @Test
     public void registersItselfToApplicationSettings()
     {
-        assertEquals(this, ApplicationSettings.getApplicationController());
+        assertEquals(controller, ApplicationSettings.getApplicationController());
     }
 
     @Test

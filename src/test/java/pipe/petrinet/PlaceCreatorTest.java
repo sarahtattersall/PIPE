@@ -42,8 +42,8 @@ public class PlaceCreatorTest {
         assertNotNull(place);
 
         assertEquals("P0", place.getName());
-        assertEquals(226, place.getX(), DOUBLE_DELTA);
-        assertEquals(241, place.getY(), DOUBLE_DELTA);
+        assertEquals(225, place.getX(), DOUBLE_DELTA);
+        assertEquals(240, place.getY(), DOUBLE_DELTA);
 
         assertEquals(0, place.getMarkingXOffset(), DOUBLE_DELTA);
         assertEquals(0, place.getMarkingYOffset(), DOUBLE_DELTA);

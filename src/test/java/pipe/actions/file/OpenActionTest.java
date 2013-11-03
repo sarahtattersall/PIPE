@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -13,14 +14,14 @@ import static org.mockito.Mockito.*;
 
 public class OpenActionTest {
     OpenAction openAction;
-    PipeApplicationView mockView;
+    PipeApplicationController mockController;
 
     @Before
     public void setUp()
     {
         openAction = new OpenAction();
-        mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
+        mockController = mock(PipeApplicationController.class);
+        ApplicationSettings.register(mockController);
     }
 
     @Test
@@ -35,7 +36,7 @@ public class OpenActionTest {
         openAction.setFileForTesting(mockFile);
 
         openAction.actionPerformed(null);
-        verify(mockView).createNewTabDELETEME(mockFile, false);
+        verify(mockController).createNewTab(mockFile, false);
     }
 
     //TODO: Need to test dialog box error

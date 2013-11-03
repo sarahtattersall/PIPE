@@ -24,7 +24,7 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     private ConnectableView(double positionX, double positionY, String id, T model) {
-        this(positionX, positionY, id, "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model);
+        this(positionX, positionY, id, model.getName(), Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model);
     }
 
     ConnectableView(double positionX, double positionY, String id, String name, double nameOffsetX, double nameOffsetY,
@@ -46,7 +46,6 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
 
     public void setId(String idInput) {
         _id = idInput;
-        setName(_id);
     }
 
     public String getId() {

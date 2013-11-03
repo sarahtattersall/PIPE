@@ -35,9 +35,5 @@ public class NormalArcViewBuilderTest {
         ArcView view = builder.build();
         assertEquals(arc.getId(), view.getId());
         assertEquals(arc.isTagged(), view.isTagged());
-        assertEquals(arc.getSource().getX(), view.getStartPositionX(), DOUBLE_DELTA);
-        assertEquals(arc.getSource().getY(), view.getStartPositionX(), DOUBLE_DELTA);
-        // TODO Cant test end positions
-
     }
 }

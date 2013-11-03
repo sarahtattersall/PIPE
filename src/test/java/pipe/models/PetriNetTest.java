@@ -7,6 +7,7 @@ import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.RateParameter;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class PetriNetTest {
@@ -30,6 +31,16 @@ public class PetriNetTest {
     }
 
     @Test
+    public void removingPlaceNotifiesObservers() {
+        net.registerObserver(mockObserver);
+        Place place = new Place("", "");
+        net.addPlace(place);
+        net.removePlace(place);
+
+        verify(mockObserver, times(2)).update();
+    }
+
+    @Test
     public void addingArcNotifiesObservers() {
         net.registerObserver(mockObserver);
         Arc mockArc = mock(Arc.class);
@@ -39,11 +50,31 @@ public class PetriNetTest {
     }
 
     @Test
+    public void removingArcNotifiesObservers() {
+        net.registerObserver(mockObserver);
+        Arc mockArc = mock(Arc.class);
+        net.addArc(mockArc);
+        net.removeArc(mockArc);
+
+        verify(mockObserver, times(2)).update();
+    }
+
+    @Test
     public void addingTransitionNotifiesObservers() {
         net.registerObserver(mockObserver);
         Transition transition = new Transition("", "");
         net.addTransition(transition);
         verify(mockObserver).update();
+    }
+
+
+    @Test
+    public void removingTransitionNotifiesObservers() {
+        net.registerObserver(mockObserver);
+        Transition transition = new Transition("", "");
+        net.addTransition(transition);
+        net.removeTransition(transition);
+        verify(mockObserver, times(2)).update();
     }
 
 

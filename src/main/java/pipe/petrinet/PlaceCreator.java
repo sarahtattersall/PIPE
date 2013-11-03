@@ -74,12 +74,10 @@ public class PlaceCreator implements ComponentCreator<Place> {
     public Place create(Element element)
     {
         String xInput = element.getAttribute("positionX");
-        double x = xInput.isEmpty() ? 0 : Double.valueOf(xInput) + 1;
-        x = Grid.getModifiedX(x);
+        double x = xInput.isEmpty() ? 0 : Double.valueOf(xInput);
 
         String yInput = element.getAttribute("positionY");
-        double y = yInput.isEmpty() ? 0 : Double.valueOf(yInput) + 1;
-        y = Grid.getModifiedY(y);
+        double y = yInput.isEmpty() ? 0 : Double.valueOf(yInput);
 
         String id = element.getAttribute("id");
         String name = element.getAttribute("name");
@@ -96,9 +94,9 @@ public class PlaceCreator implements ComponentCreator<Place> {
         double capacity =  CreatorUtils.zeroOrValueOf(element.getAttribute("capacity"));
 
         Place place = new Place(id, name);
-        //place.setX(x);
-        //place.setY(y);
-        place.setCentre(x, y);
+        place.setX(x);
+        place.setY(y);
+//        place.setCentre(x, y);
         place.setNameXOffset(nameXOffset);
         place.setNameYOffset(nameYOffset);
         place.setMarkingXOffset(markingXOffset);

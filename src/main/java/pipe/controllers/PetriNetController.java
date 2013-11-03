@@ -1,14 +1,8 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.handlers.ArcKeyboardEventHandler;
 import pipe.models.*;
-import pipe.views.ArcView;
-import pipe.views.NormalArcView;
 import pipe.views.PetriNetView;
-import pipe.views.builder.NormalArcViewBuilder;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

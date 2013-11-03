@@ -116,4 +116,20 @@ public class PetriNet extends Observable implements Serializable
     public Collection<Token> getTokens() {
         return tokens;
     }
+
+    public void removePlace(Place place) {
+        this.places.remove(place);
+        notifyObservers();
+    }
+
+    public void removeTransition(Transition transition) {
+        this.transitions.remove(transition);
+        notifyObservers();
+    }
+
+    public void removeArc(Arc arc) {
+        this.arcs.remove(arc);
+        notifyObservers();
+    }
+
 }

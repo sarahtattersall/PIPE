@@ -18,10 +18,8 @@ public class TransitionCreator implements ComponentCreator<Transition> {
 
     public Transition create(Element element) {
         double x = CreatorUtils.zeroOrValueOf(element.getAttribute("positionX"));
-        x = Grid.getModifiedX(x);
 
         double y = CreatorUtils.zeroOrValueOf(element.getAttribute("positionY"));
-        y = Grid.getModifiedY(y);
 
         String id = element.getAttribute("id");
         String name = element.getAttribute("name");
@@ -66,9 +64,8 @@ public class TransitionCreator implements ComponentCreator<Transition> {
         transition.setNameXOffset(nameXOffset);
         transition.setNameYOffset(nameYOffset);
         transition.setAngle(angle);
-        transition.setCentre(x, y);
-        //transition.setX(x);
-        //transition.setY(y);
+        transition.setX(x);
+        transition.setY(y);
         transition.setInfiniteServer(infiniteServer);
         transition.setTimedTransition(timedTransition);
         transition.setRateParameter(rateParameter);

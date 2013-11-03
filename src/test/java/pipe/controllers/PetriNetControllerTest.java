@@ -24,6 +24,11 @@ public class PetriNetControllerTest {
     @Before
     public void setUp() {
         controller = new PetriNetController();
+
+        //TODO: Remove this when you can get reid of ApplicationSettings
+        // nasty staticness means that some views persist between tests.
+        PipeApplicationView nullView = null;
+        ApplicationSettings.register(nullView);
     }
 
     @Test
@@ -118,18 +123,20 @@ public class PetriNetControllerTest {
         controller.select(place);
         controller.select(transition);
 
-        when(place.getX()).thenReturn(0.);
-        when(place.getY()).thenReturn(0.);
-        when(transition.getX()).thenReturn(0.);
-        when(transition.getY()).thenReturn(0.);
+        double x_y_value = 40.0;
+        when(place.getX()).thenReturn(x_y_value);
+        when(place.getY()).thenReturn(x_y_value);
+        when(transition.getX()).thenReturn(x_y_value);
+        when(transition.getY()).thenReturn(x_y_value);
 
         double translate_value = 50;
         controller.translateSelected(new Point2D.Double(translate_value, translate_value));
 
-        verify(place).setX(translate_value);
-        verify(place).setY(translate_value);
-        verify(transition).setX(translate_value);
-        verify(transition).setY(translate_value);
+        double expected_value = x_y_value + translate_value;
+        verify(place).setX(expected_value);
+        verify(place).setY(expected_value);
+        verify(transition).setX(expected_value);
+        verify(transition).setY(expected_value);
     }
 
     private PetriNetTab createMocKTab()
