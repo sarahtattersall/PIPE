@@ -2,6 +2,7 @@ package pipe.models;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.interfaces.IObserver;
 import pipe.views.ArcView;
 
 import java.awt.geom.Point2D;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created with IntelliJ IDEA.
@@ -71,6 +73,15 @@ public class ConnectableTest {
         assertFalse(inBoundArcs.contains(mockView));
     }
 
+    @Test
+    public void notifiesObserversOnXChange()
+    {
+        IObserver mockObserver = mock(IObserver.class);
+        connectable.registerObserver(mockObserver);
+        connectable.setX(10);
+        verify(mockObserver).update();
+    }
+
     private class DummyConnectable extends Connectable {
 
         DummyConnectable(String id, String name) {
@@ -105,6 +116,16 @@ public class ConnectableTest {
         @Override
         public boolean isEndPoint() {
             return true;
+        }
+
+        @Override
+        public boolean isSelectable() {
+            return false;
+        }
+
+        @Override
+        public boolean isDraggable() {
+            return false;
         }
     }
 

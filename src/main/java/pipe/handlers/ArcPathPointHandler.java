@@ -22,7 +22,9 @@ public class ArcPathPointHandler
 
    
    public ArcPathPointHandler(Container contentpane, ArcPathPoint obj) {
-      super(contentpane, obj);
+       //TODO: FIX THIS WITH TYPING
+       super(contentpane, null);
+//      super(contentpane, obj);
       enablePopup = true;
    }
    
@@ -68,10 +70,10 @@ public class ArcPathPointHandler
    
    
    public void mousePressed(MouseEvent e) {
-      if (component.isEnabled()) {
-         ((ArcPathPoint)e.getComponent()).setVisibilityLock(true);
-         super.mousePressed(e);
-      }
+//      if (component.isEnabled()) {
+//         ((ArcPathPoint)e.getComponent()).setVisibilityLock(true);
+//         super.mousePressed(e);
+//      }
    }
    
    

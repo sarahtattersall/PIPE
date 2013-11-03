@@ -3,6 +3,7 @@ package pipe.handlers;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
+import pipe.historyActions.GroupTransition;
 import pipe.historyActions.HistoryItem;
 import pipe.views.GroupTransitionView;
 
@@ -23,7 +24,9 @@ public class GroupTransitionHandler
   
    
    public GroupTransitionHandler(Container contentpane, GroupTransitionView obj) {
-      super(contentpane, obj);
+       super(contentpane, null);
+       //TODO: FIX THIS BACK IN RATHER THAN NULL;
+//      super(contentpane, obj);
    }
 
    
@@ -81,28 +84,28 @@ public class GroupTransitionHandler
    
    
    public void mouseClicked(MouseEvent e) {   
-      if (SwingUtilities.isLeftMouseButton(e)){
-          if (e.getClickCount() == 2 &&
-                 ApplicationSettings.getApplicationModel().isEditionAllowed() &&
-                 (ApplicationSettings.getApplicationModel().getMode() == Constants.TIMEDTRANS ||
-                 ApplicationSettings.getApplicationModel().getMode() == Constants.IMMTRANS ||
-                 ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)) {
-            ((GroupTransitionView) component).showEditor();
-         } 
-      }  else if (SwingUtilities.isRightMouseButton(e)){
-          if (ApplicationSettings.getApplicationModel().isEditionAllowed() && enablePopup) {
-            JPopupMenu m = getPopup(e);
-            if (m != null) {           
-               int x = ZoomController.getZoomedValue(
-                       component.getNameOffsetXObject().intValue(),
-                       component.getZoomPercentage());
-               int y = ZoomController.getZoomedValue(
-                       component.getNameOffsetYObject().intValue(),
-                       component.getZoomPercentage());
-               m.show(component, x, y);
-            }
-         }
-      }
+//      if (SwingUtilities.isLeftMouseButton(e)){
+//          if (e.getClickCount() == 2 &&
+//                 ApplicationSettings.getApplicationModel().isEditionAllowed() &&
+//                 (ApplicationSettings.getApplicationModel().getMode() == Constants.TIMEDTRANS ||
+//                 ApplicationSettings.getApplicationModel().getMode() == Constants.IMMTRANS ||
+//                 ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)) {
+//            ((GroupTransitionView) component).showEditor();
+//         }
+//      }  else if (SwingUtilities.isRightMouseButton(e)){
+//          if (ApplicationSettings.getApplicationModel().isEditionAllowed() && enablePopup) {
+//            JPopupMenu m = getPopup(e);
+//            if (m != null) {
+//               int x = ZoomController.getZoomedValue(
+//                       component.getNameOffsetXObject().intValue(),
+//                       component.getZoomPercentage());
+//               int y = ZoomController.getZoomedValue(
+//                       component.getNameOffsetYObject().intValue(),
+//                       component.getZoomPercentage());
+//               m.show(component, x, y);
+//            }
+//         }
+//      }
    }
    
 }

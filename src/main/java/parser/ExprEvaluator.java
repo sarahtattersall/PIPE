@@ -3,6 +3,7 @@ package parser;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,7 +96,7 @@ public class ExprEvaluator{
 					
 					
 					if(lexpr.toLowerCase().contains(name.toLowerCase())){
-						LinkedList<MarkingView> markings = ((PlaceView) pn).getCurrentMarkingView();
+						List<MarkingView> markings = ((PlaceView) pn).getCurrentMarkingView();
 						int numOfToken=0; 
 						for(MarkingView marking : markings){
 							if (marking.getToken().getID().equals(tokenId)){

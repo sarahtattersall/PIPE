@@ -43,4 +43,14 @@ public class TemporaryArcTarget extends Connectable {
     public boolean isEndPoint() {
         return false;
     }
+
+    @Override
+    public boolean isSelectable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDraggable() {
+        return false;
+    }
 }

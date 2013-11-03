@@ -4,7 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.PipeApplicationModel;
+import pipe.models.*;
 import pipe.utilities.Copier;
 import pipe.views.*;
 import pipe.views.TokenView;
@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class used to implement methods corresponding to mouse events on places.
@@ -23,8 +24,8 @@ import java.util.LinkedList;
  * @author Matthew Worthington - modified the handler which was causing the
  * null pointer exceptions and incorrect petri nets xml representation.
  */
-public class PlaceTransitionObjectHandler 
-        extends PetriNetObjectHandler
+public class PlaceTransitionObjectHandler<T extends Connectable>
+        extends PetriNetObjectHandler<T>
 {
    // STATIC ATTRIBUTES AND METHODS
 	private static boolean mouseDown = false;
@@ -38,7 +39,7 @@ public class PlaceTransitionObjectHandler
    
    // constructor passing in all required objects
    PlaceTransitionObjectHandler(Container contentpane,
-                                ConnectableView obj) {
+                                T obj) {
       super(contentpane, obj);
       enablePopup = true;
    }
@@ -81,14 +82,14 @@ public class PlaceTransitionObjectHandler
          return;
       }
       
-      ConnectableView currentObject = (ConnectableView) component;
+      Connectable currentObject = component;
        switch (ApplicationSettings.getApplicationModel().getMode()) {
          case Constants.ARC:
             if (e.isControlDown()) {
                // user is holding Ctrl key; switch to fast mode
-               if (this.component instanceof PlaceView) {
+               if (this.component instanceof Place) {
                    ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_TRANSITION);
-               } else if (this.component instanceof TransitionView) {
+               } else if (this.component instanceof Transition) {
                    ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_PLACE);
                }
             }
@@ -98,12 +99,12 @@ public class PlaceTransitionObjectHandler
              PetriNetController petriNetController = ApplicationSettings.getPetriNetController();
              if (!petriNetController.isCurrentlyCreatingArc()) {
                  if (ApplicationSettings.getApplicationModel().getMode() == Constants.INHIBARC){
-                  if (currentObject instanceof PlaceView) {
-                      petriNetController.startCreatingArc(currentObject.getModel());
+                  if (currentObject instanceof Place) {
+                      petriNetController.startCreatingArc(currentObject);
                       //createArc(new InhibitorArcView(currentObject), currentObject);
                   }
                } else {
-                   petriNetController.startCreatingArc(currentObject.getModel());
+                   petriNetController.startCreatingArc(currentObject);
                    //createArc(new NormalArcView(currentObject), currentObject);
                }
             }
@@ -126,7 +127,7 @@ public class PlaceTransitionObjectHandler
       
       super.mouseReleased(e);
       
-      ConnectableView currentObject = (ConnectableView) component;
+      Connectable currentObject = component;
       PetriNetController petriNetController = ApplicationSettings.getPetriNetController();
       
       switch (app.getMode()) {
@@ -146,7 +147,7 @@ public class PlaceTransitionObjectHandler
                      ArcView someArcView = ((ArcView)arcsFrom.next());
                      if (someArcView == createInhibitorArcView) {
                         break;
-                     } else if (someArcView.getTarget() == currentObject &&
+                     } else if (someArcView.getTarget()._model == currentObject &&
                              someArcView.getSource() == createInhibitorArcView.getSource()) {
                         isNewArc = false;
                         if (someArcView instanceof NormalArcView){
@@ -156,7 +157,7 @@ public class PlaceTransitionObjectHandler
                            // user has drawn an inhibitor arc where there is
                            // an inhibitor arc already - we increment arc's
                            // weight
-                           LinkedList<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
+                           List<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
                            for(MarkingView m:weight){
                         	   m.setCurrentMarking(m.getCurrentMarking()+1);
                            }
@@ -174,7 +175,8 @@ public class PlaceTransitionObjectHandler
 
                   if (isNewArc) {
                      createInhibitorArcView.setSelectable(true);
-                     createInhibitorArcView.setTarget(currentObject);
+                      createInhibitorArcView.getModel().setTarget(currentObject);
+//                     createInhibitorArcView.setTarget(currentObject);
                      currentObject.addInbound(createInhibitorArcView);
                      // Evil hack to prevent the arc being added to PetriNetTab twice
                      contentPane.remove(createInhibitorArcView);
@@ -189,7 +191,7 @@ public class PlaceTransitionObjectHandler
                   createInhibitorArcView.removeKeyListener(keyHandler);
                   keyHandler = null;
 
-                  petriNetController.finishCreatingArc(currentObject.getModel());
+                  petriNetController.finishCreatingArc(currentObject);
                }
             }
             break;
@@ -200,8 +202,8 @@ public class PlaceTransitionObjectHandler
          case Constants.ARC:
              //TODO: WORK OUT WHAT THIS DOES
             if (petriNetController.isCurrentlyCreatingArc()) {
-               if (petriNetController.isApplicableEndPoint(currentObject.getModel())) {
-                   petriNetController.finishCreatingArc(currentObject.getModel());
+               if (petriNetController.isApplicableEndPoint(currentObject)) {
+                   petriNetController.finishCreatingArc(currentObject);
                    //foo(isNewArc, fastMode, view, model, historyManager, currentObject, petriNetController);
                    break;
                }
@@ -213,9 +215,9 @@ public class PlaceTransitionObjectHandler
                   // a new PNO has been created 
                   view._wasNewPertiNetComponentCreated = false;
 
-                  if (currentObject instanceof TransitionView) {
+                  if (currentObject instanceof Transition) {
                      app.setMode(Constants.FAST_PLACE);
-                  } else if (currentObject instanceof PlaceView) {
+                  } else if (currentObject instanceof Place) {
                      app.setMode(Constants.FAST_TRANSITION);
                   }
                } else {
@@ -224,9 +226,9 @@ public class PlaceTransitionObjectHandler
                      // user has clicked on an existent PNO
                      app.resetMode();
                   } else {
-                     if (currentObject instanceof TransitionView) {
+                     if (currentObject instanceof Transition) {
                         app.setMode(Constants.FAST_PLACE);
-                     } else if (currentObject instanceof PlaceView) {
+                     } else if (currentObject instanceof Place) {
                         app.setMode(Constants.FAST_TRANSITION);
                      }
                   }

@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -174,11 +175,11 @@ implements IModule
 						generateCoverability = true;
 					}
 
-					LinkedList<MarkingView>[] markings = sourcePetriNetView.getCurrentMarkingVector();
+                    List<MarkingView>[] markings = sourcePetriNetView.getCurrentMarkingVector();
 					int[] currentMarking = new int[markings.length];
 					for(int i = 0; i < markings.length; i++)
 					{
-						currentMarking[i] = markings[i].getFirst().getCurrentMarking();
+						currentMarking[i] = markings[i].get(0).getCurrentMarking();
 					}
 
 					// TODO: reachability graph and coverability graph are the same

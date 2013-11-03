@@ -74,6 +74,7 @@ public class PipeApplicationController
         }
 
         PetriNet netModel = loadPetriNetFromFile(file, isTN);
+        petriNetController.addPetriNet(netModel);
         PetriNetView view = new PetriNetView(petriNetController, netModel);
         PetriNetTab petriNetTab = new PetriNetTab(view, petriNetController);
         MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), petriNetController, netModel, petriNetTab, view);

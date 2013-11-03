@@ -68,7 +68,7 @@ public class SimpleTransitions implements Serializable
 				// Passing an unfolded net, so need a simple method that returns an int for each transition.
 				// currentArc.getWeight().getFirst().getCurrentMarking() returns an int corresponding to the weight of the first arc class
 				// in the simple arc. since the net is unfolded there should only be one class in the linked list, hence getFirst() is sufficient.
-				final SimpleArc newTransArc = new SimpleArc(currentArc.getSource().getId(),currentArc.getWeight().getFirst().getCurrentMarking());
+				final SimpleArc newTransArc = new SimpleArc(currentArc.getSource().getId(),currentArc.getWeight().get(0).getCurrentMarking());
 				this.arcsTo.get(i).add(newTransArc);
 			}
 
@@ -78,7 +78,7 @@ public class SimpleTransitions implements Serializable
 				final ArcView currentArc = (ArcView) arcsFromIter.next();
 				
 				// TODO: Same as above
-				final SimpleArc newTransArc = new SimpleArc(currentArc.getTarget().getId(),currentArc.getWeight().getFirst().getCurrentMarking());
+				final SimpleArc newTransArc = new SimpleArc(currentArc.getTarget().getId(),currentArc.getWeight().get(0).getCurrentMarking());
 				this.arcsFrom.get(i).add(newTransArc);
 			}
 		}

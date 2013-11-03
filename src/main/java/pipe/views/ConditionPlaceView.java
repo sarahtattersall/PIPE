@@ -26,7 +26,7 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
         //MODEL
         super(inputPlaceView.getPositionX(), inputPlaceView.getPositionY(), inputPlaceView.getId(),
                 inputPlaceView.getName(), 0, 0, new ConditionalPlace(inputPlaceView.getId(), inputPlaceView.getName()));
-        currentMarking = new Integer(inputPlaceView.getCurrentMarkingView().getFirst().getCurrentMarking());
+        currentMarking = new Integer(inputPlaceView.getCurrentMarkingView().get(0).getCurrentMarking());
         _componentWidth = DIAMETER;
         _componentHeight = DIAMETER;
         setCentre((int) _positionX, (int) _positionY);

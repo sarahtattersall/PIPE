@@ -11,5 +11,9 @@ public class InhibitorArc extends Arc implements Serializable
         super(source, target, weight);
     }
 
+    @Override
+    public boolean isDraggable() {
+        return true;
+    }
 }
 

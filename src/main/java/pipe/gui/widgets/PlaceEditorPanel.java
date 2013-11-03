@@ -3,19 +3,14 @@ package pipe.gui.widgets;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.utilities.Copier;
-import pipe.views.ArcView;
-import pipe.views.MarkingView;
-import pipe.views.PetriNetView;
-import pipe.views.PlaceView;
-import pipe.views.TokenView;
-import pipe.views.TransitionView;
+import pipe.views.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -128,7 +123,7 @@ private final PlaceView _placeView;
 		d.setSize(50, 19);
 		int x = 0;
 		int y = 2;
-		LinkedList<MarkingView> markingViews = _placeView.getCurrentMarkingView();
+		List<MarkingView> markingViews = _placeView.getCurrentMarkingView();
 		for (TokenView tc : tokenViews) {
 			if (tc.isEnabled()) {
 				JLabel tokenClassName = new JLabel();
@@ -356,9 +351,7 @@ private final PlaceView _placeView;
          return;
       }
       _view.getHistoryManager().newEdit(); // new "transaction""
-		LinkedList<MarkingView> newMarkingViews;
-		newMarkingViews = Copier.mediumCopy(_placeView
-                                                                      .getCurrentMarkingView());
+		List<MarkingView> newMarkingViews = Copier.mediumCopy(_placeView.getCurrentMarkingView());
 		int totalMarkings = 0;
 		for (int i = 0; i < inputtedMarkings.size(); i++) {
 			String tokenClassName = inputtedTokenClassNames.get(i);

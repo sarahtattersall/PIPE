@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -25,8 +26,7 @@ public class CopierTest
 		assertEquals(1, tokenView.countObservers());
 		LinkedList<MarkingView> markingViews = new LinkedList<MarkingView>(); 
 		markingViews.add(markingView);
-		@SuppressWarnings("unused")
-		LinkedList<MarkingView> newMarkingViews = Copier.mediumCopy(markingViews);   
+		@SuppressWarnings("unused") List<MarkingView> newMarkingViews = Copier.mediumCopy(markingViews);
 		assertEquals(2, tokenView.countObservers());
 		
 	}

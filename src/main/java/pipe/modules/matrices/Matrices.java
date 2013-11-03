@@ -19,12 +19,11 @@ import pipe.views.PlaceView;
 import pipe.views.TransitionView;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 public class Matrices
         implements IModule
@@ -203,14 +202,14 @@ public class Matrices
             return "n/a";
         }
 
-        LinkedList<MarkingView>[] markings = data.getInitialMarkingVector();
+        List<MarkingView>[] markings = data.getInitialMarkingVector();
         int[] initial = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
         	if(markings[i].size()==0){
         		initial[i] = 0;
         	}else{
-        		initial[i] = markings[i].getFirst().getCurrentMarking();
+        		initial[i] = markings[i].get(0).getCurrentMarking();
         	}
         }	
 
@@ -218,7 +217,7 @@ public class Matrices
         int[] current = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            current[i] = markings[i].getFirst().getCurrentMarking();
+            current[i] = markings[i].get(0).getCurrentMarking();
         }
 
         ArrayList result = new ArrayList();

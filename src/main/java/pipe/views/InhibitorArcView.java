@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -41,7 +42,7 @@ public class InhibitorArcView extends ArcView implements Serializable {
      */
     public InhibitorArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
             double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            LinkedList<MarkingView> weightInput, String idInput, InhibitorArc model) {
+            List<MarkingView> weightInput, String idInput, InhibitorArc model) {
         super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
                 weightInput, idInput, model);
     }

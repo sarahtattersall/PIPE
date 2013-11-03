@@ -1,10 +1,12 @@
 package pipe.handlers;
 
 import pipe.actions.DeletePetriNetObjectAction;
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Grid;
 import pipe.gui.PetriNetTab;
+import pipe.models.PetriNetComponent;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PetriNetViewComponent;
 
@@ -21,13 +23,11 @@ import java.awt.event.MouseEvent;
  *
  * @author unknown
  */
-public class PetriNetObjectHandler
+public class PetriNetObjectHandler<T extends PetriNetComponent>
         extends javax.swing.event.MouseInputAdapter
-{ //NOU-PERE
-    //implements java.awt.event.MouseWheelListener {
-
+{
     final Container contentPane;
-    PetriNetViewComponent component = null;
+    final T component;
 
     // justSelected: set to true on press, and false on release;
     static boolean justSelected = false;
@@ -38,12 +38,15 @@ public class PetriNetObjectHandler
 
     private int totalX = 0;
     private int totalY = 0;
+    private final PetriNetController petriNetController;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(Container contentpane, PetriNetViewComponent obj)
+    PetriNetObjectHandler(Container contentpane, T obj)
     {
         contentPane = contentpane;
         component = obj;
+        //TODO: PASS INTO CTR
+        petriNetController = ApplicationSettings.getPetriNetController();
     }
 
 
@@ -56,10 +59,10 @@ public class PetriNetObjectHandler
     JPopupMenu getPopup(MouseEvent e)
     {
         JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem =
-                new JMenuItem(new DeletePetriNetObjectAction(component));
-        menuItem.setText("Delete");
-        popup.add(menuItem);
+//        JMenuItem menuItem =
+//                new JMenuItem(new DeletePetriNetObjectAction(component));
+//        menuItem.setText("Delete");
+//        popup.add(menuItem);
         return popup;
     }
 
@@ -75,7 +78,7 @@ public class PetriNetObjectHandler
             JPopupMenu m = getPopup(e);
             if(m != null)
             {
-                m.show(component, e.getX(), e.getY());
+                //m.show(component, e.getX(), e.getY());
             }
         }
     }
@@ -86,7 +89,7 @@ public class PetriNetObjectHandler
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         if(applicationModel.isEditionAllowed() && enablePopup)
         {
-            checkForPopup(e);
+            //checkForPopup(e);
         }
 
         if(!SwingUtilities.isLeftMouseButton(e))
@@ -96,13 +99,13 @@ public class PetriNetObjectHandler
 
         if(applicationModel.getMode() == Constants.SELECT)
         {
-            if(!component.isSelected())
+            if(!petriNetController.isSelected(component))
             {
                 if(!e.isShiftDown())
                 {
                     ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
                 }
-                component.select();
+                petriNetController.select(component);
                 justSelected = true;
             }
             dragInit = e.getPoint();
@@ -132,6 +135,7 @@ public class PetriNetObjectHandler
         {
             if(isDragging)
             {
+                petriNetController.deselectAll();
                 isDragging = false;
                 ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().translateSelection(
                         ((PetriNetTab) contentPane).getSelectionObject().getSelection(),
@@ -146,12 +150,12 @@ public class PetriNetObjectHandler
                 {
                     if(e.isShiftDown())
                     {
-                        component.deselect();
+                        petriNetController.deselect(component);
                     }
                     else
                     {
                         ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
-                        component.select();
+                        petriNetController.select(component);
                     }
                 }
             }
@@ -182,10 +186,11 @@ public class PetriNetObjectHandler
             }
 
             // Calculate translation in mouse
-            int transX = Grid.getModifiedX(e.getX() - dragInit.x);
-            int transY = Grid.getModifiedY(e.getY() - dragInit.y);
+            int transX = e.getX() - dragInit.x;//Grid.getModifiedX(e.getX() - dragInit.x);
+            int transY = e.getY() - dragInit.y;//Grid.getModifiedY(e.getY() - dragInit.y);
             totalX += transX;
             totalY += transY;
+
             ((PetriNetTab) contentPane).getSelectionObject().translateSelection(
                     transX, transY);
         }

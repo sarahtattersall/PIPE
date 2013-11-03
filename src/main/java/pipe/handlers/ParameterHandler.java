@@ -17,7 +17,9 @@ public class ParameterHandler
    
    
    public ParameterHandler(Container contentpane, Parameter parameter) {
-      super(contentpane, parameter);
+    //TODO: DONT PASS NULL FIX THIS
+       super(contentpane, null);
+//      super(contentpane, parameter);
    }
    
    
@@ -26,23 +28,23 @@ public class ParameterHandler
    public JPopupMenu getPopup(MouseEvent e) {
       int index = 0;
       JPopupMenu popup = super.getPopup(e);
-      JMenuItem menuItem = 
-               new JMenuItem(new EditNoteAction((Parameter) component));
-      menuItem.setText("Edit parameter");
-      popup.insert(menuItem, index++);
-      
-      popup.insert(new JPopupMenu.Separator(),index);
+//      JMenuItem menuItem =
+//               new JMenuItem(new EditNoteAction((Parameter) component));
+//      menuItem.setText("Edit parameter");
+//      popup.insert(menuItem, index++);
+//
+//      popup.insert(new JPopupMenu.Separator(),index);
 
       return popup;
    }
    
    
    public void mouseClicked(MouseEvent e) {
-      if ((e.getComponent() == component) || !e.getComponent().isEnabled()){
-         if ((SwingUtilities.isLeftMouseButton(e)) && (e.getClickCount() == 2)){
-            ((Parameter) component).enableEditMode();
-         }
-      }
+//      if ((e.getComponent() == component) || !e.getComponent().isEnabled()){
+//         if ((SwingUtilities.isLeftMouseButton(e)) && (e.getClickCount() == 2)){
+//            ((Parameter) component).enableEditMode();
+//         }
+//      }
    }
 
 }

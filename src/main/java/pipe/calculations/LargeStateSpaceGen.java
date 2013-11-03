@@ -18,6 +18,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -117,11 +118,11 @@ public class LargeStateSpaceGen
         //Get current/initial marking of PetriNetViewComponent and decide whether tangible or vanishing
         //Expects an array of ints. getCurrentMarkingVector now returns a linked list.
         //Code below generates an int array based on the linked list.
-        LinkedList<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
+        List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
         int[] markingsArray = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            markingsArray[i] = markings[i].getFirst().getCurrentMarking();
+            markingsArray[i] = markings[i].get(0).getCurrentMarking();
         }
 
         //ok

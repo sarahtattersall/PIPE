@@ -32,8 +32,8 @@ import java.util.Observer;
 
 public abstract class ArcView extends PetriNetViewComponent implements Cloneable, IObserver, Serializable, Observer {
     private static final long serialVersionUID = 1L;
-    LinkedList<NameLabel> weightLabel = new LinkedList<NameLabel>();
-    LinkedList<MarkingView> _weight = new LinkedList<MarkingView>();
+    List<NameLabel> weightLabel = new LinkedList<NameLabel>();
+    List<MarkingView> _weight = new LinkedList<MarkingView>();
 
     private ConnectableView _source = null;
     private ConnectableView _target = null;
@@ -50,7 +50,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     private boolean _noFunctionalWeights = true;
 
     ArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput, double endPositionYInput,
-            ConnectableView sourceInput, ConnectableView targetInput, LinkedList<MarkingView> weightInput,
+            ConnectableView sourceInput, ConnectableView targetInput, List<MarkingView> weightInput,
             String idInput, Arc model) {
         _model = model;
 
@@ -109,8 +109,8 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         _target = targetInput;
     }
 
-    public HistoryItem setWeight(LinkedList<MarkingView> weightInput) {
-        LinkedList<MarkingView> oldWeight = Copier.mediumCopy(_weight);
+    public HistoryItem setWeight(List<MarkingView> weightInput) {
+        List<MarkingView> oldWeight = Copier.mediumCopy(_weight);
         checkIfFunctionalWeightExists();
         return new ArcWeight(this, oldWeight, _weight);
     }
@@ -430,7 +430,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         return false;
     }
 
-    public LinkedList<MarkingView> getWeightSimple() {
+    public List<MarkingView> getWeightSimple() {
         return _weight;
     }
 
@@ -438,7 +438,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         return !_noFunctionalWeights;
     }
 
-    public LinkedList<MarkingView> getConstantWeight() {
+    public List<MarkingView> getConstantWeight() {
         if (_noFunctionalWeights) {
             return _weight;
         }
@@ -448,7 +448,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
         return _weight;
     }
 
-    public LinkedList<MarkingView> getWeight() {
+    public List<MarkingView> getWeight() {
         return _weight;
     }
 
@@ -542,7 +542,7 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler arcHandler = new ArcHandler(tab, this);
+        ArcHandler arcHandler = new ArcHandler(tab, this._model);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -551,10 +551,12 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     @Override
     public void update() {
         Point2D.Double startCoord = zoomPoint(_model.getStartPoint());
-        Point2D.Double endCoord = zoomPoint(_model.getEndPoint());
         setSourceLocation(startCoord.getX(), startCoord.getY());
+
+        Point2D.Double endCoord = zoomPoint(_model.getEndPoint());
         //TODO: THIS FALSE IS MEANT TO BE 'SHIFT UP'
         setEndPoint(endCoord.getX(), endCoord.getY(), false);
+
         updateBounds();
         repaint();
     }

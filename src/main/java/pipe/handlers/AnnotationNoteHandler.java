@@ -6,6 +6,7 @@
  package pipe.handlers;
 
  import pipe.actions.*;
+ import pipe.models.Annotation;
  import pipe.views.viewComponents.AnnotationNote;
 
  import javax.swing.*;
@@ -18,7 +19,7 @@
  {
    
 
-   public AnnotationNoteHandler(Container contentpane, AnnotationNote note) {
+   public AnnotationNoteHandler(Container contentpane, Annotation note) {
       super(contentpane, note);
       enablePopup = true;
    }
@@ -31,41 +32,41 @@
       int popupIndex = 0;
       JPopupMenu popup = super.getPopup(e);
       
-      JMenuItem menuItem =
-              new JMenuItem(new EditNoteAction((AnnotationNote) component));
-      menuItem.setText("Edit text");
-      popup.insert(menuItem, popupIndex++);
-      
-      menuItem = new JMenuItem(
-              new EditAnnotationBorderAction((AnnotationNote) component));
-      if (((AnnotationNote) component).isShowingBorder()){
-         menuItem.setText("Disable Border");
-      } else{
-         menuItem.setText("Enable Border");
-      }
-      popup.insert(menuItem, popupIndex++);
-      
-      menuItem = new JMenuItem(
-              new EditAnnotationBackgroundAction((AnnotationNote) component));
-      if (((AnnotationNote) component).isFilled()) {
-         menuItem.setText("Transparent");
-      } else {
-         menuItem.setText("Solid Background");
-      }
-      popup.insert(new JPopupMenu.Separator(), popupIndex++);      
-      popup.insert(menuItem, popupIndex);
+//      JMenuItem menuItem =
+//              new JMenuItem(new EditNoteAction((AnnotationNote) component));
+//      menuItem.setText("Edit text");
+//      popup.insert(menuItem, popupIndex++);
+//
+//      menuItem = new JMenuItem(
+//              new EditAnnotationBorderAction((AnnotationNote) component));
+//      if (((AnnotationNote) component).isShowingBorder()){
+//         menuItem.setText("Disable Border");
+//      } else{
+//         menuItem.setText("Enable Border");
+//      }
+//      popup.insert(menuItem, popupIndex++);
+//
+//      menuItem = new JMenuItem(
+//              new EditAnnotationBackgroundAction((AnnotationNote) component));
+//      if (((AnnotationNote) component).isFilled()) {
+//         menuItem.setText("Transparent");
+//      } else {
+//         menuItem.setText("Solid Background");
+//      }
+//      popup.insert(new JPopupMenu.Separator(), popupIndex++);
+//      popup.insert(menuItem, popupIndex);
 
       return popup;
    }
 
    
    public void mouseClicked(MouseEvent e) {
-      if ((e.getComponent() == component || !e.getComponent().isEnabled()) &&
-              (SwingUtilities.isLeftMouseButton(e))) { 
-         if (e.getClickCount() == 2){
-            ((AnnotationNote) component).enableEditMode();
-         }
-      }
+//      if ((e.getComponent() == component || !e.getComponent().isEnabled()) &&
+//              (SwingUtilities.isLeftMouseButton(e))) {
+//         if (e.getClickCount() == 2){
+//            ((AnnotationNote) component).enableEditMode();
+//         }
+//      }
    }
    
 }

@@ -26,6 +26,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
+import java.util.List;
 import java.util.Observable;
 
 
@@ -45,12 +46,12 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     private Vector<Vector<String>> functionRelatedPlaces;
 
-    private LinkedList<MarkingView>[] _initialMarkingVector;
-    private LinkedList<MarkingView>[] _currentMarkingVector;
+    private List<MarkingView>[] _initialMarkingVector;
+    private List<MarkingView>[] _currentMarkingVector;
     private int[] _capacityMatrix;
     private int[] _priorityMatrix;
     private boolean[] _timedMatrix;
-    private LinkedList<MarkingView>[] _markingVectorAnimationStorage;
+    private List<MarkingView>[] _markingVectorAnimationStorage;
     private static boolean _currentMarkingVectorChanged = true;
     private Hashtable _arcsMap;
     private Hashtable _inhibitorsMap;
@@ -142,7 +143,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
     }
 
-    public int positionInTheList(String tokenClassID, LinkedList<MarkingView> markingViews) {
+    public int positionInTheList(String tokenClassID, List<MarkingView> markingViews) {
         int size = markingViews.size();
         for (int i = 0; i < size; i++) {
             MarkingView m = markingViews.get(i);
@@ -1054,7 +1055,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     private boolean[] getTransitionEnabledStatusArray(
 
-            final TransitionView[] transArray, final LinkedList<MarkingView>[] markings, boolean backwards,/*
+            final TransitionView[] transArray, final List<MarkingView>[] markings, boolean backwards,/*
                                                                      * final
 																	 * int[][]
 																	 * CMinus,
@@ -1327,13 +1328,13 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
       */
 
 
-    public LinkedList<MarkingView>[] getInitialMarkingVector() {
+    public List<MarkingView>[] getInitialMarkingVector() {
         //if(_initialMarkingVectorChanged)
         createInitialMarkingVector();
         return _initialMarkingVector;
     }
 
-    public LinkedList<MarkingView>[] getCurrentMarkingVector() {
+    public List<MarkingView>[] getCurrentMarkingVector() {
         createCurrentMarkingVector();
 //        if(_currentMarkingVectorChanged)
 //        {
@@ -1347,7 +1348,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         int placeSize = _placeViews.size();
 
         for (int placeNo = 0; placeNo < placeSize; placeNo++) {
-            _placeViews.get(placeNo).getCurrentMarkingView().getFirst().setCurrentMarking(is[placeNo]);
+            _placeViews.get(placeNo).getCurrentMarkingView().get(0).setCurrentMarking(is[placeNo]);
         }
     }
 
@@ -1447,24 +1448,33 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private void displayArcs(Collection<Arc> arcs) {
         //TODO: Quick and dirty hack, tidy up to not use instanceof!
         for (Arc arc : arcs) {
-            if (arc instanceof NormalArc) {
-                NormalArc normalArc = NormalArc.class.cast(arc);
+            ArcView view;
+            if (_arcViews.containsKey(arc))
+            {
+                view = _arcViews.get(arc);
+                view.update();
+            } else if (arc instanceof NormalArc) {
+                NormalArc normalArc = (NormalArc) arc;
                 NormalArcViewBuilder builder = new NormalArcViewBuilder(normalArc);
-                NormalArcView view = builder.build();
-                addArc(view);
+                view = builder.build();
+                _arcViews.put(normalArc, view);
                 //TODO: Add back in:
                 //checkForInverseArc(view);
-            } else {
-
-                InhibitorArc inhibitorArc = InhibitorArc.class.cast(arc);
+            } else  {
+                InhibitorArc inhibitorArc = (InhibitorArc) arc;
                 InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(inhibitorArc);
-                addArc(builder.build());
+                view = builder.build();
+                _arcViews.put(inhibitorArc, view);
             }
+
+//            addArcToArcsMap(view);
+            setChanged();
+            setMatrixChanged();
+            notifyObservers(view);
         }
     }
 
     private void displayPlaces(Collection<Place> places) {
-
         for (Place place : places) {
             PlaceView view;
             if (_placeViews.containsKey(place))
@@ -1979,7 +1989,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
         //first we check all arc weights
         for (ArcView arc : _arcViews.values()) {
-            LinkedList<MarkingView> weights = arc.getWeightSimple();
+            List<MarkingView> weights = arc.getWeightSimple();
             for (MarkingView weight : weights) {
                 String temp = weight.getCurrentFunctionalMarking();
                 for (PlaceView place : _placeViews.values()) {
@@ -2022,7 +2032,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     public boolean hasFunctionalRatesOrWeights() {
         for (ArcView arc : _arcViews.values()) {
-            LinkedList<MarkingView> weights = arc.getWeightSimple();
+            List<MarkingView> weights = arc.getWeightSimple();
             for (MarkingView weight : weights) {
                 try {
                     Integer.parseInt(weight.getCurrentFunctionalMarking());
@@ -2050,8 +2060,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             ArcView arcTo = ((ArcView) to.next());
             PlaceView source = ((PlaceView) arcTo.getSource());
 
-            LinkedList<MarkingView> weight = arcTo.getWeight();
-            LinkedList<MarkingView> sourceMarking = source.getCurrentMarkingView();
+            List<MarkingView> weight = arcTo.getWeight();
+            List<MarkingView> sourceMarking = source.getCurrentMarkingView();
             for (int i = 0; i < weight.size(); i++) {
                 int current = sourceMarking.get(i).getCurrentMarking();
 

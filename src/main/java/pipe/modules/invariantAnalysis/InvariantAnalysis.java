@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 public class InvariantAnalysis
         implements IModule
@@ -185,11 +186,11 @@ public class InvariantAnalysis
             return "";
         }
         _incidenceMatrix = new Matrix(array);
-        LinkedList<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
+        List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
         int[] currentMarking = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            currentMarking[i] = markings[i].getFirst().getCurrentMarking();
+            currentMarking[i] = markings[i].get(0).getCurrentMarking();
         }
 
         String output = findNetInvariants(currentMarking); // Nadeem 26/05/2005
@@ -286,11 +287,11 @@ public class InvariantAnalysis
         _incidenceMatrix = new Matrix(array);
 
 
-        LinkedList<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
         int[] currentMarking = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            currentMarking[i] = markings[i].getFirst().getCurrentMarking();
+            currentMarking[i] = markings[i].get(0).getCurrentMarking();
         }
 
         return findVectors(_incidenceMatrix.transpose());
@@ -312,11 +313,11 @@ public class InvariantAnalysis
         }
         _incidenceMatrix = new Matrix(array);
 
-        LinkedList<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
         int[] currentMarking = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            currentMarking[i] = markings[i].getFirst().getCurrentMarking();
+            currentMarking[i] = markings[i].get(0).getCurrentMarking();
         }
 
         return findVectors(_incidenceMatrix);

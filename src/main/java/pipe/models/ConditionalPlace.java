@@ -41,4 +41,14 @@ public class ConditionalPlace extends Connectable implements Serializable
     public boolean isEndPoint() {
         return true;
     }
+
+    @Override
+    public boolean isSelectable() {
+        return true;
+    }
+
+    @Override
+    public boolean isDraggable() {
+        return true;
+    }
 }

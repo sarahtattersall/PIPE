@@ -350,7 +350,7 @@ public class AnnotationNote extends Note {
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(tab, this);
+        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(tab, this.model);
         addMouseListener(noteHandler);
         addMouseMotionListener(noteHandler);
         getNote().addMouseListener(noteHandler);

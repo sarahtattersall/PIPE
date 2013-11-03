@@ -6,6 +6,7 @@ import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeApplicationModel;
+import pipe.models.Transition;
 import pipe.views.TransitionView;
 
 import javax.swing.*;
@@ -19,37 +20,36 @@ import java.awt.event.MouseWheelEvent;
  * Class used to implement methods corresponding to mouse events on transitions.
  */
 public class TransitionHandler 
-        extends PlaceTransitionObjectHandler
+        extends PlaceTransitionObjectHandler<Transition>
 {
-        //implements java.awt.event.MouseWheelListener {  //NOU-PERE
   
    
-   public TransitionHandler(Container contentpane, TransitionView obj) {
+   public TransitionHandler(Container contentpane, Transition obj) {
       super(contentpane, obj);
    }
 
    
    public void mouseWheelMoved (MouseWheelEvent e) {
-
-       if (!ApplicationSettings.getApplicationModel().isEditionAllowed() ||
-              e.isControlDown()) {
-         return;
-      }
-      
-      if (e.isShiftDown()) {
-          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-                 ((TransitionView) component).setTimed(
-                 !((TransitionView) component).isTimed()));
-      } else {
-         int rotation = 0;
-         if (e.getWheelRotation() < 0) {
-            rotation = -e.getWheelRotation() * 135;
-         } else {
-            rotation = e.getWheelRotation() * 45;
-         }
-          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-                 ((TransitionView) component).rotate(rotation));
-      }
+//
+//       if (!ApplicationSettings.getApplicationModel().isEditionAllowed() ||
+//              e.isControlDown()) {
+//         return;
+//      }
+//
+//      if (e.isShiftDown()) {
+//          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
+//                 ((TransitionView) component).setTimed(
+//                 !((TransitionView) component).isTimed()));
+//      } else {
+//         int rotation = 0;
+//         if (e.getWheelRotation() < 0) {
+//            rotation = -e.getWheelRotation() * 135;
+//         } else {
+//            rotation = e.getWheelRotation() * 45;
+//         }
+//          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
+//                 ((TransitionView) component).rotate(rotation));
+//      }
    }   
    
    
@@ -61,62 +61,62 @@ public class TransitionHandler
       int index = 0;
       JPopupMenu popup = super.getPopup(e);
       
-      JMenuItem menuItem = new JMenuItem("Edit Transition");      
-      menuItem.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
-            ((TransitionView) component).showEditor();
-         }
-      });       
-      popup.insert(menuItem, index++);             
-      
-      menuItem = new JMenuItem(new ShowHideInfoAction((TransitionView) component));
-      if (((TransitionView) component).getAttributesVisible()){
-         menuItem.setText("Hide Attributes");
-      } else {
-         menuItem.setText("Show Attributes");
-      }
-      popup.insert(menuItem, index++);     
-      
-      popup.insert(new JPopupMenu.Separator(), index);
-      menuItem = new JMenuItem("Group Transitions");      
-      menuItem.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
-        	 HistoryItem edit = ((TransitionView) component).groupTransitions();
-        	 if(edit != null){
-                 ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(edit);
-        	 }
-         }
-      });       
-      popup.insert(menuItem, index++);           
-            
+//      JMenuItem menuItem = new JMenuItem("Edit Transition");
+//      menuItem.addActionListener(new ActionListener(){
+//         public void actionPerformed(ActionEvent e) {
+//            ((TransitionView) component).showEditor();
+//         }
+//      });
+//      popup.insert(menuItem, index++);
+//
+//      menuItem = new JMenuItem(new ShowHideInfoAction((TransitionView) component));
+//      if (((TransitionView) component).getAttributesVisible()){
+//         menuItem.setText("Hide Attributes");
+//      } else {
+//         menuItem.setText("Show Attributes");
+//      }
+//      popup.insert(menuItem, index++);
+//
+//      popup.insert(new JPopupMenu.Separator(), index);
+//      menuItem = new JMenuItem("Group Transitions");
+//      menuItem.addActionListener(new ActionListener(){
+//         public void actionPerformed(ActionEvent e) {
+//        	 HistoryItem edit = ((TransitionView) component).groupTransitions();
+//        	 if(edit != null){
+//                 ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(edit);
+//        	 }
+//         }
+//      });
+//      popup.insert(menuItem, index++);
+//
       return popup;
    }
    
    
    public void mouseClicked(MouseEvent e) {
           PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-      if (SwingUtilities.isLeftMouseButton(e)){
-          if (e.getClickCount() == 2 &&
-                 applicationModel.isEditionAllowed() &&
-                 (applicationModel.getMode() == Constants.TIMEDTRANS ||
-                 applicationModel.getMode() == Constants.IMMTRANS ||
-                 applicationModel.getMode() == Constants.SELECT)) {
-            ((TransitionView) component).showEditor();
-         } 
-      }  else if (SwingUtilities.isRightMouseButton(e)){
-          if (applicationModel.isEditionAllowed() && enablePopup) {
-            JPopupMenu m = getPopup(e);
-            if (m != null) {           
-               int x = ZoomController.getZoomedValue(
-                       component.getNameOffsetXObject().intValue(),
-                       component.getZoomPercentage());
-               int y = ZoomController.getZoomedValue(
-                       component.getNameOffsetYObject().intValue(),
-                       component.getZoomPercentage());
-               m.show(component, x, y);
-            }
-         }
-      }
+//      if (SwingUtilities.isLeftMouseButton(e)){
+//          if (e.getClickCount() == 2 &&
+//                 applicationModel.isEditionAllowed() &&
+//                 (applicationModel.getMode() == Constants.TIMEDTRANS ||
+//                 applicationModel.getMode() == Constants.IMMTRANS ||
+//                 applicationModel.getMode() == Constants.SELECT)) {
+//            ((TransitionView) component).showEditor();
+//         }
+//      }  else if (SwingUtilities.isRightMouseButton(e)){
+//          if (applicationModel.isEditionAllowed() && enablePopup) {
+//            JPopupMenu m = getPopup(e);
+//            if (m != null) {
+//               int x = ZoomController.getZoomedValue(
+//                       component.getNameXOffset(),
+//                       component.getZoomPercentage());
+//               int y = ZoomController.getZoomedValue(
+//                       component.getNameYOffset(),
+//                       component.getZoomPercentage());
+//               m.show(component, x, y);
+//            }
+//         }
+//      }
    }
    
 }

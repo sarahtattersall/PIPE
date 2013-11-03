@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class StateSpace
@@ -79,11 +80,11 @@ public class StateSpace
             PetriNetView sourceDataLayer = sourceFilePanel.getDataLayer();
 
             //Get the new marking from the _dataLayer object
-            LinkedList<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+            List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
             int[] markup = new int[markings.length];
             for(int k = 0; k < markings.length; k++)
             {
-                markup[k] = markings[k].getFirst().getCurrentMarking();
+                markup[k] = markings[k].get(0).getCurrentMarking();
             }
 
 
@@ -189,11 +190,11 @@ public class StateSpace
         boolean[] result = new boolean[3];
 
         //Get the new marking from the _dataLayer object
-        LinkedList<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
         int[] markup = new int[markings.length];
         for(int k = 0; k < markings.length; k++)
         {
-            markup[k] = markings[k].getFirst().getCurrentMarking();
+            markup[k] = markings[k].get(0).getCurrentMarking();
         }
 
 

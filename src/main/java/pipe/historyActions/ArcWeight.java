@@ -8,6 +8,7 @@ import pipe.views.ArcView;
 import pipe.views.MarkingView;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -18,15 +19,15 @@ public class ArcWeight
 {
    
    private final ArcView arc;
-   private final LinkedList<MarkingView> newWeight;
-   private final LinkedList<MarkingView> oldWeight;
+   private final List<MarkingView> newWeight;
+   private final List<MarkingView> oldWeight;
    
    
    /** Creates a new instance of arcWeightEdit
     * @param _arc
     * @param _oldWeight
     * @param _newWeight*/
-   public ArcWeight(ArcView _arc, LinkedList<MarkingView> _oldWeight, LinkedList<MarkingView> _newWeight) {
+   public ArcWeight(ArcView _arc, List<MarkingView> _oldWeight, List<MarkingView> _newWeight) {
       arc = _arc;
       oldWeight = _oldWeight;      
       newWeight = _newWeight;

@@ -2,11 +2,9 @@ package pipe.utilities.writers;
 
 import org.w3c.dom.*;
 import pipe.common.dataLayer.StateGroup;
-import pipe.views.MarkingView;
-import pipe.views.TokenView;
-import pipe.views.viewComponents.RateParameter;
 import pipe.views.*;
 import pipe.views.viewComponents.AnnotationNote;
+import pipe.views.viewComponents.RateParameter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,8 +19,8 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -231,7 +229,7 @@ public class PNMLWriter
             String nameInput = inputPlaceView.getName();
             Double nameOffsetXInput = inputPlaceView.getNameOffsetXObject();
             Double nameOffsetYInput = inputPlaceView.getNameOffsetYObject();
-            LinkedList<MarkingView> initialMarkingViewInput = inputPlaceView.getCurrentMarkingObject();
+            List<MarkingView> initialMarkingViewInput = inputPlaceView.getCurrentMarkingObject();
             Double markingOffsetXInput = inputPlaceView.getMarkingOffsetXObject();
             Double markingOffsetYInput = inputPlaceView.getMarkingOffsetYObject();
             Integer capacityInput = inputPlaceView.getCapacity();
@@ -398,7 +396,7 @@ public class PNMLWriter
             String idInput = inputArcView.getId();
             String sourceInput = inputArcView.getSource().getId();
             String targetInput = inputArcView.getTarget().getId();
-            LinkedList<MarkingView> weightInput = inputArcView.getWeightSimple();
+            List<MarkingView> weightInput = inputArcView.getWeightSimple();
             //LinkedList<MarkingView> weightInput = inputArcView.getWeight();
             // Double inscriptionPositionXInput = inputArc.getInscriptionOffsetXObject();
             // Double inscriptionPositionYInput = inputArc.getInscriptionOffsetYObject();

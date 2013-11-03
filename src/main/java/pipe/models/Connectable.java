@@ -10,7 +10,7 @@ import java.util.LinkedList;
  * 
  *  @author yufei wang(modification)
  */
-public abstract class Connectable extends Observable implements Serializable
+public abstract class Connectable extends Observable implements Serializable, PetriNetComponent
 {
     private final LinkedList<ArcView> _inboundArcViews =  new LinkedList<ArcView>();
     private final LinkedList<ArcView> _outboundArcViews = new LinkedList<ArcView>();
@@ -84,6 +84,7 @@ public abstract class Connectable extends Observable implements Serializable
 
     public void setX(double x) {
         this.x = x;
+        notifyObservers();
     }
 
     public double getY() {
@@ -92,6 +93,7 @@ public abstract class Connectable extends Observable implements Serializable
 
     public void setY(double y) {
         this.y = y;
+        notifyObservers();
     }
 
     public void setCentre(double x, double y)

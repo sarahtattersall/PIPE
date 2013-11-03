@@ -94,7 +94,6 @@ public class PetriNetViewTest
 		assertEquals("Default", petriNetView.getTokenViews().get(0).getID());
 	}
 
-
     @Test
     public void displaysPlaceOnTab()
     {

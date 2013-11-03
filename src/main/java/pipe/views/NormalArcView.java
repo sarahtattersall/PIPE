@@ -5,16 +5,15 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.historyActions.*;
-import pipe.models.Connectable;
 import pipe.models.NormalArc;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class NormalArcView extends ArcView implements Serializable {
@@ -32,7 +31,7 @@ public class NormalArcView extends ArcView implements Serializable {
 
     public NormalArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
             double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            LinkedList<MarkingView> weightInput, String idInput, boolean taggedInput, NormalArc model) {
+            List<MarkingView> weightInput, String idInput, boolean taggedInput, NormalArc model) {
 
         super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
                 weightInput, idInput, model);
@@ -133,7 +132,7 @@ public class NormalArcView extends ArcView implements Serializable {
     public HistoryItem setWeight(LinkedList<MarkingView> weightInput) {
         removeLabelsFromArc();
         repaint();
-        LinkedList<MarkingView> oldWeight = Copier.mediumCopy(_weight);
+        List<MarkingView> oldWeight = Copier.mediumCopy(_weight);
         _weight = weightInput;
         addThisAsObserverToWeight(_weight);
 

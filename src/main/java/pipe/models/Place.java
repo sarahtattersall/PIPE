@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Place extends Connectable implements PetriNetComponent, Serializable
+public class Place extends Connectable implements Serializable
 {
     /**
      * Place name x offset relative to its x coordinate
@@ -103,6 +103,11 @@ public class Place extends Connectable implements PetriNetComponent, Serializabl
      */
     @Override
     public boolean isSelectable() {
+        return true;
+    }
+
+    @Override
+    public boolean isDraggable() {
         return true;
     }
 

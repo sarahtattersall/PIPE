@@ -143,6 +143,10 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public void update() {
+
+        setPositionX(_model.getX());
+        setPositionY(_model.getY());
+
         updateBounds();
         updateLabelLocation();
         updateConnected();

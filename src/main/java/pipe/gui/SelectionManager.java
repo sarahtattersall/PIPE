@@ -3,6 +3,7 @@
  */
 package pipe.gui;
 
+import pipe.controllers.PetriNetController;
 import pipe.views.ArcView;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.ConnectableView;
@@ -12,7 +13,9 @@ import pipe.views.PlaceView;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -32,6 +35,7 @@ public class SelectionManager
    private static final Color selectionColorOutline = new Color(0, 0, 100);
    private final PetriNetTab _view;
    private boolean enabled = true;
+   private PetriNetController petriNetController;
 
    
    public SelectionManager(PetriNetTab _view) {
@@ -39,6 +43,8 @@ public class SelectionManager
       addMouseMotionListener(this);
       addMouseWheelListener(this);
       this._view = _view;
+       //TODO: PASS THIS IN AS ARG
+       this.petriNetController = ApplicationSettings.getPetriNetController();
    }
    
    
@@ -75,7 +81,8 @@ public class SelectionManager
       ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
       for (PetriNetViewComponent pn : pns) {
          pn.select(selectionRectangle);
-      }      
+      }
+       petriNetController.select(selectionRectangle);
    }
 
    
@@ -115,20 +122,19 @@ public class SelectionManager
 
    
    public void translateSelection(int transX, int transY) {
-      
+
       if (transX == 0 && transY == 0) {
          return;
       }
 
       // First see if translation will put anything at a negative location
-      Point point = null;
       Point topleft = null;
 
       // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+      List<PetriNetViewComponent> pns = _view.getPNObjects();
       for (PetriNetViewComponent pn : pns) {
          if (pn.isSelected()){
-            point = pn.getLocation();
+            Point point = pn.getLocation();
             if (topleft == null) {
                topleft = point;
             } else {
@@ -154,12 +160,14 @@ public class SelectionManager
             return;
          }
       }
-      
-      for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelected()) {
-            pn.translate(transX, transY);
-         }
-      }
+
+       petriNetController.translateSelected(new Point2D.Double(transX, transY));
+
+//      for (PetriNetViewComponent pn : pns) {
+//         if (pn.isSelected()) {
+//            pn.translate(transX, transY);
+//         }
+//      }
       _view.updatePreferredSize();
    }
 

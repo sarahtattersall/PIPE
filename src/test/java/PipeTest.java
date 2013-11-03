@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -52,7 +53,7 @@ public class PipeTest {
 	private JMenu menu;
 	private JMenu subMenu;
 	private File fileForTesting;
-	private LinkedList<MarkingView> markingViews;
+	private List<MarkingView> markingViews;
 	private PlaceView placeView;
 	private MarkingView markingView;
 	private PetriNetView petriNetView;
@@ -60,7 +61,7 @@ public class PipeTest {
 	private TokenView redTokenView;
 	private TokenAction tokenAction;
 	private TokenView greenTokenView;
-	private LinkedList<MarkingView> newMarkingViews;
+	private List<MarkingView> newMarkingViews;
     @BeforeClass
 	public static void setUpLog4J() throws Exception
 	{
@@ -410,9 +411,9 @@ public class PipeTest {
 		markingView = markingViews.get(0);
 		assertEquals(1, markingViews.get(0).getCurrentMarking() ); 
 		assertEquals(1, markingViews.get(1).getCurrentMarking() ); 
-		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView);
-        LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
-		handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager()); 
+		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView._model);
+        List<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
+		//handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager());
 		newMarkingViews = placeView.getCurrentMarkingView();
 		assertEquals(markingViews.get(0), newMarkingViews.get(0));
 		assertEquals(markingViews.get(1), newMarkingViews.get(1));

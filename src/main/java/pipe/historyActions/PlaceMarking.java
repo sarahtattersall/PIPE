@@ -9,6 +9,7 @@ import pipe.views.MarkingView;
 import pipe.views.PlaceView;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -18,11 +19,11 @@ public class PlaceMarking extends HistoryItem
 {
 
 	private final PlaceView _placeView;
-	private final LinkedList<MarkingView> newMarking;
-	private final LinkedList<MarkingView> oldMarking;
+	private final List<MarkingView> newMarking;
+	private final List<MarkingView> oldMarking;
 
-	public PlaceMarking(PlaceView _placeView, LinkedList<MarkingView> _oldMarking,
-                        LinkedList<MarkingView> _newMarking) {
+	public PlaceMarking(PlaceView _placeView, List<MarkingView> _oldMarking,
+                        List<MarkingView> _newMarking) {
 		this._placeView = _placeView;
 		oldMarking = _oldMarking;
 		newMarking = _newMarking;

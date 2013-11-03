@@ -563,7 +563,7 @@ class TransModel {
 				//System.out.println("\n"+arc.getSource().getId());
 				if(arcView.getSource().getId().equals(placeId)){
 					//System.out.println("\nfound match");
-					return arcView.getWeight().getFirst().getCurrentMarking();
+					return arcView.getWeight().get(0).getCurrentMarking();
 				}
 			}
 			
@@ -585,12 +585,12 @@ class TransModel {
 		  		if(arcView.isTagged())
 		  		{
 		  			condition += "((tagged_location== "+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking()-1+1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1+1)
 		  				+ ") || ( tagged_location!="+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking()-1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1)
 		  				+ "))";
 		  		}
-		  		else condition += arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking() - 1);
+		  		else condition += arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking() - 1);
 		  	}
 		  		
 		  	while (arcsTo.hasNext())
@@ -600,12 +600,12 @@ class TransModel {
 		  		if(arcView.isTagged())
 		  		{
 		  			condition += " && ((tagged_location== "+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking()-1+1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1+1)
 		  				+ ") || ( tagged_location!="+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking()-1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1)
 		  				+ "))";
 		  		}
-		  		else condition += " && "+ arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking() - 1);
+		  		else condition += " && "+ arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking() - 1);
 	  		
 		  	}
 		  	
@@ -633,13 +633,13 @@ class TransModel {
 		  	Iterator arcsTo = _transitionViews[transitionNum]. getConnectToIterator();
 		  	if (arcsTo.hasNext()){
 		  		final ArcView arcView = (ArcView)arcsTo.next();
-		  		condition += arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking()-1);
+		  		condition += arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1);
 		  	}
 		  		
 		  	while (arcsTo.hasNext())
 		  	{
 		  		final ArcView arcView = (ArcView)arcsTo.next();
-		  		condition += " && "+ arcView.getSource().getId()+" > "+ (arcView.getWeight().getFirst().getCurrentMarking()-1);
+		  		condition += " && "+ arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1);
 		  	}
 		  	return condition;
 			

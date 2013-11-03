@@ -6,13 +6,14 @@ import pipe.gui.PetriNetTab;
 import pipe.handlers.ArcKeyboardEventHandler;
 import pipe.models.*;
 import pipe.views.ArcView;
+import pipe.views.NormalArcView;
 import pipe.views.PetriNetView;
 import pipe.views.builder.NormalArcViewBuilder;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 public class PetriNetController implements IController, Serializable
@@ -25,7 +26,9 @@ public class PetriNetController implements IController, Serializable
     private int _activePetriNet = 0;
     private boolean currentlyCreatingArc = false;
     private NormalArc arc;
-    private ArcView arcView;
+
+    private final Set<PetriNetComponent> selectedComponents = new HashSet<PetriNetComponent>();
+
 
     //THis needs to be moved into its own logical class
     private Connectable source;
@@ -75,6 +78,9 @@ public class PetriNetController implements IController, Serializable
     public void addArcPoint(double x, double y, boolean shiftDown) {
         if (currentlyCreatingArc) {
             arc.setTarget(new TemporaryArcTarget(x, y));
+
+            PetriNet activeModel = _models.get(_activePetriNet);
+            activeModel.notifyObservers();
             //arc.setTarget(null);
             //_createArcView.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(event.getY()), event.isShiftDown());
         }
@@ -87,18 +93,20 @@ public class PetriNetController implements IController, Serializable
     //TODO: handle different arc types.
     public void startCreatingArc(Connectable source) {
         currentlyCreatingArc = true;
-        this.arc = new NormalArc(source,
+        this.arc = buildEmptyArc(source);;
+        addArcToCurrentPetriNet(arc);
+        this.source = source;
+    }
+
+    private void addArcToCurrentPetriNet(NormalArc arc) {
+        PetriNet activeModel = _models.get(_activePetriNet);
+        activeModel.addArc(arc);
+    }
+
+    private NormalArc buildEmptyArc(Connectable source) {
+        return new NormalArc(source,
                 new TemporaryArcTarget(source.getX(), source.getY()),
                 new LinkedList<Marking>());
-        NormalArcViewBuilder builder = new NormalArcViewBuilder(arc);
-        arcView = builder.build();
-        PetriNetTab tab = ApplicationSettings.getApplicationView().getCurrentTab();
-        tab.add(arcView);
-        arc.registerObserver(arcView);
-        arcView.setSourceLocation(source.getCentreX(), source.getCentreY());
-        ArcKeyboardEventHandler keyHandler = new ArcKeyboardEventHandler(arcView);
-        arcView.addKeyListener(keyHandler);
-        this.source = source;
     }
 
     public boolean isCurrentlyCreatingArc() {
@@ -107,8 +115,9 @@ public class PetriNetController implements IController, Serializable
 
     public void cancelArcCreation() {
         currentlyCreatingArc = false;
-        arcView.removeFromView();
-        arcView.delete();
+        //TODO: Delete arc from petrinet!
+        //arcView.removeFromView();
+        //arcView.delete();
     }
 
     public void finishCreatingArc(Connectable target) {
@@ -151,5 +160,75 @@ public class PetriNetController implements IController, Serializable
         int returnValue = _transitionNumbers.get(_activePetriNet);
         _transitionNumbers.set(_activePetriNet, returnValue + 1);
         return returnValue;
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
+    }
+
+    public boolean isSelected(PetriNetComponent component) {
+        return selectedComponents.contains(component);
+    }
+
+    public void deselect(PetriNetComponent component) {
+        selectedComponents.remove(component);
+    }
+
+    public void deselectAll() {
+        selectedComponents.clear();
+    }
+
+    public void translateSelected(Point2D.Double translation)
+    {
+        PetriNet activeModel = _models.get(_activePetriNet);
+        for (PetriNetComponent component : selectedComponents) {
+            if (component instanceof Connectable) {
+                Connectable connectable = (Connectable) component;
+                connectable.setX(connectable.getX() + translation.getX());
+                connectable.setY(connectable.getY() + translation.getY());
+            }
+
+        }
+        activeModel.notifyObservers();
+    }
+
+
+    /**
+     * Selects all components within this rectangle
+     * @param selectionRectangle
+     */
+    public void select(Rectangle selectionRectangle) {
+        PetriNet activeModel = _models.get(_activePetriNet);
+        for (Place place : activeModel.getPlaces()) {
+            selectConnectable(place, selectionRectangle);
+        }
+        for (Transition transition : activeModel.getTransitions()) {
+            selectConnectable(transition, selectionRectangle);
+        }
+        for(Arc arc : activeModel.getArcs())
+        {
+            if (selectedComponents.contains(arc.getSource()) ||
+                selectedComponents.contains(arc.getTarget()))
+            {
+                select(arc);
+            }
+        }
+
+    }
+
+    /**
+     *
+     * Currently must be of type Connectable, since yhis is the only abstract class containing getters for X and Y
+     *
+     * @param connectable object to select
+     * @param selectionRectangle
+     */
+    private void selectConnectable(Connectable connectable, Rectangle selectionRectangle) {
+        int x = new Double(connectable.getX()).intValue();
+        int y = new Double(connectable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(), connectable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(connectable);
+        }
     }
 }

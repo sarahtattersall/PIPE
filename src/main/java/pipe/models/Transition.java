@@ -11,7 +11,7 @@ import java.io.Serializable;
 /*
  * @author yufei wang(minor changes)
  */
-public class Transition extends Connectable implements Serializable, PetriNetComponent
+public class Transition extends Connectable implements Serializable
 {
     private int priority;
 	private String rateExpr;
@@ -238,5 +238,10 @@ public class Transition extends Connectable implements Serializable, PetriNetCom
     @Override
     public boolean isSelectable() {
         return  true;
+    }
+
+    @Override
+    public boolean isDraggable() {
+        return true;
     }
 }

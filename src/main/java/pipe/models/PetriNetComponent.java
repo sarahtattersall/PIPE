@@ -10,4 +10,5 @@ package pipe.models;
 public interface PetriNetComponent {
 
     public boolean isSelectable();
+    public boolean isDraggable();
 }

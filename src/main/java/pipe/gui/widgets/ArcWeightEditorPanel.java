@@ -1,24 +1,18 @@
 package pipe.gui.widgets;
 
+import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.utilities.Copier;
-import pipe.views.ArcView;
-import pipe.views.ConnectableView;
-import pipe.views.MarkingView;
-import pipe.views.PetriNetView;
-import pipe.views.TokenView;
-import pipe.views.TransitionView;
+import pipe.views.*;
 
 import javax.swing.*;
 import javax.swing.event.CaretListener;
-
-import net.sourceforge.jeval.EvaluationException;
-
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -308,8 +302,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 	};
 
 	private void okButtonHandler(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_okButtonHandler
-		LinkedList<MarkingView> newWeight;
-		newWeight = Copier.mediumCopy(_arcView.getWeightSimple());
+        List<MarkingView> newWeight = Copier.mediumCopy(_arcView.getWeightSimple());
 		ExprEvaluator parser = new ExprEvaluator();
 		for (int i = 0; i < inputtedWeights.size(); i++) {
 			String expr = inputtedWeights.get(i).getText();

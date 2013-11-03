@@ -47,4 +47,9 @@ public class Annotation implements PetriNetComponent{
     public boolean isSelectable() {
         return  true;
     }
+
+    @Override
+    public boolean isDraggable() {
+        return true;
+    }
 }

@@ -48,21 +48,25 @@ public class PetriNet extends Observable implements Serializable
     public void addPlace(Place place)
     {
         places.add(place);
+        notifyObservers();
     }
 
     public void addTransition(Transition transition)
     {
         transitions.add(transition);
+        notifyObservers();
     }
 
     public void addArc(Arc arc)
     {
         arcs.add(arc);
+        notifyObservers();
     }
 
     public void addToken(Token token)
     {
         tokens.add(token);
+        notifyObservers();
     }
 
     public Collection<Place> getPlaces()
@@ -73,6 +77,7 @@ public class PetriNet extends Observable implements Serializable
     public void addRate(RateParameter parameter)
     {
         rates.add(parameter);
+        notifyObservers();
     }
 
     public Collection<RateParameter> getRateParameters()
@@ -83,6 +88,7 @@ public class PetriNet extends Observable implements Serializable
     public void addAnnotaiton(Annotation annotation)
     {
         annotations.add(annotation);
+        notifyObservers();
     }
 
     public Collection<Annotation> getAnnotations()
@@ -92,6 +98,7 @@ public class PetriNet extends Observable implements Serializable
 
     public void addStateGroup(StateGroup group) {
         stateGroups.add(group);
+        notifyObservers();
     }
 
     public Collection<StateGroup> getStateGroups() {

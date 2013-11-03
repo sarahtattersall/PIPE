@@ -1154,7 +1154,7 @@ public class QueryData extends Observable implements QueryConstants, Cloneable
 				int placeCount = 0;
 				for (PlaceView p : placeViews)
 				{
-					placeCount += p.getCurrentMarkingView().getFirst().getCurrentMarking();
+					placeCount += p.getCurrentMarkingView().get(0).getCurrentMarking();
 
 					String placeLabel = p.getNameLabel().getName();
 					System.out.println(placeLabel);

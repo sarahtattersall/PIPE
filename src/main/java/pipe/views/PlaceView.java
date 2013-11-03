@@ -25,15 +25,16 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.List;
 
 // Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
 public class PlaceView extends ConnectableView<Place> implements Serializable, Observer {
     //transferred
     private static final long serialVersionUID = 1L;
     //transferred
-    private LinkedList<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
+    private List<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
     //transferred
-    private LinkedList<MarkingView> _currentMarkingView = new LinkedList<MarkingView>();
+    private List<MarkingView> _currentMarkingView = new LinkedList<MarkingView>();
 
     //transferred
     private Integer totalMarking = 0;
@@ -55,8 +56,8 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     //transferred
     private TokenView _activeTokenView;
     private PlaceController _placeController;
-    private LinkedList<MarkingView> initBackUp;
-    private LinkedList<MarkingView> currentBackUp;
+    private List<MarkingView> initBackUp;
+    private List<MarkingView> currentBackUp;
 
     public PlaceView() {
         this(0, 0, "", "", 0, 0, new LinkedList<MarkingView>(), 0, 0, 0);
@@ -117,7 +118,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
 
-    private void addObserver(LinkedList<MarkingView> markingViews) {
+    private void addObserver(List<MarkingView> markingViews) {
         for (MarkingView markingView : markingViews) {
             markingView.addObserver(this);
         }
@@ -140,7 +141,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
      * @return
      */
 //transferred
-    private int getMarkingListPos(String id, LinkedList<MarkingView> markingViews) {
+    private int getMarkingListPos(String id, List<MarkingView> markingViews) {
         int size = markingViews.size();
         for (int i = 0; i < size; i++) {
             if (markingViews.get(i).getToken().getID().equals(id)) {
@@ -312,13 +313,13 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        PlaceHandler placeHandler = new PlaceHandler(tab, this);
+        PlaceHandler placeHandler = new PlaceHandler(tab, this._model);
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);
     }
 
-    public HistoryItem setCurrentMarking(LinkedList<MarkingView> currentMarkingViewInput) {
+    public HistoryItem setCurrentMarking(List<MarkingView> currentMarkingViewInput) {
         if (_initialMarkingView.size() == 0) {
             _initialMarkingView = Copier.mediumCopy(_currentMarkingView);
         }
@@ -333,7 +334,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             return new PlaceMarking(this, _currentMarkingView, _currentMarkingView);
         }
 
-        LinkedList<MarkingView> oldMarkingView = Copier.mediumCopy(_currentMarkingView);
+        List<MarkingView> oldMarkingView = Copier.mediumCopy(_currentMarkingView);
 
         // if a marking for a specific class that existed before does not exist
         // in
@@ -382,7 +383,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             }
         }
         repaint();
-        LinkedList<MarkingView> newMarkingView = Copier.mediumCopy(_currentMarkingView);
+        List<MarkingView> newMarkingView = Copier.mediumCopy(_currentMarkingView);
         return new PlaceMarking(this, oldMarkingView, newMarkingView);
     }
 
@@ -396,11 +397,11 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return new PlaceCapacity(this, oldCapacity, newCapacity);
     }
 
-    public LinkedList<MarkingView> getInitialMarkingView() {
+    public List<MarkingView> getInitialMarkingView() {
         return _initialMarkingView;
     }
 
-    public LinkedList<MarkingView> getCurrentMarkingView() {
+    public List<MarkingView> getCurrentMarkingView() {
         return _currentMarkingView;
     }
 
@@ -408,7 +409,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return ((capacity == null) ? 0 : capacity.intValue());
     }
 
-    public LinkedList<MarkingView> getCurrentMarkingObject() {
+    public List<MarkingView> getCurrentMarkingObject() {
         return _currentMarkingView;
     }
 
@@ -548,6 +549,13 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
                 MarkingView viewToDelete = (MarkingView) originalObject;
                 _currentMarkingView.remove(viewToDelete);
             }
+        }
+        if (obj instanceof Place) {
+            Place place = (Place) obj;
+            this._model  = place;
+            setPositionX(_model.getX());
+            setPositionY(_model.getY());
+            update();
         }
     }
 }

@@ -4,6 +4,7 @@
 package pipe.calculations;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import pipe.gui.ApplicationSettings;
 import pipe.views.MarkingView;
@@ -16,8 +17,8 @@ import pipe.views.MarkingView;
  */
 public class State {
    
-   private int[] state;
-private LinkedList<MarkingView>[] placeMarking;
+    private int[] state;
+    private List<MarkingView>[] placeMarking;
    
    
    public State(int[] newState){
@@ -123,12 +124,12 @@ private LinkedList<MarkingView>[] placeMarking;
    }
 
 
-public void setPlaceMarking(LinkedList<MarkingView>[] currentMarkingVector) {
+public void setPlaceMarking(List<MarkingView>[] currentMarkingVector) {
 	this.placeMarking = currentMarkingVector;
 	
 }
 
-public LinkedList<MarkingView>[] getPlaceMarking(){
+public List<MarkingView>[] getPlaceMarking(){
 	if(placeMarking==null){
 		return ApplicationSettings.getApplicationView().getCurrentPetriNetView().getCurrentMarkingVector();
 	}else{

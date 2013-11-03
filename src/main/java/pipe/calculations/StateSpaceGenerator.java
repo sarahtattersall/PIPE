@@ -48,27 +48,22 @@ import java.util.*;
 public class StateSpaceGenerator {
 
 	private static final boolean DEBUG = false;
-	private static final boolean RATE = false;
-	private static final boolean PROBABILITY = true;
 	private static final int NUMHASHROWS = 46567;
 
 	// Array storing the transitions fired
 	private static final Stack transitions = new Stack();
 	private static boolean[] enabledTransitions;
-	private static int[][] _incidenceMatrixBeforeFire;
 
 	public static void generate(PetriNetView pnmlData, File reachGraph)
 			throws OutOfMemoryError, ImmediateAbortException, IOException, MarkingNotIntegerException {
 
-		// back up place markings
-		//pnmlData.backUpPlaceViewsMarking();
 		pnmlData.setFunctionalExpressionRelatedPlaces();
 		pnmlData.storeCurrentMarking();
 		
-		LinkedList<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
+		List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
 		int[] marking = new int[markings.length];
 		for (int i = 0; i < markings.length; i++) {
-			marking[i] = markings[i].getFirst().getCurrentMarking();
+			marking[i] = markings[i].get(0).getCurrentMarking();
 		}
 		State currentMarking = new State(marking);
 		int statearraysize = currentMarking.getState().length;
@@ -233,10 +228,10 @@ public class StateSpaceGenerator {
 		// This is used to catch timeless traps. It's the maximum number
 		// of attempts to try and get successors to vanishing states.
 		final int MAX_TRIES = 100000;
-		LinkedList<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
+		List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
 		int[] marking = new int[markings.length];
 		for (int i = 0; i < markings.length; i++) {
-			marking[i] = markings[i].getFirst().getCurrentMarking();
+			marking[i] = markings[i].get(0).getCurrentMarking();
 		}
 		State currentMarking = new State(marking);
 		int statearraysize = currentMarking.getState().length;
@@ -786,8 +781,8 @@ public class StateSpaceGenerator {
 			ArcView arcTo = ((ArcView) to.next());
 			PlaceView source = ((PlaceView) arcTo.getSource());
 			if (dataLayer.isPlaceFunctionalRelated(source.getName())) {
-				LinkedList<MarkingView> weight = arcTo.getWeight();
-				LinkedList<MarkingView> sourceMarking = source
+				List<MarkingView> weight = arcTo.getWeight();
+                List<MarkingView> sourceMarking = source
 						.getCurrentMarkingView();
 				for (int i = 0; i < weight.size(); i++) {
 					int current = sourceMarking.get(i).getCurrentMarking();
@@ -811,8 +806,8 @@ public class StateSpaceGenerator {
 			PlaceView targetPlace = ((PlaceView) arcFrom.getTarget());
 
 			if (dataLayer.isPlaceFunctionalRelated(targetPlace.getName())) {
-				LinkedList<MarkingView> weight = arcFrom.getWeight();
-				LinkedList<MarkingView> sourceMarking = targetPlace
+                List<MarkingView> weight = arcFrom.getWeight();
+                List<MarkingView> sourceMarking = targetPlace
 						.getCurrentMarkingView();
 				for (int i = 0; i < weight.size(); i++) {
 					int current = sourceMarking.get(i).getCurrentMarking();

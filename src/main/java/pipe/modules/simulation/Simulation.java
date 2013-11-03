@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class Simulation extends SwingWorker
@@ -165,7 +166,7 @@ public class Simulation extends SwingWorker
     {
         data.storeCurrentMarking();
 
-        LinkedList<MarkingView>[] markings = data.getInitialMarkingVector();
+        List<MarkingView>[] markings = data.getInitialMarkingVector();
         if(markings == null)
             return "No markings present. Try to add coloured tokens.";
         int length = markings.length;
@@ -175,7 +176,7 @@ public class Simulation extends SwingWorker
         {
             if(markings[i]!= null && markings[i].size() > 0)
             {
-                MarkingView first = markings[i].getFirst();
+                MarkingView first = markings[i].get(0);
                 if(first != null)
                     marking[i] = first.getCurrentMarking();
             }
@@ -219,7 +220,7 @@ public class Simulation extends SwingWorker
             {
                 if(markings[k]!= null && markings[k].size() > 0)
                 {
-                    MarkingView first = markings[k].getFirst();
+                    MarkingView first = markings[k].get(0);
                     if(first!=null)
                         marking[k] = first.getCurrentMarking();
                 }
@@ -263,7 +264,7 @@ public class Simulation extends SwingWorker
                     {
                         if(markings[k]!= null && markings[k].size() > 0)
                         {
-                            MarkingView first = markings[k].getFirst();
+                            MarkingView first = markings[k].get(0);
                             if(first != null)
                                 marking[k] = first.getCurrentMarking();
                         }

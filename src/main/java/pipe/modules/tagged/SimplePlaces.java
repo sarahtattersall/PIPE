@@ -37,7 +37,7 @@ public class SimplePlaces implements Serializable
 		for (i=0; i< length; i++)
 		{
 			ids[i] = places[i].getId();
-			marking[i] = places[i].getCurrentMarkingView().getFirst().getCurrentMarking();
+			marking[i] = places[i].getCurrentMarkingView().get(0).getCurrentMarking();
 
             //FIX THIS
 			tagged[i] = true;//places[i].isTagged();

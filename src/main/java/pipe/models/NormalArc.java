@@ -11,6 +11,11 @@ public class NormalArc extends Arc  implements Serializable
     {
         super(source, target, weight);
     }
+
+    @Override
+    public boolean isDraggable() {
+        return true;
+    }
 //    public NormalArc(Connectable source, Connectable target)
 //    {
 //        super(source, target);
