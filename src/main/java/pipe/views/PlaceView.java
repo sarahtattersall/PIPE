@@ -28,8 +28,7 @@ import java.util.List;
 
 // Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
 public class PlaceView extends ConnectableView<Place> implements Serializable, Observer {
-    //transferred
-    private static final long serialVersionUID = 1L;
+
     //transferred
     private List<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
     //transferred
