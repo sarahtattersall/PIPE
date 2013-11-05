@@ -1440,7 +1440,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void displayArcs(Collection<Arc> arcs) {
-        //TODO: Quick and dirty hack, tidy up to not use instanceof!
         for (Arc arc : arcs) {
             ArcView view;
             if (_arcViews.containsKey(arc))
@@ -1469,7 +1468,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void displayPlaces(Collection<Place> places) {
-        removeNoLongerThereComponents(_placeViews, places);
         for (Place place : places) {
             PlaceView view;
             if (_placeViews.containsKey(place))
@@ -1507,7 +1505,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void displayTransitions(Collection<Transition> transitions) {
-        removeNoLongerThereComponents(_transitionViews, transitions);
         for (Transition transition : transitions) {
             TransitionView view;
             if (_transitionViews.containsKey(transition))
@@ -1844,6 +1841,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     @Override
     public void update() {
 
+        removeAllDeletedModels();
         displayPlaces(_model.getPlaces());
         displayTokens(_model.getTokens());
         displayTransitions(_model.getTransitions());
@@ -1851,6 +1849,19 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         displayRateParameters(_model.getRateParameters());
         displayAnnotations(_model.getAnnotations());
         displayStateGroups(_model.getStateGroups());
+    }
+
+    /**
+     * Removes any models that have been deleted from the petrinet
+     */
+    private void removeAllDeletedModels() {
+        removeNoLongerThereComponents(_placeViews, _model.getPlaces());
+        removeNoLongerThereComponents(_transitionViews, _model.getTransitions());
+        //TODO: TOKENS
+        removeNoLongerThereComponents(_arcViews, _model.getArcs());
+        removeNoLongerThereComponents(_labels, _model.getAnnotations());
+        //TODO: Rate params, state groups
+
     }
 
 
@@ -2092,32 +2103,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             }
         }
         return enablingDegree;
-    }
-
-    public void deletePlace(String id) {
-        for (int i = 0; i < _placeViews.size(); i++) {
-            if (_placeViews.get(i).getId().equals(id)) {
-                _placeViews.remove(i);
-            }
-        }
-
-    }
-
-    public void deleteTransition(String id) {
-        for (int i = 0; i < _transitionViews.size(); i++) {
-            if (_transitionViews.get(i).getId().equals(id)) {
-                _transitionViews.remove(i);
-            }
-        }
-
-    }
-
-    public void deleteArc(String id) {
-        for (int i = 0; i < _arcViews.size(); i++) {
-            if (_arcViews.get(i).getId().equals(id)) {
-                _arcViews.remove(i);
-            }
-        }
     }
 
     @Override

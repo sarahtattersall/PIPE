@@ -316,7 +316,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
             myPath.forceHidePoints();
             super.delete();
             _deleted = true;
-            ApplicationSettings.getApplicationView().getCurrentPetriNetView().deleteArc(this.getId());
         }
     }
 
