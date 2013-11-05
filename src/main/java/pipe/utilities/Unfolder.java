@@ -4,10 +4,7 @@ import org.w3c.dom.DOMException;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
-import pipe.models.Marking;
-import pipe.models.NormalArc;
-import pipe.models.PetriNet;
-import pipe.models.Transition;
+import pipe.models.*;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.*;
 
@@ -16,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -103,18 +101,16 @@ class Unfolder
         {
 
             // Create a copy of existing transition and add it to the list
-            double transPositionXInput = transitionView.getPositionX();
-            double transPositionYInput = transitionView.getPositionY();
+            double transPositionXInput = transitionView.getModel().getX();
+            double transPositionYInput = transitionView.getModel().getY();
             String transIdInput = transitionView.getId();
-            double transNameOffsetXInput = transitionView._nameOffsetX;
-            double transNameOffsetYInput = transitionView._nameOffsetY;
            // double rateInput = transitionView.getRate();
             String functionalRate = transitionView.getRateExpr();
             boolean timedTransition = transitionView.isTimed();
             boolean infServer = transitionView.isInfiniteServer();
             int angleInput = transitionView.getAngle();
             int priority = transitionView.getPriority();
-            TransitionView newTransitionView = new TransitionView(transPositionXInput, transPositionYInput, transIdInput, transIdInput, transNameOffsetXInput, transNameOffsetYInput, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput, functionalRate,priority));
+            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput, functionalRate,priority));
             _newTransitionViews.add(newTransitionView);
 
             // Now analyse all arcs connected to this transition
@@ -124,7 +120,8 @@ class Unfolder
                 String newPlaceName = oldPlaceView.getId();
                 int newMarking = 0;
                 int newArcWeight = 0;
-                for(MarkingView m : outboundArcView.getWeight())
+                List<MarkingView> markingViews =  outboundArcView.getWeight();
+                for(MarkingView m : markingViews)
                 {
                     if(m.getCurrentMarking() > 0)
                     {
@@ -163,23 +160,18 @@ class Unfolder
                 if(newPlaceView == null)
                 {
                     // Create a new place
-                    double positionXInput = transitionView.getPositionX();
-                    double positionYInput = oldPlaceView.getPositionY();
-                    Double nameOffsetXInput = oldPlaceView.getNameOffsetX();
-                    Double nameOffsetYInput = oldPlaceView.getNameOffsetYObject();
                     LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
                     MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
                     markingViewInput
                             .add(placeMarkingView);
-                    double markingOffsetXInput = oldPlaceView
-                            .getMarkingOffsetXObject();
-                    double markingOffsetYInput = oldPlaceView
-                            .getMarkingOffsetYObject();
-                    int capacityInput = oldPlaceView.getCapacity();
 
-                    newPlaceView = new PlaceView(positionXInput, positionYInput, newPlaceName, newPlaceName,
-                                                 nameOffsetXInput, nameOffsetYInput, markingViewInput,
-                                                 markingOffsetXInput, markingOffsetYInput, capacityInput);
+
+                    Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
+                    place.setCapacity(oldPlaceView.getCapacity());
+                    place.setMarkingXOffset(oldPlaceView.getMarkingOffsetXObject());
+                    place.setMarkingYOffset(oldPlaceView.getMarkingOffsetYObject());
+                    newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place);
+
                     placeMarkingView.addObserver(newPlaceView); 
                     _newPlaceViews.add(newPlaceView);
                 }
@@ -187,8 +179,8 @@ class Unfolder
                 // Create a new Arc
                 double startPositionXInput = outboundArcView.getStartPositionX();
                 double startPositionYInput = outboundArcView.getStartPositionY();
-                double endPositionXInput = newPlaceView.getPositionX();
-                double endPositionYInput = newPlaceView.getPositionY();
+                double endPositionXInput = newPlaceView.getModel().getX();
+                double endPositionYInput = newPlaceView.getModel().getY();
                 ConnectableView target = newPlaceView;
                 LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
                 MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+""); 
@@ -216,7 +208,8 @@ class Unfolder
                 String newPlaceName = oldPlaceView.getId();
                 int newMarking = 0;
                 int newArcWeight = 0;
-                for(MarkingView m : inboundArcView.getWeight())
+                List<MarkingView> markingViews = inboundArcView.getWeight();
+                for(MarkingView m : markingViews)
                 {
                     if(m.getCurrentMarking() > 0)
                     {
@@ -246,30 +239,25 @@ class Unfolder
                 if(newPlaceView == null)
                 {
                     // Create a new place
-                    double positionXInput = transitionView.getPositionX();
-                    double positionYInput = oldPlaceView.getPositionY();
-                    Double nameOffsetXInput = oldPlaceView.getNameOffsetX();
-                    Double nameOffsetYInput = oldPlaceView.getNameOffsetYObject();
                     LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
                     MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
                     markingViewInput
                             .add(placeMarkingView);
-                    double markingOffsetXInput = oldPlaceView
-                            .getMarkingOffsetXObject();
-                    double markingOffsetYInput = oldPlaceView
-                            .getMarkingOffsetYObject();
-                    int capacityInput = oldPlaceView.getCapacity();
 
-                    newPlaceView = new PlaceView(positionXInput, positionYInput, newPlaceName, newPlaceName,
-                                                 nameOffsetXInput, nameOffsetYInput, markingViewInput,
-                                                 markingOffsetXInput, markingOffsetYInput, capacityInput);
+
+                    Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
+                    place.setCapacity(oldPlaceView.getCapacity());
+                    place.setMarkingXOffset(oldPlaceView.getMarkingOffsetXObject());
+                    place.setMarkingYOffset(oldPlaceView.getMarkingOffsetYObject());
+                    newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place);
+
                     placeMarkingView.addObserver(newPlaceView); 
                     _newPlaceViews.add(newPlaceView);
                 }
 
                 // Create a new Arc
-                double startPositionXInput = newPlaceView.getPositionX();
-                double startPositionYInput = newPlaceView.getPositionY();
+                double startPositionXInput = newPlaceView.getModel().getX();
+                double startPositionYInput = newPlaceView.getModel().getY();
                 double endPositionXInput = inboundArcView.getStartPositionX();
                 double endPositionYInput = inboundArcView.getStartPositionY();
                 ConnectableView source = newPlaceView;
@@ -371,7 +359,7 @@ class Unfolder
             {
                 ArcView a = (ArcView) it.next();
                 TransitionView t = (TransitionView) a.getTarget();
-                _newPlaceView.setPositionX(t.getPositionX());
+//                _newPlaceView.setPositionX(t.getPositionX());
             }
         }
 
@@ -382,12 +370,12 @@ class Unfolder
         {
             for(int i = 0; i < size - 1; i++)
             {
-                double prevX = _newPlaceViews.get(i).getPositionX();
-                double prevY = _newPlaceViews.get(i).getPositionY();
+                double prevX = _newPlaceViews.get(i).getModel().getX();
+                double prevY = _newPlaceViews.get(i).getModel().getY();
                 for(int j = i + 1; j < size; j++)
                 {
-                    currentX = _newPlaceViews.get(j).getPositionX();
-                    currentY = _newPlaceViews.get(j).getPositionY();
+                    currentX = _newPlaceViews.get(j).getModel().getX();
+                    currentY = _newPlaceViews.get(j).getModel().getY();
                     /*
                           * if((currentX - prevX) < -thresholdXDistanceApart){
                           * newPlaces.get(j).setPositionX(-thresholdXDistanceApart +
@@ -397,8 +385,8 @@ class Unfolder
                     if((currentX - prevX) < thresholdXDistanceApart
                             && Math.abs(currentY - prevY) < thresholdYDistanceApart)
                     {
-                        _newPlaceViews.get(j).setPositionX(
-                                thresholdXDistanceApart + prevX);
+//                        _newPlaceViews.get(j).setPositionX(
+//                                thresholdXDistanceApart + prevX);
                     }
                 }
             }

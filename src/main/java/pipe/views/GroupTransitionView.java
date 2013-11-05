@@ -39,12 +39,9 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
     public GroupTransitionView(TransitionView _foldedInto, double positionXInput, double positionYInput) {
         //MODEL
-        super(positionXInput, positionYInput, new Transition("", ""));
+        super(new Transition("", ""));
         this._foldedInto = _foldedInto;
-        _componentWidth = TRANSITION_HEIGHT;
-        _componentHeight = TRANSITION_HEIGHT;
         constructTransition();
-        setCentre((int) _positionX, (int) _positionY);
         updateBounds();
         updateEndPoints();
     }
@@ -68,8 +65,6 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
         this.newCopy(copy);
 
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
 
         copy.angle = this.angle;
 
@@ -85,8 +80,6 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
                 new GroupTransitionView(_foldedInto, ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
                         ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
         copy._nameLabel.setName(this.getName());
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
         copy.angle = this.angle;
         copy._attributesVisible = this._attributesVisible;
         copy.setOriginal(this);
@@ -170,7 +163,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
     public HistoryItem rotate(int angleInc) {
         angle = (angle + angleInc) % 360;
         transition.transform(
-                AffineTransform.getRotateInstance(Math.toRadians(angleInc), _componentWidth / 2, _componentHeight / 2));
+                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
         outlineTransition();
 
         Iterator<?> arcIterator = arcAngleList.iterator();
@@ -318,7 +311,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
     private void constructTransition() {
         transition = new GeneralPath();
-        transition.append(new Rectangle2D.Double((_componentWidth - TRANSITION_WIDTH) / 2, 0, TRANSITION_WIDTH,
+        transition.append(new Rectangle2D.Double((model.getHeight() - TRANSITION_WIDTH) / 2, 0, TRANSITION_WIDTH,
                 TRANSITION_HEIGHT), false);
         outlineTransition();
     }
@@ -426,11 +419,11 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
         }
 
@@ -439,11 +432,11 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
         }
 
@@ -456,11 +449,11 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
                     transformed); // +1 due to rounding making it
             // off by 1
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
             current -= inc;
         }
@@ -472,11 +465,11 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
             transform.transform(new Point2D.Double(+0.5 * TRANSITION_WIDTH, current), transformed);
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
             current += inc;
         }
@@ -562,7 +555,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
         private void calcAngle() {
             int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
-            Point2D.Double p1 = new Point2D.Double(_positionX + centreOffsetLeft(), _positionY + centreOffsetTop());
+            Point2D.Double p1 = new Point2D.Double(getX() + centreOffsetLeft(), getY() + centreOffsetTop());
             Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).x,
                     _arcView.getArcPath().getPoint(index).y);
 

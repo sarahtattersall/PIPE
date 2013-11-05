@@ -9,6 +9,7 @@ import pipe.views.ArcView;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.verify;
  * To change this template use File | Settings | File Templates.
  */
 public class ConnectableTest {
+    private static final double DOUBLE_DELTA = 0.001;
     private Connectable connectable;
     //TODO: This should really be a dummy, but it's hard to construct.
     private ArcView mockView;
@@ -81,6 +83,13 @@ public class ConnectableTest {
         connectable.registerObserver(mockObserver);
         connectable.setX(10);
         verify(mockObserver).update();
+    }
+
+    @Test
+    public void defaultNameOffsetValues()
+    {
+        assertEquals(-5, connectable.getNameXOffset(), DOUBLE_DELTA);
+        assertEquals(35, connectable.getNameYOffset(), DOUBLE_DELTA);
     }
 
     private class DummyConnectable extends Connectable {

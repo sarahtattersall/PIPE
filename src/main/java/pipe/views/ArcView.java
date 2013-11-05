@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public abstract class ArcView extends PetriNetViewComponent implements Cloneable, IObserver, Serializable, Observer {
+public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> implements Cloneable, IObserver, Serializable, Observer {
     private static final long serialVersionUID = 1L;
     List<NameLabel> weightLabel = new LinkedList<NameLabel>();
     List<MarkingView> _weight = new LinkedList<MarkingView>();
@@ -38,7 +38,6 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     private ConnectableView _source = null;
     private ConnectableView _target = null;
 
-    protected Arc _model;
 
     final ArcPath myPath = new ArcPath(this);
 
@@ -51,9 +50,8 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 
     ArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput, double endPositionYInput,
             ConnectableView sourceInput, ConnectableView targetInput, List<MarkingView> weightInput,
-            String idInput, Arc model) {
-        _model = model;
-
+            String idInput, T model) {
+        this.model = model;
         Point2D.Double startPoint = model.getStartPoint();
         myPath.addPoint(startPoint.getX(), startPoint.getY(), ArcPathPoint.STRAIGHT);
 
@@ -535,13 +533,13 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
     }
 
     public Arc getModel() {
-        return _model;
+        return model;
     }
 
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler arcHandler = new ArcHandler(tab, this._model);
+        ArcHandler arcHandler = new ArcHandler(tab, this.model);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -549,10 +547,10 @@ public abstract class ArcView extends PetriNetViewComponent implements Cloneable
 
     @Override
     public void update() {
-        Point2D.Double startCoord = zoomPoint(_model.getStartPoint());
+        Point2D.Double startCoord = zoomPoint(model.getStartPoint());
         setSourceLocation(startCoord.getX(), startCoord.getY());
 
-        Point2D.Double endCoord = zoomPoint(_model.getEndPoint());
+        Point2D.Double endCoord = zoomPoint(model.getEndPoint());
         //TODO: THIS FALSE IS MEANT TO BE 'SHIFT UP'
         setEndPoint(endCoord.getX(), endCoord.getY(), false);
 

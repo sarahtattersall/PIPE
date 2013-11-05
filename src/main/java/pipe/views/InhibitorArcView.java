@@ -18,7 +18,7 @@ import java.util.List;
  * @author Pere Bonet
  * @version 1.0
  */
-public class InhibitorArcView extends ArcView implements Serializable {
+public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializable {
 
     private final static String type = "inhibitor";
     private final static int OVAL_X = -4;

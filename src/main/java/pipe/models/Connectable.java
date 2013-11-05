@@ -17,20 +17,46 @@ public abstract class Connectable extends Observable implements Serializable, Pe
     private final LinkedList<ArcView> _outboundArcViews = new LinkedList<ArcView>();
 
     /**
-     * Place position x
+     * Connectable position x
      */
     double x = 0;
     /**
-     * Place position y
+     * Connectable position y
      */
     double y = 0;
     private String _id;
     private String _name;
+    /**
+     * Connectable name x offset relative to its x coordinate
+     */
+    protected double nameXOffset = -5;
+    /**
+     * Connectable name y offset relative to its y coordinate
+     */
+    protected double nameYOffset = 35;
 
     Connectable(String id, String name)
     {
         _id = id;
         _name = name;
+    }
+
+    public double getNameXOffset() {
+        return nameXOffset;
+    }
+
+    public double getNameYOffset() {
+        return nameYOffset;
+    }
+
+    public void setNameXOffset(double nameXOffset) {
+        this.nameXOffset = nameXOffset;
+        notifyObservers();
+    }
+
+    public void setNameYOffset(double nameYOffset) {
+        this.nameYOffset = nameYOffset;
+        notifyObservers();
     }
 
     public LinkedList<ArcView> outboundArcs()
@@ -55,7 +81,7 @@ public abstract class Connectable extends Observable implements Serializable, Pe
 
     public void addInboundOrOutbound(ArcView newArcView)
     {
-        if(newArcView.getSource()._model == this)
+        if(newArcView.getSource().getModel() == this)
             _outboundArcViews.add(newArcView);
         else
             _inboundArcViews.add(newArcView);

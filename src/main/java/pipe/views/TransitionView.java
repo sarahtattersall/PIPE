@@ -38,49 +38,28 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     private GeneralPath _path;
     private Shape proximityTransition;
-    private int _angle;
     private boolean _enabled;
     private boolean _enabledBackwards;
     public boolean _highlighted;
-    private boolean _infiniteServer;
     private double _delay;
     private boolean _delayValid;
-    private boolean _timed;
     private double _rootThreeOverTwo = 0.5 * Math.sqrt(3);
     private ArrayList _arcAngleList;
     private RateParameter _rateParameter;
     private GroupTransitionView _groupTransitionView;
 
-
-    /**
-     * Place Width
-     */
-    public static final int TRANSITION_HEIGHT = Constants.PLACE_TRANSITION_HEIGHT;
-    /**
-     * Place Width
-     */
-    public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
-
     private int _delayForShowingWarnings;
 
 
-    public TransitionView(double positionXInput, double positionYInput) {
-        this(positionXInput, positionYInput, "", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false,
+    public TransitionView() {
+        this( "", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false,
                 false, 0, new Transition("", "", "1", 1));
     }
 
-    public TransitionView(double positionXInput, double positionYInput, String id, String name, double nameOffsetX,
+    public TransitionView( String id, String name, double nameOffsetX,
             double nameOffsetY, boolean timed, boolean infServer, int angleInput, Transition model) {
-        super(positionXInput, positionYInput, id, name, nameOffsetX, nameOffsetY, model);
-        _model = model;
-        _componentHeight = TRANSITION_HEIGHT;
-        _componentWidth = TRANSITION_HEIGHT;
-        _nameOffsetX = nameOffsetX;
-        _nameOffsetY = nameOffsetY;
-        _timed = timed;
-        _infiniteServer = infServer;
+        super(id, name,  model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(), model);
         constructTransition();
-        _angle = 0;
 
         _enabled = false;
         _enabledBackwards = false;
@@ -89,16 +68,15 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _arcAngleList = new ArrayList();
         _delayForShowingWarnings = 10000;
 
-        setCentre((int) _positionX, (int) _positionY);
         rotate(angleInput);
         updateBounds();
         updateEndPoints();
     }
 
     public TransitionView(TransitionController transitionController, Transition model) {
-        super(0, 0, model);
-        _model = model;
-        _model.registerObserver(this);
+        super(model);
+        model = model;
+        model.registerObserver(this);
     }
 
     public void setDelayForShowingWarnings(int delayForShowingWarnings) {
@@ -107,8 +85,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public TransitionView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
         TransitionView copy =
-                new TransitionView((double) Grid.getModifiedX(x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2),
-                        (double) Grid.getModifiedY(y + this.getY() + Constants.PLACE_TRANSITION_HEIGHT / 2));
+                new TransitionView();
         String newName = this._nameLabel.getName() + "(" + this.getCopyNumber() + ")";
         boolean properName = false;
 
@@ -123,17 +100,12 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         this.newCopy(copy);
 
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
-
-        copy._timed = this._timed;
-        copy._model.setRateExpr(_model.getRateExpr());
-        copy._angle = this._angle;
+        copy.model.setRateExpr(this.model.getRateExpr());
 
         copy._attributesVisible = this._attributesVisible;
-        copy._model.setPriority(_model.getPriority());
+        copy.model.setPriority(this.model.getPriority());
         copy._path.transform(AffineTransform
-                .getRotateInstance(Math.toRadians(copy._angle), TRANSITION_HEIGHT / 2, TRANSITION_HEIGHT / 2));
+                .getRotateInstance(Math.toRadians(this.model.getAngle()), this.model.getHeight() / 2, this.model.getHeight() / 2));
         copy._rateParameter = null;
 
 
@@ -141,16 +113,11 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     public TransitionView copy() {
-        TransitionView copy = new TransitionView((double) ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
-                (double) ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
+        TransitionView copy = new TransitionView();
         copy._nameLabel.setName(this.getName());
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
-        copy._timed = this._timed;
-        copy._model.setRateExpr(getRate());
-        copy._angle = this._angle;
+        copy.model.setRateExpr(getRate());
         copy._attributesVisible = this._attributesVisible;
-        copy._model.setPriority(_model.getPriority());
+        copy.model.setPriority(model.getPriority());
         copy.setOriginal(this);
         copy._rateParameter = this._rateParameter;
         return copy;
@@ -168,8 +135,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             g2.setColor(Constants.ELEMENT_FILL_COLOUR);
         }
 
-        if (_timed) {
-            if (_infiniteServer) {
+        if (model.isTimed()) {
+            if (model.isInfiniteServer()) {
                 for (int i = 2; i >= 1; i--) {
                     g2.translate(2 * i, -2 * i);
                     g2.fill(_path);
@@ -198,8 +165,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         }
 
         g2.draw(_path);
-        if (!_timed) {
-            if (_infiniteServer) {
+        if (!model.isTimed()) {
+            if (model.isInfiniteServer()) {
                 for (int i = 2; i >= 1; i--) {
                     g2.translate(2 * i, -2 * i);
                     Paint pen = g2.getPaint();
@@ -237,19 +204,21 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        TransitionHandler transitionHandler = new TransitionHandler(tab, this._model);
+        TransitionHandler transitionHandler = new TransitionHandler(tab, this.model);
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);
         addMouseListener(tab.getAnimationHandler());
     }
 
+    //TODO: RE-IMPLEMENT
     public HistoryItem rotate(int angleInc) {
-        _angle = (_angle + angleInc) % 360;
+//        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
+//        _angle = (_angle + angleInc) % 360;
         _path.transform(
-                AffineTransform.getRotateInstance(Math.toRadians(angleInc), _componentWidth / 2, _componentHeight / 2));
+                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
         outlineTransition();
-
+//
         Iterator arcIterator = _arcAngleList.iterator();
         while (arcIterator.hasNext()) {
             ((ArcAngleCompare) arcIterator.next()).calcAngle();
@@ -296,14 +265,16 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _highlighted = status;
     }
 
+    //TODO: RE-IMPLEMENT
     public HistoryItem setInfiniteServer(boolean status) {
-        _infiniteServer = status;
-        repaint();
-        return new TransitionServerSemantic(this);
+        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
+//        _infiniteServer = status;
+//        repaint();
+//        return new TransitionServerSemantic(this);
     }
 
     public boolean isInfiniteServer() {
-        return _infiniteServer;
+        return model.isInfiniteServer();
     }
 
     public void setEnabled(boolean status) {
@@ -334,32 +305,34 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
 
     public int getAngle() {
-        return _angle;
+        return model.getAngle();
     }
 
     public int getPriority() {
-        return _model.
+        return model.
                 getPriority();
     }
 
     public HistoryItem setPriority(int newPriority) {
         int oldPriority = getPriority();
 
-        _model.setPriority(newPriority);
+        model.setPriority(newPriority);
         _nameLabel.setText(getAttributes());
         repaint();
-        return new TransitionPriority(this, oldPriority, _model.getPriority());
+        return new TransitionPriority(this, oldPriority, model.getPriority());
     }
 
+    //TODO: RE-IMPLEMENT
     public HistoryItem setTimed(boolean change) {
-        _timed = change;
-        _nameLabel.setText(getAttributes());
-        repaint();
-        return new TransitionTiming(this);
+        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
+//        _timed = change;
+//        _nameLabel.setText(getAttributes());
+//        repaint();
+//        return new TransitionTiming(this);
     }
 
     public boolean isTimed() {
-        return _timed;
+        return model.isTimed();
     }
 
     public void setDelay(double _delay) {
@@ -382,8 +355,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     private void constructTransition() {
         _path = new GeneralPath();
         //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
-        _path.append(new Rectangle2D.Double((_componentWidth - TRANSITION_WIDTH) / 2, 0, TRANSITION_WIDTH,
-                TRANSITION_HEIGHT), false);
+        _path.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
+                model.getHeight()), false);
 
         outlineTransition();
     }
@@ -458,81 +431,81 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         Iterator arcIterator = _arcAngleList.iterator();
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            double thisAngle = thisArc.angle - Math.toRadians(_angle);
+            double thisAngle = thisArc.angle - Math.toRadians(model.getAngle());
             if (Math.cos(thisAngle) > (_rootThreeOverTwo)) {
                 top.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(_angle + 90);
+                thisArc._arcView.setPathToTransitionAngle(model.getAngle() + 90);
             } else if (Math.cos(thisAngle) < -_rootThreeOverTwo) {
                 bottom.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(_angle + 270);
+                thisArc._arcView.setPathToTransitionAngle(model.getAngle() + 270);
             } else if (Math.sin(thisAngle) > 0) {
                 left.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(_angle + 180);
+                thisArc._arcView.setPathToTransitionAngle(model.getAngle() + 180);
             } else {
                 right.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(_angle);
+                thisArc._arcView.setPathToTransitionAngle(model.getAngle());
             }
         }
 
-        AffineTransform transform = AffineTransform.getRotateInstance(Math.toRadians(_angle + Math.PI));
+        AffineTransform transform = AffineTransform.getRotateInstance(Math.toRadians(model.getAngle() + Math.PI));
         Point2D.Double transformed = new Point2D.Double();
 
         transform.concatenate(ZoomController.getTransform(_zoomPercentage));
 
         arcIterator = top.iterator();
-        transform.transform(new Point2D.Double(1, 0.5 * TRANSITION_HEIGHT), transformed);
+        transform.transform(new Point2D.Double(1, 0.5 * model.getHeight()), transformed);
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             }
         }
 
         arcIterator = bottom.iterator();
-        transform.transform(new Point2D.Double(0, -0.5 * TRANSITION_HEIGHT), transformed);
+        transform.transform(new Point2D.Double(0, -0.5 * model.getHeight()), transformed);
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             }
         }
 
         arcIterator = left.iterator();
-        double inc = TRANSITION_HEIGHT / (left.size() + 1);
-        double current = TRANSITION_HEIGHT / 2 - inc;
+        double inc = model.getHeight() / (left.size() + 1);
+        double current = model.getHeight() / 2 - inc;
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            transform.transform(new Point2D.Double(-0.5 * TRANSITION_WIDTH, current + 1), transformed);
+            transform.transform(new Point2D.Double(-0.5 * model.getWidth(), current + 1), transformed);
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             }
             current -= inc;
         }
 
-        inc = TRANSITION_HEIGHT / (right.size() + 1);
-        current = -TRANSITION_HEIGHT / 2 + inc;
+        inc = model.getHeight() / (right.size() + 1);
+        current = -model.getHeight() / 2 + inc;
         arcIterator = right.iterator();
         while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            transform.transform(new Point2D.Double(+0.5 * TRANSITION_WIDTH, current), transformed);
+            transform.transform(new Point2D.Double(+0.5 * model.getWidth(), current), transformed);
             if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             } else {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft() + transformed.x,
-                        _positionY + centreOffsetTop() + transformed.y);
+                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
+                        model.getY() + centreOffsetTop() + transformed.y);
             }
             current += inc;
         }
@@ -558,9 +531,9 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     }
                 } else {
                     if (_rateParameter != null) {
-                        return "\n" + '\u03c0' + "=" + _model.getPriority() + "\nw=" + _rateParameter.getName();
+                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + _rateParameter.getName();
                     } else {
-                        return "\n" + '\u03c0' + "=" + _model.getPriority() + "\nw=" + getRate();
+                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + getRate();
                     }
                 }
             } catch (Exception e) {
@@ -575,9 +548,9 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     }
                 } else {
                     if (_rateParameter != null) {
-                        return "\n" + '\u03c0' + "=" + _model.getPriority() + "\nw=" + _rateParameter.getName();
+                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + _rateParameter.getName();
                     } else {
-                        return "\n" + '\u03c0' + "=" + _model.getPriority() + "\nw=" + getRateExpr() + "=" + getRate();
+                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + getRateExpr() + "=" + getRate();
                     }
                 }
             }
@@ -617,7 +590,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         double oldRate = getRate();
         this._rateParameter = rateParameter;
         this._rateParameter.add(this);
-        _model.setRateExpr(rateParameter.getValue());
+        model.setRateExpr(rateParameter.getValue());
         update();
         return new SetRateParameter(this, oldRate, this._rateParameter);
     }
@@ -635,7 +608,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         this._rateParameter.remove(this);
         this._rateParameter = rateParameter;
         this._rateParameter.add(this);
-        _model.setRateExpr(rateParameter.getValue());
+        model.setRateExpr(rateParameter.getValue());
         update();
         return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
     }
@@ -656,7 +629,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     public void setModel(Transition model) {
-        this._model = model;
+        this.model = model;
     }
 
     class ArcAngleCompare implements Comparable {
@@ -680,7 +653,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         private void calcAngle() {
             int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
-            Point2D.Double p1 = new Point2D.Double(_positionX + centreOffsetLeft(), _positionY + centreOffsetTop());
+            Point2D.Double p1 = new Point2D.Double(model.getX() + centreOffsetLeft(), model.getY() + centreOffsetTop());
             Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).x,
                     _arcView.getArcPath().getPoint(index).y);
 
@@ -837,7 +810,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     public HistoryItem groupTransitions() {
         ArrayList<TransitionView> transitionsToHide = groupTransitionsValidation();
         GroupTransitionView newGroupTransitionView =
-                new GroupTransitionView(this, this.getPositionX(), this.getPositionY());
+                new GroupTransitionView(this, model.getX(), model.getY());
         groupTransitionsHelper(transitionsToHide, newGroupTransitionView);
         return new GroupTransition(newGroupTransitionView);
     }
@@ -926,7 +899,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public boolean isConst() {
         try {
-            Double.parseDouble(_model.getRateExpr());
+            Double.parseDouble(model.getRateExpr());
             return true;
         } catch (Exception e) {
             return false;
@@ -934,23 +907,23 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     public HistoryItem setRate(double rate) {
-        String oldRate = _model.getRateExpr();
-        _model.setRateExpr(rate + "");
+        String oldRate = model.getRateExpr();
+        model.setRateExpr(rate + "");
         _nameLabel.setText(getAttributes());
         repaint();
-        return new TransitionRate(this, oldRate, _model.getRateExpr());
+        return new TransitionRate(this, oldRate, model.getRateExpr());
     }
 
     public HistoryItem setRate(String rate) {
-        String oldRate = _model.getRateExpr();
-        _model.setRateExpr(rate + "");
+        String oldRate = model.getRateExpr();
+        model.setRateExpr(rate + "");
         _nameLabel.setText(getAttributes());
         repaint();
-        return new TransitionRate(this, oldRate, _model.getRateExpr());
+        return new TransitionRate(this, oldRate, model.getRateExpr());
     }
 
     public String getRateExpr() {
-        return _model.getRateExpr();
+        return model.getRateExpr();
     }
 
     public double getRate() {
@@ -958,15 +931,15 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             return (double) ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(this);
         }
 
-        if (_model.getRateExpr() == null) {
+        if (model.getRateExpr() == null) {
             return -1;
         }
         try {
-            return Double.parseDouble(_model.getRateExpr());
+            return Double.parseDouble(model.getRateExpr());
         } catch (Exception e) {
             ExprEvaluator parser = new ExprEvaluator();
             try {
-                return parser.parseAndEvalExprForTransition(_model.getRateExpr());
+                return parser.parseAndEvalExprForTransition(model.getRateExpr());
             } catch (EvaluationException ee) {
                 showErrorMessage();
                 return 1.0;

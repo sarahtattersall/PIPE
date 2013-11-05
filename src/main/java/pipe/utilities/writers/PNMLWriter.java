@@ -223,12 +223,13 @@ public class PNMLWriter
         if(inputPlaceView != null)
         {
             Integer attrValue = null;
-            Double positionXInput = inputPlaceView.getPositionXObject();
-            Double positionYInput = inputPlaceView.getPositionYObject();
+            Double positionXInput = new Double(inputPlaceView.getX());
+            Double positionYInput = new Double(inputPlaceView.getY());
             String idInput = inputPlaceView.getId();
             String nameInput = inputPlaceView.getName();
-            Double nameOffsetXInput = inputPlaceView.getNameOffsetXObject();
-            Double nameOffsetYInput = inputPlaceView.getNameOffsetYObject();
+            //TODO: WE SHOULD BE USING MODEL TO WRITE!
+            Double nameOffsetXInput = 0.0;
+            Double nameOffsetYInput = 0.0;
             List<MarkingView> initialMarkingViewInput = inputPlaceView.getCurrentMarkingObject();
             Double markingOffsetXInput = inputPlaceView.getMarkingOffsetXObject();
             Double markingOffsetYInput = inputPlaceView.getMarkingOffsetYObject();
@@ -318,10 +319,11 @@ public class PNMLWriter
         if(inputTransitionView != null)
         {
             Integer attrValue = null;
-            Double positionXInput = inputTransitionView.getPositionXObject();
-            Double positionYInput = inputTransitionView.getPositionYObject();
-            Double nameOffsetXInput = inputTransitionView.getNameOffsetXObject();
-            Double nameOffsetYInput = inputTransitionView.getNameOffsetYObject();
+            Double positionXInput = new Double(inputTransitionView.getX());
+            Double positionYInput = new Double(inputTransitionView.getY());
+            //TODO: WE SHOULD BE USING MODEL TO WRITE!
+            Double nameOffsetXInput = 0.0;
+            Double nameOffsetYInput = 0.0;
             String idInput = inputTransitionView.getId();
             String nameInput = inputTransitionView.getName();
             //double aRate = inputTransitionView.getRate();

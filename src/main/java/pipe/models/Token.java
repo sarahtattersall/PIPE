@@ -12,6 +12,7 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class Token extends Observable implements Serializable, PetriNetComponent
 {
@@ -277,7 +278,8 @@ public class Token extends Observable implements Serializable, PetriNetComponent
                                 //TODO: Broken transitions
                                 int transitionNo = 0; //transitionsArray.indexOf(transitionView);
                                 int placeNo = 0;//placesArray.indexOf(placeView);
-                                for(MarkingView token : arcView.getWeight())
+                                List<MarkingView> markings = arcView.getWeight();
+                                for(MarkingView token : markings)
                                 {
                                     if(token.getToken().getID().equals(id))
                                     {
@@ -345,7 +347,8 @@ public class Token extends Observable implements Serializable, PetriNetComponent
                                 //TODO: Broken this
                                 int transitionNo = 0; //transitionsArray.indexOf(transitionView);
                                 int placeNo = 0; //placesArray.indexOf(placeView);
-                                for(MarkingView token : arcView.getWeight())
+                                List<MarkingView> markings = arcView.getWeight();
+                                for(MarkingView token : markings)
                                 {
                                     if(token.getToken().getID().equals(id))
                                     {

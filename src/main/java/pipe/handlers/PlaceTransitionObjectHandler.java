@@ -147,7 +147,7 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
                      ArcView someArcView = ((ArcView)arcsFrom.next());
                      if (someArcView == createInhibitorArcView) {
                         break;
-                     } else if (someArcView.getTarget()._model == currentObject &&
+                     } else if (someArcView.getTarget().getModel() == currentObject &&
                              someArcView.getSource() == createInhibitorArcView.getSource()) {
                         isNewArc = false;
                         if (someArcView instanceof NormalArcView){

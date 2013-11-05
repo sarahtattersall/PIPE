@@ -2,17 +2,13 @@ package pipe.modules.passageTimeForTaggedNet;
 
 
 import pipe.common.dataLayer.StateGroup;
-import pipe.views.ArcView;
-import pipe.views.PetriNetView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
+import pipe.views.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-
+import java.util.List;
 
 
 class TransModel {
@@ -563,7 +559,9 @@ class TransModel {
 				//System.out.println("\n"+arc.getSource().getId());
 				if(arcView.getSource().getId().equals(placeId)){
 					//System.out.println("\nfound match");
-					return arcView.getWeight().get(0).getCurrentMarking();
+                    List<MarkingView> markingViews = arcView.getWeight();
+                    MarkingView firstMarking = markingViews.get(0);
+					return firstMarking.getCurrentMarking();
 				}
 			}
 			
@@ -582,36 +580,51 @@ class TransModel {
 		  	Iterator arcsTo = _transitionViews[transitionNum]. getConnectToIterator();
 		  	if (arcsTo.hasNext()){
 		  		final ArcView arcView = (ArcView)arcsTo.next();
+                int currentMarking = getArcCurrentMarking(arcView);
 		  		if(arcView.isTagged())
 		  		{
 		  			condition += "((tagged_location== "+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1+1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (currentMarking-1+1)
 		  				+ ") || ( tagged_location!="+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (currentMarking-1)
 		  				+ "))";
 		  		}
-		  		else condition += arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking() - 1);
+		  		else condition += arcView.getSource().getId()+" > "+ (currentMarking - 1);
 		  	}
 		  		
 		  	while (arcsTo.hasNext())
 		  	{
 		  		
 		  		final ArcView arcView = (ArcView)arcsTo.next();
+                int currentMarking = getArcCurrentMarking(arcView);
 		  		if(arcView.isTagged())
 		  		{
 		  			condition += " && ((tagged_location== "+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1+1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (currentMarking-1+1)
 		  				+ ") || ( tagged_location!="+getPlaceIndex(arcView.getSource().getId())
-		  				+ " && " + arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1)
+		  				+ " && " + arcView.getSource().getId()+" > "+ (currentMarking-1)
 		  				+ "))";
 		  		}
-		  		else condition += " && "+ arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking() - 1);
+		  		else condition += " && "+ arcView.getSource().getId()+" > "+ (currentMarking - 1);
 	  		
 		  	}
 		  	
 		  	return condition;
 
 		}
+
+    /**
+     *
+     * @param arcView
+     * @return the arcviews first marking value
+     */
+    private int getArcCurrentMarking(ArcView arcView)
+    {
+        List<MarkingView> markingViews = arcView.getWeight();
+        MarkingView firstMarking = markingViews.get(0);
+        int currentMarking = firstMarking.getCurrentMarking();
+        return currentMarking;
+    }
 		
 		private int getPlaceIndex(String placeName){		
 			int index = -1;
@@ -633,13 +646,15 @@ class TransModel {
 		  	Iterator arcsTo = _transitionViews[transitionNum]. getConnectToIterator();
 		  	if (arcsTo.hasNext()){
 		  		final ArcView arcView = (ArcView)arcsTo.next();
-		  		condition += arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1);
+                int currentMarking = getArcCurrentMarking(arcView);
+		  		condition += arcView.getSource().getId()+" > "+ (currentMarking-1);
 		  	}
 		  		
 		  	while (arcsTo.hasNext())
 		  	{
 		  		final ArcView arcView = (ArcView)arcsTo.next();
-		  		condition += " && "+ arcView.getSource().getId()+" > "+ (arcView.getWeight().get(0).getCurrentMarking()-1);
+                int currentMarking = getArcCurrentMarking(arcView);
+		  		condition += " && "+ arcView.getSource().getId()+" > "+ (currentMarking-1);
 		  	}
 		  	return condition;
 			

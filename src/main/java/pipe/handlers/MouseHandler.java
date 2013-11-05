@@ -4,10 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.handlers.mouse.MouseUtilities;
 import pipe.historyActions.AddPetriNetObject;
-import pipe.models.PetriNet;
-import pipe.models.PipeApplicationModel;
-import pipe.models.Place;
-import pipe.models.Transition;
+import pipe.models.*;
 import pipe.views.*;
 import pipe.views.builder.PlaceViewBuilder;
 import pipe.views.viewComponents.AnnotationNote;
@@ -77,6 +74,7 @@ public class MouseHandler extends MouseInputAdapter
         Place place = new Place(id, id);
         place.setX(Grid.getModifiedX(p.x));
         place.setY(Grid.getModifiedY(p.y));
+
 
         PlaceViewBuilder builder = new PlaceViewBuilder(place);
         PlaceView view = builder.build();

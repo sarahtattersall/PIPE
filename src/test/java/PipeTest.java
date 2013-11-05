@@ -28,6 +28,7 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.TestingPlaceHandler;
 import pipe.gui.TokenPanel;
 import pipe.models.PipeApplicationModel;
+import pipe.models.Place;
 import pipe.utilities.Copier;
 import pipe.views.ArcView;
 import pipe.views.MarkingView;
@@ -411,7 +412,7 @@ public class PipeTest {
 		markingView = markingViews.get(0);
 		assertEquals(1, markingViews.get(0).getCurrentMarking() ); 
 		assertEquals(1, markingViews.get(1).getCurrentMarking() ); 
-		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView._model);
+		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView.getModel());
         List<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
 		//handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager());
 		newMarkingViews = placeView.getCurrentMarkingView();
@@ -486,7 +487,9 @@ public class PipeTest {
 		for (ArcView arcView : arcViews)
 		{
 			assertEquals(numTokens, arcView.getWeight().size());
-			assertEquals(tokenView, arcView.getWeight().get(i).getToken()); 
+            List<MarkingView> markings = arcView.getWeight();
+            MarkingView marking = markings.get(i);
+			assertEquals(tokenView, marking.getToken());
 		}
 	}
 	private void checkButton(String name, int index)

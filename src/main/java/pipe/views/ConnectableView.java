@@ -11,27 +11,25 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public abstract class ConnectableView<T extends Connectable> extends PetriNetViewComponent implements Cloneable, IObserver, Serializable {
+public abstract class ConnectableView<T extends Connectable> extends PetriNetViewComponent<T> implements Cloneable, IObserver, Serializable {
     private ConnectableView _lastCopy = null;
     private ConnectableView _original = null;
     private int _copyNumber = 0;
-    public T _model;
 
     boolean _attributesVisible = false;
 
-    ConnectableView(double positionXInput, double positionYInput, T model) {
-        this(positionXInput, positionYInput, "", model);
+    ConnectableView(T model) {
+        this("", model);
     }
 
-    private ConnectableView(double positionX, double positionY, String id, T model) {
-        this(positionX, positionY, id, model.getName(), Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model);
+    private ConnectableView(String id, T model) {
+        this(id, model.getName(), Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model);
     }
 
-    ConnectableView(double positionX, double positionY, String id, String name, double nameOffsetX, double nameOffsetY,
+    ConnectableView(String id, String name, double nameOffsetX, double nameOffsetY,
             T model) {
-        super(id, name, positionX, positionY, nameOffsetX, nameOffsetY);
-        _model = model;
-
+        super(id, name, nameOffsetX, nameOffsetY, model);
+        setLocation((int) model.getX(),  (int) model.getY());
         PipeApplicationView view = ApplicationSettings.getApplicationView();
         if (view != null) {
             PetriNetTab tab = view.getCurrentTab();
@@ -70,46 +68,46 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public int centreOffsetTop() {
-        return (int) (ZoomController.getZoomedValue(_componentHeight / 2.0, _zoomPercentage));
+        return (int) (ZoomController.getZoomedValue(model.getHeight() / 2.0, _zoomPercentage));
     }
 
     public int centreOffsetLeft() {
-        return (int) (ZoomController.getZoomedValue(_componentWidth / 2.0, _zoomPercentage));
+        return (int) (ZoomController.getZoomedValue(model.getWidth() / 2.0, _zoomPercentage));
     }
 
     void updateBounds() {
         double scaleFactor = ZoomController.getScaleFactor(_zoomPercentage);
-        _positionX = _locationX * scaleFactor;
-        _positionY = _locationY * scaleFactor;
-        _bounds.setBounds((int) _positionX, (int) _positionY, (int) (_componentWidth * scaleFactor),
-                (int) (_componentHeight * scaleFactor));
+        double x = model.getX() * scaleFactor;
+        double y = model.getY() * scaleFactor;
+        _bounds.setBounds((int) x, (int) y, (int) (model.getHeight() * scaleFactor),
+                (int) (model.getHeight() * scaleFactor));
         _bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
         setBounds(_bounds);
     }
 
     public void addInbound(ArcView newArcView) {
-        _model.addInbound(newArcView);
+        model.addInbound(newArcView);
     }
 
     public void addOutbound(ArcView newArcView) {
-        _model.addOutbound(newArcView);
+        model.addOutbound(newArcView);
     }
 
     public void addInboundOrOutbound(ArcView newArcView) {
-        _model.addInboundOrOutbound(newArcView);
+        model.addInboundOrOutbound(newArcView);
     }
 
     public void removeFromArc(ArcView oldArcView) {
-        _model.removeFromArcs(oldArcView);
+        model.removeFromArcs(oldArcView);
     }
 
     public void removeToArc(ArcView oldArcView) {
-        _model.removeToArc(oldArcView);
+        model.removeToArc(oldArcView);
     }
 
     public void updateConnected() {
-        updateArcs(_model.outboundArcs());
-        updateArcs(_model.inboundArcs());
+        updateArcs(model.outboundArcs());
+        updateArcs(model.inboundArcs());
     }
 
     private void updateArcs(LinkedList<ArcView> arcsFrom) {
@@ -122,29 +120,29 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public LinkedList<ArcView> outboundArcs() {
-        return _model.outboundArcs();
+        return model.outboundArcs();
     }
 
     public LinkedList<ArcView> inboundArcs() {
-        return _model.inboundArcs();
+        return model.inboundArcs();
     }
 
     public void translate(int x, int y) {
-        setPositionX(_positionX + x);
-        setPositionY(_positionY + y);
+//        setPositionX(_positionX + x);
+//        setPositionY(_positionY + y);
         update();
     }
 
     void setCentre(double x, double y) {
-        setPositionX(x - (getWidth() / 2.0));
-        setPositionY(y - (getHeight() / 2.0));
+//        setPositionX(x - (getWidth() / 2.0));
+//        setPositionY(y - (getHeight() / 2.0));
         update();
     }
 
     public void update() {
 
-        setPositionX(_model.getX());
-        setPositionY(_model.getY());
+//        setPositionX(_model.getX());
+//        setPositionY(_model.getY());
 
         updateBounds();
         updateLabelLocation();
@@ -153,9 +151,9 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
 
 
     private void updateLabelLocation() {
-        _nameLabel.setPosition(
-                Grid.getModifiedX((int) (_positionX + ZoomController.getZoomedValue(_nameOffsetX, _zoomPercentage))),
-                Grid.getModifiedY((int) (_positionY + ZoomController.getZoomedValue(_nameOffsetY, _zoomPercentage))));
+//        _nameLabel.setPosition(
+//                Grid.getModifiedX((int) (_positionX + ZoomController.getZoomedValue(_nameOffsetX, _zoomPercentage))),
+//                Grid.getModifiedY((int) (_positionY + ZoomController.getZoomedValue(_nameOffsetY, _zoomPercentage))));
     }
 
     public void delete() {
@@ -169,12 +167,12 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         if (_selectable && !_selected) {
             _selected = true;
 
-            Iterator arcsFrom = _model.outboundArcs().iterator();
+            Iterator arcsFrom = model.outboundArcs().iterator();
             while (arcsFrom.hasNext()) {
                 ((ArcView) arcsFrom.next()).select();
             }
 
-            Iterator arcsTo = _model.inboundArcs().iterator();
+            Iterator arcsTo = model.inboundArcs().iterator();
             while (arcsTo.hasNext()) {
                 ((ArcView) arcsTo.next()).select();
             }
@@ -194,11 +192,11 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public Iterator getConnectFromIterator() {
-        return _model.outboundArcs().iterator();
+        return model.outboundArcs().iterator();
     }
 
     public Iterator getConnectToIterator() {
-        return _model.inboundArcs().iterator();
+        return model.inboundArcs().iterator();
     }
 
     public abstract void updateEndPoint(ArcView arcView);
@@ -261,7 +259,7 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         return pnCopy;
     }
 
-    public Connectable getModel() {
-        return _model;
+    public T getModel() {
+        return model;
     }
 }

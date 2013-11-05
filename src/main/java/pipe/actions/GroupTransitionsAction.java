@@ -42,7 +42,7 @@ public class GroupTransitionsAction extends GuiAction
             Boolean firstAddition;
             for(int i = 0; i < transitionViews.length - 1; i++)
             {
-                GroupTransitionView newGroupTransitionView = new GroupTransitionView(transitionViews[i], transitionViews[i].getPositionX(), transitionViews[i].getPositionY());
+                GroupTransitionView newGroupTransitionView = new GroupTransitionView(transitionViews[i], transitionViews[i].getModel().getX(), transitionViews[i].getModel().getY());
                 firstAddition = true;
                 if(!transitionViews[i].isGrouped())
                 {

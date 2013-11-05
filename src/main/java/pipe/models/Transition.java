@@ -19,8 +19,6 @@ public class Transition extends Connectable implements Serializable
     private int orientation = 0;
     private boolean timed = false;
     private boolean infiniteServer = false;
-    private double nameXOffset = 0;
-    private double nameYOffset = 0;
     private int angle = 0;
     private boolean timedTransition;
     private RateParameter rateParameter;
@@ -159,13 +157,7 @@ public class Transition extends Connectable implements Serializable
 	}
 
 
-   public double getNameXOffset() {
-        return nameXOffset;
-    }
 
-    public double getNameYOffset() {
-        return nameYOffset;
-    }
 
     public int getAngle() {
         return angle;
@@ -203,15 +195,7 @@ public class Transition extends Connectable implements Serializable
         notifyObservers();
     }
 
-    public void setNameXOffset(double nameXOffset) {
-        this.nameXOffset = nameXOffset;
-        notifyObservers();
-    }
 
-    public void setNameYOffset(double nameYOffset) {
-        this.nameYOffset = nameYOffset;
-        notifyObservers();
-    }
 
     public void setAngle(int angle) {
         this.angle = angle;

@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class NormalArcView extends ArcView implements Serializable {
+public class NormalArcView extends ArcView<NormalArc> implements Serializable {
     private final static String type = "normal";
     private final static Polygon head = new Polygon(new int[]{0, 5, 0, -5}, new int[]{0, -10, -7, -10}, 4);
 
@@ -65,8 +65,8 @@ public class NormalArcView extends ArcView implements Serializable {
 
     public NormalArcView(ArcController arcController, NormalArc model) {
         _controller = arcController;
-        _model = model;
-        _model.registerObserver(this);
+        this.model = model;
+        this.model.registerObserver(this);
     }
 
     public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
@@ -102,7 +102,7 @@ public class NormalArcView extends ArcView implements Serializable {
                 new NormalArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, getWeight(),
                         source.getId() + " to " +
                                 target.getId(), false,
-                        new NormalArc(source.getModel(), target.getModel(), _model.getWeight()));
+                        new NormalArc(source.getModel(), target.getModel(), this.model.getWeight()));
 
         copy.myPath.delete();
         for (int i = 0; i <= this.myPath.getEndIndex(); i++) {

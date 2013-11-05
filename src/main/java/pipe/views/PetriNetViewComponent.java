@@ -3,6 +3,7 @@ package pipe.views;
 import pipe.gui.*;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.PetriNetObjectName;
+import pipe.models.PetriNetComponent;
 import pipe.views.viewComponents.NameLabel;
 
 import javax.swing.*;
@@ -14,16 +15,8 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.EventListener;
 
-public abstract class PetriNetViewComponent extends JComponent implements Zoomable, CopyPasteable, Cloneable, Translatable, Serializable {
+public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements Zoomable, CopyPasteable, Cloneable, Translatable, Serializable {
     static final int COMPONENT_DRAW_OFFSET = 5;
-    public double _positionX;
-    public double _positionY;
-    public double _nameOffsetX;
-    public double _nameOffsetY;
-    double _componentWidth;
-    double _componentHeight;
-    double _locationX;
-    double _locationY;
     protected String _id;
     public NameLabel _nameLabel;
     protected boolean _selected;
@@ -36,17 +29,15 @@ public abstract class PetriNetViewComponent extends JComponent implements Zoomab
     protected boolean _markedAsDeleted;
     private ZoomController zoomControl;
 
+    protected T model;
     protected int _zoomPercentage;
 
     protected PetriNetViewComponent() {
-        this(null, null, 0, 0, 0, 0);
+        this(null, null, 0, 0, null);
     }
 
-    PetriNetViewComponent(String id, String name, double positionX, double positionY, double nameOffsetX,
-            double nameOffsetY) {
+    PetriNetViewComponent(String id, String name, double namePositionX, double namePositionY, T model) {
         _id = id;
-        _positionX = positionX;
-        _positionY = positionY;
         _selected = false;
         _selectable = true;
         _draggable = true;
@@ -56,7 +47,8 @@ public abstract class PetriNetViewComponent extends JComponent implements Zoomab
         _deleted = false;
         _markedAsDeleted = false;
         _zoomPercentage = 100;
-        _nameLabel = new NameLabel(name, _zoomPercentage, nameOffsetX, nameOffsetY);
+        this.model = model;
+        _nameLabel = new NameLabel(name, _zoomPercentage, namePositionX, namePositionY);
     }
 
     void setNameLabelName(String name) {
@@ -207,61 +199,6 @@ public abstract class PetriNetViewComponent extends JComponent implements Zoomab
             throw new Error(e);
         }
     }
-
-    public void setPositionX(double positionXInput) {
-        _positionX = positionXInput;
-        _locationX = ZoomController.getUnzoomedValue(_positionX, _zoomPercentage);
-    }
-
-    void setPositionY(double positionYInput) {
-        _positionY = positionYInput;
-        _locationY = ZoomController.getUnzoomedValue(_positionY, _zoomPercentage);
-    }
-
-    public void setNameOffsetX(double nameOffsetXInput) {
-        _nameOffsetX += ZoomController.getUnzoomedValue(nameOffsetXInput, _zoomPercentage);
-    }
-
-    public void setNameOffsetY(double nameOffsetYInput) {
-        _nameOffsetY += ZoomController.getUnzoomedValue(nameOffsetYInput, _zoomPercentage);
-    }
-
-    public double getPositionX() {
-        return _positionX;
-    }
-
-    public double getPositionY() {
-        return _positionY;
-    }
-
-    public double getNameOffsetX() {
-        return _nameOffsetX;
-    }
-
-    public double getNameOffsetY() {
-        return _nameOffsetY;
-    }
-
-    public Double getNameOffsetXObject() {
-        return this._nameOffsetX;
-    }
-
-    public Double getNameOffsetYObject() {
-        return this._nameOffsetY;
-    }
-
-    public Point2D.Double getCentre() {
-        return new Point2D.Double(_positionX + getWidth() / 2.0, _positionY + getHeight() / 2.0);
-    }
-
-    public Double getPositionXObject() {
-        return new Double(_locationX);
-    }
-
-    public Double getPositionYObject() {
-        return new Double(_locationY);
-    }
-
 
     static int getComponentDrawOffset() {
         return COMPONENT_DRAW_OFFSET;

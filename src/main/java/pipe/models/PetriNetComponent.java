@@ -19,4 +19,6 @@ public interface PetriNetComponent {
      * @param visitor
      */
     public void accept(PetriNetComponentVisitor visitor);
+
+
 }

@@ -10,14 +10,7 @@ import java.util.List;
 
 public class Place extends Connectable implements Serializable
 {
-    /**
-     * Place name x offset relative to its x coordinate
-     */
-    double nameXOffset = 0;
-    /**
-     * Place name y offset relative to its y coordinate
-     */
-    double nameYOffset = 0;
+
     /**
      * Marking x offset relative to the place x coordinate
      */
@@ -115,22 +108,6 @@ public class Place extends Connectable implements Serializable
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
         visitor.visit(this);
-    }
-
-    public double getNameXOffset() {
-        return nameXOffset;
-    }
-
-    public void setNameXOffset(double nameXOffset) {
-        this.nameXOffset = nameXOffset;
-    }
-
-    public double getNameYOffset() {
-        return nameYOffset;
-    }
-
-    public void setNameYOffset(double nameYOffset) {
-        this.nameYOffset = nameYOffset;
     }
 
     public double getMarkingXOffset() {

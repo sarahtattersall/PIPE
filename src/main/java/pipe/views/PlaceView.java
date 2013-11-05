@@ -7,7 +7,6 @@ import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceHandler;
 import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.historyActions.PlaceCapacity;
 import pipe.historyActions.PlaceMarking;
 import pipe.models.Marking;
 import pipe.models.PipeObservable;
@@ -37,62 +36,39 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     //transferred
     private Integer totalMarking = 0;
 
-    private Double markingOffsetX = 0d;
-
-    private Double markingOffsetY = 0d;
-
-    //transferred
-    private Integer capacity = 0;
-
-    private static final int DIAMETER = 30;
-
-
-    private static final Ellipse2D.Double place = new Ellipse2D.Double(0, 0, DIAMETER, DIAMETER);
-    private static final Shape proximityPlace =
-            (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
+    private final Ellipse2D.Double place;
+    private final Shape proximityPlace;
 
     //transferred
     private TokenView _activeTokenView;
     private List<MarkingView> initBackUp;
     private List<MarkingView> currentBackUp;
 
-    public PlaceView() {
-        this(0, 0, "", "", 0, 0, new LinkedList<MarkingView>(), 0, 0, 0);
-    }
-
     public PlaceView(double positionXInput, double positionYInput) {
         //MODEL
-        super(positionXInput, positionYInput, new Place("", ""));
-        _componentWidth = DIAMETER;
-        _componentHeight = DIAMETER;
-
-        setCentre((int) _positionX, (int) _positionY);
+        super(new Place("", ""));
+        place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
+        proximityPlace =
+                (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
     }
 
 
-    public PlaceView(double positionXInput, double positionYInput, String idInput, String nameInput,
-            double nameOffsetXInput, double nameOffsetYInput, LinkedList<MarkingView> initialMarkingViewInput,
-            double markingOffsetXInput, double markingOffsetYInput, int capacityInput) {
+    public PlaceView(String idInput, String nameInput,
+            LinkedList<MarkingView> initialMarkingViewInput, Place model) {
         //MODEL
-        super(positionXInput, positionYInput, idInput, nameInput, nameOffsetXInput, nameOffsetYInput,
-                new Place(idInput, nameInput));
+        super(idInput, nameInput, model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(),
+               model);
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         totalMarking = getTotalMarking();
-        markingOffsetX = new Double(markingOffsetXInput);
-        markingOffsetY = new Double(markingOffsetYInput);
-        _nameOffsetX = new Double(nameOffsetXInput);
-        _nameOffsetY = new Double(nameOffsetYInput);
-        _componentWidth = DIAMETER;
-        _componentHeight = DIAMETER;
-        capacity = capacityInput;
-        setId(_model.getId());
-        setCapacity(capacityInput);
-        setCentre((int) _positionX, (int) _positionY);
+        setId(model.getId());
+        place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
+        proximityPlace =
+                (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
     }
 
     private void createDisplayTokens() {
-        for (Marking marking : _model.getTokens()) {
+        for (Marking marking : model.getTokens()) {
             Token token = marking.getToken();
             //TODO: IF TOKEN HAS NOT BEEN DECLARED POP UP ERROR MESSAGE!
             if (token != null)
@@ -104,13 +80,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
                 _currentMarkingView.add(markingView);
             }
         }
-    }
-
-    //TODO: This is a temporary method before removing variables above, so that
-    // it doesn't break existing code
-    public void setModel(Place model) {
-        this._model = model;
-        createDisplayTokens();
     }
 
     /**
@@ -181,14 +150,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             }
         }
         this.newCopy(copy);
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
-        copy.capacity = this.capacity;
         copy._attributesVisible = this._attributesVisible;
         copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
         copy.totalMarking = this.totalMarking;
-        copy.markingOffsetX = this.markingOffsetX;
-        copy.markingOffsetY = this.markingOffsetY;
         copy.update();
         return copy;
     }
@@ -197,14 +161,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         PlaceView copy = new PlaceView((double) ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
                 (double) ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
         copy._nameLabel.setName(this.getName());
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
-        copy.capacity = this.capacity;
         copy._attributesVisible = this._attributesVisible;
         copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
         copy.totalMarking = this.totalMarking;
-        copy.markingOffsetX = this.markingOffsetX;
-        copy.markingOffsetY = this.markingOffsetY;
         copy.setOriginal(this);
         return copy;
     }
@@ -259,7 +218,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
             canvas2D.translate(-2, -2);
 
-            canvas2D.fill(PlaceView.place);
+            canvas2D.fill(place);
 
             canvas2D.translate(2, 2);
 
@@ -294,7 +253,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        PlaceHandler placeHandler = new PlaceHandler(tab, this._model);
+        PlaceHandler placeHandler = new PlaceHandler(tab, this.model);
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);
@@ -311,7 +270,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             totalMarking += inputtedMarkingView.getCurrentMarking();
         }
         // If total marking exceeds capacity then leave the marking as is
-        if (capacity != 0 && totalMarking > capacity) {
+        if (model.getCapacity() != 0 && totalMarking > model.getCapacity()) {
             return new PlaceMarking(this, _currentMarkingView, _currentMarkingView);
         }
 
@@ -369,13 +328,15 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     public HistoryItem setCapacity(int newCapacity) {
-        int oldCapacity = capacity;
 
-        if (capacity != newCapacity) {
-            capacity = newCapacity;
-            update();
-        }
-        return new PlaceCapacity(this, oldCapacity, newCapacity);
+        throw new RuntimeException("NEED TO EXECUTE THIS IN CONTROLLER");
+//        int oldCapacity = (int)_model.getCapacity();
+//
+//        if (capacity != newCapacity) {
+//            capacity = newCapacity;
+//            update();
+//        }
+//        return new PlaceCapacity(this, oldCapacity, newCapacity);
     }
 
     public List<MarkingView> getInitialMarkingView() {
@@ -387,7 +348,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     public int getCapacity() {
-        return ((capacity == null) ? 0 : capacity.intValue());
+        return (int) model.getCapacity();
     }
 
     public List<MarkingView> getCurrentMarkingObject() {
@@ -395,15 +356,15 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     public Double getMarkingOffsetXObject() {
-        return markingOffsetX;
+        return model.getMarkingXOffset();
     }
 
     public Double getMarkingOffsetYObject() {
-        return markingOffsetY;
+        return model.getMarkingYOffset();
     }
 
     private int getDiameter() {
-        return ZoomController.getZoomedValue(DIAMETER, _zoomPercentage);
+        return ZoomController.getZoomedValue(model.getWidth(), _zoomPercentage);
     }
 
     public boolean contains(int x, int y) {
@@ -437,17 +398,17 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     public void updateEndPoint(ArcView arcView) {
         if (arcView.getSource() == this) {
-            arcView.setSourceLocation(_positionX + (getDiameter() * 0.5), _positionY + (getDiameter() * 0.5));
+            arcView.setSourceLocation(model.getX() + (getDiameter() * 0.5), model.getY() + (getDiameter() * 0.5));
             double angle = arcView.getArcPath().getStartAngle();
-            arcView.setSourceLocation(_positionX + centreOffsetLeft() - (0.5 * getDiameter() * (Math.sin(angle))),
-                    _positionY + centreOffsetTop() + (0.5 * getDiameter() * (Math.cos(angle))));
+            arcView.setSourceLocation(model.getX() + centreOffsetLeft() - (0.5 * getDiameter() * (Math.sin(angle))),
+                    model.getY() + centreOffsetTop() + (0.5 * getDiameter() * (Math.cos(angle))));
         } else {
             // Make it calculate the angle from the centre of the place rather
             // than the current target point
-            arcView.setTargetLocation(_positionX + (getDiameter() * 0.5), _positionY + (getDiameter() * 0.5));
+            arcView.setTargetLocation(model.getX() + (getDiameter() * 0.5), model.getY() + (getDiameter() * 0.5));
             double angle = arcView.getArcPath().getEndAngle();
-            arcView.setTargetLocation(_positionX + centreOffsetLeft() - (0.5 * getDiameter() * (Math.sin(angle))),
-                    _positionY + centreOffsetTop() + (0.5 * getDiameter() * (Math.cos(angle))));
+            arcView.setTargetLocation(model.getX() + centreOffsetLeft() - (0.5 * getDiameter() * (Math.sin(angle))),
+                    model.getY() + centreOffsetTop() + (0.5 * getDiameter() * (Math.cos(angle))));
         }
     }
 
@@ -457,7 +418,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     boolean hasCapacity() {
-        return capacity > 0;
+        return model.getCapacity() > 0;
     }
 
     public void addedToGui() {
@@ -491,7 +452,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     public void update() {
         if (_attributesVisible) {
-            _nameLabel.setText("\nk=" + (capacity > 0 ? capacity : "\u221E"));
+            _nameLabel.setText("\nk=" + (model.getCapacity() > 0 ? model.getCapacity() : "\u221E"));
         } else {
             _nameLabel.setText("");
         }
@@ -533,9 +494,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
         if (obj instanceof Place) {
             Place place = (Place) obj;
-            this._model  = place;
-            setPositionX(_model.getX());
-            setPositionY(_model.getY());
+            this.model  = place;
+//            setPositionX(_model.getX());
+//            setPositionY(_model.getY());
             update();
         }
     }

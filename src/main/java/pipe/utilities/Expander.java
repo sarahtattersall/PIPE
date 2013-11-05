@@ -4,10 +4,7 @@ import org.w3c.dom.DOMException;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
-import pipe.models.Marking;
-import pipe.models.NormalArc;
-import pipe.models.PetriNet;
-import pipe.models.Transition;
+import pipe.models.*;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.*;
 
@@ -16,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author yufeiwang (minor change)
@@ -103,19 +101,15 @@ public class Expander
         {
 
             // Create a copy of existing transition and add it to the list
-            double transPositionXInput = transitionView.getPositionX();
-            double transPositionYInput = transitionView.getPositionY();
             String transIdInput = transitionView.getId();
             //String functionalRate = transitionView.getRateExpr();
             String functionalRate = transitionView.getRate()+"";
-            double transNameOffsetXInput = transitionView._nameOffsetX;
-            double transNameOffsetYInput = transitionView._nameOffsetY;
            // double rateInput = transitionView.getRate();
             boolean timedTransition = transitionView.isTimed();
             boolean infServer = transitionView.isInfiniteServer();
             int angleInput = transitionView.getAngle();
             int priority = transitionView.getPriority();
-            TransitionView newTransitionView = new TransitionView(transPositionXInput, transPositionYInput, transIdInput, transIdInput, transNameOffsetXInput, transNameOffsetYInput, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput,functionalRate, priority));
+            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput,functionalRate, priority));
             _newTransitionViews.add(newTransitionView);
             analyseArcs(transitionView, newTransitionView, transitionView.outboundArcs());
             analyseArcs(transitionView, newTransitionView, transitionView.inboundArcs());
@@ -131,7 +125,8 @@ public class Expander
             String newPlaceName = oldPlaceView.getId();
             int newMarking = 0;
             int newArcWeight = 0;
-            for(MarkingView markingView : arcView.getWeight())
+            List<MarkingView> markings = arcView.getWeight();
+            for(MarkingView markingView : markings)
             {
                 if(markingView.getCurrentMarking() > 0)
                 {
@@ -159,7 +154,9 @@ public class Expander
                 LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
                 MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
                 markingViewInput.add(placeMarkingView);
-                newPlaceView = new PlaceView(transitionView.getPositionX(), oldPlaceView.getPositionY(), newPlaceName, newPlaceName, oldPlaceView.getNameOffsetX(), oldPlaceView.getNameOffsetYObject(), markingViewInput, oldPlaceView.getMarkingOffsetXObject(), oldPlaceView.getMarkingOffsetYObject(), oldPlaceView.getCapacity());
+
+                Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
+                newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place);
                 placeMarkingView.addObserver(newPlaceView);
                 _newPlaceViews.add(newPlaceView);
             }
@@ -171,9 +168,9 @@ public class Expander
 
             ArcView newArcView;
             if(transitionView.outboundArcs() == arcViews)
-                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getPositionX(), newPlaceView.getPositionY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel));
+                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getX(), newPlaceView.getY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel));
             else
-                newArcView = new NormalArcView(newPlaceView.getPositionX(), newPlaceView.getPositionY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel));
+                newArcView = new NormalArcView(newPlaceView.getX(), newPlaceView.getY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel));
             newPlaceView.addInboundOrOutbound(newArcView);
             newTransitionView.addInboundOrOutbound(newArcView);
             arcMarkingView.addObserver(newArcView); 
@@ -260,7 +257,7 @@ public class Expander
             {
                 ArcView a = (ArcView) it.next();
                 TransitionView t = (TransitionView) a.getTarget();
-                _newPlaceView.setPositionX(t.getPositionX());
+//                _newPlaceView.setPositionX(t.getPositionX());
             }
         }
 
@@ -271,12 +268,12 @@ public class Expander
         {
             for(int i = 0; i < size - 1; i++)
             {
-                double prevX = _newPlaceViews.get(i).getPositionX();
-                double prevY = _newPlaceViews.get(i).getPositionY();
+                double prevX = _newPlaceViews.get(i).getX();
+                double prevY = _newPlaceViews.get(i).getY();
                 for(int j = i + 1; j < size; j++)
                 {
-                    currentX = _newPlaceViews.get(j).getPositionX();
-                    currentY = _newPlaceViews.get(j).getPositionY();
+                    currentX = _newPlaceViews.get(j).getX();
+                    currentY = _newPlaceViews.get(j).getY();
                     /*
                           * if((currentX - prevX) < -thresholdXDistanceApart){
                           * newPlaces.get(j).setPositionX(-thresholdXDistanceApart +
@@ -286,8 +283,8 @@ public class Expander
                     if((currentX - prevX) < thresholdXDistanceApart
                             && Math.abs(currentY - prevY) < thresholdYDistanceApart)
                     {
-                        _newPlaceViews.get(j).setPositionX(
-                                thresholdXDistanceApart + prevX);
+//                        _newPlaceViews.get(j).setPositionX(
+//                                thresholdXDistanceApart + prevX);
                     }
                 }
             }

@@ -30,12 +30,13 @@ public class TransitionViewBuilderTest {
     public void correctlySetsViewAttributes()
     {
         TransitionView transitionView = builder.build();
-        assertEquals(transition.getX(), transitionView._positionX, DOUBLE_DELTA);
-        assertEquals(transition.getY(), transitionView._positionY, DOUBLE_DELTA);
+        transition.setX(200);
+        assertEquals(transition.getX(), transitionView.getX(), DOUBLE_DELTA);
+        assertEquals(transition.getY(), transitionView.getY(), DOUBLE_DELTA);
         assertEquals(transition.getId(), transitionView.getId());
         assertEquals(transition.getName(), transitionView.getName());
-        assertEquals(transition.getNameXOffset(), transitionView._nameOffsetX, DOUBLE_DELTA);
-        assertEquals(transition.getNameYOffset(), transitionView._nameOffsetY, DOUBLE_DELTA);
+        assertEquals(transition.getNameXOffset(), transitionView._nameLabel.getX() - transition.getX(), DOUBLE_DELTA);
+        assertEquals(transition.getNameYOffset(), transitionView._nameLabel.getY()- transition.getY(), DOUBLE_DELTA);
         assertEquals(transition.getAngle(), transitionView.getAngle());
         assertEquals(transition.isTimed(), transitionView.isTimed());
         assertEquals(transition.isInfiniteServer(), transitionView.isInfiniteServer());
