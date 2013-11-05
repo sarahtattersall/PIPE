@@ -2,6 +2,7 @@ package pipe.models;
 
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
+import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.geom.AffineTransform;
@@ -243,5 +244,10 @@ public class Transition extends Connectable implements Serializable
     @Override
     public boolean isDraggable() {
         return true;
+    }
+
+    @Override
+    public void accept(PetriNetComponentVisitor visitor) {
+        visitor.visit(this);
     }
 }

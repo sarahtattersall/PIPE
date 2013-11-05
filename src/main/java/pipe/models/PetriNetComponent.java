@@ -1,5 +1,7 @@
 package pipe.models;
 
+import pipe.models.visitor.PetriNetComponentVisitor;
+
 /**
  * Created with IntelliJ IDEA.
  * User: st809
@@ -11,4 +13,10 @@ public interface PetriNetComponent {
 
     public boolean isSelectable();
     public boolean isDraggable();
+
+    /**
+     * Visitor pattern
+     * @param visitor
+     */
+    public void accept(PetriNetComponentVisitor visitor);
 }

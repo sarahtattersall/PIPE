@@ -1,5 +1,7 @@
 package pipe.models;
 
+import pipe.models.visitor.PetriNetComponentVisitor;
+
 public class Annotation implements PetriNetComponent{
     public Annotation(double x, double y, String text,
                       double width,
@@ -51,5 +53,10 @@ public class Annotation implements PetriNetComponent{
     @Override
     public boolean isDraggable() {
         return true;
+    }
+
+    @Override
+    public void accept(PetriNetComponentVisitor visitor) {
+        visitor.visit(this);
     }
 }

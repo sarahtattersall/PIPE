@@ -1,6 +1,8 @@
 package pipe.models;
 
 import pipe.common.dataLayer.StateGroup;
+import pipe.models.visitor.PetriNetComponentRemovalVisitor;
+import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
 
 import java.io.Serializable;
@@ -20,23 +22,7 @@ public class PetriNet extends Observable implements Serializable
     private Set<RateParameter> rates = new HashSet<RateParameter>();
     private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
 
-    /**
-     * This class is used to be able to remove any generic PetriNetComponent
-     * from the PetriNet
-     */
-    private final Map<Class<? extends PetriNetComponent>, Set<? extends PetriNetComponent>> allComponents = new HashMap<Class<? extends PetriNetComponent>, Set<? extends PetriNetComponent>>();
-
-
-    public PetriNet()
-    {
-        allComponents.put(Place.class, places);
-        allComponents.put(Transition.class, transitions);
-        allComponents.put(Token.class, tokens);
-        allComponents.put(Arc.class, arcs);
-        allComponents.put(Annotation.class, annotations);
-        //allComponents.put(RateParameter.class, annotations);
-//        allComponents.put(StateGroup.class, stateGroups);
-    }
+    private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
 
     public String getPnmlName()
     {
@@ -151,10 +137,22 @@ public class PetriNet extends Observable implements Serializable
     }
 
     public void remove(PetriNetComponent component) {
-        Set<? extends PetriNetComponent> matchingComponents = allComponents.get(component.getClass());
-        //TODO: SHOULDNT HAVE TO TEST FOR THIS. SET STATEGROUP AND RATEPARAM TO BE PETRINET COMPONENTS
-        if (matchingComponents != null) {
-            matchingComponents.remove(component);
-        }
+        component.accept(deleteVisitor);
+    }
+
+    public void removeToken(Token token) {
+        tokens.remove(token);
+    }
+
+    public void removeRateParameter(RateParameter parameter) {
+        rates.remove(parameter);
+    }
+
+    public void removeStateGroup(StateGroup group) {
+        stateGroups.remove(group);
+    }
+
+    public void removeAnnotaiton(Annotation annotation) {
+        annotations.remove(annotation);
     }
 }

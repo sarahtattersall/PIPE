@@ -3,6 +3,7 @@ package pipe.models;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.interfaces.IObserver;
+import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.ArcView;
 
 import java.awt.geom.Point2D;
@@ -126,6 +127,11 @@ public class ConnectableTest {
         @Override
         public boolean isDraggable() {
             return false;
+        }
+
+        @Override
+        public void accept(PetriNetComponentVisitor visitor) {
+
         }
     }
 

@@ -6,6 +6,8 @@ import pipe.common.dataLayer.StateGroup;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.RateParameter;
 
+import java.util.LinkedList;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -124,6 +126,17 @@ public class PetriNetTest {
         assertEquals(1, net.getPlaces().size());
         net.remove(place);
         assertTrue(net.getPlaces().isEmpty());
+    }
 
+    @Test
+    public void genericRemoveMethodRemovesArc() {
+        Place place = new Place("source", "source");
+        Transition transition = new Transition("target", "target");
+        NormalArc arc = new NormalArc(place, transition, new LinkedList<Marking>());
+        net.addArc(arc);
+
+        assertEquals(1, net.getArcs().size());
+        net.remove(arc);
+        assertTrue(net.getArcs().isEmpty());
     }
 }

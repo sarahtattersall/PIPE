@@ -3,6 +3,7 @@ package pipe.models;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.interfaces.IObserver;
+import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.utilities.math.Matrix;
 import pipe.views.*;
 
@@ -437,5 +438,10 @@ public class Token extends Observable implements Serializable, PetriNetComponent
     @Override
     public boolean isDraggable() {
         return false;
+    }
+
+    @Override
+    public void accept(PetriNetComponentVisitor visitor) {
+        visitor.visit(this);
     }
 }

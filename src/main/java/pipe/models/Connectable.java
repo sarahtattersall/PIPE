@@ -1,5 +1,6 @@
 package pipe.models;
 
+import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.ArcView;
 
 import java.awt.geom.Point2D;

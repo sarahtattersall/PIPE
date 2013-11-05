@@ -1,5 +1,7 @@
 package pipe.models;
 
+import pipe.models.visitor.PetriNetComponentVisitor;
+
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
@@ -50,5 +52,10 @@ public class ConditionalPlace extends Connectable implements Serializable
     @Override
     public boolean isDraggable() {
         return true;
+    }
+
+    @Override
+    public void accept(PetriNetComponentVisitor visitor) {
+//        visitor.visit(this);
     }
 }
