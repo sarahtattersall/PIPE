@@ -29,10 +29,6 @@ public class PetriNetController implements IController, Serializable
 
     public PetriNetController()
     {
-        PlaceController placeController = new PlaceController();
-        TransitionController transitionController = new TransitionController();
-        TokenController tokenController = new TokenController();
-        MarkingController markingController = new MarkingController(tokenController);
         _placeNumbers.add(0);
         _transitionNumbers.add(0);
     }

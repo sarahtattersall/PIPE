@@ -1,6 +1,5 @@
 package pipe.views;
 
-import pipe.controllers.PlaceController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
@@ -55,7 +54,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     //transferred
     private TokenView _activeTokenView;
-    private PlaceController _placeController;
     private List<MarkingView> initBackUp;
     private List<MarkingView> currentBackUp;
 
@@ -122,14 +120,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         for (MarkingView markingView : markingViews) {
             markingView.addObserver(this);
         }
-    }
-
-    public PlaceView(PlaceController placeController, Place model) {
-        super(0, 0, model);
-
-        _placeController = placeController;
-        _model = model;
-        _model.registerObserver(this);
     }
 
     /**
