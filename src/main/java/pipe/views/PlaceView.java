@@ -78,7 +78,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
                 new Place(idInput, nameInput));
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
-        addObserver(_currentMarkingView);
         totalMarking = getTotalMarking();
         markingOffsetX = new Double(markingOffsetXInput);
         markingOffsetY = new Double(markingOffsetYInput);
@@ -112,13 +111,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     public void setModel(Place model) {
         this._model = model;
         createDisplayTokens();
-    }
-
-
-    private void addObserver(List<MarkingView> markingViews) {
-        for (MarkingView markingView : markingViews) {
-            markingView.addObserver(this);
-        }
     }
 
     /**
