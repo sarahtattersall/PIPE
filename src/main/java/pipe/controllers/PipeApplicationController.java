@@ -74,8 +74,7 @@ public class PipeApplicationController
         }
 
         PetriNet netModel = loadPetriNetFromFile(file, isTN);
-        petriNetController.addPetriNet(netModel);
-        PetriNetView view = new PetriNetView(petriNetController, netModel);
+        PetriNetView view = petriNetController.addPetriNet(netModel);
         PetriNetTab petriNetTab = new PetriNetTab(view, petriNetController);
         MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), petriNetController, netModel, petriNetTab, view);
         petriNetTab.addMouseListener(handler);
@@ -85,6 +84,7 @@ public class PipeApplicationController
         netModel.registerObserver(view);
 //        TODO: WHY? also why should I add a the pipe application view as an obsever?
         view.addObserver(petriNetTab);
+        //view.addObserver(ApplicationSettings.getApplicationView());
 
 
 

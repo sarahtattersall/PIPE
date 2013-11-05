@@ -652,7 +652,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             _rateParameter.remove(this);
             _rateParameter = null;
         }
-        ApplicationSettings.getApplicationView().getCurrentPetriNetView().deleteTransition(this.getId());
         super.delete();
     }
 

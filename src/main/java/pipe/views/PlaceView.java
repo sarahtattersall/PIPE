@@ -521,7 +521,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     public void delete() {
         super.delete();
-        ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
+        //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
     }
 
     private boolean isTagged() {

@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Token extends Observable implements Serializable
+public class Token extends Observable implements Serializable, PetriNetComponent
 {
     private String id;
     private boolean enabled;
@@ -427,5 +427,15 @@ public class Token extends Observable implements Serializable
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isSelectable() {
+        return false;
+    }
+
+    @Override
+    public boolean isDraggable() {
+        return false;
     }
 }

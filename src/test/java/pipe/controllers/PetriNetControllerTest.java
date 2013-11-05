@@ -5,17 +5,13 @@ import org.junit.Test;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.models.*;
-import pipe.models.interfaces.IObservable;
 import pipe.models.interfaces.IObserver;
 import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.contains;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class PetriNetControllerTest {
@@ -66,6 +62,33 @@ public class PetriNetControllerTest {
         controller.select(dummyComponent);
         controller.deselectAll();
         assertFalse(controller.isSelected(dummyComponent));
+    }
+
+    @Test
+    public void deletesSelectedRemovesFromNet() {
+        Place place = new Place("", "");
+        PetriNet net = new PetriNet();
+        net.addPlace(place);
+        controller.addPetriNet(net);
+
+        controller.select(place);
+        controller.deleteSelection();
+        assertFalse(net.getPlaces().contains(place));
+    }
+
+    @Test
+    public void deletesSelectedNotifiesObserver() {
+        Place place = new Place("", "");
+        PetriNet net = new PetriNet();
+        net.addPlace(place);
+        controller.addPetriNet(net);
+
+        IObserver mockObserver = mock(IObserver.class);
+        net.registerObserver(mockObserver);
+
+        controller.select(place);
+        controller.deleteSelection();
+        verify(mockObserver).update();
     }
 
     @Test

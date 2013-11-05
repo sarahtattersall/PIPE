@@ -20,6 +20,24 @@ public class PetriNet extends Observable implements Serializable
     private Set<RateParameter> rates = new HashSet<RateParameter>();
     private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
 
+    /**
+     * This class is used to be able to remove any generic PetriNetComponent
+     * from the PetriNet
+     */
+    private final Map<Class<? extends PetriNetComponent>, Set<? extends PetriNetComponent>> allComponents = new HashMap<Class<? extends PetriNetComponent>, Set<? extends PetriNetComponent>>();
+
+
+    public PetriNet()
+    {
+        allComponents.put(Place.class, places);
+        allComponents.put(Transition.class, transitions);
+        allComponents.put(Token.class, tokens);
+        allComponents.put(Arc.class, arcs);
+        allComponents.put(Annotation.class, annotations);
+        //allComponents.put(RateParameter.class, annotations);
+//        allComponents.put(StateGroup.class, stateGroups);
+    }
+
     public String getPnmlName()
     {
         return _pnmlName;
@@ -132,4 +150,11 @@ public class PetriNet extends Observable implements Serializable
         notifyObservers();
     }
 
+    public void remove(PetriNetComponent component) {
+        Set<? extends PetriNetComponent> matchingComponents = allComponents.get(component.getClass());
+        //TODO: SHOULDNT HAVE TO TEST FOR THIS. SET STATEGROUP AND RATEPARAM TO BE PETRINET COMPONENTS
+        if (matchingComponents != null) {
+            matchingComponents.remove(component);
+        }
+    }
 }

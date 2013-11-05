@@ -35,16 +35,15 @@ public class SelectionManager
    private static final Color selectionColorOutline = new Color(0, 0, 100);
    private final PetriNetTab _view;
    private boolean enabled = true;
-   private PetriNetController petriNetController;
+   private final PetriNetController petriNetController;
 
    
-   public SelectionManager(PetriNetTab _view) {
+   public SelectionManager(PetriNetTab _view, PetriNetController controller) {
       addMouseListener(this);
       addMouseMotionListener(this);
       addMouseWheelListener(this);
       this._view = _view;
-       //TODO: PASS THIS IN AS ARG
-       this.petriNetController = ApplicationSettings.getPetriNetController();
+       this.petriNetController = controller;
    }
    
    
@@ -98,15 +97,16 @@ public class SelectionManager
    
    public void deleteSelection() {
       // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-       for(PetriNetViewComponent pn : pns)
-       {
-           if(pn.isSelected())
-           {
-               pn.delete();
-           }
-       }
-      _view.updatePreferredSize();
+//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//       for(PetriNetViewComponent pn : pns)
+//       {
+//           if(pn.isSelected())
+//           {
+//               pn.delete();
+//           }
+//       }
+//      _view.updatePreferredSize();
+       petriNetController.deleteSelection();
    }
 
    
@@ -118,6 +118,7 @@ public class SelectionManager
             pn.deselect();
          }
       }
+       petriNetController.deselectAll();
    }
 
    

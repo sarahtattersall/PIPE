@@ -6,6 +6,8 @@ import pipe.common.dataLayer.StateGroup;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.RateParameter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -112,5 +114,16 @@ public class PetriNetTest {
         StateGroup group = new StateGroup();
         net.addStateGroup(group);
         verify(mockObserver).update();
+    }
+
+    @Test
+    public void genericRemoveMethodRemovesPlace() {
+        Place place = new Place("","");
+        net.addPlace(place);
+
+        assertEquals(1, net.getPlaces().size());
+        net.remove(place);
+        assertTrue(net.getPlaces().isEmpty());
+
     }
 }

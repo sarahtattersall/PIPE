@@ -19,7 +19,7 @@ public class DeleteAction extends GuiAction
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
         PetriNetTab appView = pipeApplicationView.getCurrentTab();
         appView.getHistoryManager().newEdit();
-        appView.getHistoryManager().deleteSelection(appView.getSelectionObject().getSelection());
+        //appView.getHistoryManager().deleteSelection(appView.getSelectionObject().getSelection());
         appView.getSelectionObject().deleteSelection();
     }
 }

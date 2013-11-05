@@ -29,7 +29,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     private final SelectionManager selection;
     private final HistoryManager _historyManager;
     private final PipeApplicationView _pipeApplicationView;
-    private final ArrayList<PetriNetViewComponent> petriNetComponents = new ArrayList();
+    private final ArrayList<PetriNetViewComponent> petriNetComponents = new ArrayList<PetriNetViewComponent>();
     private final ZoomController zoomControl;
     public boolean _wasNewPertiNetComponentCreated = false;
     private boolean _zoomCalled = true;
@@ -51,7 +51,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         zoomControl = new ZoomController(100);
 
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        selection = new SelectionManager(this);
+        selection = new SelectionManager(this, controller);
         _historyManager = new HistoryManager(this, _petriNetView);
     }
 
@@ -82,7 +82,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         {
             PetriNetViewComponent component = (PetriNetViewComponent) diffObj;
             addNewPetriNetObject(component);
-            repaint();
         }
     }
 

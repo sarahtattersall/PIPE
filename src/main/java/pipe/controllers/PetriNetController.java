@@ -42,7 +42,7 @@ public class PetriNetController implements IController, Serializable
         return _views.get(_activePetriNet);
     }
 
-    public void addPetriNet(PetriNet model)
+    public PetriNetView addPetriNet(PetriNet model)
     {
         _models.add(model);
         PetriNetView petriNetView = new PetriNetView(this, model);
@@ -50,6 +50,7 @@ public class PetriNetController implements IController, Serializable
         _placeNumbers.add(0);
         _transitionNumbers.add(0);
         changeActivePetriNet();
+        return petriNetView;
     }
 
     public PetriNetView addEmptyPetriNet()
@@ -224,5 +225,15 @@ public class PetriNetController implements IController, Serializable
         if (selectionRectangle.intersects(rectangle)) {
             select(connectable);
         }
+    }
+
+    public void deleteSelection() {
+        PetriNet activeModel = _models.get(_activePetriNet);
+        for (PetriNetComponent component : selectedComponents)
+        {
+            activeModel.remove(component);
+        }
+        selectedComponents.clear();
+        activeModel.notifyObservers();
     }
 }

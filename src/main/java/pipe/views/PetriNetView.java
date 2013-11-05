@@ -1,15 +1,11 @@
 package pipe.views;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import pipe.common.dataLayer.StateGroup;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
-import pipe.gui.Grid;
 import pipe.models.*;
 import pipe.models.interfaces.IObserver;
 import pipe.petrinet.*;
@@ -18,11 +14,9 @@ import pipe.utilities.math.RandomNumberGenerator;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationNote;
-import pipe.views.viewComponents.Parameter;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
@@ -53,8 +47,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private boolean[] _timedMatrix;
     private List<MarkingView>[] _markingVectorAnimationStorage;
     private static boolean _currentMarkingVectorChanged = true;
-    private Hashtable _arcsMap;
-    private Hashtable _inhibitorsMap;
+    private Hashtable _arcsMap = new Hashtable();
+    private Hashtable _inhibitorsMap = new Hashtable();
     private ArrayList<StateGroup> _stateGroups = new ArrayList<StateGroup>();
     private final HashSet _rateParameterHashSet = new HashSet();
     private PetriNet _model;
@@ -1475,6 +1469,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void displayPlaces(Collection<Place> places) {
+        removeNoLongerThereComponents(_placeViews, places);
         for (Place place : places) {
             PlaceView view;
             if (_placeViews.containsKey(place))
@@ -1488,15 +1483,31 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 _placeViews.put(place, view);
             }
             view.setActiveTokenView(_tokenSetController.getActiveTokenView());
-//            placeView.setActiveTokenView(_activeTokenView); // SJD
-//            _placeViews.add(view);
             setChanged();
             setMatrixChanged();
             notifyObservers(view);
+
+        }
+    }
+
+    /**
+     * Removes a component view if it is no longer in components.
+     * That is if it has been deleted from the model.
+     */
+    private <M extends PetriNetComponent, V extends PetriNetViewComponent>
+    void removeNoLongerThereComponents(Map<M, V> componentsToViews, Collection<M> components) {
+        final Iterator<Map.Entry<M, V>> itr = componentsToViews.entrySet().iterator();
+        while(itr.hasNext()) {
+            Map.Entry<M, V> entry = itr.next();
+            if (!components.contains(entry.getKey())) {
+                entry.getValue().delete();
+                itr.remove();
+            }
         }
     }
 
     private void displayTransitions(Collection<Transition> transitions) {
+        removeNoLongerThereComponents(_transitionViews, transitions);
         for (Transition transition : transitions) {
             TransitionView view;
             if (_transitionViews.containsKey(transition))
