@@ -6,6 +6,7 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.models.*;
 import pipe.models.interfaces.IObserver;
+import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.PipeApplicationView;
 
 import java.awt.*;
@@ -88,7 +89,7 @@ public class PetriNetControllerTest {
 
         controller.select(place);
         controller.deleteSelection();
-        verify(mockObserver).update();
+        verify(mockObserver, atLeastOnce()).update();
     }
 
     @Test
@@ -214,6 +215,11 @@ public class PetriNetControllerTest {
         @Override
         public boolean isDraggable() {
             return false;
+        }
+
+        @Override
+        public void accept(PetriNetComponentVisitor visitor) {
+
         }
     }
 }
