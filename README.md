@@ -23,40 +23,6 @@ code efficiency improvements and added zoom to the GUI and reachability graph ge
 
 
 ## Installation ##
-### Once only ###
-PIPEv4.3.0 makes use of Maven as a dependency manager and build system. Currently it makes use of a few
-internal libraries located in ```src/libs```. To install these for use with Maven there is a Python script 
-```mvn_libs/add_maven_dependencies.py``` to install these to your Maven local repository. It takes one command line
-argument which is the path to the ```jar``` files.
-It makes use of the libs declared in ```mvn_libs/internal_libs.json``` which is a JSON object of the format:
-
-    {
-        ...
-    	<jar_basename> : {
-    		"artifactId" : <artifact_name>,
-    		"version" : <version_number>
-    	},
-    	...
-    }
-
-For example
-
-    {
-    	"Jama-1.0.2" : {
-    		"artifactId" : "jama",
-    		"version" : "1.0.2"
-    	},
-    	...
-    }
-    
-If you add any other internal ```jar``` files. Make sure they follow the same format as this.
-To run this script execute the following:
-
-    $ cd mvn_libs
-    $ python add_maven_dependencies.py  ../src/lib/
-    
-
-    
 ### Build jar ###
 To build the ```jar``` library execute the following from within the PIPE root directory:
 
@@ -69,4 +35,12 @@ Once finished you should see the file ```target/PIPE-4.3.0.jar```.
 In order to run PIPE tool execute the following from within the PIPE root directory:
 
     $ mvn exec:java
+    
+### Note: local libs ###
+There are some internal libraries, which need to be found for maven. For the mean time they are located in the project under ``src/local-libs`` and this directory is treated as a local library. When installing expect the following warning:
 
+	[WARNING] The POM for internal:XXX is missing, no dependency information available
+	
+The original method for these local libraries required running a Python script to install the local libraries using ``mvn install``, however this new method removes the need for a pre-install stp).
+
+If you know of a better way to do this, please raise it in the issues section.
