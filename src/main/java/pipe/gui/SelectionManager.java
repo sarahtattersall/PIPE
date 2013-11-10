@@ -91,7 +91,6 @@ public class SelectionManager
       }
 
        Rectangle unzoomedRectangle = calculateUnzoomedSelection();
-       System.out.println("UNZOOMED " + unzoomedRectangle);
        petriNetController.select(unzoomedRectangle);
    }
 
