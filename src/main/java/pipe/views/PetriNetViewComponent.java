@@ -119,7 +119,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     public void delete() {
         _deleted = true;
-        ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);
         removeFromContainer();
         removeAll();
     }

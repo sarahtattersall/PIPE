@@ -205,7 +205,7 @@ public abstract class Note extends PetriNetViewComponent implements Translatable
 
 
     public void delete() {
-        ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);
+//        ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);
         ApplicationSettings.getApplicationView().getCurrentTab().remove(this);
     }
 

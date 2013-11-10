@@ -520,102 +520,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
     }
 
-    public void removePetriNetObject(PetriNetViewComponent pn) {
-        ArrayList attachedArcs;
-
-        try {
-
-            if (pn instanceof ConnectableView) {
-
-                if (_arcsMap.get(pn) != null) {
-
-                    attachedArcs = ((ArrayList) _arcsMap.get(pn));
-                    for (int i = attachedArcs.size() - 1; i >= 0; i--) {
-                        ((ArcView) attachedArcs.get(i)).delete();
-                    }
-                    _arcsMap.remove(pn);
-                }
-
-                if (_inhibitorsMap.get(pn) != null) {
-
-                    attachedArcs = ((ArrayList) _inhibitorsMap.get(pn));
-
-                    for (int i = attachedArcs.size() - 1; i >= 0; i--) {
-                        ((ArcView) attachedArcs.get(i)).delete();
-                    }
-                    _inhibitorsMap.remove(pn);
-                }
-            } else if (pn instanceof NormalArcView) {
-
-                ConnectableView attached = ((ArcView) pn).getSource();
-
-                if (attached != null) {
-                    ArrayList a = (ArrayList) _arcsMap.get(attached);
-                    if (a != null) {
-                        a.remove(pn);
-                    }
-
-                    attached.removeFromArc((ArcView) pn);
-                    if (attached instanceof TransitionView) {
-                        ((TransitionView) attached).removeArcCompareObject((ArcView) pn);
-                        attached.updateConnected();
-                    }
-                }
-
-                attached = ((ArcView) pn).getTarget();
-                if (attached != null) {
-                    if (_arcsMap.get(attached) != null) {
-                        ((ArrayList) _arcsMap.get(attached)).remove(pn);
-                    }
-
-                    attached.removeToArc((ArcView) pn);
-                    if (attached instanceof TransitionView) {
-                        ((TransitionView) attached).removeArcCompareObject((ArcView) pn);
-                        attached.updateConnected();
-                    }
-                }
-            } else if (pn instanceof InhibitorArcView) {
-
-                ConnectableView attached = ((ArcView) pn).getSource();
-
-                if (attached != null) {
-                    ArrayList a = (ArrayList) _inhibitorsMap.get(attached);
-                    if (a != null) {
-                        a.remove(pn);
-                    }
-
-                    attached.removeFromArc((ArcView) pn);
-                    if (attached instanceof TransitionView) {
-                        ((TransitionView) attached).removeArcCompareObject((ArcView) pn);
-                    }
-                }
-
-                attached = ((ArcView) pn).getTarget();
-
-                if (attached != null) {
-                    if (_inhibitorsMap.get(attached) != null) {
-                        ((ArrayList) _inhibitorsMap.get(attached)).remove(pn);
-                    }
-
-                    attached.removeToArc((ArcView) pn);
-                    if (attached instanceof TransitionView) {
-                        ((TransitionView) attached).removeArcCompareObject((ArcView) pn);
-                    }
-                }
-            } else if (pn instanceof RateParameter) {
-                _rateParameterHashSet.remove(pn.getName());
-            }
-
-            setChanged();
-            setMatrixChanged();
-            notifyObservers(pn);
-        } catch (NullPointerException npe) {
-            System.out.println("NullPointerException [debug]\n" + npe.getMessage());
-            throw npe;
-        }
-        //_changeArrayList = null;
-    }
-
     public void removeStateGroup(StateGroup SGObject) {
         _stateGroups.remove(SGObject);
     }
@@ -1498,7 +1402,13 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         while(itr.hasNext()) {
             Map.Entry<M, V> entry = itr.next();
             if (!components.contains(entry.getKey())) {
-                entry.getValue().delete();
+                PetriNetViewComponent component = entry.getValue();
+
+                component.delete();
+                setChanged();
+                setMatrixChanged();
+                notifyObservers(component);
+
                 itr.remove();
             }
         }
@@ -1840,7 +1750,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
      */
     @Override
     public void update() {
-
         removeAllDeletedModels();
         displayPlaces(_model.getPlaces());
         displayTokens(_model.getTokens());
