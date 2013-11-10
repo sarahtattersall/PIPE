@@ -37,7 +37,11 @@ public class SelectionManager
    private boolean enabled = true;
    private final PetriNetController petriNetController;
 
-   
+    /**
+     * Zoom as a percentage e.g. 100%
+     */
+   private int zoom = 100;
+
    public SelectionManager(PetriNetTab _view, PetriNetController controller) {
       addMouseListener(this);
       addMouseMotionListener(this);
@@ -46,7 +50,11 @@ public class SelectionManager
        this.petriNetController = controller;
    }
    
-   
+   public void setZoom(int zoom) {
+       this.zoom = zoom;
+   }
+
+
    public void updateBounds() {
       if (enabled) {
          setBounds(0,0, _view.getWidth(), _view.getHeight());
@@ -81,8 +89,24 @@ public class SelectionManager
       for (PetriNetViewComponent pn : pns) {
          pn.select(selectionRectangle);
       }
-       petriNetController.select(selectionRectangle);
+
+       Rectangle unzoomedRectangle = calculateUnzoomedSelection();
+       System.out.println("UNZOOMED " + unzoomedRectangle);
+       petriNetController.select(unzoomedRectangle);
    }
+
+
+    /**
+     * uses zoom and the ZoomController to calculate what the
+     * unzoomed selection rectangle would be
+     */
+    private Rectangle calculateUnzoomedSelection() {
+        int x = ZoomController.getUnzoomedValue((int) selectionRectangle.getX(), zoom);
+        int y = ZoomController.getUnzoomedValue((int) selectionRectangle.getY(), zoom);
+        int height = ZoomController.getUnzoomedValue((int) selectionRectangle.getHeight(), zoom);
+        int width = ZoomController.getUnzoomedValue((int) selectionRectangle.getWidth(), zoom);
+        return new Rectangle(x, y, width, height);
+    }
 
    
    public void paintComponent(Graphics g) {

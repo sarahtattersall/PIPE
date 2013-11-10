@@ -195,6 +195,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
                 ((Zoomable) aChildren).zoomUpdate(zoomControl.getPercent());
         }
         _zoomCalled = true;
+        selection.setZoom(zoomControl.getPercent());
     }
 
 
