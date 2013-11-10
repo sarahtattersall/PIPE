@@ -7,6 +7,7 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.ArcView;
 
 import java.awt.geom.Point2D;
+import java.util.Collection;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
@@ -15,40 +16,33 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-/**
- * Created with IntelliJ IDEA.
- * User: st809
- * Date: 18/10/2013
- * Time: 12:23
- * To change this template use File | Settings | File Templates.
- */
 public class ConnectableTest {
     private static final double DOUBLE_DELTA = 0.001;
     private Connectable connectable;
     //TODO: This should really be a dummy, but it's hard to construct.
-    private ArcView mockView;
+    private Arc mockArc;
 
     @Before
     public void setUp()
     {
         connectable = new DummyConnectable("test", "test");
-        mockView = mock(ArcView.class);
+        mockArc = mock(Arc.class);
     }
 
     @Test
     public void addOutBoundArcCorrectlyReturns()
     {
-        connectable.addOutbound(mockView);
-        LinkedList<ArcView> outBoundArcs = connectable.outboundArcs();
-        assertTrue(outBoundArcs.contains(mockView));
+        connectable.addOutbound(mockArc);
+        Collection<Arc> outBoundArcs = connectable.outboundArcs();
+        assertTrue(outBoundArcs.contains(mockArc));
     }
 
     @Test
     public void addInBoundArcCorrectlyReturns()
     {
-        connectable.addInbound(mockView);
-        LinkedList<ArcView> inboundArcs = connectable.inboundArcs();
-        assertTrue(inboundArcs.contains(mockView));
+        connectable.addInbound(mockArc);
+        Collection<Arc> inboundArcs = connectable.inboundArcs();
+        assertTrue(inboundArcs.contains(mockArc));
     }
 
 //    TODO: This cant be easily tested. Dont like this method anyway so it will get deleted
@@ -61,19 +55,19 @@ public class ConnectableTest {
     @Test
     public void removeFromCorrectlyRemovesItem()
     {
-        connectable.addOutbound(mockView);
-        connectable.removeFromArcs(mockView);
-        LinkedList<ArcView> outBoundArcs = connectable.outboundArcs();
-        assertFalse(outBoundArcs.contains(mockView));
+        connectable.addOutbound(mockArc);
+        connectable.removeOutboundArc(mockArc);
+        Collection<Arc> outBoundArcs = connectable.outboundArcs();
+        assertFalse(outBoundArcs.contains(mockArc));
     }
 
     @Test
     public void removeToCorrectlyRemovesItem()
     {
-        connectable.addInbound(mockView);
-        connectable.removeToArc(mockView);
-        LinkedList<ArcView> inBoundArcs = connectable.inboundArcs();
-        assertFalse(inBoundArcs.contains(mockView));
+        connectable.addInbound(mockArc);
+        connectable.removeInboundArc(mockArc);
+        Collection<Arc> inBoundArcs = connectable.inboundArcs();
+        assertFalse(inBoundArcs.contains(mockArc));
     }
 
     @Test

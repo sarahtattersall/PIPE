@@ -65,6 +65,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
         proximityPlace =
                 (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
+        createDisplayTokens();
     }
 
     private void createDisplayTokens() {

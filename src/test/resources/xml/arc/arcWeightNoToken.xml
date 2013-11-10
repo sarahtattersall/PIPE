@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?><pnml>
     <net id="Net-One" type="P/T net">
-        <arc id="Arc0" source="P0" target="P1">
+        <arc id="Arc0" source="P0" target="T0">
             <name>
                 <value>arc0</value>
                 <graphics>

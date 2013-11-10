@@ -17,12 +17,15 @@ import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ArcCreatorTest {
     ArcCreator creator;
     Map<String, Connectable> connectables = new HashMap<String, Connectable>();
     Connectable source = new Place("P0", "P0");
-    Connectable target = new Transition("P1", "P1");
+    Connectable target = new Transition("T0", "T0");
     /**
      * Range in which to declare doubles equal
      */
@@ -53,9 +56,9 @@ public class ArcCreatorTest {
 
     private Element createNormalArcWithWeight()
     {
-
         return createFromFile("src/test/resources/xml/arc/normalArcWithWeight.xml");
     }
+
 
     @Before
     public void setUp()
@@ -91,6 +94,26 @@ public class ArcCreatorTest {
         assertNotNull(marking);
         assertEquals("1", marking.getCurrentMarking());
         assertNull(marking.getToken());
+    }
+
+    @Test
+    public void setsSourceAndTargetArcs() {
+        Connectable mockSource = mock(Connectable.class);
+        when(mockSource.getId()).thenReturn("P0");
+
+        Connectable mockTarget = mock(Connectable.class);
+        when(mockTarget.getId()).thenReturn("T0");
+
+        connectables.clear();
+        connectables.put(mockSource.getId(), mockSource);
+        connectables.put(mockTarget.getId(), mockTarget);
+
+        creator.setConnectables(connectables);
+
+        Element arcElement = createNormalArcNoWeight();
+        Arc arc = creator.create(arcElement);
+        verify(mockSource).addOutbound(arc);
+        verify(mockTarget).addInbound(arc);
     }
 
     @Test

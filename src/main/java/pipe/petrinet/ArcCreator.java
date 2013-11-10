@@ -60,6 +60,8 @@ public class ArcCreator implements ComponentCreator<Arc> {
         arc.setId(id);
 
         //TODO: Add this when changed to Arc not ArcView.
+        source.addOutbound(arc);
+        target.addInbound(arc);
         //source.addOutbound(arc);
         //target.addInbound(arc);
         arc.setTagged(tagged);

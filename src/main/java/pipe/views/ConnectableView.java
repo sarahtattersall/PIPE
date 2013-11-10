@@ -86,28 +86,28 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public void addInbound(ArcView newArcView) {
-        model.addInbound(newArcView);
+//        model.addInbound(newArcView);
     }
 
     public void addOutbound(ArcView newArcView) {
-        model.addOutbound(newArcView);
+//        model.addOutbound(newArcView);
     }
 
     public void addInboundOrOutbound(ArcView newArcView) {
-        model.addInboundOrOutbound(newArcView);
+//        model.addInboundOrOutbound(newArcView);
     }
 
     public void removeFromArc(ArcView oldArcView) {
-        model.removeFromArcs(oldArcView);
+//        model.removeFromArcs(oldArcView);
     }
 
     public void removeToArc(ArcView oldArcView) {
-        model.removeToArc(oldArcView);
+//        model.removeToArc(oldArcView);
     }
 
     public void updateConnected() {
-        updateArcs(model.outboundArcs());
-        updateArcs(model.inboundArcs());
+//        updateArcs(model.outboundArcs());
+//        updateArcs(model.inboundArcs());
     }
 
     private void updateArcs(LinkedList<ArcView> arcsFrom) {
@@ -120,11 +120,13 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public LinkedList<ArcView> outboundArcs() {
-        return model.outboundArcs();
+//        return model.outboundArcs();
+        return null;
     }
 
     public LinkedList<ArcView> inboundArcs() {
-        return model.inboundArcs();
+//        return model.inboundArcs();
+        return null;
     }
 
     public void translate(int x, int y) {

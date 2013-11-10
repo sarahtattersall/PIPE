@@ -1,42 +1,50 @@
 package pipe.models;
 
-import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.ArcView;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.*;
 
 /*
  * 
  *  @author yufei wang(modification)
  */
-public abstract class Connectable extends Observable implements Serializable, PetriNetComponent
-{
-    private final LinkedList<ArcView> _inboundArcViews =  new LinkedList<ArcView>();
-    private final LinkedList<ArcView> _outboundArcViews = new LinkedList<ArcView>();
+public abstract class Connectable extends Observable implements Serializable, PetriNetComponent {
+    private final Collection<Arc> inboundArcs = new HashSet<Arc>();
+    private final Collection<Arc> outboundArcs = new HashSet<Arc>();
 
     /**
      * Connectable position x
      */
     double x = 0;
+
     /**
      * Connectable position y
      */
     double y = 0;
+
+    /**
+     * Connectable id
+     */
     private String _id;
+
+    /**
+     * Connectable name
+     */
     private String _name;
+
     /**
      * Connectable name x offset relative to its x coordinate
      */
     protected double nameXOffset = -5;
+
     /**
      * Connectable name y offset relative to its y coordinate
      */
     protected double nameYOffset = 35;
 
-    Connectable(String id, String name)
-    {
+    protected Connectable(String id, String name) {
         _id = id;
         _name = name;
     }
@@ -59,50 +67,44 @@ public abstract class Connectable extends Observable implements Serializable, Pe
         notifyObservers();
     }
 
-    public LinkedList<ArcView> outboundArcs()
-    {
-        return _outboundArcViews;
+    public Collection<Arc> outboundArcs() {
+        return outboundArcs;
     }
 
-    public LinkedList<ArcView> inboundArcs()
-    {
-        return _inboundArcViews;
+    public Collection<Arc> inboundArcs() {
+        return inboundArcs;
     }
 
-    public void addInbound(ArcView newArcView)
-    {
-        _inboundArcViews.add(newArcView);
+    public void addInbound(Arc arc) {
+        inboundArcs.add(arc);
     }
 
-    public void addOutbound(ArcView newArcView)
-    {
-        _outboundArcViews.add(newArcView);
+    public void addOutbound(Arc arc) {
+        outboundArcs.add(arc);
     }
 
-    public void addInboundOrOutbound(ArcView newArcView)
-    {
-        if(newArcView.getSource().getModel() == this)
-            _outboundArcViews.add(newArcView);
-        else
-            _inboundArcViews.add(newArcView);
+//    public void addInboundOrOutbound(ArcView newArcView) {
+//        if (newArcView.getSource().getModel() == this) {
+//            outboundArcs.add(newArcView);
+//        } else {
+//            inboundArcs.add(newArcView);
+//        }
+//    }
+
+    public void removeOutboundArc(Arc arc) {
+        outboundArcs.remove(arc);
     }
 
-    public void removeFromArcs(ArcView oldArcView)
-    {
-        _outboundArcViews.remove(oldArcView);
+    public void removeInboundArc(Arc arc) {
+        inboundArcs.remove(arc);
     }
 
-    public void removeToArc(ArcView oldArcView)
-    {
-        _inboundArcViews.remove(oldArcView);
+    public String getName() {
+        return _name;
     }
-    
-    public String getName(){
-    	return _name;
-    }
-    
-    public String getId(){
-    	return _id;
+
+    public String getId() {
+        return _id;
     }
 
     public double getX() {
@@ -123,35 +125,35 @@ public abstract class Connectable extends Observable implements Serializable, Pe
         notifyObservers();
     }
 
-    public void setCentre(double x, double y)
-    {
+    public void setCentre(double x, double y) {
         setX(x - (getWidth() / 2.0));
         setY(y - (getHeight() / 2.0));
     }
 
     public abstract int getHeight();
+
     public abstract int getWidth();
+
     public abstract double getCentreX();
+
     public abstract double getCentreY();
 
     /**
-     *
      * @return coords for an arc to connect to
-     *
-     * x, y are the top left corner so A
-     * would return (4, 1) and B would
-     * return (14, 1)
-     *
-     * +---+         +---+
-     * | A |-------->| B |
-     * +---+         +---+
-     *
+     *         <p/>
+     *         x, y are the top left corner so A
+     *         would return (4, 1) and B would
+     *         return (14, 1)
+     *         <p/>
+     *         +---+         +---+
+     *         | A |-------->| B |
+     *         +---+         +---+
      */
     public abstract Point2D.Double getArcEdgePoint(double angle);
 
     /**
      * @return true if the arc can finish at this point.
-     * I.e it is not a temporary connectable
+     *         I.e it is not a temporary connectable
      */
     public abstract boolean isEndPoint();
 

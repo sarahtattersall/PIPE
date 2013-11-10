@@ -177,7 +177,7 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
                      createInhibitorArcView.setSelectable(true);
                       createInhibitorArcView.getModel().setTarget(currentObject);
 //                     createInhibitorArcView.setTarget(currentObject);
-                     currentObject.addInbound(createInhibitorArcView);
+//                     currentObject.addInbound(createInhibitorArcView);
                      // Evil hack to prevent the arc being added to PetriNetTab twice
                      contentPane.remove(createInhibitorArcView);
                      model.addArc(createInhibitorArcView);
