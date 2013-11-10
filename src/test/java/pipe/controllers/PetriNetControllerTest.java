@@ -163,7 +163,7 @@ public class PetriNetControllerTest {
         verify(transition).setY(expected_value);
     }
 
-    private PetriNetTab createMocKTab()
+    private PetriNetTab createMockTab()
     {
         PipeApplicationView mockView = mock(PipeApplicationView.class);
         ApplicationSettings.register(mockView);
@@ -175,19 +175,37 @@ public class PetriNetControllerTest {
     @Test
     public void creatingArcAddsItToPetriNet()
     {
-        createMocKTab();
+        PetriNet net = setupPetriNet();
+        Connectable source = createFakeSource();
+        controller.startCreatingArc(source);
+        assertEquals(1, net.getArcs().size());
+    }
 
-        PetriNet net = new PetriNet();
-        controller.addPetriNet(net);
-        assertEquals(0, net.getArcs().size());
-
+    private Connectable createFakeSource() {
         Connectable source = mock(Connectable.class);
         when(source.getX()).thenReturn(0.);
         when(source.getY()).thenReturn(0.);
         when(source.getArcEdgePoint(anyDouble())).thenReturn(new Point2D.Double());
+        return source;
+    }
+
+    private PetriNet setupPetriNet() {
+        createMockTab();
+        PetriNet net = new PetriNet();
+        controller.addPetriNet(net);
+        assertEquals(0, net.getArcs().size());
+        return net;
+    }
+
+    @Test
+    public void cancellingArcRemovesItFromPetriNet()
+    {
+        PetriNet net = setupPetriNet();
+        Connectable source = createFakeSource();
 
         controller.startCreatingArc(source);
-        assertEquals(1, net.getArcs().size());
+        controller.cancelArcCreation();
+        assertEquals(0, net.getArcs().size());
     }
 
     @Test

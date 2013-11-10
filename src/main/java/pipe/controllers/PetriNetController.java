@@ -1,6 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.handlers.ArcKeyboardEventHandler;
 import pipe.models.*;
 import pipe.views.PetriNetView;
 
@@ -84,13 +85,19 @@ public class PetriNetController implements IController, Serializable
     //TODO: handle different arc types.
     public void startCreatingArc(Connectable source) {
         currentlyCreatingArc = true;
-        this.arc = buildEmptyArc(source);;
+        this.arc = buildEmptyArc(source);
         addArcToCurrentPetriNet(arc);
         this.source = source;
     }
 
-    private void addArcToCurrentPetriNet(NormalArc arc) {
+    private PetriNet getCurrentPetriNet()
+    {
         PetriNet activeModel = _models.get(_activePetriNet);
+        return activeModel;
+    }
+
+    private void addArcToCurrentPetriNet(NormalArc arc) {
+        PetriNet activeModel = getCurrentPetriNet();
         activeModel.addArc(arc);
     }
 
@@ -106,9 +113,8 @@ public class PetriNetController implements IController, Serializable
 
     public void cancelArcCreation() {
         currentlyCreatingArc = false;
-        //TODO: Delete arc from petrinet!
-        //arcView.removeFromView();
-        //arcView.delete();
+        PetriNet net = getCurrentPetriNet();
+        net.remove(arc);
     }
 
     public void finishCreatingArc(Connectable target) {

@@ -67,7 +67,7 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
 
        // addPetriNetObject a handler for shift & esc actions drawing arc
        // this is removed when the arc is finished drawing:
-       keyHandler = new ArcKeyboardEventHandler(newArcView);
+//       keyHandler = new ArcKeyboardEventHandler(null);
        newArcView.addKeyListener(keyHandler);
        newArcView.requestFocusInWindow();
        newArcView.setSelectable(false);
