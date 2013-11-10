@@ -78,16 +78,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
         return new Point2D.Double(x, y);
     }
 
-    private static class Pair<T, T2> {
-        public final T first;
-        public final T2 second;
-
-        public Pair(T first, T2 second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-
     ArcView(ConnectableView newSource) {
         _source = newSource;
         myPath.addPoint();
@@ -370,7 +360,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
 
     public void zoomUpdate(int percent) {
         _zoomPercentage = percent;
-        this.updateArcPosition();
+        update();
         for (NameLabel label : weightLabel) {
             label.zoomUpdate(percent);
             label.updateSize();

@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Observable;
@@ -501,5 +502,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             update();
         }
     }
+
 }
 

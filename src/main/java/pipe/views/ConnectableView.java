@@ -142,20 +142,19 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     public void update() {
-
-//        setPositionX(_model.getX());
-//        setPositionY(_model.getY());
-        _nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
         updateBounds();
         updateLabelLocation();
         updateConnected();
     }
 
 
+    /**
+     * Updates label position according to the Connectable location
+     */
     private void updateLabelLocation() {
-//        _nameLabel.setPosition(
-//                Grid.getModifiedX((int) (_positionX + ZoomController.getZoomedValue(_nameOffsetX, _zoomPercentage))),
-//                Grid.getModifiedY((int) (_positionY + ZoomController.getZoomedValue(_nameOffsetY, _zoomPercentage))));
+        double zoomedX = ZoomController.getZoomedValue(model.getX(), _zoomPercentage);
+        double zoomedY = ZoomController.getZoomedValue(model.getY(), _zoomPercentage);
+        _nameLabel.setPosition(zoomedX + model.getNameXOffset(), zoomedY + model.getNameYOffset());
     }
 
     public void delete() {
