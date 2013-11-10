@@ -67,7 +67,7 @@ public class ArcViewTest
         assertEquals(1, arcView.getWeight().size());
 		assertEquals(0, arcView.weightLabel.size());
 
-        ((NormalArcView) arcView).buildNameLabels(weight);
+//        ((NormalArcView) arcView).buildNameLabels(weight);
 
         assertEquals(markingView, arcView.getWeight().get(0));
 		assertEquals(1, arcView.weightLabel.size());

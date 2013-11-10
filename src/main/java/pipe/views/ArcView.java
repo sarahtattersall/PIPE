@@ -10,10 +10,7 @@ import pipe.handlers.ArcHandler;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryItem;
-import pipe.models.Arc;
-import pipe.models.Connectable;
-import pipe.models.PipeObservable;
-import pipe.models.Place;
+import pipe.models.*;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.ArcPath;
@@ -100,6 +97,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
     public HistoryItem setWeight(List<MarkingView> weightInput) {
         List<MarkingView> oldWeight = Copier.mediumCopy(_weight);
         checkIfFunctionalWeightExists();
+        _weight = weightInput;
         return new ArcWeight(this, oldWeight, _weight);
     }
 
@@ -109,59 +107,17 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
         int x = originalX;
         int y = originalY;
         int yCount = 0;
-        updateArcLabel();
+
         for (NameLabel label : weightLabel) {
             if (yCount >= 4) {
                 y = originalY;
                 x += 17;
                 yCount = 0;
             }
-            // we must trim here as the removeLabelsFromArc adds blank spaces
-            if (!label.getText().trim().equals(""))// && Integer.valueOf(label.getText()) > 0)
-            {
-                label.setPosition(x + label.getWidth() / 2 - 4, y);
-                y += 10;
-                yCount++;
-            }
+            label.setPosition(x + label.getWidth() / 2 - 4, y);
+            y += 10;
+            yCount++;
         }
-    }
-
-    private void updateArcLabel() {
-        for (int i = 0; i < weightLabel.size(); i++) {
-            try {
-                Integer.valueOf(_weight.get(i).getCurrentFunctionalMarking());
-                weightLabel.get(i).setText(_weight.get(i).getCurrentMarking() + "");
-            } catch (Exception e) {
-                if (_weight.get(i).getCurrentMarking() == 0) {
-                    weightLabel.get(i).setText(_weight.get(i).getCurrentFunctionalMarking());
-                } else {
-                    weightLabel.get(i).setText(
-                            _weight.get(i).getCurrentFunctionalMarking() + "=" + _weight.get(i).getCurrentMarking());
-                }
-            }
-        }
-    }
-
-    // Removes any current labels from the arc
-    void removeLabelsFromArc() {
-        int x = (int) (myPath.midPoint.x);
-        int y = (int) (myPath.midPoint.y) - 10;
-        for (NameLabel label : weightLabel) {
-            if (!label.getText().trim().equals(""))//&& Integer.valueOf(label.getText()) > 0)
-            {
-                // Put blank spaces over previous label
-                //	NameLabel newLabel = new NameLabel(zoom);
-                int currentLength = label.getText().length();
-                label.setText("");
-                for (int i = 0; i < currentLength; i++) {
-                    label.setText(label.getText() + " ");
-                }
-                label.setPosition(x + label.getWidth() / 2 - 4, y);
-                y += 10;
-            }
-            removeLabelFromParentContainer(label);
-        }
-        weightLabel.clear();
     }
 
     protected void removeLabelFromParentContainer(NameLabel label) {
@@ -284,16 +240,8 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
             myPath.addPointsToGui((JLayeredPane) getParent());
         }
         updateArcPosition();
-        Container parent = getParent();
-        if (parent != null) {
-            int i = 0;
-            for (NameLabel label : weightLabel) {
-                if (label.getParent() == null) {
-                    i++;
-                    parent.add(label);
-                }
-            }
-        }
+        update();
+        //addWeightLabelsToContainer(getParent());
     }
 
     public void delete() {
@@ -543,8 +491,46 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
         Point2D.Double endCoord = zoomPoint(model.getEndPoint());
         //TODO: THIS FALSE IS MEANT TO BE 'SHIFT UP'
         setEndPoint(endCoord.getX(), endCoord.getY(), false);
-
+        updateWeights();
         updateBounds();
         repaint();
+    }
+
+    private void updateWeights() {
+
+        removeCurrentWeights();
+        createWeightLabels();
+        setWeightLabelPosition();
+
+        Container parent = getParent();
+        if (parent != null) {
+            addWeightLabelsToContainer(parent);
+        }
+    }
+
+    private void removeCurrentWeights()
+    {
+        for (NameLabel name : weightLabel)
+        {
+            removeLabelFromParentContainer(name);
+        }
+        weightLabel.clear();
+    }
+
+    private void createWeightLabels() {
+        for (Marking marking : model.getWeight())
+        {
+            NameLabel label = new NameLabel(_zoomPercentage);
+            label.setText(marking.getCurrentMarking());
+            label.setColor(marking.getToken().getColor());
+            label.updateSize();
+            weightLabel.add(label);
+        }
+    }
+
+    private void addWeightLabelsToContainer(Container container) {
+        for (NameLabel label : weightLabel) {
+            container.add(label);
+        }
     }
 }
