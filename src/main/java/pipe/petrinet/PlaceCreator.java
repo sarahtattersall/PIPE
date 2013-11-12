@@ -1,14 +1,10 @@
 package pipe.petrinet;
 
 import org.w3c.dom.Element;
-import pipe.gui.Grid;
-import pipe.models.Marking;
 import pipe.models.Place;
 import pipe.models.Token;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class PlaceCreator implements ComponentCreator<Place> {
@@ -69,8 +65,10 @@ public class PlaceCreator implements ComponentCreator<Place> {
         String id = element.getAttribute("id");
         String name = element.getAttribute("name");
 
-        double nameXOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("nameOffsetX"));
-        double nameYOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("nameOffsetX"));
+        double nameXOffset = CreatorUtils.zeroOrValueOf(
+                element.getAttribute("nameOffsetX"));
+        double nameYOffset = CreatorUtils.zeroOrValueOf(
+                element.getAttribute("nameOffsetX"));
 
         double markingXOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("markingOffsetX"));
         double markingYOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("markingOffsetY"));
