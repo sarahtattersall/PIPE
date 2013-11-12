@@ -113,29 +113,6 @@ public class ArcCreator implements ComponentCreator<Arc> {
     }
 
     /**
-     * Turns a string of "TokenId, weight, TokenId, weight" etc. into a
-     * list of markings
-     * @param markingsInput
-     * @return
-     */
-    private List<Marking> processMultipleMarkings(String[] markingsInput) {
-        List<Marking> markings = new LinkedList<Marking>();
-        for (int i = 0; i < markingsInput.length; i += 2) {
-            String value = markingsInput[i+1].replace("@", ",");
-            String tokenId = markingsInput[i];
-            Token token = tokens.get(tokenId);
-            Marking marking = new Marking(token, value);
-            markings.add(marking);
-        }
-        return markings;
-    }
-
-    private Marking processIndividualMarking(String value) {
-        Marking marking = new Marking(getDefaultToken(), value);
-        return marking;
-    }
-
-    /**
      * @param tokenName token to find in {@link this.tokens}
      * @return token if exists
      * @throws RuntimeException if token does not exist
