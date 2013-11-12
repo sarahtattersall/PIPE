@@ -5,6 +5,7 @@ import org.junit.Test;
 import pipe.models.interfaces.IObserver;
 
 import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +25,7 @@ public class ArcTest {
         mockSource = mock(Connectable.class);
         mockTarget = mock(Connectable.class);
         mockObserver = mock(IObserver.class);
-        arc = new NormalArc(mockSource, mockTarget, new LinkedList<Marking>());
+        arc = new NormalArc(mockSource, mockTarget, new HashMap<Token, String>());
     }
 
     @Test

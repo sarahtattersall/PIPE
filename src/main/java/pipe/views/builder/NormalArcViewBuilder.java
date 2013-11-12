@@ -29,12 +29,12 @@ public class NormalArcViewBuilder {
         double endY = arc.getTarget().getY();
 
         LinkedList<MarkingView> markings = new LinkedList<MarkingView>();
-        for (Marking marking : arc.getWeight()) {
-            TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
-            TokenView token = builder.build();
-            MarkingView view = new MarkingView(token, marking.getCurrentMarking());
-            markings.add(view);
-        }
+//        for (Marking marking : arc.getWeight()) {
+//            TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
+//            TokenView token = builder.build();
+//            MarkingView view = new MarkingView(token, marking.getCurrentMarking());
+//            markings.add(view);
+//        }
 
         NormalArcView view =
                 new NormalArcView(startX, startY, endX, endY, null, null, markings, arc.getId(), arc.isTagged(), arc);

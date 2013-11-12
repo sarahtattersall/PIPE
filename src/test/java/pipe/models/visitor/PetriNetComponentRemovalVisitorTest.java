@@ -6,7 +6,9 @@ import pipe.models.*;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -25,7 +27,8 @@ public class PetriNetComponentRemovalVisitorTest {
     public void testDeletesNormalArc() throws Exception {
         Place place = new Place("","");
         Transition transition = new Transition("","");
-        NormalArc arc = new NormalArc(place, transition, new LinkedList<Marking>());
+        Map<Token, String> weights = new HashMap<Token, String>();
+        NormalArc arc = new NormalArc(place, transition, weights);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
 
@@ -35,7 +38,8 @@ public class PetriNetComponentRemovalVisitorTest {
     public void testDeletesInhibitorArc() throws Exception {
         Place place = new Place("","");
         Transition transition = new Transition("","");
-        InhibitorArc arc = new InhibitorArc(place, transition, new LinkedList<Marking>());
+        Map<Token, String> weights = new HashMap<Token, String>();
+        InhibitorArc arc = new InhibitorArc(place, transition, weights);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
     }

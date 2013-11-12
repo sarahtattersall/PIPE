@@ -5,6 +5,7 @@ import org.junit.Test;
 import pipe.models.*;
 import pipe.views.ArcView;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
@@ -19,7 +20,7 @@ public class NormalArcViewBuilderTest {
     {
         Place source = new Place("source", "source");
         Transition transition = new Transition("id", "name");
-        arc = new NormalArc(source, transition, new LinkedList<Marking>());
+        arc = new NormalArc(source, transition, new HashMap<Token, String>());
         arc.setId("id");
         builder = new NormalArcViewBuilder(arc);
     }

@@ -1,7 +1,9 @@
 package pipe.petrinet;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -26,6 +28,13 @@ public class ArcCreatorTest {
     Map<String, Connectable> connectables = new HashMap<String, Connectable>();
     Connectable source = new Place("P0", "P0");
     Connectable target = new Transition("T0", "T0");
+
+    Map<String, Token> tokens = new HashMap<String, Token>();
+
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
     /**
      * Range in which to declare doubles equal
      */
@@ -59,6 +68,13 @@ public class ArcCreatorTest {
         return createFromFile("src/test/resources/xml/arc/normalArcWithWeight.xml");
     }
 
+    private Token addDefaultTokenToTokens()
+    {
+        Token token = new Token("Default", true, 10, new Color(1,0,0));
+        tokens.put(token.getId(), token);
+        return token;
+    }
+
 
     @Before
     public void setUp()
@@ -73,6 +89,8 @@ public class ArcCreatorTest {
     public void createsArc() {
 
         Element arcElement = createNormalArcNoWeight();
+        addDefaultTokenToTokens();
+        creator.setTokens(tokens);
         Arc arc = creator.create(arcElement);
 
         assertNotNull(arc);
@@ -83,17 +101,12 @@ public class ArcCreatorTest {
     }
 
     @Test
-    public void createsCorrectDefaultMarkingIfNoWeight() {
+    public void willNotCreateArcIfTokenNotSet() {
+        expectedEx.expect(RuntimeException.class);
+        expectedEx.expectMessage("No Default token exists!");
+
         Element arcElement = createNormalArcNoWeight();
-        Arc arc = creator.create(arcElement);
-
-        List<Marking> markings = arc.getWeight();
-        assertEquals(1, markings.size());
-
-        Marking marking = markings.get(0);
-        assertNotNull(marking);
-        assertEquals("1", marking.getCurrentMarking());
-        assertNull(marking.getToken());
+        creator.create(arcElement);
     }
 
     @Test
@@ -108,6 +121,8 @@ public class ArcCreatorTest {
         connectables.put(mockSource.getId(), mockSource);
         connectables.put(mockTarget.getId(), mockTarget);
 
+        addDefaultTokenToTokens();
+        creator.setTokens(tokens);
         creator.setConnectables(connectables);
 
         Element arcElement = createNormalArcNoWeight();
@@ -118,39 +133,37 @@ public class ArcCreatorTest {
 
     @Test
     public void createsCorrectMarkingIfWeightSpecified() {
+        Token token = addDefaultTokenToTokens();
+        creator.setTokens(tokens);
         Element arcElement = createNormalArcWithWeight();
         Arc arc = creator.create(arcElement);
 
-        List<Marking> markings = arc.getWeight();
-        assertEquals(1, markings.size());
+        Map<Token, String> weights = arc.getTokenWeights();
+        assertEquals(1, weights.size());
 
-        Marking marking = markings.get(0);
-        assertNotNull(marking);
-        assertEquals("4", marking.getCurrentMarking());
-        assertNull(marking.getToken());
+        assertTrue(weights.containsKey(token));
+        String weight = weights.get(token);
+        assertEquals("4", weight);
     }
 
     @Test
     public void createsMarkingWithCorrectToken() {
-        Map<String, Token> tokens = new HashMap<String, Token>();
-        Token token = new Token("Default", true, 10, new Color(1,0,0));
-        tokens.put(token.getId(), token);
+        Token token = addDefaultTokenToTokens();
         creator.setTokens(tokens);
 
         Element arcElement = createNormalArcWithWeight();
         Arc arc = creator.create(arcElement);
 
-        List<Marking> markings = arc.getWeight();
-        assertEquals(1, markings.size());
-
-        Marking marking = markings.get(0);
-        assertNotNull(marking);
-        assertEquals(token, marking.getToken());
+        Map<Token, String> weights = arc.getTokenWeights();
+        assertEquals(1, weights.size());
+        assertTrue(weights.containsKey(token));
     }
 
     @Test
     public void createsInhibitoryArc()
     {
+        addDefaultTokenToTokens();
+        creator.setTokens(tokens);
         Element arcElement = createInhibitorArc();
         Arc arc = creator.create(arcElement);
 
@@ -160,16 +173,15 @@ public class ArcCreatorTest {
 
     @Test
     public void createsArcWithDefaultTokenIfNoTokenSpecifiedForWeight() {
-        Element arcElement = createArcWeightNoToken();
-        Map<String, Token> tokens = new HashMap<String, Token>();
-        Token token = new Token("Default", true, 10, new Color(1,0,0));
-        tokens.put(token.getId(), token);
+        Token token = addDefaultTokenToTokens();
         creator.setTokens(tokens);
+
+        Element arcElement = createArcWeightNoToken();
         Arc arc = creator.create(arcElement);
 
         assertNotNull(arc);
-        List<Marking> weights = arc.getWeight();
-        Marking weight = weights.get(0);
-        assertEquals(token, weight.getToken());
+        Map<Token, String> weights = arc.getTokenWeights();
+        assertEquals(1, weights.size());
+        assertTrue(weights.containsKey(token));
     }
 }

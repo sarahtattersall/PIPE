@@ -104,7 +104,7 @@ public class PetriNetController implements IController, Serializable
     private NormalArc buildEmptyArc(Connectable source) {
         return new NormalArc(source,
                 new TemporaryArcTarget(source.getX(), source.getY()),
-                new LinkedList<Marking>());
+                new HashMap<Token, String>());
     }
 
     public boolean isCurrentlyCreatingArc() {

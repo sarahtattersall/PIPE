@@ -10,10 +10,7 @@ import pipe.views.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 
@@ -185,8 +182,8 @@ class Unfolder
                 LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
                 MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+""); 
                 weight.add(arcMarkingView);
-                LinkedList<Marking> weightModel = new LinkedList<Marking>();
-                weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
+                Map<Token, String> weightModel = new HashMap<Token, String>();
+                weightModel.put(_defaultTokenView.getModel(), newArcWeight + "");
                 String idInput = outboundArcView.getId();
 
                 ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,
@@ -264,8 +261,8 @@ class Unfolder
                 LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
                 MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+""); 
                 weight.add(arcMarkingView);
-                LinkedList<Marking> weightModel = new LinkedList<Marking>();
-                weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
+                Map<Token, String> weightModel = new HashMap<Token, String>();
+                weightModel.put(_defaultTokenView.getModel(), newArcWeight+"");
                 String idInput = inboundArcView.getId();
 
                 ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,endPositionXInput, endPositionYInput, source, newTransitionView,weight, idInput, false, new NormalArc(source.getModel(), newTransitionView.getModel(), weightModel));

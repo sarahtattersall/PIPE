@@ -10,10 +10,7 @@ import pipe.views.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yufeiwang (minor change)
@@ -161,10 +158,10 @@ public class Expander
                 _newPlaceViews.add(newPlaceView);
             }
             LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
-            LinkedList<Marking> weightModel = new LinkedList<Marking>();
+            Map<Token, String> weightModel = new HashMap<Token, String>();
             MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+"");
             weight.add(arcMarkingView);
-            weightModel.add(new Marking(_defaultTokenView.getModel(), newArcWeight+""));
+            weightModel.put(_defaultTokenView.getModel(), newArcWeight+"");
 
             ArcView newArcView;
             if(transitionView.outboundArcs() == arcViews)

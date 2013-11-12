@@ -21,9 +21,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 import java.util.List;
 
 // Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
@@ -70,18 +68,17 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     private void createDisplayTokens() {
-//        for (Marking marking : model.getTokens()) {
-//            Token token = marking.getToken();
-//            //TODO: IF TOKEN HAS NOT BEEN DECLARED POP UP ERROR MESSAGE!
-//            if (token != null)
-//            {
-//                TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
-//                TokenView tokenView = builder.build();
-//                MarkingView markingView = new MarkingView(tokenView, marking.getCurrentMarking());
-//                markingView.addObserver(this);
-//                _currentMarkingView.add(markingView);
-//            }
-//        }
+        Map<Token, Integer> tokenCounts = model.getTokenCounts();
+        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
+            Token token = entry.getKey();
+            Integer count = entry.getValue();
+
+            TokenViewBuilder builder = new TokenViewBuilder(token);
+            TokenView tokenView = builder.build();
+            MarkingView markingView = new MarkingView(tokenView, count);
+            markingView.addObserver(this);
+            _currentMarkingView.add(markingView);
+        }
     }
 
     /**

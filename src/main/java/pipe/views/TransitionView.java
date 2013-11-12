@@ -12,10 +12,12 @@ import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
+import pipe.models.Token;
 import pipe.models.Transition;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,10 +26,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 
 public class TransitionView extends ConnectableView<Transition> implements Serializable {
@@ -844,7 +843,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
                     tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false,
                     new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(),
-                            new LinkedList<Marking>()));
+                            new HashMap<Token, String>()));
             newGroupTransitionView.addInbound(newArcView);
             tempArcView.getSource().addOutbound(newArcView);
             newArcView.addToView(view);
@@ -854,7 +853,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
                     newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false,
                     new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(),
-                            new LinkedList<Marking>()));
+                            new HashMap<Token, String>()));
             newGroupTransitionView.addOutbound(newArcView);
             tempArcView.getTarget().addInbound(newArcView);
             newArcView.addToView(view);

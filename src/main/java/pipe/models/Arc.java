@@ -3,8 +3,10 @@ package pipe.models;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Arc extends Observable implements PetriNetComponent, Serializable
 {
@@ -15,18 +17,23 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
     private boolean tagged = false;
 
     //TODO: Does this need to be a List?
-	private List<Marking> weight;
+//	private List<Marking> weight;
+    /**
+     * Map of Token to corresponding weights
+     * Weights can be functional e.g '> 5'
+     */
+    private Map<Token, String> arcWeights = new HashMap<Token, String>();
 
-    public Arc(Connectable source, Connectable target, List<Marking> weight)
+    public Arc(Connectable source, Connectable target, Map<Token, String> arcWeights)
     {
         this.source = source;
         this.target = target;
-        this.weight = weight;
+        this.arcWeights = arcWeights;
     }
 
-    public List<Marking> getWeight()
+    public Map<Token, String> getTokenWeights()
     {
-        return weight;
+        return arcWeights;
     }
 
     public Connectable getSource()

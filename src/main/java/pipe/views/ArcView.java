@@ -22,10 +22,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
 public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> implements Cloneable, IObserver, Serializable, Observer {
     private static final long serialVersionUID = 1L;
@@ -518,11 +517,15 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
     }
 
     private void createWeightLabels() {
-        for (Marking marking : model.getWeight())
+        final Map<Token, String> weights = model.getTokenWeights();
+        for (Map.Entry<Token, String> entry : weights.entrySet())
         {
+            Token token = entry.getKey();
+            String weight = entry.getValue();
+
             NameLabel label = new NameLabel(_zoomPercentage);
-            label.setText(marking.getCurrentMarking());
-            label.setColor(marking.getToken().getColor());
+            label.setText(weight);
+            label.setColor(token.getColor());
             label.updateSize();
             weightLabel.add(label);
         }

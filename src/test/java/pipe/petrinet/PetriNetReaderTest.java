@@ -73,8 +73,8 @@ public class PetriNetReaderTest {
         place = new Place("P0", "P0");
         otherPlace = new Place("P1", "P1");
         transition = new Transition("T0", "T0");
-        List<Marking> markings = new LinkedList<Marking>();
-        arc = new NormalArc(place, otherPlace, markings);
+        Map<Token, String> weights = new HashMap<Token, String>();
+        arc = new NormalArc(place, otherPlace, weights);
         annotation = new Annotation(10, 10, "hello", 10, 10, true);
         parameter = new RateParameter("id", 10.2, 10, 10);
 

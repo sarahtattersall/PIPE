@@ -4,12 +4,14 @@ import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.InhibitorArc;
 import pipe.models.Marking;
+import pipe.models.Token;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -107,7 +109,7 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
         }
 
         //TODO: NEEDS ACTUAL WEIGHTS
-        InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new LinkedList<Marking>());
+        InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new HashMap<Token, String>());
         InhibitorArcView copy =
                 new InhibitorArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, this.getWeight(),
                         source.getId() + " to " + target.getId(), arc);

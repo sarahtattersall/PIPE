@@ -6,7 +6,9 @@ import pipe.common.dataLayer.StateGroup;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.RateParameter;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -132,7 +134,8 @@ public class PetriNetTest {
     public void genericRemoveMethodRemovesArc() {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
-        NormalArc arc = new NormalArc(place, transition, new LinkedList<Marking>());
+        Map<Token, String> weights = new HashMap<Token, String>();
+        NormalArc arc = new NormalArc(place, transition, weights);
         net.addArc(arc);
 
         assertEquals(1, net.getArcs().size());

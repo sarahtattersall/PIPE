@@ -45,25 +45,24 @@ public class ArcCreator implements ComponentCreator<Arc> {
         String id = element.getAttribute("id");
         String sourceId = element.getAttribute("source");
         String targetId = element.getAttribute("target");
-        String weight = element.getAttribute("inscription");
+        String weightInput = element.getAttribute("inscription");
         boolean tagged = CreatorUtils.falseOrValueOf(element.getAttribute("tagged"));
-        List<Marking> weights = createMarkings(weight);
+
+        Map<Token, String> tokenWeights = createTokenWeights(weightInput);
 
         Connectable source = connectables.get(sourceId);
         Connectable target = connectables.get(targetId);
         Arc arc;
         if (isInhibitorArc(element)) {
-            arc = new InhibitorArc(source, target, weights);
+            arc = new InhibitorArc(source, target, tokenWeights);
         } else {
-            arc = new NormalArc(source, target, weights);
+            arc = new NormalArc(source, target, tokenWeights);
         }
         arc.setId(id);
 
-        //TODO: Add this when changed to Arc not ArcView.
         source.addOutbound(arc);
         target.addInbound(arc);
-        //source.addOutbound(arc);
-        //target.addInbound(arc);
+
         arc.setTagged(tagged);
 
         //TODO: Arc path?
@@ -88,19 +87,28 @@ public class ArcCreator implements ComponentCreator<Arc> {
 
     /**
      * Creates the 'markings' a.k.a. weights associated with an Arc.
-     * @param markingInput
+     * @param weightInput
      * @return
      */
-    private List<Marking> createMarkings(String markingInput) {
-        String[] commaSeperatedMarkings = markingInput.split(",");
+    private Map<Token, String> createTokenWeights(String weightInput) {
+        Map<Token, String> tokenWeights = new HashMap<Token, String>();
+
+        String[] commaSeperatedMarkings = weightInput.split(",");
         if (commaSeperatedMarkings.length == 1)
         {
-            Marking marking = processIndividualMarking(commaSeperatedMarkings[0]);
-            List<Marking> markings = new LinkedList<Marking>();
-            markings.add(marking);
-            return markings;
+            Token token = getDefaultToken();
+            String weight = commaSeperatedMarkings[0];
+            tokenWeights.put(token, weight);
+        } else
+        {
+            for (int i = 0; i < commaSeperatedMarkings.length; i += 2) {
+                String weight = commaSeperatedMarkings[i+1].replace("@", ",");
+                String tokenName = commaSeperatedMarkings[i];
+                Token token = getTokenIfExists(tokenName);
+                tokenWeights.put(token, weight);
+            }
         }
-        return processMultipleMarkings(commaSeperatedMarkings);
+        return tokenWeights;
 
     }
 
@@ -128,12 +136,24 @@ public class ArcCreator implements ComponentCreator<Arc> {
     }
 
     /**
+     * @param tokenName token to find in {@link this.tokens}
+     * @return token if exists
+     * @throws RuntimeException if token does not exist
+     */
+    private Token getTokenIfExists(String tokenName) {
+        if (!tokens.containsKey(tokenName)) {
+            throw new RuntimeException("No " + tokenName + " token exists!");
+        }
+        return tokens.get(tokenName);
+    }
+
+    /**
      * @return  the default token to use if no token is specified in the
      * Arc weight XML.
      */
     private Token getDefaultToken()
     {
-        return tokens.get("Default");
+        return getTokenIfExists("Default");
     }
 
 }

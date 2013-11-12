@@ -3,8 +3,10 @@ package pipe.models;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
@@ -24,8 +26,8 @@ public class NormalArcTest {
     {
         Connectable source = new Place("source", "source");
         Connectable destination = new Place("dest", "dest");
-        List<Marking> marking = new LinkedList<Marking>();
-        arc = new NormalArc(source, destination, marking);
+        Map<Token, String> weights = new HashMap<Token, String>();
+        arc = new NormalArc(source, destination, weights);
     }
 
     @Test
