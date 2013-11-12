@@ -1,7 +1,9 @@
 package pipe.controllers;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.models.*;
@@ -17,6 +19,9 @@ import static org.mockito.Mockito.*;
 
 public class PetriNetControllerTest {
     PetriNetController controller;
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -222,6 +227,30 @@ public class PetriNetControllerTest {
 
         controller.translateSelected(new Point2D.Double(5,5));
         verify(mockObserver).update();
+    }
+
+    @Test
+    public void incrementsPlaceCounter() {
+        Place place = mock(Place.class);
+        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
+        PetriNet net = new PetriNet();
+        net.addToken(token);
+        net.addPlace(place);
+
+        controller.addPetriNet(net);
+
+        controller.addTokenToPlace(place, "Default");
+        verify(place).incrementTokenCount(token);
+    }
+
+    @Test
+    public void throwsErrorIfIncrementWithNonExistantToken() {
+        expectedEx.expect(RuntimeException.class);
+        expectedEx.expectMessage("No foo token found in current petri net");
+        Place place = mock(Place.class);
+        PetriNet net = new PetriNet();
+        controller.addPetriNet(net);
+        controller.addTokenToPlace(place, "foo");
     }
 
     private class DummyPetriNetComponent implements PetriNetComponent {

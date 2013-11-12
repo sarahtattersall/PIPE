@@ -14,6 +14,7 @@ public class CreateAction extends FileAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         PipeApplicationView view = ApplicationSettings.getApplicationView();
-        ApplicationSettings.getApplicationController().createNewTab(null, false);
+        ApplicationSettings.getApplicationController().createNewTabFromFile(
+                null, false);
     }
 }

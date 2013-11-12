@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.historyActions.HistoryManager;
@@ -7,6 +8,7 @@ import pipe.models.Marking;
 import pipe.models.Place;
 import pipe.utilities.Copier;
 import pipe.views.ArcView;
+import pipe.views.PipeApplicationView;
 import pipe.views.TransitionView;
 
 import javax.swing.*;
@@ -18,8 +20,11 @@ import java.util.List;
 
 public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
 
+    private PetriNetController controller;
+
     public PlaceHandler(Container contentpane, Place obj) {
         super(contentpane, obj);
+//        this.controller = controller;
     }
 
     JPopupMenu getPopup(MouseEvent e) {
@@ -62,20 +67,26 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
                 //((PlaceView) component).showEditor();
             } else {
 //                List<Marking> oldMarkings = Copier.mediumCopyMarkings(component.getTokens());
-//                HistoryManager historyManager =
-//                        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
-//                switch (ApplicationSettings.getApplicationModel().getMode()) {
-//                    case Constants.ADDTOKEN:
+                HistoryManager historyManager =
+                        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
+
+                switch (ApplicationSettings.getApplicationModel().getMode()) {
+                    case Constants.ADDTOKEN:
+                        PipeApplicationView view = ApplicationSettings.getApplicationView();
+                        view.getSelectedTokenName();
+                        PetriNetController controller = ApplicationSettings.getApplicationController().getPetriNetController();
+                        controller.addTokenToPlace(component, view.getSelectedTokenName());
+
 //                        addToken(oldMarkings, historyManager);
 //                        updateArcAndTran();
-//                        break;
+                        break;
 //                    case Constants.DELTOKEN:
 //                        deleteToken(oldMarkings, historyManager);
 //                        updateArcAndTran();
 //                        break;
-//                    default:
-//                        break;
-//                }
+                    default:
+                        break;
+                }
             }
         } else if (SwingUtilities.isRightMouseButton(e)) {
             if (ApplicationSettings.getApplicationModel().isEditionAllowed() && enablePopup) {

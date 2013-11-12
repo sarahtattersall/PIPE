@@ -1,5 +1,6 @@
 package pipe.controllers;
 
+import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import pipe.actions.ActionEnum;
 import pipe.actions.GuiAction;
@@ -10,11 +11,13 @@ import pipe.handlers.MouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
+import pipe.models.Token;
 import pipe.petrinet.*;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
 import pipe.views.PetriNetView;
 
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -35,53 +38,71 @@ public class PipeApplicationController
 
     private PetriNet loadPetriNetFromFile(File file, boolean isTN)
     {
-        if (file == null)
-        {
-            PetriNet net = new PetriNet();
-            return net;
-        } else {
-            try {
-                // BK 10/02/07: Changed loading of PNML to accomodate new
-                // PNMLTransformer class
-                Document document;
-                if (isTN) {
-                    TNTransformer transformer = new TNTransformer();
-                    document = transformer.transformTN(file.getPath());
-                } else {
-                    // ProgressBar pb = new ProgressBar("test");
-                    PNMLTransformer transformer = new PNMLTransformer();
-                    document = transformer.transformPNML(file.getPath());
-                    //petriNetTab.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-                }
-                CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(),
-                        new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
-                PetriNetReader reader = new PetriNetReader(struct);
-                PetriNet net = reader.createFromFile(document);
-                return net;
 
-            } catch (Exception e) {
+        try {
+            // BK 10/02/07: Changed loading of PNML to accomodate new
+            // PNMLTransformer class
+            Document document;
+            if (isTN) {
+                TNTransformer transformer = new TNTransformer();
+                document = transformer.transformTN(file.getPath());
+            } else {
+                // ProgressBar pb = new ProgressBar("test");
+                PNMLTransformer transformer = new PNMLTransformer();
+                document = transformer.transformPNML(file.getPath());
+                //petriNetTab.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
+            }
+            CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(),
+                    new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
+            PetriNetReader reader = new PetriNetReader(struct);
+            PetriNet net = reader.createFromFile(document);
+            net.setPnmlName(file.getAbsolutePath());
+            return net;
+
+        } catch (Exception e) {
 //                JOptionPane.showMessageDialog(this, "Error loading file:\n" + file.getName() + "\n" + e.toString(),
 //                        "File load error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-                return null;
-            }
+            e.printStackTrace();
+            return null;
         }
     }
-    public void createNewTab(File file, boolean isTN) {
+
+
+    /**
+     * Creates an empty petrinet with a default token
+     */
+    public void createEmptyPetriNet() {
+        PetriNet model = new PetriNet();
+        Token defaultToken = createDefaultToken();
+        model.addToken(defaultToken);
+        createNewTab(model);
+    }
+
+    private Token createDefaultToken() {
+        Token token = new Token("Default", false, 0, new Color(0, 0, 0));
+        return token;
+    }
+
+    public void createNewTabFromFile(File file, boolean isTN) {
 
         if (isPasteInProgress()) {
             cancelPaste();
         }
 
         PetriNet netModel = loadPetriNetFromFile(file, isTN);
-        PetriNetView view = petriNetController.addPetriNet(netModel);
+        createNewTab(netModel);
+
+    }
+
+    private void createNewTab(PetriNet net) {
+        PetriNetView view = petriNetController.addPetriNet(net);
         PetriNetTab petriNetTab = new PetriNetTab(view, petriNetController);
-        MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), petriNetController, netModel, petriNetTab, view);
+        MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab, view);
         petriNetTab.addMouseListener(handler);
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
 
-        netModel.registerObserver(view);
+        net.registerObserver(view);
 //        TODO: WHY? also why should I add a the pipe application view as an obsever?
         view.addObserver(petriNetTab);
         //view.addObserver(ApplicationSettings.getApplicationView());
@@ -102,11 +123,10 @@ public class PipeApplicationController
         // observer
 
         String name;
-        if (file == null) {
+        if (net.getPnmlName().isEmpty()) {
             name = "Petri net " + (applicationModel.newPetriNetNumber());
         } else {
-            //setFile(file, freeSpace);
-            name = file.getName().split(".xml")[0];
+            name = FilenameUtils.getBaseName(net.getPnmlName());
         }
 
         petriNetTab.setNetChanged(false); // Status is unchanged
@@ -123,7 +143,7 @@ public class PipeApplicationController
 //        setTitle(name);// Change the program caption
 //        frameForPetriNetTabs.setTitleAt(freeSpace, name);
         //applicationModel.selectAction.actionPerformed(null);
-        netModel.notifyObservers();
+        net.notifyObservers();
     }
 
     public GuiAction getAction(ActionEnum actionType) {

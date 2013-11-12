@@ -24,7 +24,8 @@ public class OpenAction extends FileAction {
         {
             userPath = filePath.getParent();
             PipeApplicationView view = ApplicationSettings.getApplicationView();
-            ApplicationSettings.getApplicationController().createNewTab(filePath, false);
+            ApplicationSettings.getApplicationController().createNewTabFromFile(
+                    filePath, false);
         }
         if((filePath != null) && (!filePath.exists()))
         {

@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 
@@ -28,7 +27,7 @@ public class CreateActionTest {
     public void actionPerformed()
     {
         createAction.actionPerformed(null);
-        verify(mockController).createNewTab(null, false);
+        verify(mockController).createNewTabFromFile(null, false);
     }
 
     @Test

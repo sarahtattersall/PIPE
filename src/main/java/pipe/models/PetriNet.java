@@ -10,7 +10,7 @@ import java.util.*;
 
 public class PetriNet extends Observable implements Serializable
 {
-    public String _pnmlName;
+    public String _pnmlName = "";
     private boolean _validated = false;
     private ArrayList _changeArrayList;
 

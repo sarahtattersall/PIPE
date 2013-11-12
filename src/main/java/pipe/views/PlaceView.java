@@ -62,10 +62,12 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
         proximityPlace =
                 (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
-        createDisplayTokens();
+        updateDisplayTokens();
     }
 
-    private void createDisplayTokens() {
+    private void updateDisplayTokens() {
+        removeExistingTokens();
+
         Map<Token, Integer> tokenCounts = model.getTokenCounts();
         for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
             Token token = entry.getKey();
@@ -77,6 +79,14 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             markingView.addObserver(this);
             _currentMarkingView.add(markingView);
         }
+    }
+
+    private void removeExistingTokens() {
+        for (MarkingView view : _currentMarkingView) {
+            //TODO: THIS NEEDS TO BE DONE IN A LESS HACKY WAY
+            this.getParent().remove(view);
+        }
+        _currentMarkingView.clear();
     }
 
     /**
@@ -454,6 +464,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             _nameLabel.setText("");
         }
         _nameLabel.zoomUpdate(_zoomPercentage);
+
+        updateDisplayTokens();
+
         super.update();
         repaint();
     }

@@ -11,75 +11,68 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public class PetriNetController implements IController, Serializable
-{
+public class PetriNetController implements IController, Serializable {
 
-    private ArrayList<PetriNetView> _views = new ArrayList<PetriNetView>();
-    private ArrayList<PetriNet> _models = new ArrayList<PetriNet>();
-    private List<Integer> _placeNumbers = new LinkedList<Integer>();
-    private List<Integer> _transitionNumbers = new LinkedList<Integer>();
-    private int _activePetriNet = 0;
+    private static class PetriNetInformation {
+
+        public final PetriNetView view;
+        public int placeCount = 0;
+        public int transitionCount = 0;
+
+        PetriNetInformation(PetriNetView view) {
+            this.view = view;
+        }
+    }
+
+    private HashMap<PetriNet, PetriNetInformation> petriNetInfo = new
+            HashMap<PetriNet, PetriNetInformation>();
+//    private ArrayList<PetriNetView> _views = new ArrayList<PetriNetView>();
+//    private ArrayList<PetriNet> _models = new ArrayList<PetriNet>();
+//    private List<Integer> _placeNumbers = new LinkedList<Integer>();
+//    private List<Integer> _transitionNumbers = new LinkedList<Integer>();
+    private PetriNet _activePetriNet = null;
     private boolean currentlyCreatingArc = false;
     private NormalArc arc;
 
-    private final Set<PetriNetComponent> selectedComponents = new HashSet<PetriNetComponent>();
+    private final Set<PetriNetComponent> selectedComponents = new
+            HashSet<PetriNetComponent>();
 
 
     //THis needs to be moved into its own logical class
     private Connectable source;
 
-    public PetriNetController()
-    {
-        _placeNumbers.add(0);
-        _transitionNumbers.add(0);
+
+    public PetriNetView getView() {
+        return petriNetInfo.get(_activePetriNet).view;
     }
 
-    public PetriNetView getView()
-    {
-        return _views.get(_activePetriNet);
-    }
-
-    public PetriNetView addPetriNet(PetriNet model)
-    {
-        _models.add(model);
+    public PetriNetView addPetriNet(PetriNet model) {
         PetriNetView petriNetView = new PetriNetView(this, model);
-        _views.add(petriNetView);
-        _placeNumbers.add(0);
-        _transitionNumbers.add(0);
-        changeActivePetriNet();
+        PetriNetInformation info = new PetriNetInformation(petriNetView);
+        petriNetInfo.put(model, info);
+        _activePetriNet = model;
         return petriNetView;
     }
 
-    public PetriNetView addEmptyPetriNet()
-    {
+    public PetriNetView addEmptyPetriNet() {
         PetriNet petriNet = new PetriNet();
-        PetriNetView petriNetView = new PetriNetView(this, petriNet);
-        _views.add(petriNetView);
-        _models.add(petriNet);
-        _placeNumbers.add(0);
-        _transitionNumbers.add(0);
-        changeActivePetriNet();
-        return petriNetView;
-    }
-
-    private void changeActivePetriNet()
-    {
-        _activePetriNet = _models.size() - 1;
+        return addPetriNet(petriNet);
     }
 
     public void addArcPoint(double x, double y, boolean shiftDown) {
         if (currentlyCreatingArc) {
             arc.setTarget(new TemporaryArcTarget(x, y));
 
-            PetriNet activeModel = _models.get(_activePetriNet);
-            activeModel.notifyObservers();
+            _activePetriNet.notifyObservers();
             //arc.setTarget(null);
-            //_createArcView.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(event.getY()), event.isShiftDown());
+            //_createArcView.setEndPoint(Grid.getModifiedX(event.getX()),
+            // Grid.getModifiedY(event.getY()), event.isShiftDown());
         }
     }
 
     /**
      * Starts creating an arc from the source.
+     *
      * @param source source model
      */
     //TODO: handle different arc types.
@@ -90,21 +83,15 @@ public class PetriNetController implements IController, Serializable
         this.source = source;
     }
 
-    private PetriNet getCurrentPetriNet()
-    {
-        PetriNet activeModel = _models.get(_activePetriNet);
-        return activeModel;
-    }
-
     private void addArcToCurrentPetriNet(NormalArc arc) {
-        PetriNet activeModel = getCurrentPetriNet();
-        activeModel.addArc(arc);
+        _activePetriNet.addArc(arc);
     }
 
     private NormalArc buildEmptyArc(Connectable source) {
         return new NormalArc(source,
-                new TemporaryArcTarget(source.getX(), source.getY()),
-                new HashMap<Token, String>());
+                             new TemporaryArcTarget(source.getX(),
+                                                    source.getY()),
+                             new HashMap<Token, String>());
     }
 
     public boolean isCurrentlyCreatingArc() {
@@ -113,8 +100,7 @@ public class PetriNetController implements IController, Serializable
 
     public void cancelArcCreation() {
         currentlyCreatingArc = false;
-        PetriNet net = getCurrentPetriNet();
-        net.remove(arc);
+        _activePetriNet.remove(arc);
     }
 
     public void finishCreatingArc(Connectable target) {
@@ -123,17 +109,14 @@ public class PetriNetController implements IController, Serializable
     }
 
     /**
-     *
      * Returns true if creatingArc and if the potentialEnd is not of
      * the same class as the source.
      *
      * @param potentialEnd
      * @return true if arc can end on the connectable
-     *
      */
     public boolean isApplicableEndPoint(Connectable potentialEnd) {
-        if (currentlyCreatingArc && potentialEnd.isEndPoint())
-        {
+        if (currentlyCreatingArc && potentialEnd.isEndPoint()) {
             return potentialEnd.getClass() != arc.getSource().getClass();
         }
         return false;
@@ -141,21 +124,25 @@ public class PetriNetController implements IController, Serializable
 
     /**
      * Creates unique petri net numbers for each tab
+     *
      * @return A unique number for the petrinet in the current tab
      */
     public int getUniquePlaceNumber() {
-        int returnValue = _placeNumbers.get(_activePetriNet);
-        _placeNumbers.set(_activePetriNet, returnValue + 1);
+        PetriNetInformation info = petriNetInfo.get(_activePetriNet);
+        int returnValue = info.placeCount;
+        info.placeCount++;
         return returnValue;
     }
 
     /**
      * Creates unique petri net numbers for each tab
+     *
      * @return A unique number for the petrinet in the current tab
      */
     public int getUniqueTransitionNumber() {
-        int returnValue = _transitionNumbers.get(_activePetriNet);
-        _transitionNumbers.set(_activePetriNet, returnValue + 1);
+        PetriNetInformation info = petriNetInfo.get(_activePetriNet);
+        int returnValue = info.transitionCount;
+        info.transitionCount++;
         return returnValue;
     }
 
@@ -175,9 +162,7 @@ public class PetriNetController implements IController, Serializable
         selectedComponents.clear();
     }
 
-    public void translateSelected(Point2D.Double translation)
-    {
-        PetriNet activeModel = _models.get(_activePetriNet);
+    public void translateSelected(Point2D.Double translation) {
         for (PetriNetComponent component : selectedComponents) {
             if (component instanceof Connectable) {
                 Connectable connectable = (Connectable) component;
@@ -186,27 +171,25 @@ public class PetriNetController implements IController, Serializable
             }
 
         }
-        activeModel.notifyObservers();
+        _activePetriNet.notifyObservers();
     }
 
 
     /**
      * Selects all components within this rectangle
+     *
      * @param selectionRectangle
      */
     public void select(Rectangle selectionRectangle) {
-        PetriNet activeModel = _models.get(_activePetriNet);
-        for (Place place : activeModel.getPlaces()) {
+        for (Place place : _activePetriNet.getPlaces()) {
             selectConnectable(place, selectionRectangle);
         }
-        for (Transition transition : activeModel.getTransitions()) {
+        for (Transition transition : _activePetriNet.getTransitions()) {
             selectConnectable(transition, selectionRectangle);
         }
-        for(Arc arc : activeModel.getArcs())
-        {
+        for (Arc arc : _activePetriNet.getArcs()) {
             if (selectedComponents.contains(arc.getSource()) ||
-                selectedComponents.contains(arc.getTarget()))
-            {
+                    selectedComponents.contains(arc.getTarget())) {
                 select(arc);
             }
         }
@@ -214,28 +197,46 @@ public class PetriNetController implements IController, Serializable
     }
 
     /**
+     * Currently must be of type Connectable, since yhis is the only abstract
+     * class containing getters for X and Y
      *
-     * Currently must be of type Connectable, since yhis is the only abstract class containing getters for X and Y
-     *
-     * @param connectable object to select
+     * @param connectable        object to select
      * @param selectionRectangle
      */
-    private void selectConnectable(Connectable connectable, Rectangle selectionRectangle) {
+    private void selectConnectable(Connectable connectable,
+                                   Rectangle selectionRectangle) {
         int x = new Double(connectable.getX()).intValue();
         int y = new Double(connectable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(), connectable.getWidth());
+        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
+                                            connectable.getWidth());
         if (selectionRectangle.intersects(rectangle)) {
             select(connectable);
         }
     }
 
     public void deleteSelection() {
-        PetriNet activeModel = _models.get(_activePetriNet);
-        for (PetriNetComponent component : selectedComponents)
-        {
-            activeModel.remove(component);
+        for (PetriNetComponent component : selectedComponents) {
+            _activePetriNet.remove(component);
         }
         selectedComponents.clear();
-        activeModel.notifyObservers();
+        _activePetriNet.notifyObservers();
+    }
+
+    /**
+     *
+     * @param component
+     * @param tokenName
+     */
+    public void addTokenToPlace(Place component, String tokenName) {
+        //TODO: Find an O(1) way to do this.... maybe map id to name?
+        for (Token token : _activePetriNet.getTokens()) {
+            if (token.getId().equals(tokenName)) {
+                component.incrementTokenCount(token);
+                _activePetriNet.notifyObservers();
+                return;
+            }
+        }
+
+        throw new RuntimeException("No " + tokenName + " token found in current petri net");
     }
 }

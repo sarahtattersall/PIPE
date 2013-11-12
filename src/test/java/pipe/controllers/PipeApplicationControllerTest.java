@@ -55,7 +55,7 @@ public class PipeApplicationControllerTest {
 
         when(mockModel.newPetriNetNumber()).thenReturn(1);
 
-        controller.createNewTab(null, false);
+        controller.createNewTabFromFile(null, false);
 
         verify(mockView).addNewTab(eq("Petri net 1"), argThat(new ContainsEmptyPetriNet()));
     }
@@ -69,7 +69,7 @@ public class PipeApplicationControllerTest {
         when(mockView.getCurrentTab()).thenReturn(mockTab);
 
         File file = new File("src/test/resources/xml/simpleNet.xml");
-        controller.createNewTab(file, false);
+        controller.createNewTabFromFile(file, false);
         verify(mockView).addNewTab(eq("simpleNet"), any(PetriNetTab.class));
     }
 

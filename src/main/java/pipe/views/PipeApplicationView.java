@@ -121,10 +121,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.applicationModel.setMode(Constants.SELECT);
         this.applicationModel.selectAction.actionPerformed(null);
 
-
-        //applicationController.createNewPetriNet();
-//        createNewTabDELETEME(null, false);
-        applicationController.createNewTab(null, false);
+        applicationController.createEmptyPetriNet();
     }
 
     public JTabbedPane getFrameForPetriNetTabs() {
@@ -889,6 +886,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         String[] tokenClassChoices = buildTokenClassChoices();
         DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
         tokenClassComboBox.setModel(model);
+    }
+
+    public String getSelectedTokenName() {
+        ComboBoxModel model = tokenClassComboBox.getModel();
+        Object selected = model.getSelectedItem();
+        return selected.toString();
     }
 
 

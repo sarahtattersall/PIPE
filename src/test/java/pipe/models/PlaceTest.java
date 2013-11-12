@@ -3,6 +3,7 @@ package pipe.models;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 import static org.junit.Assert.assertEquals;
@@ -117,6 +118,22 @@ public class PlaceTest {
         assertEquals(expected, point);
     }
 
+    @Test
+    public void addNewTokenSetsCountToOne() {
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.incrementTokenCount(token);
+        assertEquals(1, place.getTokenCount(token));
+
+    }
+
+    @Test
+    public void addExistingTokenIncrementsCount() {
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.incrementTokenCount(token);
+
+        place.incrementTokenCount(token);
+        assertEquals(2, place.getTokenCount(token));
+    }
 
     private double getAngleBetweenObjects(double x1, double y1, double x2, double y2)
     {
@@ -124,4 +141,6 @@ public class PlaceTest {
         double deltay = y1 - y2;
         return Math.atan2(deltax, deltay);
     }
+
+
 }

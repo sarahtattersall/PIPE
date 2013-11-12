@@ -145,6 +145,27 @@ public class Place extends Connectable implements Serializable
         this.tokenCount = tokenCounts;
     }
 
+    /**
+     * Increments the token count of the given token
+     * @param token
+     */
+    public void incrementTokenCount(Token token) {
+        Integer count;
+        if (tokenCount.containsKey(token)) {
+            count = tokenCount.get(token);
+            count++;
+        } else
+        {
+            count = 1;
+        }
+        tokenCount.put(token, count);
+
+    }
+
+    public int getTokenCount(Token token) {
+        return tokenCount.get(token);
+    }
+
 
 //    public List<Marking> getTokens() {
 //        return tokens;
