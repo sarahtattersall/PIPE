@@ -16,16 +16,13 @@ import java.awt.event.MouseWheelEvent;
 import java.util.Collection;
 import java.util.List;
 
-public class PlaceHandler extends PlaceTransitionObjectHandler<Place>
-{
+public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
 
-    public PlaceHandler(Container contentpane, Place obj)
-    {
+    public PlaceHandler(Container contentpane, Place obj) {
         super(contentpane, obj);
     }
 
-    JPopupMenu getPopup(MouseEvent e)
-    {
+    JPopupMenu getPopup(MouseEvent e) {
 //        int index = 0;
 //        JPopupMenu popup = super.getPopup(e);
 //
@@ -55,62 +52,51 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place>
 //        return popup;
         return null;
     }
+
     // Steve Doubleday: refactored to simplify testing
-    public void mouseClicked(MouseEvent e)
-    {
-        if(SwingUtilities.isLeftMouseButton(e))
-        {
-            if(e.getClickCount() == 2
-                    && ApplicationSettings.getApplicationModel().isEditionAllowed()
-                    && (ApplicationSettings.getApplicationModel().getMode() == Constants.PLACE || ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT))
-            {
+    public void mouseClicked(MouseEvent e) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            if (e.getClickCount() == 2 && ApplicationSettings.getApplicationModel().isEditionAllowed() &&
+                    (ApplicationSettings.getApplicationModel().getMode() == Constants.PLACE ||
+                            ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)) {
                 //((PlaceView) component).showEditor();
+            } else {
+//                List<Marking> oldMarkings = Copier.mediumCopyMarkings(component.getTokens());
+//                HistoryManager historyManager =
+//                        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
+//                switch (ApplicationSettings.getApplicationModel().getMode()) {
+//                    case Constants.ADDTOKEN:
+//                        addToken(oldMarkings, historyManager);
+//                        updateArcAndTran();
+//                        break;
+//                    case Constants.DELTOKEN:
+//                        deleteToken(oldMarkings, historyManager);
+//                        updateArcAndTran();
+//                        break;
+//                    default:
+//                        break;
+//                }
             }
-            else
-            {
-                List<Marking> oldMarkings = Copier.mediumCopyMarkings(component.getTokens());
-                HistoryManager historyManager = ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
-                switch(ApplicationSettings.getApplicationModel().getMode())
-                {
-                    case Constants.ADDTOKEN:
-					addToken(oldMarkings, historyManager);
-                        updateArcAndTran();
-                        break;
-                    case Constants.DELTOKEN:
-					deleteToken(oldMarkings, historyManager);
-                        updateArcAndTran();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        else if(SwingUtilities.isRightMouseButton(e))
-        {
-            if(ApplicationSettings.getApplicationModel().isEditionAllowed() && enablePopup)
-            {
+        } else if (SwingUtilities.isRightMouseButton(e)) {
+            if (ApplicationSettings.getApplicationModel().isEditionAllowed() && enablePopup) {
                 JPopupMenu m = getPopup(e);
-                if(m != null)
-                {
+                if (m != null) {
                     //int x = component.getNameXOffset();//ZoomController.getZoomedValue(component
-                            //                                      .getNameOffsetXObject().intValue(), component
-                            //.getZoomPercentage());
+                    //                                      .getNameOffsetXObject().intValue(), component
+                    //.getZoomPercentage());
                     //int y = //ZoomController.getZoomedValue(component
-                            //                                      .getNameOffsetYObject().intValue(), component
-                            //.getZoomPercentage());
+                    //                                      .getNameOffsetYObject().intValue(), component
+                    //.getZoomPercentage());
                     //m.show(component, x, y);
                 }
             }
         }/*
-		 * else if (SwingUtilities.isMiddleMouseButton(e)){ ; }
+         * else if (SwingUtilities.isMiddleMouseButton(e)){ ; }
 		 */
     }
 
-	protected void deleteToken(List<Marking> oldMarkings,
-			HistoryManager historyManager)
-	{
-		for(Marking currentMarkingView : oldMarkings)
-		{
+    protected void deleteToken(List<Marking> oldMarkings, HistoryManager historyManager) {
+        for (Marking currentMarkingView : oldMarkings) {
 //		    if(currentMarkingView.getToken().hasSameId(
 //		            ((PlaceView) component).getActiveTokenView()))
 //		    {
@@ -121,14 +107,11 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place>
 //		            //                               .setCurrentMarking(oldMarkingViews));
 //		        }
 //		    }
-		}
-	}
+        }
+    }
 
-	protected void addToken(List<Marking> oldMarkings,
-			HistoryManager historyManager)
-	{
-		for(Marking m : oldMarkings)
-		{
+    protected void addToken(List<Marking> oldMarkings, HistoryManager historyManager) {
+        for (Marking m : oldMarkings) {
 //		    if(m.getToken().hasSameId(((PlaceView) component).getActiveTokenView()))
 //		    {
 //		        m.setCurrentMarking(m.getCurrentMarking() + 1);
@@ -136,24 +119,22 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place>
 //		        historyManager.addNewEdit(((PlaceView) component).setCurrentMarking(oldMarkingViews));
 //		        break;
 //		    }
-		}
-	}
-    
-    private void updateArcAndTran(){
-   	    Collection<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
-        for (ArcView arc : arcs)
-        {
+        }
+    }
+
+    private void updateArcAndTran() {
+        Collection<ArcView> arcs = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
+        for (ArcView arc : arcs) {
             arc.repaint();
         }
-        Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
-        for (TransitionView transition : trans)
-        {
+        Collection<TransitionView> trans =
+                ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
+        for (TransitionView transition : trans) {
             transition.update();
         }
-   }
+    }
 
-    public void mouseWheelMoved(MouseWheelEvent e)
-    {
+    public void mouseWheelMoved(MouseWheelEvent e) {
         //
 //        if(!ApplicationSettings.getApplicationModel().isEditionAllowed() || e.isControlDown())
 //        {

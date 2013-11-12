@@ -5,8 +5,10 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Place extends Connectable implements Serializable
 {
@@ -33,7 +35,8 @@ public class Place extends Connectable implements Serializable
     /**
      * Place tokens
      */
-    List<Marking> tokens =  new LinkedList<Marking>();
+//    List<Marking> tokens =  new LinkedList<Marking>();
+    Map<Token, Integer> tokenCount = new HashMap<Token, Integer>();
 
     public Place(String id, String name)
     {
@@ -134,23 +137,32 @@ public class Place extends Connectable implements Serializable
         this.capacity = capacity;
     }
 
-    public List<Marking> getTokens() {
-        return tokens;
+    public Map<Token, Integer> getTokenCounts() {
+        return tokenCount;
     }
 
-    public void addTokens(List<Marking> markings) {
-        this.tokens.addAll(markings);
+    public void setTokenCounts(Map<Token, Integer> tokenCounts) {
+        this.tokenCount = tokenCounts;
     }
 
-    public void addToken(Marking marking) {
-        this.tokens.add(marking);
-    }
 
-    public void removeToken(Marking marking) {
-        this.tokens.remove(marking);
-    }
-
-    public void removeTokens(List<Marking> markings) {
-        this.tokens.remove(markings);
-    }
+//    public List<Marking> getTokens() {
+//        return tokens;
+//    }
+//
+//    public void addTokens(List<Marking> markings) {
+//        this.tokens.addAll(markings);
+//    }
+//
+//    public void addToken(Marking marking) {
+//        this.tokens.add(marking);
+//    }
+//
+//    public void removeToken(Marking marking) {
+//        this.tokens.remove(marking);
+//    }
+//
+//    public void removeTokens(List<Marking> markings) {
+//        this.tokens.remove(markings);
+//    }
 }

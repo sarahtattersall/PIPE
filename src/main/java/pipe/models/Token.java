@@ -447,4 +447,32 @@ public class Token extends Observable implements Serializable, PetriNetComponent
     public void accept(PetriNetComponentVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Token token = (Token) o;
+
+        if (!color.equals(token.color)) {
+            return false;
+        }
+        if (!id.equals(token.id)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + color.hashCode();
+        return result;
+    }
 }

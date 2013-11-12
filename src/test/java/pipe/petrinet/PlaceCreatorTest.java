@@ -1,7 +1,9 @@
 package pipe.petrinet;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -10,6 +12,7 @@ import pipe.models.Place;
 import pipe.models.Token;
 import pipe.utilities.transformers.PNMLTransformer;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,11 @@ import static org.junit.Assert.*;
 public class PlaceCreatorTest {
     PlaceCreator creator;
     Element placeElement;
+    Map<String, Token> tokens = new HashMap<String, Token>();
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
     /**
      * Range in which to declare doubles equal
      */
@@ -37,6 +45,9 @@ public class PlaceCreatorTest {
     @Test
     public void createsPlace() {
         creator = new PlaceCreator();
+        addDefaultTokenToTokens();
+        creator.setTokens(tokens);
+
         Place place = creator.create(placeElement);
 
         assertNotNull(place);
@@ -50,33 +61,39 @@ public class PlaceCreatorTest {
         assertEquals(0, place.getNameXOffset(), DOUBLE_DELTA);
         assertEquals(0, place.getNameYOffset(), DOUBLE_DELTA);
         assertEquals(0, place.getCapacity(), DOUBLE_DELTA);
-        assertEquals(1, place.getTokens().size());
+        assertEquals(1, place.getTokenCounts().size());
     }
 
     @Test
-    public void createsMarkingCorrectlyWithNoTokenMap() {
-        creator = new PlaceCreator();
-        Place place = creator.create(placeElement);
-        List<Marking> markings = place.getTokens();
+    public void willNotCreatePlaceIfNoToken() {
+        expectedEx.expect(RuntimeException.class);
+        expectedEx.expectMessage("No Default token exists!");
 
-        Marking marking = markings.get(0);
-        assertNull(marking.getToken());
-        assertEquals("1", marking.getCurrentMarking());
+        creator = new PlaceCreator();
+        creator.create(placeElement);
+    }
+
+    /**
+     *
+     * @return default token added
+     */
+    private Token addDefaultTokenToTokens() {
+        Token token = new Token("Default", true, 0, new Color(0, 0,0));
+        tokens.put("Default", token);
+        return token;
     }
 
     @Test
     public void createsMarkingCorrectlyWithTokenMap() {
-        Token token = new Token();
-        Map<String, Token> tokens = new HashMap<String, Token>();
-        tokens.put("Default", token);
+        Token defaultToken = addDefaultTokenToTokens();
 
         creator = new PlaceCreator();
         creator.setTokens(tokens);
         Place place = creator.create(placeElement);
-        List<Marking> markings = place.getTokens();
+        Map<Token, Integer> counts = place.getTokenCounts();
 
-        Marking marking = markings.get(0);
-        assertEquals(token, marking.getToken());
-        assertEquals("1", marking.getCurrentMarking());
+        assertTrue(counts.containsKey(defaultToken));
+        Integer count = counts.get(defaultToken);
+        assertEquals(1, count.intValue());
     }
 }

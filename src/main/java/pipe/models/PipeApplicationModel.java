@@ -145,8 +145,6 @@ public class PipeApplicationModel implements Serializable
     @ApplicationAction(ActionEnum.CHOOSE_TOKEN_CLASS)
     public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
 
-
-
     private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%","120%", "140%", "160%", "180%", "200%", "300%"};
     private List<ZoomAction> zoomActions = new ArrayList<ZoomAction>();
     private final String _name;

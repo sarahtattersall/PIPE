@@ -125,7 +125,8 @@ public class PetriNetReaderTest {
         Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
         reader.createFromFile(noTokenDoc);
 
-        verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new ContainsTokenKey("Default")));
+        Token defaultToken = new Token("Default", false, 0, new Color(0, 0, 0));
+        verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new ContainsToken(defaultToken)));
     }
 
     @Test
@@ -220,19 +221,20 @@ public class PetriNetReaderTest {
 
     }
 
-    private static class ContainsTokenKey extends ArgumentMatcher<Map<String, Token>> {
+    private static class ContainsToken extends ArgumentMatcher<Map<String, Token>> {
 
-        private final String key;
+        private final Token token;
 
-        public ContainsTokenKey(String key)
+        public ContainsToken(Token token)
         {
-            this.key = key;
+            this.token = token;
         }
 
         @Override
         public boolean matches(Object argument) {
             Map<String, Token> mapArgument = (Map<String, Token>) argument;
-            return mapArgument.containsKey(key);
+            return mapArgument.containsKey(token.getId()) &&
+                    mapArgument.get(token.getId()).equals(token);
         }
     }
 

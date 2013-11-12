@@ -19,56 +19,43 @@ public class PlaceCreator implements ComponentCreator<Place> {
         this.tokens = tokens;
     }
 
-    /**
-     *
-     * @param markingInput a String with token name and marking number delimited by
-     *              commas e.g. "Default, 1, Another, 2"
-     * @return
-     */
-    private List<Marking> getTokens(String markingInput)
-    {
-        List<Marking> markings = new LinkedList<Marking>();
-        if (!markingInput.isEmpty())
-        {
-            /*
-             * tokenInputs it of the form <tokenName, number, tokenName, number> etc.
-             */
-            String[] tokens = markingInput.split(",");
 
-            //TODO: Handle case where token name is not defined ie. marking.length = 1;
-            if (tokens.length == 1)
-            {
-                Token defaultToken = getDefaultToken();
-                Marking marking = createMarking(defaultToken.getId(), tokens[0]);
-                markings.add(marking);
-            }
-            else {
-                for(int i = 0; i < tokens.length; i += 2) {
-                    String tokenName = tokens[i].trim();
-                    Marking marking = createMarking(tokenName, tokens[i+1]);
-                    markings.add(marking);
-                }
-            }
-
-        }
-        return markings;
+    private Map<Token, Integer> getTokenCounts(String input) {
+        Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+        String[] tokenInput = input.split(",");
+         if (tokenInput.length == 1)
+         {
+            Token defaultToken = getDefaultToken();
+            Integer count = Integer.valueOf(tokenInput[0]);
+            tokenCounts.put(defaultToken, count);
+         } else {
+             for(int i = 0; i < tokenInput.length; i += 2) {
+                 String tokenName = tokenInput[i].trim();
+                 Token token = getTokenIfExists(tokenName);
+                 Integer count = Integer.valueOf(tokenInput[i+1]);
+                 tokenCounts.put(token, count);
+             }
+         }
+        return tokenCounts;
     }
 
     private Token getDefaultToken() {
-        return tokens.get("Default");
+        return getTokenIfExists("Default");
     }
 
-    private Marking createMarking(String tokenName, String markingValue) {
-        int marking = 0;
-        try {
-            marking = Integer.valueOf(markingValue);
-        } catch (NumberFormatException e)
-        {
-            // Dont care marking just = 0;
-        }
-
+    /**
+     *
+     * @param tokenName
+     * @return Token for string tokenName if it exists
+     * @throws RuntimeException if it does not exist
+     */
+    private Token getTokenIfExists(String tokenName) {
         Token token = tokens.get(tokenName);
-        return new Marking(token, marking);
+        if (token == null) {
+
+            throw new RuntimeException("No " + tokenName + " token exists!");
+        }
+        return token;
     }
 
     public Place create(Element element)
@@ -88,8 +75,14 @@ public class PlaceCreator implements ComponentCreator<Place> {
         double markingXOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("markingOffsetX"));
         double markingYOffset = CreatorUtils.zeroOrValueOf(element.getAttribute("markingOffsetY"));
 
-        List<Marking> tokens =  getTokens(
-                element.getAttribute("initialMarking"));
+
+        String tokenValues = element.getAttribute("initialMarking");
+        Map<Token, Integer> tokenCounts = getTokenCounts(tokenValues);
+
+//        List<Marking> tokens =  getTokens(
+//                element.getAttribute("initialMarking"));
+//        Token token = getToken();
+
 
         double capacity =  CreatorUtils.zeroOrValueOf(element.getAttribute("capacity"));
 
@@ -102,8 +95,12 @@ public class PlaceCreator implements ComponentCreator<Place> {
         place.setMarkingXOffset(markingXOffset);
         place.setMarkingYOffset(markingYOffset);
         place.setCapacity(capacity);
-        place.addTokens(tokens);
+
+
+        place.setTokenCounts(tokenCounts);
+
 
         return place;
     }
+
 }
