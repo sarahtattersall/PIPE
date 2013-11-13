@@ -27,13 +27,11 @@ public class PipeApplicationController
 {
 
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
-//    private PetriNetController petriNetController;
     private final CopyPasteManager copyPasteManager;
     private final PipeApplicationModel applicationModel;
 
     public PipeApplicationController(PipeApplicationModel applicationModel, CopyPasteManager copyPasteManager)
     {
-//        this.petriNetController = petriNetController;
         this.applicationModel = applicationModel;
         this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
