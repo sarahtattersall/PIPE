@@ -166,6 +166,15 @@ public class Place extends Connectable implements Serializable
         return tokenCount.get(token);
     }
 
+    public void decrementTokenCount(Token token) {
+        Integer count;
+        if (tokenCount.containsKey(token)) {
+            count = tokenCount.get(token);
+            count--;
+            tokenCount.put(token, count);
+        }
+    }
+
 
 //    public List<Marking> getTokens() {
 //        return tokens;

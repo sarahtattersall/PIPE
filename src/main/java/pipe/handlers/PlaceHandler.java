@@ -68,19 +68,15 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
                 HistoryManager historyManager =
                         ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
 
+
+                PipeApplicationView view = ApplicationSettings.getApplicationView();
                 switch (ApplicationSettings.getApplicationModel().getMode()) {
                     case Constants.ADDTOKEN:
-                        PipeApplicationView view = ApplicationSettings.getApplicationView();
-                        view.getSelectedTokenName();
                         petriNetController.addTokenToPlace(component, view.getSelectedTokenName());
-
-//                        addToken(oldMarkings, historyManager);
-//                        updateArcAndTran();
                         break;
-//                    case Constants.DELTOKEN:
-//                        deleteToken(oldMarkings, historyManager);
-//                        updateArcAndTran();
-//                        break;
+                    case Constants.DELTOKEN:
+                        petriNetController.deleteTokenInPlace(component, view.getSelectedTokenName());
+                        break;
                     default:
                         break;
                 }

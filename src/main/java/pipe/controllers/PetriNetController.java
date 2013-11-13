@@ -195,15 +195,32 @@ public class PetriNetController implements IController, Serializable {
      * @param tokenName
      */
     public void addTokenToPlace(Place component, String tokenName) {
+        Token token = getTokenForName(tokenName);
+        component.incrementTokenCount(token);
+        petriNet.notifyObservers();
+    }
+
+
+
+    public void deleteTokenInPlace(Place component, String tokenName) {
+        Token token = getTokenForName(tokenName);
+        component.decrementTokenCount(token);
+        petriNet.notifyObservers();
+    }
+
+    /**
+     *
+     * @param name token name to find
+     * @return Token from PetriNet
+     * @throw RuntimeException if the token does not exist
+     */
+    private Token getTokenForName(String name) {
         //TODO: Find an O(1) way to do this.... maybe map id to name?
         for (Token token : petriNet.getTokens()) {
-            if (token.getId().equals(tokenName)) {
-                component.incrementTokenCount(token);
-                petriNet.notifyObservers();
-                return;
+            if (token.getId().equals(name)) {
+                return token;
             }
         }
-
-        throw new RuntimeException("No " + tokenName + " token found in current petri net");
+        throw new RuntimeException("No " + name + " token found in current petri net");
     }
 }

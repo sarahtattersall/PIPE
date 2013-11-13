@@ -18,9 +18,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class PetriNetControllerTest {
-    PetriNetController controller;
+    private PetriNetController controller;
 
-    PetriNet net;
+    private PetriNet net;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -217,6 +217,46 @@ public class PetriNetControllerTest {
 
         controller.addTokenToPlace(place, "Default");
         verify(place).incrementTokenCount(token);
+    }
+
+
+    @Test
+    public void decrementsPlaceCounter() {
+        Place place = mock(Place.class);
+        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
+        net.addToken(token);
+        net.addPlace(place);
+
+        controller.deleteTokenInPlace(place, "Default");
+        verify(place).decrementTokenCount(token);
+    }
+
+    @Test
+    public void decrementPlaceCounterNotifiesObservers() {
+        IObserver mockObserver = mock(IObserver.class);
+        net.registerObserver(mockObserver);
+
+        Place place = mock(Place.class);
+        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
+        net.addToken(token);
+        net.addPlace(place);
+
+        controller.deleteTokenInPlace(place, "Default");
+        verify(mockObserver, atLeastOnce()).update();
+    }
+
+    @Test
+    public void incrementPlaceCounterNotifiesObservers() {
+        IObserver mockObserver = mock(IObserver.class);
+        net.registerObserver(mockObserver);
+
+        Place place = mock(Place.class);
+        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
+        net.addToken(token);
+        net.addPlace(place);
+
+        controller.addTokenToPlace(place, "Default");
+        verify(mockObserver, atLeastOnce()).update();
     }
 
     @Test

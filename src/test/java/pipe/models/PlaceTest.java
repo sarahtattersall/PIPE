@@ -123,7 +123,6 @@ public class PlaceTest {
         Token token = new Token("red", false, 0, new Color(255, 0, 0));
         place.incrementTokenCount(token);
         assertEquals(1, place.getTokenCount(token));
-
     }
 
     @Test
@@ -133,6 +132,15 @@ public class PlaceTest {
 
         place.incrementTokenCount(token);
         assertEquals(2, place.getTokenCount(token));
+    }
+
+    @Test
+    public void decrementExistingTokenDecreasesCount() {
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.incrementTokenCount(token);
+
+        place.decrementTokenCount(token);
+        assertEquals(0, place.getTokenCount(token));
     }
 
     private double getAngleBetweenObjects(double x1, double y1, double x2, double y2)
