@@ -572,7 +572,8 @@ public class ArcPath implements Shape, Cloneable {
             if (editWindow.getIndexOf(pathPoint) < 0) {
                 editWindow.add(pathPoint);
 
-                pointHandler = new ArcPathPointHandler(editWindow, pathPoint);
+                //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
+                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, null);
 
                 if (pathPoint.getMouseListeners().length == 0) {
                     pathPoint.addMouseListener(pointHandler);
@@ -610,7 +611,8 @@ public class ArcPath implements Shape, Cloneable {
             // Nadeem 21/06/2005
             if (editWindow.getIndexOf(pathPoint) < 0) {
                 editWindow.add(pathPoint);
-                pointHandler = new ArcPathPointHandler(editWindow, pathPoint);
+                //TODO: SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER
+                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, null);
 
                 if (pathPoint.getMouseListeners().length == 0) {
                     pathPoint.addMouseListener(pointHandler);

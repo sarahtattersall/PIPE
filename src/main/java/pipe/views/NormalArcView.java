@@ -1,6 +1,7 @@
 package pipe.views;
 
 import pipe.controllers.ArcController;
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
@@ -31,10 +32,11 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
 
     public NormalArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
             double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, boolean taggedInput, NormalArc model) {
+            List<MarkingView> weightInput, String idInput, boolean taggedInput, NormalArc model,
+            PetriNetController controller) {
 
         super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
-                weightInput, idInput, model);
+                weightInput, idInput, model, controller);
         setTagged(taggedInput);
     }
 
@@ -102,7 +104,7 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
                 new NormalArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, getWeight(),
                         source.getId() + " to " +
                                 target.getId(), false,
-                        new NormalArc(source.getModel(), target.getModel(), this.model.getTokenWeights()));
+                        new NormalArc(source.getModel(), target.getModel(), this.model.getTokenWeights()), petriNetController);
 
         copy.myPath.delete();
         for (int i = 0; i <= this.myPath.getEndIndex(); i++) {

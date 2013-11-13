@@ -20,12 +20,15 @@ import static org.mockito.Mockito.*;
 public class PetriNetControllerTest {
     PetriNetController controller;
 
+    PetriNet net;
+
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() {
-        controller = new PetriNetController();
+        net = new PetriNet();
+        controller = new PetriNetController(net);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.
@@ -34,16 +37,10 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void returnsUniqueNumberForDifferentTabs()
+    public void returnsUniqueNumberForPetriNet()
     {
-        PetriNet net1 = new PetriNet();
-        controller.addPetriNet(net1);
         assertEquals(0, controller.getUniquePlaceNumber());
         assertEquals(1, controller.getUniquePlaceNumber());
-
-        PetriNet net2 = new PetriNet();
-        controller.addPetriNet(net2);
-        assertEquals(0, controller.getUniquePlaceNumber());
     }
 
     @Test
@@ -73,9 +70,7 @@ public class PetriNetControllerTest {
     @Test
     public void deletesSelectedRemovesFromNet() {
         Place place = new Place("", "");
-        PetriNet net = new PetriNet();
         net.addPlace(place);
-        controller.addPetriNet(net);
 
         controller.select(place);
         controller.deleteSelection();
@@ -85,9 +80,7 @@ public class PetriNetControllerTest {
     @Test
     public void deletesSelectedNotifiesObserver() {
         Place place = new Place("", "");
-        PetriNet net = new PetriNet();
         net.addPlace(place);
-        controller.addPetriNet(net);
 
         IObserver mockObserver = mock(IObserver.class);
         net.registerObserver(mockObserver);
@@ -105,11 +98,7 @@ public class PetriNetControllerTest {
         when(place.getWidth()).thenReturn(5);
         when(place.getHeight()).thenReturn(20);
 
-
-        PetriNet net = new PetriNet();
         net.addPlace(place);
-
-        controller.addPetriNet(net);
 
         Rectangle selectionRectangle = new Rectangle(5, 10, 40, 40);
         controller.select(selectionRectangle);
@@ -128,11 +117,7 @@ public class PetriNetControllerTest {
         when(place.getWidth()).thenReturn(10);
         when(place.getHeight()).thenReturn(10);
 
-
-        PetriNet net = new PetriNet();
         net.addPlace(place);
-
-        controller.addPetriNet(net);
 
         Rectangle selectionRectangle = new Rectangle(5, 5, 40, 40);
         controller.select(selectionRectangle);
@@ -144,11 +129,9 @@ public class PetriNetControllerTest {
     public void translatesSelectedItemsCorrectly() {
         Transition transition = mock(Transition.class);
         Place place = mock(Place.class);
-        PetriNet net = new PetriNet();
         net.addPlace(place);
         net.addTransition(transition);
 
-        controller.addPetriNet(net);
         controller.select(place);
         controller.select(transition);
 
@@ -196,8 +179,6 @@ public class PetriNetControllerTest {
 
     private PetriNet setupPetriNet() {
         createMockTab();
-        PetriNet net = new PetriNet();
-        controller.addPetriNet(net);
         assertEquals(0, net.getArcs().size());
         return net;
     }
@@ -215,12 +196,8 @@ public class PetriNetControllerTest {
 
     @Test
     public void notifiesObserversAfterTranslation() {
-
         Place place = mock(Place.class);
-        PetriNet net = new PetriNet();
         net.addPlace(place);
-
-        controller.addPetriNet(net);
 
         IObserver mockObserver = mock(IObserver.class);
         net.registerObserver(mockObserver);
@@ -233,11 +210,10 @@ public class PetriNetControllerTest {
     public void incrementsPlaceCounter() {
         Place place = mock(Place.class);
         Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
-        PetriNet net = new PetriNet();
+
         net.addToken(token);
         net.addPlace(place);
 
-        controller.addPetriNet(net);
 
         controller.addTokenToPlace(place, "Default");
         verify(place).incrementTokenCount(token);
@@ -248,8 +224,7 @@ public class PetriNetControllerTest {
         expectedEx.expect(RuntimeException.class);
         expectedEx.expectMessage("No foo token found in current petri net");
         Place place = mock(Place.class);
-        PetriNet net = new PetriNet();
-        controller.addPetriNet(net);
+
         controller.addTokenToPlace(place, "foo");
     }
 

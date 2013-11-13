@@ -76,7 +76,7 @@ public class MouseHandler extends MouseInputAdapter
         place.setY(Grid.getModifiedY(p.y));
 
 
-        PlaceViewBuilder builder = new PlaceViewBuilder(place);
+        PlaceViewBuilder builder = new PlaceViewBuilder(place, petriNetController);
         PlaceView view = builder.build();
         place.registerObserver(view);
 

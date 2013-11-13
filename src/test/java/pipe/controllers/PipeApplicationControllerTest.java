@@ -30,14 +30,13 @@ public class PipeApplicationControllerTest {
     public void setUp() {
         mockModel = mock(PipeApplicationModel.class);
         ApplicationSettings.register(mockModel);
-        PetriNetController netController = new PetriNetController();
         CopyPasteManager copyPaste = new CopyPasteManager();
 
         //TODO: This is a nasty fix until can remove ApplicationSettings
         PipeApplicationController nullController = null;
         ApplicationSettings.register(nullController);
 
-        controller = new PipeApplicationController(mockModel, netController, copyPaste);
+        controller = new PipeApplicationController(mockModel, copyPaste);
     }
 
     @Test
@@ -71,6 +70,13 @@ public class PipeApplicationControllerTest {
         File file = new File("src/test/resources/xml/simpleNet.xml");
         controller.createNewTabFromFile(file, false);
         verify(mockView).addNewTab(eq("simpleNet"), any(PetriNetTab.class));
+    }
+
+    @Test
+    public void createsNewPetriNetControllerPerPetriNet() {
+        PetriNetTab tab = controller.createEmptyPetriNet();
+        PetriNetController tabController = tab.getPetriNetController();
+        assertEquals(tabController, controller.getControllerForTab(tab));
     }
 
     private static class ContainsPetriNetWithOneToken extends ArgumentMatcher<PetriNetTab> {

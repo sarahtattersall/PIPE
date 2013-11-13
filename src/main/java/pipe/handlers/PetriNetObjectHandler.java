@@ -38,15 +38,15 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
 
     private int totalX = 0;
     private int totalY = 0;
-    private final PetriNetController petriNetController;
+    protected final PetriNetController petriNetController;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(Container contentpane, T obj)
+    PetriNetObjectHandler(Container contentpane, T obj, PetriNetController controller)
     {
         contentPane = contentpane;
         component = obj;
         //TODO: PASS INTO CTR
-        petriNetController = ApplicationSettings.getPetriNetController();
+        petriNetController = controller;
     }
 
 

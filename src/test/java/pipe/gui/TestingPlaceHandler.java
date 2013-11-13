@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.util.LinkedList;
 import java.util.List;
 
+import pipe.controllers.PetriNetController;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryManager;
 import pipe.models.Marking;
@@ -14,9 +15,9 @@ import pipe.views.PlaceView;
 public class TestingPlaceHandler extends PlaceHandler
 {
 
-	public TestingPlaceHandler(Container contentpane, Place obj)
+	public TestingPlaceHandler(Container contentpane, Place obj, PetriNetController controller)
 	{
-		super(contentpane, obj);
+		super(contentpane, obj, controller);
 	}
 	
 	public void addTokenForTesting(List<Marking> oldMarkingViews,

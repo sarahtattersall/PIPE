@@ -20,17 +20,20 @@ import pipe.views.PetriNetView;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PipeApplicationController
 {
-    private PetriNetController petriNetController;
+
+    private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
+//    private PetriNetController petriNetController;
     private final CopyPasteManager copyPasteManager;
     private final PipeApplicationModel applicationModel;
 
-    public PipeApplicationController(PipeApplicationModel applicationModel, PetriNetController petriNetController,
-            CopyPasteManager copyPasteManager)
+    public PipeApplicationController(PipeApplicationModel applicationModel, CopyPasteManager copyPasteManager)
     {
-        this.petriNetController = petriNetController;
+//        this.petriNetController = petriNetController;
         this.applicationModel = applicationModel;
         this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
@@ -71,11 +74,11 @@ public class PipeApplicationController
     /**
      * Creates an empty petrinet with a default token
      */
-    public void createEmptyPetriNet() {
+    public PetriNetTab createEmptyPetriNet() {
         PetriNet model = new PetriNet();
         Token defaultToken = createDefaultToken();
         model.addToken(defaultToken);
-        createNewTab(model);
+        return createNewTab(model);
     }
 
     private Token createDefaultToken() {
@@ -83,21 +86,25 @@ public class PipeApplicationController
         return token;
     }
 
-    public void createNewTabFromFile(File file, boolean isTN) {
+    public PetriNetTab createNewTabFromFile(File file, boolean isTN) {
 
         if (isPasteInProgress()) {
             cancelPaste();
         }
 
         PetriNet netModel = loadPetriNetFromFile(file, isTN);
-        createNewTab(netModel);
+        return createNewTab(netModel);
 
     }
 
-    private void createNewTab(PetriNet net) {
-        PetriNetView view = petriNetController.addPetriNet(net);
-        PetriNetTab petriNetTab = new PetriNetTab(view, petriNetController);
-        MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab, view);
+    private PetriNetTab createNewTab(PetriNet net) {
+        PetriNetController controller = new PetriNetController(net);
+        PetriNetView view = new PetriNetView(controller, net);
+
+        PetriNetTab petriNetTab = new PetriNetTab(view, controller);
+        netControllers.put(petriNetTab, controller);
+
+        MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), controller, net, petriNetTab, view);
         petriNetTab.addMouseListener(handler);
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
@@ -144,6 +151,7 @@ public class PipeApplicationController
 //        frameForPetriNetTabs.setTitleAt(freeSpace, name);
         //applicationModel.selectAction.actionPerformed(null);
         net.notifyObservers();
+        return petriNetTab;
     }
 
     public GuiAction getAction(ActionEnum actionType) {
@@ -180,22 +188,7 @@ public class PipeApplicationController
         copyPasteManager.showPasteRectangle(appView);
     }
 
-    public void createNewPetriNet() {
-        PetriNet net = new PetriNet();
-        petriNetController.addPetriNet(net);
-    }
-
-
-    public int addEmptyPetriNetTo(ArrayList<PetriNetTab> petriNetTabs)
-    {
-        PetriNetView petriNetView = petriNetController.addEmptyPetriNet();
-        PetriNetTab petriNetTab = new PetriNetTab(petriNetView, petriNetController);
-        petriNetTabs.add(petriNetTab);
-        return petriNetTabs.size() - 1;
-    }
-
-    public PetriNetController getPetriNetController()
-    {
-        return petriNetController;
+    public PetriNetController getControllerForTab(PetriNetTab tab) {
+        return netControllers.get(tab);
     }
 }

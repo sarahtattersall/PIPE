@@ -107,7 +107,9 @@ class Unfolder
             boolean infServer = transitionView.isInfiniteServer();
             int angleInput = transitionView.getAngle();
             int priority = transitionView.getPriority();
-            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput, functionalRate,priority));
+            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition,
+                    infServer, angleInput, new Transition(transIdInput, transIdInput, functionalRate,priority),
+                    transitionView.getPetriNetController());
             _newTransitionViews.add(newTransitionView);
 
             // Now analyse all arcs connected to this transition
@@ -167,7 +169,8 @@ class Unfolder
                     place.setCapacity(oldPlaceView.getCapacity());
                     place.setMarkingXOffset(oldPlaceView.getMarkingOffsetXObject());
                     place.setMarkingYOffset(oldPlaceView.getMarkingOffsetYObject());
-                    newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place);
+                    newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place,
+                            outboundArcView.getPetriNetController());
 
                     placeMarkingView.addObserver(newPlaceView); 
                     _newPlaceViews.add(newPlaceView);
@@ -188,7 +191,8 @@ class Unfolder
 
                 ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,
                                                        endPositionXInput, endPositionYInput, newTransitionView, target,
-                                                       weight, idInput, false, new NormalArc(newTransitionView.getModel(), target.getModel(), weightModel));
+                                                       weight, idInput, false, new NormalArc(newTransitionView.getModel(),
+                        target.getModel(), weightModel), outboundArcView.getPetriNetController());
                 arcMarkingView.addObserver(newPlaceView);
                 // Join arc, place and transition and add all to appropriate
                 // lists
@@ -246,7 +250,8 @@ class Unfolder
                     place.setCapacity(oldPlaceView.getCapacity());
                     place.setMarkingXOffset(oldPlaceView.getMarkingOffsetXObject());
                     place.setMarkingYOffset(oldPlaceView.getMarkingOffsetYObject());
-                    newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place);
+                    newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place,
+                            inboundArcView.getPetriNetController());
 
                     placeMarkingView.addObserver(newPlaceView); 
                     _newPlaceViews.add(newPlaceView);
@@ -265,7 +270,7 @@ class Unfolder
                 weightModel.put(_defaultTokenView.getModel(), newArcWeight+"");
                 String idInput = inboundArcView.getId();
 
-                ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,endPositionXInput, endPositionYInput, source, newTransitionView,weight, idInput, false, new NormalArc(source.getModel(), newTransitionView.getModel(), weightModel));
+                ArcView newArcView = new NormalArcView(startPositionXInput, startPositionYInput,endPositionXInput, endPositionYInput, source, newTransitionView,weight, idInput, false, new NormalArc(source.getModel(), newTransitionView.getModel(), weightModel), inboundArcView.getPetriNetController());
                 arcMarkingView.addObserver(newArcView); 
                 // Join arc, place and transition and add all to appropriate
                 // lists
@@ -279,8 +284,8 @@ class Unfolder
 
     private PetriNetView createPetriNetView()
     {
-        PetriNetController controller = ApplicationSettings.getPetriNetController();
-        PetriNetView petriNetView = new PetriNetView(controller, new PetriNet());
+        //TODO: PASS IN CONTROLLER> WHAT DOES THE UNFOLDER DO?
+        PetriNetView petriNetView = new PetriNetView(null, new PetriNet());
         LinkedList<TokenView> tokenViews = new LinkedList<TokenView>(); //TODO replace with TokenSetController 
         tokenViews.add(_defaultTokenView);
         try

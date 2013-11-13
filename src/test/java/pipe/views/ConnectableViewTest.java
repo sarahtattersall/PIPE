@@ -2,6 +2,7 @@ package pipe.views;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.models.Connectable;
@@ -16,10 +17,13 @@ public class ConnectableViewTest {
     ConnectableView<Connectable> view;
     Connectable mockModel;
 
+    private PetriNetController mockController;
+
     @Before
     public void setUp() {
         mockModel = mock(Connectable.class);
         view = new DummyConnectableView(mockModel);
+        mockController = mock(PetriNetController.class);
     }
 
     @Test
@@ -43,11 +47,11 @@ public class ConnectableViewTest {
         assertEquals(expectedY, label.getPositionY(), 0.001);
     }
 
-    private static class DummyConnectableView extends ConnectableView<Connectable>
+    private class DummyConnectableView extends ConnectableView<Connectable>
     {
 
         DummyConnectableView(Connectable model) {
-            super("test", "test", 0, 0, model);
+            super("test", "test", 0, 0, model, mockController);
         }
 
         @Override

@@ -20,9 +20,8 @@ public class Pipe
     {
         applicationModel = new PipeApplicationModel(version);
 
-        PetriNetController netController = new PetriNetController();
         CopyPasteManager copyPaste = new CopyPasteManager();
-        applicationController = new PipeApplicationController(applicationModel, netController, copyPaste);
+        applicationController = new PipeApplicationController(applicationModel, copyPaste);
         applicationView = new PipeApplicationView(applicationController, applicationModel);
     }
     public static void main(String args[])

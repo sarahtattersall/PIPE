@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.models.Connectable;
 import pipe.models.interfaces.IObserver;
@@ -23,12 +24,12 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     }
 
     private ConnectableView(String id, T model) {
-        this(id, model.getName(), Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model);
+        this(id, model.getName(), Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, model, null);
     }
 
     ConnectableView(String id, String name, double nameOffsetX, double nameOffsetY,
-            T model) {
-        super(id, name, nameOffsetX, nameOffsetY, model);
+            T model, PetriNetController controller) {
+        super(id, name, nameOffsetX, nameOffsetY, model, controller);
         setLocation((int) model.getX(),  (int) model.getY());
         PipeApplicationView view = ApplicationSettings.getApplicationView();
         if (view != null) {

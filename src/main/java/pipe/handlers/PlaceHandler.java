@@ -20,11 +20,9 @@ import java.util.List;
 
 public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
 
-    private PetriNetController controller;
 
-    public PlaceHandler(Container contentpane, Place obj) {
-        super(contentpane, obj);
-//        this.controller = controller;
+    public PlaceHandler(Container contentpane, Place obj, PetriNetController controller) {
+        super(contentpane, obj, controller);
     }
 
     JPopupMenu getPopup(MouseEvent e) {
@@ -74,8 +72,7 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
                     case Constants.ADDTOKEN:
                         PipeApplicationView view = ApplicationSettings.getApplicationView();
                         view.getSelectedTokenName();
-                        PetriNetController controller = ApplicationSettings.getApplicationController().getPetriNetController();
-                        controller.addTokenToPlace(component, view.getSelectedTokenName());
+                        petriNetController.addTokenToPlace(component, view.getSelectedTokenName());
 
 //                        addToken(oldMarkings, historyManager);
 //                        updateArcAndTran();

@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -46,8 +47,8 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
 
     ArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput, double endPositionYInput,
             ConnectableView sourceInput, ConnectableView targetInput, List<MarkingView> weightInput,
-            String idInput, T model) {
-        this.model = model;
+            String idInput, T model, PetriNetController controller) {
+        super(model.getId(), model.getId(), 0, 0, model, controller);
         Point2D.Double startPoint = model.getStartPoint();
         myPath.addPoint(startPoint.getX(), startPoint.getY(), ArcPathPoint.STRAIGHT);
 
@@ -476,7 +477,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler arcHandler = new ArcHandler(tab, this.model);
+        ArcHandler arcHandler = new ArcHandler(tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);

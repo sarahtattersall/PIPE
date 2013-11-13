@@ -54,6 +54,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     private PetriNet _model;
     private TokenSetController _tokenSetController = new TokenSetController();
 
+    private final PetriNetController petriNetController;
+
 
     public PetriNetView(String pnmlFileName) {
         _model = new PetriNet();
@@ -62,6 +64,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         File temp = new File(pnmlFileName);
         _model.setPnmlName(temp.getName());
         createFromPNML(transform.transformPNML(pnmlFileName));
+        petriNetController = null;
     }
 
     public PetriNetView(PetriNetController petriNetController, PetriNet model) {
@@ -69,6 +72,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         _model = model;
         model.registerObserver(this);
         _model.registerObserver(this);
+        this.petriNetController = petriNetController;
     }
 
 
@@ -1352,14 +1356,14 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 view.update();
             } else if (arc instanceof NormalArc) {
                 NormalArc normalArc = (NormalArc) arc;
-                NormalArcViewBuilder builder = new NormalArcViewBuilder(normalArc);
+                NormalArcViewBuilder builder = new NormalArcViewBuilder(normalArc, petriNetController);
                 view = builder.build();
                 _arcViews.put(normalArc, view);
                 //TODO: Add back in:
                 //checkForInverseArc(view);
             } else  {
                 InhibitorArc inhibitorArc = (InhibitorArc) arc;
-                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(inhibitorArc);
+                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(inhibitorArc, petriNetController);
                 view = builder.build();
                 _arcViews.put(inhibitorArc, view);
             }
@@ -1380,7 +1384,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 view.update(this, place);
             } else
             {
-                PlaceViewBuilder builder = new PlaceViewBuilder(place);
+                PlaceViewBuilder builder = new PlaceViewBuilder(place, petriNetController);
                 view = builder.build();
                 _placeViews.put(place, view);
             }
@@ -1423,7 +1427,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 view.update();
             } else
             {
-                TransitionViewBuilder builder = new TransitionViewBuilder(transition);
+                TransitionViewBuilder builder = new TransitionViewBuilder(transition, petriNetController);
                 view = builder.build();
                 _transitionViews.put(transition, view);
             }

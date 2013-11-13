@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
@@ -51,10 +52,10 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
 
     public PlaceView(String idInput, String nameInput,
-            LinkedList<MarkingView> initialMarkingViewInput, Place model) {
+            LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
         //MODEL
         super(idInput, nameInput, model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(),
-               model);
+               model, controller);
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         totalMarking = getTotalMarking();
@@ -260,7 +261,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        PlaceHandler placeHandler = new PlaceHandler(tab, this.model);
+        PlaceHandler placeHandler = new PlaceHandler(tab, this.model, petriNetController);
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);

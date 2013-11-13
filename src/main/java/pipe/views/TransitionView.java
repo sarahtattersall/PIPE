@@ -2,6 +2,7 @@ package pipe.views;
 
 import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
+import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
@@ -52,12 +53,14 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public TransitionView() {
         this( "", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false,
-                false, 0, new Transition("", "", "1", 1));
+                false, 0, new Transition("", "", "1", 1), null);
     }
 
     public TransitionView( String id, String name, double nameOffsetX,
-            double nameOffsetY, boolean timed, boolean infServer, int angleInput, Transition model) {
-        super(id, name,  model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(), model);
+            double nameOffsetY, boolean timed, boolean infServer, int angleInput, Transition model,
+            PetriNetController controller) {
+        super(id, name,  model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(), model,
+                 controller);
         constructTransition();
 
         _enabled = false;
@@ -203,7 +206,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        TransitionHandler transitionHandler = new TransitionHandler(tab, this.model);
+        TransitionHandler transitionHandler = new TransitionHandler(tab, this.model, petriNetController);
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);
@@ -843,7 +846,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
                     tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false,
                     new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(),
-                            new HashMap<Token, String>()));
+                            new HashMap<Token, String>()), petriNetController);
             newGroupTransitionView.addInbound(newArcView);
             tempArcView.getSource().addOutbound(newArcView);
             newArcView.addToView(view);
@@ -853,7 +856,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
                     newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false,
                     new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(),
-                            new HashMap<Token, String>()));
+                            new HashMap<Token, String>()), petriNetController);
             newGroupTransitionView.addOutbound(newArcView);
             tempArcView.getTarget().addInbound(newArcView);
             newArcView.addToView(view);

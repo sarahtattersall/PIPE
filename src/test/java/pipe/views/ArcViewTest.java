@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import org.junit.Before;
 import org.junit.Test;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
 import pipe.models.Arc;
@@ -24,10 +25,13 @@ public class ArcViewTest
 	private MarkingView markingView;
 	private TokenView tokenView;
 	private ArcView arcView;
+    private PetriNetController mockController;
+
 	@Before
 	public void setUp() throws Exception
 	{
 		tokenView = new TokenView(true, "Default", Color.black);
+        mockController = mock(PetriNetController.class);
 	}
 
     @Test
@@ -39,7 +43,7 @@ public class ArcViewTest
         when(mockArc.getStartPoint()).thenReturn(start);
         when(mockArc.getEndPoint()).thenReturn(end);
 
-        arcView = new NormalArcView(0, 0, 0, 0, null, null, new LinkedList<MarkingView>(),"id", true,  mockArc);
+        arcView = new NormalArcView(0, 0, 0, 0, null, null, new LinkedList<MarkingView>(),"id", true,  mockArc, mockController);
         ArcPath path = arcView.getArcPath();
 
         assertEquals(2, path.getNumPoints());

@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.models.ConditionalPlace;
@@ -22,10 +23,11 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
     private String condOperator = "", condOperand = "";
     private boolean tagged = false;
 
-    public ConditionPlaceView(PlaceView inputPlaceView) {
+    public ConditionPlaceView(PlaceView inputPlaceView, PetriNetController controller) {
         //MODEL
         super(inputPlaceView.getId(),
-                inputPlaceView.getName(), 0, 0, new ConditionalPlace(inputPlaceView.getId(), inputPlaceView.getName()));
+                inputPlaceView.getName(), 0, 0, new ConditionalPlace(inputPlaceView.getId(), inputPlaceView.getName()),
+                controller);
         currentMarking = new Integer(inputPlaceView.getCurrentMarkingView().get(0).getCurrentMarking());
         updateBounds();
     }

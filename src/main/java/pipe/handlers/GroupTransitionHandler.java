@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
@@ -23,8 +24,8 @@ public class GroupTransitionHandler
         //implements java.awt.event.MouseWheelListener {  //NOU-PERE
   
    
-   public GroupTransitionHandler(Container contentpane, GroupTransitionView obj) {
-       super(contentpane, null);
+   public GroupTransitionHandler(Container contentpane, GroupTransitionView obj, PetriNetController controller) {
+       super(contentpane, null, controller);
        //TODO: FIX THIS BACK IN RATHER THAN NULL;
 //      super(contentpane, obj);
    }

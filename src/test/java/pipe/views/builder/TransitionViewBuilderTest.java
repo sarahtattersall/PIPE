@@ -2,6 +2,7 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.controllers.PetriNetController;
 import pipe.models.Transition;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
@@ -10,17 +11,21 @@ import pipe.views.TransitionView;
 import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class TransitionViewBuilderTest {
     private static final double DOUBLE_DELTA = 0.001;
     Transition transition;
     TransitionViewBuilder builder;
 
+    private PetriNetController mockController;
+
     @Before
     public void setUp()
     {
         transition = new Transition("id", "name");
-        builder = new TransitionViewBuilder(transition);
+        mockController = mock(PetriNetController.class);
+        builder = new TransitionViewBuilder(transition, mockController);
     }
 
     @Test

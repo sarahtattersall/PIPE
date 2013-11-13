@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.PetriNetObjectName;
@@ -31,12 +32,13 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     protected T model;
     protected int _zoomPercentage;
+    protected final PetriNetController petriNetController;
 
     protected PetriNetViewComponent() {
-        this(null, null, 0, 0, null);
+        this(null, null, 0, 0, null, null);
     }
 
-    PetriNetViewComponent(String id, String name, double namePositionX, double namePositionY, T model) {
+    PetriNetViewComponent(String id, String name, double namePositionX, double namePositionY, T model, PetriNetController controller) {
         _id = id;
         _selected = false;
         _selectable = true;
@@ -49,6 +51,7 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         _zoomPercentage = 100;
         this.model = model;
         _nameLabel = new NameLabel(name, _zoomPercentage, namePositionX, namePositionY);
+        this.petriNetController = controller;
     }
 
     void setNameLabelName(String name) {
@@ -220,4 +223,8 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
      * @param tab to add itself to
      */
     public abstract void addToPetriNetTab(PetriNetTab tab);
+
+    public PetriNetController getPetriNetController() {
+        return petriNetController;
+    }
 }

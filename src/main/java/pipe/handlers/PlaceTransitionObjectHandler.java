@@ -39,8 +39,8 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
    
    // constructor passing in all required objects
    PlaceTransitionObjectHandler(Container contentpane,
-                                T obj) {
-      super(contentpane, obj);
+                                T obj, PetriNetController controller) {
+      super(contentpane, obj, controller);
       enablePopup = true;
    }
    
@@ -96,7 +96,6 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
          case Constants.INHIBARC:
          case Constants.FAST_PLACE:
          case Constants.FAST_TRANSITION:
-             PetriNetController petriNetController = ApplicationSettings.getPetriNetController();
              if (!petriNetController.isCurrentlyCreatingArc()) {
                  if (ApplicationSettings.getApplicationModel().getMode() == Constants.INHIBARC){
                   if (currentObject instanceof Place) {
@@ -128,7 +127,6 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
       super.mouseReleased(e);
       
       Connectable currentObject = component;
-      PetriNetController petriNetController = ApplicationSettings.getPetriNetController();
       
       switch (app.getMode()) {
          case Constants.INHIBARC:

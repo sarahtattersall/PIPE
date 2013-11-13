@@ -18,10 +18,12 @@ public class ArcKeyboardEventHandler
         extends KeyAdapter {
    
    private final ArcView _arcViewBeingDrawn;
+    private final PetriNetController petriNetController;
    
    
-   public ArcKeyboardEventHandler(ArcView anArcView) {
+   public ArcKeyboardEventHandler(ArcView anArcView, PetriNetController controller) {
       _arcViewBeingDrawn = anArcView;
+       petriNetController = controller;
    }
    
 
@@ -41,8 +43,7 @@ public class ArcKeyboardEventHandler
          case KeyEvent.VK_DELETE:
             PetriNetTab aView = ((PetriNetTab) _arcViewBeingDrawn.getParent());
             //TODO: CANCEL ARC
-             PetriNetController controller = ApplicationSettings.getPetriNetController();
-             controller.cancelArcCreation();
+             petriNetController.cancelArcCreation();
             //aView._createArcView = null;
             //_arcViewBeingDrawn.delete();
              if ((ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_PLACE) ||

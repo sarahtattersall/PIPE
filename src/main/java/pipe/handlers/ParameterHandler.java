@@ -4,6 +4,7 @@
 package pipe.handlers;
 
 import pipe.actions.EditNoteAction;
+import pipe.controllers.PetriNetController;
 import pipe.views.viewComponents.Parameter;
 
 import javax.swing.*;
@@ -16,9 +17,9 @@ public class ParameterHandler
 {
    
    
-   public ParameterHandler(Container contentpane, Parameter parameter) {
+   public ParameterHandler(Container contentpane, Parameter parameter, PetriNetController controller) {
     //TODO: DONT PASS NULL FIX THIS
-       super(contentpane, null);
+       super(contentpane, null, controller);
 //      super(contentpane, parameter);
    }
    

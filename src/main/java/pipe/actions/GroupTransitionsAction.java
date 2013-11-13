@@ -1,5 +1,7 @@
 package pipe.actions;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.models.Marking;
@@ -38,7 +40,7 @@ public class GroupTransitionsAction extends GuiAction
         System.out.println(applicationView.getCurrentPetriNetView().getTokenViews().size());
         if(applicationView.getCurrentPetriNetView().getTokenViews().size() > 1)
         {
-            PetriNetTab view = applicationView.getCurrentTab();
+            PetriNetTab petriNetTab = applicationView.getCurrentTab();
             PetriNetView model = applicationView.getCurrentPetriNetView();
             TransitionView[] transitionViews = model.getTransitionViews();
             Boolean firstAddition;
@@ -91,6 +93,10 @@ public class GroupTransitionsAction extends GuiAction
                                 // First entry in groupTransition. Hence initialize.
                                 if(!transitionViews[i].isGrouped())
                                 {
+
+                                    PipeApplicationController controller = ApplicationSettings.getApplicationController();
+                                    PetriNetController netController = controller.getControllerForTab(petriNetTab);
+
                                     // Add new input arcs to our new Grouped transition
                                     LinkedList<ArcView> arcsTo = transitionViews[i].inboundArcs();
                                     for(ArcView tempArcView : arcsTo)
@@ -101,10 +107,10 @@ public class GroupTransitionsAction extends GuiAction
                                                                                tempArcView.getArcPath().getPoint(1).getY(),
                                                                                tempArcView.getSource(),
                                                                                newGroupTransitionView,
-                                                                               new LinkedList<MarkingView>(), "", false, new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(), new HashMap<Token, String>()));
+                                                                               new LinkedList<MarkingView>(), "", false, new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(), new HashMap<Token, String>()), netController);
                                         newGroupTransitionView.addInbound(newArcView);
                                         tempArcView.getSource().addOutbound(newArcView);
-                                        newArcView.addToView(view);
+                                        newArcView.addToView(petriNetTab);
                                     }
 
                                     LinkedList<ArcView> arcsFrom = transitionViews[i].outboundArcs();
@@ -112,10 +118,10 @@ public class GroupTransitionsAction extends GuiAction
                                     {
                                         ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
                                                                                tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(), newGroupTransitionView, tempArcView.getTarget(),
-                                                                               new LinkedList<MarkingView>(), "", false,  new NormalArc(newGroupTransitionView.getModel(),tempArcView.getSource().getModel(), new HashMap<Token, String>()));
+                                                                               new LinkedList<MarkingView>(), "", false,  new NormalArc(newGroupTransitionView.getModel(),tempArcView.getSource().getModel(), new HashMap<Token, String>()), netController);
                                         newGroupTransitionView.addOutbound(newArcView);
                                         tempArcView.getTarget().addInbound(newArcView);
-                                        newArcView.addToView(view);
+                                        newArcView.addToView(petriNetTab);
                                     }
                                     newGroupTransitionView
                                             .addTransition(transitionViews[i]);
@@ -161,7 +167,7 @@ public class GroupTransitionsAction extends GuiAction
                     t.hideAssociatedArcs();
                 }
                 model.addPetriNetObject(groupTransitionView);
-                view.addNewPetriNetObject(groupTransitionView);
+                petriNetTab.addNewPetriNetObject(groupTransitionView);
                 groupTransitionView.setVisible(true);
             }
 

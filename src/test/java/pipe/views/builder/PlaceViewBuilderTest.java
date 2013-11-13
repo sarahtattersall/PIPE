@@ -2,23 +2,27 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.controllers.PetriNetController;
 import pipe.models.Place;
 import pipe.views.PlaceView;
 
 import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class PlaceViewBuilderTest {
     private static final double DOUBLE_DELTA = 0.001;
     Place place;
     PlaceViewBuilder builder;
+    PetriNetController mockController;
 
     @Before
     public void setUp()
     {
+        mockController = mock(PetriNetController.class);
         place = new Place("id", "name");
-        builder = new PlaceViewBuilder(place);
+        builder = new PlaceViewBuilder(place, mockController);
     }
 
     @Test

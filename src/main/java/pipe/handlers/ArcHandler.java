@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Grid;
@@ -29,8 +30,8 @@ public class ArcHandler
 {
 
    
-   public ArcHandler(Container contentpane, Arc obj) {
-      super(contentpane, obj);
+   public ArcHandler(Container contentpane, Arc obj, PetriNetController controller) {
+      super(contentpane, obj, controller);
       enablePopup = true;
    }
 

@@ -1,6 +1,7 @@
 package pipe.handlers;
 
 import pipe.actions.ShowHideInfoAction;
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
@@ -24,8 +25,8 @@ public class TransitionHandler
 {
   
    
-   public TransitionHandler(Container contentpane, Transition obj) {
-      super(contentpane, obj);
+   public TransitionHandler(Container contentpane, Transition obj, PetriNetController controller) {
+      super(contentpane, obj, controller);
    }
 
    

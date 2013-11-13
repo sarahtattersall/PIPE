@@ -1,5 +1,6 @@
 package pipe.views.builder;
 
+import pipe.controllers.PetriNetController;
 import pipe.models.Marking;
 import pipe.models.NormalArc;
 import pipe.views.MarkingView;
@@ -11,9 +12,11 @@ import java.util.LinkedList;
 
 public class NormalArcViewBuilder {
     private final NormalArc arc;
+    private final PetriNetController controller;
 
-    public NormalArcViewBuilder(NormalArc arc) {
+    public NormalArcViewBuilder(NormalArc arc, PetriNetController controller) {
         this.arc = arc;
+        this.controller = controller;
     }
 
     /*
@@ -37,7 +40,7 @@ public class NormalArcViewBuilder {
 //        }
 
         NormalArcView view =
-                new NormalArcView(startX, startY, endX, endY, null, null, markings, arc.getId(), arc.isTagged(), arc);
+                new NormalArcView(startX, startY, endX, endY, null, null, markings, arc.getId(), arc.isTagged(), arc, controller);
         return view;
 
     }

@@ -51,9 +51,4 @@ public class ApplicationSettings
     {
         return _applicationModel;
     }
-
-    public static PetriNetController getPetriNetController()
-    {
-        return _applicationController.getPetriNetController();
-    }
 }

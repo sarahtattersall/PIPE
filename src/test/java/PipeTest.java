@@ -412,7 +412,7 @@ public class PipeTest {
 		markingView = markingViews.get(0);
 		assertEquals(1, markingViews.get(0).getCurrentMarking() ); 
 		assertEquals(1, markingViews.get(1).getCurrentMarking() ); 
-		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView.getModel());
+//		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView.getModel());
         List<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
 		//handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager());
 		newMarkingViews = placeView.getCurrentMarkingView();

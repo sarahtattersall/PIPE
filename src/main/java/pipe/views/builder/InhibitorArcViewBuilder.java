@@ -1,5 +1,6 @@
 package pipe.views.builder;
 
+import pipe.controllers.PetriNetController;
 import pipe.models.InhibitorArc;
 import pipe.views.InhibitorArcView;
 import pipe.views.MarkingView;
@@ -8,9 +9,11 @@ import java.util.LinkedList;
 
 public class InhibitorArcViewBuilder {
     private final InhibitorArc arc;
+    private final PetriNetController controller;
 
-    public InhibitorArcViewBuilder(InhibitorArc arc) {
+    public InhibitorArcViewBuilder(InhibitorArc arc, PetriNetController controller) {
         this.arc = arc;
+        this.controller = controller;
     }
 
     /*
@@ -26,7 +29,7 @@ public class InhibitorArcViewBuilder {
         double endY = arc.getTarget().getY();
         InhibitorArcView view =
                 new InhibitorArcView(startX, startY, endX, endY, null, null, new LinkedList<MarkingView>(), arc.getId(),
-                        arc);
+                        arc, controller);
         return view;
 
     }

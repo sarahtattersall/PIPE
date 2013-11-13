@@ -77,7 +77,7 @@ public abstract class Parameter extends Note {
     @Override
 
     public void addToPetriNetTab(PetriNetTab tab){
-        ParameterHandler parameterHandler = new ParameterHandler(tab, this);
+        ParameterHandler parameterHandler = new ParameterHandler(tab, this, petriNetController);
         addMouseListener(parameterHandler);
         addMouseMotionListener(parameterHandler);
         getNote().addMouseListener(parameterHandler);

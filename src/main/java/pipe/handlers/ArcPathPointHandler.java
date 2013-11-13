@@ -7,6 +7,7 @@ package pipe.handlers;
 
 import pipe.actions.SplitArcPointAction;
 import pipe.actions.ToggleArcPointAction;
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.ArcPathPoint;
 
@@ -21,9 +22,9 @@ public class ArcPathPointHandler
 {
 
    
-   public ArcPathPointHandler(Container contentpane, ArcPathPoint obj) {
+   public ArcPathPointHandler(Container contentpane, ArcPathPoint obj, PetriNetController controller) {
        //TODO: FIX THIS WITH TYPING
-       super(contentpane, null);
+       super(contentpane, null, controller);
 //      super(contentpane, obj);
       enablePopup = true;
    }

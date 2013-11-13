@@ -8,6 +8,7 @@ package pipe.handlers;
 import java.awt.Container;
 import java.awt.event.MouseEvent;
 
+import pipe.controllers.PetriNetController;
 import pipe.models.Annotation;
 import pipe.views.viewComponents.Note;
 
@@ -17,8 +18,8 @@ public class NoteHandler
 {
    
    
-   NoteHandler(Container contentpane, Annotation note) {
-      super(contentpane, note);
+   NoteHandler(Container contentpane, Annotation note, PetriNetController controller) {
+      super(contentpane, note, controller);
       enablePopup = true;
    }
 

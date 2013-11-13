@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.InhibitorArc;
@@ -44,9 +45,9 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
      */
     public InhibitorArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
             double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, InhibitorArc model) {
+            List<MarkingView> weightInput, String idInput, InhibitorArc model, PetriNetController controller) {
         super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
-                weightInput, idInput, model);
+                weightInput, idInput, model, controller);
     }
 
 
@@ -112,7 +113,7 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
         InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new HashMap<Token, String>());
         InhibitorArcView copy =
                 new InhibitorArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, this.getWeight(),
-                        source.getId() + " to " + target.getId(), arc);
+                        source.getId() + " to " + target.getId(), arc, petriNetController);
 
         copy.myPath.delete();
         for (int i = 0; i <= this.myPath.getEndIndex(); i++) {

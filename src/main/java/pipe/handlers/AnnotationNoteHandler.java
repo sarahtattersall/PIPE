@@ -6,6 +6,7 @@
  package pipe.handlers;
 
  import pipe.actions.*;
+ import pipe.controllers.PetriNetController;
  import pipe.models.Annotation;
  import pipe.views.viewComponents.AnnotationNote;
 
@@ -19,8 +20,8 @@
  {
    
 
-   public AnnotationNoteHandler(Container contentpane, Annotation note) {
-      super(contentpane, note);
+   public AnnotationNoteHandler(Container contentpane, Annotation note, PetriNetController controller) {
+      super(contentpane, note, controller);
       enablePopup = true;
    }
 

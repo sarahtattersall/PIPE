@@ -94,7 +94,8 @@ public class StateView extends JLayeredPane implements QueryConstants {
 
 	void add(PetriNetViewComponent currentObj) {
 		if (currentObj instanceof PlaceView) {
-			ConditionPlaceView placeView = new ConditionPlaceView((PlaceView)currentObj);
+            PlaceView currentView = (PlaceView) currentObj;
+			ConditionPlaceView placeView = new ConditionPlaceView(currentView, currentView.getPetriNetController());
 			// Set the state group condition associated with the place
 			StateElement placeCondition = activeStateGroup.getCondition(placeView.getId());
 			if (placeCondition != null)

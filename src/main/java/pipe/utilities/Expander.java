@@ -106,7 +106,9 @@ public class Expander
             boolean infServer = transitionView.isInfiniteServer();
             int angleInput = transitionView.getAngle();
             int priority = transitionView.getPriority();
-            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput,functionalRate, priority));
+
+            //TODO: WORK OUT HOW TO GET CONTROLLER
+            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput,functionalRate, priority), transitionView.getPetriNetController());
             _newTransitionViews.add(newTransitionView);
             analyseArcs(transitionView, newTransitionView, transitionView.outboundArcs());
             analyseArcs(transitionView, newTransitionView, transitionView.inboundArcs());
@@ -153,7 +155,8 @@ public class Expander
                 markingViewInput.add(placeMarkingView);
 
                 Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
-                newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place);
+                //TODO: WORK OUT HOW TO GET CONTROLLER
+                newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place, null);
                 placeMarkingView.addObserver(newPlaceView);
                 _newPlaceViews.add(newPlaceView);
             }
@@ -165,9 +168,9 @@ public class Expander
 
             ArcView newArcView;
             if(transitionView.outboundArcs() == arcViews)
-                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getX(), newPlaceView.getY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel));
+                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getX(), newPlaceView.getY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel), arcView.getPetriNetController());
             else
-                newArcView = new NormalArcView(newPlaceView.getX(), newPlaceView.getY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel));
+                newArcView = new NormalArcView(newPlaceView.getX(), newPlaceView.getY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel), arcView.getPetriNetController());
             newPlaceView.addInboundOrOutbound(newArcView);
             newTransitionView.addInboundOrOutbound(newArcView);
             arcMarkingView.addObserver(newArcView); 
@@ -177,8 +180,8 @@ public class Expander
 
     private PetriNetView createPetriNetView()
     {
-        PetriNetController controllet = ApplicationSettings.getPetriNetController();
-        PetriNetView petriNetView = new PetriNetView(controllet, new PetriNet());
+        //TODO: PASS IN CONTROLLER? WHAT DOES THE EXPANDER DO?
+        PetriNetView petriNetView = new PetriNetView(null, new PetriNet());
         LinkedList<TokenView> tokenViews = new LinkedList<TokenView>();
         tokenViews.add(_defaultTokenView);
         try
