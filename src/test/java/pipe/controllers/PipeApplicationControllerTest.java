@@ -48,16 +48,16 @@ public class PipeApplicationControllerTest {
 
     @Test
 //    TODO: NEED TO CHECK THAT VIEW IS AN OBSERVER....
-    public void createNewTabCreatesANewTabForEmptyPetriNet()
+    public void createNewTabCreatesANewTabForPetriNetWithDefaultToken()
     {
         PipeApplicationView mockView = mock(PipeApplicationView.class);
         ApplicationSettings.register(mockView);
 
         when(mockModel.newPetriNetNumber()).thenReturn(1);
 
-        controller.createNewTabFromFile(null, false);
+        controller.createEmptyPetriNet();
 
-        verify(mockView).addNewTab(eq("Petri net 1"), argThat(new ContainsEmptyPetriNet()));
+        verify(mockView).addNewTab(eq("Petri net 1"), argThat(new ContainsPetriNetWithOneToken()));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PipeApplicationControllerTest {
         verify(mockView).addNewTab(eq("simpleNet"), any(PetriNetTab.class));
     }
 
-    private static class ContainsEmptyPetriNet extends ArgumentMatcher<PetriNetTab> {
+    private static class ContainsPetriNetWithOneToken extends ArgumentMatcher<PetriNetTab> {
 
         @Override
         public boolean matches(Object argument) {
@@ -89,7 +89,7 @@ public class PipeApplicationControllerTest {
                        model.getPlaces().isEmpty() &&
                        model.getArcs().isEmpty() &&
                        model.getRateParameters().isEmpty() &&
-                       model.getTokens().isEmpty() &&
+                       model.getTokens().size() == 1 &&
                        model.getStateGroups().isEmpty();
             }
         }
