@@ -13,31 +13,25 @@ import java.awt.event.ActionListener;
  */
 
 public class TokenDialog extends JDialog implements ActionListener{
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 	private boolean acceptChanges = false;
-    private TokenPanel _dialogContent;
+    private TokenPanel dialogContent;
 
     public TokenDialog(Frame owner, String title, boolean modal, TokenPanel dialogContent){
 		super(owner, title, modal);
-        _dialogContent = dialogContent;
+        this.dialogContent = dialogContent;
     }
+
 	public void actionPerformed(ActionEvent e) {
-        boolean valid = true;
 		if(e.getActionCommand().equals("OK")){
-            valid = ((TokenPanel.TableModel) _dialogContent.table.getModel()).isValid();
-            if(valid)
-			    acceptChanges = true;
-            else
-                acceptChanges = false;
+            acceptChanges = ((TokenPanel.TableModel) dialogContent.table.getModel()).isValid();
 		}
 		else if(e.getActionCommand().equals("Cancel")){
 			acceptChanges = false;
 		}
-        if(valid)
+        if(acceptChanges) {
 		    setVisible(false);
+        }
 	}
 	
 	public boolean shouldAcceptChanges(){

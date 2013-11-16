@@ -223,4 +223,23 @@ public class PetriNetController implements IController, Serializable {
         }
         throw new RuntimeException("No " + name + " token found in current petri net");
     }
+
+    /**
+     * Adds a new token to the petrinet
+     * @param name
+     * @param enabled
+     * @param color
+     */
+    public void createNewToken(String name, boolean enabled, Color color) {
+        Token token = new Token(name, enabled, 0, color);
+        petriNet.addToken(token);
+    }
+
+    public Collection<Token> getNetTokens() {
+        return petriNet.getTokens();
+    }
+
+    public void updateToken(String currentTokenName, String name, Boolean enabled, Color color) {
+        petriNet.getToken(currentTokenName);
+    }
 }

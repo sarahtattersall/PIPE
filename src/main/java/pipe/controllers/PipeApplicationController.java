@@ -29,6 +29,7 @@ public class PipeApplicationController
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
     private final CopyPasteManager copyPasteManager;
     private final PipeApplicationModel applicationModel;
+    private PetriNetTab activeTab;
 
     public PipeApplicationController(PipeApplicationModel applicationModel, CopyPasteManager copyPasteManager)
     {
@@ -80,7 +81,7 @@ public class PipeApplicationController
     }
 
     private Token createDefaultToken() {
-        Token token = new Token("Default", false, 0, new Color(0, 0, 0));
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
         return token;
     }
 
@@ -188,5 +189,13 @@ public class PipeApplicationController
 
     public PetriNetController getControllerForTab(PetriNetTab tab) {
         return netControllers.get(tab);
+    }
+
+    public void setActiveTab(PetriNetTab tab) {
+        this.activeTab = tab;
+    }
+
+    public PetriNetController getActivePetriNetController() {
+        return netControllers.get(activeTab);  //To change body of created methods use File | Settings | File Templates.
     }
 }

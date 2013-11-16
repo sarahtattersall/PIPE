@@ -13,6 +13,7 @@ import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -266,6 +267,21 @@ public class PetriNetControllerTest {
         Place place = mock(Place.class);
 
         controller.addTokenToPlace(place, "foo");
+    }
+
+    @Test
+    public void createNewToken() {
+        String name = "testToken";
+        boolean enabled = true;
+        Color color = new Color(160, 92, 240);
+
+        controller.createNewToken(name, enabled, color);
+        Collection<Token> tokens = net.getTokens();
+        assertEquals(1, tokens.size());
+        Token token  = tokens.iterator().next();
+        assertEquals(name, token.getId());
+        assertEquals(enabled, token.isEnabled());
+        assertEquals(color, token.getColor());
     }
 
     private class DummyPetriNetComponent implements PetriNetComponent {

@@ -57,12 +57,14 @@ public class TokenAction extends GuiAction
             buildAndUpdateTokenViews(x, rows);
         }
 	}
+
 	protected void buildAndUpdateTokenViews(TokenPanel.TableModel x, int rows)
 	{
 		LinkedList<TokenView> tokenViews = convertInputToTokenViews(x, rows);
 		updateTokenViews(tokenViews);
 		pipeApplicationView.refreshTokenClassChoices();
 	}
+
 	protected LinkedList<TokenView> convertInputToTokenViews(
 			TokenPanel.TableModel x, int rows)
 	{
@@ -100,8 +102,7 @@ public class TokenAction extends GuiAction
 		pipeApplicationView = ApplicationSettings.getApplicationView();
 		
 		dialogContent = new TokenPanel();
-		guiDialog = new TokenDialog(pipeApplicationView,
-				"Tokens", true, dialogContent);
+		guiDialog = new TokenDialog(pipeApplicationView, "Tokens", true, dialogContent);
 	}
 
 	public void finishBuildingGui()

@@ -156,4 +156,13 @@ public class PetriNet extends Observable implements Serializable
     public void removeAnnotaiton(Annotation annotation) {
         annotations.remove(annotation);
     }
+
+    public Token getToken(String tokenId) {
+        for (Token token : tokens) {
+            if (token.getId().equals(tokenId)) {
+                return token;
+            }
+        }
+        throw new RuntimeException("No token " + tokenId + " exists in petrinet.");
+    }
 }

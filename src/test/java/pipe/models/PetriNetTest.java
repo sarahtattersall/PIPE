@@ -1,11 +1,14 @@
 package pipe.models;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.RateParameter;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,6 +22,9 @@ import static org.mockito.Mockito.verify;
 public class PetriNetTest {
     PetriNet net;
     IObserver mockObserver;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp()
@@ -141,5 +147,22 @@ public class PetriNetTest {
         assertEquals(1, net.getArcs().size());
         net.remove(arc);
         assertTrue(net.getArcs().isEmpty());
+    }
+
+    @Test
+    public void returnsCorrectToken() {
+        String id = "Token1";
+        boolean enabled = true;
+        Color color = new Color(132, 16, 130);
+        Token token = new Token(id, enabled, 0, color);
+        net.addToken(token);
+        assertEquals(token, net.getToken(id));
+    }
+
+    @Test
+    public void throwsErrorIfNoTokenExists() {
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("No token foo exists in petrinet.");
+        net.getToken("foo");
     }
 }

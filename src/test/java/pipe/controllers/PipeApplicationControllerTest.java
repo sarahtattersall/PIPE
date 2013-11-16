@@ -8,11 +8,14 @@ import pipe.gui.CopyPasteManager;
 import pipe.gui.PetriNetTab;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
+import pipe.models.Token;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
 
 
+import java.awt.*;
 import java.io.File;
+import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -56,7 +59,7 @@ public class PipeApplicationControllerTest {
 
         controller.createEmptyPetriNet();
 
-        verify(mockView).addNewTab(eq("Petri net 1"), argThat(new ContainsPetriNetWithOneToken()));
+        verify(mockView).addNewTab(eq("Petri net 1"), argThat(new ContainsPetriNetWithDefaultToken()));
     }
 
     @Test
@@ -79,7 +82,7 @@ public class PipeApplicationControllerTest {
         assertEquals(tabController, controller.getControllerForTab(tab));
     }
 
-    private static class ContainsPetriNetWithOneToken extends ArgumentMatcher<PetriNetTab> {
+    private static class ContainsPetriNetWithDefaultToken extends ArgumentMatcher<PetriNetTab> {
 
         @Override
         public boolean matches(Object argument) {
@@ -90,13 +93,22 @@ public class PipeApplicationControllerTest {
             } else {
                 PetriNetView view = petriNetTabArgument._petriNetView;
                 PetriNet model = view.getModel();
-                return model.getAnnotations().isEmpty() &&
-                       model.getTransitions().isEmpty() &&
-                       model.getPlaces().isEmpty() &&
-                       model.getArcs().isEmpty() &&
-                       model.getRateParameters().isEmpty() &&
-                       model.getTokens().size() == 1 &&
-                       model.getStateGroups().isEmpty();
+                Collection<Token> tokens = model.getTokens();
+                if(tokens.isEmpty() || tokens.size() > 1) {
+                    return false;
+                }
+
+                Token token = tokens.iterator().next();
+                return token.isEnabled() &&
+                        token.getId().equals("Default") &&
+                        token.getColor().equals(Color.BLACK) &&
+                        model.getAnnotations().isEmpty() &&
+                        model.getTransitions().isEmpty() &&
+                        model.getPlaces().isEmpty() &&
+                        model.getArcs().isEmpty() &&
+                        model.getRateParameters().isEmpty() &&
+                        model.getTokens().size() == 1 &&
+                        model.getStateGroups().isEmpty();
             }
         }
     }

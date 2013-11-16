@@ -4,14 +4,14 @@ import pipe.actions.ActionEnum;
 import pipe.actions.ExampleFileAction;
 import pipe.actions.GuiAction;
 import pipe.actions.ZoomAction;
+import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.widgets.FileBrowser;
 import pipe.historyActions.HistoryManager;
 import pipe.io.JarUtilities;
 import pipe.models.PipeApplicationModel;
-import pipe.utilities.transformers.PNMLTransformer;
-import pipe.utilities.transformers.TNTransformer;
+import pipe.models.Token;
 import pipe.utilities.writers.PNMLWriter;
 
 import javax.swing.*;
@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 //
@@ -102,7 +103,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         Grid.enableGrid();
 
         animator = new Animator();
-        setTab();
 
         ModuleManager moduleManager = new ModuleManager();
         JTree moduleTree = moduleManager.getModuleTree();
@@ -121,7 +121,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.applicationModel.setMode(Constants.SELECT);
         this.applicationModel.selectAction.actionPerformed(null);
 
-        applicationController.createEmptyPetriNet();
+        PetriNetTab tab = applicationController.createEmptyPetriNet();
+        applicationController.setActiveTab(tab);
+        setTab();
     }
 
     public JTabbedPane getFrameForPetriNetTabs() {
@@ -500,11 +502,20 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     protected String[] buildTokenClassChoices() {
-        LinkedList<TokenView> tokenViews = getCurrentPetriNetView().getTokenViews();
-        int size = tokenViews.size();
-        String[] tokenClassChoices = new String[size];
-        for (int i = 0; i < size; i++) {
-            tokenClassChoices[i] = tokenViews.get(i).getID();
+//        LinkedList<TokenView> tokenViews = getCurrentPetriNetView().getTokenViews();
+//        int size = tokenViews.size();
+//        for (int i = 0; i < size; i++) {
+//            tokenClassChoices[i] = tokenViews.get(i).getID();
+//        }
+
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        Collection<Token> tokens = petriNetController.getNetTokens();
+        System.out.println("************ TOKENS:  " + tokens.size());
+        String[] tokenClassChoices = new String[tokens.size()];
+        int index = 0;
+        for (Token token : tokens) {
+            tokenClassChoices[index] = token.getId();
+            index++;
         }
         return tokenClassChoices;
     }
@@ -546,24 +557,27 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 }
 
                 PetriNetView _petriNetView = getCurrentPetriNetView();
-                PetriNetTab _appView = getCurrentTab();
+                PetriNetTab petriNetTab = getCurrentTab();
 
-                if (_appView != null) {
-                    _appView.setVisible(true);
-                    _appView.repaint();
+                System.out.println("PETRI NET TAB: " + petriNetTab);
+                applicationController.setActiveTab(petriNetTab);
+                System.out.println("TOKENS FOR TAB: " + applicationController.getActivePetriNetController().getNetTokens().size());
+                if (petriNetTab != null) {
+                    petriNetTab.setVisible(true);
+                    petriNetTab.repaint();
                     updateZoomCombo();
 
                     applicationModel
-                            .enableActions(!_appView.isInAnimationMode(), applicationController.isPasteEnabled());
+                            .enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
 
                     setTitle(getCurrentTab().getName());
                 } else {
                     setTitle(null);
                 }
 
-                if (_petriNetView != null) {
+//                if (_petriNetView != null) {
                     refreshTokenClassChoices();
-                }
+//                }
             }
 
         });
@@ -643,13 +657,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             JOptionPane.showMessageDialog(this, e.toString(), "File Output Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void addNewTab(String name, PetriNetTab tab) {
 
+    public void addNewTab(String name, PetriNetTab tab) {
         JScrollPane scroller = new JScrollPane(tab);
         scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
         frameForPetriNetTabs.addTab(name, null, scroller, null);
         petriNetTabs.add(tab);
-//        frameForPetriNetTabs.setSelectedIndex(freeSpace);
+        frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
     }
 
     /*
@@ -871,9 +885,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
 
     public PetriNetTab getCurrentTab() {
-        if (frameForPetriNetTabs == null) {
-            return null;
-        }
         int index = frameForPetriNetTabs.getSelectedIndex();
         return getTab(index);
     }
@@ -890,9 +901,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     public PetriNetView getCurrentPetriNetView() {
-        if (frameForPetriNetTabs == null) {
-            return null;
-        }
         return getPetriNetView(frameForPetriNetTabs.getSelectedIndex());
     }
 
