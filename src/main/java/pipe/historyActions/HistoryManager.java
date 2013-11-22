@@ -293,21 +293,4 @@ public class HistoryManager
             }
         }
     }
-
-
-    private void debug()
-    {
-        int i = startOfBuffer;
-        System.out.println("");
-        for(int k = 0; k < fillCount; k++)
-        {
-            Iterator<HistoryItem> currentEdit = edits.get(i).iterator();
-            while(currentEdit.hasNext())
-            {
-                System.out.println("[" + i + "]" + currentEdit.next().toString());
-            }
-            i = (i + 1) % UNDO_BUFFER_CAPACITY;
-        }
-    }
-
 }
