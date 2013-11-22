@@ -1,6 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.*;
 import pipe.views.PetriNetView;
@@ -79,6 +80,7 @@ public class PetriNetController implements IController, Serializable {
 
     public void finishCreatingArc(Connectable target) {
         arc.setTarget(target);
+        historyManager.addNewEdit(new AddPetriNetObject(arc, petriNet));
         currentlyCreatingArc = false;
     }
 
