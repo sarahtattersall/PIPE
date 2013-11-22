@@ -318,7 +318,16 @@ public class TokenView extends Observable implements Serializable, IObserver {
 
     @Override
     public String toString() {
-        return _model.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("TokenView: Enabled=");
+        builder.append(_model.isEnabled());
+        builder.append(", Id=");
+        builder.append(_model.getId());
+        builder.append(", Color=");
+        builder.append(_model.getColor());
+        builder.append(", Lock count=");
+        builder.append(_model.getLockCount());
+        return builder.toString();
     }
 
 }

@@ -27,7 +27,7 @@ public class CreateActionTest {
     public void actionPerformed()
     {
         createAction.actionPerformed(null);
-        verify(mockController).createNewTabFromFile(null, false);
+        verify(mockController).createEmptyPetriNet();
     }
 
     @Test
