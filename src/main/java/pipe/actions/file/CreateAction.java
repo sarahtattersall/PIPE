@@ -1,5 +1,6 @@
 package pipe.actions.file;
 
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -13,8 +14,7 @@ public class CreateAction extends FileAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        ApplicationSettings.getApplicationController().createNewTabFromFile(
-                null, false);
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        controller.createEmptyPetriNet();
     }
 }
