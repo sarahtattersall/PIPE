@@ -31,7 +31,6 @@ public class HistoryManager
 
     private final ArrayList<ArrayList> edits = new ArrayList(UNDO_BUFFER_CAPACITY);
 
-    private final PetriNetTab petriNetTab;
     private final PetriNet petriNet;
     private final PipeApplicationModel app;
 
@@ -39,12 +38,11 @@ public class HistoryManager
     /**
      * Creates a new instance of HistoryManager
      * @param petriNetTab
-     * @param _model
+     * @param petriNet
      */
-    public HistoryManager(PetriNetTab petriNetTab, PetriNet _model)
+    public HistoryManager(PetriNet petriNet)
     {
-        this.petriNetTab = petriNetTab;
-        this.petriNet = _model;
+        this.petriNet = petriNet;
         app = ApplicationSettings.getApplicationModel();
         app.setUndoActionEnabled(false);
         app.setRedoActionEnabled(false);
@@ -253,7 +251,7 @@ public class HistoryManager
                     ArcView anArc = (ArcView) arcsTo.next();
                     if(!anArc.isDeleted())
                     {
-                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNetTab, petriNet));
+                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNet));
                     }
                 }
                 //
@@ -264,7 +262,7 @@ public class HistoryManager
                     ArcView anArc = (ArcView) arcsFrom.next();
                     if(!anArc.isDeleted())
                     {
-                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNetTab, petriNet));
+                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNet));
                     }
                 }
 
@@ -278,7 +276,7 @@ public class HistoryManager
                         addEdit(((NormalArcView) pn).split());
                         NormalArcView inverse = ((NormalArcView) pn).getInverse();
                         addEdit(((NormalArcView) pn).clearInverse());
-                        addEdit(new DeletePetriNetObject(inverse.getModel(), petriNetTab, petriNet));
+                        addEdit(new DeletePetriNetObject(inverse.getModel(), petriNet));
                         inverse.delete();
                     }
                     else

@@ -9,6 +9,7 @@ import pipe.gui.CopyPasteManager;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.MouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
+import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
 import pipe.models.Token;
@@ -97,7 +98,7 @@ public class PipeApplicationController
     }
 
     private PetriNetTab createNewTab(PetriNet net) {
-        PetriNetController controller = new PetriNetController(net);
+        PetriNetController controller = new PetriNetController(net, new HistoryManager(net));
         PetriNetView view = new PetriNetView(controller, net);
 
         PetriNetTab petriNetTab = new PetriNetTab(view, controller);

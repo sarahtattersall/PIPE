@@ -4,6 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
+import pipe.historyActions.HistoryManager;
 import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
@@ -24,7 +25,8 @@ public class DeleteAction extends GuiAction
         //TODO: Ensure this works
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController =  controller.getActivePetriNetController();
-        petriNetController.getHistoryManager().newEdit();
+        HistoryManager historyManager = petriNetController.getHistoryManager();
+//        petriNetController.getHistoryManager().newEdit();
         petriNetController.getHistoryManager().deleteSelection(appView.getSelectionObject().getSelection());
         appView.getSelectionObject().deleteSelection();
     }

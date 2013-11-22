@@ -2,9 +2,9 @@ package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
 import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.*;
-import pipe.views.PetriNetView;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -27,11 +27,9 @@ public class PetriNetController implements IController, Serializable {
     //THis needs to be moved into its own logical class
     private Connectable source;
 
-    public PetriNetController(PetriNet model) {
+    public PetriNetController(PetriNet model, HistoryManager historyManager) {
         petriNet = model;
-        //TODO: Passing null in because I want to remove PetriNetTab from History manager
-        // It's too big a job to do in current commit
-        historyManager = new HistoryManager(null, model);
+        this.historyManager = historyManager;
     }
 
     public void addArcPoint(double x, double y, boolean shiftDown) {
@@ -188,9 +186,17 @@ public class PetriNetController implements IController, Serializable {
         }
     }
 
+    /**
+     * Deletes selection and adds to history manager
+     */
     public void deleteSelection() {
+        historyManager.newEdit();
+
         for (PetriNetComponent component : selectedComponents) {
             petriNet.remove(component);
+
+            DeletePetriNetObject deleteAction = new DeletePetriNetObject(component, petriNet);
+            historyManager.addEdit(deleteAction);
         }
         selectedComponents.clear();
         petriNet.notifyObservers();

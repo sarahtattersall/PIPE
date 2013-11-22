@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
+import pipe.historyActions.DeletePetriNetObject;
+import pipe.historyActions.HistoryManager;
 import pipe.models.*;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
@@ -23,13 +25,16 @@ public class PetriNetControllerTest {
 
     private PetriNet net;
 
+    private HistoryManager mockHistoryManager;
+
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() {
         net = new PetriNet();
-        controller = new PetriNetController(net);
+        mockHistoryManager = mock(HistoryManager.class);
+        controller = new PetriNetController(net, mockHistoryManager);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.
@@ -76,6 +81,20 @@ public class PetriNetControllerTest {
         controller.select(place);
         controller.deleteSelection();
         assertFalse(net.getPlaces().contains(place));
+    }
+
+    @Test
+    public void deletingSelectionAddsToHistoryManager() {
+        Place place = new Place("", "");
+        net.addPlace(place);
+
+        controller.select(place);
+        controller.deleteSelection();
+
+        DeletePetriNetObject deleteAction = new DeletePetriNetObject(place, net);
+
+        verify(mockHistoryManager).newEdit();
+        verify(mockHistoryManager).addEdit(deleteAction);
     }
 
     @Test
@@ -283,6 +302,8 @@ public class PetriNetControllerTest {
         assertEquals(enabled, token.isEnabled());
         assertEquals(color, token.getColor());
     }
+
+
 
     private class DummyPetriNetComponent implements PetriNetComponent {
         @Override
