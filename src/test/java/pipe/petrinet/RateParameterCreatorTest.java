@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.gui.Constants;
+import pipe.petrinet.reader.creator.RateParameterCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.viewComponents.RateParameter;
 

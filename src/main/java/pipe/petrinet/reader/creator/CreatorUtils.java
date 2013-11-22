@@ -1,4 +1,4 @@
-package pipe.petrinet;
+package pipe.petrinet.reader.creator;
 
 public class CreatorUtils {
     /**

@@ -5,6 +5,7 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 import java.io.Serializable;
 import java.util.Map;
 
+@Pnml("arc")
 public class NormalArc extends Arc  implements Serializable
 {
 

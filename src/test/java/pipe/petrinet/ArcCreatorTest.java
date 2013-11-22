@@ -8,11 +8,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.*;
+import pipe.petrinet.reader.creator.ArcCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertNull;

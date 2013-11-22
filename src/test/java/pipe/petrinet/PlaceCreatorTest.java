@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.Place;
 import pipe.models.Token;
+import pipe.petrinet.reader.creator.PlaceCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 
 import java.awt.*;
@@ -18,9 +19,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class PlaceCreatorTest {
-    PlaceCreator creator;
-    Element placeElement;
-    Map<String, Token> tokens = new HashMap<String, Token>();
+    private PlaceCreator creator;
+    private Map<String, Token> tokens = new HashMap<String, Token>();
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -30,14 +30,20 @@ public class PlaceCreatorTest {
      */
     private static final double DOUBLE_DELTA = 0.001;
 
-    @Before
-    public void setUp()
-    {
+    private Element getSinglePlaceElement() {
+        return getElementForFile("src/test/resources/xml/place/singlePlace.xml");
+    }
+
+    private Element getPlaceElementNoTokens() {
+        return getElementForFile("src/test/resources/xml/place/noTokenPlace.xml");
+    }
+
+    private Element getElementForFile(String file) {
         PNMLTransformer transformer = new PNMLTransformer();
-        Document document = transformer.transformPNML("src/test/resources/xml/place/singlePlace.xml");
+        Document document = transformer.transformPNML(file);
         Element rootElement = document.getDocumentElement();
         NodeList nodes = rootElement.getChildNodes();
-        placeElement = (Element) nodes.item(1);
+        return (Element) nodes.item(1);
     }
 
     @Test
@@ -46,6 +52,7 @@ public class PlaceCreatorTest {
         addDefaultTokenToTokens();
         creator.setTokens(tokens);
 
+        Element placeElement = getSinglePlaceElement();
         Place place = creator.create(placeElement);
 
         assertNotNull(place);
@@ -68,6 +75,8 @@ public class PlaceCreatorTest {
         expectedEx.expectMessage("No Default token exists!");
 
         creator = new PlaceCreator();
+
+        Element placeElement = getSinglePlaceElement();
         creator.create(placeElement);
     }
 
@@ -87,11 +96,25 @@ public class PlaceCreatorTest {
 
         creator = new PlaceCreator();
         creator.setTokens(tokens);
+
+        Element placeElement = getSinglePlaceElement();
         Place place = creator.create(placeElement);
         Map<Token, Integer> counts = place.getTokenCounts();
 
         assertTrue(counts.containsKey(defaultToken));
         Integer count = counts.get(defaultToken);
         assertEquals(1, count.intValue());
+    }
+
+    @Test
+    public void createsMarkingIfNoTokensSet() {
+
+        creator = new PlaceCreator();
+        creator.setTokens(tokens);
+
+        Element placeElement = getPlaceElementNoTokens();
+        Place place = creator.create(placeElement);
+        Map<Token, Integer> counts = place.getTokenCounts();
+        assertTrue(counts.isEmpty());
     }
 }

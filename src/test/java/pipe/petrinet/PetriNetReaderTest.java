@@ -7,12 +7,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.*;
+import pipe.petrinet.reader.*;
+import pipe.petrinet.reader.creator.*;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

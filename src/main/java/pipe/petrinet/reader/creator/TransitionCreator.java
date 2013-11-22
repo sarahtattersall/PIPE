@@ -1,7 +1,6 @@
-package pipe.petrinet;
+package pipe.petrinet.reader.creator;
 
 import org.w3c.dom.Element;
-import pipe.gui.Grid;
 import pipe.models.Transition;
 import pipe.views.viewComponents.RateParameter;
 

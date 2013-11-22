@@ -1,13 +1,10 @@
 package pipe.models;
 
-import pipe.gui.ZoomController;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class Place extends Connectable implements Serializable
@@ -16,15 +13,19 @@ public class Place extends Connectable implements Serializable
     /**
      * Marking x offset relative to the place x coordinate
      */
+    @Pnml("markingOffsetX")
     double markingXOffset = 0;
 
     /**
      * Marking y offset relative to the place y coordinate
      */
+    @Pnml("markingOffsetY")
     double markingYOffset = 0;
+
     /**
      * Place capacity
      */
+    @Pnml("capacity")
     double capacity = 0;
 
     /**
@@ -35,8 +36,8 @@ public class Place extends Connectable implements Serializable
     /**
      * Place tokens
      */
-//    List<Marking> tokens =  new LinkedList<Marking>();
-    Map<Token, Integer> tokenCount = new HashMap<Token, Integer>();
+    @Pnml("initialMarking")
+    Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
 
     public Place(String id, String name)
     {
@@ -138,11 +139,11 @@ public class Place extends Connectable implements Serializable
     }
 
     public Map<Token, Integer> getTokenCounts() {
-        return tokenCount;
+        return tokenCounts;
     }
 
     public void setTokenCounts(Map<Token, Integer> tokenCounts) {
-        this.tokenCount = tokenCounts;
+        this.tokenCounts = tokenCounts;
     }
 
     /**
@@ -151,27 +152,27 @@ public class Place extends Connectable implements Serializable
      */
     public void incrementTokenCount(Token token) {
         Integer count;
-        if (tokenCount.containsKey(token)) {
-            count = tokenCount.get(token);
+        if (tokenCounts.containsKey(token)) {
+            count = tokenCounts.get(token);
             count++;
         } else
         {
             count = 1;
         }
-        tokenCount.put(token, count);
+        tokenCounts.put(token, count);
 
     }
 
     public int getTokenCount(Token token) {
-        return tokenCount.get(token);
+        return tokenCounts.get(token);
     }
 
     public void decrementTokenCount(Token token) {
         Integer count;
-        if (tokenCount.containsKey(token)) {
-            count = tokenCount.get(token);
+        if (tokenCounts.containsKey(token)) {
+            count = tokenCounts.get(token);
             count--;
-            tokenCount.put(token, count);
+            tokenCounts.put(token, count);
         }
     }
 

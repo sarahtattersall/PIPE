@@ -259,4 +259,8 @@ public class PetriNetController implements IController, Serializable {
     public HistoryManager getHistoryManager() {
         return historyManager;
     }
+
+    public PetriNet getPetriNet() {
+        return petriNet;
+    }
 }

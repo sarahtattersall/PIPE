@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.common.dataLayer.StateElement;
 import pipe.common.dataLayer.StateGroup;
+import pipe.petrinet.reader.creator.StateGroupCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 
 import static org.junit.Assert.assertEquals;

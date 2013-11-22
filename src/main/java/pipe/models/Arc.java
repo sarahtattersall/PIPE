@@ -1,17 +1,20 @@
 package pipe.models;
 
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public abstract class Arc extends Observable implements PetriNetComponent, Serializable
 {
+
+    @Pnml("source")
     private Connectable source;
+
+    @Pnml("target")
     private Connectable target;
+
+    @Pnml("id")
     private String id;
 
     private boolean tagged = false;
@@ -22,18 +25,19 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
      */
-    private Map<Token, String> arcWeights = new HashMap<Token, String>();
+    @Pnml("inscription")
+    private Map<Token, String> tokenWeights = new HashMap<Token, String>();
 
-    public Arc(Connectable source, Connectable target, Map<Token, String> arcWeights)
+    public Arc(Connectable source, Connectable target, Map<Token, String> tokenWeights)
     {
         this.source = source;
         this.target = target;
-        this.arcWeights = arcWeights;
+        this.tokenWeights = tokenWeights;
     }
 
     public Map<Token, String> getTokenWeights()
     {
-        return arcWeights;
+        return tokenWeights;
     }
 
     public Connectable getSource()

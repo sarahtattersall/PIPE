@@ -636,8 +636,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     // Steve Doubleday:  public to simplify testing
     public void saveNet(File outFile, boolean saveFunctional) {
         try {
-            PNMLWriter saveModel = new PNMLWriter(getCurrentPetriNetView());
-            saveModel.saveTo(outFile, saveFunctional);
+
+            applicationController.saveCurrentPetriNet(outFile, saveFunctional);
+//
+//            PNMLWriter saveModel = new PNMLWriter(getCurrentPetriNetView());
+//            saveModel.saveTo(outFile, saveFunctional);
 
             setFile(outFile, frameForPetriNetTabs.getSelectedIndex());
             PetriNetTab currentTab = getCurrentTab();

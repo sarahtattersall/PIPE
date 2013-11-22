@@ -16,12 +16,18 @@ import java.util.List;
 
 public class Token extends Observable implements Serializable, PetriNetComponent
 {
+
+    @Pnml("id")
     private String id;
+
+    @Pnml("enabled")
     private boolean enabled;
+
     private int currentMarking;
     private int lockCount = 0; // So that users cannot change this class while
     // places are marked with it
 
+    @Pnml("color")
     private Color color;
     private Matrix incidenceMatrix;
     private Matrix forwardsIncidenceMatrix;
@@ -91,17 +97,7 @@ public class Token extends Observable implements Serializable, PetriNetComponent
 	@Override
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer(); 
-		sb.append("TokenView:");
-		sb.append(" Enabled=");
-		sb.append(isEnabled());
-		sb.append(", Id=");
-		sb.append(getId());
-		sb.append(", Color=");
-		sb.append(getColor());
-		sb.append(", Lock count=");
-		sb.append(getLockCount());
-		return sb.toString();
+		return getId();
 	}
 
     public Color getColor()

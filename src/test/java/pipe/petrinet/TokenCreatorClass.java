@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.Token;
+import pipe.petrinet.reader.creator.TokenCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 
 import java.awt.*;

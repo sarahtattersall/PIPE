@@ -1,4 +1,4 @@
-package pipe.petrinet;
+package pipe.petrinet.reader.creator;
 
 import org.w3c.dom.Element;
 import pipe.models.Place;
@@ -18,20 +18,22 @@ public class PlaceCreator implements ComponentCreator<Place> {
 
     private Map<Token, Integer> getTokenCounts(String input) {
         Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
-        String[] tokenInput = input.split(",");
-         if (tokenInput.length == 1)
-         {
-            Token defaultToken = getDefaultToken();
-            Integer count = Integer.valueOf(tokenInput[0]);
-            tokenCounts.put(defaultToken, count);
-         } else {
-             for(int i = 0; i < tokenInput.length; i += 2) {
-                 String tokenName = tokenInput[i].trim();
-                 Token token = getTokenIfExists(tokenName);
-                 Integer count = Integer.valueOf(tokenInput[i+1]);
-                 tokenCounts.put(token, count);
-             }
-         }
+
+        if (!input.isEmpty()) {
+            String[] tokenInput = input.split(",");
+            if (tokenInput.length == 1) {
+                Token defaultToken = getDefaultToken();
+                Integer count = Integer.valueOf(tokenInput[0]);
+                tokenCounts.put(defaultToken, count);
+            } else {
+                for (int i = 0; i < tokenInput.length; i += 2) {
+                    String tokenName = tokenInput[i].trim();
+                    Token token = getTokenIfExists(tokenName);
+                    Integer count = Integer.valueOf(tokenInput[i + 1]);
+                    tokenCounts.put(token, count);
+                }
+            }
+        }
         return tokenCounts;
     }
 
@@ -40,7 +42,6 @@ public class PlaceCreator implements ComponentCreator<Place> {
     }
 
     /**
-     *
      * @param tokenName
      * @return Token for string tokenName if it exists
      * @throws RuntimeException if it does not exist
@@ -54,8 +55,7 @@ public class PlaceCreator implements ComponentCreator<Place> {
         return token;
     }
 
-    public Place create(Element element)
-    {
+    public Place create(Element element) {
         String xInput = element.getAttribute("positionX");
         double x = xInput.isEmpty() ? 0 : Double.valueOf(xInput);
 
@@ -82,7 +82,7 @@ public class PlaceCreator implements ComponentCreator<Place> {
 //        Token token = getToken();
 
 
-        double capacity =  CreatorUtils.zeroOrValueOf(element.getAttribute("capacity"));
+        double capacity = CreatorUtils.zeroOrValueOf(element.getAttribute("capacity"));
 
         Place place = new Place(id, name);
         place.setX(x);

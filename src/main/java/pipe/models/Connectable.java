@@ -1,7 +1,5 @@
 package pipe.models;
 
-import pipe.views.ArcView;
-
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
@@ -17,36 +15,42 @@ public abstract class Connectable extends Observable implements Serializable, Pe
     /**
      * Connectable position x
      */
+    @Pnml("positionX")
     double x = 0;
 
     /**
      * Connectable position y
      */
+    @Pnml("positionY")
     double y = 0;
 
     /**
      * Connectable id
      */
-    private String _id;
+    @Pnml("id")
+    private String id;
 
     /**
      * Connectable name
      */
-    private String _name;
+    @Pnml("name")
+    private String name;
 
     /**
      * Connectable name x offset relative to its x coordinate
      */
+    @Pnml("nameOffsetX")
     protected double nameXOffset = -5;
 
     /**
      * Connectable name y offset relative to its y coordinate
      */
+    @Pnml("nameOffsetY")
     protected double nameYOffset = 35;
 
     protected Connectable(String id, String name) {
-        _id = id;
-        _name = name;
+        this.id = id;
+        this.name = name;
     }
 
     public double getNameXOffset() {
@@ -100,11 +104,11 @@ public abstract class Connectable extends Observable implements Serializable, Pe
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public String getId() {
-        return _id;
+        return id;
     }
 
     public double getX() {
@@ -156,5 +160,10 @@ public abstract class Connectable extends Observable implements Serializable, Pe
      *         I.e it is not a temporary connectable
      */
     public abstract boolean isEndPoint();
+
+    @Override
+    public String toString() {
+        return id;
+    }
 
 }

@@ -14,12 +14,24 @@ import java.io.Serializable;
  */
 public class Transition extends Connectable implements Serializable
 {
+
+    @Pnml("priority")
     private int priority;
+
+    @Pnml("rate")
 	private String rateExpr;
+
     private int orientation = 0;
+
+    @Pnml("timed")
     private boolean timed = false;
+
+    @Pnml("infiniteServer")
     private boolean infiniteServer = false;
+
+    @Pnml("angle")
     private int angle = 0;
+
     private boolean timedTransition;
     private RateParameter rateParameter;
 

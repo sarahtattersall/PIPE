@@ -13,13 +13,18 @@ import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
 import pipe.models.Token;
-import pipe.petrinet.*;
+import pipe.petrinet.reader.*;
+import pipe.petrinet.reader.creator.*;
+import pipe.petrinet.writer.PetriNetWriter;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
 import pipe.views.PetriNetView;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -198,5 +203,15 @@ public class PipeApplicationController
 
     public PetriNetController getActivePetriNetController() {
         return netControllers.get(activeTab);  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void saveCurrentPetriNet(File outFile, boolean saveFunctional) throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        PetriNetController petriNetController =  getActivePetriNetController();
+        PetriNet petriNet = petriNetController.getPetriNet();
+
+
+        //TODO: WORK OUT WHAT TO DO WITH SAVE FUNCTIONAL
+        PetriNetWriter writer = new PetriNetWriter();
+        writer.writeToFile(petriNet, outFile.getAbsolutePath());
     }
 }
