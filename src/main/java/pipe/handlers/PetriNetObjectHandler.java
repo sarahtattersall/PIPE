@@ -136,7 +136,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
             if(isDragging)
             {
                 isDragging = false;
-                ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().translateSelection(
+                petriNetController.getHistoryManager().translateSelection(
                         ((PetriNetTab) contentPane).getSelectionObject().getSelection(),
                         totalX,
                         totalY);

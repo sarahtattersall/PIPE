@@ -1,6 +1,7 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.handlers.mouse.MouseUtilities;
 import pipe.historyActions.AddPetriNetObject;
@@ -65,7 +66,7 @@ public class MouseHandler extends MouseInputAdapter
         return id;
     }
 
-    private ConnectableView newPlace(Point p)
+    private Place newPlace(Point p)
     {
         p = adjustPoint(p, _petriNetTab.getZoom());
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
@@ -76,14 +77,14 @@ public class MouseHandler extends MouseInputAdapter
         place.setY(Grid.getModifiedY(p.y));
 
 
-        PlaceViewBuilder builder = new PlaceViewBuilder(place, petriNetController);
-        PlaceView view = builder.build();
-        place.registerObserver(view);
+//        PlaceViewBuilder builder = new PlaceViewBuilder(place, petriNetController);
+//        PlaceView view = builder.build();
+//        place.registerObserver(view);
 
         petriNet.addPlace(place);
         petriNet.notifyObservers();
 
-        return (ConnectableView) pn;
+        return place;
     }
 
 
@@ -95,7 +96,7 @@ public class MouseHandler extends MouseInputAdapter
 
     }
 
-    private ConnectableView newTransition(Point p, boolean timed)
+    private Transition newTransition(Point p, boolean timed)
     {
         p = adjustPoint(p, _petriNetTab.getZoom());
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
@@ -108,7 +109,7 @@ public class MouseHandler extends MouseInputAdapter
         petriNet.addTransition(transition);
         petriNet.notifyObservers();
 
-        return (ConnectableView) pn;
+        return transition;
     }
 
 
@@ -124,8 +125,8 @@ public class MouseHandler extends MouseInputAdapter
             switch(mode)
             {
                 case Constants.PLACE:
-                    ConnectableView pto = newPlace(e.getPoint());
-                    _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pto, _petriNetTab, petriNetView));
+                    PetriNetComponent pto = newPlace(e.getPoint());
+                    petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(pto, petriNet));
                     if(e.isControlDown())
                     {
                         applicationModel.enterFastMode(Constants.FAST_TRANSITION);
@@ -137,7 +138,7 @@ public class MouseHandler extends MouseInputAdapter
                 case Constants.TIMEDTRANS:
                     boolean timed = (mode == Constants.TIMEDTRANS);
                     pto = newTransition(e.getPoint(), timed);
-                    _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pto, _petriNetTab, petriNetView));
+                    petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(pto, petriNet));
                     if(e.isControlDown())
                     {
                         applicationModel.enterFastMode(Constants.FAST_PLACE);
@@ -152,12 +153,12 @@ public class MouseHandler extends MouseInputAdapter
                     break;
 
                 case Constants.ANNOTATION:
-                    p = adjustPoint(e.getPoint(), _petriNetTab.getZoom());
-                    pn = new AnnotationNote(p.x, p.y);
-                    petriNetView.addPetriNetObject(pn);
-                    _petriNetTab.addNewPetriNetObject(pn);
-                    _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, _petriNetTab, petriNetView));
-                    ((AnnotationNote) pn).enableEditMode();
+//                    p = adjustPoint(e.getPoint(), _petriNetTab.getZoom());
+//                    pn = new AnnotationNote(p.x, p.y);
+//                    petriNetView.addPetriNetObject(pn);
+//                    _petriNetTab.addNewPetriNetObject(pn);
+//                    _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, _petriNetTab, petriNet));
+//                    ((AnnotationNote) pn).enableEditMode();
                     break;
 
                 case Constants.RATE:
@@ -176,11 +177,11 @@ public class MouseHandler extends MouseInputAdapter
 
                         p = adjustPoint(e.getPoint(), _petriNetTab.getZoom());
 
-                        pn = new RateParameter(label,Double.parseDouble(value), p.x, p.y);
-                        petriNetView.addPetriNetObject(pn);
-                        _petriNetTab.addNewPetriNetObject(pn);
-                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, _petriNetTab,
-                                petriNetView));
+//                        pn = new RateParameter(label,Double.parseDouble(value), p.x, p.y);
+//                        petriNetView.addPetriNetObject(pn);
+//                        _petriNetTab.addNewPetriNetObject(pn);
+//                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, _petriNetTab,
+//                                petriNetView));
                     }
                     catch(NumberFormatException nfe)
                     {
@@ -198,7 +199,7 @@ public class MouseHandler extends MouseInputAdapter
                     break;
 
                 case Constants.FAST_PLACE:
-                    ConnectableView createPTO;
+                    PetriNetComponent createPTO;
                     if(e.isMetaDown() || _petriNetTab.isMetaDown())
                     {
                         if(petriNetController.isCurrentlyCreatingArc())
@@ -212,8 +213,7 @@ public class MouseHandler extends MouseInputAdapter
                             break;
                         _petriNetTab._wasNewPertiNetComponentCreated = true;
                         createPTO = newPlace(e.getPoint());
-                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(createPTO, _petriNetTab,
-                                petriNetView));
+                        petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(createPTO, petriNet));
                         pn.getMouseListeners()[0].mouseReleased(e);
                         if(e.isControlDown())
                         {
@@ -240,8 +240,7 @@ public class MouseHandler extends MouseInputAdapter
                         if(applicationModel.getOldMode() == Constants.TIMEDTRANS)
                             timed = !timed;
                         createPTO = newTransition(e.getPoint(), timed);
-                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(createPTO, _petriNetTab,
-                                petriNetView));
+                        petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(createPTO, petriNet));
                         pn.getMouseListeners()[0].mouseReleased(e);
                         if(e.isControlDown())
                         {

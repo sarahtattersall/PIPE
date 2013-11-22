@@ -35,7 +35,10 @@ public class GroupTransitionsAction extends GuiAction
         * should all be done as a single undo transaction.
         */
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        applicationView.getCurrentTab().getHistoryManager().clear();
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        petriNetController.getHistoryManager().clear();
+
         LinkedList<GroupTransitionView> newGroupTransitionViews = new LinkedList<GroupTransitionView>();
         System.out.println(applicationView.getCurrentPetriNetView().getTokenViews().size());
         if(applicationView.getCurrentPetriNetView().getTokenViews().size() > 1)
@@ -94,9 +97,6 @@ public class GroupTransitionsAction extends GuiAction
                                 if(!transitionViews[i].isGrouped())
                                 {
 
-                                    PipeApplicationController controller = ApplicationSettings.getApplicationController();
-                                    PetriNetController netController = controller.getControllerForTab(petriNetTab);
-
                                     // Add new input arcs to our new Grouped transition
                                     LinkedList<ArcView> arcsTo = transitionViews[i].inboundArcs();
                                     for(ArcView tempArcView : arcsTo)
@@ -107,7 +107,7 @@ public class GroupTransitionsAction extends GuiAction
                                                                                tempArcView.getArcPath().getPoint(1).getY(),
                                                                                tempArcView.getSource(),
                                                                                newGroupTransitionView,
-                                                                               new LinkedList<MarkingView>(), "", false, new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(), new HashMap<Token, String>()), netController);
+                                                                               new LinkedList<MarkingView>(), "", false, new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(), new HashMap<Token, String>()), petriNetController);
                                         newGroupTransitionView.addInbound(newArcView);
                                         tempArcView.getSource().addOutbound(newArcView);
                                         newArcView.addToView(petriNetTab);
@@ -118,7 +118,7 @@ public class GroupTransitionsAction extends GuiAction
                                     {
                                         ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
                                                                                tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(), newGroupTransitionView, tempArcView.getTarget(),
-                                                                               new LinkedList<MarkingView>(), "", false,  new NormalArc(newGroupTransitionView.getModel(),tempArcView.getSource().getModel(), new HashMap<Token, String>()), netController);
+                                                                               new LinkedList<MarkingView>(), "", false,  new NormalArc(newGroupTransitionView.getModel(),tempArcView.getSource().getModel(), new HashMap<Token, String>()), petriNetController);
                                         newGroupTransitionView.addOutbound(newArcView);
                                         tempArcView.getTarget().addInbound(newArcView);
                                         newArcView.addToView(petriNetTab);

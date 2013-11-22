@@ -6,6 +6,7 @@ package pipe.historyActions;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
+import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
 import pipe.views.*;
 import pipe.views.viewComponents.ArcPathPoint;
@@ -30,20 +31,20 @@ public class HistoryManager
 
     private final ArrayList<ArrayList> edits = new ArrayList(UNDO_BUFFER_CAPACITY);
 
-    private final PetriNetTab _view;
-    private final PetriNetView _model;
+    private final PetriNetTab petriNetTab;
+    private final PetriNet petriNet;
     private final PipeApplicationModel app;
 
 
     /**
      * Creates a new instance of HistoryManager
-     * @param _view
+     * @param petriNetTab
      * @param _model
      */
-    public HistoryManager(PetriNetTab _view, PetriNetView _model)
+    public HistoryManager(PetriNetTab petriNetTab, PetriNet _model)
     {
-        this._view = _view;
-        this._model = _model;
+        this.petriNetTab = petriNetTab;
+        this.petriNet = _model;
         app = ApplicationSettings.getApplicationModel();
         app.setUndoActionEnabled(false);
         app.setRedoActionEnabled(false);
@@ -133,7 +134,7 @@ public class HistoryManager
         undoneEdits = 0;
         app.setUndoActionEnabled(true);
         app.setRedoActionEnabled(false);
-        _view.setNetChanged(true);
+//        petriNetTab.setNetChanged(true);
 
         ArrayList<HistoryItem> compoundEdit = new ArrayList();
         edits.set(freePosition, compoundEdit);
@@ -207,14 +208,14 @@ public class HistoryManager
     private void checkArcBeingDrawn()
     {
         //TODO: WORK OUT WAHT THIS DOS
-//        ArcView arcBeingDrawn = _view._createArcView;
+//        ArcView arcBeingDrawn = petriNetTab._createArcView;
 //        if(arcBeingDrawn != null)
 //        {
 //            if(arcBeingDrawn.getParent() != null)
 //            {
 //                arcBeingDrawn.getParent().remove(arcBeingDrawn);
 //            }
-//            _view._createArcView = null;
+//            petriNetTab._createArcView = null;
 //        }
     }
 
@@ -252,7 +253,7 @@ public class HistoryManager
                     ArcView anArc = (ArcView) arcsTo.next();
                     if(!anArc.isDeleted())
                     {
-                        addEdit(new DeletePetriNetObject(anArc, _view, _model));
+                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNetTab, petriNet));
                     }
                 }
                 //
@@ -263,7 +264,7 @@ public class HistoryManager
                     ArcView anArc = (ArcView) arcsFrom.next();
                     if(!anArc.isDeleted())
                     {
-                        addEdit(new DeletePetriNetObject(anArc, _view, _model));
+                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNetTab, petriNet));
                     }
                 }
 
@@ -277,7 +278,7 @@ public class HistoryManager
                         addEdit(((NormalArcView) pn).split());
                         NormalArcView inverse = ((NormalArcView) pn).getInverse();
                         addEdit(((NormalArcView) pn).clearInverse());
-                        addEdit(new DeletePetriNetObject(inverse, _view, _model));
+                        addEdit(new DeletePetriNetObject(inverse.getModel(), petriNetTab, petriNet));
                         inverse.delete();
                     }
                     else
@@ -289,8 +290,9 @@ public class HistoryManager
 
             if(!pn.isDeleted())
             {
-                addEdit(new DeletePetriNetObject(pn, _view, _model));
-                pn.delete();
+                //TODO: COMMENT BACK IN
+//                addEdit(new DeletePetriNetObject(pn, petriNetTab, petriNet));
+//                pn.delete();
             }
         }
     }

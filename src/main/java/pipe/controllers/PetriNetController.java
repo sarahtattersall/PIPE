@@ -1,6 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.historyActions.HistoryManager;
 import pipe.models.*;
 import pipe.views.PetriNetView;
 
@@ -11,6 +12,7 @@ import java.util.*;
 
 public class PetriNetController implements IController, Serializable {
 
+    private final HistoryManager historyManager;
     private final PetriNet petriNet;
     private int placeNumber = 0;
     private int transitionNumber = 0;
@@ -26,6 +28,9 @@ public class PetriNetController implements IController, Serializable {
 
     public PetriNetController(PetriNet model) {
         petriNet = model;
+        //TODO: Passing null in because I want to remove PetriNetTab from History manager
+        // It's too big a job to do in current commit
+        historyManager = new HistoryManager(null, model);
     }
 
     public void addArcPoint(double x, double y, boolean shiftDown) {
@@ -241,5 +246,9 @@ public class PetriNetController implements IController, Serializable {
 
     public void updateToken(String currentTokenName, String name, Boolean enabled, Color color) {
         petriNet.getToken(currentTokenName);
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 }

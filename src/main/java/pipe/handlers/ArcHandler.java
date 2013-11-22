@@ -242,11 +242,9 @@ public class ArcHandler
       
       public void actionPerformed(ActionEvent e) {
          if (joined) {
-             ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-                    _arcView.split());
+            petriNetController.getHistoryManager().addNewEdit(_arcView.split());
          } else {
-             ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-                    _arcView.join());
+             petriNetController.getHistoryManager().addNewEdit(_arcView.join());
          }
       }
       
@@ -269,7 +267,7 @@ public class ArcHandler
       
       
       public void actionPerformed(ActionEvent e) {
-          HistoryManager historyManager = ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
+          HistoryManager historyManager = petriNetController.getHistoryManager();
          
          if (switchArcs) {
             historyManager.addNewEdit(_arcView.split());

@@ -1,6 +1,7 @@
 package pipe.models;
 
 import pipe.common.dataLayer.StateGroup;
+import pipe.models.visitor.PetriNetComponentAddVisitor;
 import pipe.models.visitor.PetriNetComponentRemovalVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
@@ -24,6 +25,7 @@ public class PetriNet extends Observable implements Serializable
 
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
+    private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
 
     public String getPnmlName()
     {
@@ -164,5 +166,9 @@ public class PetriNet extends Observable implements Serializable
             }
         }
         throw new RuntimeException("No token " + tokenId + " exists in petrinet.");
+    }
+
+    public void add(PetriNetComponent component) {
+        component.accept(addVisitor);
     }
 }

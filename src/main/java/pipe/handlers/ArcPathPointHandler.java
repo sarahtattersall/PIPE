@@ -97,7 +97,8 @@ public class ArcPathPointHandler
       }
       
       if (e.isShiftDown()) {
-          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
+          //TODO: PASS THIS IN!
+          ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager().addNewEdit(
                  ((ArcPathPoint) component).togglePointType());
       }
    }  

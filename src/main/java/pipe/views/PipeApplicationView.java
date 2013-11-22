@@ -510,7 +510,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Collection<Token> tokens = petriNetController.getNetTokens();
-        System.out.println("************ TOKENS:  " + tokens.size());
         String[] tokenClassChoices = new String[tokens.size()];
         int index = 0;
         for (Token token : tokens) {
@@ -559,9 +558,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 PetriNetView _petriNetView = getCurrentPetriNetView();
                 PetriNetTab petriNetTab = getCurrentTab();
 
-                System.out.println("PETRI NET TAB: " + petriNetTab);
                 applicationController.setActiveTab(petriNetTab);
-                System.out.println("TOKENS FOR TAB: " + applicationController.getActivePetriNetController().getNetTokens().size());
                 if (petriNetTab != null) {
                     petriNetTab.setVisible(true);
                     petriNetTab.repaint();
@@ -648,7 +645,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             String name = outFile.getName().split(".xml")[0];
             frameForPetriNetTabs.setTitleAt(frameForPetriNetTabs.getSelectedIndex(), name);
             setTitle(outFile.getName());
-            currentTab.getHistoryManager().clear();
+            //TODO: WHY CLEAR THIS?
+//            currentTab.getHistoryManager().clear();
             applicationModel.undoAction.setEnabled(false);
             applicationModel.redoAction.setEnabled(false);
         } catch (Exception e) {
@@ -887,10 +885,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public PetriNetTab getCurrentTab() {
         int index = frameForPetriNetTabs.getSelectedIndex();
         return getTab(index);
-    }
-
-    public HistoryManager getCurrentHistoryManager() {
-        return getCurrentTab().getHistoryManager();
     }
 
     PetriNetTab getTab(int index) {

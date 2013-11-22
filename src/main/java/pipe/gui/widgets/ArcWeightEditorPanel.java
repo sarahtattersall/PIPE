@@ -3,6 +3,8 @@ package pipe.gui.widgets;
 import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.utilities.Copier;
@@ -372,10 +374,12 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 				}
 			}
 		}
-		
-		
-		
-	    _view.getHistoryManager().newEdit(); // new "transaction""
+
+
+
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+	    petriNetController.getHistoryManager().newEdit(); // new "transaction""
 	    int totalMarking = 0;
 		for (int i = 0; i < inputtedWeights.size(); i++) {
 			String tokenClassName = inputtedTokenClassNames.get(i);
@@ -489,7 +493,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 					"Total weight of arc must be greater than 0. Please re-enter");
 			return;
 		}
-        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addEdit(
+        petriNetController.getHistoryManager().addEdit(
 				_arcView.setWeight(newWeight));
 		_arcView.addThisAsObserverToWeight(newWeight); // Steve Doubleday
 		_arcView.repaint();

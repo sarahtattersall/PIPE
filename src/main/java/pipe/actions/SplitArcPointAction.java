@@ -7,6 +7,8 @@ package pipe.actions;
 
 import java.awt.event.ActionEvent;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.ArcPathPoint;
 
@@ -28,8 +30,9 @@ public class SplitArcPointAction
    
    
    public void actionPerformed(ActionEvent e) {
-       ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-               arcPathPoint.splitPoint());
+       PipeApplicationController controller = ApplicationSettings.getApplicationController();
+       PetriNetController petriNetController = controller.getActivePetriNetController();
+       petriNetController.getHistoryManager().addNewEdit(arcPathPoint.splitPoint());
    }
    
 }

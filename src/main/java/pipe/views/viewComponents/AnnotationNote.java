@@ -150,7 +150,7 @@ public class AnnotationNote extends Note {
         String newText = note.getText();
         if (oldText != null && !newText.equals(oldText)) {
             // Text has been changed
-            ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager()
+            petriNetController.getHistoryManager()
                     .addNewEdit(new AnnotationText(this, oldText, newText));
             updateBounds();
         }

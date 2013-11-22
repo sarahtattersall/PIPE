@@ -1,6 +1,7 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
@@ -121,7 +122,7 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
 
        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-      HistoryManager historyManager = view.getHistoryManager();
+//       HistoryManager historyManager = view.getHistoryManager();
        PipeApplicationModel app = ApplicationSettings.getApplicationModel();
       
       super.mouseReleased(e);
@@ -134,63 +135,63 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
              //TODO: FIGURE OUT WHAT IT DOES
             InhibitorArcView createInhibitorArcView = null; //(InhibitorArcView) view._createArcView;
             if (petriNetController.isCurrentlyCreatingArc()) {
-               if (!currentObject.getClass().equals(
-                       createInhibitorArcView.getSource().getClass())) {
-
-                  Iterator arcsFrom =
-                          createInhibitorArcView.getSource().getConnectFromIterator();
-                  // search for pre-existent arcs from createInhibitorArc's
-                  // source to createInhibitorArc's target
-                  while(arcsFrom.hasNext()) {
-                     ArcView someArcView = ((ArcView)arcsFrom.next());
-                     if (someArcView == createInhibitorArcView) {
-                        break;
-                     } else if (someArcView.getTarget().getModel() == currentObject &&
-                             someArcView.getSource() == createInhibitorArcView.getSource()) {
-                        isNewArc = false;
-                        if (someArcView instanceof NormalArcView){
-                           // user has drawn an inhibitor arc where there is
-                           // a normal arc already - nothing to do
-                        } else if (someArcView instanceof InhibitorArcView) {
-                           // user has drawn an inhibitor arc where there is
-                           // an inhibitor arc already - we increment arc's
-                           // weight
-                           List<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
-                           for(MarkingView m:weight){
-                        	   m.setCurrentMarking(m.getCurrentMarking()+1);
-                           }
-                           historyManager.addNewEdit(someArcView.setWeight(someArcView.getWeight()));
-                        } else {
-                           // This is not supposed to happen
-                        }
-                        createInhibitorArcView.delete();
-                        someArcView.getTransition().removeArcCompareObject(
-                                createInhibitorArcView);
-                        someArcView.getTransition().updateConnected();
-                        break;
-                     }
-                  }
-
-                  if (isNewArc) {
-                     createInhibitorArcView.setSelectable(true);
-                      createInhibitorArcView.getModel().setTarget(currentObject);
-//                     createInhibitorArcView.setTarget(currentObject);
-//                     currentObject.addInbound(createInhibitorArcView);
-                     // Evil hack to prevent the arc being added to PetriNetTab twice
-                     contentPane.remove(createInhibitorArcView);
-                     model.addArc(createInhibitorArcView);
-                     view.addNewPetriNetObject(createInhibitorArcView);
-                     historyManager.addNewEdit(
-                             new AddPetriNetObject(createInhibitorArcView,
-                             view, model));
-                  }
-
-                  // arc is drawn, remove handler:
-                  createInhibitorArcView.removeKeyListener(keyHandler);
-                  keyHandler = null;
-
-                  petriNetController.finishCreatingArc(currentObject);
-               }
+//               if (!currentObject.getClass().equals(
+//                       createInhibitorArcView.getSource().getClass())) {
+//
+//                  Iterator arcsFrom =
+//                          createInhibitorArcView.getSource().getConnectFromIterator();
+//                  // search for pre-existent arcs from createInhibitorArc's
+//                  // source to createInhibitorArc's target
+//                  while(arcsFrom.hasNext()) {
+//                     ArcView someArcView = ((ArcView)arcsFrom.next());
+//                     if (someArcView == createInhibitorArcView) {
+//                        break;
+//                     } else if (someArcView.getTarget().getModel() == currentObject &&
+//                             someArcView.getSource() == createInhibitorArcView.getSource()) {
+//                        isNewArc = false;
+//                        if (someArcView instanceof NormalArcView){
+//                           // user has drawn an inhibitor arc where there is
+//                           // a normal arc already - nothing to do
+//                        } else if (someArcView instanceof InhibitorArcView) {
+//                           // user has drawn an inhibitor arc where there is
+//                           // an inhibitor arc already - we increment arc's
+//                           // weight
+//                           List<MarkingView> weight = Copier.mediumCopy(someArcView.getWeight());
+//                           for(MarkingView m:weight){
+//                        	   m.setCurrentMarking(m.getCurrentMarking()+1);
+//                           }
+//                           historyManager.addNewEdit(someArcView.setWeight(someArcView.getWeight()));
+//                        } else {
+//                           // This is not supposed to happen
+//                        }
+//                        createInhibitorArcView.delete();
+//                        someArcView.getTransition().removeArcCompareObject(
+//                                createInhibitorArcView);
+//                        someArcView.getTransition().updateConnected();
+//                        break;
+//                     }
+//                  }
+//
+//                  if (isNewArc) {
+//                     createInhibitorArcView.setSelectable(true);
+//                      createInhibitorArcView.getModel().setTarget(currentObject);
+////                     createInhibitorArcView.setTarget(currentObject);
+////                     currentObject.addInbound(createInhibitorArcView);
+//                     // Evil hack to prevent the arc being added to PetriNetTab twice
+//                     contentPane.remove(createInhibitorArcView);
+//                     model.addArc(createInhibitorArcView);
+//                     view.addNewPetriNetObject(createInhibitorArcView);
+//                     historyManager.addNewEdit(
+//                             new AddPetriNetObject(createInhibitorArcView,
+//                             view, model));
+//                  }
+//
+//                  // arc is drawn, remove handler:
+//                  createInhibitorArcView.removeKeyListener(keyHandler);
+//                  keyHandler = null;
+//
+//                  petriNetController.finishCreatingArc(currentObject);
+//               }
             }
             break;
 
@@ -201,7 +202,10 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
              //TODO: WORK OUT WHAT THIS DOES
             if (petriNetController.isCurrentlyCreatingArc()) {
                if (petriNetController.isApplicableEndPoint(currentObject)) {
+                   //TODO: CHANGE TO CONTROLLER HOUSING THIS THEN YOU DONT NEED THE STATIC GET
+
                    petriNetController.finishCreatingArc(currentObject);
+
                    //foo(isNewArc, fastMode, view, model, historyManager, currentObject, petriNetController);
                    break;
                }

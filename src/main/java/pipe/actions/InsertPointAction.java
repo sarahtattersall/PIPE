@@ -7,7 +7,10 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
+import pipe.historyActions.HistoryManager;
 import pipe.views.ArcView;
 
 
@@ -36,8 +39,11 @@ public class InsertPointAction
    
    
    public void actionPerformed(ActionEvent arg0) {
-       ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-               _selected.getArcPath().insertPointAt(mouseposition, false));
+       PipeApplicationController controller = ApplicationSettings.getApplicationController();
+       PetriNetController petriNetController = controller.getActivePetriNetController();
+       HistoryManager historyManager = petriNetController.getHistoryManager();
+
+       historyManager.addNewEdit(_selected.getArcPath().insertPointAt(mouseposition, false));
    }
    
 }

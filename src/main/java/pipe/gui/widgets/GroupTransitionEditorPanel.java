@@ -1,6 +1,10 @@
 package pipe.gui.widgets;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
+import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
+import pipe.historyActions.HistoryManager;
 import pipe.views.GroupTransitionView;
 import pipe.views.PetriNetView;
 
@@ -223,12 +227,15 @@ private final GroupTransitionView _groupTransitionView;
        
    private void okButtonHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonHandler
 
-      _view.getHistoryManager().newEdit(); // new "transaction""
+       PipeApplicationController controller = ApplicationSettings.getApplicationController();
+       PetriNetController petriNetController = controller.getActivePetriNetController();
+       HistoryManager historyManager = petriNetController.getHistoryManager();
+       historyManager.newEdit(); // new "transaction""
        
       String newName = nameTextField.getText();
       if (!newName.equals(name)){
          if (_pnmlData.checkTransitionIDAvailability(newName)){
-            _view.getHistoryManager().addEdit(_groupTransitionView.setPNObjectName(newName));
+            historyManager.addEdit(_groupTransitionView.setPNObjectName(newName));
          } else{
             // aquest nom no est disponible...
             JOptionPane.showMessageDialog(null,
@@ -255,7 +262,7 @@ private final GroupTransitionView _groupTransitionView;
                break;               
          }
          if (angle != 0) {
-            _view.getHistoryManager().addEdit(_groupTransitionView.rotate(angle));
+            historyManager.addEdit(_groupTransitionView.rotate(angle));
          }
       }
       _groupTransitionView.repaint();

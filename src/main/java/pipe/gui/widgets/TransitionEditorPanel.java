@@ -1,6 +1,8 @@
 package pipe.gui.widgets;
 
 import parser.ExprEvaluator;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.views.ArcView;
@@ -752,9 +754,12 @@ private final TransitionView _transitionView;
    
        
    private void okButtonHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonHandler
-	   
+
+       PipeApplicationController controller = ApplicationSettings.getApplicationController();
+       PetriNetController petriNetController = controller.getActivePetriNetController();
 	   if (infiniteServerRadioButton.isSelected() != infiniteServer) {
-	         _view.getHistoryManager().addEdit(
+
+           petriNetController.getHistoryManager().addEdit(
 	                 _transitionView.setInfiniteServer(!infiniteServer));
 	         _transitionView.repaint();
 	         exit();
@@ -782,12 +787,12 @@ private final TransitionView _transitionView;
 	   }
 	   //  }
 
-      _view.getHistoryManager().newEdit(); // new "transaction""
+      petriNetController.getHistoryManager().newEdit(); // new "transaction""
        
       String newName = nameTextField.getText();
       if (!newName.equals(name)){
          if (_pnmlData.checkTransitionIDAvailability(newName)){
-            _view.getHistoryManager().addEdit(_transitionView.setPNObjectName(newName));
+            petriNetController.getHistoryManager().addEdit(_transitionView.setPNObjectName(newName));
          } else{
             // aquest nom no est disponible...
             JOptionPane.showMessageDialog(null,
@@ -798,7 +803,7 @@ private final TransitionView _transitionView;
       }
 
       if (timedRadioButton.isSelected() != timed) {
-         _view.getHistoryManager().addEdit(
+         petriNetController.getHistoryManager().addEdit(
                  _transitionView.setTimed(!timed));
       }
       
@@ -807,7 +812,7 @@ private final TransitionView _transitionView;
       
       int newPriority = prioritySlider.getValue();
       if (newPriority != priority && !_transitionView.isTimed()) {
-         _view.getHistoryManager().addEdit(_transitionView.setPriority(newPriority));
+         petriNetController.getHistoryManager().addEdit(_transitionView.setPriority(newPriority));
       }
       
     //first decide whether constant rate or functional rate is given
@@ -831,11 +836,11 @@ private final TransitionView _transitionView;
 
 		            if (rParameter != null) {
 		               // The rate parameter has been changed
-		               _view.getHistoryManager().addEdit(_transitionView.changeRateParameter(
+		               petriNetController.getHistoryManager().addEdit(_transitionView.changeRateParameter(
 		                       (RateParameter)rateComboBox.getSelectedItem()));
 		            } else {
 		               // The rate parameter has been changed
-		               _view.getHistoryManager().addEdit(_transitionView.setRateParameter(
+		               petriNetController.getHistoryManager().addEdit(_transitionView.setRateParameter(
 		                       (RateParameter)rateComboBox.getSelectedItem()));
 		            }
 					//  _transitionView.setRateType("C");
@@ -846,13 +851,13 @@ private final TransitionView _transitionView;
 		    		// There is no rate parameter selected
 		    	         if (rParameter != null) {
 		    	            // The rate parameter has been changed
-		    	            _view.getHistoryManager().addEdit(_transitionView.clearRateParameter());
+		    	            petriNetController.getHistoryManager().addEdit(_transitionView.clearRateParameter());
 		    	         }
 		    	         try{
 		    	        	 if(singleServerRadioButton.isSelected()){
 		    	        		// Double newRate = Double.parseDouble(rateTextField.getText());
 				    	            if (!(r==rate)) {
-				    	               _view.getHistoryManager().addEdit(_transitionView.setRate(rateTextField.getText()));
+				    	               petriNetController.getHistoryManager().addEdit(_transitionView.setRate(rateTextField.getText()));
 				    	 			//  _transitionView.setRateType("C");
 				    	            } 
 		    	        	 }
@@ -890,7 +895,7 @@ private final TransitionView _transitionView;
                break;               
          }
          if (angle != 0) {
-            _view.getHistoryManager().addEdit(_transitionView.rotate(angle));
+            petriNetController.getHistoryManager().addEdit(_transitionView.rotate(angle));
          }
       }
       

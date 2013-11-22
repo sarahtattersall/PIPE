@@ -55,7 +55,7 @@ public class MouseHandlerTest {
         when(mockEvent.getPoint()).thenReturn(new Point(0,0));
         when(mockUtilities.isLeftMouse(mockEvent)).thenReturn(true);
         mockHistory = mock(HistoryManager.class);
-        when(mockTab.getHistoryManager()).thenReturn(mockHistory);
+        when(mockController.getHistoryManager()).thenReturn(mockHistory);
     }
 
     @Test

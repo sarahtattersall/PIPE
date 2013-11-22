@@ -7,6 +7,8 @@ package pipe.actions;
 
 import java.awt.event.ActionEvent;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.ArcPathPoint;
 
@@ -26,8 +28,10 @@ public class ToggleArcPointAction
     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
    public void actionPerformed(ActionEvent e) {
-       ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-              arcPathPoint.togglePointType());
+
+       PipeApplicationController controller = ApplicationSettings.getApplicationController();
+       PetriNetController petriNetController = controller.getActivePetriNetController();
+       petriNetController.getHistoryManager().addNewEdit(arcPathPoint.togglePointType());
    }
 
 }

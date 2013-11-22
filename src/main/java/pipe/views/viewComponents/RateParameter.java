@@ -119,8 +119,9 @@ public class RateParameter extends Parameter {
     public void delete() {
         Object[] transitions = _transitionsHashSet.toArray();
         if (transitions.length > 0) {
+            //TODO: PASS THIS IN!
             HistoryManager historyManager =
-                    ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
+                    ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager();
             for (Object transition : transitions) {
                 historyManager.addEdit(((TransitionView) transition).clearRateParameter());
             }

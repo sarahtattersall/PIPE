@@ -27,7 +27,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     private final AnimationHandler animationHandler = new AnimationHandler();
     private boolean metaDown = false;
     private final SelectionManager selection;
-    private final HistoryManager _historyManager;
+//    private final HistoryManager _historyManager;
     private final PipeApplicationView _pipeApplicationView;
     private final ArrayList<PetriNetViewComponent> petriNetComponents = new ArrayList<PetriNetViewComponent>();
     private final ZoomController zoomControl;
@@ -52,7 +52,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
 
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         selection = new SelectionManager(this, controller);
-        _historyManager = new HistoryManager(this, _petriNetView);
+//        _historyManager = new HistoryManager(this, _petriNetView);
     }
 
     public PetriNetController getPetriNetController() {
@@ -175,10 +175,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         return selection;
     }
 
-    public HistoryManager getHistoryManager()
-    {
-        return _historyManager;
-    }
+//    public HistoryManager getHistoryManager()
+//    {
+//        return _historyManager;
+//    }
 
     public ZoomController getZoomController()
     {

@@ -467,7 +467,8 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
 
     protected void updateHistory(
             HistoryItem historyItem) { // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls
-        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(historyItem);
+
+        petriNetController.getHistoryManager().addNewEdit(historyItem);
     }
 
     public Arc getModel() {

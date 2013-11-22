@@ -4,8 +4,9 @@
 package pipe.historyActions;
 
 import pipe.gui.PetriNetTab;
+import pipe.models.PetriNet;
+import pipe.models.PetriNetComponent;
 import pipe.views.PetriNetView;
-import pipe.views.PetriNetViewComponent;
 
 
 /**
@@ -15,44 +16,46 @@ public class DeletePetriNetObject
         extends HistoryItem
 {
 
-    private PetriNetViewComponent _viewComponent;
-    private final PetriNetView _model;
-    private final PetriNetTab _view;
+    private PetriNetComponent component;
+    private final PetriNet petriNet;
+    private final PetriNetTab tab;
 
 
     /**
      * Creates a new instance of placeWeightEdit
-     * @param viewComponent
+     * @param component
      * @param tab
-     * @param view
+     * @param petriNet
      */
-    public DeletePetriNetObject(PetriNetViewComponent viewComponent, PetriNetTab tab, PetriNetView view)
+    public DeletePetriNetObject(PetriNetComponent component, PetriNetTab tab, PetriNet petriNet)
     {
-        _viewComponent = viewComponent;
-        _view = tab;
-        _model = view;
-        _viewComponent.markAsDeleted();
+        this.component = component;
+        this.tab = tab;
+        this.petriNet = petriNet;
+//        this.component.markAsDeleted();
     }
 
 
     /** */
     public void redo()
     {
-        _viewComponent.delete();
+
+        petriNet.remove(component);
     }
 
 
     /** */
     public void undo()
     {
-        _viewComponent.undelete(_model, _view);
+        petriNet.add(component);
+//        component.undelete(_model, tab);
     }
 
 
     public String toString()
     {
-        return super.toString() + " " + _viewComponent.getClass().getSimpleName()
-                + " [" + _viewComponent.getId() + "]";
+        return super.toString() + " " + component.getClass().getSimpleName()
+                + " [" + component + "]";
     }
 
 }

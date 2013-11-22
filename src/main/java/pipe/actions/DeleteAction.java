@@ -1,5 +1,7 @@
 package pipe.actions;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.views.PipeApplicationView;
@@ -18,8 +20,12 @@ public class DeleteAction extends GuiAction
     {
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
         PetriNetTab appView = pipeApplicationView.getCurrentTab();
-        appView.getHistoryManager().newEdit();
-        //appView.getHistoryManager().deleteSelection(appView.getSelectionObject().getSelection());
+
+        //TODO: Ensure this works
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController =  controller.getActivePetriNetController();
+        petriNetController.getHistoryManager().newEdit();
+        petriNetController.getHistoryManager().deleteSelection(appView.getSelectionObject().getSelection());
         appView.getSelectionObject().deleteSelection();
     }
 }

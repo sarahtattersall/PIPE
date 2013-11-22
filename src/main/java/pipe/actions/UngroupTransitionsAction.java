@@ -1,5 +1,7 @@
 package pipe.actions;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
 import pipe.views.GroupTransitionView;
@@ -9,6 +11,7 @@ import pipe.views.TransitionView;
 
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Alex Charalambous, June 2010: Ungroups any transitions that have
@@ -31,12 +34,16 @@ public class UngroupTransitionsAction extends GuiAction
         * should all be done as a single undo transaction.
         */
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        applicationView.getCurrentTab().getHistoryManager().clear();
-        LinkedList<GroupTransitionView> transitionsToUngroup = new LinkedList<GroupTransitionView>();
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        petriNetController.getHistoryManager().clear();
+
+        List<GroupTransitionView> transitionsToUngroup = new LinkedList<GroupTransitionView>();
         if(applicationView.getCurrentPetriNetView().getTokenViews().size() > 1)
         {
             PetriNetView model = applicationView.getCurrentPetriNetView();
             TransitionView[] transitionViews = model.getTransitionViews();
+
             for(TransitionView transitionView : transitionViews)
             {
                 if(transitionView.isGrouped())
@@ -45,10 +52,11 @@ public class UngroupTransitionsAction extends GuiAction
                         transitionsToUngroup.add(transitionView.getGroup());
                 }
             }
+
             for(GroupTransitionView groupTransitionView : transitionsToUngroup)
             {
                 HistoryItem edit = groupTransitionView.ungroupTransitions();
-                applicationView.getCurrentTab().getHistoryManager().addNewEdit(edit);
+                petriNetController.getHistoryManager().addNewEdit(edit);
                 groupTransitionView.deleteAssociatedArcs();
                 groupTransitionView.setVisible(false);
                 groupTransitionView.getNameLabel().setVisible(false);

@@ -65,8 +65,7 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place> {
                 //((PlaceView) component).showEditor();
             } else {
 //                List<Marking> oldMarkings = Copier.mediumCopyMarkings(component.getTokens());
-                HistoryManager historyManager =
-                        ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
+                HistoryManager historyManager = petriNetController.getHistoryManager();
 
 
                 PipeApplicationView view = ApplicationSettings.getApplicationView();
