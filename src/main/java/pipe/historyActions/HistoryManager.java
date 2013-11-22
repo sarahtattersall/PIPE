@@ -37,7 +37,6 @@ public class HistoryManager
 
     /**
      * Creates a new instance of HistoryManager
-     * @param petriNetTab
      * @param petriNet
      */
     public HistoryManager(PetriNet petriNet)
