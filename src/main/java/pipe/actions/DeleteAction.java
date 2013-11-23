@@ -19,15 +19,8 @@ public class DeleteAction extends GuiAction
 
     public void actionPerformed(ActionEvent e)
     {
-        PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-        PetriNetTab appView = pipeApplicationView.getCurrentTab();
-
-        //TODO: Ensure this works
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController =  controller.getActivePetriNetController();
-        HistoryManager historyManager = petriNetController.getHistoryManager();
-//        petriNetController.getHistoryManager().newEdit();
-        petriNetController.getHistoryManager().deleteSelection(appView.getSelectionObject().getSelection());
-        appView.getSelectionObject().deleteSelection();
+        petriNetController.deleteSelection();
     }
 }

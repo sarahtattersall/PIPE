@@ -24,7 +24,7 @@ public class ArcPathPointHandler
    
    public ArcPathPointHandler(Container contentpane, ArcPathPoint obj, PetriNetController controller) {
        //TODO: FIX THIS WITH TYPING
-       super(contentpane, null, controller);
+       super(null, contentpane, null, controller);
 //      super(contentpane, obj);
       enablePopup = true;
    }

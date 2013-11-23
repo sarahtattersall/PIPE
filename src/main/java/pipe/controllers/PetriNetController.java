@@ -193,13 +193,28 @@ public class PetriNetController implements IController, Serializable {
         historyManager.newEdit();
 
         for (PetriNetComponent component : selectedComponents) {
-            petriNet.remove(component);
-
-            DeletePetriNetObject deleteAction = new DeletePetriNetObject(component, petriNet);
-            historyManager.addEdit(deleteAction);
+            deleteComponent(component);
         }
         selectedComponents.clear();
-        petriNet.notifyObservers();
+    }
+
+    /**
+     * Deletes single component, starts a newEdit for history manager
+     * @param component
+     */
+    public void delete(PetriNetComponent component) {
+        historyManager.newEdit();
+        deleteComponent(component);
+    }
+
+    /**
+     * Deletes a component adding it to the history managers current edit
+     * @param component
+     */
+    private void deleteComponent(PetriNetComponent component) {
+        petriNet.remove(component);
+        DeletePetriNetObject deleteAction = new DeletePetriNetObject(component, petriNet);
+        historyManager.addEdit(deleteAction);
     }
 
     /**
@@ -263,4 +278,6 @@ public class PetriNetController implements IController, Serializable {
     public PetriNet getPetriNet() {
         return petriNet;
     }
+
+
 }

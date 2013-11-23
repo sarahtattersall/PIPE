@@ -23,11 +23,12 @@ import java.awt.event.MouseEvent;
  *
  * @author unknown
  */
-public class PetriNetObjectHandler<T extends PetriNetComponent>
+public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriNetViewComponent>
         extends javax.swing.event.MouseInputAdapter
 {
     final Container contentPane;
     final T component;
+    final V viewComponent;
 
     // justSelected: set to true on press, and false on release;
     static boolean justSelected = false;
@@ -41,8 +42,9 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
     protected final PetriNetController petriNetController;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(Container contentpane, T obj, PetriNetController controller)
+    PetriNetObjectHandler(V viewComponent, Container contentpane, T obj, PetriNetController controller)
     {
+        this.viewComponent = viewComponent;
         contentPane = contentpane;
         component = obj;
         //TODO: PASS INTO CTR
@@ -59,10 +61,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
     JPopupMenu getPopup(MouseEvent e)
     {
         JPopupMenu popup = new JPopupMenu();
-//        JMenuItem menuItem =
-//                new JMenuItem(new DeletePetriNetObjectAction(component));
-//        menuItem.setText("Delete");
-//        popup.add(menuItem);
+        JMenuItem menuItem =
+                new JMenuItem(new DeletePetriNetObjectAction(component));
+        menuItem.setText("Delete");
+        popup.add(menuItem);
         return popup;
     }
 

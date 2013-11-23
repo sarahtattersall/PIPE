@@ -26,12 +26,12 @@ import java.awt.geom.Point2D;
  * Class used to implement methods corresponding to mouse events on arcs.
  */
 public class ArcHandler 
-        extends PetriNetObjectHandler<Arc>
+        extends PetriNetObjectHandler<Arc, ArcView>
 {
 
    
-   public ArcHandler(Container contentpane, Arc obj, PetriNetController controller) {
-      super(contentpane, obj, controller);
+   public ArcHandler(ArcView view, Container contentpane, Arc obj, PetriNetController controller) {
+      super(view, contentpane, obj, controller);
       enablePopup = true;
    }
 

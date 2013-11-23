@@ -147,7 +147,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        GroupTransitionHandler groupTransitionHandler = new GroupTransitionHandler(tab, this, petriNetController);
+        GroupTransitionHandler groupTransitionHandler = new GroupTransitionHandler(this, tab, this, petriNetController);
         addMouseListener(groupTransitionHandler);
         addMouseMotionListener(groupTransitionHandler);
         addMouseWheelListener(groupTransitionHandler);

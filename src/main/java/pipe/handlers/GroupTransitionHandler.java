@@ -25,8 +25,8 @@ public class GroupTransitionHandler
     //implements java.awt.event.MouseWheelListener {  //NOU-PERE
 
 
-    public GroupTransitionHandler(Container contentpane, GroupTransitionView obj, PetriNetController controller) {
-        super(contentpane, null, controller);
+    public GroupTransitionHandler(GroupTransitionView view, Container contentpane, GroupTransitionView obj, PetriNetController controller) {
+        super(view, contentpane, null, controller);
         //TODO: FIX THIS BACK IN RATHER THAN NULL;
 //      super(contentpane, obj);
     }

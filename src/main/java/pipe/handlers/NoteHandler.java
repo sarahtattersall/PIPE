@@ -10,16 +10,18 @@ import java.awt.event.MouseEvent;
 
 import pipe.controllers.PetriNetController;
 import pipe.models.Annotation;
+import pipe.views.MarkingView;
+import pipe.views.viewComponents.AnnotationNote;
 import pipe.views.viewComponents.Note;
 
 
 public class NoteHandler 
-        extends PetriNetObjectHandler<Annotation>
+        extends PetriNetObjectHandler<Annotation, AnnotationNote>
 {
    
    
-   NoteHandler(Container contentpane, Annotation note, PetriNetController controller) {
-      super(contentpane, note, controller);
+   NoteHandler(AnnotationNote view, Container contentpane, Annotation note, PetriNetController controller) {
+      super(view, contentpane, note, controller);
       enablePopup = true;
    }
 

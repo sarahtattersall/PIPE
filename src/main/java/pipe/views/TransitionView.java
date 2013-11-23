@@ -206,7 +206,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        TransitionHandler transitionHandler = new TransitionHandler(tab, this.model, petriNetController);
+        TransitionHandler transitionHandler = new TransitionHandler(this, tab, this.model, petriNetController);
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);

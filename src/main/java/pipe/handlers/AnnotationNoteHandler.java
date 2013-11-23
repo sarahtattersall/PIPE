@@ -20,8 +20,8 @@
  {
    
 
-   public AnnotationNoteHandler(Container contentpane, Annotation note, PetriNetController controller) {
-      super(contentpane, note, controller);
+   public AnnotationNoteHandler(AnnotationNote view, Container contentpane, Annotation note, PetriNetController controller) {
+      super(view, contentpane, note, controller);
       enablePopup = true;
    }
 

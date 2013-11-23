@@ -478,7 +478,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T> im
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler arcHandler = new ArcHandler(tab, this.model, petriNetController);
+        ArcHandler arcHandler = new ArcHandler(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);

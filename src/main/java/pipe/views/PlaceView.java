@@ -261,7 +261,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         _nameLabel.addMouseMotionListener(labelHandler);
         _nameLabel.addMouseWheelListener(labelHandler);
 
-        PlaceHandler placeHandler = new PlaceHandler(tab, this.model, petriNetController);
+        PlaceHandler placeHandler = new PlaceHandler(this, tab, this.model, petriNetController);
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);

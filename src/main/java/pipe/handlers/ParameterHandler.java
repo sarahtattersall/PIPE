@@ -19,7 +19,7 @@ public class ParameterHandler
    
    public ParameterHandler(Container contentpane, Parameter parameter, PetriNetController controller) {
     //TODO: DONT PASS NULL FIX THIS
-       super(contentpane, null, controller);
+       super(null, contentpane, null, controller);
 //      super(contentpane, parameter);
    }
    

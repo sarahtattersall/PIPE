@@ -97,6 +97,31 @@ public class PetriNetControllerTest {
         verify(mockHistoryManager).addEdit(deleteAction);
     }
 
+
+    @Test
+    public void deleteComponentRemovesFromPetriNet() {
+        Place place = new Place("", "");
+        net.addPlace(place);
+
+        controller.delete(place);
+
+        assertFalse("Petrinet contains place after deletion", net.getPlaces().contains(place));
+    }
+
+
+    @Test
+    public void deletingComponentAddsToHistoryManager() {
+        Place place = new Place("", "");
+        net.addPlace(place);
+
+        controller.delete(place);
+
+        DeletePetriNetObject deleteAction = new DeletePetriNetObject(place, net);
+
+        verify(mockHistoryManager).newEdit();
+        verify(mockHistoryManager).addEdit(deleteAction);
+    }
+
     @Test
     public void deletesSelectedNotifiesObserver() {
         Place place = new Place("", "");

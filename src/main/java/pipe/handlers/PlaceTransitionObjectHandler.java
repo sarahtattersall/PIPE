@@ -25,8 +25,8 @@ import java.util.List;
  * @author Matthew Worthington - modified the handler which was causing the
  * null pointer exceptions and incorrect petri nets xml representation.
  */
-public class PlaceTransitionObjectHandler<T extends Connectable>
-        extends PetriNetObjectHandler<T>
+public class PlaceTransitionObjectHandler<T extends Connectable, V extends ConnectableView>
+        extends PetriNetObjectHandler<T, V>
 {
    // STATIC ATTRIBUTES AND METHODS
 	private static boolean mouseDown = false;
@@ -39,9 +39,9 @@ public class PlaceTransitionObjectHandler<T extends Connectable>
    private ArcKeyboardEventHandler keyHandler = null;
    
    // constructor passing in all required objects
-   PlaceTransitionObjectHandler(Container contentpane,
+   PlaceTransitionObjectHandler(V view, Container contentpane,
                                 T obj, PetriNetController controller) {
-      super(contentpane, obj, controller);
+      super(view, contentpane, obj, controller);
       enablePopup = true;
    }
    

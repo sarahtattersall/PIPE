@@ -8,7 +8,9 @@ package pipe.actions;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
+import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
+import pipe.models.PetriNetComponent;
 import pipe.views.PetriNetViewComponent;
 
 import javax.swing.*;
@@ -17,11 +19,11 @@ import java.awt.event.ActionEvent;
 
 public class DeletePetriNetObjectAction extends AbstractAction {
 
-    private final PetriNetViewComponent selected;
+    private final PetriNetComponent component;
 
 
-    public DeletePetriNetObjectAction(PetriNetViewComponent component) {
-        selected = component;
+    public DeletePetriNetObjectAction(PetriNetComponent component) {
+        this.component = component;
     }
 
     /* (non-Javadoc)
@@ -30,10 +32,7 @@ public class DeletePetriNetObjectAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();
-        HistoryManager historyManager = petriNetController.getHistoryManager();
-        historyManager.newEdit(); // new "transaction""
-        historyManager.deleteSelection(selected);
-        selected.delete();
+        petriNetController.delete(component);
     }
 
 }

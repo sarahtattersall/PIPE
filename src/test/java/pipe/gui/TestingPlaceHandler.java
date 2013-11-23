@@ -15,9 +15,9 @@ import pipe.views.PlaceView;
 public class TestingPlaceHandler extends PlaceHandler
 {
 
-	public TestingPlaceHandler(Container contentpane, Place obj, PetriNetController controller)
+	public TestingPlaceHandler(PlaceView view, Container contentpane, Place obj, PetriNetController controller)
 	{
-		super(contentpane, obj, controller);
+		super(view, contentpane, obj, controller);
 	}
 	
 	public void addTokenForTesting(List<Marking> oldMarkingViews,

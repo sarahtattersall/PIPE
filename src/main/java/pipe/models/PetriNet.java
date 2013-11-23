@@ -141,6 +141,7 @@ public class PetriNet extends Observable implements Serializable
 
     public void remove(PetriNetComponent component) {
         component.accept(deleteVisitor);
+        notifyObservers();
     }
 
     public void removeToken(Token token) {
@@ -170,5 +171,6 @@ public class PetriNet extends Observable implements Serializable
 
     public void add(PetriNetComponent component) {
         component.accept(addVisitor);
+        notifyObservers();
     }
 }
