@@ -18,6 +18,7 @@ import javax.swing.KeyStroke;
 /**
  *
  * @author Pere Bonet
+ * Dialog that closes itself on escape key pressed
  */
 public class EscapableDialog 
         extends JDialog{
