@@ -76,51 +76,46 @@ public class PlaceTransitionObjectHandler<T extends Connectable, V extends Conne
 
 
     public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            JPopupMenu menu = getPopup(e);
-            menu.show(viewComponent, 0, 0);
-            return;
-        }
-
         super.mousePressed(e);
         mouseDown = true;
 
-
-        // Prevent creating arcs with a right-click or a middle-click
-        if (e.getButton() != MouseEvent.BUTTON1) {
-            return;
-        }
-
-        Connectable currentObject = component;
-        switch (ApplicationSettings.getApplicationModel().getMode()) {
-            case Constants.ARC:
-                if (e.isControlDown()) {
-                    // user is holding Ctrl key; switch to fast mode
-                    if (this.component instanceof Place) {
-                        ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_TRANSITION);
-                    } else if (this.component instanceof Transition) {
-                        ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_PLACE);
-                    }
-                }
-            case Constants.INHIBARC:
-            case Constants.FAST_PLACE:
-            case Constants.FAST_TRANSITION:
-                if (!petriNetController.isCurrentlyCreatingArc()) {
-                    if (ApplicationSettings.getApplicationModel().getMode() == Constants.INHIBARC) {
-                        if (currentObject instanceof Place) {
-                            petriNetController.startCreatingArc(currentObject);
-                            //createArc(new InhibitorArcView(currentObject), currentObject);
+        if (e.isPopupTrigger()) {
+            JPopupMenu menu = getPopup(e);
+            menu.show(viewComponent, 0, 0);
+        } else if (e.getButton() == MouseEvent.BUTTON1) {
+            Connectable currentObject = component;
+            switch (ApplicationSettings.getApplicationModel().getMode()) {
+                case Constants.ARC:
+                    if (e.isControlDown()) {
+                        // user is holding Ctrl key; switch to fast mode
+                        if (this.component instanceof Place) {
+                            ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_TRANSITION);
+                        } else if (this.component instanceof Transition) {
+                            ApplicationSettings.getApplicationModel().enterFastMode(Constants.FAST_PLACE);
                         }
-                    } else {
-                        petriNetController.startCreatingArc(currentObject);
-                        //createArc(new NormalArcView(currentObject), currentObject);
                     }
-                }
-                break;
+                case Constants.INHIBARC:
+                case Constants.FAST_PLACE:
+                case Constants.FAST_TRANSITION:
+                    if (!petriNetController.isCurrentlyCreatingArc()) {
+                        if (ApplicationSettings.getApplicationModel().getMode() == Constants.INHIBARC) {
+                            if (currentObject instanceof Place) {
+                                petriNetController.startCreatingArc(currentObject);
+                                //createArc(new InhibitorArcView(currentObject), currentObject);
+                            }
+                        } else {
+                            petriNetController.startCreatingArc(currentObject);
+                            //createArc(new NormalArcView(currentObject), currentObject);
+                        }
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
+
+
     }
 
 
