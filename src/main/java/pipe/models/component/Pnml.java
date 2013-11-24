@@ -1,4 +1,4 @@
-package pipe.models;
+package pipe.models.component;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

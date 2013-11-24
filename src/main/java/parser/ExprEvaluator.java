@@ -3,8 +3,8 @@ package parser;
 import net.sourceforge.jeval.EvaluationException;
 import net.sourceforge.jeval.Evaluator;
 import pipe.models.PetriNet;
-import pipe.models.Place;
-import pipe.models.Token;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 
 import java.util.Map;
 import java.util.regex.Matcher;

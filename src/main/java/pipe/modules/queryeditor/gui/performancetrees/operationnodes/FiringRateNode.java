@@ -9,11 +9,11 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.operationnodes;
 
-import java.util.ArrayList;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+
+import java.util.ArrayList;
 
 
 public class FiringRateNode extends OperationNode {

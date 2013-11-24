@@ -1,12 +1,10 @@
-import java.lang.reflect.InvocationTargetException;
-
-import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.CopyPasteManager;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 public class Pipe
 {
 

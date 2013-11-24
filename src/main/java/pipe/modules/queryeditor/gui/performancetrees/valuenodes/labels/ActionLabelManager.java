@@ -11,22 +11,16 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.valuenodes.labels;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.ButtonBar;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
 import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ActionsNode;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 
 public class ActionLabelManager {

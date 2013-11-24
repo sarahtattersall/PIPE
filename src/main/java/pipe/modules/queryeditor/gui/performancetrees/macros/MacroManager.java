@@ -12,15 +12,21 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.macros;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import org.w3c.dom.Document;
+import pipe.gui.widgets.ButtonBar;
+import pipe.modules.queryeditor.QueryManager;
+import pipe.modules.queryeditor.gui.QueryFileBrowser;
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+import pipe.modules.queryeditor.gui.performancetrees.macros.MacroDefinition.OutgoingArcInfo;
+import pipe.modules.queryeditor.io.MacroLoader;
+import pipe.modules.queryeditor.io.MacroTransformer;
+
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,30 +36,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.MouseInputAdapter;
-
-import org.w3c.dom.Document;
-
-import pipe.gui.widgets.ButtonBar;
-import pipe.modules.queryeditor.QueryManager;
-import pipe.modules.queryeditor.gui.QueryFileBrowser;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroDefinition.OutgoingArcInfo;
-import pipe.modules.queryeditor.io.MacroLoader;
-import pipe.modules.queryeditor.io.MacroTransformer;
 
 
 public class MacroManager {

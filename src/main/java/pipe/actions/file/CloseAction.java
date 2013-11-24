@@ -1,7 +1,6 @@
 package pipe.actions.file;
 
 import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;

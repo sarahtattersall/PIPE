@@ -3,12 +3,12 @@
  */
 package pipe.modules.queryeditor.evaluator.gui;
 
-import java.net.URL;
-
 import pipe.common.PetriNetNode;
-import pipe.modules.queryresult.ResultWrapper;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
+import pipe.modules.queryresult.ResultWrapper;
+
+import java.net.URL;
 
 /**
  * @author dazz

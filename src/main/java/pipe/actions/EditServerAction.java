@@ -1,10 +1,9 @@
 package pipe.actions;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import pipe.views.TransitionView;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Action object that can be used to alternate a transition between

@@ -1,7 +1,7 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.InhibitorArc;
+import pipe.models.component.InhibitorArc;
 import pipe.views.InhibitorArcView;
 import pipe.views.MarkingView;
 

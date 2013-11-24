@@ -3,16 +3,16 @@
  */
 package pipe.server.performancequery.nodeanalyser;
 
-import java.util.concurrent.ExecutionException;
-
-import pipe.common.SimpleOperationNode;
 import pipe.common.PTArithComp;
 import pipe.common.PTArithOp;
 import pipe.common.PTDisCon;
+import pipe.common.SimpleOperationNode;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.server.performancequery.SimpleValueNode;
 import pipe.server.performancequery.structure.Subtree;
 import pipe.server.performancequery.structure.ValueSubtree;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author dazz

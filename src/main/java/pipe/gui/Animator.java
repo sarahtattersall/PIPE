@@ -1,8 +1,8 @@
 package pipe.gui;
 
 import pipe.views.ArcView;
-import pipe.views.PipeApplicationView;
 import pipe.views.PetriNetView;
+import pipe.views.PipeApplicationView;
 import pipe.views.TransitionView;
 
 import javax.swing.*;

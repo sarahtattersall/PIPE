@@ -1,12 +1,11 @@
 package pipe.server.performancequery;
 
-import java.util.logging.Level;
-
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.JobTemplate;
-
 import pipe.server.serverCommon.DrmaaSession;
+
+import java.util.logging.Level;
 
 public class PerformanceQueryDrmaaSession extends DrmaaSession implements ServerLoggingHandler
 {

@@ -2,42 +2,39 @@ package pipe.gui.widgets;
 
 import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
-import pipe.gui.ApplicationSettings;
-import pipe.models.Arc;
+import pipe.controllers.ArcController;
 import pipe.models.PetriNet;
-import pipe.models.Place;
-import pipe.models.Token;
-import pipe.views.PlaceView;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ArcFunctionEditor extends JPanel {
     private PetriNet petriNet;
     private EscapableDialog _rootPane;
-    private Arc arc;
+    private ArcController arcController;
     private Token token;
     private ArcWeightEditorPanel awep;
 
     public ArcFunctionEditor(ArcWeightEditorPanel awep,
                              EscapableDialog guiDialog, PetriNet petriNet,
-                             Arc arc, Token token) {
+                             ArcController arcController, Token token) {
         this.awep = awep;
         this.petriNet = petriNet;
         _rootPane = guiDialog;
-        this.arc = arc;
+        this.arcController = arcController;
         this.token = token;
         init();
     }
 
     private void init() {
         final JTextArea function = new JTextArea();
-        function.setText(arc.getWeightForToken(token));
+        function.setText(arcController.getWeightForToken(token));
 
         JScrollPane scrollPane = new JScrollPane(function);
         scrollPane.setBorder(javax.swing.BorderFactory
@@ -131,7 +128,8 @@ public class ArcFunctionEditor extends JPanel {
                 JOptionPane.showMessageDialog(null, help);
             }
 
-        }); south.add(okbutton);
+        });
+        south.add(okbutton);
         south.add(helpbutton);
 
         places.addActionListener(new ActionListener() {

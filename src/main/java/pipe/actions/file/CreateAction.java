@@ -2,7 +2,6 @@ package pipe.actions.file;
 
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 

@@ -2,13 +2,13 @@ package pipe.models;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
-import pipe.views.ArcView;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -84,6 +84,24 @@ public class ConnectableTest {
     {
         assertEquals(-5, connectable.getNameXOffset(), DOUBLE_DELTA);
         assertEquals(35, connectable.getNameYOffset(), DOUBLE_DELTA);
+    }
+
+    @Test
+    public void notifiesObserversOnNameChange()
+    {
+        IObserver mockObserver = mock(IObserver.class);
+        connectable.registerObserver(mockObserver);
+        connectable.setName("");
+        verify(mockObserver).update();
+    }
+
+    @Test
+    public void notifiesObserversOnIdChange()
+    {
+        IObserver mockObserver = mock(IObserver.class);
+        connectable.registerObserver(mockObserver);
+        connectable.setId("");
+        verify(mockObserver).update();
     }
 
     private class DummyConnectable extends Connectable {

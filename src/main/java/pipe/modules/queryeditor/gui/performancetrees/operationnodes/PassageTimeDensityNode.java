@@ -9,13 +9,13 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.operationnodes;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StatesNode;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PassageTimeDensityNode extends OperationNode {
 

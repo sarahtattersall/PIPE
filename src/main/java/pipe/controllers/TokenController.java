@@ -1,7 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.views.TokenView;
 
 import java.util.ArrayList;

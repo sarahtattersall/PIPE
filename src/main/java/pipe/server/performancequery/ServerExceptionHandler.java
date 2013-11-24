@@ -3,10 +3,10 @@
  */
 package pipe.server.performancequery;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
-import pipe.modules.interfaces.Cleanable;
 import pipe.common.LoggingHelper;
+import pipe.modules.interfaces.Cleanable;
+
+import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
  * @author dazz

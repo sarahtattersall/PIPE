@@ -1,9 +1,8 @@
 package matchers.component;
 
 import org.mockito.ArgumentMatcher;
-import pipe.models.Connectable;
+import pipe.models.component.Connectable;
 import pipe.views.ConnectableView;
-import pipe.views.PetriNetViewComponent;
 
 public class HasModel<T1 extends Connectable, T2 extends ConnectableView> extends ArgumentMatcher<T2> {
     T1 model;

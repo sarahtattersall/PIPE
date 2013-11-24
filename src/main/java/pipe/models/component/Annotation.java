@@ -1,8 +1,8 @@
-package pipe.models;
+package pipe.models.component;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
 
-public class Annotation implements PetriNetComponent {
+public class Annotation extends AbstractPetriNetComponent {
     public Annotation(double x, double y, String text,
                       double width,
                       double height, boolean border) {

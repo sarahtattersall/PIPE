@@ -3,11 +3,10 @@
  */
 package pipe.calculations;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import pipe.gui.ApplicationSettings;
 import pipe.views.MarkingView;
+
+import java.util.List;
 
 
 /**

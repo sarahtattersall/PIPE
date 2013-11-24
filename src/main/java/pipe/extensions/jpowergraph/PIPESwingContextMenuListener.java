@@ -4,13 +4,13 @@
 
 package pipe.extensions.jpowergraph;
 
-import javax.swing.JPopupMenu;
-
 import net.sourceforge.jpowergraph.Edge;
 import net.sourceforge.jpowergraph.Graph;
 import net.sourceforge.jpowergraph.Node;
 import net.sourceforge.jpowergraph.lens.LensSet;
 import net.sourceforge.jpowergraph.swing.manipulator.DefaultSwingContextMenuListener;
+
+import javax.swing.*;
 
 
 //REMARK: this class extends a jpowergraph's class which is LGPL

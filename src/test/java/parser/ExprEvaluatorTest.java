@@ -4,8 +4,9 @@ import net.sourceforge.jeval.EvaluationException;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.PetriNet;
-import pipe.models.Place;
-import pipe.models.Token;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
+import utils.TokenUtils;
 
 import java.awt.*;
 
@@ -50,7 +51,7 @@ public class ExprEvaluatorTest {
 
     @Test
     public void evaluatesCorrectTokensWhenExpressionIsTrue() throws EvaluationException {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = TokenUtils.createDefaultToken();;
         net.addToken(defaultToken);
 
         Place place = new Place("P0", "P0");
@@ -65,7 +66,7 @@ public class ExprEvaluatorTest {
 
     @Test
     public void evaluatesCorrectTokensWhenExpressionIsFalse() throws EvaluationException {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = TokenUtils.createDefaultToken();
         net.addToken(defaultToken);
 
         Place place = new Place("P0", "P0");

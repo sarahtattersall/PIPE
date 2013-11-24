@@ -1,13 +1,9 @@
 package pipe.handlers;
 
+import pipe.actions.SplitArcAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.gui.PetriNetTab;
-import pipe.actions.*;
 import pipe.historyActions.HistoryManager;
-import pipe.models.Arc;
+import pipe.models.component.Arc;
 import pipe.views.ArcView;
 import pipe.views.InhibitorArcView;
 import pipe.views.NormalArcView;
@@ -19,8 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.Point2D;
-
 
 /**
  * Class used to implement methods corresponding to mouse events on arcs.

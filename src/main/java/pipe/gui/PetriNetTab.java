@@ -1,9 +1,10 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.handlers.*;
-import pipe.historyActions.HistoryManager;
-import pipe.views.*;
+import pipe.handlers.AnimationHandler;
+import pipe.views.PetriNetView;
+import pipe.views.PetriNetViewComponent;
+import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 import java.awt.*;

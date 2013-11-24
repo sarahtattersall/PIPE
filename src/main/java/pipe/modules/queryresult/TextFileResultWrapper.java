@@ -3,22 +3,17 @@
  */
 package pipe.modules.queryresult;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import pipe.common.PetriNetNode;
 import pipe.exceptions.UnexpectedResultException;
 import pipe.handlers.StringHelper;
 import pipe.server.performancequery.nodeanalyser.NumNode;
 import pipe.server.performancequery.nodeanalyser.ValueNodeAnalyser;
+
+import java.io.*;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author dazz

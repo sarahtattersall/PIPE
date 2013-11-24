@@ -1,13 +1,10 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.Marking;
-import pipe.models.NormalArc;
+import pipe.models.component.NormalArc;
 import pipe.views.MarkingView;
 import pipe.views.NormalArcView;
-import pipe.views.TokenView;
 
-import java.awt.geom.Point2D;
 import java.util.LinkedList;
 
 public class NormalArcViewBuilder {

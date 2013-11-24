@@ -1,10 +1,9 @@
 package pipe.gui.widgets;
 
-import net.sourceforge.jeval.EvaluationException;
-import parser.ExprEvaluator;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.Transition;
+import pipe.models.component.Transition;
 import pipe.views.ArcView;
 import pipe.views.PetriNetView;
 import pipe.views.viewComponents.RateParameter;
@@ -21,7 +20,7 @@ import java.util.Iterator;
  */
 public class TransitionEditorPanel extends javax.swing.JPanel {
 
-    private final Transition transition;
+    private final TransitionController transitionController;
     private final PetriNetView _pnmlData;
     private final PetriNetController netController;
     private final JRootPane rootPane;
@@ -54,14 +53,14 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * Creates new form PlaceEditor
      *
      * @param _rootPane
-     * @param transition
+     * @param transitionController
      * @param _pnmlData
-     * @param netController petriNetController that transition belongs to.
+     * @param netController petriNetController that transitionController belongs to.
      */
-    public TransitionEditorPanel(JRootPane _rootPane, Transition transition,
+    public TransitionEditorPanel(JRootPane _rootPane, TransitionController transitionController,
                                  PetriNetView _pnmlData,
                                  PetriNetController netController) {
-        this.transition = transition;
+        this.transitionController = transitionController;
         this._pnmlData = _pnmlData;
         this.netController = netController;
         rootPane = _rootPane;
@@ -73,23 +72,23 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
         rootPane.setDefaultButton(okButton);
 
-        if (transition.isTimed()) {
+        if (transitionController.isTimed()) {
             timedTransition();
         }
         else {
             immediateTransition();
         }
 
-        if (transition.isInfiniteServer()) {
+        if (transitionController.isInfiniteServer()) {
             infiniteServerRadioButton.setSelected(true);
         }
         else {
             singleServerRadioButton.setSelected(true);
         }
 
-        if (transition.getRateParameter() != null) {
+        if (transitionController.getRateParameter() != null) {
             for (int i = 1; i < rateComboBox.getItemCount(); i++) {
-                if (transition.getRateParameter() ==
+                if (transitionController.getRateParameter() ==
                         rateComboBox.getItemAt(i)) {
                     rateComboBox.setSelectedIndex(i);
                 }
@@ -100,12 +99,12 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private void timedTransition() {
         timedRadioButton.setSelected(true);
         rateLabel.setText("Rate:");
-        if (transition.isInfiniteServer()) {
-            rateTextField.setText("ED(" + transition.getName() + ")");
+        if (transitionController.isInfiniteServer()) {
+            rateTextField.setText("ED(" + transitionController.getName() + ")");
             rateTextField.setEditable(false);
         }
         else {
-            rateTextField.setText(transition.getRateExpr());
+            rateTextField.setText(transitionController.getRateExpr());
             rateTextField.setEditable(true);
         }
         rateTextField.setEnabled(true);
@@ -138,12 +137,12 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private void immediateTransition() {
         immediateRadioButton.setSelected(true);
         rateLabel.setText("Weight:");
-        if (transition.isInfiniteServer()) {
-            rateTextField.setText("ED(" + transition.getName() + ")");
+        if (transitionController.isInfiniteServer()) {
+            rateTextField.setText("ED(" + transitionController.getName() + ")");
             rateTextField.setEditable(false);
         }
         else {
-            rateTextField.setText(transition.getRateExpr());
+            rateTextField.setText(transitionController.getRateExpr());
             rateTextField.setEditable(true);
         }
         rateTextField.setEnabled(false);
@@ -151,7 +150,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         functionalratebutton.setText("Weight expression editor");
 
         prioritySlider.setEnabled(true);
-        priorityTextField.setText("" + transition.getPriority());
+        priorityTextField.setText("" + transitionController.getPriority());
 
         priorityLabel.setEnabled(true);
         priorityPanel.setEnabled(true);
@@ -199,7 +198,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         transitionEditorPanel.add(nameLabel, gridBagConstraints);
 
-        nameTextField.setText(transition.getName());
+        nameTextField.setText(transitionController.getName());
         nameTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 nameTextFieldFocusGained(evt);
@@ -417,7 +416,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         prioritySlider.setSnapToTicks(true);
         prioritySlider
                 .setToolTipText("1: lowest priority; 127: highest priority");
-        prioritySlider.setValue(transition.getPriority());
+        prioritySlider.setValue(transitionController.getPriority());
         prioritySlider
                 .addChangeListener(new javax.swing.event.ChangeListener() {
                     public void stateChanged(
@@ -434,7 +433,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         priorityTextField.setMaximumSize(new java.awt.Dimension(36, 19));
         priorityTextField.setMinimumSize(new java.awt.Dimension(36, 19));
         priorityTextField.setPreferredSize(new java.awt.Dimension(36, 19));
-        priorityTextField.setText("" + transition.getPriority());
+        priorityTextField.setText("" + transitionController.getPriority());
         priorityPanel.add(priorityTextField);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -509,7 +508,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
                         "PIPE2", true);
         TransitionFunctionEditor feditor =
                 new TransitionFunctionEditor(this, guiDialog, _pnmlData,
-                        transition);
+                        transitionController);
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
         guiDialog.setLocationRelativeTo(
@@ -588,7 +587,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             singleServerRadioButton.setSelected(true);
             infiniteServerRadioButton.setSelected(false);
             rateTextField.setEditable(true);
-            rateTextField.setText(transition.getRateExpr());
+            rateTextField.setText(transitionController.getRateExpr());
         }
         else {
             if (checkIfArcsAreFunctional()) {
@@ -608,12 +607,12 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             singleServerRadioButton.setSelected(false);
             infiniteServerRadioButton.setSelected(true);
             functionalratebutton.setEnabled(false);
-            rateTextField.setText("ED(" + transition.getName() + ")");
+            rateTextField.setText("ED(" + transitionController.getName() + ")");
         }
     }
 
     private boolean checkIfArcsAreFunctional() {
-        Iterator to = transition.inboundArcs().iterator();
+        Iterator to = transitionController.inboundArcs().iterator();
         while (to.hasNext()) {
             ArcView arcTo = ((ArcView) to.next());
             arcTo.checkIfFunctionalWeightExists();
@@ -703,7 +702,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 //            return false;
 //        }
 //
-//        if (transition.getRateExpr().equals("")) {
+//        if (transitionController.getRateExpr().equals("")) {
 //            String message =
 //                    "Functional rate expression is empty. Please check.";
 //            String title = "Error";
@@ -715,17 +714,17 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 //            // There's a rate parameter selected
 //            RateParameter parameter =
 //                    (RateParameter) rateComboBox.getSelectedItem();
-//            if (parameter != transition.getRateParameter()) {
+//            if (parameter != transitionController.getRateParameter()) {
 //
 //                if (rParameter != null) {
 //                    // The rate parameter has been changed
-//                    petriNetController.getHistoryManager().addEdit(transition
+//                    petriNetController.getHistoryManager().addEdit(transitionController
 //                            .changeRateParameter((RateParameter) rateComboBox
 //                                    .getSelectedItem()));
 //                }
 //                else {
 //                    // The rate parameter has been changed
-//                    petriNetController.getHistoryManager().addEdit(transition
+//                    petriNetController.getHistoryManager().addEdit(transitionController
 //                            .setRateParameter((RateParameter) rateComboBox
 //                                    .getSelectedItem()));
 //                }
@@ -737,15 +736,15 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 //            if (rParameter != null) {
 //                // The rate parameter has been changed
 //                petriNetController.getHistoryManager()
-//                        .addEdit(transition.clearRateParameter());
+//                        .addEdit(transitionController.clearRateParameter());
 //            }
 //            try {
 //                if (singleServerRadioButton.isSelected()) {
 //                    // Double newRate = Double.parseDouble(rateTextField.getText());
 //                    if (!(r == rate)) {
 //                        petriNetController.getHistoryManager().addEdit(
-//                                transition.setRate(rateTextField.getText()));
-//                        //  transition.setRateType("C");
+//                                transitionController.setRate(rateTextField.getText()));
+//                        //  transitionController.setRateType("C");
 //                    }
 //                }
 //            } catch (NumberFormatException nfe) {
@@ -777,21 +776,22 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
                     break;
             }
             if (angle != 0) {
-                netController.setAngle(transition, angle);
+                transitionController.setAngle(angle);
             }
         }
     }
 
     private void setPriority() {
         int newPriority = prioritySlider.getValue();
-        if (newPriority != transition.getPriority() && !transition.isTimed()) {
-            netController.setPriority(transition, prioritySlider.getValue());
+        if (newPriority != transitionController
+                .getPriority() && !transitionController.isTimed()) {
+            transitionController.setPriority(prioritySlider.getValue());
         }
     }
 
     private void setTimed() {
-        if (timedRadioButton.isSelected() != transition.isTimed()) {
-            netController.setTimed(transition, timedRadioButton.isSelected());
+        if (timedRadioButton.isSelected() != transitionController.isTimed()) {
+            transitionController.setTimed(timedRadioButton.isSelected());
         }
     }
 
@@ -801,13 +801,13 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      */
     private boolean setName() {
         String newName = nameTextField.getText();
-        if (!newName.equals(transition.getName())) {
+        if (!newName.equals(transitionController.getName())) {
             if (_pnmlData.checkTransitionIDAvailability(newName)) {
-                netController.setPetriNetComponentName(transition, newName);
+                transitionController.setName(newName);
             }
             else {
                 JOptionPane.showMessageDialog(null,
-                        "There is already a transition named " + newName,
+                        "There is already a transitionController named " + newName,
                         "Error", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
@@ -821,8 +821,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      */
     private boolean setInfiniteServer() {
         if (infiniteServerRadioButton.isSelected() !=
-                transition.isInfiniteServer()) {
-            netController.setInfiniteServer(transition, infiniteServerRadioButton.isSelected());
+                transitionController.isInfiniteServer()) {
+            transitionController.setInfiniteServer(infiniteServerRadioButton.isSelected());
             exit();
             return true;
         }

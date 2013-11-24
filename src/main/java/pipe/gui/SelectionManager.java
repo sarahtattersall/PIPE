@@ -5,10 +5,9 @@ package pipe.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.views.ArcView;
-import pipe.views.viewComponents.ArcPath;
 import pipe.views.ConnectableView;
 import pipe.views.PetriNetViewComponent;
-import pipe.views.PlaceView;
+import pipe.views.viewComponents.ArcPath;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

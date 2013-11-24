@@ -7,10 +7,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.*;
+import pipe.models.component.*;
 import pipe.petrinet.reader.*;
 import pipe.petrinet.reader.creator.*;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.viewComponents.RateParameter;
+import utils.TokenUtils;
 
 import java.awt.*;
 import java.util.*;
@@ -126,7 +128,7 @@ public class PetriNetReaderTest {
         Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
         reader.createFromFile(noTokenDoc);
 
-        Token defaultToken = new Token("Default", false, 0, new Color(0, 0, 0));
+        Token defaultToken = TokenUtils.createDefaultToken();
         verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new ContainsToken(defaultToken)));
     }
 

@@ -1,6 +1,6 @@
 package pipe.views.builder;
 
-import pipe.models.Annotation;
+import pipe.models.component.Annotation;
 import pipe.views.viewComponents.AnnotationNote;
 
 public class AnnotationNodeBuilder {

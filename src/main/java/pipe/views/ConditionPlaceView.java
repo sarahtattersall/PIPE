@@ -3,7 +3,7 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.models.ConditionalPlace;
+import pipe.models.component.ConditionalPlace;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

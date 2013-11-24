@@ -3,10 +3,7 @@
  */
 package pipe.gui;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.GeneralPath;
 
 /**

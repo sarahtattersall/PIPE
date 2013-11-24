@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pipe.models.PetriNet;
-import pipe.models.Place;
+import pipe.models.component.Place;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.PNMLTransformerTest;
 

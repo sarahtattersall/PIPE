@@ -1,10 +1,12 @@
 package pipe.utilities;
 
 import org.w3c.dom.DOMException;
-import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
-import pipe.gui.ApplicationSettings;
-import pipe.models.*;
+import pipe.models.PetriNet;
+import pipe.models.component.NormalArc;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
+import pipe.models.component.Transition;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.*;
 

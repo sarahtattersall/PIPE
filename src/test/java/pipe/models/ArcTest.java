@@ -2,12 +2,16 @@ package pipe.models;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.component.Arc;
+import pipe.models.component.NormalArc;
+import pipe.models.component.Token;
+import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
+import utils.TokenUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -108,7 +112,7 @@ public class ArcTest {
 
     @Test
     public void returnsTokenWeightForToken() {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = TokenUtils.createDefaultToken();
         String weight = "cap(P0)";
 
         arc.setWeight(defaultToken, weight);
@@ -118,7 +122,7 @@ public class ArcTest {
 
     @Test
     public void returnTrueIfHasFunctionalWeight() {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = TokenUtils.createDefaultToken();
         Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));
 
         arc.setWeight(defaultToken, "2");
@@ -129,12 +133,21 @@ public class ArcTest {
 
     @Test
     public void returnFalseIfNoFunctionalWeight() {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
-        Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));
+        Token defaultToken = TokenUtils.createDefaultToken();
+        Token redToken = new Token("Red", true, 0, new Color(255, 0, 0));
 
         arc.setWeight(defaultToken, "2");
         arc.setWeight(redToken, "4");
 
         assertFalse(arc.hasFunctionalWeight());
+    }
+
+    @Test
+    public void settingWeightNotifiesObservers() {
+        arc.registerObserver(mockObserver);
+
+        Token defaultToken = TokenUtils.createDefaultToken();
+        arc.setWeight(defaultToken, "5");
+        verify(mockObserver).update();
     }
 }

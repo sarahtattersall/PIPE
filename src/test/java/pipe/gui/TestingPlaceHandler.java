@@ -1,15 +1,13 @@
 package pipe.gui;
 
 import java.awt.Container;
-import java.util.LinkedList;
 import java.util.List;
 
 import pipe.controllers.PetriNetController;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryManager;
 import pipe.models.Marking;
-import pipe.models.Place;
-import pipe.views.MarkingView;
+import pipe.models.component.Place;
 import pipe.views.PlaceView;
 
 public class TestingPlaceHandler extends PlaceHandler

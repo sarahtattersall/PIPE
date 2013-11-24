@@ -4,17 +4,19 @@ import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
-import pipe.gui.*;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
+import pipe.gui.ZoomController;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
-import pipe.models.Marking;
-import pipe.models.NormalArc;
-import pipe.models.Token;
-import pipe.models.Transition;
+import pipe.models.component.NormalArc;
+import pipe.models.component.Token;
+import pipe.models.component.Transition;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
@@ -575,7 +577,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public void showEditor() {
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(), this.model,
+        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(), petriNetController.getTransitionController(this.model),
                 ApplicationSettings.getApplicationView().getCurrentPetriNetView(),
                 petriNetController);
         guiDialog.add(te);
@@ -933,7 +935,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public double getRate() {
         if (isInfiniteServer()) {
-            return (double) ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(this);
+            return (double) ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(
+                    this);
         }
 
         if (model.getRateExpr() == null) {

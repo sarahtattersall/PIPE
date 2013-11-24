@@ -8,7 +8,7 @@ import pipe.gui.CopyPasteManager;
 import pipe.gui.PetriNetTab;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
 

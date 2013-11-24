@@ -3,14 +3,14 @@
  */
 package pipe.calculations;
 
+import pipe.exceptions.StateSpaceTooBigException;
+import pipe.io.ReachabilityGraphFileHeader;
+import pipe.io.StateRecord;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-
-import pipe.exceptions.StateSpaceTooBigException;
-import pipe.io.ReachabilityGraphFileHeader;
-import pipe.io.StateRecord;
 
 
 /**

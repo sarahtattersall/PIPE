@@ -1,20 +1,17 @@
-package pipe.models;
+package pipe.models.component;
 
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
-import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.utilities.math.Matrix;
 import pipe.views.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Token extends Observable implements Serializable, PetriNetComponent
+public class Token extends AbstractPetriNetComponent
 {
 
     @Pnml("id")

@@ -3,7 +3,6 @@
  */
 package pipe.handlers;
 
-import pipe.actions.EditNoteAction;
 import pipe.controllers.PetriNetController;
 import pipe.views.viewComponents.Parameter;
 

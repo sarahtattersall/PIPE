@@ -1,18 +1,18 @@
 package pipe.server.performancequery.structure;
 
+import pipe.common.*;
+import pipe.common.dataLayer.StateGroup;
+import pipe.handlers.StringHelper;
+import pipe.modules.interfaces.QueryConstants;
+import pipe.server.performancequery.QueryServerException;
+import pipe.server.performancequery.SimpleNode;
+import pipe.server.performancequery.SimpleValueNode;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import pipe.common.*;
-import pipe.common.dataLayer.StateGroup;
-import pipe.modules.interfaces.QueryConstants;
-import pipe.handlers.StringHelper;
-import pipe.server.performancequery.QueryServerException;
-import pipe.server.performancequery.SimpleNode;
-import pipe.server.performancequery.SimpleValueNode;
 
 public class TranslateQueryTree implements StructureLoggingHandler
 {

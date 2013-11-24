@@ -1,7 +1,8 @@
 package pipe.models.visitor;
 
 import pipe.common.dataLayer.StateGroup;
-import pipe.models.*;
+import pipe.models.PetriNet;
+import pipe.models.component.*;
 import pipe.views.viewComponents.RateParameter;
 
 public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor {

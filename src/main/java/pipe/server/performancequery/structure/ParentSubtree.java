@@ -3,13 +3,13 @@
  */
 package pipe.server.performancequery.structure;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-
 import pipe.modules.queryresult.ResultWrapper;
 import pipe.server.performancequery.SimpleNode;
 import pipe.server.performancequery.StatusIndicatorUpdater;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
 
 /**
  * @author dazz

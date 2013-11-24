@@ -3,17 +3,18 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
-import pipe.models.*;
+import pipe.models.component.NormalArc;
+import pipe.models.component.Token;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
 import pipe.views.ArcView;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class NormalArcViewBuilderTest {
-    private static final double DOUBLE_DELTA = 0.001;
     NormalArc arc;
     NormalArcViewBuilder builder;
     private PetriNetController mockController;

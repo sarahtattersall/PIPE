@@ -1,15 +1,16 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.handlers.mouse.MouseUtilities;
 import pipe.historyActions.AddPetriNetObject;
-import pipe.models.*;
-import pipe.views.*;
-import pipe.views.builder.PlaceViewBuilder;
-import pipe.views.viewComponents.AnnotationNote;
-import pipe.views.viewComponents.RateParameter;
+import pipe.models.PetriNet;
+import pipe.models.PipeApplicationModel;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
+import pipe.views.PetriNetView;
+import pipe.views.PetriNetViewComponent;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;

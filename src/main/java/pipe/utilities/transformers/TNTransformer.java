@@ -11,11 +11,11 @@
 package pipe.utilities.transformers;
 
 //Collections
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import pipe.views.MarkingView;
 import pipe.utilities.Copier;
 import pipe.views.*;
 

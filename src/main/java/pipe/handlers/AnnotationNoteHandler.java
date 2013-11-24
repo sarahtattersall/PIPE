@@ -5,9 +5,8 @@
  */
  package pipe.handlers;
 
- import pipe.actions.*;
  import pipe.controllers.PetriNetController;
- import pipe.models.Annotation;
+ import pipe.models.component.Annotation;
  import pipe.views.viewComponents.AnnotationNote;
 
  import javax.swing.*;

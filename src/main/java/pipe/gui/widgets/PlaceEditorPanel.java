@@ -1,11 +1,13 @@
 package pipe.gui.widgets;
 
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PlaceController;
 import pipe.gui.ApplicationSettings;
 import pipe.models.PetriNet;
-import pipe.models.Place;
-import pipe.models.Token;
-import pipe.views.*;
+import pipe.models.component.Token;
+import pipe.views.ArcView;
+import pipe.views.PetriNetView;
+import pipe.views.TransitionView;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -16,10 +18,9 @@ import java.util.List;
 /**
  * @author pere
  */
-public class PlaceEditorPanel
-        extends javax.swing.JPanel {
-    private final Place place;
+public class PlaceEditorPanel extends javax.swing.JPanel {
     private final PetriNetController netController;
+    private final PlaceController placeController;
     private final PetriNetView petriNetView;
     private final JRootPane rootPane;
 
@@ -34,19 +35,19 @@ public class PlaceEditorPanel
      * Creates new form PlaceEditor
      *
      * @param rootPane
-     * @param place
      * @param petriNetView
      */
-    public PlaceEditorPanel(JRootPane rootPane, Place place,
+    public PlaceEditorPanel(JRootPane rootPane, PlaceController placeController,
                             PetriNetView petriNetView) {
 
         this.rootPane = rootPane;
         this.rootPane.setDefaultButton(okButton);
-        this.place = place;
+        this.placeController = placeController;
         this.petriNetView = petriNetView;
 
         //TOOD: PASS IN AS ARG
-        netController = ApplicationSettings.getApplicationController().getActivePetriNetController();
+        netController = ApplicationSettings.getApplicationController()
+                .getActivePetriNetController();
         initComponents();
     }
 
@@ -65,7 +66,8 @@ public class PlaceEditorPanel
         int col = 0;
         int row = 2;
 
-        PetriNet net = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
+        PetriNet net = ApplicationSettings.getApplicationController()
+                .getActivePetriNetController().getPetriNet();
         for (Token token : net.getTokens()) {
             if (token.isEnabled()) {
                 JLabel tokenClassName = new JLabel();
@@ -74,28 +76,36 @@ public class PlaceEditorPanel
 
                 tokenClassName.setText(token.getId() + ": ");
                 inputtedTokenClassNames.add(token.getId());
-                final GridBagConstraints tokenNameConstraints = new java.awt.GridBagConstraints();
+                final GridBagConstraints tokenNameConstraints =
+                        new java.awt.GridBagConstraints();
                 tokenNameConstraints.gridx = 0;
                 tokenNameConstraints.gridy = row;
                 tokenNameConstraints.anchor = java.awt.GridBagConstraints.EAST;
                 tokenNameConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
                 placeEditorPanel.add(tokenClassName, tokenNameConstraints);
 
-                tokenClassMarking.setValue(place.getTokenCount(token));
-                tokenClassMarking.setMinimumSize(new java.awt.Dimension(50, 20));
-                tokenClassMarking.setPreferredSize(new java.awt.Dimension(50, 20));
-                tokenClassMarking.addChangeListener(new javax.swing.event.ChangeListener() {
-                    public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                        markingSpinnerStateChanged(evt, inputtedMarkings.size() - 1);
-                    }
-                });
+                tokenClassMarking
+                        .setValue(placeController.getTokenCount(token));
+                tokenClassMarking
+                        .setMinimumSize(new java.awt.Dimension(50, 20));
+                tokenClassMarking
+                        .setPreferredSize(new java.awt.Dimension(50, 20));
+                tokenClassMarking.addChangeListener(
+                        new javax.swing.event.ChangeListener() {
+                            public void stateChanged(
+                                    javax.swing.event.ChangeEvent evt) {
+                                markingSpinnerStateChanged(evt,
+                                        inputtedMarkings.size() - 1);
+                            }
+                        });
 
-
-                final GridBagConstraints tokenValueConstraints = new java.awt.GridBagConstraints();
+                final GridBagConstraints tokenValueConstraints =
+                        new java.awt.GridBagConstraints();
                 tokenValueConstraints.gridx = col + 1;
                 tokenValueConstraints.gridy = row;
                 tokenValueConstraints.gridwidth = 3;
-                tokenValueConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                tokenValueConstraints.fill =
+                        java.awt.GridBagConstraints.HORIZONTAL;
                 tokenValueConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
                 placeEditorPanel.add(tokenClassMarking, tokenValueConstraints);
                 row++;
@@ -108,7 +118,6 @@ public class PlaceEditorPanel
         row++;
 
         GridBagConstraints gridBagConstraints;
-
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new java.awt.GridBagLayout());
@@ -126,12 +135,14 @@ public class PlaceEditorPanel
     /**
      * Sets the no capacity restriction label visible if the capacity is
      * zero
+     *
      * @param capacity
      */
     private void setCapacityVisible(double capacity) {
         if (capacity == 0) {
             capacity0Label.setVisible(true);
-        } else {
+        }
+        else {
             capacity0Label.setVisible(false);
         }
 
@@ -150,11 +161,13 @@ public class PlaceEditorPanel
         gridBagConstraints.anchor = GridBagConstraints.EAST;
         gridBagConstraints.insets = new Insets(5, 8, 5, 8);
         add(placeEditorPanel, gridBagConstraints);
-        setCapacityVisible(place.getCapacity());
+        setCapacityVisible(placeController.getCapacity());
     }
 
     private void initializeCapacitySpinner(JPanel placeEditorPanel, int row) {
-        capacitySpinner.setModel(new SpinnerNumberModel(place.getCapacity(), 0, Integer.MAX_VALUE, 1));
+        capacitySpinner.setModel(
+                new SpinnerNumberModel(placeController.getCapacity(), 0,
+                        Integer.MAX_VALUE, 1));
         capacitySpinner.setMinimumSize(new Dimension(50, 20));
         capacitySpinner.setPreferredSize(new Dimension(50, 20));
         capacitySpinner.addChangeListener(new ChangeListener() {
@@ -176,7 +189,8 @@ public class PlaceEditorPanel
         JPanel placeEditorPanel = new JPanel();
         placeEditorPanel.setLayout(new GridBagLayout());
 
-        placeEditorPanel.setBorder(BorderFactory.createTitledBorder("Place Editor"));
+        placeEditorPanel
+                .setBorder(BorderFactory.createTitledBorder("Place Editor"));
 
         JLabel nameLabel = new JLabel();
         nameLabel.setText("Name:");
@@ -222,7 +236,7 @@ public class PlaceEditorPanel
     }
 
     private void initializeNameTextField(JPanel placeEditorPanel) {
-        nameTextField.setText(place.getName());
+        nameTextField.setText(placeController.getName());
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -246,7 +260,8 @@ public class PlaceEditorPanel
             }
         });
 
-        GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
+        GridBagConstraints gridBagConstraints =
+                new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.RELATIVE;
@@ -255,7 +270,8 @@ public class PlaceEditorPanel
         buttonPanel.add(okButton, gridBagConstraints);
     }
 
-    private void markingSpinnerStateChanged(javax.swing.event.ChangeEvent evt, int posInList) {//GEN-FIRST:event_markingSpinnerStateChanged
+    private void markingSpinnerStateChanged(javax.swing.event.ChangeEvent evt,
+                                            int posInList) {//GEN-FIRST:event_markingSpinnerStateChanged
 /*      Integer capacity = (Integer)capacitySpinner.getValue();
       int totalMarkings = 0;
       for(JSpinner inputtedMarking:inputtedMarkings){
@@ -270,15 +286,17 @@ public class PlaceEditorPanel
       }*/
     }//GEN-LAST:event_markingSpinnerStateChanged
 
-    private final ChangeListener changeListener = new javax.swing.event.ChangeListener() {
-        public void stateChanged(javax.swing.event.ChangeEvent evt) {
-            JSpinner spinner = (JSpinner) evt.getSource();
-            JSpinner.NumberEditor numberEditor =
-                    ((JSpinner.NumberEditor) spinner.getEditor());
-            numberEditor.getTextField().setBackground(new Color(255, 255, 255));
-            spinner.removeChangeListener(this);
-        }
-    };
+    private final ChangeListener changeListener =
+            new javax.swing.event.ChangeListener() {
+                public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                    JSpinner spinner = (JSpinner) evt.getSource();
+                    JSpinner.NumberEditor numberEditor =
+                            ((JSpinner.NumberEditor) spinner.getEditor());
+                    numberEditor.getTextField()
+                            .setBackground(new Color(255, 255, 255));
+                    spinner.removeChangeListener(this);
+                }
+            };
 
     private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
@@ -288,8 +306,7 @@ public class PlaceEditorPanel
 
     private void doOK() {
 
-
-        if (!setCapacity()){
+        if (!setCapacity()) {
             return;
         }
 
@@ -297,7 +314,6 @@ public class PlaceEditorPanel
         if (!successfullySet) {
             return;
         }
-
 
         boolean successfulName = setNameValue();
         if (!successfulName) {
@@ -322,7 +338,7 @@ public class PlaceEditorPanel
             return false;
         }
 
-        netController.setPlaceCapacity(place, newCapacity);
+        placeController.setCapacity(newCapacity);
         return true;
     }
 
@@ -331,15 +347,15 @@ public class PlaceEditorPanel
     }
 
     /**
-     *
      * @return return false if could not set name
      */
     private boolean setNameValue() {
         String newName = nameTextField.getText();
-        if (!newName.equals(place.getName())) {
+        if (!newName.equals(placeController.getName())) {
             if (petriNetView.checkPlaceIDAvailability(newName)) {
-                netController.setPetriNetComponentName(place, newName);
-            } else {
+                placeController.setName(newName);
+            }
+            else {
                 // aquest nom no est disponible...
                 JOptionPane.showMessageDialog(null,
                         "There is already a place named " + newName, "Error",
@@ -351,24 +367,25 @@ public class PlaceEditorPanel
     }
 
     /**
-     *
      * Sets the token values on the place
      *
      * @return true if it was able to set token values, false if not.
      */
     private boolean setTokenValues() {
         int totalCount = calculateTokenCount();
-        if (place.hasCapacityRestriction() && totalCount > getCapacitySpinnerValue()) {
+        if (placeController.hasCapacityRestriction() &&
+                totalCount > getCapacitySpinnerValue()) {
             JOptionPane.showMessageDialog(null,
                     "Token counts exceed the capacity of place. Please alter capacity or tokens");
             return false;
         }
 
         Map<Token, Integer> newTokenCounts = new HashMap<Token, Integer>();
-        for (int tokenIndex = 0; tokenIndex < inputtedMarkings.size(); tokenIndex++) {
+        for (int tokenIndex = 0; tokenIndex < inputtedMarkings.size();
+             tokenIndex++) {
             String tokenName = inputtedTokenClassNames.get(tokenIndex);
-            int newTokenCount = Integer.valueOf((Integer) inputtedMarkings.get(tokenIndex)
-                    .getValue());
+            int newTokenCount = Integer.valueOf(
+                    (Integer) inputtedMarkings.get(tokenIndex).getValue());
 
             try {
                 if (newTokenCount < 0) {
@@ -378,7 +395,7 @@ public class PlaceEditorPanel
                 }
 
                 Token token = netController.getToken(tokenName);
-                if (place.getTokenCount(token) != newTokenCount) {
+                if (placeController.getTokenCount(token) != newTokenCount) {
                     newTokenCounts.put(token, newTokenCount);
                 }
 
@@ -396,17 +413,17 @@ public class PlaceEditorPanel
             }
         }
 
-        netController.setTokenCounts(place, newTokenCounts);
+        placeController.setTokenCounts(newTokenCounts);
         return true;
     }
 
     /**
-     *
      * @return the total number of tokens declared for the place
      */
     private int calculateTokenCount() {
         int sum = 0;
-        for (int tokenIndex = 0; tokenIndex < inputtedMarkings.size(); tokenIndex++) {
+        for (int tokenIndex = 0; tokenIndex < inputtedMarkings.size();
+             tokenIndex++) {
             Object value = inputtedMarkings.get(tokenIndex).getValue();
             sum += Integer.valueOf((Integer) value);
         }
@@ -414,37 +431,35 @@ public class PlaceEditorPanel
     }
 
     private void updateArcAndTran() {
-        Collection<ArcView> arcs = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
+        Collection<ArcView> arcs = ApplicationSettings.getApplicationView()
+                .getCurrentPetriNetView().getArcsArrayList();
         for (ArcView arc : arcs) {
             arc.repaint();
         }
-        Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
+        Collection<TransitionView> trans =
+                ApplicationSettings.getApplicationView()
+                        .getCurrentPetriNetView().getTransitionsArrayList();
         for (TransitionView transition : trans) {
             transition.update();
         }
     }
 
-    private void okButtonHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonHandler
+    private void okButtonHandler(java.awt.event.ActionEvent evt) {
         doOK();
-    }//GEN-LAST:event_okButtonHandler
-
+    }
 
     private void exit() {
         rootPane.getParent().setVisible(false);
     }
 
-
-    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonHandler
+    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
         exit();
-    }//GEN-LAST:event_cancelButtonHandler
+    }
 
-
-    private void capacitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {
+    private void capacitySpinnerStateChanged(
+            javax.swing.event.ChangeEvent evt) {
         Double capacity = (Double) capacitySpinner.getValue();
         setCapacityVisible(capacity);
     }
-
-
-
 
 }

@@ -7,15 +7,15 @@ import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import pipe.models.*;
+import pipe.models.component.*;
 import pipe.petrinet.reader.creator.ArcCreator;
 import pipe.utilities.transformers.PNMLTransformer;
+import utils.TokenUtils;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -70,7 +70,7 @@ public class ArcCreatorTest {
 
     private Token addDefaultTokenToTokens()
     {
-        Token token = new Token("Default", true, 10, new Color(1,0,0));
+        Token token = TokenUtils.createDefaultToken();
         tokens.put(token.getId(), token);
         return token;
     }

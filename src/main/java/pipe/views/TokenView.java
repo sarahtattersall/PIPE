@@ -2,13 +2,12 @@ package pipe.views;
 
 import pipe.controllers.TokenController;
 import pipe.exceptions.TokenLockedException;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.math.Matrix;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 

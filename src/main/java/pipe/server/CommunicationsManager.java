@@ -1,12 +1,13 @@
 package pipe.server;
 
+import pipe.server.performancequery.ClientUpdater;
+import pipe.server.performancequery.ServerLoggingHandler;
+
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.util.logging.Level;
-import pipe.server.performancequery.ClientUpdater;
-import pipe.server.performancequery.ServerLoggingHandler;
 
 
 public class CommunicationsManager {

@@ -10,8 +10,8 @@
 
 package pipe.modules.queryeditor.io;
 
-import pipe.common.dataLayer.StateGroup;
 import pipe.common.PetriNetNode;
+import pipe.common.dataLayer.StateGroup;
 import pipe.gui.ApplicationSettings;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;

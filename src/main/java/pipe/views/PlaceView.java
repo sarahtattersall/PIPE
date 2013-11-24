@@ -8,10 +8,9 @@ import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceHandler;
 import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.historyActions.PlaceMarking;
 import pipe.models.PipeObservable;
-import pipe.models.Place;
-import pipe.models.Token;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 import pipe.utilities.Copier;
 import pipe.views.builder.TokenViewBuilder;
 
@@ -445,7 +444,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
         // 2 Add Place editor
-        contentPane.add(new PlaceEditorPanel(guiDialog.getRootPane(), this.getModel(),
+        contentPane.add(new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
                 ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
 
         guiDialog.setResizable(false);

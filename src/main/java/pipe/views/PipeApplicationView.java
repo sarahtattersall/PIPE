@@ -8,11 +8,9 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.widgets.FileBrowser;
-import pipe.historyActions.HistoryManager;
 import pipe.io.JarUtilities;
 import pipe.models.PipeApplicationModel;
-import pipe.models.Token;
-import pipe.utilities.writers.PNMLWriter;
+import pipe.models.component.Token;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -27,7 +25,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 //

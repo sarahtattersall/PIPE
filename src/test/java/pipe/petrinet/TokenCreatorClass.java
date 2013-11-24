@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.petrinet.reader.creator.TokenCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 

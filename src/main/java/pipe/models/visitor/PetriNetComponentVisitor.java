@@ -1,7 +1,7 @@
 package pipe.models.visitor;
 
 import pipe.common.dataLayer.StateGroup;
-import pipe.models.*;
+import pipe.models.component.*;
 import pipe.views.viewComponents.RateParameter;
 
 public interface PetriNetComponentVisitor {

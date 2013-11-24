@@ -5,8 +5,6 @@
  */
 package pipe.gui.widgets;
 
-import javax.swing.*;
-
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
@@ -14,6 +12,8 @@ import pipe.gui.PetriNetTab;
 import pipe.historyActions.HistoryManager;
 import pipe.views.viewComponents.Parameter;
 import pipe.views.viewComponents.RateParameter;
+
+import javax.swing.*;
 
 /**
  * @author Pere Bonet

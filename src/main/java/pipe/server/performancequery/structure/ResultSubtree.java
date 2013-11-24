@@ -1,12 +1,12 @@
 package pipe.server.performancequery.structure;
 
-import java.util.concurrent.ExecutionException;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.queryresult.ResultWrapper;
 import pipe.server.performancequery.QueryServerException;
 import pipe.server.performancequery.SimpleNode;
 import pipe.server.performancequery.StatusIndicatorUpdater;
+
+import java.util.concurrent.ExecutionException;
 
 public class ResultSubtree extends ParentSubtree
 {

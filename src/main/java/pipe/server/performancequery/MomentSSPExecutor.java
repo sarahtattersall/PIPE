@@ -3,17 +3,17 @@
  */
 package pipe.server.performancequery;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-
-import pipe.modules.interfaces.QueryConstants;
 import pipe.exceptions.UnexpectedResultException;
 import pipe.handlers.StringHelper;
+import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryresult.ResultWrapper;
 import pipe.modules.queryresult.TextFileResultWrapper;
 import pipe.server.performancequery.nodeanalyser.NumNode;
 import pipe.server.performancequery.structure.ParentSubtree;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author dazz

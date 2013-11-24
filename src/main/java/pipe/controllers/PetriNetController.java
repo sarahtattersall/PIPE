@@ -2,7 +2,8 @@ package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
 import pipe.historyActions.*;
-import pipe.models.*;
+import pipe.models.PetriNet;
+import pipe.models.component.*;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -217,25 +218,6 @@ public class PetriNetController implements IController, Serializable {
 
     /**
      *
-     * @param component
-     * @param tokenName
-     */
-    public void addTokenToPlace(Place component, String tokenName) {
-        Token token = getTokenForName(tokenName);
-        component.incrementTokenCount(token);
-        petriNet.notifyObservers();
-    }
-
-
-
-    public void deleteTokenInPlace(Place component, String tokenName) {
-        Token token = getTokenForName(tokenName);
-        component.decrementTokenCount(token);
-        petriNet.notifyObservers();
-    }
-
-    /**
-     *
      * @param name token name to find
      * @return Token from PetriNet
      * @throw RuntimeException if the token does not exist
@@ -282,101 +264,18 @@ public class PetriNetController implements IController, Serializable {
         return getTokenForName(tokenName);
     }
 
-    public void setTokenCounts(Place place, Map<Token, Integer> counts) {
-        historyManager.newEdit();
-        for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
-            Token token = entry.getKey();
-            Integer newTokenCount = entry.getValue();
-            int currentTokenCount = place.getTokenCount(token);
 
-            PlaceMarking markingAction = new PlaceMarking(place, petriNet, token,
-                    currentTokenCount, newTokenCount);
-            markingAction.redo();
 
-            historyManager.addEdit(markingAction);
-
-        }
-
+    public ArcController getArcController(Arc arc) {
+        return new ArcController(arc, historyManager);
     }
 
-    public void setPetriNetComponentName(PetriNetComponent component, String newName) {
-        String oldName = component.getId();
-        PetriNetObjectName nameAction = new PetriNetObjectName(component, petriNet, oldName, newName);
-        nameAction.redo();
-        historyManager.addNewEdit(nameAction);
+    public PlaceController getPlaceController(Place place) {
+        return new PlaceController(place, historyManager);
     }
 
-    public void setPlaceCapacity(Place place, Double capacity) {
-        double oldCapacity = place.getCapacity();
-        PlaceCapacity capacityAction = new PlaceCapacity(place, petriNet, oldCapacity, capacity);
-        capacityAction.redo();
-        historyManager.addNewEdit(capacityAction);
-    }
-
-    /**
-     *
-     * @param transition
-     * @param infiniteValue
-     */
-    public void setInfiniteServer(final Transition transition,
-                                  final boolean infiniteValue) {
-        TransitionInfiniteServer infiniteAction = new TransitionInfiniteServer(transition, petriNet, infiniteValue);
-        infiniteAction.redo();
-        historyManager.addNewEdit(infiniteAction);
-    }
-
-    public void setTimed(final Transition transition, final boolean timedValue) {
-        TransitionTiming timedAction = new TransitionTiming(transition, petriNet, timedValue);
-        timedAction.redo();
-        historyManager.addNewEdit(timedAction);
-    }
-
-    public void setPriority(final Transition transition,
-                            final int priorityValue) {
-        int oldPriority = transition.getPriority();
-        TransitionPriority priorityAction = new TransitionPriority(transition, petriNet, oldPriority, priorityValue);
-        priorityAction.redo();
-        historyManager.addNewEdit(priorityAction);
-    }
-
-    public void setAngle(final Transition transition, final int angle) {
-        int oldAngle = transition.getAngle();
-        TransitionRotation angleAction = new TransitionRotation(transition, petriNet, oldAngle, angle);
-        angleAction.redo();
-        historyManager.addNewEdit(angleAction);
-
-    }
-
-    /**
-     * Sets the weight for specified token to be expr
-     * @param arc
-     * @param token
-     * @param expr
-     */
-    public void setWeightForArc(final Arc arc, final Token token,
-                                final String expr) {
-        historyManager.newEdit();
-        updateWeightForArc(arc, token, expr);
-    }
-
-    /**
-     * Creates a historyItem for updating weight and applies it
-     * @param arc
-     * @param token
-     * @param expr
-     */
-    private void updateWeightForArc(final Arc arc, final Token token,
-                                 final String expr) {
-        String oldWeight = arc.getWeightForToken(token);
-        ArcWeight weightAction = new ArcWeight(arc, petriNet, token, oldWeight, expr);
-        weightAction.redo();
-        historyManager.addEdit(weightAction);
-    }
-
-    public void setWeights(final Arc arc, final Map<Token, String> newWeights) {
-        historyManager.newEdit();
-        for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
-            updateWeightForArc(arc, entry.getKey(), entry.getValue());
-        }
+    public TransitionController getTransitionController(
+            final Transition transition) {
+        return new TransitionController(transition, historyManager);
     }
 }

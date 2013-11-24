@@ -5,12 +5,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pipe.common.dataLayer.StateGroup;
+import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -165,4 +165,28 @@ public class PetriNetTest {
         exception.expectMessage("No token foo exists in petrinet.");
         net.getToken("foo");
     }
+
+    @Test
+    public void registersItselfAsPlaceObserver() {
+        Place place = mock(Place.class);
+        net.addPlace(place);
+        verify(place).registerObserver(net);
+    }
+
+
+    @Test
+    public void registersItselfAsTransitionObserver() {
+        Transition transition = mock(Transition.class);
+        net.addTransition(transition);
+        verify(transition).registerObserver(net);
+    }
+
+
+    @Test
+    public void registersItselfAsArcObserver() {
+        Arc arc = mock(Arc.class);
+        net.addArc(arc);
+        verify(arc).registerObserver(net);
+    }
+
 }

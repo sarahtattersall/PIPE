@@ -6,14 +6,12 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.historyActions.*;
-import pipe.models.NormalArc;
+import pipe.models.component.NormalArc;
 import pipe.utilities.Copier;
-import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 
 

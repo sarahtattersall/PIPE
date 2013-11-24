@@ -9,18 +9,15 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.Container;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import pipe.gui.Grid;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroView;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 
 public class PerformanceTreeArcHandler extends PerformanceTreeObjectHandler {

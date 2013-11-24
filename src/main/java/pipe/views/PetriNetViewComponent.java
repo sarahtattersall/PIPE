@@ -3,8 +3,7 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.historyActions.HistoryItem;
-import pipe.historyActions.PetriNetObjectName;
-import pipe.models.PetriNetComponent;
+import pipe.models.component.PetriNetComponent;
 import pipe.views.viewComponents.NameLabel;
 
 import javax.swing.*;
@@ -12,7 +11,6 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.EventListener;
 

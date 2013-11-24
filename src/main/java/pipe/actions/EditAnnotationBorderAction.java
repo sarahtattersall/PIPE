@@ -4,14 +4,13 @@
  */
 package pipe.actions;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.AnnotationNote;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 
 public class EditAnnotationBorderAction

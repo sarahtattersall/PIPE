@@ -4,9 +4,7 @@
 package pipe.historyActions;
 
 import pipe.models.PetriNet;
-import pipe.models.PetriNetComponent;
-import pipe.views.PetriNetViewComponent;
-
+import pipe.models.component.PetriNetComponent;
 
 /**
  *
@@ -19,13 +17,10 @@ public class PetriNetObjectName
     private final String oldName;
     private final String newName;
     private final PetriNetComponent component;
-    private final PetriNet petriNet;
 
 
-    public PetriNetObjectName(PetriNetComponent component, PetriNet petriNet, String oldName, String newName) {
-        //To change body of created methods use File | Settings | File Templates.
+    public PetriNetObjectName(PetriNetComponent component, String oldName, String newName) {
         this.component = component;
-        this.petriNet = petriNet;
         this.oldName = oldName;
         this.newName = newName;
     }
@@ -35,7 +30,6 @@ public class PetriNetObjectName
    public void undo() {
        component.setName(oldName);
        component.setId(oldName);
-       petriNet.notifyObservers();
    }
 
    
@@ -43,7 +37,6 @@ public class PetriNetObjectName
    public void redo() {
        component.setName(newName);
        component.setId(newName);
-       petriNet.notifyObservers();
    }
    
 }

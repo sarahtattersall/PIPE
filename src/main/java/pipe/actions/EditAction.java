@@ -3,14 +3,10 @@ package pipe.actions;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.views.ArcView;
-import pipe.views.PipeApplicationView;
-import pipe.views.PlaceView;
 import pipe.models.PipeApplicationModel;
+import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 public class EditAction extends GuiAction
 {

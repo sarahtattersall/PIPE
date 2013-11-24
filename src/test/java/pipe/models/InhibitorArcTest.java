@@ -2,21 +2,17 @@ package pipe.models;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.component.NormalArc;
+import pipe.models.component.Token;
+import pipe.models.component.Connectable;
+import pipe.models.component.Place;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created with IntelliJ IDEA.
- * User: st809
- * Date: 18/10/2013
- * Time: 12:56
- * To change this template use File | Settings | File Templates.
- */
+
 public class InhibitorArcTest {
 
     NormalArc arc;

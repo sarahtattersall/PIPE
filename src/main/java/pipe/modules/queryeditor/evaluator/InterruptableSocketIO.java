@@ -3,6 +3,8 @@
  */
 package pipe.modules.queryeditor.evaluator;
 
+import pipe.modules.interfaces.Cleanable;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,8 +12,6 @@ import java.net.InetSocketAddress;
 import java.nio.channels.Channels;
 import java.nio.channels.SocketChannel;
 import java.util.logging.Level;
-
-import pipe.modules.interfaces.Cleanable;
 
 /**
  * @author dazz

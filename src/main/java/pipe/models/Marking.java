@@ -1,5 +1,7 @@
 package pipe.models;
 
+import pipe.models.component.Token;
+
 import java.io.Serializable;
 import java.util.Observable;
 

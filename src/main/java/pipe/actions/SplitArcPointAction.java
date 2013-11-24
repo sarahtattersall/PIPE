@@ -5,12 +5,12 @@
  */
 package pipe.actions;
 
-import java.awt.event.ActionEvent;
-
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.ArcPathPoint;
+
+import java.awt.event.ActionEvent;
 
 /**
  * @author Nadeem

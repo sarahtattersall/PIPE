@@ -1,7 +1,7 @@
 package pipe.views.builder;
 
 import pipe.controllers.TokenController;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.views.TokenView;
 
 public class TokenViewBuilder {

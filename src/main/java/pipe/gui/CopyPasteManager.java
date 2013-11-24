@@ -5,11 +5,10 @@ package pipe.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.HistoryManager;
-import pipe.views.viewComponents.RateParameter;
 import pipe.views.*;
+import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

@@ -1,6 +1,6 @@
 package matchers.component;
 
-import pipe.models.Connectable;
+import pipe.models.component.Connectable;
 /**
  * Checks if connectable has given x and y
  */

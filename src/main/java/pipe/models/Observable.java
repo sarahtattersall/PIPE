@@ -7,7 +7,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Observable implements IObservable, Serializable
+/**
+ * Observable class can be used in classes that implement IObservable
+ */
+public class Observable implements IObservable, Serializable
 {
     private final List<IObserver> observers = new ArrayList<IObserver>();
 

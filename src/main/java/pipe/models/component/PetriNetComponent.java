@@ -1,15 +1,14 @@
-package pipe.models;
+package pipe.models.component;
 
+import pipe.models.interfaces.IObservable;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 /**
- * Created with IntelliJ IDEA.
- * User: st809
- * Date: 18/10/2013
- * Time: 12:17
- * To change this template use File | Settings | File Templates.
+ * This class extends the IObservable interface since java.utils.Observable is
+ * messy. See SO:
+ * http://stackoverflow.com/questions/7281469/why-is-java-util-observable-not-an-abstract-class
  */
-public interface PetriNetComponent {
+public interface PetriNetComponent extends IObservable {
 
     public boolean isSelectable();
     public boolean isDraggable();

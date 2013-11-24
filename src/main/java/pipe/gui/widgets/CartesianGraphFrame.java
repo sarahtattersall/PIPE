@@ -1,8 +1,7 @@
 package pipe.gui.widgets;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Window;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -13,10 +12,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 /**
  * Class that handles the creation of a new JFrame to display the GraphPanel widget and

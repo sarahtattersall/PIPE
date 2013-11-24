@@ -1,25 +1,16 @@
 package pipe.actions;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.LinkedList;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenDialog;
 import pipe.gui.TokenPanel;
 import pipe.views.PipeApplicationView;
 import pipe.views.TokenView;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
 // 
 // Steve Doubleday: refactored to simplify testing
 //

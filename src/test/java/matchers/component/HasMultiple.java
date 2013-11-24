@@ -1,7 +1,7 @@
 package matchers.component;
 
 import org.mockito.ArgumentMatcher;
-import pipe.models.Connectable;
+import pipe.models.component.Connectable;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -5,8 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import pipe.models.*;
+import pipe.models.component.*;
 import pipe.petrinet.writer.reflectionCreator.ElementCreator;
+import utils.TokenUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,7 +46,7 @@ public class ArcElementCreatorTest {
 
     private Map<Token, String> createTokenCounts() {
         Map<Token, String> tokens = new HashMap<Token, String>();
-        Token token = new Token("Default", true, 0, new Color(0,0,0));
+        Token token = TokenUtils.createDefaultToken();
         tokens.put(token, TOKEN_COUNT);
         return tokens;
     }

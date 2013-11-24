@@ -3,7 +3,9 @@
  */
 package pipe.modules.gspn;
 
-import pipe.calculations.*;
+import pipe.calculations.StateList;
+import pipe.calculations.StateSpaceGenerator;
+import pipe.calculations.SteadyStateSolver;
 import pipe.exceptions.MarkingNotIntegerException;
 import pipe.exceptions.StateSpaceTooBigException;
 import pipe.exceptions.TimelessTrapException;
@@ -13,16 +15,15 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
 import pipe.io.ImmediateAbortException;
-import pipe.views.MarkingView;
+import pipe.modules.interfaces.IModule;
+import pipe.utilities.Expander;
 import pipe.utilities.writers.PNMLWriter;
+import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
-import pipe.utilities.Expander;
 import pipe.views.TransitionView;
-import pipe.modules.interfaces.IModule;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

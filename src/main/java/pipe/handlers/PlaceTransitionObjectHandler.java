@@ -2,22 +2,20 @@ package pipe.handlers;
 
 import pipe.actions.ShowHideInfoAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
-import pipe.gui.*;
-import pipe.historyActions.AddPetriNetObject;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
 import pipe.historyActions.HistoryManager;
-import pipe.models.*;
-import pipe.utilities.Copier;
+import pipe.models.PipeApplicationModel;
+import pipe.models.component.Connectable;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
 import pipe.views.*;
-import pipe.views.TokenView;
-import pipe.views.MarkingView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Class used to implement methods corresponding to mouse events on places.

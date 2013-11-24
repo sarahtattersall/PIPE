@@ -5,8 +5,8 @@ import com.google.common.base.Joiner;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import pipe.models.PetriNetComponent;
-import pipe.models.Pnml;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.Pnml;
 
 import java.awt.*;
 import java.lang.reflect.Field;

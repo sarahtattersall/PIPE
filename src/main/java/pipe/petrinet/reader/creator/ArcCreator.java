@@ -2,12 +2,12 @@ package pipe.petrinet.reader.creator;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import pipe.models.*;
-
-import java.util.*;
+import pipe.models.component.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Creates an {@link Arc} based on an {@link Element}'s information
+ * Creates an {@link pipe.models.component.Arc} based on an {@link Element}'s information
  */
 public class ArcCreator implements ComponentCreator<Arc> {
 
@@ -33,7 +33,7 @@ public class ArcCreator implements ComponentCreator<Arc> {
 
     /**
      *
-     * Creates either a {@link InhibitorArc} or a {@link NormalArc}
+     * Creates either a {@link pipe.models.component.InhibitorArc} or a {@link pipe.models.component.NormalArc}
      * based on the elements arc type
      *
      * Sets it source/target to those found in {@link this.connectables}

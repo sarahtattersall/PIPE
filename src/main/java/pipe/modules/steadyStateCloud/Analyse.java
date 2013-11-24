@@ -1,9 +1,9 @@
 package pipe.modules.steadyStateCloud;
 
-import pipe.common.SimplePlaces;
-import pipe.common.SimpleTransitions;
 import pipe.common.AnalysisType;
 import pipe.common.PerformanceMeasure;
+import pipe.common.SimplePlaces;
+import pipe.common.SimpleTransitions;
 import pipe.gui.widgets.ResultsHTMLPane;
 import pipe.modules.clientCommon.HTMLPane;
 import pipe.modules.clientCommon.SocketIO;

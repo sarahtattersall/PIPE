@@ -4,9 +4,8 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
-import pipe.models.Marking;
-import pipe.models.NormalArc;
-import pipe.models.Token;
+import pipe.models.component.NormalArc;
+import pipe.models.component.Token;
 import pipe.views.*;
 
 import java.awt.event.ActionEvent;

@@ -9,17 +9,17 @@
 
 package pipe.modules.queryeditor.evaluator;
 
+import pipe.common.AnalysisInstruction;
+import pipe.exceptions.UnexpectedResultException;
+import pipe.modules.interfaces.Cleanable;
+import pipe.modules.queryeditor.QueryManager;
+import pipe.modules.queryeditor.evaluator.gui.ProgressView;
+import pipe.modules.queryresult.ResultWrapper;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.nio.channels.AsynchronousCloseException;
 import java.util.logging.Level;
-
-import pipe.common.AnalysisInstruction;
-import pipe.modules.interfaces.Cleanable;
-import pipe.modules.queryresult.ResultWrapper;
-import pipe.exceptions.UnexpectedResultException;
-import pipe.modules.queryeditor.QueryManager;
-import pipe.modules.queryeditor.evaluator.gui.ProgressView;
 
 public class AnalysisResultsReceiver implements Runnable, Cleanable, EvaluatorLoggingHandler
 {

@@ -3,11 +3,10 @@ package pipe.models.visitor;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.*;
-import pipe.views.viewComponents.RateParameter;
+import pipe.models.component.*;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;

@@ -11,11 +11,11 @@
 
 package pipe.modules.queryeditor.evaluator.gui;
 
-import java.awt.image.ImageObserver;
-
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+
+import java.awt.image.ImageObserver;
 
 public abstract class QueryTreeNode extends PerformanceTreeNode implements QueryConstants
 {

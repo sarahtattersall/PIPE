@@ -13,22 +13,18 @@
 
 package pipe.modules.queryeditor.evaluator;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.nio.channels.Channels;
-import java.nio.channels.SocketChannel;
-import java.util.logging.Level;
-
 import pipe.common.AnalysisInstruction;
 import pipe.modules.interfaces.Cleanable;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.evaluator.gui.ProgressWindow;
 import pipe.server.performancequery.ServerLoggingHandler;
+
+import java.io.*;
+import java.net.InetSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.SocketChannel;
+import java.util.logging.Level;
 
 public class AnalysisStatusUpdater implements Cleanable, Runnable, EvaluatorLoggingHandler
 {

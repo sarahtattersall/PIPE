@@ -4,6 +4,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import pipe.models.component.Token;
+import pipe.models.component.Place;
+import pipe.models.interfaces.IObserver;
+import utils.TokenUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -12,7 +16,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PlaceTest {
 
@@ -224,6 +229,29 @@ public class PlaceTest {
 
         assertEquals(redTokenCount + blueTokenCount, place.getNumberOfTokensStored());
     }
+
+    @Test
+    public void notifiesObserverOnTokenChange() {
+        IObserver mockObserver = mock(IObserver.class);
+        Token defaultToken = TokenUtils.createDefaultToken();
+        place.registerObserver(mockObserver);
+
+        place.setTokenCount(defaultToken, 7);
+        verify(mockObserver).update();
+    }
+
+    @Test
+    public void notifiesObserverOnTokenMapChange() {
+        Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+        IObserver mockObserver = mock(IObserver.class);
+        Token defaultToken = TokenUtils.createDefaultToken();
+        tokenCounts.put(defaultToken, 7);
+        place.registerObserver(mockObserver);
+
+        place.setTokenCounts(tokenCounts);
+        verify(mockObserver).update();
+    }
+
 
     private double getAngleBetweenObjects(double x1, double y1, double x2, double y2)
     {

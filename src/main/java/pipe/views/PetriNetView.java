@@ -6,9 +6,10 @@ import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
-import pipe.models.*;
+import pipe.models.PetriNet;
+import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
-import pipe.petrinet.reader.*;
+import pipe.petrinet.reader.PetriNetReader;
 import pipe.petrinet.reader.creator.*;
 import pipe.utilities.Copier;
 import pipe.utilities.math.RandomNumberGenerator;
@@ -21,8 +22,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
-import java.util.List;
-import java.util.Observable;
 
 
 /*

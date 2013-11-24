@@ -1,4 +1,4 @@
-package pipe.models;
+package pipe.models.component;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
 
@@ -150,6 +150,7 @@ public class Place extends Connectable implements Serializable
             }
         }
         this.tokenCounts = tokenCounts;
+        notifyObservers();
     }
 
     /**
@@ -194,6 +195,7 @@ public class Place extends Connectable implements Serializable
             }
         }
         tokenCounts.put(token, count);
+        notifyObservers();
     }
 
     /**

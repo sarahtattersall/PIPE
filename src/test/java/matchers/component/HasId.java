@@ -1,6 +1,6 @@
 package matchers.component;
 
-import pipe.models.Connectable;
+import pipe.models.component.Connectable;
 
 public class HasId<T extends Connectable> implements Has<T> {
     String id;

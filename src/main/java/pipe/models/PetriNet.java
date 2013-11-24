@@ -1,15 +1,19 @@
 package pipe.models;
 
 import pipe.common.dataLayer.StateGroup;
+import pipe.models.component.*;
+import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentAddVisitor;
 import pipe.models.visitor.PetriNetComponentRemovalVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-public class PetriNet extends Observable implements Serializable
+public class PetriNet extends Observable implements IObserver
 {
     public String _pnmlName = "";
     private boolean _validated = false;
@@ -55,24 +59,28 @@ public class PetriNet extends Observable implements Serializable
     public void addPlace(Place place)
     {
         places.add(place);
+        place.registerObserver(this);
         notifyObservers();
     }
 
     public void addTransition(Transition transition)
     {
         transitions.add(transition);
+        transition.registerObserver(this);
         notifyObservers();
     }
 
     public void addArc(Arc arc)
     {
         arcs.add(arc);
+        arc.registerObserver(this);
         notifyObservers();
     }
 
     public void addToken(Token token)
     {
         tokens.add(token);
+        token.registerObserver(this);
         notifyObservers();
     }
 
@@ -95,6 +103,7 @@ public class PetriNet extends Observable implements Serializable
     public void addAnnotaiton(Annotation annotation)
     {
         annotations.add(annotation);
+        annotation.registerObserver(this);
         notifyObservers();
     }
 
@@ -171,6 +180,11 @@ public class PetriNet extends Observable implements Serializable
 
     public void add(PetriNetComponent component) {
         component.accept(addVisitor);
+        notifyObservers();
+    }
+
+    @Override
+    public void update() {
         notifyObservers();
     }
 }

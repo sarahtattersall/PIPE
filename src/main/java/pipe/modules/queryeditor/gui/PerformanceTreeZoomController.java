@@ -7,11 +7,10 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.geom.AffineTransform;
-
-import javax.swing.JLayeredPane;
-
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroView;
+
+import javax.swing.*;
+import java.awt.geom.AffineTransform;
 
 
 public class PerformanceTreeZoomController {

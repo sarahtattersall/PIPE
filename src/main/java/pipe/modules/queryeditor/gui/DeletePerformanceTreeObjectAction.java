@@ -7,12 +7,6 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.swing.AbstractAction;
-
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
@@ -21,6 +15,11 @@ import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ResultNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SequentialNode;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 class DeletePerformanceTreeObjectAction extends AbstractAction {

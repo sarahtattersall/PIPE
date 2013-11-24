@@ -4,9 +4,6 @@
  */
 package pipe.exceptions;
 
-import pipe.gui.Constants;
-
-
 /**
  * @author Matthew
  */

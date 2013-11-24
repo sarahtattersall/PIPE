@@ -4,9 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import pipe.models.Place;
-import pipe.models.Token;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 import pipe.petrinet.writer.reflectionCreator.ElementCreator;
+import utils.TokenUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,11 +33,11 @@ public class PlaceElementCreatorTest {
     private static final double NAME_Y = 2.4;
     private static final int TOKEN_COUNT = 6;
 
-
     @Before
     public void setUp() throws ParserConfigurationException {
         creator = new ElementCreator();
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory builderFactory =
+                DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         document = builder.newDocument();
     }
@@ -52,16 +53,17 @@ public class PlaceElementCreatorTest {
         return place;
     }
 
-
     private Map<Token, Integer> createTokenCounts() {
         Map<Token, Integer> tokens = new HashMap<Token, Integer>();
-        Token token = new Token("Default", true, 0, new Color(0,0,0));
+        Token token = TokenUtils.createDefaultToken();
         tokens.put(token, TOKEN_COUNT);
         return tokens;
     }
 
     @Test
-    public void setsCorrectTag() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void setsCorrectTag()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
 
@@ -69,7 +71,9 @@ public class PlaceElementCreatorTest {
     }
 
     @Test
-    public void writesCorrectId() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void writesCorrectId()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
         String attribute = element.getAttribute("id");
@@ -78,9 +82,10 @@ public class PlaceElementCreatorTest {
         assertEquals(ID, attribute);
     }
 
-
     @Test
-    public void writesCorrectName() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void writesCorrectName()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
         String attribute = element.getAttribute("name");
@@ -89,9 +94,10 @@ public class PlaceElementCreatorTest {
         assertEquals(NAME, attribute);
     }
 
-
     @Test
-    public void writesCorrectNameOffset() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void writesCorrectNameOffset()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
 
@@ -104,9 +110,10 @@ public class PlaceElementCreatorTest {
         assertEquals(String.valueOf(NAME_Y), nameOffsetY);
     }
 
-
     @Test
-    public void writesCorrectMarkingOffset() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void writesCorrectMarkingOffset()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
 
@@ -119,9 +126,10 @@ public class PlaceElementCreatorTest {
         assertEquals(String.valueOf(MARKING_Y), markingOffsetY);
     }
 
-
     @Test
-    public void writesCorrectCapacity() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void writesCorrectCapacity()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
 
@@ -131,7 +139,9 @@ public class PlaceElementCreatorTest {
     }
 
     @Test
-    public void writesCorrectTokens() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void writesCorrectTokens()
+            throws IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         Place place = createPlace();
         Element element = creator.createElement(place, document);
 

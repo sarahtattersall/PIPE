@@ -3,15 +3,15 @@
  */
 package pipe.server.performancequery.structure;
 
-import java.util.ArrayList;
-import java.util.Vector;
-import java.util.concurrent.ExecutionException;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.queryresult.ResultWrapper;
 import pipe.server.performancequery.QueryServerException;
 import pipe.server.performancequery.SimpleNode;
 import pipe.server.performancequery.StatusIndicatorUpdater;
+
+import java.util.ArrayList;
+import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author dazz

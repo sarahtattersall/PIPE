@@ -10,13 +10,11 @@
 
 package pipe.modules.queryeditor.gui;
 
+import pipe.gui.ExtensionFilter;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import pipe.gui.ExtensionFilter;
 
 
 public class QueryFileBrowser extends JFileChooser {

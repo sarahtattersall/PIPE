@@ -6,7 +6,6 @@ import matchers.component.HasTimed;
 import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
@@ -17,12 +16,12 @@ import pipe.handlers.mouse.MouseUtilities;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.*;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
 import pipe.views.PetriNetView;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;

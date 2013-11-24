@@ -1,7 +1,7 @@
 package pipe.petrinet.reader.creator;
 
 import org.w3c.dom.Element;
-import pipe.models.Token;
+import pipe.models.component.Token;
 
 import java.awt.*;
 

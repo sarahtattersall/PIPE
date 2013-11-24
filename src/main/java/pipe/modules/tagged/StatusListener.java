@@ -1,8 +1,8 @@
 package pipe.modules.tagged;
 
-import java.io.IOException;
-
 import pipe.modules.clientCommon.SocketIO;
+
+import java.io.IOException;
 
 class StatusListener
 {

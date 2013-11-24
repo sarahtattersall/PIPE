@@ -9,13 +9,6 @@
 
 package pipe.modules.queryeditor.gui.performancetrees;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
-import java.awt.geom.Point2D;
-
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.QueryView;
@@ -25,6 +18,9 @@ import pipe.modules.queryeditor.gui.performancetrees.macros.MacroView;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
 import pipe.modules.queryeditor.io.MacroLoader;
 import pipe.modules.queryeditor.io.QueryLoader;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 
 public class PerformanceTreeArc extends PerformanceTreeObject
 {

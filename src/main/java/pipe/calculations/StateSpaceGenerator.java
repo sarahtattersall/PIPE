@@ -13,11 +13,7 @@ import pipe.io.ReachabilityGraphFileHeader;
 import pipe.io.StateRecord;
 import pipe.io.TransitionRecord;
 import pipe.utilities.math.Matrix;
-import pipe.views.ArcView;
-import pipe.views.MarkingView;
-import pipe.views.PetriNetView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
+import pipe.views.*;
 
 import java.io.*;
 import java.util.*;

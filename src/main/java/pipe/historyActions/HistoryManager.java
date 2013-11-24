@@ -5,10 +5,12 @@ package pipe.historyActions;
 
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
-import pipe.views.*;
+import pipe.views.ArcView;
+import pipe.views.ConnectableView;
+import pipe.views.NormalArcView;
+import pipe.views.PetriNetViewComponent;
 import pipe.views.viewComponents.ArcPathPoint;
 
 import java.util.ArrayList;

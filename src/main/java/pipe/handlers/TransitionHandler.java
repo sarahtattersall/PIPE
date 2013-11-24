@@ -1,13 +1,10 @@
 package pipe.handlers;
 
-import pipe.actions.ShowHideInfoAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.ZoomController;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeApplicationModel;
-import pipe.models.Transition;
+import pipe.models.component.Transition;
 import pipe.views.TransitionView;
 
 import javax.swing.*;

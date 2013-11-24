@@ -1,8 +1,11 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.*;
-import pipe.models.Connectable;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
+import pipe.gui.ZoomController;
+import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.NameLabel;
 

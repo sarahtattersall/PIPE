@@ -5,7 +5,7 @@
 package pipe.historyActions;
 
 import pipe.models.PetriNet;
-import pipe.models.PetriNetComponent;
+import pipe.models.component.PetriNetComponent;
 
 /**
  *

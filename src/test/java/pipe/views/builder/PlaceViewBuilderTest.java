@@ -3,10 +3,8 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
-import pipe.models.Place;
+import pipe.models.component.Place;
 import pipe.views.PlaceView;
-
-import java.awt.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

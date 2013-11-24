@@ -1,4 +1,4 @@
-package pipe.models;
+package pipe.models.component;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
 

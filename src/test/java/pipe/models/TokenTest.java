@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pipe.exceptions.TokenLockedException;
+import pipe.models.component.Token;
 
 import java.awt.*;
 

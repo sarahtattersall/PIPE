@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pipe.exceptions.TokenLockedException;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.utilities.math.Matrix;
 
 public class TokenViewTest implements Observer

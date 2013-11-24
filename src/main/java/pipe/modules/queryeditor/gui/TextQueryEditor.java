@@ -10,24 +10,20 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
+import pipe.gui.Grid;
+import pipe.modules.queryeditor.QueryManager;
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeObject;
+import pipe.modules.queryeditor.gui.performancetrees.macros.MacroEditor;
+import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
+import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
+import pipe.modules.queryeditor.gui.performancetrees.operationnodes.*;
+import pipe.modules.queryeditor.gui.performancetrees.valuenodes.*;
+import pipe.modules.queryeditor.gui.performancetrees.valuenodes.labels.StateLabelManager;
+import pipe.modules.queryeditor.io.QueryData;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -37,44 +33,11 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.undo.UndoManager;
-
-import pipe.gui.Grid;
-import pipe.modules.queryeditor.QueryManager;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeObject;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroEditor;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ArithCompNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ArithOpNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ConvolutionNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.DisconNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.DistributionNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.FiringRateNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.InIntervalNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.MomentNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.NegationNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.PassageTimeDensityNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.PercentileNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ProbInIntervalNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ProbInStatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.RangeNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ResultNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SequentialNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.StatesAtTimeNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SteadyStateProbNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SteadyStateStatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SubsetNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ActionsNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.BoolNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.NumNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StateFunctionNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ValueNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.labels.StateLabelManager;
-import pipe.modules.queryeditor.io.QueryData;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class TextQueryEditor extends JPanel {
 

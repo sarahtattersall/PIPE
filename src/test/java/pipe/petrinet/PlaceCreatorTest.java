@@ -1,16 +1,16 @@
 package pipe.petrinet;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import pipe.models.Place;
-import pipe.models.Token;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 import pipe.petrinet.reader.creator.PlaceCreator;
 import pipe.utilities.transformers.PNMLTransformer;
+import utils.TokenUtils;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -85,7 +85,7 @@ public class PlaceCreatorTest {
      * @return default token added
      */
     private Token addDefaultTokenToTokens() {
-        Token token = new Token("Default", true, 0, new Color(0, 0,0));
+        Token token = TokenUtils.createDefaultToken();
         tokens.put("Default", token);
         return token;
     }

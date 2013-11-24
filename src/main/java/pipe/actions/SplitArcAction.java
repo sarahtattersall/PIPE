@@ -3,15 +3,15 @@
  */
 package pipe.actions;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.geom.Point2D;
-
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryManager;
 import pipe.views.ArcView;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.geom.Point2D;
 
 /**
  * This class is used to split an arc in two at the

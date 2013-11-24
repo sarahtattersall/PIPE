@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import pipe.models.Transition;
+import pipe.models.component.Transition;
 import pipe.petrinet.reader.creator.TransitionCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.viewComponents.RateParameter;

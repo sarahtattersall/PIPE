@@ -11,13 +11,13 @@ package pipe.modules.classification;
 
 import pipe.exceptions.EmptyNetException;
 import pipe.gui.ApplicationSettings;
-import pipe.modules.interfaces.IModule;
-import pipe.utilities.writers.PNMLWriter;
-import pipe.utilities.Expander;
 import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
+import pipe.modules.interfaces.IModule;
+import pipe.utilities.Expander;
+import pipe.utilities.writers.PNMLWriter;
 import pipe.views.PetriNetView;
 
 import javax.swing.*;

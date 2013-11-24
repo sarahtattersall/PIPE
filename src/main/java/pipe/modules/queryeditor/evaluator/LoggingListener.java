@@ -3,6 +3,9 @@
  */
 package pipe.modules.queryeditor.evaluator;
 
+import pipe.modules.interfaces.Cleanable;
+import pipe.server.CommunicationsManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,9 +14,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.logging.Level;
-
-import pipe.modules.interfaces.Cleanable;
-import pipe.server.CommunicationsManager;
 
 /**
  * @author dazz

@@ -1,15 +1,10 @@
 package pipe.gui;
 
-import java.awt.Color;
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
 import java.util.Enumeration;
 import java.util.Vector;
-
-import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 
 
 /** Class to represent the history of the net animation

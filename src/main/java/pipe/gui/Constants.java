@@ -1,6 +1,6 @@
 package pipe.gui;
-import java.awt.Color;
-import java.awt.MouseInfo;
+
+import java.awt.*;
 
 public interface Constants {
    

@@ -8,10 +8,12 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.*;
+import pipe.models.PetriNet;
+import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.PipeApplicationView;
+import utils.TokenUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -251,67 +253,6 @@ public class PetriNetControllerTest {
         verify(mockObserver).update();
     }
 
-    @Test
-    public void incrementsPlaceCounter() {
-        Place place = mock(Place.class);
-        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
-
-        net.addToken(token);
-        net.addPlace(place);
-
-
-        controller.addTokenToPlace(place, "Default");
-        verify(place).incrementTokenCount(token);
-    }
-
-
-    @Test
-    public void decrementsPlaceCounter() {
-        Place place = mock(Place.class);
-        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
-        net.addToken(token);
-        net.addPlace(place);
-
-        controller.deleteTokenInPlace(place, "Default");
-        verify(place).decrementTokenCount(token);
-    }
-
-    @Test
-    public void decrementPlaceCounterNotifiesObservers() {
-        IObserver mockObserver = mock(IObserver.class);
-        net.registerObserver(mockObserver);
-
-        Place place = mock(Place.class);
-        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
-        net.addToken(token);
-        net.addPlace(place);
-
-        controller.deleteTokenInPlace(place, "Default");
-        verify(mockObserver, atLeastOnce()).update();
-    }
-
-    @Test
-    public void incrementPlaceCounterNotifiesObservers() {
-        IObserver mockObserver = mock(IObserver.class);
-        net.registerObserver(mockObserver);
-
-        Place place = mock(Place.class);
-        Token token = new Token("Default" , false, 0, new Color(0, 0, 0));
-        net.addToken(token);
-        net.addPlace(place);
-
-        controller.addTokenToPlace(place, "Default");
-        verify(mockObserver, atLeastOnce()).update();
-    }
-
-    @Test
-    public void throwsErrorIfIncrementWithNonExistantToken() {
-        expectedEx.expect(RuntimeException.class);
-        expectedEx.expectMessage("No foo token found in current petri net");
-        Place place = mock(Place.class);
-
-        controller.addTokenToPlace(place, "foo");
-    }
 
     @Test
     public void createNewToken() {
@@ -329,8 +270,17 @@ public class PetriNetControllerTest {
     }
 
 
+    @Test
+    public void throwsErrorIfCannotFindTokenName() {
+        expectedEx.expect(RuntimeException.class);
+        expectedEx.expectMessage("No foo token found in current petri net");
+        Place place = mock(Place.class);
 
-    private class DummyPetriNetComponent implements PetriNetComponent {
+        controller.getToken("foo");
+    }
+
+
+    private class DummyPetriNetComponent extends AbstractPetriNetComponent {
         @Override
         public boolean isSelectable() {
             return false;

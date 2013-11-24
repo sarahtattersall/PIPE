@@ -7,14 +7,12 @@
 
 package pipe.modules.queryeditor.gui;
 
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
-
-import javax.swing.AbstractAction;
-
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 
 
 class SplitPerformanceTreeArcAction extends AbstractAction {

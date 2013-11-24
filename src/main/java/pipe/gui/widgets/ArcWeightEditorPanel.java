@@ -3,13 +3,12 @@ package pipe.gui.widgets;
 import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
+import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.Arc;
-import pipe.models.PetriNet;
-import pipe.models.Token;
-import pipe.models.Transition;
-import pipe.views.PetriNetView;
+import pipe.models.component.Connectable;
+import pipe.models.component.Token;
+import pipe.models.component.Transition;
 import pipe.views.TokenView;
 
 import javax.swing.*;
@@ -25,9 +24,8 @@ import java.util.Map;
  */
 public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
-    private final Arc arc;
-
-    private final PetriNet petriNet;
+    private final PetriNetController petriNetController;
+    private final ArcController arcController;
     private JRootPane _rootPane;
 
     private javax.swing.JButton okButton = new javax.swing.JButton();
@@ -36,23 +34,19 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     private LinkedList<String> inputtedTokenClassNames =
             new LinkedList<String>();
 
-    private PetriNetController netController;
 
     /**
      * Creates new form Arc Weight Editor
      *
      * @param rootPane
-     * @param arc
-     * @param _pnmlData
-     * @param controller
+     * @param arcController
      */
-    public ArcWeightEditorPanel(JRootPane rootPane, Arc arc,
-                                PetriNetController controller) {
-        this.arc = arc;
-        this.petriNet = controller.getPetriNet();
+    public ArcWeightEditorPanel(JRootPane rootPane,
+                                PetriNetController petriNetController,
+                                ArcController arcController) {
         _rootPane = rootPane;
-        this.netController = controller;
-
+        this.petriNetController = petriNetController;
+        this.arcController = arcController;
         initComponents();
 
         this._rootPane.setDefaultButton(okButton);
@@ -83,7 +77,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         int x = 0;
         int y = 0;
 
-        for (final Token token : petriNet.getTokens()) {
+        for (final Token token : petriNetController.getNetTokens()) {
             if (token.isEnabled()) {
                 gridBagConstraints = new java.awt.GridBagConstraints();
 
@@ -92,7 +86,8 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 tokenClassWeight.setEditable(true);
                 tokenClassWeight.setName(token.getId());
 
-                tokenClassWeight.setText(arc.getWeightForToken(token));
+                tokenClassWeight
+                        .setText(arcController.getWeightForToken(token));
                 inputtedWeights.add(tokenClassWeight);
 
                 tokenClassName.setText(token.getId() + ": ");
@@ -200,14 +195,14 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 8, 3);
         add(buttonPanel, gridBagConstraints);
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
     public void createEditorWindow(Token token) {
         EscapableDialog guiDialog =
                 new EscapableDialog(ApplicationSettings.getApplicationView(),
                         "PIPE2", true);
-        ArcFunctionEditor feditor =
-                new ArcFunctionEditor(this, guiDialog, petriNet, arc, token);
+        ArcFunctionEditor feditor = new ArcFunctionEditor(this, guiDialog,
+                petriNetController.getPetriNet(), arcController, token);
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
         guiDialog.setLocationRelativeTo(
@@ -239,7 +234,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     };
 
     private void okButtonHandler(java.awt.event.ActionEvent evt) {
-        ExprEvaluator parser = new ExprEvaluator(petriNet);
+        ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
         for (int i = 0; i < inputtedWeights.size(); i++) {
             String expr = inputtedWeights.get(i).getText();
             try {
@@ -254,10 +249,10 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 }
 
                 String tokenClassName = inputtedTokenClassNames.get(i);
-                Token token = petriNet.getToken(tokenClassName);
+                Token token = petriNetController.getToken(tokenClassName);
 
                 if (parser.parseAndEvalExpr(expr, tokenClassName) != -1) {
-                    netController.setWeightForArc(arc, token, expr);
+                    arcController.setWeight(token, expr);
                 }
                 else {
                     if (parser.parseAndEvalExpr(expr, tokenClassName) == -2) {
@@ -293,8 +288,8 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             }
         }
 
-        if (arc.hasFunctionalWeight()) {
-            Object target = arc.getTarget();
+        if (arcController.hasFunctionalWeight()) {
+            Connectable target = arcController.getTarget();
             if (target instanceof Transition) {
                 Transition transition = (Transition) target;
                 if (transition.isInfiniteServer()) {
@@ -309,16 +304,16 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             }
         }
 
-
-        Map<Token, String> newWeights = new HashMap <Token, String>();
-//        int totalMarking = 0;
+        Map<Token, String> newWeights = new HashMap<Token, String>();
+        //        int totalMarking = 0;
         for (int i = 0; i < inputtedWeights.size(); i++) {
             String tokenClassName = inputtedTokenClassNames.get(i);
-            Token token = petriNet.getToken(tokenClassName);
+            Token token = petriNetController.getToken(tokenClassName);
             String weight = inputtedWeights.get(i).getText();
             newWeights.put(token, weight);
             try {
-                int evaluatedWeight = parser.parseAndEvalExpr(weight, tokenClassName);
+                int evaluatedWeight =
+                        parser.parseAndEvalExpr(weight, tokenClassName);
                 if (evaluatedWeight == -1) {
                     JOptionPane.showMessageDialog(null,
                             "Error in weight expression. Please make sure\r\n it is an integer");
@@ -352,13 +347,13 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             }
 
         }
-//        if (totalMarking <= 0) {
-//            JOptionPane.showMessageDialog(null,
-//                    "Total weight of arc must be greater than 0. Please re-enter");
-//            return;
-//        }
+        //        if (totalMarking <= 0) {
+        //            JOptionPane.showMessageDialog(null,
+        //                    "Total weight of arc must be greater than 0. Please re-enter");
+        //            return;
+        //        }
 
-        netController.setWeights(arc, newWeights);
+        arcController.setWeights(newWeights);
         exit();
     }
 

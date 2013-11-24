@@ -3,10 +3,10 @@
  */
 package pipe.modules.queryresult;
 
-import java.io.Serializable;
-
 import pipe.common.PetriNetNode;
 import pipe.server.performancequery.nodeanalyser.ValueNodeAnalyser;
+
+import java.io.Serializable;
 
 /**
  * @author dazz

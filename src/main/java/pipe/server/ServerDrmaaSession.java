@@ -3,16 +3,15 @@
  */
 package pipe.server;
 
+import org.ggf.drmaa.DrmaaException;
+import org.ggf.drmaa.JobInfo;
+import org.ggf.drmaa.JobTemplate;
+import pipe.server.serverCommon.DrmaaSession;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import org.ggf.drmaa.DrmaaException;
-import org.ggf.drmaa.JobInfo;
-import org.ggf.drmaa.JobTemplate;
-
-import pipe.server.serverCommon.DrmaaSession;
 
 /**
  * @author dazz

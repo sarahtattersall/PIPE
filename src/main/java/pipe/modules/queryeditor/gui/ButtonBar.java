@@ -10,12 +10,9 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
 
 
 public class ButtonBar extends JPanel {

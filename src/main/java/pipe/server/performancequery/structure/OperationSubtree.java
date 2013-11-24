@@ -1,10 +1,10 @@
 package pipe.server.performancequery.structure;
 
-import java.io.File;
-
 import pipe.server.performancequery.QueryServerException;
 import pipe.server.performancequery.SimpleNode;
 import pipe.server.performancequery.StatusIndicatorUpdater;
+
+import java.io.File;
 
 public class OperationSubtree extends ParentSubtree
 {

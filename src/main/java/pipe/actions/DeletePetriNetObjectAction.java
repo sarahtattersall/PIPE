@@ -8,10 +8,7 @@ package pipe.actions;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.historyActions.DeletePetriNetObject;
-import pipe.historyActions.HistoryManager;
-import pipe.models.PetriNetComponent;
-import pipe.views.PetriNetViewComponent;
+import pipe.models.component.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

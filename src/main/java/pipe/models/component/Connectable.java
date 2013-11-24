@@ -1,14 +1,14 @@
-package pipe.models;
+package pipe.models.component;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
 
 /*
  * 
  *  @author yufei wang(modification)
  */
-public abstract class Connectable extends Observable implements Serializable, PetriNetComponent {
+public abstract class Connectable extends AbstractPetriNetComponent {
     private final Collection<Arc> inboundArcs = new HashSet<Arc>();
     private final Collection<Arc> outboundArcs = new HashSet<Arc>();
 
@@ -163,10 +163,12 @@ public abstract class Connectable extends Observable implements Serializable, Pe
 
     public void setId(String id) {
         this.id = id;
+        notifyObservers();
     }
 
     public void setName(String name) {
         this.name = name;
+        notifyObservers();
     }
 
     @Override

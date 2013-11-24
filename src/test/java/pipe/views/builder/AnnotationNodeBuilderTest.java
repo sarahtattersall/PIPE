@@ -2,7 +2,7 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.Annotation;
+import pipe.models.component.Annotation;
 import pipe.views.viewComponents.AnnotationNote;
 
 import static org.junit.Assert.assertEquals;

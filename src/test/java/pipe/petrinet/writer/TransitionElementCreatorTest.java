@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import pipe.models.Transition;
+import pipe.models.component.Transition;
 import pipe.petrinet.writer.reflectionCreator.ElementCreator;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,7 +49,7 @@ public class TransitionElementCreatorTest {
 
         transition.setAngle(ANGLE);
         transition.setInfiniteServer(INFINITE_SERVER);
-        transition.setTimedTransition(TIMED);
+        transition.setTimed(TIMED);
         return transition;
     }
 

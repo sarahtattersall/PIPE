@@ -1,7 +1,7 @@
 package pipe.petrinet.reader.creator;
 
 import org.w3c.dom.Element;
-import pipe.models.Transition;
+import pipe.models.component.Transition;
 import pipe.views.viewComponents.RateParameter;
 
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class TransitionCreator implements ComponentCreator<Transition> {
         transition.setX(x);
         transition.setY(y);
         transition.setInfiniteServer(infiniteServer);
-        transition.setTimedTransition(timedTransition);
+        transition.setTimed(timedTransition);
         transition.setRateParameter(rateParameter);
 
         return transition;

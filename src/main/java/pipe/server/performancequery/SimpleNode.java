@@ -11,9 +11,9 @@
 
 package pipe.server.performancequery;
 
-import java.io.Serializable;
-
 import pipe.common.PetriNetNode;
+
+import java.io.Serializable;
 
 public abstract class SimpleNode implements Serializable
 {

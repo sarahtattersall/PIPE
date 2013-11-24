@@ -1,7 +1,6 @@
-package pipe.models;
+package pipe.models.component;
 
 import pipe.gui.Constants;
-import pipe.gui.ZoomController;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
 
@@ -211,11 +210,6 @@ public class Transition extends Connectable implements Serializable
 
     public void setAngle(int angle) {
         this.angle = angle;
-        notifyObservers();
-    }
-
-    public void setTimedTransition(boolean timedTransition) {
-        this.timedTransition = timedTransition;
         notifyObservers();
     }
 

@@ -3,6 +3,7 @@ package pipe.models.visitor;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.*;
+import pipe.models.component.*;
 
 import java.awt.*;
 import java.util.HashMap;

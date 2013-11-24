@@ -1,6 +1,5 @@
 package pipe.gui;
 
-import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PipeApplicationView;

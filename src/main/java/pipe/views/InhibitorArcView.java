@@ -3,9 +3,8 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
-import pipe.models.InhibitorArc;
-import pipe.models.Marking;
-import pipe.models.Token;
+import pipe.models.component.InhibitorArc;
+import pipe.models.component.Token;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 

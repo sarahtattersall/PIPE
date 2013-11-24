@@ -1,22 +1,5 @@
 package pipe.modules.reachability;
 
-import java.awt.Checkbox;
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import net.sourceforge.jpowergraph.defaults.DefaultGraph;
 import net.sourceforge.jpowergraph.defaults.DefaultNode;
 import net.sourceforge.jpowergraph.defaults.TextEdge;
@@ -25,30 +8,28 @@ import pipe.calculations.myTree;
 import pipe.exceptions.MarkingNotIntegerException;
 import pipe.exceptions.TimelessTrapException;
 import pipe.exceptions.TreeTooBigException;
-import pipe.extensions.jpowergraph.PIPEInitialState;
-import pipe.extensions.jpowergraph.PIPEInitialTangibleState;
-import pipe.extensions.jpowergraph.PIPEInitialVanishingState;
-import pipe.extensions.jpowergraph.PIPELoopWithTextEdge;
-import pipe.extensions.jpowergraph.PIPEState;
-import pipe.extensions.jpowergraph.PIPETangibleState;
-import pipe.extensions.jpowergraph.PIPEVanishingState;
+import pipe.extensions.jpowergraph.*;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.widgets.ButtonBar;
-import pipe.gui.widgets.EscapableDialog;
-import pipe.gui.widgets.GraphFrame;
-import pipe.gui.widgets.PetriNetChooserPanel;
-import pipe.gui.widgets.ResultsHTMLPane;
-import pipe.io.ImmediateAbortException;
-import pipe.io.IncorrectFileFormatException;
-import pipe.io.ReachabilityGraphFileHeader;
-import pipe.io.StateRecord;
-import pipe.io.TransitionRecord;
+import pipe.gui.widgets.*;
+import pipe.io.*;
 import pipe.modules.interfaces.IModule;
 import pipe.utilities.Expander;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Matthew Worthington / Edwin Chung / Will Master

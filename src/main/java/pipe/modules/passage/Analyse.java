@@ -1,9 +1,9 @@
 package pipe.modules.passage;
 
-import pipe.common.SimplePlaces;
-import pipe.common.SimpleTransitions;
 import pipe.common.AnalysisSettings;
 import pipe.common.AnalysisType;
+import pipe.common.SimplePlaces;
+import pipe.common.SimpleTransitions;
 import pipe.modules.clientCommon.SocketIO;
 import pipe.views.PetriNetView;
 

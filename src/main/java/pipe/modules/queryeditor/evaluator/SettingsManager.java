@@ -10,22 +10,18 @@
 
 package pipe.modules.queryeditor.evaluator;
 
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.logging.Level;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
 import pipe.common.AnalysisSettings;
 import pipe.modules.clientCommon.ServerInfo;
 import pipe.modules.clientCommon.ServerList;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.evaluator.gui.EvaluationSettingsPanel;
 import pipe.modules.queryeditor.evaluator.gui.EvaluationSettingsServerPanel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Level;
 
 public class SettingsManager
 {

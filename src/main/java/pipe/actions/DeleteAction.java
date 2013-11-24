@@ -3,9 +3,6 @@ package pipe.actions;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.historyActions.HistoryManager;
-import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 

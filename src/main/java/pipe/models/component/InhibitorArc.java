@@ -1,10 +1,8 @@
-package pipe.models;
+package pipe.models.component;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 @Pnml("arc")

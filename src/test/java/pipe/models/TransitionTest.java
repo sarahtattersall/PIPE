@@ -1,6 +1,7 @@
 package pipe.models;
 
 import org.junit.Test;
+import pipe.models.component.Transition;
 
 import java.awt.geom.Point2D;
 

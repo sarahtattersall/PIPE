@@ -9,9 +9,10 @@ import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
 import pipe.historyActions.AddArcPathPoint;
-import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryItem;
-import pipe.models.*;
+import pipe.models.PipeObservable;
+import pipe.models.component.Arc;
+import pipe.models.component.Token;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.ArcPath;
@@ -20,12 +21,10 @@ import pipe.views.viewComponents.NameLabel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
-import java.util.Observable;
 
 public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         implements Cloneable, IObserver, Serializable, Observer {
@@ -352,8 +351,8 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
                         "PIPE2", true);
 
         ArcWeightEditorPanel arcWeightEditor =
-                new ArcWeightEditorPanel(guiDialog.getRootPane(), this.model,
-                        petriNetController);
+                new ArcWeightEditorPanel(guiDialog.getRootPane(),
+                        petriNetController, petriNetController.getArcController(this.model));
 
         guiDialog.add(arcWeightEditor);
 

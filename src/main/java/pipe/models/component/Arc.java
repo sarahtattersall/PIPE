@@ -1,14 +1,10 @@
-package pipe.models;
-
-import pipe.views.MarkingView;
+package pipe.models.component;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Arc extends Observable
-        implements PetriNetComponent, Serializable {
+public abstract class Arc extends AbstractPetriNetComponent {
 
     @Pnml("source")
     private Connectable source;
@@ -123,6 +119,7 @@ public abstract class Arc extends Observable
 
     public void setWeight(final Token defaultToken, final String weight) {
         tokenWeights.put(defaultToken, weight);
+        notifyObservers();
     }
 
     /**

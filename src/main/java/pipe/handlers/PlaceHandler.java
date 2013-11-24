@@ -1,13 +1,13 @@
 package pipe.handlers;
 
-import pipe.actions.ShowHideInfoAction;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PlaceController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.historyActions.HistoryManager;
 import pipe.models.Marking;
-import pipe.models.Place;
-import pipe.utilities.Copier;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 import pipe.views.ArcView;
 import pipe.views.PipeApplicationView;
 import pipe.views.PlaceView;
@@ -24,8 +24,13 @@ import java.util.List;
 
 public class PlaceHandler extends PlaceTransitionObjectHandler<Place, PlaceView> {
 
+    private final PlaceController placeController;
+
     public PlaceHandler(PlaceView view, Container contentpane, Place obj, PetriNetController controller) {
         super(view, contentpane, obj, controller);
+        //TODO: REPLACE BY PASSING IN AND REMOVING component from parent
+        this.placeController = controller.getPlaceController(obj);
+
     }
 
     protected JPopupMenu getPopup(MouseEvent e) {
@@ -55,17 +60,18 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place, PlaceView>
                             ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)) {
                 //((PlaceView) component).showEditor();
             } else {
-//                List<Marking> oldMarkings = Copier.mediumCopyMarkings(component.getTokens());
-                HistoryManager historyManager = petriNetController.getHistoryManager();
 
 
                 PipeApplicationView view = ApplicationSettings.getApplicationView();
+                Token token = petriNetController.getToken(
+                        view.getSelectedTokenName());
                 switch (ApplicationSettings.getApplicationModel().getMode()) {
                     case Constants.ADDTOKEN:
-                        petriNetController.addTokenToPlace(component, view.getSelectedTokenName());
+
+                        placeController.addTokenToPlace(token);
                         break;
                     case Constants.DELTOKEN:
-                        petriNetController.deleteTokenInPlace(component, view.getSelectedTokenName());
+                        placeController.deleteTokenInPlace(token);
                         break;
                     default:
                         break;

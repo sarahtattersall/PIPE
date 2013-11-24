@@ -14,8 +14,7 @@ import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
-import pipe.models.Arc;
-import pipe.models.NormalArc;
+import pipe.models.component.NormalArc;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 

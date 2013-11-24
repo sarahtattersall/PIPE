@@ -4,14 +4,9 @@
 
 package pipe.historyActions;
 
-import pipe.models.Arc;
 import pipe.models.PetriNet;
-import pipe.models.Token;
-import pipe.views.ArcView;
-import pipe.views.MarkingView;
-
-import java.util.LinkedList;
-import java.util.List;
+import pipe.models.component.Arc;
+import pipe.models.component.Token;
 
 /**
  * @author Alex Charalambous
@@ -19,16 +14,50 @@ import java.util.List;
 public class ArcWeight extends HistoryItem {
 
     private final Arc arc;
-    private final PetriNet petriNet;
     private final Token token;
     private final String newWeight;
     private final String oldWeight;
 
-    public ArcWeight(final Arc arc, final PetriNet petriNet, final Token token,
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final ArcWeight arcWeight = (ArcWeight) o;
+
+        if (!arc.equals(arcWeight.arc)) {
+            return false;
+        }
+        if (!newWeight.equals(arcWeight.newWeight)) {
+            return false;
+        }
+        if (!oldWeight.equals(arcWeight.oldWeight)) {
+            return false;
+        }
+        if (!token.equals(arcWeight.token)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = arc.hashCode();
+        result = 31 * result + token.hashCode();
+        result = 31 * result + newWeight.hashCode();
+        result = 31 * result + oldWeight.hashCode();
+        return result;
+    }
+
+    public ArcWeight(final Arc arc, final Token token,
                      final String oldWeight, final String newWeight) {
 
         this.arc = arc;
-        this.petriNet = petriNet;
         this.token = token;
         this.oldWeight = oldWeight;
         this.newWeight = newWeight;
@@ -37,13 +66,11 @@ public class ArcWeight extends HistoryItem {
     /** */
     public void undo() {
         arc.setWeight(token, oldWeight);
-        petriNet.notifyObservers();
     }
 
     /** */
     public void redo() {
         arc.setWeight(token, newWeight);
-        petriNet.notifyObservers();
     }
 
 }
