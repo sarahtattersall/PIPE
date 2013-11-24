@@ -57,7 +57,7 @@ public class GroupTransitionHandler
      * Creates the popup menu that the user will see when they right click on a
      * component
      */
-    JPopupMenu getPopup(MouseEvent e) {
+    protected JPopupMenu getPopup(MouseEvent e) {
         int index = 0;
         JPopupMenu popup = super.getPopup(e);
 

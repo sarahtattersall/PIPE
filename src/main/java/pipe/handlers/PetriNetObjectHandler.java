@@ -58,7 +58,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
      * @param e
      * @return
      */
-    JPopupMenu getPopup(MouseEvent e)
+    protected JPopupMenu getPopup(MouseEvent e)
     {
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem =

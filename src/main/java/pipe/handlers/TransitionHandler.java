@@ -58,38 +58,29 @@ public class TransitionHandler
     * Creates the popup menu that the user will see when they right click on a 
     * component 
     */
-   JPopupMenu getPopup(MouseEvent e) {
+   protected JPopupMenu getPopup(MouseEvent e) {
       int index = 0;
       JPopupMenu popup = super.getPopup(e);
-      
-//      JMenuItem menuItem = new JMenuItem("Edit Transition");
-//      menuItem.addActionListener(new ActionListener(){
-//         public void actionPerformed(ActionEvent e) {
-//            ((TransitionView) component).showEditor();
-//         }
-//      });
-//      popup.insert(menuItem, index++);
-//
-//      menuItem = new JMenuItem(new ShowHideInfoAction((TransitionView) component));
-//      if (((TransitionView) component).getAttributesVisible()){
-//         menuItem.setText("Hide Attributes");
-//      } else {
-//         menuItem.setText("Show Attributes");
-//      }
-//      popup.insert(menuItem, index++);
-//
-//      popup.insert(new JPopupMenu.Separator(), index);
-//      menuItem = new JMenuItem("Group Transitions");
-//      menuItem.addActionListener(new ActionListener(){
-//         public void actionPerformed(ActionEvent e) {
-//        	 HistoryItem edit = ((TransitionView) component).groupTransitions();
-//        	 if(edit != null){
+      JMenuItem menuItem = new JMenuItem("Edit Transition");
+      menuItem.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent e) {
+            viewComponent.showEditor();
+         }
+      });
+      popup.insert(menuItem, index++);
+
+      popup.insert(new JPopupMenu.Separator(), index);
+      menuItem = new JMenuItem("Group Transitions");
+      menuItem.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent e) {
+        	 HistoryItem edit = viewComponent.groupTransitions();
+        	 if(edit != null){
 //                 ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(edit);
-//        	 }
-//         }
-//      });
-//      popup.insert(menuItem, index++);
-//
+        	 }
+         }
+      });
+      popup.insert(menuItem, index++);
+
       return popup;
    }
    

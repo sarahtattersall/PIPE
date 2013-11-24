@@ -214,23 +214,25 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     //TODO: RE-IMPLEMENT
+    //TODO: DELETE
     public HistoryItem rotate(int angleInc) {
 //        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
 //        _angle = (_angle + angleInc) % 360;
-        _path.transform(
-                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
-        outlineTransition();
+//        _path.transform(
+//                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
+//        outlineTransition();
+////
+//        Iterator arcIterator = _arcAngleList.iterator();
+//        while (arcIterator.hasNext()) {
+//            ((ArcAngleCompare) arcIterator.next()).calcAngle();
+//        }
+//        Collections.sort(_arcAngleList);
 //
-        Iterator arcIterator = _arcAngleList.iterator();
-        while (arcIterator.hasNext()) {
-            ((ArcAngleCompare) arcIterator.next()).calcAngle();
-        }
-        Collections.sort(_arcAngleList);
-
-        updateEndPoints();
-        repaint();
-
-        return new TransitionRotation(this, angleInc);
+//        updateEndPoints();
+//        repaint();
+//
+//        return new TransitionRotation(this, angleInc);
+        return null;
     }
 
     private void outlineTransition() {
@@ -272,7 +274,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
 //        _infiniteServer = status;
 //        repaint();
-//        return new TransitionServerSemantic(this);
+//        return new TransitionInfiniteServer(this);
     }
 
     public boolean isInfiniteServer() {
@@ -316,12 +318,13 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     public HistoryItem setPriority(int newPriority) {
-        int oldPriority = getPriority();
-
-        model.setPriority(newPriority);
-        _nameLabel.setText(getAttributes());
-        repaint();
-        return new TransitionPriority(this, oldPriority, model.getPriority());
+//        int oldPriority = getPriority();
+//
+//        model.setPriority(newPriority);
+//        _nameLabel.setText(getAttributes());
+//        repaint();
+//        return new TransitionPriority(this, oldPriority, model.getPriority());
+        return null;
     }
 
     //TODO: RE-IMPLEMENT
@@ -572,9 +575,9 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public void showEditor() {
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(), this,
+        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(), this.model,
                 ApplicationSettings.getApplicationView().getCurrentPetriNetView(),
-                ApplicationSettings.getApplicationView().getCurrentTab());
+                petriNetController);
         guiDialog.add(te);
         guiDialog.getRootPane().setDefaultButton(null);
         guiDialog.setResizable(false);
@@ -939,7 +942,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         try {
             return Double.parseDouble(model.getRateExpr());
         } catch (Exception e) {
-            ExprEvaluator parser = new ExprEvaluator();
+            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
             try {
                 return parser.parseAndEvalExprForTransition(model.getRateExpr());
             } catch (EvaluationException ee) {

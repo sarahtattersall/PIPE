@@ -7,6 +7,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
+import pipe.models.PetriNet;
 import pipe.utilities.Copier;
 import pipe.views.*;
 
@@ -305,7 +306,10 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
 	private void okButtonHandler(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_okButtonHandler
         List<MarkingView> newWeight = Copier.mediumCopy(_arcView.getWeightSimple());
-		ExprEvaluator parser = new ExprEvaluator();
+
+        //TODO: PASS THIS IN
+        PetriNet net = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
+		ExprEvaluator parser = new ExprEvaluator(net);
 		for (int i = 0; i < inputtedWeights.size(); i++) {
 			String expr = inputtedWeights.get(i).getText();
 			try {

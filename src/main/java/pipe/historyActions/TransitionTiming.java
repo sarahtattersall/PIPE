@@ -3,36 +3,37 @@
  */
 package pipe.historyActions;
 
+import pipe.models.PetriNet;
+import pipe.models.Transition;
 import pipe.views.TransitionView;
 
-
 /**
- *
- * @author corveau
+ * HistoryItem in charge of whether a {@link Transition} is timed or not
  */
-public class TransitionTiming
-        extends HistoryItem
-{
-   
-   private final TransitionView _transitionView;
-   
-   
-   /** Creates a new instance of placeRateEdit
-    * @param _transitionView*/
-   public TransitionTiming(TransitionView _transitionView) {
-      this._transitionView = _transitionView;
-   }
+public class TransitionTiming extends HistoryItem {
 
-   
-   /** */
-   public void undo() {
-      _transitionView.setTimed(!_transitionView.isTimed());
-   }
+    private final Transition transition;
+    private final PetriNet petriNet;
+    private final boolean timedValue;
 
-   
-   /** */
-   public void redo() {
-      _transitionView.setTimed(!_transitionView.isTimed());
-   }
-   
+    public TransitionTiming(final Transition transition,
+                            final PetriNet petriNet, final boolean timedValue) {
+
+        this.transition = transition;
+        this.petriNet = petriNet;
+        this.timedValue = timedValue;
+    }
+
+    /** */
+    public void undo() {
+        transition.setTimedTransition(!timedValue);
+        petriNet.notifyObservers();
+    }
+
+    /** */
+    public void redo() {
+        transition.setTimedTransition(timedValue);
+        petriNet.notifyObservers();
+    }
+
 }

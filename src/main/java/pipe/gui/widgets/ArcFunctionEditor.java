@@ -18,6 +18,8 @@ import javax.swing.JTextArea;
 
 import parser.ExprEvaluator;
 import parser.MarkingDividedByNumberException;
+import pipe.gui.ApplicationSettings;
+import pipe.models.PetriNet;
 import pipe.views.ArcView;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
@@ -84,7 +86,11 @@ public class ArcFunctionEditor extends JPanel{
 						exit();
 						return;
 					}
-					ExprEvaluator parser = new ExprEvaluator();
+
+
+                    //TODO: PASS THIS IN
+                    PetriNet net = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
+					ExprEvaluator parser = new ExprEvaluator(net);
 					if(parser.parseAndEvalExpr(func,token.getID())!=-1){// && !parser.parseAndEvalExpr(func).){
 						//_arcView.setWeightFunctionByID(token.getID(), func);
 						awep.setWeight(func, token.getID());

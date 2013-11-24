@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.actions.ShowHideInfoAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
@@ -353,4 +354,16 @@ public class PlaceTransitionObjectHandler<T extends Connectable, V extends Conne
 //        petriNetController.finishCreatingArc(currentObject.getModel());
     }
 
+    @Override
+    protected JPopupMenu getPopup(MouseEvent e) {
+        JPopupMenu popupMenu = super.getPopup(e);
+        JMenuItem menuItem = new JMenuItem(new ShowHideInfoAction(viewComponent));
+        if (viewComponent.getAttributesVisible()){
+            menuItem.setText("Hide Attributes");
+        } else {
+            menuItem.setText("Show Attributes");
+        }
+        popupMenu.insert(menuItem, 0);
+        return popupMenu;
+    }
 }

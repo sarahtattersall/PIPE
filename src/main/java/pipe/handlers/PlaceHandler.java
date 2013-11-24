@@ -28,7 +28,7 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place, PlaceView>
         super(view, contentpane, obj, controller);
     }
 
-    JPopupMenu getPopup(MouseEvent e) {
+    protected JPopupMenu getPopup(MouseEvent e) {
         int index = 0;
         JPopupMenu popup = super.getPopup(e);
 
@@ -41,17 +41,6 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place, PlaceView>
                                                 }
                                             };
         menuItem.addActionListener(actionListener);
-        popup.insert(menuItem, index++);
-
-        menuItem = new JMenuItem(new ShowHideInfoAction(viewComponent));
-        if(viewComponent.getAttributesVisible())
-        {
-            menuItem.setText("Hide Attributes");
-        }
-        else
-        {
-            menuItem.setText("Show Attributes");
-        }
         popup.insert(menuItem, index++);
         popup.insert(new JPopupMenu.Separator(), index);
 

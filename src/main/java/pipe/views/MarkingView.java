@@ -71,7 +71,8 @@ public class MarkingView extends JComponent implements Serializable, Observer {
             return result;
         } catch (NumberFormatException e) {
 
-            ExprEvaluator paser = new ExprEvaluator();
+            //TODO: DONT PASS NULL
+            ExprEvaluator paser = new ExprEvaluator(null);
             int result;
             try {
                 result = paser.parseAndEvalExpr(_model.getCurrentMarking(), _model.getToken().getId());

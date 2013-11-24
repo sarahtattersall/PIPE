@@ -312,4 +312,35 @@ public class PetriNetController implements IController, Serializable {
         capacityAction.redo();
         historyManager.addNewEdit(capacityAction);
     }
+
+    /**
+     *
+     * @param transition
+     * @param infiniteValue
+     */
+    public void setInfiniteServer(final Transition transition,
+                                  final boolean infiniteValue) {
+        TransitionInfiniteServer infiniteAction = new TransitionInfiniteServer(transition, petriNet, infiniteValue);
+        infiniteAction.redo();
+        historyManager.addNewEdit(infiniteAction);
+    }
+
+    public void setTimed(final Transition transition, final boolean timedValue) {
+        TransitionTiming timedAction = new TransitionTiming(transition, petriNet, timedValue);
+        timedAction.redo();
+        historyManager.addNewEdit(timedAction);
+    }
+
+    public void setPriority(final Transition transition,
+                            final int priorityValue) {
+        int oldPriority = transition.getPriority();
+        TransitionPriority priorityAction = new TransitionPriority(transition, petriNet, oldPriority, priorityValue);
+        priorityAction.redo();
+        historyManager.addNewEdit(priorityAction);
+    }
+
+    public void setAngle(final Transition transition, final int angle) {
+        int oldAngle = transition.getAngle();
+        TransitionRotation angleAction = new TransitionRotation(transition, petriNet, oldAngle, angle);
+    }
 }

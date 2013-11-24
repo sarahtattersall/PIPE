@@ -29,6 +29,7 @@ import net.sourceforge.jeval.Evaluator;
 
 
 import parser.ExprEvaluator;
+import pipe.models.Transition;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
 import pipe.views.TransitionView;
@@ -47,11 +48,12 @@ public class TransitionFunctionEditor extends JPanel {
 	private TransitionView _transitionView;
 	private TransitionEditorPanel _editor;
 	
-	public TransitionFunctionEditor(TransitionEditorPanel transitionEditorPanel, EscapableDialog guiDialog,PetriNetView pnmldata, TransitionView _transitionView) {
+	public TransitionFunctionEditor(TransitionEditorPanel transitionEditorPanel, EscapableDialog guiDialog,PetriNetView pnmldata, Transition _transitionView) {
 		_editor=transitionEditorPanel;
 		_pnmldata=pnmldata;
 		_rootPane=guiDialog;
-		this._transitionView=_transitionView;
+        //TODO: SET AS TRANSITION
+		this._transitionView = null;
 		init(_pnmldata);
 	}
 	
@@ -114,7 +116,8 @@ public class TransitionFunctionEditor extends JPanel {
 						exit();
 						return;
 					}
-					ExprEvaluator parser = new ExprEvaluator();
+                    //TODD: DONT PASS NULL
+					ExprEvaluator parser = new ExprEvaluator(null);
 					if(parser.parseAndEvalExprForTransition(func)!=null){
 						_editor.setRate(func);
 						//_transitionView.setRate(func);
