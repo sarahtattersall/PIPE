@@ -127,13 +127,6 @@ public class PlaceHandler extends PlaceTransitionObjectHandler<Place, PlaceView>
         }
     }
 
-    public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            JPopupMenu menu = getPopup(e);
-            menu.show(viewComponent, 0, 0);
-        }
-    }
-
     public void mouseWheelMoved(MouseWheelEvent e) {
         //
 //        if(!ApplicationSettings.getApplicationModel().isEditionAllowed() || e.isControlDown())
