@@ -120,4 +120,8 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
         this.id = id;
         notifyObservers();
     }
+
+    public void setName(String name) {
+        setId(name);
+    }
 }

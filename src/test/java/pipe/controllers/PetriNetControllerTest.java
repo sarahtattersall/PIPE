@@ -345,5 +345,18 @@ public class PetriNetControllerTest {
         public void accept(PetriNetComponentVisitor visitor) {
 
         }
+
+        @Override
+        public String getId() {
+            return "";
+        }
+
+        @Override
+        public void setId(String id) {
+        }
+
+        @Override
+        public void setName(String name) {
+        }
     }
 }

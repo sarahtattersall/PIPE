@@ -1,10 +1,14 @@
 package pipe.models;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +17,10 @@ import static org.junit.Assert.assertTrue;
 public class PlaceTest {
 
     Place place;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
 
     @Before
     public void setUp()
@@ -141,6 +149,80 @@ public class PlaceTest {
 
         place.decrementTokenCount(token);
         assertEquals(0, place.getTokenCount(token));
+    }
+
+
+    @Test
+    public void tokenCountIsZeroIfPlaceDoesNotContainToken() {
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        assertEquals(0, place.getTokenCount(token));
+    }
+
+    @Test
+    public void throwsErrorIfSetTokenCountGreaterThanCapacity() {
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("Cannot set token count that exceeds the capacity");
+        place.setCapacity(1);
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.setTokenCount(token, 2);
+    }
+
+    @Test
+    public void throwsErrorIfIncrementTokenCountGreaterThanCapacity() {
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("Cannot set token count that exceeds the capacity");
+        place.setCapacity(1);
+
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.incrementTokenCount(token);
+        place.incrementTokenCount(token);
+    }
+
+
+    @Test
+    public void capacityZeroMeansNoRestriction() {
+        place.setCapacity(0);
+
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.incrementTokenCount(token);
+    }
+
+    @Test
+    public void setTokenCountsCannotExceedCapacity() {
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("Count of tokens exceeds capacity!");
+        place.setCapacity(0);
+
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+        tokenCounts.put(token, 10);
+
+        place.setTokenCounts(tokenCounts);
+    }
+
+    @Test
+    public void changingNumberOfTokensDoesNotTriggerExceedCapacityError() {
+        place.setCapacity(1);
+
+        Token token = new Token("red", false, 0, new Color(255, 0, 0));
+        place.incrementTokenCount(token);
+
+        place.setTokenCount(token, 1);;
+    }
+
+    @Test
+    public void correctlyCountsNumberOfTokensStored() {
+        place.setCapacity(20);
+
+        int redTokenCount = 3;
+        Token redToken = new Token("red", false, 0, new Color(255, 0, 0));
+        place.setTokenCount(redToken, 3);
+
+        int blueTokenCount = 10;
+        Token blueToken = new Token("red", false, 0, new Color(0, 0, 255));
+        place.setTokenCount(blueToken, blueTokenCount);
+
+        assertEquals(redTokenCount + blueTokenCount, place.getNumberOfTokensStored());
     }
 
     private double getAngleBetweenObjects(double x1, double y1, double x2, double y2)

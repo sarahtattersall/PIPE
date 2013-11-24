@@ -161,6 +161,14 @@ public abstract class Connectable extends Observable implements Serializable, Pe
      */
     public abstract boolean isEndPoint();
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return id;

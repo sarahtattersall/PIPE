@@ -2,7 +2,7 @@ package pipe.models;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
 
-public class Annotation implements PetriNetComponent{
+public class Annotation implements PetriNetComponent {
     public Annotation(double x, double y, String text,
                       double width,
                       double height, boolean border) {
@@ -58,5 +58,21 @@ public class Annotation implements PetriNetComponent{
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
         visitor.visit(this);
+    }
+
+    //TODO: WORK OUT WHAT THESE SHOULD DO
+    @Override
+    public String getId() {
+        return "";  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setId(String id) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setName(String name) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

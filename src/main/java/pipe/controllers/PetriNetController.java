@@ -1,9 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.DeletePetriNetObject;
-import pipe.historyActions.HistoryManager;
+import pipe.historyActions.*;
 import pipe.models.*;
 
 import java.awt.*;
@@ -280,4 +278,38 @@ public class PetriNetController implements IController, Serializable {
     }
 
 
+    public Token getToken(String tokenName) {
+        return getTokenForName(tokenName);
+    }
+
+    public void setTokenCounts(Place place, Map<Token, Integer> counts) {
+        historyManager.newEdit();
+        for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
+            Token token = entry.getKey();
+            Integer newTokenCount = entry.getValue();
+            int currentTokenCount = place.getTokenCount(token);
+
+            PlaceMarking markingAction = new PlaceMarking(place, petriNet, token,
+                    currentTokenCount, newTokenCount);
+            markingAction.redo();
+
+            historyManager.addEdit(markingAction);
+
+        }
+
+    }
+
+    public void setPetriNetComponentName(PetriNetComponent component, String newName) {
+        String oldName = component.getId();
+        PetriNetObjectName nameAction = new PetriNetObjectName(component, petriNet, oldName, newName);
+        nameAction.redo();
+        historyManager.addNewEdit(nameAction);
+    }
+
+    public void setPlaceCapacity(Place place, Double capacity) {
+        double oldCapacity = place.getCapacity();
+        PlaceCapacity capacityAction = new PlaceCapacity(place, petriNet, oldCapacity, capacity);
+        capacityAction.redo();
+        historyManager.addNewEdit(capacityAction);
+    }
 }

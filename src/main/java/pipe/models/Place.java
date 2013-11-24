@@ -143,6 +143,12 @@ public class Place extends Connectable implements Serializable
     }
 
     public void setTokenCounts(Map<Token, Integer> tokenCounts) {
+        if (hasCapacityRestriction()) {
+            int count = getNumberOfTokensStored(tokenCounts);
+            if (count > capacity) {
+                throw new RuntimeException("Count of tokens exceeds capacity!");
+            }
+        }
         this.tokenCounts = tokenCounts;
     }
 
@@ -159,12 +165,14 @@ public class Place extends Connectable implements Serializable
         {
             count = 1;
         }
-        tokenCounts.put(token, count);
-
+        setTokenCount(token, count);
     }
 
     public int getTokenCount(Token token) {
-        return tokenCounts.get(token);
+        if (tokenCounts.containsKey(token)) {
+            return tokenCounts.get(token);
+        }
+        return 0;
     }
 
     public void decrementTokenCount(Token token) {
@@ -176,24 +184,36 @@ public class Place extends Connectable implements Serializable
         }
     }
 
+    public void setTokenCount(Token token, int count) {
+        if (hasCapacityRestriction()) {
+            int currentTokenCount = getNumberOfTokensStored();
+            int countMinusToken = currentTokenCount - getTokenCount(token);
+            if (countMinusToken + count > capacity) {
+                throw new RuntimeException("Cannot set token count that exceeds " +
+                        "the capacity of " + count);
+            }
+        }
+        tokenCounts.put(token, count);
+    }
 
-//    public List<Marking> getTokens() {
-//        return tokens;
-//    }
-//
-//    public void addTokens(List<Marking> markings) {
-//        this.tokens.addAll(markings);
-//    }
-//
-//    public void addToken(Marking marking) {
-//        this.tokens.add(marking);
-//    }
-//
-//    public void removeToken(Marking marking) {
-//        this.tokens.remove(marking);
-//    }
-//
-//    public void removeTokens(List<Marking> markings) {
-//        this.tokens.remove(markings);
-//    }
+    /**
+     *
+     * @return the number of tokens currently stored in this place
+     */
+    public int getNumberOfTokensStored() {
+        return getNumberOfTokensStored(tokenCounts);
+    }
+
+    private int getNumberOfTokensStored(Map<Token, Integer> tokens) {
+        int sum = 0;
+        for (Integer value : tokens.values()) {
+            sum += value;
+        }
+        return sum;
+    }
+
+    public boolean hasCapacityRestriction() {
+        return capacity > 0;
+    }
+
 }

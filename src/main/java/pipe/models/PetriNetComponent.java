@@ -21,4 +21,12 @@ public interface PetriNetComponent {
     public void accept(PetriNetComponentVisitor visitor);
 
 
+    /**
+     * @return objectId
+     */
+    String getId();
+
+    void setId(String id);
+    void setName(String name);
+
 }

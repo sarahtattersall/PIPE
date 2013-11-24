@@ -4,6 +4,8 @@
 
 package pipe.historyActions;
 
+import pipe.models.PetriNet;
+import pipe.models.Place;
 import pipe.views.PlaceView;
 
 /**
@@ -13,35 +15,33 @@ import pipe.views.PlaceView;
 public class PlaceCapacity
         extends HistoryItem
 {
-   
-   private final PlaceView _placeView;
-   private final Integer newCapacity;
-   private final Integer oldCapacity;
-   
-   
-   /**
-    * Creates a new instance of PlaceCapacityEdit
-    * @param _placeView
-    * @param _oldCapacity
-    * @param _newCapacity
-    */
-   public PlaceCapacity(PlaceView _placeView,
-                        Integer _oldCapacity, Integer _newCapacity) {
-      this._placeView = _placeView;
-      oldCapacity = _oldCapacity;      
-      newCapacity = _newCapacity;
-   }
 
-   
-   /** */
+    private final double newCapacity;
+    private final double oldCapacity;
+    private final Place place;
+    private final PetriNet petriNet;
+
+
+    public PlaceCapacity(Place place, PetriNet petriNet, double oldCapacity, double newCapacity) {
+
+        this.place = place;
+        this.petriNet = petriNet;
+        this.oldCapacity = oldCapacity;
+        this.newCapacity = newCapacity;
+    }
+
+
+    /** */
    public void undo() {
-      _placeView.setCapacity(oldCapacity);
+      place.setCapacity(oldCapacity);
+       petriNet.notifyObservers();
    }
    
 
    /** */
    public void redo() {
-      _placeView.setCapacity(newCapacity);
+      place.setCapacity(newCapacity);
+       petriNet.notifyObservers();
    }
    
 }

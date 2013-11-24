@@ -5,6 +5,10 @@
 package pipe.historyActions;
 
 import pipe.gui.ApplicationSettings;
+import pipe.models.PetriNet;
+import pipe.models.PetriNetComponent;
+import pipe.models.Place;
+import pipe.models.Token;
 import pipe.views.MarkingView;
 import pipe.views.PlaceView;
 
@@ -18,35 +22,31 @@ import java.util.List;
 public class PlaceMarking extends HistoryItem
 {
 
-	private final PlaceView _placeView;
-	private final List<MarkingView> newMarking;
-	private final List<MarkingView> oldMarking;
+    private final Place place;
+    private final PetriNet petriNet;
+    private final Token token;
+    private final int previousCount;
+    private final int newCount;
 
-	public PlaceMarking(PlaceView _placeView, List<MarkingView> _oldMarking,
-                        List<MarkingView> _newMarking) {
-		this._placeView = _placeView;
-		oldMarking = _oldMarking;
-		newMarking = _newMarking;
-	}
+	public PlaceMarking(Place place, PetriNet petriNet, Token token, int previousCount, int newCount) {
+		this.place = place;
+        this.petriNet = petriNet;
+        this.token = token;
+        this.previousCount = previousCount;
+        this.newCount = newCount;
+    }
 
 	public void undo() {
-		// Restore references to tokenClasses so that updates are reflected
-		// in marking.
-		for (MarkingView m : oldMarking) {
-            m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(
-                    m.getToken().getID()));
-		}
-		_placeView.setCurrentMarking(oldMarking);
+        place.setTokenCount(token, previousCount);
+        //TODO MAKE NET OBSERVE PLACE
+        petriNet.notifyObservers();
+
 	}
 
 	public void redo() {
-		// Restore references to tokenClasses so that updates are reflected
-		// in marking.
-		for (MarkingView m : newMarking) {
-            m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(
-                    m.getToken().getID()));
-		}
-		_placeView.setCurrentMarking(newMarking);
+        place.setTokenCount(token, newCount);
+        petriNet.notifyObservers();
+
 	}
 
 }

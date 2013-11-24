@@ -57,6 +57,11 @@ public class Token extends Observable implements Serializable, PetriNetComponent
         this.id = id;
     }
 
+    @Override
+    public void setName(String name) {
+        setId(name);
+    }
+
     public int getCurrentMarking()
     {
         return currentMarking;

@@ -139,11 +139,13 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         }
     }
 
+    //TODO: REMOVE
     public HistoryItem setPNObjectName(String name) {
-        String oldName = this.getName();
-        this.setId(name);
-        this.setName(name);
-        return new PetriNetObjectName(this, oldName, name);
+//        String oldName = this.getName();
+//        this.setId(name);
+//        this.setName(name);
+//        return new PetriNetObjectName(this, oldName, name);
+        return null;
     }
 
     public boolean isDeleted() {
