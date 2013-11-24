@@ -342,5 +342,41 @@ public class PetriNetController implements IController, Serializable {
     public void setAngle(final Transition transition, final int angle) {
         int oldAngle = transition.getAngle();
         TransitionRotation angleAction = new TransitionRotation(transition, petriNet, oldAngle, angle);
+        angleAction.redo();
+        historyManager.addNewEdit(angleAction);
+
+    }
+
+    /**
+     * Sets the weight for specified token to be expr
+     * @param arc
+     * @param token
+     * @param expr
+     */
+    public void setWeightForArc(final Arc arc, final Token token,
+                                final String expr) {
+        historyManager.newEdit();
+        updateWeightForArc(arc, token, expr);
+    }
+
+    /**
+     * Creates a historyItem for updating weight and applies it
+     * @param arc
+     * @param token
+     * @param expr
+     */
+    private void updateWeightForArc(final Arc arc, final Token token,
+                                 final String expr) {
+        String oldWeight = arc.getWeightForToken(token);
+        ArcWeight weightAction = new ArcWeight(arc, petriNet, token, oldWeight, expr);
+        weightAction.redo();
+        historyManager.addEdit(weightAction);
+    }
+
+    public void setWeights(final Arc arc, final Map<Token, String> newWeights) {
+        historyManager.newEdit();
+        for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
+            updateWeightForArc(arc, entry.getKey(), entry.getValue());
+        }
     }
 }

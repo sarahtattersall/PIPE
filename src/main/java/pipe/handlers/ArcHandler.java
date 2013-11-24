@@ -46,137 +46,88 @@ public class ArcHandler
       JPopupMenu popup = super.getPopup(e);
       
  
-//      if (component instanceof InhibitorArcView) {
-//          menuItem = new JMenuItem("Edit Weight");
-//          menuItem.addActionListener(new ActionListener(){
-//             public void actionPerformed(ActionEvent e) {
-//                ((ArcView) component).showEditor();
-//             }
-//          });
-//          popup.insert(menuItem, popupIndex++);
-//
-//         menuItem = new JMenuItem(new SplitArcAction((ArcView) component,
-//                                                      e.getPoint()));
-//         menuItem.setText("Split Arc Segment");
-//         popup.insert(menuItem, popupIndex++);
-//
-//         popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//      } else if (component instanceof NormalArcView) {
-//         if (((NormalArcView) component).isJoined()){
-//            NormalArcView PTArc;
-//            NormalArcView TPArc;
-//
-//            if (((NormalArcView) component).getSource() instanceof PlaceView){
-//               PTArc = (NormalArcView) component;
-//               TPArc = ((NormalArcView) component).getInverse();
-//            } else {
-//               PTArc = ((NormalArcView) component).getInverse();
-//               TPArc = (NormalArcView) component;
-//            }
-//
-////            if (!PTArc.isTagged()) { //pendentnou
-//            menuItem = new JMenuItem("Edit Weight");
-//            menuItem.addActionListener(new ActionListener(){
-//               public void actionPerformed(ActionEvent e) {
-//                  ((ArcView) component).showEditor();
-//               }
-//            });
-//            popup.insert(menuItem, popupIndex++);
-////               menuItem = new JMenuItem(
-////                       new EditTaggedAction(contentPane, PTArc));
-////               menuItem.setText("Make Tagged (PT Arc)");
-////               popup.insert(menuItem, popupIndex++);
-////            } else {
-////               menuItem = new JMenuItem(
-////                       new EditTaggedAction(contentPane, PTArc));
-////               menuItem.setText("Make Non-Tagged (PT Arc)");
-////               popup.insert(menuItem, popupIndex++);
-////            }
-//            popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//
-////            if (!TPArc.isTagged()) {
-////               menuItem = new JMenuItem(
-////                       new EditTaggedAction(contentPane, TPArc));
-////               menuItem.setText("Make Tagged (TP Arc)");
-////               popup.insert(menuItem, popupIndex++);
-////            } else {
-////               menuItem = new JMenuItem(
-////                       new EditTaggedAction(contentPane, TPArc));
-////               menuItem.setText("Make Non-Tagged (TP Arc)");
-////               popup.insert(menuItem, popupIndex++);
-////            }
-//
-//            popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//
-//            menuItem = new JMenuItem(new InsertPointAction((ArcView) component,
-//                                                         e.getPoint()));
-//            menuItem.setText("Insert Point");
-//            /*
-//            menuItem = new JMenuItem(new SplitArcAction((Arc)component,
-//                                                         e.getPoint()));
-//            menuItem.setText("Split Arc Segment");
-//             */
-//            popup.insert(menuItem, popupIndex++);
-//
-//            menuItem = new JMenuItem(
-//                    new SplitArcsAction((NormalArcView) component, true));
-//            menuItem.setText("Split Arcs (PT / TP)");
-//            popup.insert(menuItem, popupIndex++);
-//
-//            popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//
-//            menuItem = new JMenuItem(new DeleteInverseArcAction(PTArc));
-//            menuItem.setText("Delete (PT Arc)");
-//            popup.insert(menuItem, popupIndex++);
-//
-//            menuItem = new JMenuItem(new DeleteInverseArcAction(TPArc));
-//            menuItem.setText("Delete (TP Arc)");
-//            popup.insert(menuItem, popupIndex++);
-//            /*
-//            menuItem = new JMenuItem(new DeleteBothAction((NormalArc)component));
-//            menuItem.setText("Delete Both");
-//            popup.insert(menuItem, 8);
-//            */
-//         } else {
-////            if(!((NormalArc)component).isTagged()) {
-//             menuItem = new JMenuItem("Edit Weight");
-//             menuItem.addActionListener(new ActionListener(){
-//                public void actionPerformed(ActionEvent e) {
-//                   ((ArcView) component).showEditor();
-//                }
-//             });
-//             popup.insert(menuItem, popupIndex++);
-////            }
-//
-////            menuItem = new JMenuItem(
-////                    new EditTaggedAction(contentPane,(NormalArc)component));
-////            if (((NormalArc)component).isTagged()) {
-////               menuItem.setText("Make Non-Tagged");
-////            } else {
-////               menuItem.setText("Make Tagged");
-////            }
-////            popup.insert(menuItem, popupIndex++);
-//
-//            //menuItem = new JMenuItem(new SplitArcAction((Arc)component,
-//            //                                             e.getPoint()));
-//            //menuItem.setText("Split Arc Segment");
-//
-//
-//            menuItem = new JMenuItem(new SplitArcAction((ArcView) component,
+      if (viewComponent instanceof InhibitorArcView) {
+          menuItem = new JMenuItem("Edit Weight");
+          menuItem.addActionListener(new ActionListener(){
+             public void actionPerformed(ActionEvent e) {
+                viewComponent.showEditor();
+             }
+          });
+          popup.insert(menuItem, popupIndex++);
+
+         menuItem = new JMenuItem(new SplitArcAction(viewComponent,
+                                                      e.getPoint()));
+         menuItem.setText("Split Arc Segment");
+         popup.insert(menuItem, popupIndex++);
+
+         popup.insert(new JPopupMenu.Separator(), popupIndex++);
+      } else if (viewComponent instanceof NormalArcView) {
+         if (((NormalArcView) viewComponent).isJoined()){
+            NormalArcView PTArc;
+            NormalArcView TPArc;
+
+            if (((NormalArcView) viewComponent).getSource() instanceof PlaceView){
+               PTArc = (NormalArcView) viewComponent;
+               TPArc = ((NormalArcView) viewComponent).getInverse();
+            } else {
+               PTArc = ((NormalArcView) viewComponent).getInverse();
+               TPArc = (NormalArcView) viewComponent;
+            }
+
+            menuItem = new JMenuItem("Edit Weight");
+            menuItem.addActionListener(new ActionListener(){
+               public void actionPerformed(ActionEvent e) {
+                  viewComponent.showEditor();
+               }
+            });
+            popup.insert(menuItem, popupIndex++);
+            popup.insert(new JPopupMenu.Separator(), popupIndex++);
+            popup.insert(new JPopupMenu.Separator(), popupIndex++);
+
+//            menuItem = new JMenuItem(new InsertPointAction(viewComponent,
 //                                                         e.getPoint()));
 //            menuItem.setText("Insert Point");
 //            popup.insert(menuItem, popupIndex++);
-//
-//            if (((NormalArcView) component).hasInverse()){
-//               menuItem = new JMenuItem(
-//                        new SplitArcsAction((NormalArcView) component, false));
-//
-//               menuItem.setText("Join Arcs (PT / TP)");
-//               popup.insert(menuItem, popupIndex++);
-//            }
-//            popup.insert(new JPopupMenu.Separator(), popupIndex);
-//         }
-//      }
+
+            menuItem = new JMenuItem(
+                    new SplitArcsAction((NormalArcView) viewComponent, true));
+            menuItem.setText("Split Arcs (PT / TP)");
+            popup.insert(menuItem, popupIndex++);
+
+            popup.insert(new JPopupMenu.Separator(), popupIndex++);
+
+            menuItem = new JMenuItem(new DeleteInverseArcAction(PTArc));
+            menuItem.setText("Delete (PT Arc)");
+            popup.insert(menuItem, popupIndex++);
+
+            menuItem = new JMenuItem(new DeleteInverseArcAction(TPArc));
+            menuItem.setText("Delete (TP Arc)");
+            popup.insert(menuItem, popupIndex++);
+
+         } else {
+             menuItem = new JMenuItem("Edit Weight");
+             menuItem.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                   viewComponent.showEditor();
+                }
+             });
+             popup.insert(menuItem, popupIndex++);
+
+//            menuItem = new JMenuItem(new SplitArcAction(viewComponent,
+//                                                         e.getPoint()));
+//            menuItem.setText("Insert Point");
+//            popup.insert(menuItem, popupIndex++);
+
+            if (((NormalArcView) viewComponent).hasInverse()){
+               menuItem = new JMenuItem(
+                        new SplitArcsAction((NormalArcView) viewComponent, false));
+
+               menuItem.setText("Join Arcs (PT / TP)");
+               popup.insert(menuItem, popupIndex++);
+            }
+            popup.insert(new JPopupMenu.Separator(), popupIndex);
+         }
+      }
       return popup;
    }
 

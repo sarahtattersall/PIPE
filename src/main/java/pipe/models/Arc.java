@@ -1,12 +1,14 @@
 package pipe.models;
 
+import pipe.views.MarkingView;
+
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Arc extends Observable implements PetriNetComponent, Serializable
-{
+public abstract class Arc extends Observable
+        implements PetriNetComponent, Serializable {
 
     @Pnml("source")
     private Connectable source;
@@ -19,8 +21,6 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
 
     private boolean tagged = false;
 
-    //TODO: Does this need to be a List?
-//	private List<Marking> weight;
     /**
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
@@ -28,53 +28,45 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
     @Pnml("inscription")
     private Map<Token, String> tokenWeights = new HashMap<Token, String>();
 
-    public Arc(Connectable source, Connectable target, Map<Token, String> tokenWeights)
-    {
+    public Arc(Connectable source, Connectable target,
+               Map<Token, String> tokenWeights) {
         this.source = source;
         this.target = target;
         this.tokenWeights = tokenWeights;
     }
 
-    public Map<Token, String> getTokenWeights()
-    {
+    public Map<Token, String> getTokenWeights() {
         return tokenWeights;
     }
 
-    public Connectable getSource()
-    {
+    public Connectable getSource() {
         return source;
     }
 
-    public void setSource(Connectable source)
-    {
+    public void setSource(Connectable source) {
         this.source = source;
         notifyObservers();
     }
 
-    public Connectable getTarget()
-    {
+    public Connectable getTarget() {
         return target;
     }
 
-    public void setTarget(Connectable target)
-    {
+    public void setTarget(Connectable target) {
         this.target = target;
         notifyObservers();
     }
 
     /**
-     *
      * @return angle in randians between source and target
      */
-    private double getAngleBetweenSourceAndTarget()
-    {
+    private double getAngleBetweenSourceAndTarget() {
         double deltax = source.getX() - target.getX();
         double deltay = source.getY() - target.getY();
         return Math.atan2(deltax, deltay);
     }
 
     /**
-     *
      * @return The start coordinate of the arc
      */
     public Point2D.Double getStartPoint() {
@@ -82,9 +74,7 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
         return source.getArcEdgePoint(angle);
     }
 
-
     /**
-     *
      * @return The end coordinate of the arc
      */
     public Point2D.Double getEndPoint() {
@@ -92,14 +82,11 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
         return target.getArcEdgePoint(Math.PI + angle);
     }
 
-
     /**
-     *
      * @return true - Arcs are always selectable
      */
     @Override
-    public boolean isSelectable()
-    {
+    public boolean isSelectable() {
         return true;
     }
 
@@ -123,5 +110,33 @@ public abstract class Arc extends Observable implements PetriNetComponent, Seria
 
     public void setName(String name) {
         setId(name);
+    }
+
+    public String getWeightForToken(Token token) {
+        if (tokenWeights.containsKey(token)) {
+            return tokenWeights.get(token);
+        }
+        else {
+            return "";
+        }
+    }
+
+    public void setWeight(final Token defaultToken, final String weight) {
+        tokenWeights.put(defaultToken, weight);
+    }
+
+    /**
+     * @return true if any of the weights are functional
+     */
+    public boolean hasFunctionalWeight() {
+        for (String weight : tokenWeights.values()) {
+
+            try {
+                Integer.parseInt(weight);
+            } catch (Exception e) {
+                return true;
+            }
+        }
+        return false;
     }
 }

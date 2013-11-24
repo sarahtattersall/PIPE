@@ -4,11 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.interfaces.IObserver;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -101,5 +104,37 @@ public class ArcTest {
 
         Point2D.Double arcEndPoint = arc.getEndPoint();
         assertEquals(expectedEndPoint, arcEndPoint);
+    }
+
+    @Test
+    public void returnsTokenWeightForToken() {
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        String weight = "cap(P0)";
+
+        arc.setWeight(defaultToken, weight);
+        String actualWeight = arc.getWeightForToken(defaultToken);
+        assertEquals(weight, actualWeight);
+    }
+
+    @Test
+    public void returnTrueIfHasFunctionalWeight() {
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));
+
+        arc.setWeight(defaultToken, "2");
+        arc.setWeight(redToken, "cap(P0)");
+
+        assertTrue(arc.hasFunctionalWeight());
+    }
+
+    @Test
+    public void returnFalseIfNoFunctionalWeight() {
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));
+
+        arc.setWeight(defaultToken, "2");
+        arc.setWeight(redToken, "4");
+
+        assertFalse(arc.hasFunctionalWeight());
     }
 }

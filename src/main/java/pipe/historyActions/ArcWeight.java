@@ -4,6 +4,9 @@
 
 package pipe.historyActions;
 
+import pipe.models.Arc;
+import pipe.models.PetriNet;
+import pipe.models.Token;
 import pipe.views.ArcView;
 import pipe.views.MarkingView;
 
@@ -11,44 +14,36 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Alex Charalambous
  */
-public class ArcWeight
-        extends HistoryItem
-{
-   
-   private final ArcView arc;
-   private final List<MarkingView> newWeight;
-   private final List<MarkingView> oldWeight;
-   
-   
-   /** Creates a new instance of arcWeightEdit
-    * @param _arc
-    * @param _oldWeight
-    * @param _newWeight*/
-   public ArcWeight(ArcView _arc, List<MarkingView> _oldWeight, List<MarkingView> _newWeight) {
-      arc = _arc;
-      oldWeight = _oldWeight;      
-      newWeight = _newWeight;
-   }
+public class ArcWeight extends HistoryItem {
 
-   
-   /** */
-   public void undo() {
-      arc.setWeight(oldWeight);
-   }
+    private final Arc arc;
+    private final PetriNet petriNet;
+    private final Token token;
+    private final String newWeight;
+    private final String oldWeight;
 
-   
-   /** */
-   public void redo() {
-      arc.setWeight(newWeight);
-   }
-   
-   
-   public String toString(){
-      return super.toString() + " " + arc.getName() + 
-              "oldWeight: " + oldWeight + "newWeight: " + newWeight;
-   }   
-   
+    public ArcWeight(final Arc arc, final PetriNet petriNet, final Token token,
+                     final String oldWeight, final String newWeight) {
+
+        this.arc = arc;
+        this.petriNet = petriNet;
+        this.token = token;
+        this.oldWeight = oldWeight;
+        this.newWeight = newWeight;
+    }
+
+    /** */
+    public void undo() {
+        arc.setWeight(token, oldWeight);
+        petriNet.notifyObservers();
+    }
+
+    /** */
+    public void redo() {
+        arc.setWeight(token, newWeight);
+        petriNet.notifyObservers();
+    }
+
 }

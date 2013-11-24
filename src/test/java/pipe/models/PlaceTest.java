@@ -191,7 +191,7 @@ public class PlaceTest {
     public void setTokenCountsCannotExceedCapacity() {
         exception.expect(RuntimeException.class);
         exception.expectMessage("Count of tokens exceeds capacity!");
-        place.setCapacity(0);
+        place.setCapacity(1);
 
         Token token = new Token("red", false, 0, new Color(255, 0, 0));
         Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();

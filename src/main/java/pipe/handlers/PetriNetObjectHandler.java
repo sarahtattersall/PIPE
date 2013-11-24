@@ -75,13 +75,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
      */
     private void checkForPopup(MouseEvent e)
     {
-        if(SwingUtilities.isRightMouseButton(e))
+        if(e.isPopupTrigger())
         {
             JPopupMenu m = getPopup(e);
-            if(m != null)
-            {
-                //m.show(component, e.getX(), e.getY());
-            }
+            m.show(viewComponent, e.getX(), e.getY());
         }
     }
 
@@ -91,7 +88,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         if(applicationModel.isEditionAllowed() && enablePopup)
         {
-            //checkForPopup(e);
+            checkForPopup(e);
         }
 
         if(!SwingUtilities.isLeftMouseButton(e))

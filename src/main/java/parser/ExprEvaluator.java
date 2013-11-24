@@ -33,7 +33,6 @@ public class ExprEvaluator {
         }
 
         Evaluator evaluator = new Evaluator();
-        System.out.println("LEXPR " + lexpr);
         String result = evaluator.evaluate(lexpr);
         System.out.println(result);
         Double dresult = Double.parseDouble(result);
