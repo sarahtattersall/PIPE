@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pipe.actions.*;
+import pipe.actions.edit.*;
 import pipe.actions.file.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenPanel;
@@ -87,11 +88,11 @@ public class PipeTest {
     	checkAction("PostScript", model.exportPSAction, ExportPSAction.class);
     	checkAction("eDSPN", model.exportTNAction, ExportTNAction.class);
     	checkAction("Print", model.printAction, PrintAction.class);
-    	checkAction("Undo", model.undoAction, EditAction.class); 
-    	checkAction("Redo", model.redoAction, EditAction.class); 
-    	checkAction("Cut", model.cutAction, EditAction.class); 
-    	checkAction("Copy", model.copyAction, EditAction.class); 
-    	checkAction("Paste", model.pasteAction, EditAction.class); 
+    	checkAction("Undo", model.undoAction, UndoAction.class);
+    	checkAction("Redo", model.redoAction, RedoAction.class);
+    	checkAction("Cut", model.cutAction, CutAction.class);
+    	checkAction("Copy", model.copyAction, CopyAction.class);
+    	checkAction("Paste", model.pasteAction, PasteAction.class);
     	checkAction("Delete", model.deleteAction, DeleteAction.class); 
     	checkAction("Select", model.selectAction, TypeAction.class); 
     	checkAction("Place", model.placeAction, TypeAction.class); 

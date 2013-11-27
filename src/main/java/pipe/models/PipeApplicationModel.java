@@ -1,6 +1,7 @@
 package pipe.models;
 
 import pipe.actions.*;
+import pipe.actions.edit.*;
 import pipe.actions.file.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
@@ -50,19 +51,19 @@ public class PipeApplicationModel implements Serializable
     public GuiAction exitAction = new ExitAction();
 
     @ApplicationAction(ActionEnum.UNDO)
-    public EditAction undoAction = new EditAction("Undo", "Undo (Ctrl-Z)", "ctrl Z");
+    public GuiAction undoAction = new UndoAction();
 
     @ApplicationAction(ActionEnum.REDO)
-    public EditAction redoAction = new EditAction("Redo", "Redo (Ctrl-Y)", "ctrl Y");
-
-    @ApplicationAction(ActionEnum.CUT)
-    public EditAction cutAction = new EditAction("Cut", "Cut (Ctrl-X)", "ctrl X");
+    public GuiAction redoAction = new RedoAction();
 
     @ApplicationAction(ActionEnum.COPY)
-    public EditAction copyAction = new EditAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+    public GuiAction copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+
+    @ApplicationAction(ActionEnum.CUT)
+    public GuiAction cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X");
 
     @ApplicationAction(ActionEnum.PASTE)
-    public EditAction pasteAction = new EditAction("Paste", "Paste (Ctrl-V)", "ctrl V");
+    public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
 
     @ApplicationAction(ActionEnum.DELETE)
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");

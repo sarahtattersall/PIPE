@@ -22,10 +22,6 @@ public class PetriNetController implements IController, Serializable {
     private final Set<PetriNetComponent> selectedComponents = new
             HashSet<PetriNetComponent>();
 
-
-    //THis needs to be moved into its own logical class
-    private Connectable source;
-
     public PetriNetController(PetriNet model, HistoryManager historyManager) {
         petriNet = model;
         this.historyManager = historyManager;
@@ -36,9 +32,6 @@ public class PetriNetController implements IController, Serializable {
             arc.setTarget(new TemporaryArcTarget(x, y));
 
             petriNet.notifyObservers();
-            //arc.setTarget(null);
-            //_createArcView.setEndPoint(Grid.getModifiedX(event.getX()),
-            // Grid.getModifiedY(event.getY()), event.isShiftDown());
         }
     }
 
@@ -52,7 +45,6 @@ public class PetriNetController implements IController, Serializable {
         currentlyCreatingArc = true;
         this.arc = buildEmptyArc(source);
         addArcToCurrentPetriNet(arc);
-        this.source = source;
     }
 
     private void addArcToCurrentPetriNet(NormalArc arc) {
