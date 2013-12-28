@@ -58,7 +58,7 @@ public class PipeTest {
 	private PetriNetView petriNetView;
 	private TokenView defaultTokenView;
 	private TokenView redTokenView;
-	private TokenAction tokenAction;
+	private SpecifyTokenAction tokenAction;
 	private TokenView greenTokenView;
 	private List<MarkingView> newMarkingViews;
     @BeforeClass
@@ -103,7 +103,7 @@ public class PipeTest {
     	checkAction("Annotation", model.annotationAction, TypeAction.class); 
     	checkAction("Add token", model.tokenAction, TypeAction.class); 
     	checkAction("Delete token", model.deleteTokenAction, TypeAction.class); 
-    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, TokenAction.class);
+    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, SpecifyTokenAction.class);
     	checkAction("groupTransitions", model.groupTransitions, GroupTransitionsAction.class); 
     	checkAction("ungroupTransitions", model.ungroupTransitions, UngroupTransitionsAction.class); 
     	checkAction("unfoldAction", model.unfoldAction, UnfoldAction.class); 
@@ -400,7 +400,7 @@ public class PipeTest {
 	}
 	protected void showTokenDialogAndJustClickOk()
 	{
-		tokenAction = (TokenAction) getActionForMenuItem(menu, 11);  
+		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
 		tokenAction.forceOkForTesting();
 		tokenAction.actionPerformed(null);
 	}
@@ -436,9 +436,9 @@ public class PipeTest {
 		applicationView.saveNet(fileForTesting, false); 
 	}
 	protected void openTokenDialogDisableDefaultTokenAddNewToken() throws InterruptedException
-	{ // To get access to the table in TokenPanel, TokenAction.actionPerformed refactored to three methods:
+	{ // To get access to the table in TokenPanel, SpecifyTokenAction.actionPerformed refactored to three methods:
 	  // buildTokenGuiClasses(), finishBuildingGui(), updateTokenViewsFromGui(); invoked separately.  
-		tokenAction = (TokenAction) getActionForMenuItem(menu, 11);  
+		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
 		tokenAction.forceOkForTesting();
 		tokenAction.buildTokenGuiClasses();
 		TokenPanel dialogContent = tokenAction.getDialogContentForTesting(); 

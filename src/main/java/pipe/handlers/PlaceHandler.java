@@ -1,9 +1,11 @@
 package pipe.handlers;
 
+import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
+import pipe.models.PipeApplicationModel;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.views.PipeApplicationView;
@@ -16,17 +18,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+
+/**
+ * Handles place actions
+ */
 public class PlaceHandler
-        extends PlaceTransitionObjectHandler<Place, PlaceView> {
+        extends ConnectableHandler<Place, PlaceView> {
 
-    private final PlaceController placeController;
 
-    public PlaceHandler(PlaceView view, Container contentpane, Place obj,
+    public PlaceHandler(PlaceView view, Container contentpane, Place place,
                         PetriNetController controller) {
-        super(view, contentpane, obj, controller);
-        //TODO: REPLACE BY PASSING IN AND REMOVING component from parent
-        this.placeController = controller.getPlaceController(obj);
-
+        super(view, contentpane, place, controller);
     }
 
     protected JPopupMenu getPopup(MouseEvent e) {
@@ -44,26 +46,6 @@ public class PlaceHandler
         popup.insert(new JPopupMenu.Separator(), index);
 
         return popup;
-    }
-
-    // Steve Doubleday: refactored to simplify testing
-    public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            PipeApplicationView view = ApplicationSettings.getApplicationView();
-            Token token =
-                    petriNetController.getToken(view.getSelectedTokenName());
-            switch (ApplicationSettings.getApplicationModel().getMode()) {
-                case Constants.ADDTOKEN:
-
-                    placeController.addTokenToPlace(token);
-                    break;
-                case Constants.DELTOKEN:
-                    placeController.deleteTokenInPlace(token);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {

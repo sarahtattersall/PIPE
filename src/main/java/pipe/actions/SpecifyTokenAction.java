@@ -14,7 +14,7 @@ import java.util.LinkedList;
 // 
 // Steve Doubleday: refactored to simplify testing
 //
-public class TokenAction extends GuiAction
+public class SpecifyTokenAction extends GuiAction
 {
 	private static final long serialVersionUID = 1L;
 	protected static final String PROBLEM_ENCOUNTERED_SAVING_UPDATES = "Problem encountered saving updates to tokens.  Changes will be discarded; please re-enter.\n";
@@ -24,7 +24,7 @@ public class TokenAction extends GuiAction
 	private JDialog guiDialog;
 	private ActionEvent forcedAction;
 
-	public TokenAction()
+	public SpecifyTokenAction()
     {
         super("SpecifyTokenClasses", "Specify tokens", "shift ctrl T");
         setErrorMessage(""); 

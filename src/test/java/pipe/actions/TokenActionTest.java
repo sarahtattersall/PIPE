@@ -22,7 +22,7 @@ import pipe.views.TokenView;
 public class TokenActionTest
 {
 
-	private TokenAction tokenAction;
+	private SpecifyTokenAction tokenAction;
 	private LinkedList<TokenView> tokenViews;
 	private TokenView oneTokenView;
 	private TokenView twoTokenView;
@@ -84,9 +84,9 @@ public class TokenActionTest
 		newOneTokenView = new TokenView(true, "", Color.green); 
 		newTokenViews.add(newOneTokenView);
 		tokenAction.updateTokenViews(newTokenViews); 
-		assertTrue(tokenAction.getErrorMessage().startsWith(TokenAction.PROBLEM_ENCOUNTERED_SAVING_UPDATES));
+		assertTrue(tokenAction.getErrorMessage().startsWith(SpecifyTokenAction.PROBLEM_ENCOUNTERED_SAVING_UPDATES));
 	}
-	private class TestingTokenAction extends TokenAction
+	private class TestingTokenAction extends SpecifyTokenAction
 	{
 		private static final long serialVersionUID = 1L;
 

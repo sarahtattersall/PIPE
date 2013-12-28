@@ -13,7 +13,6 @@ import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.PipeApplicationView;
-import utils.TokenUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -211,13 +210,52 @@ public class PetriNetControllerTest {
     public void creatingArcAddsItToPetriNet()
     {
         PetriNet net = setupPetriNet();
-        Connectable source = createFakeSource();
-        controller.startCreatingArc(source);
+        Connectable source = createFakePlace();
+        controller.startCreatingNormalArc(source);
         assertEquals(1, net.getArcs().size());
     }
 
-    private Connectable createFakeSource() {
-        Connectable source = mock(Connectable.class);
+    @Test
+    public void finishingArcReturnsFalseIfNotCreating() {
+        Connectable place = mock(Place.class);
+        assertFalse(controller.finishCreatingArc(place));
+    }
+
+    @Test
+    public void finishingArcReturnsFalseIfNotValidEndPoint() {
+        PetriNet net = setupPetriNet();
+        Connectable source = createFakePlace();
+        controller.startCreatingNormalArc(source);
+
+        Connectable place = mock(Place.class);
+        when(place.isEndPoint()).thenReturn(true);
+        assertFalse(controller.finishCreatingArc(place));
+    }
+
+    @Test
+    public void finishingArcReturnsTrueIfNotValidEndPoint() {
+        Connectable source = createFakePlace();
+        controller.startCreatingNormalArc(source);
+
+        Connectable transition = mock(Transition.class);
+        when(transition.isEndPoint()).thenReturn(true);
+        assertTrue(controller.finishCreatingArc(transition));
+    }
+
+
+    @Test
+    public void finishingArcSetsCreatingToFalse() {
+        Connectable source = createFakePlace();
+        controller.startCreatingNormalArc(source);
+
+        Connectable transition = mock(Transition.class);
+        when(transition.isEndPoint()).thenReturn(true);
+        controller.finishCreatingArc(transition);
+        assertFalse(controller.isCurrentlyCreatingArc());
+    }
+
+    private Connectable createFakePlace() {
+        Connectable source = mock(Place.class);
         when(source.getX()).thenReturn(0.);
         when(source.getY()).thenReturn(0.);
         when(source.getArcEdgePoint(anyDouble())).thenReturn(new Point2D.Double());
@@ -234,9 +272,9 @@ public class PetriNetControllerTest {
     public void cancellingArcRemovesItFromPetriNet()
     {
         PetriNet net = setupPetriNet();
-        Connectable source = createFakeSource();
+        Connectable source = createFakePlace();
 
-        controller.startCreatingArc(source);
+        controller.startCreatingNormalArc(source);
         controller.cancelArcCreation();
         assertEquals(0, net.getArcs().size());
     }

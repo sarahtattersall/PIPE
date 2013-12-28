@@ -17,7 +17,7 @@ public class PetriNetController implements IController, Serializable {
     private int placeNumber = 0;
     private int transitionNumber = 0;
     private boolean currentlyCreatingArc = false;
-    private NormalArc arc;
+    private Arc arc;
 
     private final Set<PetriNetComponent> selectedComponents = new
             HashSet<PetriNetComponent>();
@@ -40,14 +40,37 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param source source model
      */
-    //TODO: handle different arc types.
-    public void startCreatingArc(Connectable source) {
+    public void startCreatingNormalArc(Connectable source) {
         currentlyCreatingArc = true;
         this.arc = buildEmptyArc(source);
         addArcToCurrentPetriNet(arc);
     }
 
-    private void addArcToCurrentPetriNet(NormalArc arc) {
+    /**
+     * Start creating an inhibitor arc starting at the source
+     *
+     * @param source
+     */
+    public void startCreatingInhibitorArc(Connectable source) {
+        currentlyCreatingArc = true;
+        this.arc = buildEmptyInhibitorArc(source);
+        addArcToCurrentPetriNet(arc);
+    }
+
+    /**
+     * Create inhibitor arc with a temporary finish destination
+     *
+     * @param source
+     * @return inhibitor arc
+     */
+    private InhibitorArc buildEmptyInhibitorArc(Connectable source) {
+        return new InhibitorArc(source,
+                new TemporaryArcTarget(source.getX(),
+                        source.getY()),
+                new HashMap<Token, String>());
+    }
+
+    private void addArcToCurrentPetriNet(Arc arc) {
         petriNet.addArc(arc);
     }
 
@@ -67,10 +90,19 @@ public class PetriNetController implements IController, Serializable {
         petriNet.remove(arc);
     }
 
-    public void finishCreatingArc(Connectable target) {
-        arc.setTarget(target);
-        historyManager.addNewEdit(new AddPetriNetObject(arc, petriNet));
-        currentlyCreatingArc = false;
+    /**
+     * Finishes creating an arc if the target is an applicable end point
+     * @param target
+     * @return true if could create an arc, false otherwise
+     */
+    public boolean finishCreatingArc(Connectable target) {
+        if (isApplicableEndPoint(target) && currentlyCreatingArc) {
+            arc.setTarget(target);
+            historyManager.addNewEdit(new AddPetriNetObject(arc, petriNet));
+            currentlyCreatingArc = false;
+            return true;
+        }
+        return false;
     }
 
     /**

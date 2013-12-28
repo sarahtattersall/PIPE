@@ -10,8 +10,8 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
+import pipe.handlers.ConnectableHandler;
 import pipe.handlers.LabelHandler;
-import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
 import pipe.models.component.NormalArc;
@@ -386,7 +386,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                 return true;
             } else {
                 if (someArcView.getTarget() == this) {
-                    if (!PlaceTransitionObjectHandler.isMouseDown()) {
+                    if (!ConnectableHandler.isMouseDown()) {
                         someArcView.setTarget(null);
                         removeArcCompareObject(someArcView);
                         updateConnected();

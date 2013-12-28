@@ -128,7 +128,7 @@ public class SelectionManager
 //           }
 //       }
 //      _view.updatePreferredSize();
-       petriNetController.deleteSelection();
+//       petriNetController.deleteSelection();
    }
 
    

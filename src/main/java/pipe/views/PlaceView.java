@@ -4,9 +4,9 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
+import pipe.handlers.ConnectableHandler;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceHandler;
-import pipe.handlers.PlaceTransitionObjectHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
 import pipe.models.component.Place;
@@ -392,7 +392,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
                 return true;
             } else {
                 if (someArcView.getTarget() == this) {
-                    if (!PlaceTransitionObjectHandler.isMouseDown()) {
+                    if (!ConnectableHandler.isMouseDown()) {
                         someArcView.setTarget(null);
                         updateConnected();
                     }
