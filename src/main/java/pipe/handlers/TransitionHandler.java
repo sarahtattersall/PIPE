@@ -18,7 +18,7 @@ import java.awt.event.MouseWheelEvent;
  * Class used to implement methods corresponding to mouse events on transitions.
  */
 public class TransitionHandler 
-        extends PlaceTransitionObjectHandler<Transition, TransitionView>
+        extends ConnectableHandler<Transition, TransitionView>
 {
   
    

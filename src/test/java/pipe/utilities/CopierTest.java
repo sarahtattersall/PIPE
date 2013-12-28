@@ -28,7 +28,6 @@ public class CopierTest
 		markingViews.add(markingView);
 		@SuppressWarnings("unused") List<MarkingView> newMarkingViews = Copier.mediumCopy(markingViews);
 		assertEquals(2, tokenView.countObservers());
-		
 	}
 
 }

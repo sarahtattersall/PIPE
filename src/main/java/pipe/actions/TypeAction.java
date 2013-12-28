@@ -5,12 +5,21 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.StatusBar;
+import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class TypeAction extends GuiAction
+public abstract class TypeAction extends GuiAction
 {
+    //TODO: Eventually a handler can tell the GUI Action to do its thing
+    // for each type of type clicked on.
+    public abstract void doAction(Point point, PetriNetController petriNetController);
+    public abstract void doConnectableAction(Connectable connectable, PetriNetController petriNetController);
+
     private final int typeID;
 
     public TypeAction(String name, int typeID, String tooltip, String keystroke)
@@ -28,54 +37,8 @@ public class TypeAction extends GuiAction
     public void actionPerformed(ActionEvent e)
     {
         PipeApplicationModel pipeApplicationView = ApplicationSettings.getApplicationModel();
-        // if (!isSelected()){
-        this.setSelected(true);
-
-        // deselect other actions
-        if(this != pipeApplicationView.placeAction)
-        {
-            pipeApplicationView.placeAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.transAction)
-        {
-            pipeApplicationView.transAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.timedtransAction)
-        {
-            pipeApplicationView.timedtransAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.arcAction)
-        {
-            pipeApplicationView.arcAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.inhibarcAction)
-        {
-            pipeApplicationView.inhibarcAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.tokenAction)
-        {
-            pipeApplicationView.tokenAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.deleteTokenAction)
-        {
-            pipeApplicationView.deleteTokenAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.rateAction)
-        {
-            pipeApplicationView.rateAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.selectAction)
-        {
-            pipeApplicationView.selectAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.annotationAction)
-        {
-            pipeApplicationView.annotationAction.setSelected(false);
-        }
-        if(this != pipeApplicationView.dragAction)
-        {
-            pipeApplicationView.dragAction.setSelected(false);
-        }
+        PipeApplicationModel model = ApplicationSettings.getApplicationModel();
+        model.selectTypeAction(this);
 
         pipeApplicationView.setMode(typeID);
         StatusBar statusBar = ApplicationSettings.getApplicationView().statusBar;
@@ -89,9 +52,6 @@ public class TypeAction extends GuiAction
 
         petriNetTab.getSelectionObject().disableSelection();
         // _petriNetTabView.getSelectionObject().clearSelection();
-
-
-
 
         PetriNetController petriNetController = petriNetTab.getPetriNetController();
         if((typeID != Constants.ARC) && (petriNetController.isCurrentlyCreatingArc()))
@@ -117,6 +77,5 @@ public class TypeAction extends GuiAction
             petriNetTab.setCursorType("crosshair");
         }
     }
-    // }
 
 }

@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pipe.actions.*;
+import pipe.actions.edit.*;
 import pipe.actions.file.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenPanel;
@@ -57,7 +58,7 @@ public class PipeTest {
 	private PetriNetView petriNetView;
 	private TokenView defaultTokenView;
 	private TokenView redTokenView;
-	private TokenAction tokenAction;
+	private SpecifyTokenAction tokenAction;
 	private TokenView greenTokenView;
 	private List<MarkingView> newMarkingViews;
     @BeforeClass
@@ -87,11 +88,11 @@ public class PipeTest {
     	checkAction("PostScript", model.exportPSAction, ExportPSAction.class);
     	checkAction("eDSPN", model.exportTNAction, ExportTNAction.class);
     	checkAction("Print", model.printAction, PrintAction.class);
-    	checkAction("Undo", model.undoAction, EditAction.class); 
-    	checkAction("Redo", model.redoAction, EditAction.class); 
-    	checkAction("Cut", model.cutAction, EditAction.class); 
-    	checkAction("Copy", model.copyAction, EditAction.class); 
-    	checkAction("Paste", model.pasteAction, EditAction.class); 
+    	checkAction("Undo", model.undoAction, UndoAction.class);
+    	checkAction("Redo", model.redoAction, RedoAction.class);
+    	checkAction("Cut", model.cutAction, CutAction.class);
+    	checkAction("Copy", model.copyAction, CopyAction.class);
+    	checkAction("Paste", model.pasteAction, PasteAction.class);
     	checkAction("Delete", model.deleteAction, DeleteAction.class); 
     	checkAction("Select", model.selectAction, TypeAction.class); 
     	checkAction("Place", model.placeAction, TypeAction.class); 
@@ -102,7 +103,7 @@ public class PipeTest {
     	checkAction("Annotation", model.annotationAction, TypeAction.class); 
     	checkAction("Add token", model.tokenAction, TypeAction.class); 
     	checkAction("Delete token", model.deleteTokenAction, TypeAction.class); 
-    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, TokenAction.class);
+    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, SpecifyTokenAction.class);
     	checkAction("groupTransitions", model.groupTransitions, GroupTransitionsAction.class); 
     	checkAction("ungroupTransitions", model.ungroupTransitions, UngroupTransitionsAction.class); 
     	checkAction("unfoldAction", model.unfoldAction, UnfoldAction.class); 
@@ -399,7 +400,7 @@ public class PipeTest {
 	}
 	protected void showTokenDialogAndJustClickOk()
 	{
-		tokenAction = (TokenAction) getActionForMenuItem(menu, 11);  
+		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
 		tokenAction.forceOkForTesting();
 		tokenAction.actionPerformed(null);
 	}
@@ -435,9 +436,9 @@ public class PipeTest {
 		applicationView.saveNet(fileForTesting, false); 
 	}
 	protected void openTokenDialogDisableDefaultTokenAddNewToken() throws InterruptedException
-	{ // To get access to the table in TokenPanel, TokenAction.actionPerformed refactored to three methods:
+	{ // To get access to the table in TokenPanel, SpecifyTokenAction.actionPerformed refactored to three methods:
 	  // buildTokenGuiClasses(), finishBuildingGui(), updateTokenViewsFromGui(); invoked separately.  
-		tokenAction = (TokenAction) getActionForMenuItem(menu, 11);  
+		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
 		tokenAction.forceOkForTesting();
 		tokenAction.buildTokenGuiClasses();
 		TokenPanel dialogContent = tokenAction.getDialogContentForTesting(); 

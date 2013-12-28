@@ -162,7 +162,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
 
 
     /**
-     * Handler for dragging PlaceTransitionObjects around
+     * Handler for dragging objects around
      */
     public void mouseDragged(MouseEvent e)
     {

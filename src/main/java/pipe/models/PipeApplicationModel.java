@@ -1,7 +1,10 @@
 package pipe.models;
 
 import pipe.actions.*;
+import pipe.actions.edit.*;
 import pipe.actions.file.*;
+import pipe.actions.type.*;
+import pipe.actions.type.AddTokenAction;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.views.PipeApplicationView;
@@ -50,56 +53,56 @@ public class PipeApplicationModel implements Serializable
     public GuiAction exitAction = new ExitAction();
 
     @ApplicationAction(ActionEnum.UNDO)
-    public EditAction undoAction = new EditAction("Undo", "Undo (Ctrl-Z)", "ctrl Z");
+    public GuiAction undoAction = new UndoAction();
 
     @ApplicationAction(ActionEnum.REDO)
-    public EditAction redoAction = new EditAction("Redo", "Redo (Ctrl-Y)", "ctrl Y");
-
-    @ApplicationAction(ActionEnum.CUT)
-    public EditAction cutAction = new EditAction("Cut", "Cut (Ctrl-X)", "ctrl X");
+    public GuiAction redoAction = new RedoAction();
 
     @ApplicationAction(ActionEnum.COPY)
-    public EditAction copyAction = new EditAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+    public GuiAction copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+
+    @ApplicationAction(ActionEnum.CUT)
+    public GuiAction cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X");
 
     @ApplicationAction(ActionEnum.PASTE)
-    public EditAction pasteAction = new EditAction("Paste", "Paste (Ctrl-V)", "ctrl V");
+    public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
 
     @ApplicationAction(ActionEnum.DELETE)
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
 
 
     @ApplicationAction(ActionEnum.SELECT)
-    public TypeAction selectAction = new TypeAction("Select", Constants.SELECT, "Select components", "S", true);
+    public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
 
     @ApplicationAction(ActionEnum.PLACE)
-    public TypeAction placeAction = new TypeAction("Place", Constants.PLACE, "Add a place", "P", true);
+    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
 
     @ApplicationAction(ActionEnum.TRANSACTION)
-    public TypeAction transAction = new TypeAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I", true);
+    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I");
 
     @ApplicationAction(ActionEnum.TIMED_TRANSACTION)
-    public TypeAction timedtransAction = new TypeAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T", true);
+    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
 
     @ApplicationAction(ActionEnum.ARC)
-    public TypeAction arcAction = new TypeAction("Arc", Constants.ARC, "Add an arc", "A", true);
+    public TypeAction arcAction = new NormalArcAction("Arc", Constants.ARC, "Add an arc", "A");
 
     @ApplicationAction(ActionEnum.INHIBITOR_ARC)
-    public TypeAction inhibarcAction = new TypeAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", true);
+    public TypeAction inhibarcAction = new InhibitorArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H");
 
     @ApplicationAction(ActionEnum.ANNOTATION)
-    public TypeAction annotationAction = new TypeAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N", true);
+    public TypeAction annotationAction = new AnnotationAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N");
 
     @ApplicationAction(ActionEnum.TOKEN)
-    public TypeAction tokenAction = new TypeAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD", true);
+    public TypeAction tokenAction = new AddTokenAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD");
 
     @ApplicationAction(ActionEnum.DELETE_TOKEN)
-    public TypeAction deleteTokenAction = new TypeAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT", true);
+    public TypeAction deleteTokenAction = new DeleteTokenAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT");
 
     @ApplicationAction(ActionEnum.DRAG)
-    public TypeAction dragAction = new TypeAction("Drag", Constants.DRAG, "Drag the drawing", "D", true);
+    public TypeAction dragAction = new DragAction("Drag", Constants.DRAG, "Drag the drawing", "D");
 
     @ApplicationAction(ActionEnum.RATE_PARAMETER)
-    public TypeAction rateAction = new TypeAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
+    public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
 
     @ApplicationAction(ActionEnum.TOGGLE_GRID)
     public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");;
@@ -131,7 +134,7 @@ public class PipeApplicationModel implements Serializable
     public AnimateAction randomAnimateAction = new AnimateAction("Animate", Constants.ANIMATE, "Randomly fire a number of transitions", "7");
 
     @ApplicationAction(ActionEnum.SPECIFY_TOKEN)
-    public TokenAction specifyTokenClasses = new TokenAction();
+    public SpecifyTokenAction specifyTokenClasses = new SpecifyTokenAction();
 
     @ApplicationAction(ActionEnum.GROUP_TRANSITIONS)
     public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
@@ -156,6 +159,11 @@ public class PipeApplicationModel implements Serializable
     private int newNameCounter = 0;
 
     Map<ActionEnum, GuiAction> actionMap = new HashMap<ActionEnum, GuiAction>();
+
+    /**
+     * Type that is currently selected on the petrinet
+     */
+    private TypeAction selectedType;
 
     public PipeApplicationModel(String version)
     {
@@ -234,6 +242,7 @@ public class PipeApplicationModel implements Serializable
 
     public void setMode(int _mode)
     {
+
         // Don't bother unless new mode is different.
         if(mode != _mode)
         {
@@ -336,5 +345,14 @@ public class PipeApplicationModel implements Serializable
     public int newPetriNetNumber()
     {
         return ++newNameCounter;
+    }
+
+
+    public void selectTypeAction(TypeAction action) {
+        selectedType = action;
+    }
+
+    public TypeAction getSelectedAction() {
+        return selectedType;
     }
 }
