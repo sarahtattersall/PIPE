@@ -24,6 +24,7 @@ import org.junit.Test;
 import pipe.actions.*;
 import pipe.actions.edit.*;
 import pipe.actions.file.*;
+import pipe.actions.type.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenPanel;
 import pipe.models.PipeApplicationModel;
@@ -94,24 +95,24 @@ public class PipeTest {
     	checkAction("Copy", model.copyAction, CopyAction.class);
     	checkAction("Paste", model.pasteAction, PasteAction.class);
     	checkAction("Delete", model.deleteAction, DeleteAction.class); 
-    	checkAction("Select", model.selectAction, TypeAction.class); 
-    	checkAction("Place", model.placeAction, TypeAction.class); 
-    	checkAction("Immediate transition", model.transAction, TypeAction.class); 
-    	checkAction("Timed transition", model.timedtransAction, TypeAction.class); 
-    	checkAction("Arc", model.arcAction, TypeAction.class); 
-    	checkAction("Inhibitor Arc", model.inhibarcAction, TypeAction.class); 
-    	checkAction("Annotation", model.annotationAction, TypeAction.class); 
-    	checkAction("Add token", model.tokenAction, TypeAction.class); 
-    	checkAction("Delete token", model.deleteTokenAction, TypeAction.class); 
+    	checkAction("Select", model.selectAction, SelectAction.class);
+    	checkAction("Place", model.placeAction, PlaceAction.class);
+    	checkAction("Immediate transition", model.transAction, ImmediateTransitionAction.class);
+    	checkAction("Timed transition", model.timedtransAction, TimedTransitionAction.class);
+    	checkAction("Arc", model.arcAction, NormalArcAction.class);
+    	checkAction("Inhibitor Arc", model.inhibarcAction, InhibitorArcAction.class);
+    	checkAction("Annotation", model.annotationAction, AnnotationAction.class);
+    	checkAction("Add token", model.tokenAction, AddTokenAction.class);
+    	checkAction("Delete token", model.deleteTokenAction, DeleteTokenAction.class);
     	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, SpecifyTokenAction.class);
     	checkAction("groupTransitions", model.groupTransitions, GroupTransitionsAction.class); 
     	checkAction("ungroupTransitions", model.ungroupTransitions, UngroupTransitionsAction.class); 
     	checkAction("unfoldAction", model.unfoldAction, UnfoldAction.class); 
-    	checkAction("Rate Parameter", model.rateAction, TypeAction.class); 
+    	checkAction("Rate Parameter", model.rateAction, RateAction.class);
     	checkAction("Zoom out", model.zoomOutAction, ZoomAction.class); 
     	checkAction("Zoom in", model.zoomInAction, ZoomAction.class); 
     	checkAction("Cycle grid", model.toggleGrid, GridAction.class); 
-    	checkAction("Drag", model.dragAction, TypeAction.class); 
+    	checkAction("Drag", model.dragAction, DragAction.class);
     	checkAction("Animation mode", model.startAction, AnimateAction.class); 
     	checkAction("Back", model.stepbackwardAction, AnimateAction.class); 
     	checkAction("Forward", model.stepforwardAction, AnimateAction.class); 
@@ -306,7 +307,7 @@ public class PipeTest {
 		checkButton("Animate", 3);
 	}
 	@Test
-	public void verifyExampleNetLoadsAndAnimatesFixingBug45() throws Exception
+	public void verifyExampleNetLoadsAndAnimates() throws Exception
 	{
 		menu = applicationView.getJMenuBar().getMenu(0); 
 		subMenu = (JMenu) menu.getMenuComponent(12); 
@@ -318,8 +319,8 @@ public class PipeTest {
 		assertTrue(applicationView.getCurrentTab().isInAnimationMode());
 		selectMenuItem(menu, 2); 
 	}
+
 	@Test
-	//TODO refactor
 	public void verifyNetLoadsTokenViewsEditedNetSavesLoadsVerifies() throws Exception
 	{
 		menu = applicationView.getJMenuBar().getMenu(0); 
@@ -398,6 +399,7 @@ public class PipeTest {
 		assertEquals("red", tokenViews.get(1).getID()); 
 		assertTrue(tokenViews.get(1).isLocked()); 
 	}
+
 	protected void showTokenDialogAndJustClickOk()
 	{
 		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);

@@ -746,13 +746,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void setAnimationMode(boolean on) {
         applicationModel.randomAnimateAction.setSelected(false);
-        getAnimator().setNumberSequences(0);
+        animator.setNumberSequences(0);
         applicationModel.startAction.setSelected(on);
         getCurrentTab().changeAnimationMode(on);
         if (on) {
-            getAnimator().storeModel();
-            getCurrentPetriNetView().setEnabledTransitions();
-            getAnimator().highlightEnabledTransitions();
+            PetriNetView petriNetView = getCurrentPetriNetView();
+            animator.storeModel(petriNetView);
+            petriNetView.setEnabledTransitions();
+            animator.highlightEnabledTransitions();
             addAnimationHistory();
             applicationModel
                     .enableActions(false, applicationController.isPasteEnabled());// disables all non-animation buttons

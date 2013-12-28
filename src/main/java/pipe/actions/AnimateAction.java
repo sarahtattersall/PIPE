@@ -27,9 +27,10 @@ public class AnimateAction extends GuiAction
                 return;
             }
 
-            AnimationHistory animBox = pipeApplicationView.getAnimationHistory();
+            AnimationHistory animationHistory = pipeApplicationView.getAnimationHistory();
 
             PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
+
             switch(typeID)
             {
                 case Constants.START:
@@ -62,26 +63,26 @@ public class AnimateAction extends GuiAction
                     break;
 
                 case Constants.RANDOM:
-                    animBox.clearStepsForward();
+                    animationHistory.clearStepsForward();
                     pipeApplicationView.getAnimator().doRandomFiring();
-                    applicationModel.stepforwardAction.setEnabled(animBox.isStepForwardAllowed());
-                    applicationModel.stepbackwardAction.setEnabled(animBox.isStepBackAllowed());
+                    applicationModel.stepforwardAction.setEnabled(animationHistory.isStepForwardAllowed());
+                    applicationModel.stepbackwardAction.setEnabled(animationHistory.isStepBackAllowed());
                     pipeApplicationView.getAnimator().updateArcAndTran();
                     break;
 
                 case Constants.STEPFORWARD:
-                    animBox.stepForward();
+                    animationHistory.stepForward();
                     pipeApplicationView.getAnimator().stepForward();
-                    applicationModel.stepforwardAction.setEnabled(animBox.isStepForwardAllowed());
-                    applicationModel.stepbackwardAction.setEnabled(animBox.isStepBackAllowed());
+                    applicationModel.stepforwardAction.setEnabled(animationHistory.isStepForwardAllowed());
+                    applicationModel.stepbackwardAction.setEnabled(animationHistory.isStepBackAllowed());
                     pipeApplicationView.getAnimator().updateArcAndTran();
                     break;
 
                 case Constants.STEPBACKWARD:
-                    animBox.stepBackwards();
+                    animationHistory.stepBackwards();
                     pipeApplicationView.getAnimator().stepBack();
-                    applicationModel.stepforwardAction.setEnabled(animBox.isStepForwardAllowed());
-                    applicationModel.stepbackwardAction.setEnabled(animBox.isStepBackAllowed());
+                    applicationModel.stepforwardAction.setEnabled(animationHistory.isStepForwardAllowed());
+                    applicationModel.stepbackwardAction.setEnabled(animationHistory.isStepBackAllowed());
                     pipeApplicationView.getAnimator().updateArcAndTran();
                     break;
 
@@ -99,7 +100,7 @@ public class AnimateAction extends GuiAction
                         applicationModel.stepforwardAction.setEnabled(false);
                         applicationModel.randomAction.setEnabled(false);
                         setSelected(true);
-                        animBox.clearStepsForward();
+                        animationHistory.clearStepsForward();
                         pipeApplicationView.getAnimator().startRandomFiring();
                         pipeApplicationView.getAnimator().updateArcAndTran();
                     }

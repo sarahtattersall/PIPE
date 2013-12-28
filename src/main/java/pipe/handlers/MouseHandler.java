@@ -57,6 +57,7 @@ public class MouseHandler extends MouseInputAdapter
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         TypeAction action = applicationModel.getSelectedAction();
+        System.out.println(action);
 //        Point start = e.getPoint();
 //        Point p;
 

@@ -6,6 +6,7 @@ import matchers.component.HasTimed;
 import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
@@ -34,10 +35,12 @@ public class MouseHandlerTest {
     PetriNetView mockView;
     MouseUtilities mockUtilities;
     MouseHandler handler;
-    HistoryManager mockHistory;
 
     PipeApplicationModel mockModel;
     MouseEvent mockEvent;
+
+
+    TypeAction mockAction;
 
     @Before
     public void setup() {
@@ -49,149 +52,18 @@ public class MouseHandlerTest {
         handler = new MouseHandler(mockUtilities, mockController, mockNet, mockTab, mockView);
 
         mockModel = mock(PipeApplicationModel.class);
-        ApplicationSettings.register(mockModel);
         mockEvent = mock(MouseEvent.class);
         when(mockEvent.getPoint()).thenReturn(new Point(0,0));
         when(mockUtilities.isLeftMouse(mockEvent)).thenReturn(true);
-        mockHistory = mock(HistoryManager.class);
-        when(mockController.getHistoryManager()).thenReturn(mockHistory);
+        mockAction = mock(TypeAction.class);
     }
 
     @Test
-    public void createsPlaceOnClick() {
-        when(mockModel.getMode()).thenReturn(Constants.PLACE);
-        handler.mousePressed(mockEvent);
-
-        verify(mockNet).addPlace(argThat(
-                new HasMultiple<Place>(
-                        new HasXY(Grid.getModifiedX(0), Grid.getModifiedY(0)),
-                        new HasId("P0")
-                )
-        ));
-    }
-
-    @Test
-    public void notifyObserversOnPlaceCreation() {
-        assertPetrinetNotifiesObservers(Constants.PLACE);
-    }
-
-    @Test
-    public void createsPlaceHistoryOnClick() {
-        when(mockModel.getMode()).thenReturn(Constants.PLACE);
-        handler.mousePressed(mockEvent);
-
-        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
-    }
-
-    @Test
-    public void createsImmediateTransitionOnClick() {
-        when(mockModel.getMode()).thenReturn(Constants.IMMTRANS);
-        handler.mousePressed(mockEvent);
-
-        verify(mockNet).addTransition(argThat(
-                new HasMultiple<Transition>(
-                        new HasXY(Grid.getModifiedX(0),  Grid.getModifiedY(0)),
-                        new HasId("T0"),
-                        new HasTimed(false)))
-        );
-    }
-
-    @Test
-    public void createsTimedTransitionOnClick() {
-        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
-        handler.mousePressed(mockEvent);
-
-        verify(mockNet).addTransition(argThat(
-                new HasMultiple<Transition>(
-                        new HasXY(Grid.getModifiedX(0),  Grid.getModifiedY(0)),
-                        new HasId("T0"),
-                        new HasTimed(true)))
-        );
-    }
-
-    @Test
-    public void createsTimedTransitionHistoryOnClick() {
-        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
-        handler.mousePressed(mockEvent);
-
-        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
-    }
-
-    @Test
-    public void createsImmediateTransitionHistoryOnClick() {
-        when(mockModel.getMode()).thenReturn(Constants.TIMEDTRANS);
-        handler.mousePressed(mockEvent);
-
-        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
-    }
-
-    @Test
-    public void notifyObserversOnImmediateTransitionCreation() {
-        assertPetrinetNotifiesObservers(Constants.IMMTRANS);
-    }
-
-    @Test
-    public void notifyObserversOnTimedTransitionCreation() {
-        assertPetrinetNotifiesObservers(Constants.TIMEDTRANS);
-    }
-
-    @Test
-    public void addsArcWithShiftDownPoint() {
-       assertCreatesArcPoint(Constants.ARC, true);
-    }
-
-    @Test
-    public void addsArcWithShiftUpPoint() {
-        assertCreatesArcPoint(Constants.ARC, false);
-    }
-
-    @Test
-    public void doesNotAddArcPointIfNotCreating() {
-        assertDoesNotCreateArcPoint(Constants.ARC);
-    }
-
-    @Test
-    public void addsInhibitionArcWithShiftUpPoint() {
-        assertCreatesArcPoint(Constants.INHIBARC, false);
-    }
-
-    @Test
-    public void addsInhibitionArcWithShiftDownPoint() {
-        assertCreatesArcPoint(Constants.INHIBARC, true);
-    }
-
-    @Test
-    public void doesNotAddInhibitionArcPointIfNotCreating() {
-        assertDoesNotCreateArcPoint(Constants.INHIBARC);
-    }
-
-    private void assertPetrinetNotifiesObservers(int arcType)
-    {
-        when(mockModel.getMode()).thenReturn(arcType);
-        handler.mousePressed(mockEvent);
-
-        verify(mockNet).notifyObservers();
-    }
-
-    private void assertCreatesArcPoint(int arcType, boolean shiftDown)
-    {
-        when (mockModel.getMode()).thenReturn(arcType);
-        when(mockController.isCurrentlyCreatingArc()).thenReturn(true);
-
-        when (mockEvent.isShiftDown()).thenReturn(shiftDown);
-        handler.mousePressed(mockEvent);
-
-        verify(mockController).addArcPoint(Grid.getModifiedX(0), Grid.getModifiedY(0), shiftDown);
-    }
-
-    private void assertDoesNotCreateArcPoint(int arcType)
-    {
-        when (mockModel.getMode()).thenReturn(arcType);
-        when(mockController.isCurrentlyCreatingArc()).thenReturn(false);
+    public void callsActionDoActionMethod() {
+        when(mockModel.getSelectedAction()).thenReturn(mockAction);
+        ApplicationSettings.register(mockModel);
 
         handler.mousePressed(mockEvent);
-
-        verify(mockController, never()).addArcPoint(anyInt(), anyInt(), anyBoolean());
+        verify(mockAction).doAction(mockEvent.getPoint(), mockController);
     }
-
 }

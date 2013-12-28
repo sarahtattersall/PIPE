@@ -59,6 +59,8 @@ public class PetriNetViewTest
 		petriNetView.createFromPNML(transformer.transformPNMLStreamSource(PNMLTransformerTest
 				.getNetAsStreamSource(net)));
 	}
+
+    //TODO: THis logic should not be in here
 	@Test
 	public void verifyInitialPlaceMarkingIgnoredIfCorrespondingTokenDoesNotExist() throws Exception
 	{
@@ -70,6 +72,8 @@ public class PetriNetViewTest
 		markingView = placeView.getCurrentMarkingView().get(0); 
 		assertEquals(petriNetView.getTokenViews().get(0), markingView.getToken());
 	}
+
+    //TODO: This logic should not be in here, its tested elsewhere in the model
 	@Test
 	public void verifyNonzeroInitialMarkingLocksCorrespondingTokenView() throws Exception
 	{
@@ -87,6 +91,7 @@ public class PetriNetViewTest
 		assertTrue(markingView.getToken().isLocked());
 		assertEquals(petriNetView.getTokenViews().get(1),markingView.getToken());
 	}
+
 	@Test
 	public void verifyDefaultTokenViewCreatedDuringConstruction() throws Exception
 	{

@@ -634,7 +634,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     public void storeCurrentMarking() {
-        int placeSize = _placeViews.size();
+        int placeSize = _model.getPlaces().size();
         _markingVectorAnimationStorage = new LinkedList[placeSize];
         for (int placeNo = 0; placeNo < placeSize; placeNo++) {
             _markingVectorAnimationStorage[placeNo] =

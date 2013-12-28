@@ -131,9 +131,9 @@ public class Animator
     /**
      * Stores model at start of animation
      */
-    public void storeModel()
+    public void storeModel(PetriNetView petriNetView)
     {
-        ApplicationSettings.getApplicationView().getCurrentPetriNetView().storeCurrentMarking();
+        petriNetView.storeCurrentMarking();
     }
 
 
@@ -183,26 +183,16 @@ public class Animator
 
 
     /**
-     * This method randomly fires one of the enabled transitions. It then records
-     * the information about this by calling the recordFiredTransition method.
-     *
-     * @author Dave Patterson Apr 29, 2007
-     * I changed the code to keep the random transition found by the PetriNet.
-     * If it is not null, I call the fireTransition method, otherwise I put
-     * out an error message in the status bar.
+     * Randomly fires one of the enabled transitions.
      */
     public void doRandomFiring()
     {
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        PetriNetView data = applicationView.getCurrentPetriNetView();
-        TransitionView t = data.getRandomTransition(); //revisar
-        //Pipe.getAnimationHistory().clearStepsForward(); //ok - igual
-        //removeStoredTransitions(); //ok - igual
+        PetriNetView petriNetView = applicationView.getCurrentPetriNetView();
+        TransitionView t = petriNetView.getRandomTransition();
         if(t != null)
         {
             fireTransition(t); //revisar
-            //unhighlightDisabledTransitions();
-            //highlightEnabledTransitions();
         }
         else
         {

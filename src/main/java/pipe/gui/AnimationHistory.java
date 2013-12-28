@@ -7,15 +7,9 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 
-/** Class to represent the history of the net animation
- *
- * @author Pere Bonet changed and added a number of new functions
- * to fix the unexpected behaviour observed during animation playback.
- * Previously, under certain circumstances, it is possible to step back to state(s)
- * before the initial state and step forward to state(s) after the last recorded
- * transitions in the animation history. 
- * These actions are no longer allowed after the fix.
- * */
+/**
+ * Class to represent the history of the net animation
+ **/
 public class AnimationHistory
         extends JTextPane {
    
