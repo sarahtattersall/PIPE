@@ -281,6 +281,18 @@ public class PetriNetTest {
         assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transition));
     }
 
+    @Test
+    public void firingTransitionMovesToken() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+
+        container.petriNet.fireTransition(container.transition);
+
+        assertEquals(0, container.place.getTokenCount(container.token));
+        assertEquals(1, container.place2.getTokenCount(container.token));
+
+    }
+
 
     /**
      * Create simple petrinet with P1 -> T1 -> P2

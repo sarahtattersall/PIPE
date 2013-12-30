@@ -44,7 +44,9 @@ public abstract class Arc extends AbstractPetriNetComponent {
     }
 
     public void setSource(Connectable source) {
+        this.source.removeOutboundArc(this);
         this.source = source;
+        source.addOutbound(this);
         notifyObservers();
     }
 
@@ -53,7 +55,9 @@ public abstract class Arc extends AbstractPetriNetComponent {
     }
 
     public void setTarget(Connectable target) {
+        this.target.removeInboundArc(this);
         this.target = target;
+        target.addInbound(this);
         notifyObservers();
     }
 

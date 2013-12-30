@@ -9,10 +9,8 @@ import pipe.models.visitor.PetriNetComponentAddVisitor;
 import pipe.models.visitor.PetriNetComponentRemovalVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.utilities.math.IncidenceMatrix;
-import pipe.views.ArcView;
-import pipe.views.MarkingView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
+import pipe.utilities.math.RandomNumberGenerator;
+import pipe.views.*;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
@@ -386,4 +384,57 @@ public class PetriNet extends Observable implements IObserver {
         }
         return !place.getTokenCounts().isEmpty();
     }
+
+    public Transition getRandomTransition() {
+
+        Collection<Transition> enabledTransitions = getEnabledTransitions(false);
+        if (enabledTransitions.isEmpty()) {
+            throw new RuntimeException("Error - no transitions to fire!");
+        }
+
+        Random random = new Random();
+        int index = random.nextInt(enabledTransitions.size());
+
+        Iterator<Transition> iter = enabledTransitions.iterator();
+        Transition transition = iter.next();
+        for (int i = 1; i < index; i++) {
+            transition = iter.next();
+        }
+        return transition;
+    }
+
+    /**
+     * Removes tokens from places into the transition
+     * Adds tokens to the places out of the transition according to the arc weight
+     * Disables fired transition
+     * @param transition
+     */
+    public void fireTransition(Transition transition) {
+        Collection<Transition> enabledTransitions = getEnabledTransitions(false);
+        if (enabledTransitions.contains(transition)) {
+            //Decrement previous places
+            for (Arc arc : transition.inboundArcs()) {
+                Place place = (Place) arc.getSource();
+                for (Token token : arc.getTokenWeights().keySet()) {
+                    IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
+                    int oldCount = place.getTokenCount(token);
+                    int newCount = oldCount - matrix.get(place, transition);
+                    place.setTokenCount(token, newCount);
+                }
+            }
+
+            //Increment new places
+            for (Arc arc : transition.outboundArcs()) {
+                Place place = (Place) arc.getTarget();
+                for (Token token : arc.getTokenWeights().keySet()) {
+                    IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
+                    int oldCount = place.getTokenCount(token);
+                    int newCount = oldCount + matrix.get(place, transition);
+                    place.setTokenCount(token, newCount);
+                }
+            }
+        }
+        transition.disable();
+    }
+
 }

@@ -118,6 +118,22 @@ public class ArcTest {
     }
 
     @Test
+    public void changingSourceChangesOutbound() {
+        Connectable newSource = mock(Connectable.class);
+        arc.setSource(newSource);
+        verify(mockSource).removeOutboundArc(arc);
+        verify(newSource).addOutbound(arc);
+    }
+
+    @Test
+    public void changingTargetChangesInbound() {
+        Connectable newTarget = mock(Connectable.class);
+        arc.setTarget(newTarget);
+        verify(mockTarget).removeInboundArc(arc);
+        verify(newTarget).addInbound(arc);
+    }
+
+    @Test
     public void returnsTokenWeightForToken() {
         Token defaultToken = TokenUtils.createDefaultToken();
         String weight = "cap(P0)";

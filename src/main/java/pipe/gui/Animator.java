@@ -1,5 +1,7 @@
 package pipe.gui;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.models.PetriNet;
 import pipe.models.component.Transition;
 import pipe.views.ArcView;
@@ -122,7 +124,6 @@ public class Animator
      */
     private void disableTransitions(PetriNet net)
     {
-        System.out.println("DISABLING TRANSITIONS");
         for (Transition transition : net.getTransitions()) {
             transition.disable();
         }
@@ -199,18 +200,21 @@ public class Animator
      * Randomly fires one of the enabled transitions.
      */
     public void doRandomFiring() {
-        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        PetriNetView petriNetView = applicationView.getCurrentPetriNetView();
-        TransitionView t = petriNetView.getRandomTransition();
-        if(t != null)
-        {
-            fireTransition(t); //revisar
-        }
-        else
-        {
-            applicationView.getStatusBar().changeText(
-                    "ERROR: No transition to fire.");
-        }
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        PetriNet net = petriNetController.getPetriNet();
+        Transition transition = net.getRandomTransition();
+        fireTransition(transition);
+
+//        if(t != null)
+//        {
+//            fireTransition(t); //revisar
+//        }
+//        else
+//        {
+//            applicationView.getStatusBar().changeText(
+//                    "ERROR: No transition to fire.");
+//        }
     }
 
 
@@ -250,7 +254,7 @@ public class Animator
      * object, enables transitions after the recent firing, and properly displays
      * the transitions.
      *
-     * @param transitionView
+     * @param transition
      * @author David Patterson renamed this method and changed the
      * AnimationHandler to make it fire the transition before calling this method.
      * This prevents double-firing a transition.
@@ -260,27 +264,30 @@ public class Animator
      * animation playback.
      * The method is renamed back to fireTransition.
      */
-    public void fireTransition(TransitionView transitionView) {
-        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        Animator animator = applicationView.getAnimator();
+    public void fireTransition(Transition transition) {
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        PetriNet net = petriNetController.getPetriNet();
 
-        applicationView.getAnimationHistory().addHistoryItem(transitionView.getName());
-        applicationView.getCurrentPetriNetView().fireTransition(transitionView);
-        applicationView.getCurrentPetriNetView().setEnabledTransitions();
-        animator.highlightEnabledTransitions();
-        animator.unhighlightDisabledTransitions();
+        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+
+        applicationView.getAnimationHistory().addHistoryItem(transition.getName());
+        net.fireTransition(transition);
+
+//        highlightEnabledTransitions();
+//        animator.unhighlightDisabledTransitions();
         if(count == firedTransitions.size())
         {
-            firedTransitions.add(transitionView);
+            firedTransitions.add(transition);
             count++;
         }
         else
         {
             removeStoredTransitions(count + 1);
-            firedTransitions.set(count++, transitionView);
+            firedTransitions.set(count++, transition);
 
         }
-        updateArcAndTran();
+//        updateArcAndTran();
     }
 
     public void updateArcAndTran(){
