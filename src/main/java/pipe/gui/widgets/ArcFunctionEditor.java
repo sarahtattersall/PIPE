@@ -93,11 +93,11 @@ public class ArcFunctionEditor extends JPanel {
                         }
                     }
                     exit();
-                } catch (MarkingDividedByNumberException e) {
-                    JOptionPane.showMessageDialog(null,
-                            "Marking-dependent arc weight divided by number not supported.\r\n" +
-                                    "Since this may cause non-integer arc weight.");
-                    return;
+//                } catch (MarkingDividedByNumberException e) {
+//                    JOptionPane.showMessageDialog(null,
+//                            "Marking-dependent arc weight divided by number not supported.\r\n" +
+//                                    "Since this may cause non-integer arc weight.");
+//                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.err.println("Error in functional rates expression.");

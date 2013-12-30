@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import parser.ExprEvaluator;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.visitor.PetriNetComponentVisitor;
@@ -9,10 +10,11 @@ import pipe.views.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Token extends AbstractPetriNetComponent
-{
+public class Token extends AbstractPetriNetComponent {
 
     @Pnml("id")
     private String id;
@@ -27,30 +29,28 @@ public class Token extends AbstractPetriNetComponent
     @Pnml("color")
     private Color color;
     private Matrix incidenceMatrix;
+    // weight of connections from transition to place for given token
     private Matrix forwardsIncidenceMatrix;
+    // weight of connections from place to transition for given token
     private Matrix backwardsIncidenceMatrix;
     private Matrix inhibitionMatrix;
 
-    public Token()
-    {
+    public Token() {
         this("", false, 0, Color.BLACK);
     }
 
-    public Token(String id, boolean enabled, int currentMarking, Color color)
-    {
+    public Token(String id, boolean enabled, int currentMarking, Color color) {
         this.id = id;
         this.enabled = enabled;
         this.currentMarking = currentMarking;
         this.color = color;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public void setId(String id)
-    {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -59,369 +59,294 @@ public class Token extends AbstractPetriNetComponent
         setId(name);
     }
 
-    public int getCurrentMarking()
-    {
+    public int getCurrentMarking() {
         return currentMarking;
     }
 
-    public void setCurrentMarking(int currentMarking)
-    {
+    public void setCurrentMarking(int currentMarking) {
         this.currentMarking = currentMarking;
     }
 
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     *
      * @param enabled
      * @throws TokenLockedException if the Token is locked
      */
-    public void setEnabled(boolean enabled) throws TokenLockedException
-    {
-    	if (!isLocked()) {
+    public void setEnabled(boolean enabled) throws TokenLockedException {
+        if (!isLocked()) {
             this.enabled = enabled;
-        }
-    	else {
+        } else {
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for ")
-                          .append(getLockCount())
-                          .append(" Places.  It may not be disabled unless tokens are removed from those Places.\n")
-                          .append("Details: ")
-                          .append(this.toString());
+                    .append(getLockCount())
+                    .append(" Places.  It may not be disabled unless tokens are removed from those Places.\n")
+                    .append("Details: ")
+                    .append(this.toString());
 
             throw new TokenLockedException(messageBuilder.toString());
         }
     }
 
-	@Override
-	public String toString()
-	{
-		return getId();
-	}
+    @Override
+    public String toString() {
+        return getId();
+    }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(Color color)
-    {
+    public void setColor(Color color) {
         this.color = color;
     }
 
-    public void incrementLock()
-    {
+    public void incrementLock() {
         lockCount++;
     }
 
-    public void decrementLock()
-    {
+    public void decrementLock() {
         lockCount--;
     }
 
-    public boolean isLocked()
-    {
+    public boolean isLocked() {
         return lockCount > 0;
     }
 
-    public int getLockCount()
-    {
+    public int getLockCount() {
         return lockCount;
     }
 
-    public void setLockCount(int newLockCount)
-    {
+    public void setLockCount(int newLockCount) {
         lockCount = newLockCount;
     }
 
-    public Matrix getIncidenceMatrix()
-    {
+    public Matrix getIncidenceMatrix() {
         return incidenceMatrix;
     }
 
-    public int[][] getIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
-        if(incidenceMatrix == null || incidenceMatrix.matrixChanged)
-        {
-            createIncidenceMatrix(arcsArray, transitionsArray, placesArray);
+    public int[][] getIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {
+        if (incidenceMatrix == null || incidenceMatrix.matrixChanged) {
+            createIncidenceMatrix(arcs, transitions, places);
         }
         return (incidenceMatrix != null ? incidenceMatrix.getArrayCopy() : null);
     }
 
     // New method for TransModel.java
-    public int[][] simpleMatrix()
-    {
+    public int[][] simpleMatrix() {
         return incidenceMatrix.getArrayCopy();
     }
 
-    public void setIncidenceMatrix(Matrix incidenceMatrix)
-    {
+    public void setIncidenceMatrix(Matrix incidenceMatrix) {
         this.incidenceMatrix = incidenceMatrix;
     }
 
-    public void createIncidenceMatrix(Collection<ArcView> arcsArray,Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
-        createForwardIncidenceMatrix(arcsArray, transitionsArray, placesArray);
-        createBackwardsIncidenceMatrix(arcsArray, transitionsArray, placesArray);
+    public void createIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {
+        createForwardIncidenceMatrix(arcs, transitions, places);
+        createBackwardsIncidenceMatrix(arcs, transitions, places);
         incidenceMatrix = new Matrix(forwardsIncidenceMatrix);
         incidenceMatrix = incidenceMatrix.minus(backwardsIncidenceMatrix);
         incidenceMatrix.matrixChanged = false;
     }
 
-    public Matrix getForwardsIncidenceMatrix()
-    {
+    public Matrix getForwardsIncidenceMatrix() {
         return forwardsIncidenceMatrix;
     }
 
-    public int[][] getForwardsIncidenceMatrix(Collection<ArcView> arcsArray,
-            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
-        if(forwardsIncidenceMatrix == null
-                || forwardsIncidenceMatrix.matrixChanged)
-        {
+    public int[][] getForwardsIncidenceMatrix(Collection<Arc> arcsArray,
+                                              Collection<Transition> transitionsArray, Collection<Place> placesArray) {
+        if (forwardsIncidenceMatrix == null
+                || forwardsIncidenceMatrix.matrixChanged) {
             createForwardIncidenceMatrix(arcsArray, transitionsArray,
-                                         placesArray);
+                    placesArray);
         }
         return (forwardsIncidenceMatrix != null ? forwardsIncidenceMatrix
                 .getArrayCopy() : null);
     }
 
-    public int[][] simpleForwardsIncidenceMatrix()
-    {
+    public int[][] simpleForwardsIncidenceMatrix() {
         return forwardsIncidenceMatrix.getArrayCopy();
     }
 
-    public void setForwardsIncidenceMatrix(Matrix forwardsIncidenceMatrix)
-    {
+    public void setForwardsIncidenceMatrix(Matrix forwardsIncidenceMatrix) {
         this.forwardsIncidenceMatrix = forwardsIncidenceMatrix;
     }
 
-    public Matrix getBackwardsIncidenceMatrix()
-    {
+    public Matrix getBackwardsIncidenceMatrix() {
         return backwardsIncidenceMatrix;
     }
 
-    public int[][] getBackwardsIncidenceMatrix(Collection<ArcView> arcsArray,
-            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
-        if(backwardsIncidenceMatrix == null
-                || backwardsIncidenceMatrix.matrixChanged)
-        {
+    public int[][] getBackwardsIncidenceMatrix(Collection<Arc> arcsArray,
+                                               Collection<Transition> transitionsArray, Collection<Place> placesArray) {
+        if (backwardsIncidenceMatrix == null
+                || backwardsIncidenceMatrix.matrixChanged) {
             createBackwardsIncidenceMatrix(arcsArray, transitionsArray,
-                                           placesArray);
+                    placesArray);
         }
         return (backwardsIncidenceMatrix != null ? backwardsIncidenceMatrix
                 .getArrayCopy() : null);
     }
 
-    public int[][] simpleBackwardsIncidenceMatrix()
-    {
+    public int[][] simpleBackwardsIncidenceMatrix() {
         return backwardsIncidenceMatrix.getArrayCopy();
     }
 
-    public void setBackwardsIncidenceMatrix(Matrix backwardsIncidenceMatrix)
-    {
+    public void setBackwardsIncidenceMatrix(Matrix backwardsIncidenceMatrix) {
         this.backwardsIncidenceMatrix = backwardsIncidenceMatrix;
     }
 
-    public Matrix getInhibitionMatrix()
-    {
+    public Matrix getInhibitionMatrix() {
         return inhibitionMatrix;
     }
 
     public int[][] getInhibitionMatrix(Collection<InhibitorArcView> inhibitorArrayView,
-            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
-        if(inhibitionMatrix == null || inhibitionMatrix.matrixChanged)
-        {
+                                       Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
+        if (inhibitionMatrix == null || inhibitionMatrix.matrixChanged) {
             createInhibitionMatrix(inhibitorArrayView, transitionsArray,
-                                   placesArray);
+                    placesArray);
         }
         return (inhibitionMatrix != null ? inhibitionMatrix.getArrayCopy()
                 : null);
     }
 
-    public void setInhibitionMatrix(Matrix inhibitionMatrix)
-    {
+    public void setInhibitionMatrix(Matrix inhibitionMatrix) {
         this.inhibitionMatrix = inhibitionMatrix;
     }
 
-    void createForwardIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
-        int placeSize = placesArray.size();
-        int transitionSize = transitionsArray.size();
-
-        forwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
-
-        for(ArcView arcView : arcsArray)
-        {
-            if(arcView != null)
-            {
-                PetriNetViewComponent pn = arcView.getTarget();
-                if(pn != null)
-                {
-                    if(pn instanceof PlaceView)
-                    {
-                        PlaceView placeView = (PlaceView) pn;
-                        pn = arcView.getSource();
-                        if(pn != null)
-                        {
-                            if(pn instanceof TransitionView)
-                            {
-                                TransitionView transitionView = (TransitionView) pn;
-
-                                //TODO: Broken transitions
-                                int transitionNo = 0; //transitionsArray.indexOf(transitionView);
-                                int placeNo = 0;//placesArray.indexOf(placeView);
-                                List<MarkingView> markings = arcView.getWeight();
-                                for(MarkingView token : markings)
-                                {
-                                    if(token.getToken().getID().equals(id))
-                                    {
-                                    	int marking=token.getCurrentMarking();
-                                    	if(marking==0){
-                                    		marking=1;
-                                    	}
-                                        try
-                                        {
-                                        	//System.out.println("compare: "+ token.getCurrentMarking()+ " raw: "+ token.getCurrentFunctionalMarking());
-                                            forwardsIncidenceMatrix.set(
-                                                    placeNo, transitionNo,
-                                                    marking);//arcView.getWeightOfTokenClass(id));
-                                           // System.out.println(arcView.getWeightFunctionOfTokenClass(id));
-                                        }
-                                        catch(Exception e)
-                                        {
-                                            JOptionPane.showMessageDialog(null, "Problem in forwardsIncidenceMatrix");
-                                            System.out.println("p:" + placeNo + ";t:" + transitionNo + ";w:" + arcView.getWeight());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    void createForwardIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {
+        throw new RuntimeException("Using old forwards incidence matrix method");
+//        int placeSize = places.size();
+//        int transitionSize = transitions.size();
+//
+//        forwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
+//        for (Arc arc : arcs) {
+//            Connectable target = arc.getTarget();
+//            Connectable source = arc.getSource();
+//
+//            if (target instanceof Place) {
+//                Place place = (Place) target;
+//                if (source instanceof Transition) {
+//                    Transition transition = (Transition) source;
+//
+//                    //TODO: Broken transitions
+//                    String expression = arc.getWeightForToken(this);
+//
+//                    //TODO: PASS PETRI NET!!! VERY IMPORTANT
+//                    ExprEvaluator paser = new ExprEvaluator(null);
+//
+//                    Integer weight = paser.parseAndEvalExpr(expression, id);
+//                    if (weight == 0) {  // Ie at least one token to pass
+//                        weight = 1;
+//                    }
+//
+//                    if (forwardsIncidenceMatrix.get(transition) == null) {
+//                        HashMap<Place, Integer> weights = new HashMap<Place, Integer>();
+//                        forwardsIncidenceMatrix.put(transition, weights);
+//                    }
+//                    forwardsIncidenceMatrix.get(transition).put(place, weight);
+//                }
+//            }
+//        }
     }
 
     /**
      * Creates Backwards Incidence Matrix from current Petri-Net
-     * @param arcsArray
-     * @param transitionsArray
-     * @param placesArray
+     *
+     * @param arcs
+     * @param transitions
+     * @param places
      */
-    void createBackwardsIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {// Matthew
-        int placeSize = placesArray.size();
-        int transitionSize = transitionsArray.size();
-
-        backwardsIncidenceMatrix = new Matrix(placeSize, transitionSize);
-
-        for(ArcView arcView : arcsArray)
-        {
-            if(arcView != null)
-            {
-                PetriNetViewComponent pn = arcView.getSource();
-                if(pn != null)
-                {
-                    if(pn instanceof PlaceView)
-                    {
-                        PlaceView placeView = (PlaceView) pn;
-                        pn = arcView.getTarget();
-                        if(pn != null)
-                        {
-                            if(pn instanceof TransitionView)
-                            {
-                                TransitionView transitionView = (TransitionView) pn;
-                                boolean isTransitionInfiniteServer = transitionView.isInfiniteServer();
-                                int enablingDegree=1;
-                                if(isTransitionInfiniteServer){
-                                	enablingDegree=ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(transitionView);
-                                }
-                                //TODO: Broken this
-                                int transitionNo = 0; //transitionsArray.indexOf(transitionView);
-                                int placeNo = 0; //placesArray.indexOf(placeView);
-                                List<MarkingView> markings = arcView.getWeight();
-                                for(MarkingView token : markings)
-                                {
-                                    if(token.getToken().getID().equals(id))
-                                    {
-                                        try
-                                        {
-                                        	int marking=token.getCurrentMarking();
-                                        	if(marking==0){
-                                        		marking=1;
-                                        	}
-                                        	if(isTransitionInfiniteServer){
-                                        		
-                                        		backwardsIncidenceMatrix.set(
-                                                        placeNo, transitionNo,
-                                                        marking * enablingDegree);
-                                        	}else{
-                                        		backwardsIncidenceMatrix.set(
-                                                        placeNo, transitionNo,
-                                                        marking);//arcView.getWeightOfTokenClass(id));
-                                        	}
-                                        //	System.out.println("compare: "+ token.getCurrentMarking()+ " raw: "+ token.getCurrentFunctionalMarking()+"   "+arcView.getWeightFunctionOfTokenClass(id));
-                                            
-                                       //     System.out.println(arcView.getWeightFunctionOfTokenClass(id));
-                                        }
-                                        catch(Exception e)
-                                        {
-                                            JOptionPane.showMessageDialog(null, "Problem in backwardsIncidenceMatrix");
-                                            System.out.println("p:" + placeNo + ";t:" + transitionNo + ";w:" + arcView.getWeight());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    void createBackwardsIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {// Matthew
+        throw new RuntimeException("Using old backwards incidence matrix method");
+//        backwardsIncidenceMatrix.clear();
+//
+//        for (Arc arc : arcs) {
+//            Connectable target = arc.getTarget();
+//            Connectable source = arc.getSource();
+//            if (target instanceof Transition)
+//            {
+//                Transition transition = (Transition) target;
+//                if (source instanceof Place) {
+//                    Place place = (Place) source;
+//                    int enablingDegree = transition.isInfiniteServer() ? : 0;
+//                }
+//            }
+//            if (pn instanceof PlaceView) {
+//                PlaceView placeView = (PlaceView) pn;
+//                pn = arcView.getTarget();
+//                if (pn != null) {
+//                    if (pn instanceof TransitionView) {
+//                        TransitionView transitionView = (TransitionView) pn;
+//                        boolean isTransitionInfiniteServer = transitionView.isInfiniteServer();
+//                        int enablingDegree = 1;
+//                        if (isTransitionInfiniteServer) {
+//                            enablingDegree = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(transitionView);
+//                        }
+//                        //TODO: Broken this
+//                        int transitionNo = 0; //transitionsArray.indexOf(transitionView);
+//                        int placeNo = 0; //placesArray.indexOf(placeView);
+//                        List<MarkingView> markings = arcView.getWeight();
+//                        for (MarkingView token : markings) {
+//                            if (token.getToken().getID().equals(id)) {
+//                                try {
+//                                    int marking = token.getCurrentMarking();
+//                                    if (marking == 0) {
+//                                        marking = 1;
+//                                    }
+//                                    if (isTransitionInfiniteServer) {
+//
+//                                        backwardsIncidenceMatrix.set(
+//                                                placeNo, transitionNo,
+//                                                marking * enablingDegree);
+//                                    } else {
+//                                        backwardsIncidenceMatrix.set(
+//                                                placeNo, transitionNo,
+//                                                marking);//arcView.getWeightOfTokenClass(id));
+//                                    }
+//                                    //	System.out.println("compare: "+ token.getCurrentMarking()+ " raw: "+ token.getCurrentFunctionalMarking()+"   "+arcView.getWeightFunctionOfTokenClass(id));
+//
+//                                    //     System.out.println(arcView.getWeightFunctionOfTokenClass(id));
+//                                } catch (Exception e) {
+//                                    JOptionPane.showMessageDialog(null, "Problem in backwardsIncidenceMatrix");
+//                                    System.out.println("p:" + placeNo + ";t:" + transitionNo + ";w:" + arcView.getWeight());
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
-    public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray,Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray)
-    {
+    public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
         int placeSize = placesArray.size();
         int transitionSize = transitionsArray.size();
         inhibitionMatrix = new Matrix(placeSize, transitionSize);
 
-        for(InhibitorArcView inhibitorArcView : inhibitorsArray)
-        {
-            if(inhibitorArcView != null)
-            {
+        for (InhibitorArcView inhibitorArcView : inhibitorsArray) {
+            if (inhibitorArcView != null) {
                 PetriNetViewComponent pn = inhibitorArcView.getSource();
-                if(pn != null)
-                {
-                    if(pn instanceof PlaceView)
-                    {
+                if (pn != null) {
+                    if (pn instanceof PlaceView) {
                         PlaceView placeView = (PlaceView) pn;
                         pn = inhibitorArcView.getTarget();
-                        if(pn != null)
-                        {
-                            if(pn instanceof TransitionView)
-                            {
+                        if (pn != null) {
+                            if (pn instanceof TransitionView) {
                                 TransitionView transitionView = (TransitionView) pn;
                                 //TODO: Broken this
                                 int transitionNo = 0; //transitionsArray.indexOf(transitionView);
                                 int placeNo = 0; //placesArray.indexOf(placeView);
-                                try
-                                {
+                                try {
                                     inhibitionMatrix.set(placeNo, transitionNo,
-                                                          1);
-                                }
-                                catch(Exception e)
-                                {
+                                            1);
+                                } catch (Exception e) {
                                     JOptionPane.showMessageDialog(null,
-                                                                  "Problema a inhibitionMatrix");
+                                            "Problema a inhibitionMatrix");
                                     System.out.println("p:" + placeNo + ";t:"
-                                                               + transitionNo + ";w:"
-                                                               + inhibitorArcView.getWeight());
+                                            + transitionNo + ";w:"
+                                            + inhibitorArcView.getWeight());
                                 }
                             }
                         }

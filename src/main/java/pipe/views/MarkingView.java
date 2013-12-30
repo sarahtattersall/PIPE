@@ -76,10 +76,6 @@ public class MarkingView extends JComponent implements Serializable, Observer {
             int result;
             try {
                 result = paser.parseAndEvalExpr(_model.getCurrentMarking(), _model.getToken().getId());
-            } catch (EvaluationException e1) {
-                return showErrorMessage();
-            } catch (MarkingDividedByNumberException e1) {
-                return showErrorMessage();
             } catch (Exception e1) {
                 return showErrorMessage();
             }

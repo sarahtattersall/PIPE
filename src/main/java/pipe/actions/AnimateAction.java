@@ -65,6 +65,7 @@ public class AnimateAction extends GuiAction
                 case Constants.RANDOM:
                     animationHistory.clearStepsForward();
                     pipeApplicationView.getAnimator().doRandomFiring();
+
                     applicationModel.stepforwardAction.setEnabled(animationHistory.isStepForwardAllowed());
                     applicationModel.stepbackwardAction.setEnabled(animationHistory.isStepBackAllowed());
                     pipeApplicationView.getAnimator().updateArcAndTran();
@@ -73,6 +74,7 @@ public class AnimateAction extends GuiAction
                 case Constants.STEPFORWARD:
                     animationHistory.stepForward();
                     pipeApplicationView.getAnimator().stepForward();
+
                     applicationModel.stepforwardAction.setEnabled(animationHistory.isStepForwardAllowed());
                     applicationModel.stepbackwardAction.setEnabled(animationHistory.isStepBackAllowed());
                     pipeApplicationView.getAnimator().updateArcAndTran();

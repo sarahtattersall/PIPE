@@ -272,12 +272,14 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                         return;
                     }
                 }
-            } catch (MarkingDividedByNumberException e) {
-                JOptionPane.showMessageDialog(null,
-                        "Marking-dependent arc weight divided by number not supported.\r\n" +
-                                "Since this may cause non-integer arc weight.");
-                return;
-            } catch (Exception e) {
+            }
+//            catch (MarkingDividedByNumberException e) {
+//                JOptionPane.showMessageDialog(null,
+//                        "Marking-dependent arc weight divided by number not supported.\r\n" +
+//                                "Since this may cause non-integer arc weight.");
+//                return;
+//            }
+            catch (Exception e) {
                 System.err.println("Error in functional rates expression.");
                 String message =
                         " Expression is invalid. Please check your function.";
@@ -331,16 +333,18 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                     return;
                 }
 
-            } catch (EvaluationException e) {
-                JOptionPane.showMessageDialog(null,
-                        "Error in Arc weight expression");
-                return;
-            } catch (MarkingDividedByNumberException eee) {
-                JOptionPane.showMessageDialog(null,
-                        "Marking-dependent arc weight divided by number not supported.\r\n" +
-                                "Since this may cause non-integer arc weight.");
-                return;
-            } catch (Exception ee) {
+            }
+//            catch (EvaluationException e) {
+//                JOptionPane.showMessageDialog(null,
+//                        "Error in Arc weight expression");
+//                return;
+//            } catch (MarkingDividedByNumberException eee) {
+//                JOptionPane.showMessageDialog(null,
+//                        "Marking-dependent arc weight divided by number not supported.\r\n" +
+//                                "Since this may cause non-integer arc weight.");
+//                return;
+//            }
+            catch (Exception ee) {
                 JOptionPane.showMessageDialog(null,
                         "Error in Arc weight expression");
                 return;

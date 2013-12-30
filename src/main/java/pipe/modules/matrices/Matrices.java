@@ -113,20 +113,20 @@ public class Matrices
                     s += ResultsHTMLPane.makeTable(new String[]{
                             "Forwards incidence matrix <i>I<sup>+</sup></i>",
                             renderMatrix(data, data.getActiveTokenView().getForwardsIncidenceMatrix(
-                                    data.getArcsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
+                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+                                    data.getModel().getPlaces()))
                     }, 1, false, false, true, false);
                     s += ResultsHTMLPane.makeTable(new String[]{
                             "Backwards incidence matrix <i>I<sup>-</sup></i>",
                             renderMatrix(data, data.getActiveTokenView().getBackwardsIncidenceMatrix(
-                                    data.getArcsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
+                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+                                    data.getModel().getPlaces()))
                     }, 1, false, false, true, false);
                     s += ResultsHTMLPane.makeTable(new String[]{
                             "Combined incidence matrix <i>I</i>",
                             renderMatrix(data, data.getActiveTokenView().getIncidenceMatrix(
-                                    data.getArcsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
+                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+                                    data.getModel().getPlaces()))
                     }, 1, false, false, true, false);
                     s += ResultsHTMLPane.makeTable(new String[]{
                             "Inhibition matrix <i>H</i>",
@@ -243,8 +243,7 @@ public class Matrices
                 result.toArray(), placeViews.length + 1, false, true, true, true);
     }
 
-    private String renderTransitionStates(PetriNetView data)
-    {
+    private String renderTransitionStates(PetriNetView data) throws Exception {
         TransitionView[] transitionViews = data.getTransitionViews();
         if(transitionViews.length == 0)
         {

@@ -211,14 +211,14 @@ public class GSPNNew extends GSPN implements IModule {
 								s += "<br>Error: " + e.getMessage();
 								results.setText(s);
 								return null;
-							} catch (TimelessTrapException e) {
-								s += "<br>" + e.getMessage();
-								results.setText(s);
-								return null;
-							} catch (IOException e) {
-								s += "<br>" + e.getMessage();
-								results.setText(s);
-								return null;
+//							} catch (TimelessTrapException e) {
+//								s += "<br>" + e.getMessage();
+//								results.setText(s);
+//								return null;
+//							} catch (IOException e) {
+//								s += "<br>" + e.getMessage();
+//								results.setText(s);
+//								return null;
 							} catch (MarkingNotIntegerException e) {
 								JOptionPane.showMessageDialog(null,
 										"Functional arc weight cannot have non-integer value. Please check again.");
@@ -626,18 +626,22 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            //TODO: WAHT EXCEPTION
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-		return result;
+        return result;
 	}
 
 	/*
@@ -680,18 +684,22 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            //TODO: WAHT EXCEPTION
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-	}
+    }
 
 	/*
 	 * It returns a two-dimensional array containing the token distribution for
@@ -734,18 +742,21 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-	}
+    }
 
 	/*
 	 * It returns a two-dimensional array containing the token distribution for
@@ -788,18 +799,21 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-	}
+    }
 
 	// </Marc>
 
@@ -1063,11 +1077,7 @@ public class GSPNNew extends GSPN implements IModule {
 	/**
 	 * This function determines the sojourn time for each state in a specified
 	 * set of states.
-	 * 
-	 * @param DataLater
-	 *            - the net to be analysed
-	 * @param StateList
-	 *            - the list of tangible markings
+	 *
 	 * @return double[] - the array of sojourn times for each specific state
 	 * @param pnmldata
 	 * @param tangibleStates

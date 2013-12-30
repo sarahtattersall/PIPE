@@ -744,14 +744,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         applicationModel.randomAnimateAction.setSelected(on);
     }
 
-    public void setAnimationMode(boolean on) {
+    public void setAnimationMode(boolean on) throws Exception {
         applicationModel.randomAnimateAction.setSelected(false);
         animator.setNumberSequences(0);
         applicationModel.startAction.setSelected(on);
         getCurrentTab().changeAnimationMode(on);
         if (on) {
             PetriNetView petriNetView = getCurrentPetriNetView();
-            animator.storeModel(petriNetView);
+//            animator.storeModel(petriNetView);
             petriNetView.setEnabledTransitions();
             animator.highlightEnabledTransitions();
             addAnimationHistory();

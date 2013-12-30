@@ -155,7 +155,7 @@ public class Classification
 
 
     //<Marc>
-    public boolean[] getClassification(PetriNetView sourceDataLayer) throws EmptyNetException
+    public boolean[] getClassification(PetriNetView sourceDataLayer) throws Exception
     {
         boolean result[] = new boolean[6];
         if(!sourceDataLayer.hasPlaceTransitionObjects())
@@ -195,8 +195,7 @@ public class Classification
      *         </pre>
      * @author Maxim Gready after James D Bloom
      */
-    boolean stateMachine(PetriNetView pnmlData)
-    {
+    boolean stateMachine(PetriNetView pnmlData) throws Exception {
         int transitionsCount = pnmlData.numberOfTransitions();
 
         for(int transitionNo = 0; transitionNo < transitionsCount; transitionNo++)
@@ -230,8 +229,7 @@ public class Classification
      *         </pre>
      * @author Maxim Gready after James D Bloom
      */
-    boolean markedGraph(PetriNetView pnmlData)
-    {
+    boolean markedGraph(PetriNetView pnmlData) throws Exception {
         int placeCount = pnmlData.numberOfPlaces();
 
         for(int placeNo = 0; placeNo < placeCount; placeNo++)
@@ -462,12 +460,11 @@ public class Classification
      * @param PlaceNo
      * @return number of arcs leading to the given place number; -1 on error
      */
-    private int countPlaceInputs(PetriNetView pnmlData, int PlaceNo)
-    {
+    private int countPlaceInputs(PetriNetView pnmlData, int PlaceNo) throws Exception {
 
         int[][] backwards = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
-                pnmlData.getArcsArrayList(),
-                pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+                pnmlData.getModel().getArcs(),
+                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         // The forwards incidence matrix is like this:
         // | 0 1 |     P0 ->- T0 ->- P1
         // | 1 0 |       `-<- T1 -<-'
@@ -499,8 +496,8 @@ public class Classification
     private int countPlaceOutputs(PetriNetView pnmlData, int PlaceNo)
     {
         int[][] forwards = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(
-                pnmlData.getArcsArrayList(),
-                pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList()); // transition backwards = place forwards
+                pnmlData.getModel().getArcs(),
+                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces()); // transition backwards = place forwards
         int count = 0;
 
         if(PlaceNo >= forwards.length)
@@ -522,8 +519,8 @@ public class Classification
     // @return number of arcs leading to the given transition number; -1 on error
     private int countTransitionInputs(PetriNetView pnmlData, int TransitionNo)
     {
-        int[][] backwards = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(),
-                                                                                      pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] backwards = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(),
+                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         int count = 0;
 
         if((backwards.length < 1) || (TransitionNo >= backwards[0].length))
@@ -547,10 +544,9 @@ public class Classification
      * @param TransitionNo
      * @return number of arcs leading from the given transition number; -1 on error
      */
-    private int countTransitionOutputs(PetriNetView pnmlData, int TransitionNo)
-    {
-        int[][] forwards = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(pnmlData.getArcsArrayList(),
-                                                                                    pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+    private int countTransitionOutputs(PetriNetView pnmlData, int TransitionNo) throws Exception {
+        int[][] forwards = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(pnmlData.getModel().getArcs(),
+                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         int count = 0;
 
         if((forwards.length < 1) || (TransitionNo >= forwards[0].length))
@@ -571,8 +567,8 @@ public class Classification
     // returns array of ints set to indices of transitions output to by given place
     private int[] forwardsPlaceSet(PetriNetView pnmlData, int PlaceNo)
     {
-        int[][] forwards = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(),
-                                                                                     pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] forwards = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(),
+                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         ArrayList postsetArrayList = new ArrayList();
 
         for(int TransitionNo = 0; TransitionNo < forwards[PlaceNo].length; TransitionNo++)

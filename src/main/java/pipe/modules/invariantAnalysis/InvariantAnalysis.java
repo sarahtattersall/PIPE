@@ -172,13 +172,12 @@ public class InvariantAnalysis
      * @version 1.2
      * @return
      */
-    private String analyse(PetriNetView pnmlData)
-    {
+    private String analyse(PetriNetView pnmlData) throws Exception {
         Date start_time = new Date(); // start timer for program execution
         // extract data from PN object
         int[][] array = pnmlData.getActiveTokenView().getIncidenceMatrix(
-                pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                pnmlData.getPlacesArrayList());
+                pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                pnmlData.getModel().getPlaces());
         if(array.length == 0)
         {
             return "";
@@ -273,11 +272,10 @@ public class InvariantAnalysis
     *                        the petri net.
     * @return a PNMatrix where each column contains a place invariant.
     */
-    public Matrix getPInvariants(PetriNetView sourceDataLayer)
-    {
+    public Matrix getPInvariants(PetriNetView sourceDataLayer) throws Exception {
         int[][] array = sourceDataLayer.getActiveTokenView()
-                .getIncidenceMatrix(sourceDataLayer.getArcsArrayList(), sourceDataLayer.getTransitionsArrayList(),
-                                    sourceDataLayer.getPlacesArrayList());
+                .getIncidenceMatrix(sourceDataLayer.getModel().getArcs(), sourceDataLayer.getModel().getTransitions(),
+                        sourceDataLayer.getModel().getPlaces());
         if(array.length == 0)
         {
             return null;
@@ -300,11 +298,10 @@ public class InvariantAnalysis
     *                        the petri net.
     * @return a PNMatrix where each column contains a transition invariant.
     */
-    public Matrix getTInvariants(PetriNetView sourceDataLayer)
-    {
+    public Matrix getTInvariants(PetriNetView sourceDataLayer) throws Exception {
         int[][] array = sourceDataLayer.getActiveTokenView().getIncidenceMatrix(
-                sourceDataLayer.getArcsArrayList(), sourceDataLayer.getTransitionsArrayList(),
-                sourceDataLayer.getPlacesArrayList());
+                sourceDataLayer.getModel().getArcs(), sourceDataLayer.getModel().getTransitions(),
+                sourceDataLayer.getModel().getPlaces());
         if(array.length == 0)
         {
             return null;

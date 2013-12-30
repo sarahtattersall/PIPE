@@ -1,5 +1,7 @@
 package pipe.gui;
 
+import pipe.models.PetriNet;
+import pipe.models.component.Transition;
 import pipe.views.ArcView;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
@@ -57,7 +59,12 @@ public class Animator
                     applicationView.setRandomAnimationMode(false);
                     return;
                 }
-                doRandomFiring();
+                try {
+                    doRandomFiring();
+                } catch (Exception e) {
+                    //TODO: HANDLE EXCEPTION
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
                 setNumberSequences(getNumberSequences() - 1);
             }
         });
@@ -113,18 +120,22 @@ public class Animator
      * Called at end of animation and resets all Transitions to false and
      * unhighlighted
      */
-    private void disableTransitions()
+    private void disableTransitions(PetriNet net)
     {
-        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        Iterator transitionIterator =
-                applicationView.getCurrentPetriNetView().returnTransitions();
-        while(transitionIterator.hasNext())
-        {
-            TransitionView tempTransitionView = (TransitionView) transitionIterator.next();
-            tempTransitionView.setEnabledFalse();
-            applicationView.getCurrentPetriNetView().notifyObservers();
-            tempTransitionView.repaint();
+        for (Transition transition : net.getTransitions()) {
+            transition.disable();
         }
+
+//        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+//        Iterator transitionIterator =
+//                applicationView.getCurrentPetriNetView().returnTransitions();
+//        while(transitionIterator.hasNext())
+//        {
+//            TransitionView tempTransitionView = (TransitionView) transitionIterator.next();
+//            tempTransitionView.setEnabledFalse();
+//            applicationView.getCurrentPetriNetView().notifyObservers();
+//            tempTransitionView.repaint();
+//        }
     }
 
 
@@ -143,8 +154,9 @@ public class Animator
      */
     public void restoreModel()
     {
-        ApplicationSettings.getApplicationView().getCurrentPetriNetView().restorePreviousMarking();
-        disableTransitions();
+        PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+        petriNetView.restorePreviousMarking();
+        disableTransitions(petriNetView.getModel());
         count = 0;
     }
 
@@ -185,8 +197,7 @@ public class Animator
     /**
      * Randomly fires one of the enabled transitions.
      */
-    public void doRandomFiring()
-    {
+    public void doRandomFiring() {
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
         PetriNetView petriNetView = applicationView.getCurrentPetriNetView();
         TransitionView t = petriNetView.getRandomTransition();
@@ -205,8 +216,7 @@ public class Animator
     /**
      * Steps back through previously fired transitions
      */
-    public void stepBack()
-    {
+    public void stepBack() {
         if(count > 0)
         {
             TransitionView lastTransitionView = (TransitionView) firedTransitions.get(--count);
@@ -222,8 +232,7 @@ public class Animator
     /**
      * Steps forward through previously fired transitions
      */
-    public void stepForward()
-    {
+    public void stepForward() {
         if(count < firedTransitions.size())
         {
             TransitionView nextTransitionView = (TransitionView) firedTransitions.get(count++);
@@ -250,8 +259,7 @@ public class Animator
      * animation playback.
      * The method is renamed back to fireTransition.
      */
-    public void fireTransition(TransitionView transitionView)
-    {
+    public void fireTransition(TransitionView transitionView) {
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
         Animator animator = applicationView.getAnimator();
 

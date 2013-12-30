@@ -168,8 +168,7 @@ public class MinimalSiphons
      * @param pnmlData
      * @return
      */
-    String analyse(PetriNetView pnmlData)
-    {
+    String analyse(PetriNetView pnmlData) throws Exception {
 
         Date start_time = new Date(); // start timer for program execution
 
@@ -177,10 +176,10 @@ public class MinimalSiphons
         // compute siphons
         Vector<boolean[]> siphons = findAllMinimalSiphons(
                 new PetriNet(pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
-                        pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                        pnmlData.getPlacesArrayList()),
-                             pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                                                                                       pnmlData.getPlacesArrayList())),
+                        pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                        pnmlData.getModel().getPlaces()),
+                             pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                                                                                       pnmlData.getModel().getPlaces())),
                 new SetOfPlaces(pnmlData.numberOfPlaces()));
         output += toString(siphons);
 
@@ -188,11 +187,11 @@ public class MinimalSiphons
         // now, compute traps switching forwards and backwards incidence matrices
         Vector<boolean[]> traps = findAllMinimalSiphons(
                 new PetriNet(pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(
-                        pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                        pnmlData.getPlacesArrayList()),
+                        pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                        pnmlData.getModel().getPlaces()),
                              pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
-                                     pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                                     pnmlData.getPlacesArrayList())),
+                                     pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                                     pnmlData.getModel().getPlaces())),
                 new SetOfPlaces(pnmlData.numberOfPlaces()));
         output += toString(traps);
 
@@ -236,15 +235,14 @@ public class MinimalSiphons
     /**
      * @param pnmlData
      * @return */
-    public Vector<boolean[]> getMinimalSiphons(PetriNetView pnmlData)
-    {
+    public Vector<boolean[]> getMinimalSiphons(PetriNetView pnmlData) throws Exception {
         return findAllMinimalSiphons(
                 new PetriNet(pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
-                        pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                        pnmlData.getPlacesArrayList()),
+                        pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                        pnmlData.getModel().getPlaces()),
                              pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(
-                                     pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                                     pnmlData.getPlacesArrayList())),
+                                     pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                                     pnmlData.getModel().getPlaces())),
                 new SetOfPlaces(pnmlData.numberOfPlaces()));
     }
 
@@ -252,15 +250,14 @@ public class MinimalSiphons
     /**
      * @param pnmlData
      * @return */
-    public Vector<boolean[]> getMinimalTraps(PetriNetView pnmlData)
-    {
+    public Vector<boolean[]> getMinimalTraps(PetriNetView pnmlData) throws Exception {
         return findAllMinimalSiphons(
                 new PetriNet(pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(
-                        pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                        pnmlData.getPlacesArrayList()),
+                        pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                        pnmlData.getModel().getPlaces()),
                              pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
-                                     pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(),
-                                     pnmlData.getPlacesArrayList())),
+                                     pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
+                                     pnmlData.getModel().getPlaces())),
                 new SetOfPlaces(pnmlData.numberOfPlaces()));
     }
 

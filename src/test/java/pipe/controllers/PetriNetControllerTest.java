@@ -211,7 +211,8 @@ public class PetriNetControllerTest {
     {
         PetriNet net = setupPetriNet();
         Connectable source = createFakePlace();
-        controller.startCreatingNormalArc(source);
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
         assertEquals(1, net.getArcs().size());
     }
 
@@ -225,7 +226,8 @@ public class PetriNetControllerTest {
     public void finishingArcReturnsFalseIfNotValidEndPoint() {
         PetriNet net = setupPetriNet();
         Connectable source = createFakePlace();
-        controller.startCreatingNormalArc(source);
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
 
         Connectable place = mock(Place.class);
         when(place.isEndPoint()).thenReturn(true);
@@ -235,7 +237,8 @@ public class PetriNetControllerTest {
     @Test
     public void finishingArcReturnsTrueIfNotValidEndPoint() {
         Connectable source = createFakePlace();
-        controller.startCreatingNormalArc(source);
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
 
         Connectable transition = mock(Transition.class);
         when(transition.isEndPoint()).thenReturn(true);
@@ -246,7 +249,8 @@ public class PetriNetControllerTest {
     @Test
     public void finishingArcSetsCreatingToFalse() {
         Connectable source = createFakePlace();
-        controller.startCreatingNormalArc(source);
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
 
         Connectable transition = mock(Transition.class);
         when(transition.isEndPoint()).thenReturn(true);
@@ -273,8 +277,8 @@ public class PetriNetControllerTest {
     {
         PetriNet net = setupPetriNet();
         Connectable source = createFakePlace();
-
-        controller.startCreatingNormalArc(source);
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
         controller.cancelArcCreation();
         assertEquals(0, net.getArcs().size());
     }

@@ -51,7 +51,7 @@ public class StateSpaceGenerator {
 	private static boolean[] enabledTransitions;
 
 	public static void generate(PetriNetView pnmlData, File reachGraph)
-			throws OutOfMemoryError, ImmediateAbortException, IOException, MarkingNotIntegerException {
+            throws OutOfMemoryError, Exception {
 
 		pnmlData.setFunctionalExpressionRelatedPlaces();
 		pnmlData.storeCurrentMarking();
@@ -216,8 +216,7 @@ public class StateSpaceGenerator {
 	 * @throws MarkingNotIntegerException 
 	 */
 	public static void generate(PetriNetView pnmlData, File reachGraph,
-			ResultsHTMLPane resultspane) throws OutOfMemoryError,
-			TimelessTrapException, ImmediateAbortException, IOException, MarkingNotIntegerException {
+			ResultsHTMLPane resultspane) throws OutOfMemoryError, MarkingNotIntegerException, Exception {
 
 		pnmlData.backUpPlaceViewsMarking();
 		pnmlData.setFunctionalExpressionRelatedPlaces();
@@ -618,7 +617,7 @@ public class StateSpaceGenerator {
 	 * @return
 	 * @throws MarkingNotIntegerException 
 	 */
-	private static int fire(PetriNetView pnmlData, State vs, Stack succ) throws MarkingNotIntegerException {
+	private static int fire(PetriNetView pnmlData, State vs, Stack succ) throws Exception {
 		int transCount = pnmlData.numberOfTransitions();
 
 		int transitionsfired = 0;
@@ -735,15 +734,13 @@ public class StateSpaceGenerator {
 		int[][] CMinus = pnmlData
 				.getTokenViews()
 				.getFirst()
-				.getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(),
-						pnmlData.getTransitionsArrayList(),
-						pnmlData.getPlacesArrayList());
+				.getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(),
+                        pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
 		int[][] CPlus = pnmlData
 				.getTokenViews()
 				.getFirst()
-				.getForwardsIncidenceMatrix(pnmlData.getArcsArrayList(),
-						pnmlData.getTransitionsArrayList(),
-						pnmlData.getPlacesArrayList());
+				.getForwardsIncidenceMatrix(pnmlData.getModel().getArcs(),
+                        pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
 
 		// Create marking array to return
 		int[] newmarking = new int[marking.length];
@@ -830,7 +827,6 @@ public class StateSpaceGenerator {
 	 * @param test
 	 *            The state to look for
 	 * @param es
-	 * @param exploredStates
 	 *            The hashtable to check for the state
 	 * @return
 	 */
@@ -929,8 +925,6 @@ public class StateSpaceGenerator {
 	 * @param pnmlData
 	 * @param s
 	 * @param sprime
-	 * @param v
-	 * @param vprime
 	 * @return double - the probability
 	 */
 	private static double rate(PetriNetView pnmlData, State s, State sprime) {
@@ -1038,12 +1032,10 @@ public class StateSpaceGenerator {
 	 * @param s
 	 * @param sprime
 	 * @param firedTransition
-	 * @param v
-	 * @param vprime
 	 * @return double - the probability
 	 */
 	private static double prob(PetriNetView pnmlData, State s, State sprime,
-			int firedTransition) {
+			int firedTransition) throws Exception {
 		
 		int[] marking1 = s.getState();
 		int[] marking2 = sprime.getState();
@@ -1058,9 +1050,8 @@ public class StateSpaceGenerator {
 		int[][] incidenceMatrix = pnmlData
 				.getTokenViews()
 				.getFirst()
-				.getIncidenceMatrix(pnmlData.getArcsArrayList(),
-						pnmlData.getTransitionsArrayList(),
-						pnmlData.getPlacesArrayList());
+				.getIncidenceMatrix(pnmlData.getModel().getArcs(),
+                        pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
 		int transCount = pnmlData.numberOfTransitions();
 		// get list of transitions enabled at marking1
 		LinkedList<MarkingView>[] state = new LinkedList[marking1.length];

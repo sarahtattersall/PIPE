@@ -3,6 +3,7 @@ package pipe.views;
 import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
@@ -127,6 +128,18 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         return copy;
     }
 
+    /**
+     *
+     * @return true if in animate mode and the model is enabled
+     */
+    private boolean highlightView() {
+        //TODO: GET THIS IN A BETTER WAY
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        PetriNetTab tab = view.getCurrentTab();
+
+        return model.isEnabled() && tab.isInAnimationMode();
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -145,7 +158,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     g2.translate(2 * i, -2 * i);
                     g2.fill(_path);
                     Paint pen = g2.getPaint();
-                    if (_highlighted) {
+                    if (highlightView()) {
                         g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
                     } else if (_selected && !_ignoreSelection) {
                         g2.setPaint(Constants.SELECTION_LINE_COLOUR);
@@ -160,7 +173,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             g2.fill(_path);
         }
 
-        if (_highlighted) {
+        if (highlightView()) {
             g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
         } else if (_selected && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);

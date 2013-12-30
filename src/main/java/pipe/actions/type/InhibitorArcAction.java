@@ -2,8 +2,11 @@ package pipe.actions.type;
 
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
+import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
 import pipe.models.component.Place;
+import pipe.models.component.Token;
+import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 
@@ -16,7 +19,9 @@ public class InhibitorArcAction extends ArcAction {
 
     @Override
     protected void createArc(Connectable connectable, PetriNetController controller) {
-        controller.startCreatingInhibitorArc(connectable);
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        Token activeToken = controller.getToken(view.getSelectedTokenName());
+        controller.startCreatingInhibitorArc(connectable, activeToken);
     }
 
     public InhibitorArcAction(final String name, final int typeID,

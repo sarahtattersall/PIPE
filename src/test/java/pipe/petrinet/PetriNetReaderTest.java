@@ -40,12 +40,6 @@ public class PetriNetReaderTest {
 
     PNMLTransformer transformer;
 
-
-    /**
-     * Delta in which to mark doubles equal to each other as.
-     */
-    private static final double DOUBLE_DELTA = 0.01;
-
     @Before
     public void setUp() {
         transformer = new PNMLTransformer();

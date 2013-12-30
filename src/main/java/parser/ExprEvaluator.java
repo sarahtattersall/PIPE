@@ -45,7 +45,7 @@ public class ExprEvaluator {
      * @return -1 indicates the result value is not an integer
      * @throws Exception
      */
-    public int parseAndEvalExpr(String expr, String tokenId) throws Exception {
+    public int parseAndEvalExpr(String expr, String tokenId) {
 
         if (!validFloatAndDivision(expr)) {
             return -2;
@@ -66,10 +66,17 @@ public class ExprEvaluator {
         }
 
         Evaluator evaluator = new Evaluator();
-        String result = evaluator.evaluate(lexpr);
+        try {
 
-        Double dresult = Double.parseDouble(result);
-        return (int) Math.round(dresult);
+            String result = evaluator.evaluate(lexpr);
+            Double dresult = Double.parseDouble(result);
+            return (int) Math.round(dresult);
+        } catch (EvaluationException e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage() + " Expression was " + expr);
+            return -1;
+        }
+
     }
 
 

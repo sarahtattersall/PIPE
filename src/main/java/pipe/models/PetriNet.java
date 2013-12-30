@@ -1,20 +1,24 @@
 package pipe.models;
 
+import parser.ExprEvaluator;
 import pipe.common.dataLayer.StateGroup;
+import pipe.gui.ApplicationSettings;
 import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentAddVisitor;
 import pipe.models.visitor.PetriNetComponentRemovalVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.utilities.math.IncidenceMatrix;
+import pipe.views.ArcView;
+import pipe.views.MarkingView;
+import pipe.views.PlaceView;
+import pipe.views.TransitionView;
 import pipe.views.viewComponents.RateParameter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import javax.swing.*;
+import java.util.*;
 
-public class PetriNet extends Observable implements IObserver
-{
+public class PetriNet extends Observable implements IObserver {
     public String _pnmlName = "";
     private boolean _validated = false;
     private ArrayList _changeArrayList;
@@ -31,84 +35,70 @@ public class PetriNet extends Observable implements IObserver
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
     private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
 
-    public String getPnmlName()
-    {
+    public String getPnmlName() {
         return _pnmlName;
     }
 
-    public void setPnmlName(String pnmlName)
-    {
+    public void setPnmlName(String pnmlName) {
         _pnmlName = pnmlName;
     }
 
-    public boolean isValidated()
-    {
+    public boolean isValidated() {
         return _validated;
     }
 
-    public void setValidated(boolean validated)
-    {
+    public void setValidated(boolean validated) {
         _validated = validated;
     }
 
-    public void resetPNML()
-    {
+    public void resetPNML() {
         _pnmlName = null;
     }
 
-    public void addPlace(Place place)
-    {
+    public void addPlace(Place place) {
         places.add(place);
         place.registerObserver(this);
         notifyObservers();
     }
 
-    public void addTransition(Transition transition)
-    {
+    public void addTransition(Transition transition) {
         transitions.add(transition);
         transition.registerObserver(this);
         notifyObservers();
     }
 
-    public void addArc(Arc arc)
-    {
+    public void addArc(Arc arc) {
         arcs.add(arc);
         arc.registerObserver(this);
         notifyObservers();
     }
 
-    public void addToken(Token token)
-    {
+    public void addToken(Token token) {
         tokens.add(token);
         token.registerObserver(this);
         notifyObservers();
     }
 
-    public Collection<Place> getPlaces()
-    {
+    public Collection<Place> getPlaces() {
         return places;
     }
 
-    public void addRate(RateParameter parameter)
-    {
+    public void addRate(RateParameter parameter) {
         rates.add(parameter);
         notifyObservers();
     }
 
-    public Collection<RateParameter> getRateParameters()
-    {
+    public Collection<RateParameter> getRateParameters() {
         return rates;
     }
 
-    public void addAnnotaiton(Annotation annotation)
-    {
+    public void addAnnotaiton(Annotation annotation) {
         annotations.add(annotation);
         annotation.registerObserver(this);
         notifyObservers();
     }
 
-    public Collection<Annotation> getAnnotations()
-    {
+    public Collection<Annotation> getAnnotations() {
         return annotations;
     }
 
@@ -183,8 +173,210 @@ public class PetriNet extends Observable implements IObserver
         notifyObservers();
     }
 
+
+    //TODO: IS THIS WHAT IT DOES?
+
+    /**
+     * A Transition is enabled if all its input places are marked with at least one token
+     * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
+     *
+     * @param transition
+     * @return
+     * @throws Exception
+     */
+    public int getEnablingDegree(Transition transition) {
+
+        int enablingDegree = Integer.MAX_VALUE;
+
+        ExprEvaluator evaluator = new ExprEvaluator(this);
+        for (Arc arc : transition.inboundArcs()) {
+            Place place = (Place) arc.getSource();
+            Map<Token, String> arcWeights = arc.getTokenWeights();
+            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
+                Token arcToken = entry.getKey();
+                String arcTokenExpression = entry.getValue();
+
+                int placeTokenCount = place.getTokenCount(arcToken);
+                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
+
+                if (requiredTokenCount == 0) {
+                    enablingDegree = 0;
+                } else {
+                    //TODO: WHY DIVIDE?
+                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
+                    if (currentDegree < enablingDegree) {
+                        enablingDegree = currentDegree;
+                    }
+
+                }
+            }
+        }
+        return enablingDegree;
+    }
+
     @Override
     public void update() {
         notifyObservers();
+    }
+
+    /**
+     * Calculates weights of connections from places to transitions for given token
+     * @param token
+     * @throws Exception
+     */
+    public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
+        IncidenceMatrix backwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+            if (target instanceof Transition) {
+                Transition transition = (Transition) target;
+                if (source instanceof Place) {
+                    Place place = (Place) source;
+                    int enablingDegree = transition.isInfiniteServer() ? getEnablingDegree(transition) : 0;
+
+
+                    String expression = arc.getWeightForToken(token);
+                    ExprEvaluator paser = new ExprEvaluator(this);
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    if (weight == 0) {  // Ie at least one token to pass
+                        weight = 1;
+                    }
+                    int totalWeight = transition.isInfiniteServer() ? weight * enablingDegree : weight;
+                    backwardsIncidenceMatrix.put(place, transition, totalWeight);
+                }
+            }
+        }
+        return backwardsIncidenceMatrix;
+    }
+
+    /**
+     *
+     * Calculates weights of connections from transitions to places for given token
+     * @param token
+     * @return
+     * @throws Exception
+     */
+    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+
+        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+
+            if (target instanceof Place) {
+                Place place = (Place) target;
+                if (source instanceof Transition) {
+                    Transition transition = (Transition) source;
+
+                    //TODO: Broken transitions
+                    String expression = arc.getWeightForToken(token);
+
+                    ExprEvaluator paser = new ExprEvaluator(this);
+
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    if (weight == 0) {  // Ie at least one token to pass
+                        weight = 1;
+                    }
+                    forwardsIncidenceMatrix.put(place, transition, weight);
+                }
+            }
+        }
+        return forwardsIncidenceMatrix;
+    }
+
+    /**
+     *
+     * @param backwards
+     * @return all transitions that can be enabled
+     * @throws Exception
+     */
+    public Collection<Transition> getEnabledTransitions(boolean backwards) {
+        boolean hasTimed = false;
+        boolean hasImmediate = false;
+        int maxPriority = 0;
+        final LinkedList<Transition> enabledTransitions = new LinkedList<Transition>();
+
+        for (Transition transition : getTransitions()) {
+            for (Place place : getPlaces()) {
+                if (allPlaceTokensEnabled(backwards, transition, place)) {
+                    enabledTransitions.add(transition);
+
+                    // we look for the highest priority of the enabled transitions
+                    if (transition.isTimed()) {
+                        hasTimed = true;
+                    } else {
+                        hasImmediate = true;
+                        if (transition.getPriority() > maxPriority) {
+                            maxPriority = transition.getPriority();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Now make sure that if any of the enabled transitions are immediate
+        // transitions, only they can fire as this must then be a vanishing
+        // state. That is:
+        // - disable the immediate transitions with lower priority.
+        // - disable all timed transitions if there is an immediate transition
+        // enabled.
+        Iterator<Transition> enabledTransitionIter = enabledTransitions.iterator();
+        while (enabledTransitionIter.hasNext()) {
+            Transition enabledTransition = enabledTransitionIter.next();
+            if ((!enabledTransition.isTimed() && enabledTransition.getPriority() < maxPriority) ||
+                    (hasTimed && hasImmediate && enabledTransition.isTimed())) {
+                enabledTransitionIter.remove();
+            }
+        }
+
+        return enabledTransitions;
+    }
+
+    /**
+     * @param backwards
+     * @param transition
+     * @param place
+     * @return true if every token in the place enables the transition
+     * @throws Exception
+     */
+    private boolean allPlaceTokensEnabled(boolean backwards,
+                                          Transition transition,
+                                          Place place) {
+        int totalMarkings = 0;
+        int totalIPlus = 0;
+        int totalIMinus = 0;
+        for (Map.Entry<Token, Integer> entry : place.getTokenCounts().entrySet()) {
+            Token token = entry.getKey();
+            int tokenCount = entry.getValue();
+
+            IncidenceMatrix forwardsIncidenceMatrix = getForwardsIncidenceMatrix(token);
+            IncidenceMatrix backwardsIncidenceMatrix;
+
+            //TODO: WHAT IS THIS LOGIC?
+            if (backwards) {
+                backwardsIncidenceMatrix = forwardsIncidenceMatrix;
+            } else {
+                backwardsIncidenceMatrix = getBackwardsIncidenceMatrix(token);
+            }
+            //TODO: INHIBITION
+
+            if (tokenCount < backwardsIncidenceMatrix.get(place, transition) && tokenCount != -1) {
+                return false;
+            }
+
+            // Capacities
+            totalMarkings += tokenCount;
+            totalIPlus += forwardsIncidenceMatrix.get(place, transition);
+            totalIMinus += backwardsIncidenceMatrix.get(place, transition);
+
+            if (place.getCapacity() > 0 &&
+               (totalMarkings + totalIPlus - totalIMinus > place.getCapacity())) {
+                return false;
+            }
+
+            //TODO: INHIBITOR
+        }
+        return !place.getTokenCounts().isEmpty();
     }
 }

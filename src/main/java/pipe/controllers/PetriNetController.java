@@ -40,9 +40,9 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param source source model
      */
-    public void startCreatingNormalArc(Connectable source) {
+    public void startCreatingNormalArc(Connectable source, Token currentToken) {
         currentlyCreatingArc = true;
-        this.arc = buildEmptyArc(source);
+        this.arc = buildEmptyArc(source, currentToken);
         addArcToCurrentPetriNet(arc);
     }
 
@@ -51,9 +51,9 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param source
      */
-    public void startCreatingInhibitorArc(Connectable source) {
+    public void startCreatingInhibitorArc(Connectable source, Token currentToken) {
         currentlyCreatingArc = true;
-        this.arc = buildEmptyInhibitorArc(source);
+        this.arc = buildEmptyInhibitorArc(source, currentToken);
         addArcToCurrentPetriNet(arc);
     }
 
@@ -63,22 +63,26 @@ public class PetriNetController implements IController, Serializable {
      * @param source
      * @return inhibitor arc
      */
-    private InhibitorArc buildEmptyInhibitorArc(Connectable source) {
+    private InhibitorArc buildEmptyInhibitorArc(Connectable source, Token token) {
+        Map<Token, String> tokens = new HashMap<Token, String>();
+        tokens.put(token, "1");
         return new InhibitorArc(source,
                 new TemporaryArcTarget(source.getX(),
                         source.getY()),
-                new HashMap<Token, String>());
+                tokens);
     }
 
     private void addArcToCurrentPetriNet(Arc arc) {
         petriNet.addArc(arc);
     }
 
-    private NormalArc buildEmptyArc(Connectable source) {
+    private NormalArc buildEmptyArc(Connectable source, Token token) {
+        Map<Token, String> tokens = new HashMap<Token, String>();
+        tokens.put(token, "1");
         return new NormalArc(source,
                              new TemporaryArcTarget(source.getX(),
                                                     source.getY()),
-                             new HashMap<Token, String>());
+                             tokens);
     }
 
     public boolean isCurrentlyCreatingArc() {

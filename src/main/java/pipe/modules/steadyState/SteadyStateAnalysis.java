@@ -215,8 +215,11 @@ public class SteadyStateAnalysis implements IModule{
 								JOptionPane.showMessageDialog(null,
 										"Weighting cannot be less than 0. Please re-enter");
 								return null;
-							}
-						}
+							} catch (Exception e) {
+                                //TODO: WHAT EXCEPTION IS THIS?
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                        }
 					}
 					return null;
 				}

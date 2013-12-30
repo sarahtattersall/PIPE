@@ -397,14 +397,13 @@ public class LargeStateSpaceGen
      * @author Matthew Cook, James Bloom and Clare Clark (original code)
      * Nadeem Akharware (optimisation)
      */
-    private static int[] fireTransition(PetriNetView pnmlData, int[] marking, int transIndex)
-    {
+    private static int[] fireTransition(PetriNetView pnmlData, int[] marking, int transIndex) {
         int count;               //index for 'for loop'
         int CMinusValue;         //Value from C- matrix
         int CPlusValue;          //Value from C+ matrix
 
-        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
-        int[][] CPlus = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
+        int[][] CPlus = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
 
         //Create marking array to return
         int[] newmarking = new int[marking.length];
@@ -437,7 +436,7 @@ public class LargeStateSpaceGen
 
         TransitionView[] transArray = pnmlData.getTransitionViews();
 
-        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         int placeCount = pnmlData.numberOfPlaces();
 
         // Initialise the result array
@@ -612,7 +611,7 @@ public class LargeStateSpaceGen
         int[] marking1 = s.getState();
         int[] marking2 = sprime.getState();
         int markSize = marking1.length;
-        int[][] incidenceMatrix = pnmlData.getActiveTokenView().getIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] incidenceMatrix = pnmlData.getActiveTokenView().getIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         int transCount = pnmlData.numberOfTransitions();
         boolean[] marking1EnabledTransitions = getTransitionEnabledStatusArray(pnmlData, marking1, false); //get list of transitions enabled at marking1
         boolean[] matchingTransition = new boolean[transCount];

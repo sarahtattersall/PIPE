@@ -1,7 +1,11 @@
 package pipe.actions.type;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
+import pipe.models.component.Token;
+import pipe.views.PetriNetView;
+import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 
@@ -17,7 +21,10 @@ public class NormalArcAction extends ArcAction {
 
     @Override
     protected void createArc(Connectable connectable, PetriNetController petriNetController) {
-        petriNetController.startCreatingNormalArc(connectable);
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        Token activeToken = petriNetController.getToken(view.getSelectedTokenName());
+
+        petriNetController.startCreatingNormalArc(connectable, activeToken);
     }
 
     @Override
