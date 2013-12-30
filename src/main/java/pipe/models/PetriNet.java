@@ -221,6 +221,7 @@ public class PetriNet extends Observable implements IObserver {
 
     /**
      * Calculates weights of connections from places to transitions for given token
+     *
      * @param token
      * @throws Exception
      */
@@ -251,8 +252,8 @@ public class PetriNet extends Observable implements IObserver {
     }
 
     /**
-     *
      * Calculates weights of connections from transitions to places for given token
+     *
      * @param token
      * @return
      * @throws Exception
@@ -286,7 +287,6 @@ public class PetriNet extends Observable implements IObserver {
     }
 
     /**
-     *
      * @param backwards
      * @return all transitions that can be enabled
      * @throws Exception
@@ -298,18 +298,23 @@ public class PetriNet extends Observable implements IObserver {
         final LinkedList<Transition> enabledTransitions = new LinkedList<Transition>();
 
         for (Transition transition : getTransitions()) {
-            for (Place place : getPlaces()) {
-                if (allPlaceTokensEnabled(backwards, transition, place)) {
-                    enabledTransitions.add(transition);
+            boolean enabledForAllPlaces = true;
+            for (Arc arc : transition.inboundArcs()) {
+                //TODO: Avoid the cast
+                Place place = (Place) arc.getSource();
+                enabledForAllPlaces &= allPlaceTokensEnabled(backwards, transition, arc, place);
+            }
 
-                    // we look for the highest priority of the enabled transitions
-                    if (transition.isTimed()) {
-                        hasTimed = true;
-                    } else {
-                        hasImmediate = true;
-                        if (transition.getPriority() > maxPriority) {
-                            maxPriority = transition.getPriority();
-                        }
+            if (enabledForAllPlaces) {
+                enabledTransitions.add(transition);
+
+                // we look for the highest priority of the enabled transitions
+                if (transition.isTimed()) {
+                    hasTimed = true;
+                } else {
+                    hasImmediate = true;
+                    if (transition.getPriority() > maxPriority) {
+                        maxPriority = transition.getPriority();
                     }
                 }
             }
@@ -322,7 +327,9 @@ public class PetriNet extends Observable implements IObserver {
         // - disable all timed transitions if there is an immediate transition
         // enabled.
         Iterator<Transition> enabledTransitionIter = enabledTransitions.iterator();
-        while (enabledTransitionIter.hasNext()) {
+        while (enabledTransitionIter.hasNext())
+
+        {
             Transition enabledTransition = enabledTransitionIter.next();
             if ((!enabledTransition.isTimed() && enabledTransition.getPriority() < maxPriority) ||
                     (hasTimed && hasImmediate && enabledTransition.isTimed())) {
@@ -342,13 +349,13 @@ public class PetriNet extends Observable implements IObserver {
      */
     private boolean allPlaceTokensEnabled(boolean backwards,
                                           Transition transition,
+                                          Arc arc,
                                           Place place) {
         int totalMarkings = 0;
         int totalIPlus = 0;
         int totalIMinus = 0;
-        for (Map.Entry<Token, Integer> entry : place.getTokenCounts().entrySet()) {
-            Token token = entry.getKey();
-            int tokenCount = entry.getValue();
+        for (Token token : arc.getTokenWeights().keySet()) {
+            int tokenCount = place.getTokenCount(token);
 
             IncidenceMatrix forwardsIncidenceMatrix = getForwardsIncidenceMatrix(token);
             IncidenceMatrix backwardsIncidenceMatrix;
@@ -371,7 +378,7 @@ public class PetriNet extends Observable implements IObserver {
             totalIMinus += backwardsIncidenceMatrix.get(place, transition);
 
             if (place.getCapacity() > 0 &&
-               (totalMarkings + totalIPlus - totalIMinus > place.getCapacity())) {
+                    (totalMarkings + totalIPlus - totalIMinus > place.getCapacity())) {
                 return false;
             }
 

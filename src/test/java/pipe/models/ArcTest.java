@@ -36,6 +36,13 @@ public class ArcTest {
     }
 
     @Test
+    public void constructorSetsConnectableInboundOutbound() {
+        arc = new NormalArc(mockSource, mockTarget, new HashMap<Token, String>());
+        verify(mockSource).addOutbound(arc);
+        verify(mockTarget).addInbound(arc);
+    }
+
+    @Test
     public void notifiesObserversAfterSettingSource()
     {
         arc.registerObserver(mockObserver);

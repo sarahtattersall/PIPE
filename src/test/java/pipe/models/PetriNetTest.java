@@ -244,6 +244,44 @@ public class PetriNetTest {
         assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
     }
 
+    @Test
+    public void correctlyIdentifiesNotEnabledTransitionDueToOnePlaceNotEnoughTokens() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNetTwoPlacesToTransition(tokenWeight);
+
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
+    }
+
+
+    @Test
+    public void correctlyIdentifiesNotEnabledTransitionDueToArcNeedingTwoDifferentTokens() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+
+        Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
+        container.petriNet.addToken(redToken);
+        container.arc.getTokenWeights().put(redToken, "1");
+
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
+    }
+
+    @Test
+    public void correctlyIdentifiesEnabledTransitionRequiringTwoTokens() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+
+        Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
+        container.petriNet.addToken(redToken);
+        container.arc.getTokenWeights().put(redToken, "1");
+        container.place.incrementTokenCount(redToken);
+
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transition));
+    }
+
+
     /**
      * Create simple petrinet with P1 -> T1 -> P2
      * Initialises a token in P1 and gives arcs A1 and A2 a weight of tokenWeight to a default token
@@ -262,6 +300,38 @@ public class PetriNetTest {
         Arc arc = new NormalArc(place, transition, arcWeight);
         Place place2 = new Place("p2", "p2");
         Arc arc2 = new NormalArc(transition, place2, arcWeight);
+
+        PetriNet petriNet = new PetriNet();
+        petriNet.addToken(token);
+        petriNet.addPlace(place);
+        petriNet.addPlace(place2);
+        petriNet.addTransition(transition);
+        petriNet.addArc(arc);
+        petriNet.addArc(arc2);
+
+        place.incrementTokenCount(token);
+
+        return new PetriNetContainer(token, place, place2, transition, arc, arc2, petriNet);
+    }
+
+    /**
+     * Create simple petrinet with P1 -> T1 and P2 -> T1
+     * Initialises a token in P1 and gives arcs A1 and A2 a weight of tokenWeight to a default token
+     *
+     * @param tokenWeight
+     * @return
+     */
+    public PetriNetContainer createSimplePetriNetTwoPlacesToTransition(int tokenWeight) {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Place place = new Place("p1", "p1");
+        Transition transition = new Transition("t1", "t1");
+
+        Map<Token, String> arcWeight = new HashMap<Token, String>();
+        arcWeight.put(token, Integer.toString(tokenWeight));
+
+        Arc arc = new NormalArc(place, transition, arcWeight);
+        Place place2 = new Place("p2", "p2");
+        Arc arc2 = new NormalArc(place2, transition, arcWeight);
 
         PetriNet petriNet = new PetriNet();
         petriNet.addToken(token);

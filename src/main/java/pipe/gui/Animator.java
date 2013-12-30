@@ -122,6 +122,7 @@ public class Animator
      */
     private void disableTransitions(PetriNet net)
     {
+        System.out.println("DISABLING TRANSITIONS");
         for (Transition transition : net.getTransitions()) {
             transition.disable();
         }
