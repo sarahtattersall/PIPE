@@ -168,23 +168,6 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         super.delete();
     }
 
-    public void select() {
-        if (_selectable && !_selected) {
-            _selected = true;
-
-            Iterator arcsFrom = model.outboundArcs().iterator();
-            while (arcsFrom.hasNext()) {
-                ((ArcView) arcsFrom.next()).select();
-            }
-
-            Iterator arcsTo = model.inboundArcs().iterator();
-            while (arcsTo.hasNext()) {
-                ((ArcView) arcsTo.next()).select();
-            }
-            repaint();
-        }
-    }
-
     public void addedToGui() {
         _deleted = false;
         _markedAsDeleted = false;

@@ -92,7 +92,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setColor(Constants.SELECTION_FILL_COLOUR);
         } else {
             g2.setColor(Constants.ELEMENT_FILL_COLOUR);
@@ -106,7 +106,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
             Paint pen = g2.getPaint();
             if (highlighted) {
                 g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
-            } else if (_selected && !_ignoreSelection) {
+            } else if (isSelected() && !_ignoreSelection) {
                 g2.setPaint(Constants.SELECTION_LINE_COLOUR);
             } else {
                 g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
@@ -121,7 +121,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
         if (highlighted) {
             g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
-        } else if (_selected && !_ignoreSelection) {
+        } else if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);

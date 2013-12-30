@@ -172,8 +172,8 @@ public class CopyPasteManager
                 model.addPetriNetObject(pn);
                 view.addNewPetriNetObject(pn);
                 view.updatePreferredSize();
-                pn.select();
                 //TODO: ADD THIS BACK IN
+//                pn.select();
 //	               undo.add(new AddPetriNetObject(pn, view, model));
             }
         }
@@ -192,9 +192,9 @@ public class CopyPasteManager
                 model.addPetriNetObject(arcView);
                 view.addNewPetriNetObject(arcView);
                 view.updatePreferredSize();
-                arcView.select();
                 arcView.updateArcPosition();
                 //TODO: ADD THIS BACK IN
+//                arcView.select();
 //	               undo.add(new AddPetriNetObject(arcView, view, model));
             }
         }

@@ -337,11 +337,6 @@ public class ArcPath implements Shape, Cloneable {
     }
 
 
-    public void selectPoint(int index) {
-        pathPoints.get(index).select();
-    }
-
-
     public int getNumPoints() {
         return pathPoints.size();
     }
@@ -371,16 +366,16 @@ public class ArcPath implements Shape, Cloneable {
     }
 
 
-    public void hidePoints() {
-        if (!pointLock) {
-            for (ArcPathPoint pathPoint : pathPoints) {
-                currentPoint = pathPoint;
-                if (!currentPoint.isSelected()) {
-                    currentPoint.setVisible(false);
-                }
-            }
-        }
-    }
+//    public void hidePoints() {
+//        if (!pointLock) {
+//            for (ArcPathPoint pathPoint : pathPoints) {
+//                currentPoint = pathPoint;
+//                if (!currentPoint.isSelected()) {
+//                    currentPoint.setVisible(false);
+//                }
+//            }
+//        }
+//    }
 
 
     //
@@ -753,10 +748,10 @@ public class ArcPath implements Shape, Cloneable {
         return wantedpoint;
     }
 
-
-    public boolean isPointSelected(int j) {
-        return pathPoints.get(j).isSelected();
-    }
+//
+//    public boolean isPointSelected(int j) {
+//        return pathPoints.get(j).isSelected();
+//    }
 
 }
 

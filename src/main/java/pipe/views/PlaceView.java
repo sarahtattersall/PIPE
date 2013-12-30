@@ -196,14 +196,14 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
         canvas2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             canvas2D.setColor(Constants.SELECTION_FILL_COLOUR);
         } else {
             canvas2D.setColor(Constants.ELEMENT_FILL_COLOUR);
         }
         canvas2D.fill(place);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             canvas2D.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             canvas2D.setPaint(Constants.ELEMENT_LINE_COLOUR);

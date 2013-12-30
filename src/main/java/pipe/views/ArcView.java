@@ -224,12 +224,13 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
                         zoomGrow);
         if (!ApplicationSettings.getApplicationView().getCurrentTab()
                 .isInAnimationMode()) {
-            if (myPath.proximityContains(point) || _selected) {
+            if (myPath.proximityContains(point) || isSelected()) {
                 // show also if Arc itself selected
                 myPath.showPoints();
             }
             else {
-                myPath.hidePoints();
+                //TODO: HIDEPOINTS
+//                myPath.hidePoints();
             }
         }
 
@@ -482,10 +483,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
             HistoryItem historyItem) { // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls
 
         petriNetController.getHistoryManager().addNewEdit(historyItem);
-    }
-
-    public Arc getModel() {
-        return model;
     }
 
     @Override

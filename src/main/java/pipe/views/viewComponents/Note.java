@@ -229,8 +229,4 @@ public abstract class Note extends PetriNetViewComponent implements Translatable
         _zoomPercentage = percent;
         updateBounds();
     }
-
-    boolean getSelected() {
-        return _selected;
-    }
 }

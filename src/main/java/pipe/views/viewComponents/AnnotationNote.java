@@ -182,7 +182,7 @@ public class AnnotationNote extends Note {
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 
         g2.transform(ZoomController.getTransform(_zoomPercentage));
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_FILL_COLOUR);
             g2.fill(noteRect);
             if (drawBorder) {
@@ -315,7 +315,7 @@ public class AnnotationNote extends Note {
         public void myPaintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setTransform(prova);
-            if (myNote.getSelected() && !PetriNetViewComponent._ignoreSelection) {
+            if (myNote.isSelected() && !PetriNetViewComponent._ignoreSelection) {
                 g2.translate(this.getLocation().x, this.getLocation().y);
                 shape = new Rectangle(0, 0, 2 * SIZE, 2 * SIZE);
                 g2.fill(shape);

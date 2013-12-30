@@ -18,7 +18,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
     static final int COMPONENT_DRAW_OFFSET = 5;
     protected String _id;
     public NameLabel _nameLabel;
-    protected boolean _selected;
     boolean _selectable;
     private boolean _draggable;
     protected boolean _copyPasteable;
@@ -38,7 +37,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     PetriNetViewComponent(String id, String name, double namePositionX, double namePositionY, T model, PetriNetController controller) {
         _id = id;
-        _selected = false;
         _selectable = true;
         _draggable = true;
         _copyPasteable = true;
@@ -72,29 +70,29 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         return _nameLabel;
     }
 
+    public T getModel() {
+        return model;
+    }
+
     void addLabelToContainer() {
         if (getParent() != null && _nameLabel.getParent() == null) {
             getParent().add(_nameLabel);
         }
     }
 
-    public boolean isSelected() {
-        return _selected;
-    }
-
-    public void select() {
-        if (_selectable && !_selected) {
-            _selected = true;
-            repaint();
-        }
-    }
-
-    public void deselect() {
-        if (_selected) {
-            _selected = false;
-            repaint();
-        }
-    }
+//    public void select() {
+//        if (_selectable && !_selected) {
+//            _selected = true;
+//            repaint();
+//        }
+//    }
+//
+//    public void deselect() {
+//        if (_selected) {
+//            _selected = false;
+//            repaint();
+//        }
+//    }
 
     public boolean isSelectable() {
         return _selectable;
@@ -152,12 +150,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     public void markAsDeleted() {
         _markedAsDeleted = true;
-    }
-
-    public void select(Rectangle selectionRectangle) {
-        if (selectionRectangle.intersects(this.getBounds())) {
-            select();
-        }
     }
 
     public void paintComponent(Graphics g) {
@@ -226,5 +218,12 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     public PetriNetController getPetriNetController() {
         return petriNetController;
+    }
+
+    /**
+     * @return true if model selected
+     */
+    public boolean isSelected() {
+        return petriNetController.isSelected(model);
     }
 }

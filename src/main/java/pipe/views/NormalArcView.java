@@ -108,7 +108,8 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
         for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
             copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
                     this.myPath.getPointType(i));
-            copy.myPath.selectPoint(i);
+            //TODO: REIMPLEMENT
+//            copy.myPath.selectPoint(i);
         }
 
         source.addOutbound(copy);
@@ -279,7 +280,7 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
 
         AffineTransform reset = g2.getTransform();
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
@@ -304,7 +305,7 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
         g2.transform(ZoomController.getTransform(_zoomPercentage));
         g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);

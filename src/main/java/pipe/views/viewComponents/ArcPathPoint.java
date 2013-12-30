@@ -168,7 +168,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
                 shape = new Rectangle2D.Double(0, 0, 2 * SIZE, 2 * SIZE);
             }
 
-            if (_selected) {
+            if (isSelected()) {
                 g2.setPaint(Constants.SELECTION_FILL_COLOUR);
                 g2.fill(shape);
                 g2.setPaint(Constants.SELECTION_LINE_COLOUR);
@@ -340,5 +340,14 @@ public class ArcPathPoint extends PetriNetViewComponent {
         point.setLocation(x, y);
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }
+
+
+
+    //TODO: WORK OUT HOW TO SELECT THESE?
+    @Override
+    public boolean isSelected() {
+        return false;
+    }
+
 
 }

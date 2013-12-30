@@ -102,7 +102,9 @@ public class StateViewer extends JLayeredPane implements Constants
 
 			ConditionPlaceHandler handler = new ConditionPlaceHandler(parent, placeView, _stateDataLayer);
 			placeView.addMouseListener(handler);
-			placeView.deselect();
+
+            //TODO: DESELECT
+//			placeView.deselect();
 					
 			super.add(placeView);
 			
@@ -117,7 +119,8 @@ public class StateViewer extends JLayeredPane implements Constants
 			
 		else
 		{
-			currentObj.deselect();
+            //TODO: DESELECT
+//			currentObj.deselect();
 			super.add(currentObj);
 			
 	

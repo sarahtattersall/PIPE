@@ -146,7 +146,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setColor(Constants.SELECTION_FILL_COLOUR);
         } else {
             g2.setColor(Constants.ELEMENT_FILL_COLOUR);
@@ -160,7 +160,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     Paint pen = g2.getPaint();
                     if (highlightView()) {
                         g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
-                    } else if (_selected && !_ignoreSelection) {
+                    } else if (isSelected() && !_ignoreSelection) {
                         g2.setPaint(Constants.SELECTION_LINE_COLOUR);
                     } else {
                         g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
@@ -175,7 +175,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         if (highlightView()) {
             g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
-        } else if (_selected && !_ignoreSelection) {
+        } else if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
@@ -739,7 +739,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         for (PetriNetViewComponent pn : pns) {
             if (pn.isSelected()) {
-                pn.deselect();
+                //TODO: HOW TO DESELECT?
+//                pn.deselect();
                 if (pn instanceof TransitionView) {
                     if (this != pn) {
                         currentOutputPlaceViews = new ArrayList<PlaceView>();

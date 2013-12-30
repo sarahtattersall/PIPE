@@ -51,7 +51,7 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
         g2.setColor(currentColor);
         g2.fill(place);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setPaint(SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(ELEMENT_LINE_COLOUR);

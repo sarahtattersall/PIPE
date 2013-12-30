@@ -84,10 +84,10 @@ public class SelectionManager
       }
       
       // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-      for (PetriNetViewComponent pn : pns) {
-         pn.select(selectionRectangle);
-      }
+//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//      for (PetriNetViewComponent pn : pns) {
+//         pn.select(selectionRectangle);
+//      }
 
        Rectangle unzoomedRectangle = calculateUnzoomedSelection();
        petriNetController.select(unzoomedRectangle);
@@ -133,13 +133,6 @@ public class SelectionManager
 
    
    public void clearSelection() {
-      // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-      for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelectable()) {
-            pn.deselect();
-         }
-      }
        petriNetController.deselectAll();
    }
 
@@ -156,7 +149,7 @@ public class SelectionManager
       // Get all the objects in the current window
       List<PetriNetViewComponent> pns = _view.getPNObjects();
       for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelected()){
+         if (petriNetController.isSelected(pn.getModel())){
             Point point = pn.getLocation();
             if (topleft == null) {
                topleft = point;
@@ -201,7 +194,7 @@ public class SelectionManager
       // Get all the objects in the current window
       ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
       for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelected()){
+         if (petriNetController.isSelected(pn.getModel())){
 //        	 if(pn instanceof ArcView)
 //        		 System.out.println("arc found");
         	 selection.add(pn);
@@ -294,40 +287,6 @@ public class SelectionManager
     */
    public void mouseMoved(MouseEvent e) {
        // Not needed
-   }   
-   
-   
-   public int getSelectionCount() {
-      Component netObj[] = _view.getComponents();
-      int selectionCount = 0;
-      // Get all the objects in the current window
-       for(Component aNetObj : netObj)
-       {
-           // Handle Arcs and Arc Points
-           if((aNetObj instanceof ArcView) && ((PetriNetViewComponent) aNetObj).isSelectable())
-           {
-               ArcView thisArcView = (ArcView) aNetObj;
-               ArcPath thisArcPath = thisArcView.getArcPath();
-               for(int j = 1; j < thisArcPath.getEndIndex(); j++)
-               {
-                   if(thisArcPath.isPointSelected(j))
-                   {
-                       selectionCount++;
-                   }
-               }
-           }
-
-           // Handle PlaceTransition Objects
-           if((aNetObj instanceof ConnectableView) &&
-                   ((PetriNetViewComponent) aNetObj).isSelectable())
-           {
-               if(((ConnectableView) aNetObj).isSelected())
-               {
-                   selectionCount++;
-               }
-           }
-       }
-      return selectionCount;
    }
 
 }

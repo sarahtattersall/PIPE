@@ -146,7 +146,7 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
         g2.translate(getComponentDrawOffset() + zoomGrow - myPath.getBounds().getX(),
                 getComponentDrawOffset() + zoomGrow - myPath.getBounds().getY());
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
@@ -166,7 +166,7 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
         g2.setStroke(new BasicStroke(0.8f));
         g2.fillOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
 
-        if (_selected && !_ignoreSelection) {
+        if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
