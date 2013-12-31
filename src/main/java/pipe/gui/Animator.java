@@ -10,11 +10,10 @@ import pipe.views.PipeApplicationView;
 import pipe.views.TransitionView;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 
 /**
@@ -42,13 +41,12 @@ public class Animator
 
     private Timer timer;
     private int numberSequences;
-    private static ArrayList firedTransitions;
-    private static int count = 0;
+    private final List<Transition> firedTransitions = new ArrayList<Transition>();
+    private int count = 0;
 
 
     public Animator()
     {
-        firedTransitions = new ArrayList();
 
         timer = new Timer(0, new ActionListener()
         {
@@ -79,17 +77,17 @@ public class Animator
     public void highlightEnabledTransitions()
     {
         /* rewritten by wjk 03/10/2007 */
-        PetriNetView current = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+        PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
 
         //current.setEnabledTransitions();
 
-        Iterator transitionIterator = current.returnTransitions();
+        Iterator transitionIterator = petriNetView.returnTransitions();
         while(transitionIterator.hasNext())
         {
             TransitionView tempTransitionView = (TransitionView) transitionIterator.next();
             if(tempTransitionView.isEnabled(true))
             {
-                current.notifyObservers();
+                petriNetView.notifyObservers();
                 tempTransitionView.repaint();
             }
         }
@@ -224,12 +222,12 @@ public class Animator
     public void stepBack() {
         if(count > 0)
         {
-            TransitionView lastTransitionView = (TransitionView) firedTransitions.get(--count);
+            Transition previousTransition = firedTransitions.get(--count);
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            applicationView.getCurrentPetriNetView().fireTransitionBackwards(lastTransitionView);
-            applicationView.getCurrentPetriNetView().setEnabledTransitions();
-            unhighlightDisabledTransitions();
-            highlightEnabledTransitions();
+            applicationView.getCurrentPetriNetView().getModel().fireTransitionBackwards(previousTransition);
+//            applicationView.getCurrentPetriNetView().setEnabledTransitions();
+//            unhighlightDisabledTransitions();
+//            highlightEnabledTransitions();
         }
     }
 
@@ -240,12 +238,12 @@ public class Animator
     public void stepForward() {
         if(count < firedTransitions.size())
         {
-            TransitionView nextTransitionView = (TransitionView) firedTransitions.get(count++);
+            Transition nextTransition = firedTransitions.get(count++);
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            applicationView.getCurrentPetriNetView().fireTransition(nextTransitionView);
-            ApplicationSettings.getApplicationView().getCurrentPetriNetView().setEnabledTransitions();
-            unhighlightDisabledTransitions();
-            highlightEnabledTransitions();
+            applicationView.getCurrentPetriNetView().getModel().fireTransition(nextTransition);
+//            ApplicationSettings.getApplicationView().getCurrentPetriNetView().setEnabledTransitions();
+//            unhighlightDisabledTransitions();
+//            highlightEnabledTransitions();
         }
     }
 

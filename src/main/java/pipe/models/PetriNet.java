@@ -428,25 +428,58 @@ public class PetriNet extends Observable implements IObserver {
                 Place place = (Place) arc.getSource();
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
-                    int oldCount = place.getTokenCount(token);
-                    int newCount = oldCount - matrix.get(place, transition);
+                    int currentCount = place.getTokenCount(token);
+                    int newCount = currentCount - matrix.get(place, transition);
                     place.setTokenCount(token, newCount);
                 }
             }
 
             //Increment new places
-            System.out.println("TRANSITION " + transition.getName() + " OUTBOUDN ARCS: " + transition.outboundArcs().size());
             for (Arc arc : transition.outboundArcs()) {
                 Place place = (Place) arc.getTarget();
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
-                    int oldCount = place.getTokenCount(token);
-                    int newCount = oldCount + matrix.get(place, transition);
+                    int currentCount = place.getTokenCount(token);
+                    int newCount = currentCount + matrix.get(place, transition);
                     place.setTokenCount(token, newCount);
                 }
             }
         }
         transition.disable();
+    }
+
+
+    /**
+     * Removes tokens from places out of the transition
+     * Adds tokens to the places into the transition according to the arc weight
+     * Enables fired transition
+     * @param transition
+     */
+    //TODO: NOT SURE IF BETTER TO JUST HAVE UNDO/REDO IN ANIMATION HISTORY? HAVE TO STORE ENTIRE PETRI
+    //      NET STATES SO MAYBE NOT?
+    public void fireTransitionBackwards(Transition transition) {
+        //Increment previous places
+        for (Arc arc : transition.inboundArcs()) {
+            Place place = (Place) arc.getSource();
+            for (Token token : arc.getTokenWeights().keySet()) {
+                IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
+                int currentCount = place.getTokenCount(token);
+                int newCount = currentCount + matrix.get(place, transition);
+                place.setTokenCount(token, newCount);
+            }
+        }
+
+        //Decrement new places
+        for (Arc arc : transition.outboundArcs()) {
+            Place place = (Place) arc.getTarget();
+            for (Token token : arc.getTokenWeights().keySet()) {
+                IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
+                int oldCount = place.getTokenCount(token);
+                int newCount = oldCount - matrix.get(place, transition);
+                place.setTokenCount(token, newCount);
+            }
+        }
+        transition.enable();
     }
 
 }

@@ -19,9 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.endsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class PetriNetTest {
     PetriNet net;
@@ -68,6 +66,9 @@ public class PetriNetTest {
     public void removingArcNotifiesObservers() {
         net.registerObserver(mockObserver);
         Arc mockArc = mock(Arc.class);
+        Connectable connectable = mock(Connectable.class);
+        when(mockArc.getTarget()).thenReturn(connectable);
+        when(mockArc.getSource()).thenReturn(connectable);
         net.addArc(mockArc);
         net.removeArc(mockArc);
 
@@ -312,7 +313,41 @@ public class PetriNetTest {
 
         assertEquals(0, container.place.getTokenCount(container.token));
         assertEquals(1, container.place2.getTokenCount(container.token));
+    }
 
+
+    @Test
+    public void firingTransitionDisablesTransition() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+
+        container.petriNet.fireTransition(container.transition);
+
+        assertFalse("Transition was not disabled", container.transition.isEnabled());
+    }
+
+    @Test
+    public void firingTransitionBackwardMovesTokensBack() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+        container.place.setTokenCount(container.token, 0);
+        container.place2.setTokenCount(container.token, 1);
+
+        container.petriNet.fireTransitionBackwards(container.transition);
+
+        assertEquals(0, container.place2.getTokenCount(container.token));
+        assertEquals(1, container.place.getTokenCount(container.token));
+    }
+
+    @Test
+    public void firingTransitionBackwardEnablesTransition() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+        container.place.setTokenCount(container.token, 0);
+        container.place2.setTokenCount(container.token, 1);
+
+        container.petriNet.fireTransitionBackwards(container.transition);
+        assertTrue("Transition was not enabled", container.transition.isEnabled());
     }
 
 

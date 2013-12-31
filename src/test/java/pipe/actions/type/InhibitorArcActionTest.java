@@ -34,6 +34,7 @@ public class InhibitorArcActionTest {
 
 
         activeToken = mock(Token.class);
+        mockApplicationView = mock(PipeApplicationView.class);
         when(mockApplicationView.getSelectedTokenName()).thenReturn("Default");
         when(mockController.getToken("Default")).thenReturn(activeToken);
         ApplicationSettings.register(mockApplicationView);
@@ -60,7 +61,7 @@ public class InhibitorArcActionTest {
     }
 
     @Test
-    public void finishesCreatignArc() {
+    public void finishesCreatingArc() {
         when(mockController.isCurrentlyCreatingArc()).thenReturn(true);
 
         Transition transition = mock(Transition.class);
