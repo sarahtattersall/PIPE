@@ -33,11 +33,12 @@ public class AnimationHandler
 	private final LinkedList<GroupTransitionView> _lastGroupTransitionView = new LinkedList<GroupTransitionView>();
    
    public void mouseClicked(MouseEvent e){
+
       if (e.getComponent() instanceof TransitionView) {
          TransitionView transitionView = (TransitionView)e.getComponent();
          
          if (SwingUtilities.isLeftMouseButton(e)
-                 && (transitionView.isEnabled(true))) {
+                 && (transitionView.getModel().isEnabled())) {
              ApplicationSettings.getApplicationView().getAnimationHistory().clearStepsForward();
 
              PipeApplicationController controller = ApplicationSettings.getApplicationController();

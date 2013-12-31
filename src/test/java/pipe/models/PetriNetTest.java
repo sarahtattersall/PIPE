@@ -75,6 +75,28 @@ public class PetriNetTest {
     }
 
     @Test
+    public void removesArcFromSource() throws Exception {
+        Place place = mock(Place.class);
+        Transition transition = mock(Transition.class);
+        Map<Token, String> weights = new HashMap<Token, String>();
+        NormalArc arc = new NormalArc(place, transition, weights);
+        net.addArc(arc);
+        net.removeArc(arc);
+        verify(place).removeOutboundArc(arc);
+    }
+
+    @Test
+    public void removesArcFromTarget() throws Exception {
+        Place place = mock(Place.class);
+        Transition transition = mock(Transition.class);
+        Map<Token, String> weights = new HashMap<Token, String>();
+        NormalArc arc = new NormalArc(place, transition, weights);
+        net.addArc(arc);
+        net.removeArc(arc);
+        verify(transition).removeInboundArc(arc);
+    }
+
+    @Test
     public void addingTransitionNotifiesObservers() {
         net.registerObserver(mockObserver);
         Transition transition = new Transition("", "");

@@ -30,7 +30,6 @@ public class PetriNetComponentRemovalVisitorTest {
         NormalArc arc = new NormalArc(place, transition, weights);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
-
     }
 
     @Test

@@ -133,7 +133,18 @@ public class PetriNet extends Observable implements IObserver {
 
     public void removeArc(Arc arc) {
         this.arcs.remove(arc);
+        removeArcFromSourceAndTarget(arc);
         notifyObservers();
+    }
+
+    /**
+     * Removes the arc from the source and target inbound/outbound Collections
+     */
+    private void removeArcFromSourceAndTarget(Arc arc) {
+        Connectable source = arc.getSource();
+        Connectable target = arc.getTarget();
+        source.removeOutboundArc(arc);
+        target.removeInboundArc(arc);
     }
 
     public void remove(PetriNetComponent component) {
@@ -424,6 +435,7 @@ public class PetriNet extends Observable implements IObserver {
             }
 
             //Increment new places
+            System.out.println("TRANSITION " + transition.getName() + " OUTBOUDN ARCS: " + transition.outboundArcs().size());
             for (Arc arc : transition.outboundArcs()) {
                 Place place = (Place) arc.getTarget();
                 for (Token token : arc.getTokenWeights().keySet()) {
