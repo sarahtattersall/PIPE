@@ -2,18 +2,14 @@ package pipe.models;
 
 import parser.ExprEvaluator;
 import pipe.common.dataLayer.StateGroup;
-import pipe.gui.ApplicationSettings;
 import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentAddVisitor;
 import pipe.models.visitor.PetriNetComponentRemovalVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.utilities.math.IncidenceMatrix;
-import pipe.utilities.math.RandomNumberGenerator;
-import pipe.views.*;
 import pipe.views.viewComponents.RateParameter;
 
-import javax.swing.*;
 import java.util.*;
 
 public class PetriNet extends Observable implements IObserver {
@@ -300,21 +296,14 @@ public class PetriNet extends Observable implements IObserver {
      * @return all transitions that can be enabled
      * @throws Exception
      */
-    public Collection<Transition> getEnabledTransitions(boolean backwards) {
+    public Set<Transition> getEnabledTransitions(boolean backwards) {
         boolean hasTimed = false;
         boolean hasImmediate = false;
         int maxPriority = 0;
-        final LinkedList<Transition> enabledTransitions = new LinkedList<Transition>();
+        final Set<Transition> enabledTransitions = new HashSet<Transition>();
 
         for (Transition transition : getTransitions()) {
-            boolean enabledForAllPlaces = true;
-            for (Arc arc : transition.inboundArcs()) {
-                //TODO: Avoid the cast
-                Place place = (Place) arc.getSource();
-                enabledForAllPlaces &= allPlaceTokensEnabled(backwards, transition, arc, place);
-            }
-
-            if (enabledForAllPlaces) {
+            if (isEnabled(transition, backwards)) {
                 enabledTransitions.add(transition);
 
                 // we look for the highest priority of the enabled transitions
@@ -347,6 +336,21 @@ public class PetriNet extends Observable implements IObserver {
         }
 
         return enabledTransitions;
+    }
+
+    /**
+     *
+     * @param transition
+     * @return true if transition is enabled
+     */
+    private boolean isEnabled(Transition transition, boolean backwards) {
+        boolean enabledForAllPlaces = true;
+        for (Arc arc : transition.inboundArcs()) {
+            //TODO: Avoid the cast
+            Place place = (Place) arc.getSource();
+            enabledForAllPlaces &= allPlaceTokensEnabled(backwards, transition, arc, place);
+        }
+        return enabledForAllPlaces;
     }
 
     /**
@@ -421,8 +425,7 @@ public class PetriNet extends Observable implements IObserver {
      * @param transition
      */
     public void fireTransition(Transition transition) {
-        Collection<Transition> enabledTransitions = getEnabledTransitions(false);
-        if (enabledTransitions.contains(transition)) {
+        if (transition.isEnabled()) {
             //Decrement previous places
             for (Arc arc : transition.inboundArcs()) {
                 Place place = (Place) arc.getSource();
@@ -445,7 +448,21 @@ public class PetriNet extends Observable implements IObserver {
                 }
             }
         }
-        transition.disable();
+        markEnabledTransitions();
+    }
+
+    /**
+     * Calculates enabled transitions and enables them.
+     */
+    public void markEnabledTransitions() {
+        Set<Transition> enabledTransitions = getEnabledTransitions(false);
+        for (Transition transition : transitions) {
+            if (enabledTransitions.contains(transition)) {
+                transition.enable();
+            } else {
+                transition.disable();
+            }
+        }
     }
 
 
@@ -479,7 +496,7 @@ public class PetriNet extends Observable implements IObserver {
                 place.setTokenCount(token, newCount);
             }
         }
-        transition.enable();
+        markEnabledTransitions();
     }
 
 }

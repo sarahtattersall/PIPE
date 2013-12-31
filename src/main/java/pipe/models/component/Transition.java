@@ -37,7 +37,7 @@ public class Transition extends Connectable implements Serializable
     public static final int TRANSITION_HEIGHT = Constants.PLACE_TRANSITION_HEIGHT;
     public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
     private static final double ROOT_THREE_OVER_TWO = 0.5 * Math.sqrt(3);
-    private boolean enabled;
+    private boolean enabled = false;
 
     public Transition(String id, String name)
     {

@@ -18,7 +18,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.*;
 
 public class PetriNetTest {
@@ -305,10 +304,26 @@ public class PetriNetTest {
     }
 
     @Test
+    public void correctlyMarksEnabledTransitions() {
+        PetriNetContainer container = createSimplePetriNet(1);
+        container.petriNet.markEnabledTransitions();
+        assertTrue("Did not enable transition", container.transition.isEnabled());
+    }
+
+    @Test
+    public void correctlyDoesNotMarkNotEnabledTransitions() {
+        PetriNetContainer container = createSimplePetriNet(2);
+        container.petriNet.markEnabledTransitions();
+        assertFalse("Enabled transition when it cannot fire", container.transition.isEnabled());
+    }
+
+    @Test
     public void firingTransitionMovesToken() {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
+
+        container.petriNet.markEnabledTransitions();
         container.petriNet.fireTransition(container.transition);
 
         assertEquals(0, container.place.getTokenCount(container.token));
@@ -321,9 +336,39 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
+        container.petriNet.markEnabledTransitions();
         container.petriNet.fireTransition(container.transition);
 
         assertFalse("Transition was not disabled", container.transition.isEnabled());
+    }
+
+    @Test
+    public void firingTransitionDoesNotDisableTransition() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+        container.place.setTokenCount(container.token, 2);
+
+        container.petriNet.fireTransition(container.transition);
+
+        assertTrue("Transition was disabled when it could have fired again", container.transition.isEnabled());
+    }
+
+
+    @Test
+    public void firingTransitionEnablesNextTransition() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+        Transition transition = new Transition("t2", "t2");
+        Arc arc3 = new NormalArc(container.place2, transition, container.arc.getTokenWeights());
+        container.petriNet.addArc(arc3);
+        container.petriNet.addTransition(transition);
+
+        container.place.setTokenCount(container.token, 1);
+
+        container.petriNet.markEnabledTransitions();
+        container.petriNet.fireTransition(container.transition);
+
+        assertTrue("Next transition was enabled", transition.isEnabled());
     }
 
     @Test
