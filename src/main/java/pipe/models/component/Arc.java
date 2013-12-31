@@ -29,6 +29,7 @@ public abstract class Arc extends AbstractPetriNetComponent {
         this.source = source;
         this.target = target;
         this.tokenWeights = tokenWeights;
+        this.id = source.getId() + " TO " + target.getId();
 
 
         source.addOutbound(this);

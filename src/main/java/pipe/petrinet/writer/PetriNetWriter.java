@@ -4,6 +4,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pipe.models.PetriNet;
+import pipe.models.component.Arc;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
@@ -63,6 +64,12 @@ public class PetriNetWriter {
         for (Transition transition : net.getTransitions()) {
             Element element = creator.createElement(transition, document);
             netElement.appendChild(element);
+        }
+
+        for (Arc arc : net.getArcs()) {
+            Element element = creator.createElement(arc, document);
+            netElement.appendChild(element);
+
         }
         document.normalize();
     }

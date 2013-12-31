@@ -30,7 +30,9 @@ public class ArcTest {
     public void setUp()
     {
         mockSource = mock(Connectable.class);
+        when(mockSource.getId()).thenReturn("source");
         mockTarget = mock(Connectable.class);
+        when(mockTarget.getId()).thenReturn("target");
         mockObserver = mock(IObserver.class);
         arc = new NormalArc(mockSource, mockTarget, new HashMap<Token, String>());
     }
@@ -172,5 +174,10 @@ public class ArcTest {
         Token defaultToken = TokenUtils.createDefaultToken();
         arc.setWeight(defaultToken, "5");
         verify(mockObserver).update();
+    }
+
+    @Test
+    public void createsId() {
+        assertEquals("source TO target", arc.getId());
     }
 }
