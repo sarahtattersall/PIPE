@@ -253,6 +253,19 @@ public class PetriNetTest {
     }
 
     @Test
+    public void correctlyIdentifiesEnabledWithNoSecondColourToken() {
+        int tokenWeight = 1;
+        PetriNetContainer container = createSimplePetriNet(tokenWeight);
+
+        Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
+        container.petriNet.addToken(redToken);
+        container.arcs.get(0).setWeight(redToken, "0");
+
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transitions.get(0)));
+    }
+
+    @Test
     public void correctlyIdentifiesNotEnabledTransitionDueToEmptyPlace() {
         int tokenWeight = 4;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
