@@ -6,7 +6,7 @@ import pipe.models.visitor.connectable.ConnectableVisitor;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
-public class ConditionalPlace extends Connectable implements Serializable
+public class ConditionalPlace extends Connectable<Transition, ConditionalPlace> implements Serializable
 {
     private static int DIAMETER = 30;
 

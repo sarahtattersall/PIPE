@@ -4,13 +4,13 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Arc extends AbstractPetriNetComponent {
+public abstract class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
 
     @Pnml("source")
-    private Connectable source;
+    private S source;
 
     @Pnml("target")
-    private Connectable target;
+    private T target;
 
     @Pnml("id")
     private String id;
@@ -24,7 +24,7 @@ public abstract class Arc extends AbstractPetriNetComponent {
     @Pnml("inscription")
     private Map<Token, String> tokenWeights = new HashMap<Token, String>();
 
-    public Arc(Connectable source, Connectable target,
+    public Arc(S source, T target,
                Map<Token, String> tokenWeights) {
         this.source = source;
         this.target = target;
@@ -40,22 +40,22 @@ public abstract class Arc extends AbstractPetriNetComponent {
         return tokenWeights;
     }
 
-    public Connectable getSource() {
+    public S getSource() {
         return source;
     }
 
-    public void setSource(Connectable source) {
+    public void setSource(S source) {
         this.source.removeOutboundArc(this);
         this.source = source;
         source.addOutbound(this);
         notifyObservers();
     }
 
-    public Connectable getTarget() {
+    public T getTarget() {
         return target;
     }
 
-    public void setTarget(Connectable target) {
+    public void setTarget(T target) {
         this.target.removeInboundArc(this);
         this.target = target;
         target.addInbound(this);
@@ -126,7 +126,7 @@ public abstract class Arc extends AbstractPetriNetComponent {
         }
     }
 
-    public void setWeight(final Token defaultToken, final String weight) {
+    public void setWeight(Token defaultToken, String weight) {
         tokenWeights.put(defaultToken, weight);
         notifyObservers();
     }

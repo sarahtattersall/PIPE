@@ -210,7 +210,7 @@ public class PetriNetControllerTest {
     public void creatingArcAddsItToPetriNet()
     {
         PetriNet net = setupPetriNet();
-        Connectable source = createFakePlace();
+        Place source = createFakePlace();
         Token token = mock(Token.class);
         controller.startCreatingNormalArc(source, token);
         assertEquals(1, net.getArcs().size());
@@ -224,8 +224,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void finishingArcReturnsFalseIfNotValidEndPoint() {
-        PetriNet net = setupPetriNet();
-        Connectable source = createFakePlace();
+        Place source = createFakePlace();
         Token token = mock(Token.class);
         controller.startCreatingNormalArc(source, token);
 
@@ -236,7 +235,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void finishingArcReturnsTrueIfNotValidEndPoint() {
-        Connectable source = createFakePlace();
+        Place source = createFakePlace();
         Token token = mock(Token.class);
         controller.startCreatingNormalArc(source, token);
 
@@ -248,7 +247,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void finishingArcSetsCreatingToFalse() {
-        Connectable source = createFakePlace();
+        Place source = createFakePlace();
         Token token = mock(Token.class);
         controller.startCreatingNormalArc(source, token);
 

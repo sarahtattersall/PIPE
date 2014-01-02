@@ -18,6 +18,7 @@ import java.awt.*;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -118,6 +119,15 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsDefaultTokenIfNoneSpecified()
+    {
+        Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
+        PetriNet net = reader.createFromFile(noTokenDoc);
+        assertEquals(1, net.getTokens().size());
+        assertNotNull(net.getToken("Default"));
+    }
+
+    @Test
+    public void createsDefaultTokenIfNoneSpecifiedAndAddsToPetrinet()
     {
         Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
         reader.createFromFile(noTokenDoc);

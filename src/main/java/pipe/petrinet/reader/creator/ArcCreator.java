@@ -62,24 +62,23 @@ public class ArcCreator implements ComponentCreator<Arc> {
         if (isInhibitorArc(element)) {
             Place source = places.get(sourceId);
             Transition target = transitions.get(targetId);
-            arc = new InhibitorArc(source, target, tokenWeights);
+            arc = new InhibitorArc<Transition>(source, target, tokenWeights);
             source.addOutbound(arc);
             target.addInbound(arc);
         } else {
             if (places.containsKey(sourceId)) {
                 Place source = places.get(sourceId);
                 Transition target = transitions.get(targetId);
-                arc = new NormalArc(source, target, tokenWeights);
+                arc = new NormalArc<Place, Transition>(source, target, tokenWeights);
                 source.addOutbound(arc);
                 target.addInbound(arc);
             } else {
-                Place target = places.get(sourceId);
-                Transition source = transitions.get(targetId);
-                arc = new NormalArc(source, target, tokenWeights);
+                Place target = places.get(targetId);
+                Transition source = transitions.get(sourceId);
+                arc = new NormalArc<Transition, Place>(source, target, tokenWeights);
                 source.addOutbound(arc);
                 target.addInbound(arc);
             }
-
         }
         arc.setId(id);
         arc.setTagged(tagged);

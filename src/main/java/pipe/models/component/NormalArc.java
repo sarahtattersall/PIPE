@@ -6,10 +6,10 @@ import java.io.Serializable;
 import java.util.Map;
 
 @Pnml("arc")
-public class NormalArc extends Arc  implements Serializable
+public class NormalArc<S extends Connectable, T extends Connectable> extends Arc<S, T>  implements Serializable
 {
 
-    public NormalArc(Connectable source, Connectable target, Map<Token, String> weight)
+    public NormalArc(S source, T target, Map<Token, String> weight)
     {
         super(source, target, weight);
     }

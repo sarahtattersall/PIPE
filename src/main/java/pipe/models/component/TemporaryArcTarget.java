@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
  * This is a temporary class, if an arc does not yet have a target
  * this class can be used in place. It therefore is not a permenant end point
  */
-public class TemporaryArcTarget extends Connectable {
+public class TemporaryArcTarget extends Connectable<TemporaryArcTarget, TemporaryArcTarget> {
 
     public TemporaryArcTarget(double x, double y) {
         super("temp", "temp");

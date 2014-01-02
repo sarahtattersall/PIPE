@@ -204,9 +204,6 @@ public class PetriNet extends Observable implements IObserver {
 
                     String expression = arc.getWeightForToken(token);
                     Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    if (weight == 0) {  // Ie at least one token to pass
-                        weight = 1;
-                    }
                     int totalWeight = transition.isInfiniteServer() ? weight * enablingDegree : weight;
                     backwardsIncidenceMatrix.put(place, transition, totalWeight);
                 }
@@ -239,9 +236,6 @@ public class PetriNet extends Observable implements IObserver {
                     ExprEvaluator paser = new ExprEvaluator(this);
 
                     Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    if (weight == 0) {  // Ie at least one token to pass
-                        weight = 1;
-                    }
                     forwardsIncidenceMatrix.put(place, transition, weight);
                 }
             }
@@ -250,9 +244,8 @@ public class PetriNet extends Observable implements IObserver {
     }
 
     /**
-     * @param backwards
+     * @param backwards firing backwards or forwards
      * @return all transitions that can be enabled
-     * @throws Exception
      */
     public Set<Transition> getEnabledTransitions(boolean backwards) {
         boolean hasTimed = false;
@@ -303,14 +296,13 @@ public class PetriNet extends Observable implements IObserver {
      */
     private boolean isEnabled(Transition transition, boolean backwards) {
         boolean enabledForArcs = true;
-        for (Arc arc : transition.inboundArcs()) {
-            //TODO: Avoid the cast
-            Place place = (Place) arc.getSource();
+        for (Arc<Place, Transition> arc : transition.inboundArcs()) {
+            Place place = arc.getSource();
             enabledForArcs &= allPlaceTokensEnabled(backwards, transition, arc, place);
         }
 
-        for (Arc arc : transition.outboundArcs()) {
-            Place place = (Place) arc.getTarget();
+        for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+            Place place = arc.getTarget();
             enabledForArcs &= allPlaceCapacitiesOk(backwards, transition, place);
         }
         return enabledForArcs;
@@ -325,7 +317,7 @@ public class PetriNet extends Observable implements IObserver {
      */
     private boolean allPlaceTokensEnabled(boolean backwards,
                                           Transition transition,
-                                          Arc arc,
+                                          Arc<Place, Transition> arc,
                                           Place place) {
         for (Token token : arc.getTokenWeights().keySet()) {
             int tokenCount = place.getTokenCount(token);
@@ -404,8 +396,8 @@ public class PetriNet extends Observable implements IObserver {
     public void fireTransition(Transition transition) {
         if (transition.isEnabled()) {
             //Decrement previous places
-            for (Arc arc : transition.inboundArcs()) {
-                Place place = (Place) arc.getSource();
+            for (Arc<Place, Transition> arc : transition.inboundArcs()) {
+                Place place = arc.getSource();
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
                     int currentCount = place.getTokenCount(token);
@@ -415,8 +407,8 @@ public class PetriNet extends Observable implements IObserver {
             }
 
             //Increment new places
-            for (Arc arc : transition.outboundArcs()) {
-                Place place = (Place) arc.getTarget();
+            for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+                Place place = arc.getTarget();
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
                     int currentCount = place.getTokenCount(token);
@@ -453,8 +445,8 @@ public class PetriNet extends Observable implements IObserver {
     //      NET STATES SO MAYBE NOT?
     public void fireTransitionBackwards(Transition transition) {
         //Increment previous places
-        for (Arc arc : transition.inboundArcs()) {
-            Place place = (Place) arc.getSource();
+        for (Arc<Place, Transition> arc : transition.inboundArcs()) {
+            Place place = arc.getSource();
             for (Token token : arc.getTokenWeights().keySet()) {
                 IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
                 int currentCount = place.getTokenCount(token);
@@ -464,8 +456,8 @@ public class PetriNet extends Observable implements IObserver {
         }
 
         //Decrement new places
-        for (Arc arc : transition.outboundArcs()) {
-            Place place = (Place) arc.getTarget();
+        for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+            Place place = arc.getTarget();
             for (Token token : arc.getTokenWeights().keySet()) {
                 IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
                 int oldCount = place.getTokenCount(token);

@@ -11,10 +11,8 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Map;
 
-/*
- * @author yufei wang(minor changes)
- */
-public class Transition extends Connectable implements Serializable
+
+public class Transition extends Connectable<Place, Transition> implements Serializable
 {
 
     @Pnml("priority")

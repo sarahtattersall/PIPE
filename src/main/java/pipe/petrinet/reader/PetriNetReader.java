@@ -93,7 +93,7 @@ public class PetriNetReader {
     {
         if (tokens.isEmpty())
         {
-            createDefaultToken();
+            createDefaultToken(net);
         }
         creators.placeCreator.setTokens(tokens);
         Place place = creators.placeCreator.create(element);
@@ -101,9 +101,10 @@ public class PetriNetReader {
         net.addPlace(place);
     }
 
-    private void createDefaultToken() {
+    private void createDefaultToken(PetriNet net) {
         Token defaultToken = new Token("Default", true, 0, Color.BLACK);
         tokens.put(defaultToken.getId(), defaultToken);
+        net.addToken(defaultToken);
     }
 
     @ElementParser("transition")

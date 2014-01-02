@@ -5,14 +5,14 @@ import pipe.models.visitor.connectable.ConnectableVisitor;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashSet;
-
-/*
- * 
- *  @author yufei wang(modification)
+/**
+ *
+ * @param <S> class that T connects to type
+ * @param <T> current class type
  */
-public abstract class Connectable extends AbstractPetriNetComponent {
-    protected final Collection<Arc> inboundArcs = new HashSet<Arc>();
-    protected final Collection<Arc> outboundArcs = new HashSet<Arc>();
+public abstract class Connectable<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
+    protected final Collection<Arc<S, T>> inboundArcs = new HashSet<Arc<S, T>>();
+    protected final Collection<Arc<T, S>> outboundArcs = new HashSet<Arc<T, S>>();
 
     /**
      * Connectable position x
@@ -73,19 +73,19 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         notifyObservers();
     }
 
-    public Collection<Arc> outboundArcs() {
+    public Collection<Arc<T, S>> outboundArcs() {
         return outboundArcs;
     }
 
-    public Collection<Arc> inboundArcs() {
+    public Collection<Arc<S, T>> inboundArcs() {
         return inboundArcs;
     }
 
-    public void addInbound(Arc arc) {
+    public void addInbound(Arc<S, T> arc) {
         inboundArcs.add(arc);
     }
 
-    public void addOutbound(Arc arc) {
+    public void addOutbound(Arc<T, S> arc) {
         outboundArcs.add(arc);
     }
 

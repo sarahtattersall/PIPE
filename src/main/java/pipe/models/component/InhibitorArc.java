@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 @Pnml("arc")
-public class InhibitorArc extends Arc implements Serializable
+public class InhibitorArc<T extends Connectable> extends Arc<Place, T> implements Serializable
 {
-    public InhibitorArc(Place source, Connectable target, Map<Token, String> weight)
+    public InhibitorArc(Place source, T target, Map<Token, String> weight)
     {
         super(source, target, weight);
     }

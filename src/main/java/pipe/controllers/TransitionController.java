@@ -4,6 +4,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import pipe.controllers.interfaces.IController;
 import pipe.historyActions.*;
 import pipe.models.component.Arc;
+import pipe.models.component.Place;
 import pipe.models.component.Transition;
 import pipe.views.TransitionView;
 import pipe.views.viewComponents.RateParameter;
@@ -14,8 +15,8 @@ import java.util.Collection;
 public class TransitionController extends AbstractPetriNetComponentController<Transition>
 {
 
-    protected TransitionController(final Transition component,
-                                   final HistoryManager historyManager) {
+    protected TransitionController(Transition component,
+                                   HistoryManager historyManager) {
         super(component, historyManager);
     }
 
@@ -43,7 +44,7 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
         return component.getPriority();
     }
 
-    public Collection<Arc> inboundArcs() {
+    public Collection<Arc<Place, Transition>> inboundArcs() {
         return component.inboundArcs();
     }
 

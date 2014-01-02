@@ -44,7 +44,18 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param source source model
      */
-    public void startCreatingNormalArc(Connectable source, Token currentToken) {
+    public void startCreatingNormalArc(Place source, Token currentToken) {
+        currentlyCreatingArc = true;
+        this.arc = buildEmptyArc(source, currentToken);
+        addArcToCurrentPetriNet(arc);
+    }
+
+    /**
+     * Starts creating an arc from the source.
+     *
+     * @param source source model
+     */
+    public void startCreatingNormalArc(Transition source, Token currentToken) {
         currentlyCreatingArc = true;
         this.arc = buildEmptyArc(source, currentToken);
         addArcToCurrentPetriNet(arc);
@@ -70,7 +81,7 @@ public class PetriNetController implements IController, Serializable {
     private InhibitorArc buildEmptyInhibitorArc(Place source, Token token) {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
-        return new InhibitorArc(source,
+        return new InhibitorArc<TemporaryArcTarget>(source,
                 new TemporaryArcTarget(source.getX(),
                         source.getY()),
                 tokens);
@@ -80,10 +91,19 @@ public class PetriNetController implements IController, Serializable {
         petriNet.addArc(arc);
     }
 
-    private NormalArc buildEmptyArc(Connectable source, Token token) {
+    private NormalArc buildEmptyArc(Place source, Token token) {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
-        return new NormalArc(source,
+        return new NormalArc<Place, TemporaryArcTarget>(source,
+                new TemporaryArcTarget(source.getX(),
+                        source.getY()),
+                tokens);
+    }
+
+    private NormalArc buildEmptyArc(Transition source, Token token) {
+        Map<Token, String> tokens = new HashMap<Token, String>();
+        tokens.put(token, "1");
+        return new NormalArc<Transition, TemporaryArcTarget>(source,
                              new TemporaryArcTarget(source.getX(),
                                                     source.getY()),
                              tokens);
