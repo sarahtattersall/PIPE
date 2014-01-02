@@ -344,13 +344,18 @@ public class PetriNet extends Observable implements IObserver {
      * @return true if transition is enabled
      */
     private boolean isEnabled(Transition transition, boolean backwards) {
-        boolean enabledForAllPlaces = true;
+        boolean enabledForArcs = true;
         for (Arc arc : transition.inboundArcs()) {
             //TODO: Avoid the cast
             Place place = (Place) arc.getSource();
-            enabledForAllPlaces &= allPlaceTokensEnabled(backwards, transition, arc, place);
+            enabledForArcs &= allPlaceTokensEnabled(backwards, transition, arc, place);
         }
-        return enabledForAllPlaces;
+
+        for (Arc arc : transition.outboundArcs()) {
+            Place place = (Place) arc.getTarget();
+            enabledForArcs &= allPlaceCapacitiesOk(backwards, transition, arc, place);
+        }
+        return enabledForArcs;
     }
 
     /**
@@ -364,9 +369,6 @@ public class PetriNet extends Observable implements IObserver {
                                           Transition transition,
                                           Arc arc,
                                           Place place) {
-        int totalMarkings = 0;
-        int totalIPlus = 0;
-        int totalIMinus = 0;
         for (Token token : arc.getTokenWeights().keySet()) {
             int tokenCount = place.getTokenCount(token);
 
@@ -385,19 +387,41 @@ public class PetriNet extends Observable implements IObserver {
                 return false;
             }
 
-            // Capacities
-            totalMarkings += tokenCount;
-            totalIPlus += forwardsIncidenceMatrix.get(place, transition);
-            totalIMinus += backwardsIncidenceMatrix.get(place, transition);
 
-            if (place.getCapacity() > 0 &&
-                    (totalMarkings + totalIPlus - totalIMinus > place.getCapacity())) {
-                return false;
-            }
 
             //TODO: INHIBITOR
         }
         return !place.getTokenCounts().isEmpty();
+    }
+
+    public boolean allPlaceCapacitiesOk  (boolean backwards,
+                                       Transition transition,
+                                       Arc arc,
+                                       Place place) {
+
+        int totalTokensIn = 0;
+        int totalTokensOut = 0;
+        for (Token token : arc.getTokenWeights().keySet()) {
+            IncidenceMatrix forwardsIncidenceMatrix = getForwardsIncidenceMatrix(token);
+            IncidenceMatrix backwardsIncidenceMatrix;
+
+            //TODO: WHAT IS THIS LOGIC?
+            if (backwards) {
+                backwardsIncidenceMatrix = forwardsIncidenceMatrix;
+            } else {
+                backwardsIncidenceMatrix = getBackwardsIncidenceMatrix(token);
+            }
+
+            totalTokensIn += forwardsIncidenceMatrix.get(place, transition);
+            totalTokensOut += backwardsIncidenceMatrix.get(place, transition);
+        }
+
+        if (place.getCapacity() > 0 &&
+                (place.getNumberOfTokensStored() + totalTokensIn - totalTokensOut > place.getCapacity())) {
+            return false;
+        }
+        return true;
+
     }
 
     public Transition getRandomTransition() {

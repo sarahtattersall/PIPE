@@ -11,9 +11,11 @@ import pipe.utilities.math.IncidenceMatrix;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -220,9 +222,11 @@ public class PetriNetTest {
         int tokenWeight = 4;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
-        IncidenceMatrix forwardMatrix = container.petriNet.getForwardsIncidenceMatrix(container.token);
-        assertEquals(tokenWeight, forwardMatrix.get(container.place2, container.transition));
-        assertEquals(0, forwardMatrix.get(container.place, container.transition));
+        IncidenceMatrix forwardMatrix = container.petriNet.getForwardsIncidenceMatrix(container.tokens.get(0));
+
+        Transition transition = container.transitions.get(0);
+        assertEquals(tokenWeight, forwardMatrix.get(container.places.get(1), transition));
+        assertEquals(0, forwardMatrix.get(container.places.get(0), transition));
     }
 
 
@@ -231,9 +235,10 @@ public class PetriNetTest {
         int tokenWeight = 4;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
-        IncidenceMatrix backwardIncidence = container.petriNet.getBackwardsIncidenceMatrix(container.token);
-        assertEquals(tokenWeight, backwardIncidence.get(container.place, container.transition));
-        assertEquals(0, backwardIncidence.get(container.place2, container.transition));
+        IncidenceMatrix backwardIncidence = container.petriNet.getBackwardsIncidenceMatrix(container.tokens.get(0));
+        Transition transition = container.transitions.get(0);
+        assertEquals(tokenWeight, backwardIncidence.get(container.places.get(0), transition));
+        assertEquals(0, backwardIncidence.get(container.places.get(1), transition));
     }
 
 
@@ -244,17 +249,17 @@ public class PetriNetTest {
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
         Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
-        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transition));
+        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
     @Test
     public void correctlyIdentifiesNotEnabledTransitionDueToEmptyPlace() {
         int tokenWeight = 4;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
-        container.place.decrementTokenCount(container.token);
+        container.places.get(0).decrementTokenCount(container.tokens.get(0));
 
         Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
-        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
+        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
     @Test
@@ -263,7 +268,7 @@ public class PetriNetTest {
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
         Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
-        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
+        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
     @Test
@@ -272,7 +277,7 @@ public class PetriNetTest {
         PetriNetContainer container = createSimplePetriNetTwoPlacesToTransition(tokenWeight);
 
         Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
-        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
+        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
 
@@ -283,10 +288,10 @@ public class PetriNetTest {
 
         Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
         container.petriNet.addToken(redToken);
-        container.arc.getTokenWeights().put(redToken, "1");
+        container.arcs.get(0).getTokenWeights().put(redToken, "1");
 
         Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
-        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transition));
+        assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
     @Test
@@ -296,26 +301,46 @@ public class PetriNetTest {
 
         Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
         container.petriNet.addToken(redToken);
-        container.arc.getTokenWeights().put(redToken, "1");
-        container.place.incrementTokenCount(redToken);
+        container.arcs.get(0).getTokenWeights().put(redToken, "1");
+        container.places.get(0).incrementTokenCount(redToken);
 
         Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
-        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transition));
+        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
     @Test
     public void correctlyMarksEnabledTransitions() {
         PetriNetContainer container = createSimplePetriNet(1);
         container.petriNet.markEnabledTransitions();
-        assertTrue("Did not enable transition", container.transition.isEnabled());
+        assertTrue("Did not enable transition", container.transitions.get(0).isEnabled());
     }
 
     @Test
     public void correctlyDoesNotMarkNotEnabledTransitions() {
         PetriNetContainer container = createSimplePetriNet(2);
         container.petriNet.markEnabledTransitions();
-        assertFalse("Enabled transition when it cannot fire", container.transition.isEnabled());
+        assertFalse("Enabled transition when it cannot fire", container.transitions.get(0).isEnabled());
     }
+
+    @Test
+    public void correctlyDoesNotMarkNotEnabledTransitionsIfPlaceCapacityIsFull() {
+        PetriNetContainer container = createSimplePetriNet(2);
+        container.places.get(0).setTokenCount(container.tokens.get(0), 2);
+        container.places.get(1).setCapacity(1);
+        container.petriNet.markEnabledTransitions();
+        assertFalse("Enabled transition when it cannot fire", container.transitions.get(0).isEnabled());
+    }
+
+    @Test
+    public void correctlyMarksEnabledTransitionIfSelfLoop() {
+        PetriNetContainer container = createSelfLoopPetriNet(1);
+        Place place = container.places.get(0);
+        place.setTokenCount(container.tokens.get(0), 1);
+        place.setCapacity(1);
+        container.petriNet.markEnabledTransitions();
+        assertTrue("Did not enable transition when it can fire", container.transitions.get(0).isEnabled());
+    }
+
 
     @Test
     public void firingTransitionMovesToken() {
@@ -324,10 +349,11 @@ public class PetriNetTest {
 
 
         container.petriNet.markEnabledTransitions();
-        container.petriNet.fireTransition(container.transition);
+        container.petriNet.fireTransition(container.transitions.get(0));
 
-        assertEquals(0, container.place.getTokenCount(container.token));
-        assertEquals(1, container.place2.getTokenCount(container.token));
+        Token token = container.tokens.get(0);
+        assertEquals(0, container.places.get(0).getTokenCount(token));
+        assertEquals(1, container.places.get(1).getTokenCount(token));
     }
 
 
@@ -337,20 +363,22 @@ public class PetriNetTest {
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
         container.petriNet.markEnabledTransitions();
-        container.petriNet.fireTransition(container.transition);
+        Transition transition = container.transitions.get(0);
+        container.petriNet.fireTransition(transition);
 
-        assertFalse("Transition was not disabled", container.transition.isEnabled());
+        assertFalse("Transition was not disabled", transition.isEnabled());
     }
 
     @Test
     public void firingTransitionDoesNotDisableTransition() {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
-        container.place.setTokenCount(container.token, 2);
+        container.places.get(0).setTokenCount(container.tokens.get(0), 2);
 
-        container.petriNet.fireTransition(container.transition);
+        Transition transition = container.transitions.get(0);
+        container.petriNet.fireTransition(transition);
 
-        assertTrue("Transition was disabled when it could have fired again", container.transition.isEnabled());
+        assertTrue("Transition was disabled when it could have fired again", transition.isEnabled());
     }
 
 
@@ -359,14 +387,14 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
         Transition transition = new Transition("t2", "t2");
-        Arc arc3 = new NormalArc(container.place2, transition, container.arc.getTokenWeights());
+        Arc arc3 = new NormalArc(container.places.get(1), transition, container.arcs.get(0).getTokenWeights());
         container.petriNet.addArc(arc3);
         container.petriNet.addTransition(transition);
 
-        container.place.setTokenCount(container.token, 1);
+        container.places.get(0).setTokenCount(container.tokens.get(0), 1);
 
         container.petriNet.markEnabledTransitions();
-        container.petriNet.fireTransition(container.transition);
+        container.petriNet.fireTransition(container.transitions.get(0));
 
         assertTrue("Next transition was enabled", transition.isEnabled());
     }
@@ -375,24 +403,30 @@ public class PetriNetTest {
     public void firingTransitionBackwardMovesTokensBack() {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
-        container.place.setTokenCount(container.token, 0);
-        container.place2.setTokenCount(container.token, 1);
+        Place place1 = container.places.get(0);
+        Place place2 = container.places.get(1);
+        Token token = container.tokens.get(0);
+        place1.setTokenCount(token, 0);
+        place2.setTokenCount(token, 1);
 
-        container.petriNet.fireTransitionBackwards(container.transition);
+        container.petriNet.fireTransitionBackwards(container.transitions.get(0));
 
-        assertEquals(0, container.place2.getTokenCount(container.token));
-        assertEquals(1, container.place.getTokenCount(container.token));
+        assertEquals(0, place2.getTokenCount(token));
+        assertEquals(1, place1.getTokenCount(token));
     }
 
     @Test
     public void firingTransitionBackwardEnablesTransition() {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
-        container.place.setTokenCount(container.token, 0);
-        container.place2.setTokenCount(container.token, 1);
 
-        container.petriNet.fireTransitionBackwards(container.transition);
-        assertTrue("Transition was not enabled", container.transition.isEnabled());
+        Token token = container.tokens.get(0);
+        container.places.get(0).setTokenCount(token, 0);
+        container.places.get(1).setTokenCount(token, 1);
+
+        Transition transition = container.transitions.get(0);
+        container.petriNet.fireTransitionBackwards(transition);
+        assertTrue("Transition was not enabled", transition.isEnabled());
     }
 
 
@@ -425,7 +459,39 @@ public class PetriNetTest {
 
         place.incrementTokenCount(token);
 
-        return new PetriNetContainer(token, place, place2, transition, arc, arc2, petriNet);
+        PetriNetContainer container = new PetriNetContainer(petriNet);
+        container.addArcs(arc, arc2);
+        container.addPlaces(place, place2);
+        container.addTransitions(transition);
+        container.addTokens(token);
+        return container;
+    }
+
+
+    private PetriNetContainer createSelfLoopPetriNet(final int tokenWeight) {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Place place = new Place("p1", "p1");
+        Transition transition = new Transition("t1", "t1");
+        Map<Token, String> arcWeight = new HashMap<Token, String>();
+        arcWeight.put(token, Integer.toString(tokenWeight));
+
+        Arc arc = new NormalArc(place, transition, arcWeight);
+        Arc arc2 = new NormalArc(transition, place, arcWeight);
+
+        PetriNet petriNet = new PetriNet();
+        petriNet.addToken(token);
+        petriNet.addPlace(place);
+        petriNet.addTransition(transition);
+        petriNet.addArc(arc);
+        petriNet.addArc(arc2);
+
+        PetriNetContainer container = new PetriNetContainer(petriNet);
+        container.addArcs(arc, arc2);
+        container.addPlaces(place);
+        container.addTransitions(transition);
+        container.addTokens(token);
+        return container;
+
     }
 
     /**
@@ -457,28 +523,48 @@ public class PetriNetTest {
 
         place.incrementTokenCount(token);
 
-        return new PetriNetContainer(token, place, place2, transition, arc, arc2, petriNet);
+        PetriNetContainer container = new PetriNetContainer(petriNet);
+        container.addArcs(arc, arc2);
+        container.addPlaces(place, place2);
+        container.addTransitions(transition);
+        container.addTokens(token);
+        return container;
     }
 
     private class PetriNetContainer {
-        private PetriNetContainer(final Token token, final Place place, final Place place2, final Transition transition,
-                                  final Arc arc, final Arc arc2, final PetriNet petriNet) {
-            this.token = token;
-            this.place = place;
-            this.place2 = place2;
-            this.transition = transition;
-            this.arc = arc;
-            this.arc2 = arc2;
+        public final List<Token> tokens = new ArrayList<Token>();
+        public final List<Place> places = new ArrayList<Place>();
+        public final List<Transition> transitions = new ArrayList<Transition>();
+        public final List<Arc> arcs = new ArrayList<Arc>();
+        public final PetriNet petriNet;
+
+        private PetriNetContainer(final PetriNet petriNet) {
             this.petriNet = petriNet;
         }
 
-        public final Token token;
-        public final Place place;
-        public final Place place2;
-        public final Transition transition;
-        public final Arc arc;
-        public final Arc arc2;
-        public final PetriNet petriNet;
+        public void addTokens(Token... tokens) {
+            for (Token token : tokens) {
+                this.tokens.add(token);
+            }
+        }
+
+        public void addArcs(Arc... arcs) {
+            for (Arc arc : arcs) {
+                this.arcs.add(arc);
+            }
+        }
+
+        public void addPlaces(Place... places) {
+            for (Place place : places) {
+                this.places.add(place);
+            }
+        }
+
+        public void addTransitions(Transition... transitions) {
+            for (Transition transition : transitions) {
+                this.transitions.add(transition);
+            }
+        }
 
 
     }
