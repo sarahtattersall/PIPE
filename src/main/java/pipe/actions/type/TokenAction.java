@@ -35,11 +35,7 @@ public abstract class TokenAction extends TypeAction {
         if (connectable instanceof Place) {
             Place place = (Place) connectable;
             PlaceController placeController = petriNetController.getPlaceController(place);
-
-
-            PipeApplicationView view = ApplicationSettings.getApplicationView();
-            Token token = petriNetController.getToken(view.getSelectedTokenName());
-
+            Token token = petriNetController.getSelectedToken();
             performTokenAction(placeController, token);
         }
     }

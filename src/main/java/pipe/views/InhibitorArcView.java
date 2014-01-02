@@ -80,50 +80,51 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
 
 
     public InhibitorArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
-        ConnectableView source = this.getSource().getLastCopy();
-        ConnectableView target = this.getTarget().getLastCopy();
-
-        if (source == null && target == null) {
-            // don't paste an arc with neither source nor target
-            return null;
-        }
-
-        if (source == null) {
-            if (toAnotherView) {
-                // if the source belongs to another Petri Net, the arc can't be
-                // pasted
-                return null;
-            } else {
-                source = this.getSource();
-            }
-        }
-
-        if (target == null) {
-            if (toAnotherView) {
-                // if the target belongs to another Petri Net, the arc can't be
-                // pasted
-                return null;
-            } else {
-                target = this.getTarget();
-            }
-        }
-
-        //TODO: NEEDS ACTUAL WEIGHTS
-        InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new HashMap<Token, String>());
-        InhibitorArcView copy =
-                new InhibitorArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, this.getWeight(),
-                        source.getId() + " to " + target.getId(), arc, petriNetController);
-
-        copy.myPath.delete();
-        for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
-            copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
-                    this.myPath.getPointType(i));
-            //copy.myPath.selectPoint(i);
-        }
-
-        source.addOutbound(copy);
-        target.addInbound(copy);
-        return copy;
+//        ConnectableView source = this.getSource().getLastCopy();
+//        ConnectableView target = this.getTarget().getLastCopy();
+//
+//        if (source == null && target == null) {
+//            // don't paste an arc with neither source nor target
+//            return null;
+//        }
+//
+//        if (source == null) {
+//            if (toAnotherView) {
+//                // if the source belongs to another Petri Net, the arc can't be
+//                // pasted
+//                return null;
+//            } else {
+//                source = this.getSource();
+//            }
+//        }
+//
+//        if (target == null) {
+//            if (toAnotherView) {
+//                // if the target belongs to another Petri Net, the arc can't be
+//                // pasted
+//                return null;
+//            } else {
+//                target = this.getTarget();
+//            }
+//        }
+//
+//        //TODO: NEEDS ACTUAL WEIGHTS
+//        InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new HashMap<Token, String>());
+//        InhibitorArcView copy =
+//                new InhibitorArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, this.getWeight(),
+//                        source.getId() + " to " + target.getId(), arc, petriNetController);
+//
+//        copy.myPath.delete();
+//        for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
+//            copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
+//                    this.myPath.getPointType(i));
+//            //copy.myPath.selectPoint(i);
+//        }
+//
+//        source.addOutbound(copy);
+//        target.addInbound(copy);
+//        return copy;
+        return null;
     }
 
 

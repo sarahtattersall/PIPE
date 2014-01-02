@@ -21,9 +21,13 @@ public class PetriNetController implements IController, Serializable {
 
     private final Set<PetriNetComponent> selectedComponents = new
             HashSet<PetriNetComponent>();
+    private Token selectedToken;
 
     public PetriNetController(PetriNet model, HistoryManager historyManager) {
         petriNet = model;
+        if (model.getTokens().size() > 0) {
+            selectedToken = model.getTokens().iterator().next();
+        }
         this.historyManager = historyManager;
     }
 
@@ -51,7 +55,7 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param source
      */
-    public void startCreatingInhibitorArc(Connectable source, Token currentToken) {
+    public void startCreatingInhibitorArc(Place source, Token currentToken) {
         currentlyCreatingArc = true;
         this.arc = buildEmptyInhibitorArc(source, currentToken);
         addArcToCurrentPetriNet(arc);
@@ -63,7 +67,7 @@ public class PetriNetController implements IController, Serializable {
      * @param source
      * @return inhibitor arc
      */
-    private InhibitorArc buildEmptyInhibitorArc(Connectable source, Token token) {
+    private InhibitorArc buildEmptyInhibitorArc(Place source, Token token) {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
         return new InhibitorArc(source,
@@ -305,5 +309,13 @@ public class PetriNetController implements IController, Serializable {
     public TransitionController getTransitionController(
             final Transition transition) {
         return new TransitionController(transition, historyManager);
+    }
+
+    //TODO: Should this be in the model???
+    public void selectToken(Token token) {
+        this.selectedToken = token;
+    }
+    public Token getSelectedToken() {
+        return selectedToken;
     }
 }

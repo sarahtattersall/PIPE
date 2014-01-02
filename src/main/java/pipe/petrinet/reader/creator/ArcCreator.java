@@ -11,15 +11,23 @@ import java.util.Map;
  */
 public class ArcCreator implements ComponentCreator<Arc> {
 
-    private Map<String, Connectable> connectables = new HashMap<String, Connectable>();
+    private Map<String, Place> places = new HashMap<String, Place>();
+    private Map<String, Transition> transitions = new HashMap<String, Transition>();
     private Map<String, Token> tokens = new HashMap<String, Token>();
 
     /**
      *
-     * @param connectables Map of id to connectable
+     * @param places Map of id to place
      */
-    public void setConnectables(Map<String, Connectable> connectables) {
-        this.connectables = connectables;
+    public void setPlaces(Map<String, Place> places) {
+        this.places = places;
+    }
+    /**
+     *
+     * @param transitions Map of id to transitions
+     */
+    public void setTransitions(Map<String, Transition> transitions) {
+        this.transitions = transitions;
     }
 
     /**
@@ -50,23 +58,31 @@ public class ArcCreator implements ComponentCreator<Arc> {
 
         Map<Token, String> tokenWeights = createTokenWeights(weightInput);
 
-        Connectable source = connectables.get(sourceId);
-        Connectable target = connectables.get(targetId);
         Arc arc;
         if (isInhibitorArc(element)) {
+            Place source = places.get(sourceId);
+            Transition target = transitions.get(targetId);
             arc = new InhibitorArc(source, target, tokenWeights);
+            source.addOutbound(arc);
+            target.addInbound(arc);
         } else {
-            arc = new NormalArc(source, target, tokenWeights);
+            if (places.containsKey(sourceId)) {
+                Place source = places.get(sourceId);
+                Transition target = transitions.get(targetId);
+                arc = new NormalArc(source, target, tokenWeights);
+                source.addOutbound(arc);
+                target.addInbound(arc);
+            } else {
+                Place target = places.get(sourceId);
+                Transition source = transitions.get(targetId);
+                arc = new NormalArc(source, target, tokenWeights);
+                source.addOutbound(arc);
+                target.addInbound(arc);
+            }
+
         }
         arc.setId(id);
-
-        source.addOutbound(arc);
-        target.addInbound(arc);
-
         arc.setTagged(tagged);
-
-        //TODO: Arc path?
-
         return arc;
     }
 

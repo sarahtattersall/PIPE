@@ -12,7 +12,6 @@ import pipe.petrinet.reader.creator.ArcCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 import utils.TokenUtils;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,9 +24,10 @@ import static org.mockito.Mockito.when;
 
 public class ArcCreatorTest {
     ArcCreator creator;
-    Map<String, Connectable> connectables = new HashMap<String, Connectable>();
-    Connectable source = new Place("P0", "P0");
-    Connectable target = new Transition("T0", "T0");
+    Map<String, Place> places = new HashMap<String, Place>();
+    Map<String, Transition> transitions = new HashMap<String, Transition>();
+    Place source = new Place("P0", "P0");
+    Transition target = new Transition("T0", "T0");
 
     Map<String, Token> tokens = new HashMap<String, Token>();
 
@@ -79,10 +79,11 @@ public class ArcCreatorTest {
     @Before
     public void setUp()
     {
-        connectables.put(source.getId(), source);
-        connectables.put(target.getId(), target);
+        places.put(source.getId(), source);
+        transitions.put(target.getId(), target);
         creator = new ArcCreator();
-        creator.setConnectables(connectables);
+        creator.setPlaces(places);
+        creator.setTransitions(transitions);
     }
 
     @Test
@@ -111,19 +112,20 @@ public class ArcCreatorTest {
 
     @Test
     public void setsSourceAndTargetArcs() {
-        Connectable mockSource = mock(Connectable.class);
+        Place mockSource = mock(Place.class);
         when(mockSource.getId()).thenReturn("P0");
 
-        Connectable mockTarget = mock(Connectable.class);
+        Transition mockTarget = mock(Transition.class);
         when(mockTarget.getId()).thenReturn("T0");
 
-        connectables.clear();
-        connectables.put(mockSource.getId(), mockSource);
-        connectables.put(mockTarget.getId(), mockTarget);
+        places.clear();
+        places.put(mockSource.getId(), mockSource);
+        transitions.put(mockTarget.getId(), mockTarget);
 
         addDefaultTokenToTokens();
         creator.setTokens(tokens);
-        creator.setConnectables(connectables);
+        creator.setPlaces(places);
+        creator.setTransitions(transitions);
 
         Element arcElement = createNormalArcNoWeight();
         Arc arc = creator.create(arcElement);

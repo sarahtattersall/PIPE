@@ -5,6 +5,7 @@ import org.junit.Test;
 import pipe.models.component.Arc;
 import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
@@ -138,6 +139,11 @@ public class ConnectableTest {
         @Override
         public boolean isEndPoint() {
             return true;
+        }
+
+        @Override
+        public void accept(final ConnectableVisitor visitor) {
+            //To change body of implemented methods use File | Settings | File Templates.
         }
 
         @Override

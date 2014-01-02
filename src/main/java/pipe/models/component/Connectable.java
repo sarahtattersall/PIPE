@@ -1,5 +1,7 @@
 package pipe.models.component;
 
+import pipe.models.visitor.connectable.ConnectableVisitor;
+
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,32 +11,32 @@ import java.util.HashSet;
  *  @author yufei wang(modification)
  */
 public abstract class Connectable extends AbstractPetriNetComponent {
-    private final Collection<Arc> inboundArcs = new HashSet<Arc>();
-    private final Collection<Arc> outboundArcs = new HashSet<Arc>();
+    protected final Collection<Arc> inboundArcs = new HashSet<Arc>();
+    protected final Collection<Arc> outboundArcs = new HashSet<Arc>();
 
     /**
      * Connectable position x
      */
     @Pnml("positionX")
-    double x = 0;
+    protected double x = 0;
 
     /**
      * Connectable position y
      */
     @Pnml("positionY")
-    double y = 0;
+    protected double y = 0;
 
     /**
      * Connectable id
      */
     @Pnml("id")
-    private String id;
+    protected String id;
 
     /**
      * Connectable name
      */
     @Pnml("name")
-    private String name;
+    protected String name;
 
     /**
      * Connectable name x offset relative to its x coordinate
@@ -170,6 +172,8 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         this.name = name;
         notifyObservers();
     }
+
+    public abstract void accept(ConnectableVisitor visitor);
 
     @Override
     public String toString() {

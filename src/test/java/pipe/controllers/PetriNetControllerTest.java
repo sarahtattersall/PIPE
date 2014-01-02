@@ -258,8 +258,8 @@ public class PetriNetControllerTest {
         assertFalse(controller.isCurrentlyCreatingArc());
     }
 
-    private Connectable createFakePlace() {
-        Connectable source = mock(Place.class);
+    private Place createFakePlace() {
+        Place source = mock(Place.class);
         when(source.getX()).thenReturn(0.);
         when(source.getY()).thenReturn(0.);
         when(source.getArcEdgePoint(anyDouble())).thenReturn(new Point2D.Double());
@@ -276,7 +276,7 @@ public class PetriNetControllerTest {
     public void cancellingArcRemovesItFromPetriNet()
     {
         PetriNet net = setupPetriNet();
-        Connectable source = createFakePlace();
+        Place source = createFakePlace();
         Token token = mock(Token.class);
         controller.startCreatingNormalArc(source, token);
         controller.cancelArcCreation();

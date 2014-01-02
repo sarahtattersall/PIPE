@@ -26,7 +26,8 @@ public class PetriNetReader {
 
     private Map<String, Method> elementMethods = new HashMap<String, Method>();
 
-    private Map<String, Connectable> connectables = new HashMap<String, Connectable>();
+    private Map<String, Transition> transitions = new HashMap<String, Transition>();
+    private Map<String, Place> places = new HashMap<String, Place>();
 
     private Map<String, RateParameter> rates = new HashMap<String, RateParameter>();
 
@@ -96,7 +97,7 @@ public class PetriNetReader {
         }
         creators.placeCreator.setTokens(tokens);
         Place place = creators.placeCreator.create(element);
-        connectables.put(place.getId(), place);
+        places.put(place.getId(), place);
         net.addPlace(place);
     }
 
@@ -110,14 +111,15 @@ public class PetriNetReader {
     {
         creators.transitionCreator.setRates(rates);
         Transition transition = creators.transitionCreator.create(element);
-        connectables.put(transition.getId(), transition);
+        transitions.put(transition.getId(), transition);
         net.addTransition(transition);
     }
 
     @ElementParser("arc")
     private void createArcAndAddToNet(Element element, PetriNet net)
     {
-        creators.arcCreator.setConnectables(connectables);
+        creators.arcCreator.setPlaces(places);
+        creators.arcCreator.setTransitions(transitions);
         creators.arcCreator.setTokens(tokens);
         Arc arc = creators.arcCreator.create(element);
         net.addArc(arc);

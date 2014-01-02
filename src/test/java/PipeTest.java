@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pipe.actions.*;
+import pipe.actions.animate.*;
 import pipe.actions.edit.*;
 import pipe.actions.file.*;
 import pipe.actions.type.*;
@@ -99,8 +100,8 @@ public class PipeTest {
     	checkAction("Place", model.placeAction, PlaceAction.class);
     	checkAction("Immediate transition", model.transAction, ImmediateTransitionAction.class);
     	checkAction("Timed transition", model.timedtransAction, TimedTransitionAction.class);
-    	checkAction("Arc", model.arcAction, NormalArcAction.class);
-    	checkAction("Inhibitor Arc", model.inhibarcAction, InhibitorArcAction.class);
+    	checkAction("Arc", model.arcAction, ArcAction.class);
+    	checkAction("Inhibitor Arc", model.inhibarcAction, ArcAction.class);
     	checkAction("Annotation", model.annotationAction, AnnotationAction.class);
     	checkAction("Add token", model.tokenAction, AddTokenAction.class);
     	checkAction("Delete token", model.deleteTokenAction, DeleteTokenAction.class);
@@ -113,11 +114,11 @@ public class PipeTest {
     	checkAction("Zoom in", model.zoomInAction, ZoomAction.class); 
     	checkAction("Cycle grid", model.toggleGrid, GridAction.class); 
     	checkAction("Drag", model.dragAction, DragAction.class);
-    	checkAction("Animation mode", model.startAction, AnimateAction.class); 
-    	checkAction("Back", model.stepbackwardAction, AnimateAction.class); 
-    	checkAction("Forward", model.stepforwardAction, AnimateAction.class); 
-    	checkAction("Random", model.randomAction, AnimateAction.class); 
-    	checkAction("Animate", model.randomAnimateAction, AnimateAction.class); 
+    	checkAction("Animation mode", model.startAction, StartAnimateAction.class);
+    	checkAction("Back", model.stepbackwardAction, StepBackwardAction.class);
+    	checkAction("Forward", model.stepforwardAction, StepForwardAction.class);
+    	checkAction("Random", model.randomAction, RandomAnimateAction.class);
+    	checkAction("Animate", model.randomAnimateAction, AnimationAction.class);
     	checkAction("chooseTokenClass", model.chooseTokenClassAction, ChooseTokenClassAction.class); 
     	checkAction("Exit", model.exitAction, ExitAction.class);
     	for (int i = 0; i < model.getZoomActions().size(); i++)

@@ -1,6 +1,7 @@
 package pipe.models.component;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
@@ -42,6 +43,11 @@ public class ConditionalPlace extends Connectable implements Serializable
     @Override
     public boolean isEndPoint() {
         return true;
+    }
+
+    @Override
+    public void accept(final ConnectableVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package pipe.models.component;
 
 import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 
 import java.awt.geom.Point2D;
 
@@ -44,6 +45,11 @@ public class TemporaryArcTarget extends Connectable {
     @Override
     public boolean isEndPoint() {
         return false;
+    }
+
+    @Override
+    public void accept(final ConnectableVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override

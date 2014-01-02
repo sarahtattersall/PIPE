@@ -4,13 +4,22 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Grid;
 import pipe.models.component.Connectable;
+import pipe.models.visitor.connectable.arc.ArcCreatorVisitor;
+import pipe.models.visitor.connectable.arc.ArcSourceVisitor;
 
 import java.awt.*;
 
-public abstract class ArcAction extends TypeAction {
+public class ArcAction extends TypeAction {
 
-    protected abstract boolean canCreateArcHere(Connectable connectable);
-    protected abstract void createArc(Connectable connectable, PetriNetController petriNetController);
+    private final ArcSourceVisitor sourceVisitor;
+    private final ArcCreatorVisitor creatorVisitor;
+
+    public ArcAction(final String name, final int typeID,
+                     final String tooltip, final String keystroke, ArcSourceVisitor sourceVisitor, ArcCreatorVisitor creatorVisitor) {
+        super(name, typeID, tooltip, keystroke);
+        this.sourceVisitor = sourceVisitor;
+        this.creatorVisitor = creatorVisitor;
+    }
 
     /**
      * Changes the arc end point to the place clicked
@@ -32,7 +41,7 @@ public abstract class ArcAction extends TypeAction {
     @Override
     public void doConnectableAction(Connectable connectable, PetriNetController petriNetController) {
         if (!petriNetController.isCurrentlyCreatingArc() && canCreateArcHere(connectable)) {
-            createArc(connectable, petriNetController);
+            createArc(connectable);
             return;
         }
 
@@ -42,10 +51,16 @@ public abstract class ArcAction extends TypeAction {
     }
 
 
-    public ArcAction(final String name, final int typeID,
-                     final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+
+
+    private boolean canCreateArcHere(Connectable connectable) {
+          return sourceVisitor.canCreate(connectable);
     }
+
+    private void createArc(Connectable connectable) {
+        connectable.accept(creatorVisitor);
+    }
+
 
 
 }

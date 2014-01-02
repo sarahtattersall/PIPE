@@ -113,6 +113,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     public void setActiveTokenView(TokenView tc) {
         _tokenSetController.setActiveTokenView(tc.getID());
+        //TODO: IMPROVE WHERE THIS HAPPENS
+        petriNetController.selectToken(tc.getModel());
         updatePlaceViewsWithActiveToken(tc);
     }
 

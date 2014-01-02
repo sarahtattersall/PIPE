@@ -39,7 +39,8 @@ public class PipeApplicationControllerTest {
         PipeApplicationController nullController = null;
         ApplicationSettings.register(nullController);
 
-        controller = new PipeApplicationController(mockModel, copyPaste);
+        controller = new PipeApplicationController(copyPaste);
+        controller.setApplicationModel(mockModel);
     }
 
     @Test

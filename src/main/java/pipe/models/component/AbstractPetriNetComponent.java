@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import parser.ExprEvaluator;
 import pipe.models.Observable;
 import pipe.models.interfaces.IObserver;
 
@@ -10,8 +11,6 @@ import pipe.models.interfaces.IObserver;
 public abstract class AbstractPetriNetComponent implements PetriNetComponent {
 
     private final Observable observable = new Observable();
-
-
 
     @Override
     public void registerObserver(final IObserver observer) {

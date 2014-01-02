@@ -41,9 +41,7 @@ public class DeleteTokenActionTest {
 
     @Test
     public void deletesToken() {
-        String tokenName = "Name";
-        when(mockView.getSelectedTokenName()).thenReturn(tokenName);
-        when(mockPetriNetController.getToken(tokenName)).thenReturn(mockToken);
+        when(mockPetriNetController.getSelectedToken()).thenReturn(mockToken);
 
         action.doConnectableAction(place, mockPetriNetController);
 

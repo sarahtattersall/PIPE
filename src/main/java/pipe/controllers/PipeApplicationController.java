@@ -34,14 +34,19 @@ public class PipeApplicationController
 
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
     private final CopyPasteManager copyPasteManager;
-    private final PipeApplicationModel applicationModel;
+
+    //TODO: Circular dependency between these two classes
+    private  PipeApplicationModel applicationModel;
     private PetriNetTab activeTab;
 
-    public PipeApplicationController(PipeApplicationModel applicationModel, CopyPasteManager copyPasteManager)
+    public PipeApplicationController(CopyPasteManager copyPasteManager)
     {
-        this.applicationModel = applicationModel;
         this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
+    }
+
+    public void setApplicationModel(PipeApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
     }
 
     private PetriNet loadPetriNetFromFile(File file, boolean isTN)

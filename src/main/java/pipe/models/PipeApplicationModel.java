@@ -6,8 +6,13 @@ import pipe.actions.file.*;
 import pipe.actions.type.*;
 import pipe.actions.animate.*;
 import pipe.actions.type.AddTokenAction;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
+import pipe.models.visitor.connectable.arc.InhibitorCreatorVisitor;
+import pipe.models.visitor.connectable.arc.InhibitorSourceVisitor;
+import pipe.models.visitor.connectable.arc.NormalArcCreatorVisitor;
+import pipe.models.visitor.connectable.arc.NormalArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 
 import java.io.Serializable;
@@ -85,10 +90,10 @@ public class PipeApplicationModel implements Serializable
     public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
 
     @ApplicationAction(ActionEnum.ARC)
-    public TypeAction arcAction = new NormalArcAction("Arc", Constants.ARC, "Add an arc", "A");
+    public final TypeAction arcAction;
 
     @ApplicationAction(ActionEnum.INHIBITOR_ARC)
-    public TypeAction inhibarcAction = new InhibitorArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H");
+    public final TypeAction inhibarcAction;
 
     @ApplicationAction(ActionEnum.ANNOTATION)
     public TypeAction annotationAction = new AnnotationAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N");
@@ -166,8 +171,10 @@ public class PipeApplicationModel implements Serializable
      */
     private TypeAction selectedType;
 
-    public PipeApplicationModel(String version)
+    public PipeApplicationModel(PipeApplicationController controller, String version)
     {
+        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreatorVisitor(controller));
+        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalArcCreatorVisitor(controller));
         ApplicationSettings.register(this);
         _name = "PIPE: Platform Independent Petri Net Editor " + version;
         registerZoomActions();

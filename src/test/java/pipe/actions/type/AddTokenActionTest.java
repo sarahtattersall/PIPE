@@ -38,9 +38,7 @@ public class AddTokenActionTest {
 
     @Test
     public void addsToken() {
-        String tokenName = "Name";
-        when(mockView.getSelectedTokenName()).thenReturn(tokenName);
-        when(mockPetriNetController.getToken(tokenName)).thenReturn(mockToken);
+        when(mockPetriNetController.getSelectedToken()).thenReturn(mockToken);
 
         action.doConnectableAction(place, mockPetriNetController);
 

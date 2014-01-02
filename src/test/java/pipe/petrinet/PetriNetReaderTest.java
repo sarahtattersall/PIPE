@@ -172,11 +172,14 @@ public class PetriNetReaderTest {
     {
         reader.createFromFile(doc);
 
-        Map<String, Connectable> connectables = new HashMap<String, Connectable>();
-        connectables.put(place.getId(), place);
-        connectables.put(otherPlace.getId(), otherPlace);
-        connectables.put(transition.getId(), transition);
-        verify(creators.arcCreator, atLeastOnce()).setConnectables(argThat(new MatchesThisMap<Connectable>(connectables)));
+        Map<String, Place> places = new HashMap<String, Place>();
+        places.put(place.getId(), place);
+        places.put(otherPlace.getId(), otherPlace);
+
+        Map<String, Transition> transitions = new HashMap<String, Transition>();
+        transitions.put(transition.getId(), transition);
+        verify(creators.arcCreator, atLeastOnce()).setPlaces(argThat(new MatchesThisMap<Place>(places)));
+        verify(creators.arcCreator, atLeastOnce()).setTransitions(argThat(new MatchesThisMap<Transition>(transitions)));
     }
 
     @Test

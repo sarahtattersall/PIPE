@@ -1,12 +1,15 @@
 package pipe.models.component;
 
+import parser.ExprEvaluator;
 import pipe.gui.Constants;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.Map;
 
 /*
  * @author yufei wang(minor changes)
@@ -31,7 +34,6 @@ public class Transition extends Connectable implements Serializable
     @Pnml("angle")
     private int angle = 0;
 
-    private boolean timedTransition;
     private RateParameter rateParameter;
 
     public static final int TRANSITION_HEIGHT = Constants.PLACE_TRANSITION_HEIGHT;
@@ -105,6 +107,11 @@ public class Transition extends Connectable implements Serializable
     @Override
     public boolean isEndPoint() {
         return true;
+    }
+
+    @Override
+    public void accept(final ConnectableVisitor visitor) {
+        visitor.visit(this);
     }
 
     /**
@@ -214,10 +221,6 @@ public class Transition extends Connectable implements Serializable
         notifyObservers();
     }
 
-    public boolean isTimedTransition() {
-        return timedTransition;
-    }
-
     public RateParameter getRateParameter() {
         return rateParameter;
     }
@@ -254,5 +257,43 @@ public class Transition extends Connectable implements Serializable
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    /**
+     * A Transition is enabled if all its input places are marked with at least one token
+     * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
+     *
+     * @param evaluator used to evaluate an arcs expression in the petrinet the
+     *                  transition belongs to.
+     * @return
+     */
+    public int getEnablingDegree(ExprEvaluator evaluator) {
+
+        int enablingDegree = Integer.MAX_VALUE;
+
+
+        for (Arc arc : inboundArcs()) {
+            Place place = (Place) arc.getSource();
+            Map<Token, String> arcWeights = arc.getTokenWeights();
+            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
+                Token arcToken = entry.getKey();
+                String arcTokenExpression = entry.getValue();
+
+                int placeTokenCount = place.getTokenCount(arcToken);
+                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
+
+                if (requiredTokenCount == 0) {
+                    enablingDegree = 0;
+                } else {
+                    //TODO: WHY DIVIDE?
+                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
+                    if (currentDegree < enablingDegree) {
+                        enablingDegree = currentDegree;
+                    }
+
+                }
+            }
+        }
+        return enablingDegree;
     }
 }

@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
@@ -216,6 +217,12 @@ public class Place extends Connectable implements Serializable
 
     public boolean hasCapacityRestriction() {
         return capacity > 0;
+    }
+
+
+    @Override
+    public void accept(final ConnectableVisitor visitor) {
+        visitor.visit(this);
     }
 
 }
