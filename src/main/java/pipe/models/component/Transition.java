@@ -258,18 +258,6 @@ public class Transition extends Connectable<Place, Transition> implements Serial
         return enabled;
     }
 
-    public boolean isEnabled(PetriNet net) {
-        boolean enabledForArcs = true;
-        for (Arc<Place, Transition> arc : inboundArcs()) {
-            enabledForArcs &= arc.canFire();
-        }
-
-        for (Arc<Transition, Place> arc : outboundArcs()) {
-            enabledForArcs &= arc.canFire();
-        }
-        return enabledForArcs;
-    }
-
     /**
      * A Transition is enabled if all its input places are marked with at least one token
      * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
