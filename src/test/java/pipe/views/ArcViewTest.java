@@ -14,7 +14,7 @@ import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.NormalArc;
+import pipe.models.component.Arc;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 
@@ -36,7 +36,7 @@ public class ArcViewTest
     @Test
     public void ArcViewSetsCorrectPathInConstructor()
     {
-        NormalArc mockArc = mock(NormalArc.class);
+        Arc mockArc = mock(Arc.class);
         Point2D.Double start = new Point2D.Double(50, 39);
         Point2D.Double end = new Point2D.Double(100, 500);
         when(mockArc.getStartPoint()).thenReturn(start);

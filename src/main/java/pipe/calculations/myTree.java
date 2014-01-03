@@ -201,7 +201,8 @@ public class myTree
             state[i] = mlist;
         }
 
-        boolean[] enabledTransitions = _petriNetView.areTransitionsEnabled(state);
+        boolean[] enabledTransitions = new boolean[0];
+//        _petriNetView.areTransitionsEnabled(state);
 
         //emmagatzemar estat nou
         writeNode(root.id, root.markup, esoFile, true);
@@ -228,7 +229,9 @@ public class myTree
             }
 
             enabledTransitions =
-                    _petriNetView.areTransitionsEnabled(state);
+//                    _petriNetView.areTransitionsEnabled(state);
+                      new boolean[0];
+
             //For each transition
             for(int i = 0; i < enabledTransitions.length; i++)
             {

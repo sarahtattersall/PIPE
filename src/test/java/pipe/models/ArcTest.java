@@ -3,10 +3,10 @@ package pipe.models;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.Arc;
-import pipe.models.component.NormalArc;
 import pipe.models.component.Token;
 import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
+import pipe.models.strategy.arc.ArcStrategy;
 import utils.TokenUtils;
 
 import java.awt.*;
@@ -25,6 +25,7 @@ public class ArcTest {
     Connectable mockTarget;
     IObserver mockObserver;
     Arc arc;
+    ArcStrategy mockStrategy;
 
     @Before
     public void setUp()
@@ -34,12 +35,13 @@ public class ArcTest {
         mockTarget = mock(Connectable.class);
         when(mockTarget.getId()).thenReturn("target");
         mockObserver = mock(IObserver.class);
-        arc = new NormalArc(mockSource, mockTarget, new HashMap<Token, String>());
+        mockStrategy = mock(ArcStrategy.class);
+        arc = new Arc(mockSource, mockTarget, new HashMap<Token, String>(), mockStrategy);
     }
 
     @Test
     public void constructorSetsConnectableInboundOutbound() {
-        arc = new NormalArc(mockSource, mockTarget, new HashMap<Token, String>());
+        arc = new Arc(mockSource, mockTarget, new HashMap<Token, String>(), mockStrategy);
         verify(mockSource).addOutbound(arc);
         verify(mockTarget).addInbound(arc);
     }

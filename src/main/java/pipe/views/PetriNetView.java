@@ -9,6 +9,10 @@ import pipe.gui.Constants;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
+import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.strategy.arc.ForwardsNormalStrategy;
+import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.PetriNetReader;
 import pipe.petrinet.reader.creator.*;
 import pipe.utilities.Copier;
@@ -216,7 +220,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 //            placeView.setActiveTokenView(_activeTokenView); // SJD
 //            _placeViews.add(placeView);
             setChanged();
-            setMatrixChanged();
             notifyObservers(placeView);
         }
     }
@@ -274,7 +277,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             }
 //            _transitionViews.add(transitionViewInput);
             setChanged();
-            setMatrixChanged();
             notifyObservers(transitionViewInput);
         }
     }
@@ -319,7 +321,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             addArcToArcsMap(arcViewInput);
 
             setChanged();
-            setMatrixChanged();
             notifyObservers(arcViewInput);
         }
     }
@@ -364,7 +365,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             addInhibitorArcToInhibitorsMap(inhibitorArcViewInput);
 
             setChanged();
-            setMatrixChanged();
             // notifyObservers(arcInput.getBounds());
             notifyObservers(inhibitorArcViewInput);
         }
@@ -501,7 +501,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 e.printStackTrace();  // should not happen when PetriNet is first being populated
             }
             setChanged();
-            setMatrixChanged();
             notifyObservers(tokenViewInput);
         }
     }
@@ -652,316 +651,12 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                     placeView.setCurrentMarking(_markingVectorAnimationStorage[placeNo]);
                     setChanged();
                     notifyObservers(placeView);
-                    setMatrixChanged();
                 }
             }
         }
     }
 
-    public void fireTransition(TransitionView transitionView) {
-        if (transitionView != null) {
-            if (transitionView.isEnabled() && _placeViews != null) {
-                //TODO: fix this
-                int transitionNo = 0; //_transitionViews.values().indexOf(transitionView);
-                createMatrixes();
-                for (int placeNo = 0; placeNo < _placeViews.size(); placeNo++) {
-                    for (MarkingView markingView : _placeViews.get(placeNo).getCurrentMarkingView()) {
 
-                        TokenView tokenView = markingView.getToken();
-                        int oldMarkingPositionInTheList =
-                                positionInTheList(tokenView.getID(), _currentMarkingVector[placeNo]);
-                        int oldMarking =
-                                _currentMarkingVector[placeNo].get(oldMarkingPositionInTheList).getCurrentMarking();
-                        //  tokenView.createIncidenceMatrix(_arcViews, _transitionViews, _placeViews);
-
-                        int markingToBeAdded = tokenView.
-                                getIncidenceMatrix().
-                                get(placeNo, transitionNo);
-                        markingView.setCurrentMarking(oldMarking + markingToBeAdded);
-                    }
-                    _placeViews.get(placeNo).repaint();
-                }
-            }
-        }
-        setMatrixChanged();
-    }
-
-    public TransitionView getRandomTransition() {
-
-        setEnabledTransitions();
-        // All the enabled _transitions are of the same type:
-        // a) all are immediate _transitions; or
-        // b) all are timed _transitions.
-
-        ArrayList enabledTransitions = new ArrayList();
-        double rate = 0;
-        for (TransitionView transitionView : _transitionViews.values()) {
-            if (transitionView.isEnabled()) {
-                enabledTransitions.add(transitionView);
-                rate += transitionView.getRate();
-            }
-        }
-
-        // if there is only one enabled transition, return this transition
-        if (enabledTransitions.size() == 1) {
-            return (TransitionView) enabledTransitions.get(0);
-        }
-
-        double random = RandomNumberGenerator.getRandomNumber();
-        double x = 0;
-        for (Object enabledTransition : enabledTransitions) {
-            TransitionView t = (TransitionView) enabledTransition;
-
-            x += t.getRate() / rate;
-
-            if (random < x) {
-                return t;
-            }
-        }
-
-        // no enabled transition found, so no transition can be fired
-        return null;
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#getEnabledTransitions()
-      */
-    public ArrayList<TransitionView> getEnabledTransitions() {
-//        setEnabledTransitions();
-        // All the enabled _transitions are of the same type:
-        // a) all are immediate _transitions; or
-        // b) all are timed _transitions.
-
-        ArrayList enabledTransitions = new ArrayList();
-        for (TransitionView transitionView : _transitionViews.values()) {
-            if (transitionView.isEnabled()) {
-                enabledTransitions.add(transitionView);
-            }
-        }
-
-        return enabledTransitions;
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#fireTransitionBackwards(pipe.views.Transition)
-      */
-
-    public void fireTransitionBackwards(TransitionView transitionView) {
-        if (transitionView != null) {
-            setEnabledTransitionsBackwards();
-            if (transitionView.isEnabled() && _placeViews != null) {
-                //TODO: fix this
-                int transitionNo = 0;// _transitionViews.values().indexOf(transitionView);
-                for (int placeNo = 0; placeNo < _placeViews.size(); placeNo++) {
-                    for (MarkingView m : _placeViews.get(placeNo).getCurrentMarkingView()) {
-                        int oldMarkingPos = positionInTheList(m.getToken().getID(), _currentMarkingVector[placeNo]);
-                        int oldMarking = _currentMarkingVector[placeNo].get(oldMarkingPos).getCurrentMarking();
-                        int markingToBeSubtracted = m.getToken()
-                                //.getIncidenceMatrix()
-                                .getPreviousIncidenceMatrix().get(placeNo, transitionNo);
-                        m.setCurrentMarking(oldMarking - markingToBeSubtracted);
-                    }
-                    _placeViews.get(placeNo).repaint();
-                }
-            }
-        }
-        setMatrixChanged();
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#resetEnabledTransitions()
-      */
-    public void resetEnabledTransitions() {
-        for (TransitionView transitionView : _transitionViews.values()) {
-            transitionView.setEnabled(false);
-            setChanged();
-            notifyObservers(transitionView);
-        }
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#isTransitionEnabled(java.util.LinkedList, int)
-      */
-    public boolean isTransitionEnabled(LinkedList<MarkingView>[] markings, int transition) {
-        int transCount = this.numberOfTransitions();
-        int placeCount = this.numberOfPlaces();
-        boolean[] result = new boolean[transCount];
-        int[][] CMinus;
-
-        // initialise matrix to true
-        for (int k = 0; k < transCount; k++) {
-            result[k] = true;
-        }
-        for (int i = 0; i < transCount; i++) {
-            for (int j = 0; j < placeCount; j++) {
-                boolean allTokenClassesEnabled = true;
-                for (MarkingView m : markings[j]) {
-                    CMinus = (m.getToken()).getBackwardsIncidenceMatrix(_model.getArcs(), _model.getTransitions(), _model.getPlaces());
-                    if (m.getCurrentMarking() < CMinus[j][i]) {
-                        result[i] = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return result[transition];
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#areTransitionsEnabled(java.util.LinkedList)
-      */
-    public final boolean[] areTransitionsEnabled(LinkedList<MarkingView>[] markings) {
-        createMatrixes();
-        int transitionCount = numberOfTransitions();
-        int placeCount = numberOfPlaces();
-        boolean[] result = new boolean[transitionCount];
-        boolean hasTimed = false;
-        boolean hasImmediate = false;
-
-        int maxPriority = 0;
-        for (int i = 0; i < transitionCount; i++) {
-            if (_transitionViews.get(i).isInfiniteServer()) {
-                if (getEnablingDegree(_transitionViews.get(i)) == 0) {
-                    result[i] = false;
-                    continue;
-                } else {
-                    result[i] = true;
-                    continue;
-                }
-            }
-            result[i] = true; // inicialitzam a enabled
-            for (int j = 0; j < placeCount; j++) {
-                boolean allTokenClassesEnabled = true;
-                int totalMarkings = 0;
-                int totalForwardIncidenceMarkings = 0;
-                int totalBackwardIncidenceMarkings = 0;
-                for (MarkingView m : markings[j]) {
-                    if (m.getToken().isEnabled()) {
-                        totalMarkings += m.getCurrentMarking();
-                        totalForwardIncidenceMarkings += (m.getToken()).getForwardsIncidenceMatrix().get(j, i);
-                        totalBackwardIncidenceMarkings += (m.getToken()).getBackwardsIncidenceMatrix().get(j, i);
-                        if ((m.getCurrentMarking() < (m.getToken()).getBackwardsIncidenceMatrix().get(j, i)) &&
-                                (m.getCurrentMarking() != -1)) {
-                            allTokenClassesEnabled = false;
-                            break;
-                        }
-                        // inhibitor arcs
-                        if (m.getToken().getInhibitionMatrix().get(j, i) > 0 &&
-                                m.getCurrentMarking() >= m.getToken().getInhibitionMatrix().get(j, i)) {
-                            // an inhibitor arc prevents the firing of this
-                            // transition so
-                            // the transition is not enabled
-                            allTokenClassesEnabled = false;
-                            break;
-                        }
-                    }
-                }
-                // capacities
-                if (allTokenClassesEnabled && (_capacityMatrix[j] > 0) &&
-                        (totalMarkings + totalForwardIncidenceMarkings - totalBackwardIncidenceMarkings >
-                                _capacityMatrix[j])) { // firing this transition would break a capacity
-                    // restriction so the transition is not enabled
-                    allTokenClassesEnabled = false;
-                }
-
-
-                if (!allTokenClassesEnabled) {
-                    result[i] = false;
-                    break;
-                }
-            }
-
-            // we look for the highest priority of the enabled _transitions
-            if (result[i]) {
-                TransitionView t = _transitionViews.get(i);
-                if (t.isTimed()) {
-                    hasTimed = true;
-                } else {
-                    hasImmediate = true;
-                    if (t.getPriority() > maxPriority) {
-                        maxPriority = t.getPriority();
-                    }
-                }
-            }
-        }
-
-        // Now make sure that if any of the enabled _transitions are immediate
-        // _transitions, only they can fire as this must then be a vanishing
-        // state.
-        // - disable the immediate _transitions with lower priority.
-        // - disable all timed _transitions if there is an immediate transition
-        // enabled.
-        for (int i = 0; i < transitionCount; i++) {
-            TransitionView t = _transitionViews.get(i);
-            if (!t.isTimed() && t.getPriority() < maxPriority) {
-                result[i] = false;
-            }
-            if (hasTimed && hasImmediate) {
-                if (t.isTimed()) {
-                    result[i] = false;
-                }
-            }
-        }
-
-        // print("areTransitionsEnabled: ",result);//debug
-        return result;
-    }
-
-    // }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#setEnabledTransitionsBackwards()
-      */
-    public void setEnabledTransitionsBackwards() {
-
-        if (_currentMarkingVectorChanged) {
-            createMatrixes();
-        }
-
-        Collection<Transition> enabledTransitions =
-                _model.getEnabledTransitions(true);
-
-        for (Transition transition : enabledTransitions) {
-            transition.enable();
-        }
-
-//        for (int i = 0; i < enabledTransitions.length; i++) {
-//            TransitionView transitionView = _transitionViews.get(i);
-//            if (enabledTransitions[i] != transitionView.isEnabled()) {
-//                transitionView.setEnabled(enabledTransitions[i]);
-//                setChanged();
-//                notifyObservers(transitionView);
-//            }
-//        }
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#setEnabledTransitions()
-      */
-    public void setEnabledTransitions() {
-
-//        if (_currentMarkingVectorChanged) {
-//            createMatrixes();
-//        }
-
-        Collection<Transition> enabledTransitions =
-                _model.getEnabledTransitions(false);
-
-        for (Transition transition : enabledTransitions) {
-            transition.enable();
-        }
-        //TODO: POTENTIALLY NEED TO NOTIFY OBSERVERS?
-
-//        for (int i = 0; i < enabledTransitions.length; i++) {
-//            TransitionView transitionView = _transitionViews.get(i);
-//            if (enabledTransitions[i] != transitionView.isEnabled()) {
-//                transitionView.setEnabled(enabledTransitions[i]);
-//                setChanged();
-//                notifyObservers(transitionView);
-//            }
-//        }
-    }
 
     /**
      * Empty all attributes, turn into empty Petri-Net
@@ -1168,24 +863,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         return _timedMatrix;
     }
 
-    private void setMatrixChanged() { // Steve Doubleday:  checks both enabled and disabled TokenViews; do we just need the enabled ones?
-        for (TokenView tc : _tokenSetController.getAllTokenViews()) {
-            if (tc.getForwardsIncidenceMatrix() != null) {
-                tc.getForwardsIncidenceMatrix().matrixChanged = true;
-            }
-            if (tc.getBackwardsIncidenceMatrix() != null) {
-                tc.getBackwardsIncidenceMatrix().matrixChanged = true;
-            }
-            if (tc.getIncidenceMatrix() != null) {
-                tc.getIncidenceMatrix().matrixChanged = true;
-            }
-            if (tc.getInhibitionMatrix() != null) {
-                tc.getInhibitionMatrix().matrixChanged = true;
-            }
-        }
-        _currentMarkingVectorChanged = true;
-    }
-
     /* (non-Javadoc)
       * @see pipe.models.interfaces.IPetriNet#createFromPNML(org.w3c.dom.Document)
       */
@@ -1210,10 +887,16 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void newDisplayMethod(Document PNMLDoc) {
-        CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(),
+
+
+        _model = new PetriNet();
+        ArcStrategy inhibitorStrategy = new InhibitorStrategy();
+        ArcStrategy normalForwardStrategy = new ForwardsNormalStrategy(_model);
+        ArcStrategy normalBackwardStrategy = new BackwardsNormalStrategy(_model);
+        CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
                 new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
         PetriNetReader reader = new PetriNetReader(struct);
-        _model = reader.createFromFile(PNMLDoc);
+        _model = reader.createFromFile(_model, PNMLDoc);
         update();
     }
 
@@ -1243,23 +926,20 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             if (_arcViews.containsKey(arc)) {
                 view = _arcViews.get(arc);
                 view.update();
-            } else if (arc instanceof NormalArc) {
-                NormalArc normalArc = (NormalArc) arc;
-                NormalArcViewBuilder builder = new NormalArcViewBuilder(normalArc, petriNetController);
+            } else if (arc.getType().equals(ArcType.NORMAL)) {
+                NormalArcViewBuilder builder = new NormalArcViewBuilder(arc, petriNetController);
                 view = builder.build();
-                _arcViews.put(normalArc, view);
+                _arcViews.put(arc, view);
                 //TODO: Add back in:
                 //checkForInverseArc(view);
             } else {
-                InhibitorArc inhibitorArc = (InhibitorArc) arc;
-                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(inhibitorArc, petriNetController);
+                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(arc, petriNetController);
                 view = builder.build();
-                _arcViews.put(inhibitorArc, view);
+                _arcViews.put(arc, view);
             }
 
 //            addArcToArcsMap(view);
             setChanged();
-            setMatrixChanged();
             notifyObservers(view);
         }
     }
@@ -1277,7 +957,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             }
             view.setActiveTokenView(_tokenSetController.getActiveTokenView());
             setChanged();
-            setMatrixChanged();
             notifyObservers(view);
 
         }
@@ -1297,7 +976,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
                 component.delete();
                 setChanged();
-                setMatrixChanged();
                 notifyObservers(component);
 
                 itr.remove();
@@ -1318,7 +996,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             }
 
             setChanged();
-            setMatrixChanged();
             notifyObservers(view);
         }
 
@@ -1402,30 +1079,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         return false;
     }
 
-    /* (non-Javadoc)
-      * @see pipe.models.interfaces.IPetriNet#isTangibleState(java.util.LinkedList)
-      */
-    public boolean isTangibleState(LinkedList<MarkingView>[] marking) {
-        TransitionView[] trans = this.getTransitionViews();
-        int numTrans = trans.length;
-        boolean hasTimed = false;
-        boolean hasImmediate = false;
-
-        for (int i = 0; i < numTrans; i++) {
-            if (this.isTransitionEnabled(marking, i)) {
-                if (trans[i].isTimed()) {
-                    // If any immediate transtions exist, the state is vanishing
-                    // as they will fire immediately
-                    hasTimed = true;
-                } else if (!trans[i].isTimed()) {
-                    hasImmediate = true;
-                }
-            }
-        }
-        return (hasTimed && !hasImmediate);
-    }
-
-    private void checkForInverseArc(NormalArcView newArcView) {
+      private void checkForInverseArc(NormalArcView newArcView) {
         Iterator iterator = newArcView.getSource().getConnectToIterator();
 
         ArcView anArcView;
@@ -1912,5 +1566,10 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     public PetriNet getModel() {
         return _model;
+    }
+
+    //TODO: STUBBED METHOD DELETE
+    public boolean[] areTransitionsEnabled(final LinkedList<MarkingView>[] state) {
+        return new boolean[0];  //To change body of created methods use File | Settings | File Templates.
     }
 }

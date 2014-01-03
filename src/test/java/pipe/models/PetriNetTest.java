@@ -7,6 +7,9 @@ import org.junit.rules.ExpectedException;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
+import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.strategy.arc.ForwardsNormalStrategy;
+import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.utilities.math.IncidenceMatrix;
 import pipe.views.viewComponents.RateParameter;
 
@@ -81,7 +84,7 @@ public class PetriNetTest {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
         Map<Token, String> weights = new HashMap<Token, String>();
-        NormalArc arc = new NormalArc(place, transition, weights);
+        Arc arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
         net.addArc(arc);
         net.removeArc(arc);
         verify(place).removeOutboundArc(arc);
@@ -92,7 +95,7 @@ public class PetriNetTest {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
         Map<Token, String> weights = new HashMap<Token, String>();
-        NormalArc arc = new NormalArc(place, transition, weights);
+        Arc arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
         net.addArc(arc);
         net.removeArc(arc);
         verify(transition).removeInboundArc(arc);
@@ -168,7 +171,7 @@ public class PetriNetTest {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
         Map<Token, String> weights = new HashMap<Token, String>();
-        NormalArc arc = new NormalArc(place, transition, weights);
+        Arc arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
         net.addArc(arc);
 
         assertEquals(1, net.getArcs().size());
@@ -331,6 +334,7 @@ public class PetriNetTest {
     @Test
     public void correctlyDoesNotMarkNotEnabledTransitions() {
         PetriNetContainer container = createSimplePetriNet(2);
+        System.out.println("PRE RUN ARCS SIZE " + container.petriNet.getArcs().size());
         container.petriNet.markEnabledTransitions();
         assertFalse("Enabled transition when it cannot fire", container.transitions.get(0).isEnabled());
     }
@@ -351,6 +355,21 @@ public class PetriNetTest {
         place.setTokenCount(container.tokens.get(0), 1);
         place.setCapacity(1);
         container.petriNet.markEnabledTransitions();
+        assertTrue("Did not enable transition when it can fire", container.transitions.get(0).isEnabled());
+    }
+
+    @Test
+    public void correctlyMarksInhibitorArcEnabledTransition() {
+        PetriNetContainer container = createSimpleInhibitorPetriNet(1);
+        container.petriNet.markEnabledTransitions();
+        assertTrue("Did not enable transition when it can fire", container.transitions.get(0).isEnabled());
+    }
+
+    @Test
+    public void correctlyMarksInhibitorArcEnabledTransitionEvenAfterFiring() {
+        PetriNetContainer container = createSimpleInhibitorPetriNet(1);
+        container.petriNet.markEnabledTransitions();
+        container.petriNet.fireTransition(container.transitions.get(0));
         assertTrue("Did not enable transition when it can fire", container.transitions.get(0).isEnabled());
     }
 
@@ -400,7 +419,7 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
         Transition transition = new Transition("t2", "t2");
-        Arc arc3 = new NormalArc(container.places.get(1), transition, container.arcs.get(0).getTokenWeights());
+        Arc arc3 = new Arc<Place, Transition>(container.places.get(1), transition, container.arcs.get(0).getTokenWeights(), new BackwardsNormalStrategy(net));
         container.petriNet.addArc(arc3);
         container.petriNet.addTransition(transition);
 
@@ -458,11 +477,11 @@ public class PetriNetTest {
         Map<Token, String> arcWeight = new HashMap<Token, String>();
         arcWeight.put(token, Integer.toString(tokenWeight));
 
-        Arc arc = new NormalArc(place, transition, arcWeight);
-        Place place2 = new Place("p2", "p2");
-        Arc arc2 = new NormalArc(transition, place2, arcWeight);
-
         PetriNet petriNet = new PetriNet();
+        Arc arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Place place2 = new Place("p2", "p2");
+        Arc arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, new ForwardsNormalStrategy(petriNet));
+
         petriNet.addToken(token);
         petriNet.addPlace(place);
         petriNet.addPlace(place2);
@@ -480,6 +499,42 @@ public class PetriNetTest {
         return container;
     }
 
+    /**
+     * Create simple petrinet with P1 -o T1 -> P2
+     * Initialises a token in P1 and gives arcs A1 and A2 a weight of tokenWeight to a default token
+     *
+     * @param tokenWeight
+     * @return
+     */
+    public PetriNetContainer createSimpleInhibitorPetriNet(int tokenWeight) {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Place place = new Place("p1", "p1");
+        Transition transition = new Transition("t1", "t1");
+
+
+
+        Arc arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), new InhibitorStrategy());
+        Place place2 = new Place("p2", "p2");
+        PetriNet petriNet = new PetriNet();
+        Map<Token, String> arcWeight = new HashMap<Token, String>();
+        arcWeight.put(token, Integer.toString(tokenWeight));
+        Arc arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, new ForwardsNormalStrategy(petriNet));
+
+        petriNet.addToken(token);
+        petriNet.addPlace(place);
+        petriNet.addPlace(place2);
+        petriNet.addTransition(transition);
+        petriNet.addArc(arc);
+        petriNet.addArc(arc2);
+
+        PetriNetContainer container = new PetriNetContainer(petriNet);
+        container.addArcs(arc, arc2);
+        container.addPlaces(place, place2);
+        container.addTransitions(transition);
+        container.addTokens(token);
+        return container;
+    }
+
 
     private PetriNetContainer createSelfLoopPetriNet(final int tokenWeight) {
         Token token = new Token("Default", true, 0, new Color(0, 0, 0));
@@ -488,10 +543,11 @@ public class PetriNetTest {
         Map<Token, String> arcWeight = new HashMap<Token, String>();
         arcWeight.put(token, Integer.toString(tokenWeight));
 
-        Arc arc = new NormalArc(place, transition, arcWeight);
-        Arc arc2 = new NormalArc(transition, place, arcWeight);
 
         PetriNet petriNet = new PetriNet();
+        Arc arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Arc arc2 = new Arc<Transition, Place>(transition, place, arcWeight, new ForwardsNormalStrategy(petriNet));
+
         petriNet.addToken(token);
         petriNet.addPlace(place);
         petriNet.addTransition(transition);
@@ -522,11 +578,11 @@ public class PetriNetTest {
         Map<Token, String> arcWeight = new HashMap<Token, String>();
         arcWeight.put(token, Integer.toString(tokenWeight));
 
-        Arc arc = new NormalArc(place, transition, arcWeight);
-        Place place2 = new Place("p2", "p2");
-        Arc arc2 = new NormalArc(place2, transition, arcWeight);
-
         PetriNet petriNet = new PetriNet();
+        Arc arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Place place2 = new Place("p2", "p2");
+        Arc arc2 = new Arc<Place, Transition>(place2, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+
         petriNet.addToken(token);
         petriNet.addPlace(place);
         petriNet.addPlace(place2);

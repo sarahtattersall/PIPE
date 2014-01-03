@@ -4,7 +4,7 @@
 package pipe.historyActions;
 
 
-import pipe.views.NormalArcView;
+import pipe.views.ArcView;
 
 /**
  *
@@ -14,25 +14,25 @@ public class SplitInverseArc
         extends HistoryItem
 {
    
-   private final NormalArcView arc;
+   private final ArcView arc;
    
    
    /** Creates a new instance of placeRateEdit
     * @param _arc*/
-   public SplitInverseArc(NormalArcView _arc) {
+   public SplitInverseArc(ArcView _arc) {
       arc = _arc;
    }
 
    
    /** */
    public void undo() {
-      arc.join();
+//      arc.join();
    }
 
    
    /** */
    public void redo() {
-      arc.split();
+//      arc.split();
    }
    
 }

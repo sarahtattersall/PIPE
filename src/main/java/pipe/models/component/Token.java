@@ -28,12 +28,6 @@ public class Token extends AbstractPetriNetComponent {
 
     @Pnml("color")
     private Color color;
-    private Matrix incidenceMatrix;
-    // weight of connections from transition to place for given token
-    private Matrix forwardsIncidenceMatrix;
-    // weight of connections from place to transition for given token
-    private Matrix backwardsIncidenceMatrix;
-    private Matrix inhibitionMatrix;
 
     public Token() {
         this("", false, 0, Color.BLACK);
@@ -123,97 +117,6 @@ public class Token extends AbstractPetriNetComponent {
         lockCount = newLockCount;
     }
 
-    public Matrix getIncidenceMatrix() {
-        return incidenceMatrix;
-    }
-
-    public int[][] getIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {
-        if (incidenceMatrix == null || incidenceMatrix.matrixChanged) {
-            createIncidenceMatrix(arcs, transitions, places);
-        }
-        return (incidenceMatrix != null ? incidenceMatrix.getArrayCopy() : null);
-    }
-
-    // New method for TransModel.java
-    public int[][] simpleMatrix() {
-        return incidenceMatrix.getArrayCopy();
-    }
-
-    public void setIncidenceMatrix(Matrix incidenceMatrix) {
-        this.incidenceMatrix = incidenceMatrix;
-    }
-
-    public void createIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {
-        createForwardIncidenceMatrix(arcs, transitions, places);
-        createBackwardsIncidenceMatrix(arcs, transitions, places);
-        incidenceMatrix = new Matrix(forwardsIncidenceMatrix);
-        incidenceMatrix = incidenceMatrix.minus(backwardsIncidenceMatrix);
-        incidenceMatrix.matrixChanged = false;
-    }
-
-    public Matrix getForwardsIncidenceMatrix() {
-        return forwardsIncidenceMatrix;
-    }
-
-    public int[][] getForwardsIncidenceMatrix(Collection<Arc> arcsArray,
-                                              Collection<Transition> transitionsArray, Collection<Place> placesArray) {
-        if (forwardsIncidenceMatrix == null
-                || forwardsIncidenceMatrix.matrixChanged) {
-            createForwardIncidenceMatrix(arcsArray, transitionsArray,
-                    placesArray);
-        }
-        return (forwardsIncidenceMatrix != null ? forwardsIncidenceMatrix
-                .getArrayCopy() : null);
-    }
-
-    public int[][] simpleForwardsIncidenceMatrix() {
-        return forwardsIncidenceMatrix.getArrayCopy();
-    }
-
-    public void setForwardsIncidenceMatrix(Matrix forwardsIncidenceMatrix) {
-        this.forwardsIncidenceMatrix = forwardsIncidenceMatrix;
-    }
-
-    public Matrix getBackwardsIncidenceMatrix() {
-        return backwardsIncidenceMatrix;
-    }
-
-    public int[][] getBackwardsIncidenceMatrix(Collection<Arc> arcsArray,
-                                               Collection<Transition> transitionsArray, Collection<Place> placesArray) {
-        if (backwardsIncidenceMatrix == null
-                || backwardsIncidenceMatrix.matrixChanged) {
-            createBackwardsIncidenceMatrix(arcsArray, transitionsArray,
-                    placesArray);
-        }
-        return (backwardsIncidenceMatrix != null ? backwardsIncidenceMatrix
-                .getArrayCopy() : null);
-    }
-
-    public int[][] simpleBackwardsIncidenceMatrix() {
-        return backwardsIncidenceMatrix.getArrayCopy();
-    }
-
-    public void setBackwardsIncidenceMatrix(Matrix backwardsIncidenceMatrix) {
-        this.backwardsIncidenceMatrix = backwardsIncidenceMatrix;
-    }
-
-    public Matrix getInhibitionMatrix() {
-        return inhibitionMatrix;
-    }
-
-    public int[][] getInhibitionMatrix(Collection<InhibitorArcView> inhibitorArrayView,
-                                       Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
-        if (inhibitionMatrix == null || inhibitionMatrix.matrixChanged) {
-            createInhibitionMatrix(inhibitorArrayView, transitionsArray,
-                    placesArray);
-        }
-        return (inhibitionMatrix != null ? inhibitionMatrix.getArrayCopy()
-                : null);
-    }
-
-    public void setInhibitionMatrix(Matrix inhibitionMatrix) {
-        this.inhibitionMatrix = inhibitionMatrix;
-    }
 
     void createForwardIncidenceMatrix(Collection<Arc> arcs, Collection<Transition> transitions, Collection<Place> places) {
         throw new RuntimeException("Using old forwards incidence matrix method");
@@ -318,42 +221,6 @@ public class Token extends AbstractPetriNetComponent {
 //                }
 //            }
 //        }
-    }
-
-    public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray, Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
-        int placeSize = placesArray.size();
-        int transitionSize = transitionsArray.size();
-        inhibitionMatrix = new Matrix(placeSize, transitionSize);
-
-        for (InhibitorArcView inhibitorArcView : inhibitorsArray) {
-            if (inhibitorArcView != null) {
-                PetriNetViewComponent pn = inhibitorArcView.getSource();
-                if (pn != null) {
-                    if (pn instanceof PlaceView) {
-                        PlaceView placeView = (PlaceView) pn;
-                        pn = inhibitorArcView.getTarget();
-                        if (pn != null) {
-                            if (pn instanceof TransitionView) {
-                                TransitionView transitionView = (TransitionView) pn;
-                                //TODO: Broken this
-                                int transitionNo = 0; //transitionsArray.indexOf(transitionView);
-                                int placeNo = 0; //placesArray.indexOf(placeView);
-                                try {
-                                    inhibitionMatrix.set(placeNo, transitionNo,
-                                            1);
-                                } catch (Exception e) {
-                                    JOptionPane.showMessageDialog(null,
-                                            "Problema a inhibitionMatrix");
-                                    System.out.println("p:" + placeNo + ";t:"
-                                            + transitionNo + ";w:"
-                                            + inhibitorArcView.getWeight());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     @Override

@@ -205,7 +205,7 @@ public class StateSpaceGenerator {
 	 * uses a hashtable so that it can quickly check whether a state has already
 	 * been explored.
 	 * 
-	 * @param pnmlData
+	 * @param petriNetView
 	 * @param reachGraph
 	 * @param resultspane
 	 * @throws TimelessTrapException
@@ -215,15 +215,15 @@ public class StateSpaceGenerator {
 	 * @throws OutOfMemoryError
 	 * @throws MarkingNotIntegerException 
 	 */
-	public static void generate(PetriNetView pnmlData, File reachGraph,
+	public static void generate(PetriNetView petriNetView, File reachGraph,
 			ResultsHTMLPane resultspane) throws OutOfMemoryError, MarkingNotIntegerException, Exception {
 
-		pnmlData.backUpPlaceViewsMarking();
-		pnmlData.setFunctionalExpressionRelatedPlaces();
+		petriNetView.backUpPlaceViewsMarking();
+		petriNetView.setFunctionalExpressionRelatedPlaces();
 		// This is used to catch timeless traps. It's the maximum number
 		// of attempts to try and get successors to vanishing states.
 		final int MAX_TRIES = 100000;
-		List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
+		List<MarkingView>[] markings = petriNetView.getCurrentMarkingVector();
 		int[] marking = new int[markings.length];
 		for (int i = 0; i < markings.length; i++) {
 			marking[i] = markings[i].get(0).getCurrentMarking();
@@ -296,26 +296,26 @@ public class StateSpaceGenerator {
 			return;
 		}
 
-		pnmlData.createMatrixes();
+		petriNetView.createMatrixes();
 
 		/*
 		 * Phase I Initialise the tangibleStates stack with initial tangible
 		 * states.
 		 */
 		System.out.println("Beginning Phase I: "
-				+ "Determining initial tangible states...");
+                + "Determining initial tangible states...");
 
 		// Start state space exploration
-		if (isTangible(pnmlData, currentMarking)) {
+		if (isTangible(petriNetView, currentMarking)) {
 			tangible = new MarkingState(currentMarking, numtangiblestates);
-			tangible.setPlaceMarking(pnmlData.getCurrentMarkingVector());
+			tangible.setPlaceMarking(petriNetView.getCurrentMarkingVector());
 			tangibleStates.enqueue(tangible);
 			addExplored(tangible, exploredStates, esoFile, false);
 			numtangiblestates++;
 		} else {
 			int attempts = 0; // This is a counter used to detect timeless traps
 			VanishingState vs = new VanishingState(currentMarking, 1.0);
-			vs.setPlaceMarking(pnmlData.getCurrentMarkingVector());
+			vs.setPlaceMarking(petriNetView.getCurrentMarkingVector());
 			vanishingStates.push(vs);
 			while ((!vanishingStates.isEmpty()) && (attempts != MAX_TRIES)) {
 				attempts++;
@@ -323,7 +323,7 @@ public class StateSpaceGenerator {
 				/**
 				 * 
 				 */
-				pnmlData.setCurrentMarkingVector(v.getState());
+				petriNetView.setCurrentMarkingVector(v.getState());
 				p = v.getRate();
 				// System.out.println("p: " + p);//debug
 				// numtransitionsfired += fire(_pnmlData, v, vansuccessor);
@@ -331,15 +331,16 @@ public class StateSpaceGenerator {
 				LinkedList<MarkingView>[] state = new LinkedList[v.getState().length];
 				for (int i = 0; i < v.getState().length; i++) {
 					LinkedList<MarkingView> mlist = new LinkedList<MarkingView>();
-					MarkingView m = new MarkingView(pnmlData.getTokenViews()
+					MarkingView m = new MarkingView(petriNetView.getTokenViews()
 							.getFirst(), v.getState()[i]);
 					mlist.add(m);
 					state[i] = mlist;
 				}
-				boolean[] enabledTransitions = pnmlData
-						.areTransitionsEnabled(state);
+                enabledTransitions = new boolean[0];
+//				boolean[] enabledTransitions = petriNetView
+//						.areTransitionsEnabled(state);
 
-				int transition = fireFirstEnabledTransition(pnmlData,
+				int transition = fireFirstEnabledTransition(petriNetView,
 						enabledTransitions, v, vansuccessor);
 
 				while (transition != -1) {
@@ -349,8 +350,8 @@ public class StateSpaceGenerator {
 					/**
 					 * 
 					 */
-					pnmlData.setCurrentMarkingVector(vprime.getState());
-					if (isTangible(pnmlData, vprime)) {
+					petriNetView.setCurrentMarkingVector(vprime.getState());
+					if (isTangible(petriNetView, vprime)) {
 						if (!explored(vprime, exploredStates)) {
 							tangible = new MarkingState(vprime,
 									numtangiblestates);
@@ -361,7 +362,7 @@ public class StateSpaceGenerator {
 							numtangiblestates++;
 						}
 					} else {
-						pprime = p * prob(pnmlData, v, vprime, transition);
+						pprime = p * prob(petriNetView, v, vprime, transition);
 						if (pprime > epsilon) {
 							VanishingState vsp =new VanishingState(vprime,
 									pprime);
@@ -369,7 +370,7 @@ public class StateSpaceGenerator {
 							vanishingStates.push(vsp);
 						}
 					}
-					transition = fireFirstEnabledTransition(pnmlData,
+					transition = fireFirstEnabledTransition(petriNetView,
 							enabledTransitions, v, vansuccessor);
 				}
 			}
@@ -403,14 +404,14 @@ public class StateSpaceGenerator {
 		//	pnmlData.setCurrentMarkingVector(s.getPlaceMarking());
 			// System.out.println("numtransitionsfired abans de fire: " +
 			// numtransitionsfired);//debug
-			pnmlData.createMatrixes();
-			numtransitionsfired += fire(pnmlData, s, tansuccessor);
+			petriNetView.createMatrixes();
+			numtransitionsfired += fire(petriNetView, s, tansuccessor);
 			//updatePlaceMarkings();
 			// System.out.println("numtransitionsfired despres de fire: " +
 			// numtransitionsfired);//debug
 			while (!tansuccessor.isEmpty()) {
 				sprime = (State) tansuccessor.pop();
-				if (isTangible(pnmlData, sprime)) {
+				if (isTangible(petriNetView, sprime)) {
 					if (!explored(sprime, exploredStates)) {
 						tangible = new MarkingState(sprime, numtangiblestates);
 						
@@ -432,11 +433,11 @@ public class StateSpaceGenerator {
 					
 					//here we calculate the rate, so we need place markings to be updated before this
 					numtransitions += transition(tangible,
-							rate(pnmlData, s, sprime), localarcs);
+							rate(petriNetView, s, sprime), localarcs);
 				} else {
 					int attempts = 0;
 					VanishingState vs = new VanishingState(sprime, rate(
-							pnmlData, s, sprime));
+							petriNetView, s, sprime));
 					vs.setPlaceMarking(sprime.getPlaceMarking());
 					vanishingStates.push(vs);
 					while ((!vanishingStates.isEmpty())
@@ -449,22 +450,22 @@ public class StateSpaceGenerator {
 								.getState().length];
 						for (int i = 0; i < v.getState().length; i++) {
 							LinkedList<MarkingView> mlist = new LinkedList<MarkingView>();
-							MarkingView m = new MarkingView(pnmlData
+							MarkingView m = new MarkingView(petriNetView
 									.getTokenViews().getFirst(),
 									v.getState()[i]);
 							mlist.add(m);
 							state[i] = mlist;
 						}
-						boolean[] enabledTransitions = pnmlData
+						boolean[] enabledTransitions = petriNetView
 								.areTransitionsEnabled(state);
 
-						int transition = fireFirstEnabledTransition(pnmlData,
+						int transition = fireFirstEnabledTransition(petriNetView,
 								enabledTransitions, v, vansuccessor);
 						//updatePlaceMarkings();
 						while (transition != -1) {
 							vprime = (State) vansuccessor.pop();
-							pprime = p * prob(pnmlData, v, vprime, transition);
-							if (isTangible(pnmlData, vprime)) {
+							pprime = p * prob(petriNetView, v, vprime, transition);
+							if (isTangible(petriNetView, vprime)) {
 								if (!explored(vprime, exploredStates)) {
 									tangible = new MarkingState(vprime,
 											numtangiblestates);
@@ -494,7 +495,7 @@ public class StateSpaceGenerator {
 								}
 							}
 
-							transition = fireFirstEnabledTransition(pnmlData,
+							transition = fireFirstEnabledTransition(petriNetView,
 									enabledTransitions, v, vansuccessor);
 						//	updatePlaceMarkings();
 						}
@@ -549,7 +550,7 @@ public class StateSpaceGenerator {
 				System.err.println("\nCould not delete intermediate file.");
 			}
 		}
-		pnmlData.restorePlaceViewsMarking();
+		petriNetView.restorePlaceViewsMarking();
 	}
 	
 	/**
@@ -952,10 +953,10 @@ public class StateSpaceGenerator {
 //		System.out.println("rate1: "+pnmlData.getTransitionViews()[0].getRate());
 //		System.out.println("rate2: "+pnmlData.getTransitionViews()[1].getRate());
 //		System.out.println();
-		Matrix incidenceMatrix1 = pnmlData
+		Matrix incidenceMatrix1 = new Matrix(pnmlData
 				.getTokenViews()
 				.getFirst()
-				.getIncidenceMatrix();
+				.getIncidenceMatrix(null, null, null));
 		int transCount = pnmlData.numberOfTransitions();
 		// get list of transitions enabled at marking1
 		LinkedList<MarkingView>[] state = new LinkedList[marking1.length];

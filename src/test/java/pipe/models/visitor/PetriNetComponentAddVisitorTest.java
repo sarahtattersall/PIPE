@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.*;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -24,42 +25,33 @@ public class PetriNetComponentAddVisitorTest {
         }
 
         @Test
-        public void testAddsNormalArc() throws Exception {
+        public void testAddsArc()  {
             Place place = new Place("","");
             Transition transition = new Transition("","");
             Map<Token, String> weights = new HashMap<Token, String>();
-            NormalArc arc = new NormalArc(place, transition, weights);
+            ArcStrategy strategy = mock(ArcStrategy.class);
+            Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, strategy);
             arc.accept(visitor);
             verify(mockNet).addArc(arc);
 
         }
 
         @Test
-        public void testAddsInhibitorArc() throws Exception {
-            Place place = new Place("","");
-            Transition transition = new Transition("","");
-            Map<Token, String> weights = new HashMap<Token, String>();
-            InhibitorArc arc = new InhibitorArc(place, transition, weights);
-            arc.accept(visitor);
-            verify(mockNet).addArc(arc);
-        }
-
-        @Test
-        public void testAddsPlace() throws Exception {
+        public void testAddsPlace() {
             Place place = new Place("","");
             place.accept(visitor);
             verify(mockNet).addPlace(place);
         }
 
         @Test
-        public void testAddsTransition() throws Exception {
+        public void testAddsTransition() {
             Transition transition = new Transition("","");
             transition.accept(visitor);
             verify(mockNet).addTransition(transition);
         }
 
         @Test
-        public void testAddAnnotation() throws Exception {
+        public void testAddAnnotation() {
             Annotation annotation = new Annotation(0, 0, "", 0, 0, false);
             annotation.accept(visitor);
             verify(mockNet).addAnnotaiton(annotation);
@@ -75,7 +67,7 @@ public class PetriNetComponentAddVisitorTest {
 //    }
 
         @Test
-        public void testAddsToken() throws Exception {
+        public void testAddsToken() {
             Token token = new Token("", false, 0, new Color(0, 0, 0));
             token.accept(visitor);
             verify(mockNet).addToken(token);

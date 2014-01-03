@@ -3,7 +3,6 @@ package pipe.utilities;
 import org.w3c.dom.DOMException;
 import pipe.exceptions.TokenLockedException;
 import pipe.models.PetriNet;
-import pipe.models.component.NormalArc;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
@@ -117,67 +116,69 @@ public class Expander
         }
 
     }
+
+    //TODO: REIMPLEMENT
     // Steve Doubleday:  added PlaceViews and ArcViews as observers for new MarkingViews
     public void analyseArcs(TransitionView transitionView, TransitionView newTransitionView, LinkedList<ArcView> arcViews)
     {
-        for(ArcView arcView : arcViews)
-        {
-            PlaceView oldPlaceView = (PlaceView) arcView.getTheOtherEndFor(transitionView);
-            String newPlaceName = oldPlaceView.getId();
-            int newMarking = 0;
-            int newArcWeight = 0;
-            List<MarkingView> markings = arcView.getWeight();
-            for(MarkingView markingView : markings)
-            {
-                if(markingView.getCurrentMarking() > 0)
-                {
-                    newPlaceName += "_" + markingView.getToken().getID();
-                    for(MarkingView placeMarkingView : oldPlaceView.getCurrentMarkingView())
-                    {
-                        if(markingView.getToken().getID().equals(placeMarkingView.getToken().getID()))
-                        {
-                            newMarking = placeMarkingView.getCurrentMarking();
-                            newArcWeight = markingView.getCurrentMarking();
-                        }
-                    }
-                }
-            }
-            PlaceView newPlaceView = null;
-            for(PlaceView placeView : _newPlaceViews)
-            {
-                if(placeView.getId().equals(newPlaceName))
-                {
-                    newPlaceView = placeView;
-                }
-            }
-            if(newPlaceView == null)
-            {
-                LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
-                MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
-                markingViewInput.add(placeMarkingView);
-
-                Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
-                //TODO: WORK OUT HOW TO GET CONTROLLER
-                newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place, null);
-                placeMarkingView.addObserver(newPlaceView);
-                _newPlaceViews.add(newPlaceView);
-            }
-            LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
-            Map<Token, String> weightModel = new HashMap<Token, String>();
-            MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+"");
-            weight.add(arcMarkingView);
-            weightModel.put(_defaultTokenView.getModel(), newArcWeight+"");
-
-            ArcView newArcView;
-            if(transitionView.outboundArcs() == arcViews)
-                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getX(), newPlaceView.getY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel), arcView.getPetriNetController());
-            else
-                newArcView = new NormalArcView(newPlaceView.getX(), newPlaceView.getY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel), arcView.getPetriNetController());
-            newPlaceView.addInboundOrOutbound(newArcView);
-            newTransitionView.addInboundOrOutbound(newArcView);
-            arcMarkingView.addObserver(newArcView); 
-            _newArcViews.add(newArcView);
-        }
+//        for(ArcView arcView : arcViews)
+//        {
+//            PlaceView oldPlaceView = (PlaceView) arcView.getTheOtherEndFor(transitionView);
+//            String newPlaceName = oldPlaceView.getId();
+//            int newMarking = 0;
+//            int newArcWeight = 0;
+//            List<MarkingView> markings = arcView.getWeight();
+//            for(MarkingView markingView : markings)
+//            {
+//                if(markingView.getCurrentMarking() > 0)
+//                {
+//                    newPlaceName += "_" + markingView.getToken().getID();
+//                    for(MarkingView placeMarkingView : oldPlaceView.getCurrentMarkingView())
+//                    {
+//                        if(markingView.getToken().getID().equals(placeMarkingView.getToken().getID()))
+//                        {
+//                            newMarking = placeMarkingView.getCurrentMarking();
+//                            newArcWeight = markingView.getCurrentMarking();
+//                        }
+//                    }
+//                }
+//            }
+//            PlaceView newPlaceView = null;
+//            for(PlaceView placeView : _newPlaceViews)
+//            {
+//                if(placeView.getId().equals(newPlaceName))
+//                {
+//                    newPlaceView = placeView;
+//                }
+//            }
+//            if(newPlaceView == null)
+//            {
+//                LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
+//                MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
+//                markingViewInput.add(placeMarkingView);
+//
+//                Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
+//                //TODO: WORK OUT HOW TO GET CONTROLLER
+//                newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place, null);
+//                placeMarkingView.addObserver(newPlaceView);
+//                _newPlaceViews.add(newPlaceView);
+//            }
+//            LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
+//            Map<Token, String> weightModel = new HashMap<Token, String>();
+//            MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+"");
+//            weight.add(arcMarkingView);
+//            weightModel.put(_defaultTokenView.getModel(), newArcWeight+"");
+//
+//            ArcView newArcView;
+//            if(transitionView.outboundArcs() == arcViews)
+//                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getX(), newPlaceView.getY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel), arcView.getPetriNetController());
+//            else
+//                newArcView = new NormalArcView(newPlaceView.getX(), newPlaceView.getY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel), arcView.getPetriNetController());
+//            newPlaceView.addInboundOrOutbound(newArcView);
+//            newTransitionView.addInboundOrOutbound(newArcView);
+//            arcMarkingView.addObserver(newArcView);
+//            _newArcViews.add(newArcView);
+//        }
     }
 
     private PetriNetView createPetriNetView()

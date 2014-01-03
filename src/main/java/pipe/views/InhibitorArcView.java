@@ -3,7 +3,7 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
-import pipe.models.component.InhibitorArc;
+import pipe.models.component.Arc;
 import pipe.models.component.Token;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author Pere Bonet
  * @version 1.0
  */
-public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializable {
+public class InhibitorArcView extends ArcView<Arc> implements Serializable {
 
     private final static String type = "inhibitor";
     private final static int OVAL_X = -4;
@@ -44,7 +44,7 @@ public class InhibitorArcView extends ArcView<InhibitorArc> implements Serializa
      */
     public InhibitorArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
             double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, InhibitorArc model, PetriNetController controller) {
+            List<MarkingView> weightInput, String idInput, Arc model, PetriNetController controller) {
         super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
                 weightInput, idInput, model, controller);
     }

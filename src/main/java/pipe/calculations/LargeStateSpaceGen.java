@@ -596,7 +596,7 @@ public class LargeStateSpaceGen
      * intersection of the two.  Then sums the firing rates of the intersection
      * and divides it by the sum of the firing rates of the enabled transitions.
      *
-     * @param pnmlData
+     * @param petriNetView
      * @param s
      * @param sprime
      * @param rp
@@ -605,15 +605,15 @@ public class LargeStateSpaceGen
      * optimisation)
      */
 
-    private static double rateorprob(PetriNetView pnmlData, State s, State sprime, boolean rp)
+    private static double rateorprob(PetriNetView petriNetView, State s, State sprime, boolean rp)
     {
 
         int[] marking1 = s.getState();
         int[] marking2 = sprime.getState();
         int markSize = marking1.length;
-        int[][] incidenceMatrix = pnmlData.getActiveTokenView().getIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
-        int transCount = pnmlData.numberOfTransitions();
-        boolean[] marking1EnabledTransitions = getTransitionEnabledStatusArray(pnmlData, marking1, false); //get list of transitions enabled at marking1
+        int[][] incidenceMatrix = petriNetView.getActiveTokenView().getIncidenceMatrix(petriNetView.getModel().getArcs(), petriNetView.getModel().getTransitions(), petriNetView.getModel().getPlaces());
+        int transCount = petriNetView.numberOfTransitions();
+        boolean[] marking1EnabledTransitions = getTransitionEnabledStatusArray(petriNetView, marking1, false); //get list of transitions enabled at marking1
         boolean[] matchingTransition = new boolean[transCount];
 
 
@@ -644,7 +644,7 @@ public class LargeStateSpaceGen
         // as immediate transitions will always fire first.
         if(rp)
         {
-            TransitionView[] transitionViews = pnmlData.getTransitionViews();
+            TransitionView[] transitionViews = petriNetView.getTransitionViews();
             for(int i = 0; i < transCount; i++)
             {
                 if(transitionViews[i].isTimed())
@@ -680,7 +680,7 @@ public class LargeStateSpaceGen
         {
             if((matchingTransition[i]) && (marking1EnabledTransitions[i]))
             {
-                candidateTransitionWeighting += pnmlData.getTransitionViews()[i].getRate();
+                candidateTransitionWeighting += petriNetView.getTransitionViews()[i].getRate();
             }
         }
         if(!rp)
@@ -696,7 +696,7 @@ public class LargeStateSpaceGen
             {
                 if(marking1EnabledTransitions[i])
                 {
-                    enabledTransitionWeighting += pnmlData.getTransitionViews()[i].getRate();
+                    enabledTransitionWeighting += petriNetView.getTransitionViews()[i].getRate();
                 }
             }
             return (candidateTransitionWeighting / enabledTransitionWeighting);

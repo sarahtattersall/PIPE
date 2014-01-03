@@ -53,9 +53,8 @@ public class PetriNetReader {
         }
     }
 
-    public PetriNet createFromFile(Document document)
+    public PetriNet createFromFile(PetriNet net, Document document)
     {
-        PetriNet net = new PetriNet();
         Element rootElement = document.getDocumentElement();
         NodeList nodes = rootElement.getChildNodes();
 

@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.*;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -23,21 +24,12 @@ public class PetriNetComponentRemovalVisitorTest {
     }
 
     @Test
-    public void testDeletesNormalArc() throws Exception {
+    public void testDeletesArc() throws Exception {
         Place place = new Place("","");
         Transition transition = new Transition("","");
         Map<Token, String> weights = new HashMap<Token, String>();
-        NormalArc arc = new NormalArc(place, transition, weights);
-        arc.accept(visitor);
-        verify(mockNet).removeArc(arc);
-    }
-
-    @Test
-    public void testDeletesInhibitorArc() throws Exception {
-        Place place = new Place("","");
-        Transition transition = new Transition("","");
-        Map<Token, String> weights = new HashMap<Token, String>();
-        InhibitorArc arc = new InhibitorArc(place, transition, weights);
+        ArcStrategy strategy = mock(ArcStrategy.class);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, strategy);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
     }

@@ -268,7 +268,7 @@ public class HistoryManager
                 }
 
             }
-            else if(pn instanceof NormalArcView)
+            else if(pn instanceof ArcView)
             {
                 if(((NormalArcView) pn).hasInverse())
                 {
@@ -282,7 +282,8 @@ public class HistoryManager
                     }
                     else
                     {
-                        addEdit(((NormalArcView) pn).clearInverse());
+                        //TODO: PUT BACK IN?
+//                        addEdit(((ArcView) pn).clearInverse());
                     }
                 }
             }

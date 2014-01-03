@@ -15,7 +15,7 @@ import pipe.handlers.ConnectableHandler;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
-import pipe.models.component.NormalArc;
+import pipe.models.component.Arc;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
 import pipe.views.viewComponents.RateParameter;
@@ -838,53 +838,53 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide,
             GroupTransitionView newGroupTransitionView) {
-        if (transitionsToHide == null) {
-            return;
-        }
-
-        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
-        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-
-        int i = 0;
-        for (TransitionView transitionViewToGroup : transitionsToHide) {
-            transitionViewToGroup.hideFromCanvas();
-            transitionViewToGroup.hideAssociatedArcs();
-            transitionViewToGroup.bindToGroup(newGroupTransitionView);
-            newGroupTransitionView.addTransition(transitionViewToGroup);
-            if (i == 0) {
-                newGroupTransitionView.setName(transitionViewToGroup.getName());
-            } else {
-                newGroupTransitionView
-                        .setName(newGroupTransitionView.getName() + "_" + transitionViewToGroup.getName());
-            }
-            i++;
-        }
-
-        for (ArcView tempArcView : inboundArcs()) {
-            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
-                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
-                    tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false,
-                    new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(),
-                            new HashMap<Token, String>()), petriNetController);
-            newGroupTransitionView.addInbound(newArcView);
-            tempArcView.getSource().addOutbound(newArcView);
-            newArcView.addToView(view);
-        }
-        for (ArcView tempArcView : outboundArcs()) {
-            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
-                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
-                    newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false,
-                    new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(),
-                            new HashMap<Token, String>()), petriNetController);
-            newGroupTransitionView.addOutbound(newArcView);
-            tempArcView.getTarget().addInbound(newArcView);
-            newArcView.addToView(view);
-        }
-        newGroupTransitionView.setVisible(true);
-        newGroupTransitionView.getNameLabel().setVisible(true);
-        view.addNewPetriNetObject(newGroupTransitionView);
-        model.addPetriNetObject(newGroupTransitionView);
-        newGroupTransitionView.repaint();
+//        if (transitionsToHide == null) {
+//            return;
+//        }
+//
+//        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
+//        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+//
+//        int i = 0;
+//        for (TransitionView transitionViewToGroup : transitionsToHide) {
+//            transitionViewToGroup.hideFromCanvas();
+//            transitionViewToGroup.hideAssociatedArcs();
+//            transitionViewToGroup.bindToGroup(newGroupTransitionView);
+//            newGroupTransitionView.addTransition(transitionViewToGroup);
+//            if (i == 0) {
+//                newGroupTransitionView.setName(transitionViewToGroup.getName());
+//            } else {
+//                newGroupTransitionView
+//                        .setName(newGroupTransitionView.getName() + "_" + transitionViewToGroup.getName());
+//            }
+//            i++;
+//        }
+//
+//        for (ArcView tempArcView : inboundArcs()) {
+//            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
+//                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
+//                    tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false,
+//                    new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(),
+//                            new HashMap<Token, String>()), petriNetController);
+//            newGroupTransitionView.addInbound(newArcView);
+//            tempArcView.getSource().addOutbound(newArcView);
+//            newArcView.addToView(view);
+//        }
+//        for (ArcView tempArcView : outboundArcs()) {
+//            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
+//                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
+//                    newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false,
+//                    new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(),
+//                            new HashMap<Token, String>()), petriNetController);
+//            newGroupTransitionView.addOutbound(newArcView);
+//            tempArcView.getTarget().addInbound(newArcView);
+//            newArcView.addToView(view);
+//        }
+//        newGroupTransitionView.setVisible(true);
+//        newGroupTransitionView.getNameLabel().setVisible(true);
+//        view.addNewPetriNetObject(newGroupTransitionView);
+//        model.addPetriNetObject(newGroupTransitionView);
+//        newGroupTransitionView.repaint();
     }
 
     public void hideFromCanvas() {

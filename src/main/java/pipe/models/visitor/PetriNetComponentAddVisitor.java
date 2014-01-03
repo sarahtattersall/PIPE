@@ -13,12 +13,7 @@ public class PetriNetComponentAddVisitor implements PetriNetComponentVisitor {
     }
 
     @Override
-    public void visit(NormalArc arc) {
-        petriNet.addArc(arc);
-    }
-
-    @Override
-    public void visit(InhibitorArc arc) {
+    public void visit(Arc arc) {
        petriNet.addArc(arc);
     }
 

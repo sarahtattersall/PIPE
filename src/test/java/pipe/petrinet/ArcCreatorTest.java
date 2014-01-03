@@ -7,7 +7,12 @@ import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import pipe.models.PetriNet;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.strategy.arc.ForwardsNormalStrategy;
+import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.creator.ArcCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 import utils.TokenUtils;
@@ -24,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 public class ArcCreatorTest {
     ArcCreator creator;
+    PetriNet mockNet;
     Map<String, Place> places = new HashMap<String, Place>();
     Map<String, Transition> transitions = new HashMap<String, Transition>();
     Place source = new Place("P0", "P0");
@@ -35,10 +41,6 @@ public class ArcCreatorTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
-    /**
-     * Range in which to declare doubles equal
-     */
-    private static final double DOUBLE_DELTA = 0.001;
 
     private Element createNormalArcNoWeight()
     {
@@ -79,9 +81,14 @@ public class ArcCreatorTest {
     @Before
     public void setUp()
     {
+        mockNet = mock(PetriNet.class);
         places.put(source.getId(), source);
         transitions.put(target.getId(), target);
-        creator = new ArcCreator();
+
+        ArcStrategy inhibitorStrategy = new InhibitorStrategy();
+        ArcStrategy normalForwardStrategy = new ForwardsNormalStrategy(mockNet);
+        ArcStrategy normalBackwardStrategy = new BackwardsNormalStrategy(mockNet);
+        creator = new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy);
         creator.setPlaces(places);
         creator.setTransitions(transitions);
     }
@@ -95,7 +102,7 @@ public class ArcCreatorTest {
         Arc arc = creator.create(arcElement);
 
         assertNotNull(arc);
-        assertEquals(NormalArc.class, arc.getClass());
+        assertEquals(ArcType.NORMAL, arc.getType());
         assertEquals(source, arc.getSource());
         assertEquals(target, arc.getTarget());
         assertEquals("Arc0", arc.getId());
@@ -170,7 +177,7 @@ public class ArcCreatorTest {
         Arc arc = creator.create(arcElement);
 
         assertNotNull(arc);
-        assertEquals(InhibitorArc.class, arc.getClass());
+        assertEquals(ArcType.INHIBITOR, arc.getType());
     }
 
     @Test

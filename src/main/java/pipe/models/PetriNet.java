@@ -186,8 +186,7 @@ public class PetriNet extends Observable implements IObserver {
     /**
      * Calculates weights of connections from places to transitions for given token
      *
-     * @param token
-     * @throws Exception
+     * @param token calculates backwards incidence matrix for this token
      */
     public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
         ExprEvaluator paser = new ExprEvaluator(this);
@@ -269,7 +268,7 @@ public class PetriNet extends Observable implements IObserver {
             }
         }
 
-        // Now make sure that if any of the enabled transitions are immediate
+//        Now make sure that if any of the enabled transitions are immediate
         // transitions, only they can fire as this must then be a vanishing
         // state. That is:
         // - disable the immediate transitions with lower priority.
@@ -297,76 +296,15 @@ public class PetriNet extends Observable implements IObserver {
     private boolean isEnabled(Transition transition, boolean backwards) {
         boolean enabledForArcs = true;
         for (Arc<Place, Transition> arc : transition.inboundArcs()) {
-            Place place = arc.getSource();
-            enabledForArcs &= allPlaceTokensEnabled(backwards, transition, arc, place);
+            enabledForArcs &= arc.canFire();
+//            enabledForArcs &= allPlaceTokensEnabled(backwards, arc);
         }
 
         for (Arc<Transition, Place> arc : transition.outboundArcs()) {
-            Place place = arc.getTarget();
-            enabledForArcs &= allPlaceCapacitiesOk(backwards, transition, place);
+//            Place place = arc.getTarget();
+            enabledForArcs &= arc.canFire();
         }
         return enabledForArcs;
-    }
-
-    /**
-     * @param backwards
-     * @param transition
-     * @param place
-     * @return true if every token in the place enables the transition
-     * @throws Exception
-     */
-    private boolean allPlaceTokensEnabled(boolean backwards,
-                                          Transition transition,
-                                          Arc<Place, Transition> arc,
-                                          Place place) {
-        for (Token token : arc.getTokenWeights().keySet()) {
-            int tokenCount = place.getTokenCount(token);
-            IncidenceMatrix backwardsIncidenceMatrix;
-
-            //TODO: WHAT IS THIS LOGIC?
-            if (backwards) {
-                backwardsIncidenceMatrix = getForwardsIncidenceMatrix(token);
-            } else {
-                backwardsIncidenceMatrix = getBackwardsIncidenceMatrix(token);
-            }
-            //TODO: INHIBITION
-
-            //THis line is specific to arc type...
-            if (tokenCount < backwardsIncidenceMatrix.get(place, transition) && tokenCount != -1) {
-                return false;
-            }
-            //TODO: INHIBITOR
-        }
-        return !place.getTokenCounts().isEmpty();
-    }
-
-    public boolean allPlaceCapacitiesOk  (boolean backwards,
-                                       Transition transition,
-                                       Place place) {
-
-        int totalTokensIn = 0;
-        int totalTokensOut = 0;
-        for (Token token : tokens) {
-            IncidenceMatrix forwardsIncidenceMatrix = getForwardsIncidenceMatrix(token);
-            IncidenceMatrix backwardsIncidenceMatrix;
-
-            //TODO: WHAT IS THIS LOGIC?
-            if (backwards) {
-                backwardsIncidenceMatrix = forwardsIncidenceMatrix;
-            } else {
-                backwardsIncidenceMatrix = getBackwardsIncidenceMatrix(token);
-            }
-
-            totalTokensIn += forwardsIncidenceMatrix.get(place, transition);
-            totalTokensOut += backwardsIncidenceMatrix.get(place, transition);
-        }
-
-        if (place.getCapacity() > 0 &&
-                (place.getNumberOfTokensStored() + totalTokensIn - totalTokensOut > place.getCapacity())) {
-            return false;
-        }
-        return true;
-
     }
 
     public Transition getRandomTransition() {

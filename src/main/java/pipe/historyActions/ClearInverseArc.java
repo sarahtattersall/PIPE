@@ -4,7 +4,7 @@
 package pipe.historyActions;
 
 
-import pipe.views.NormalArcView;
+import pipe.views.ArcView;
 
 /**
  *
@@ -14,8 +14,8 @@ public class ClearInverseArc
         extends HistoryItem
 {
    
-   private final NormalArcView arc;
-   private final NormalArcView inverse;
+   private final ArcView arc;
+   private final ArcView inverse;
    private final boolean junts;
    
    
@@ -23,7 +23,7 @@ public class ClearInverseArc
     * @param _arc
     * @param _inverse
     * @param _junts*/
-   public ClearInverseArc(NormalArcView _arc, NormalArcView _inverse, boolean _junts){
+   public ClearInverseArc(ArcView _arc, ArcView _inverse, boolean _junts){
       arc = _arc;
       inverse = _inverse;
       junts = _junts;
@@ -32,13 +32,13 @@ public class ClearInverseArc
    
    /** */
    public void undo() {
-      inverse.setInverse(arc, junts);
+//      inverse.setInverse(arc, junts);
    }
 
    
    /** */
    public void redo() {
-      arc.clearInverse();
+//      arc.clearInverse();
    }
    
 }

@@ -13,6 +13,10 @@ import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
 import pipe.models.component.Token;
+import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.strategy.arc.ForwardsNormalStrategy;
+import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.PetriNetReader;
 import pipe.petrinet.reader.creator.*;
 import pipe.petrinet.writer.PetriNetWriter;
@@ -65,10 +69,16 @@ public class PipeApplicationController
                 document = transformer.transformPNML(file.getPath());
                 //petriNetTab.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
             }
-            CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(),
+            PetriNet net = new PetriNet();
+            ArcStrategy inhibitorStrategy = new InhibitorStrategy();
+            ArcStrategy normalForwardStrategy = new ForwardsNormalStrategy(net);
+            ArcStrategy normalBackwardStrategy = new BackwardsNormalStrategy(net);
+
+
+            CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
                     new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
             PetriNetReader reader = new PetriNetReader(struct);
-            PetriNet net = reader.createFromFile(document);
+            reader.createFromFile(net, document);
             net.setPnmlName(file.getAbsolutePath());
             return net;
 

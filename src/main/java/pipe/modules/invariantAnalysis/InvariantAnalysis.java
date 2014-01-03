@@ -167,34 +167,36 @@ public class InvariantAnalysis
      * this. The method calls have been changed to pass the current markup matrix
      * as the parameter for invariant analysis.
      *
-     * @param pnmlData
+     * @param petriNetView
      * @author Nadeem Akharware
      * @version 1.2
      * @return
      */
-    private String analyse(PetriNetView pnmlData) throws Exception {
-        Date start_time = new Date(); // start timer for program execution
-        // extract data from PN object
-        int[][] array = pnmlData.getActiveTokenView().getIncidenceMatrix(
-                pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(),
-                pnmlData.getModel().getPlaces());
-        if(array.length == 0)
-        {
-            return "";
-        }
-        _incidenceMatrix = new Matrix(array);
-        List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
-        int[] currentMarking = new int[markings.length];
-        for(int i = 0; i < markings.length; i++)
-        {
-            currentMarking[i] = markings[i].get(0).getCurrentMarking();
-        }
-
-        String output = findNetInvariants(currentMarking); // Nadeem 26/05/2005
-
-        Date stop_time = new Date();
-        double etime = (stop_time.getTime() - start_time.getTime()) / 1000.;
-        return output + "<br>Analysis time: " + etime + "s";
+    //TODO: Reimplement
+    private String analyse(PetriNetView petriNetView) throws Exception {
+//        Date start_time = new Date(); // start timer for program execution
+//        // extract data from PN object
+//        int[][] array = petriNetView.getActiveTokenView().getIncidenceMatrix(
+//                petriNetView.getModel().getArcs(), petriNetView.getModel().getTransitions(),
+//                petriNetView.getModel().getPlaces());
+//        if(array.length == 0)
+//        {
+//            return "";
+//        }
+//        _incidenceMatrix = new Matrix(array);
+//        List<MarkingView>[] markings = petriNetView.getCurrentMarkingVector();
+//        int[] currentMarking = new int[markings.length];
+//        for(int i = 0; i < markings.length; i++)
+//        {
+//            currentMarking[i] = markings[i].get(0).getCurrentMarking();
+//        }
+//
+//        String output = findNetInvariants(currentMarking); // Nadeem 26/05/2005
+//
+//        Date stop_time = new Date();
+//        double etime = (stop_time.getTime() - start_time.getTime()) / 1000.;
+//        return output + "<br>Analysis time: " + etime + "s";
+        return "";
     }
 
     /**
@@ -273,22 +275,22 @@ public class InvariantAnalysis
     * @return a PNMatrix where each column contains a place invariant.
     */
     public Matrix getPInvariants(PetriNetView sourceDataLayer) throws Exception {
-        int[][] array = sourceDataLayer.getActiveTokenView()
-                .getIncidenceMatrix(sourceDataLayer.getModel().getArcs(), sourceDataLayer.getModel().getTransitions(),
-                        sourceDataLayer.getModel().getPlaces());
-        if(array.length == 0)
-        {
-            return null;
-        }
-        _incidenceMatrix = new Matrix(array);
-
-
-        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
-        int[] currentMarking = new int[markings.length];
-        for(int i = 0; i < markings.length; i++)
-        {
-            currentMarking[i] = markings[i].get(0).getCurrentMarking();
-        }
+//        int[][] array = sourceDataLayer.getActiveTokenView()
+//                .getIncidenceMatrix(sourceDataLayer.getModel().getArcs(), sourceDataLayer.getModel().getTransitions(),
+//                        sourceDataLayer.getModel().getPlaces());
+//        if(array.length == 0)
+//        {
+//            return null;
+//        }
+//        _incidenceMatrix = new Matrix(array);
+//
+//
+//        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+//        int[] currentMarking = new int[markings.length];
+//        for(int i = 0; i < markings.length; i++)
+//        {
+//            currentMarking[i] = markings[i].get(0).getCurrentMarking();
+//        }
 
         return findVectors(_incidenceMatrix.transpose());
     }
@@ -299,21 +301,21 @@ public class InvariantAnalysis
     * @return a PNMatrix where each column contains a transition invariant.
     */
     public Matrix getTInvariants(PetriNetView sourceDataLayer) throws Exception {
-        int[][] array = sourceDataLayer.getActiveTokenView().getIncidenceMatrix(
-                sourceDataLayer.getModel().getArcs(), sourceDataLayer.getModel().getTransitions(),
-                sourceDataLayer.getModel().getPlaces());
-        if(array.length == 0)
-        {
-            return null;
-        }
-        _incidenceMatrix = new Matrix(array);
-
-        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
-        int[] currentMarking = new int[markings.length];
-        for(int i = 0; i < markings.length; i++)
-        {
-            currentMarking[i] = markings[i].get(0).getCurrentMarking();
-        }
+//        int[][] array = sourceDataLayer.getActiveTokenView().getIncidenceMatrix(
+//                sourceDataLayer.getModel().getArcs(), sourceDataLayer.getModel().getTransitions(),
+//                sourceDataLayer.getModel().getPlaces());
+//        if(array.length == 0)
+//        {
+//            return null;
+//        }
+//        _incidenceMatrix = new Matrix(array);
+//
+//        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+//        int[] currentMarking = new int[markings.length];
+//        for(int i = 0; i < markings.length; i++)
+//        {
+//            currentMarking[i] = markings[i].get(0).getCurrentMarking();
+//        }
 
         return findVectors(_incidenceMatrix);
     }

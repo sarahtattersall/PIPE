@@ -6,7 +6,7 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.historyActions.*;
-import pipe.models.component.NormalArc;
+import pipe.models.component.Arc;
 import pipe.utilities.Copier;
 
 import java.awt.*;
@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class NormalArcView extends ArcView<NormalArc> implements Serializable {
+public class NormalArcView extends ArcView<Arc> implements Serializable {
     private final static String type = "normal";
     private final static Polygon head = new Polygon(new int[]{0, 5, 0, -5}, new int[]{0, -10, -7, -10}, 4);
 
@@ -30,7 +30,7 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
 
     public NormalArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
             double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, boolean taggedInput, NormalArc model,
+            List<MarkingView> weightInput, String idInput, boolean taggedInput, Arc model,
             PetriNetController controller) {
 
         super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
@@ -63,62 +63,63 @@ public class NormalArcView extends ArcView<NormalArc> implements Serializable {
         this.joined = arc.joined;
     }
 
-    public NormalArcView(ArcController arcController, NormalArc model) {
+    public NormalArcView(ArcController arcController, Arc model) {
         _controller = arcController;
         this.model = model;
         this.model.registerObserver(this);
     }
 
     public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
-        ConnectableView source = this.getSource().getLastCopy();
-        ConnectableView target = this.getTarget().getLastCopy();
-
-        if (source == null && target == null) {
-            // don't paste an arc with neither source nor target
-            return null;
-        }
-
-        if (source == null) {
-            if (toAnotherView) {
-                // if the source belongs to another Petri Net, the arc can't be
-                // pasted
-                return null;
-            } else {
-                source = this.getSource();
-            }
-        }
-
-        if (target == null) {
-            if (toAnotherView) {
-                // if the target belongs to another Petri Net, the arc can't be
-                // pasted
-                return null;
-            } else {
-                target = this.getTarget();
-            }
-        }
-
-        NormalArcView copy =
-                new NormalArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, getWeight(),
-                        source.getId() + " to " +
-                                target.getId(), false,
-                        new NormalArc(source.getModel(), target.getModel(), this.model.getTokenWeights()), petriNetController);
-
-        copy.myPath.delete();
-        for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
-            copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
-                    this.myPath.getPointType(i));
-            //TODO: REIMPLEMENT
-//            copy.myPath.selectPoint(i);
-        }
-
-        source.addOutbound(copy);
-        target.addInbound(copy);
-
-        copy.inView = this.inView;
-        copy.joined = this.joined;
-
-        return copy;
+//        ConnectableView source = this.getSource().getLastCopy();
+//        ConnectableView target = this.getTarget().getLastCopy();
+//
+//        if (source == null && target == null) {
+//            // don't paste an arc with neither source nor target
+//            return null;
+//        }
+//
+//        if (source == null) {
+//            if (toAnotherView) {
+//                // if the source belongs to another Petri Net, the arc can't be
+//                // pasted
+//                return null;
+//            } else {
+//                source = this.getSource();
+//            }
+//        }
+//
+//        if (target == null) {
+//            if (toAnotherView) {
+//                // if the target belongs to another Petri Net, the arc can't be
+//                // pasted
+//                return null;
+//            } else {
+//                target = this.getTarget();
+//            }
+//        }
+//
+//        NormalArcView copy =
+//                new NormalArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, getWeight(),
+//                        source.getId() + " to " +
+//                                target.getId(), false,
+//                        new Arc(source.getModel(), target.getModel(), this.model.getTokenWeights()), petriNetController);
+//
+//        copy.myPath.delete();
+//        for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
+//            copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
+//                    this.myPath.getPointType(i));
+//            //TODO: REIMPLEMENT
+////            copy.myPath.selectPoint(i);
+//        }
+//
+//        source.addOutbound(copy);
+//        target.addInbound(copy);
+//
+//        copy.inView = this.inView;
+//        copy.joined = this.joined;
+//
+//        return copy;
+        return null;
     }
 
     public NormalArcView copy() {

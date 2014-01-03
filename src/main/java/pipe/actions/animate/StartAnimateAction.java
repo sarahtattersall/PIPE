@@ -34,6 +34,7 @@ public class StartAnimateAction extends AnimateAction {
             else
             {
                 applicationModel.setMode(Constants.START);
+                currentTab.getPetriNetController().getPetriNet().markEnabledTransitions();
                 PetriNetViewComponent.ignoreSelection(true);
                 // Do we keep the selection??
                 currentTab.getSelectionObject().clearSelection();

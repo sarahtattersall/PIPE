@@ -460,35 +460,37 @@ public class Classification
      * @param PlaceNo
      * @return number of arcs leading to the given place number; -1 on error
      */
+    //TODO: IMPLEMENT
     private int countPlaceInputs(PetriNetView pnmlData, int PlaceNo) throws Exception {
 
-        int[][] backwards = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
-                pnmlData.getModel().getArcs(),
-                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
-        // The forwards incidence matrix is like this:
-        // | 0 1 |     P0 ->- T0 ->- P1
-        // | 1 0 |       `-<- T1 -<-'
-        // where rows are place numbers and columns are transition numbers.
-        // The number is the weight of the arc from the corresponding transition
-        // to the corresponding place.
-        // It can also be considered the backwards incidence matrix for the place.
-        int count = 0;
-
-        if(PlaceNo < backwards.length)
-        {
-            for(int TransitionNo = 0; TransitionNo < backwards[PlaceNo].length; TransitionNo++)
-            {
-                if(backwards[PlaceNo][TransitionNo] != 0)
-                {
-                    count++;
-                }
-            }
-        }
-        else
-        {
-            return -1;
-        }
-        return count;
+//        int[][] backwards = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(
+//                pnmlData.getModel().getArcs(),
+//                pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
+//        // The forwards incidence matrix is like this:
+//        // | 0 1 |     P0 ->- T0 ->- P1
+//        // | 1 0 |       `-<- T1 -<-'
+//        // where rows are place numbers and columns are transition numbers.
+//        // The number is the weight of the arc from the corresponding transition
+//        // to the corresponding place.
+//        // It can also be considered the backwards incidence matrix for the place.
+//        int count = 0;
+//
+//        if(PlaceNo < backwards.length)
+//        {
+//            for(int TransitionNo = 0; TransitionNo < backwards[PlaceNo].length; TransitionNo++)
+//            {
+//                if(backwards[PlaceNo][TransitionNo] != 0)
+//                {
+//                    count++;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            return -1;
+//        }
+//        return count;
+        return 0;
     }
 
     // Counts outputs from given place

@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.*;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
 import pipe.petrinet.reader.*;
 import pipe.petrinet.reader.creator.*;
 import pipe.utilities.transformers.PNMLTransformer;
@@ -40,9 +41,11 @@ public class PetriNetReaderTest {
     StateGroup group;
 
     PNMLTransformer transformer;
+    PetriNet net;
 
     @Before
     public void setUp() {
+        net = new PetriNet();
         transformer = new PNMLTransformer();
         doc = transformer.transformPNML("src/test/resources/xml/petriNet.xml");
 //        Document doc = mock(Document.class);
@@ -72,7 +75,8 @@ public class PetriNetReaderTest {
         otherPlace = new Place("P1", "P1");
         transition = new Transition("T0", "T0");
         Map<Token, String> weights = new HashMap<Token, String>();
-        arc = new NormalArc(place, otherPlace, weights);
+        ArcStrategy mockStrategy = mock(ArcStrategy.class);
+        arc = new Arc<Place, Transition>(place, transition, weights, mockStrategy);
         annotation = new Annotation(10, 10, "hello", 10, 10, true);
         parameter = new RateParameter("id", 10.2, 10, 10);
 
@@ -99,7 +103,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsPlace()
     {
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
 
         Collection<Place> places = net.getPlaces();
         assertEquals(2, places.size());
@@ -110,7 +114,7 @@ public class PetriNetReaderTest {
     @Test
     public void setsTokensForPlaceCreator()
     {
-        reader.createFromFile(doc);
+        reader.createFromFile(net, doc);
 
         Map<String, Token> tokens = new HashMap<String, Token>();
         tokens.put(token.getId(), token);
@@ -121,7 +125,7 @@ public class PetriNetReaderTest {
     public void createsDefaultTokenIfNoneSpecified()
     {
         Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
-        PetriNet net = reader.createFromFile(noTokenDoc);
+        net = reader.createFromFile(net, noTokenDoc);
         assertEquals(1, net.getTokens().size());
         assertNotNull(net.getToken("Default"));
     }
@@ -130,7 +134,7 @@ public class PetriNetReaderTest {
     public void createsDefaultTokenIfNoneSpecifiedAndAddsToPetrinet()
     {
         Document noTokenDoc = transformer.transformPNML("src/test/resources/xml/noTokenPlace.xml");
-        reader.createFromFile(noTokenDoc);
+        reader.createFromFile(net, noTokenDoc);
 
         Token defaultToken = TokenUtils.createDefaultToken();
         verify(creators.placeCreator, atLeastOnce()).setTokens(argThat(new ContainsToken(defaultToken)));
@@ -139,7 +143,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsTransition()
     {
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
 
         Collection<Transition> transitions = net.getTransitions();
         assertEquals(1, transitions.size());
@@ -149,7 +153,7 @@ public class PetriNetReaderTest {
     @Test
     public void setsRateParametersForTransition()
     {
-        PetriNet net = reader.createFromFile(doc);
+        reader.createFromFile(net, doc);
 
         Map<String, RateParameter> params = new HashMap<String, RateParameter>();
         params.put(parameter.getId(), parameter);
@@ -160,7 +164,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsArc()
     {
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
 
         Collection<Arc> arcs = net.getArcs();
         assertEquals(1, arcs.size());
@@ -170,7 +174,7 @@ public class PetriNetReaderTest {
     @Test
     public void setsTokensForArcCreator()
     {
-        reader.createFromFile(doc);
+        reader.createFromFile(net, doc);
 
         Map<String, Token> tokens = new HashMap<String, Token>();
         tokens.put(token.getId(), token);
@@ -180,7 +184,7 @@ public class PetriNetReaderTest {
     @Test
     public void setsConnectablesForArcCreator()
     {
-        reader.createFromFile(doc);
+        reader.createFromFile(net, doc);
 
         Map<String, Place> places = new HashMap<String, Place>();
         places.put(place.getId(), place);
@@ -195,7 +199,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsAnnotation()
     {
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
         Collection<Annotation> annotations = net.getAnnotations();
         assertEquals(1, annotations.size());
         assertTrue(annotations.contains(annotation));
@@ -204,7 +208,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsRateParameter()
     {
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
         Collection<RateParameter> rates = net.getRateParameters();
         assertEquals(1, rates.size());
         assertTrue(rates.contains(parameter));
@@ -214,7 +218,7 @@ public class PetriNetReaderTest {
     public void createsToken()
     {
 
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
         Collection<Token> tokens = net.getTokens();
         assertEquals(1, tokens.size());
         assertTrue(tokens.contains(token));
@@ -224,7 +228,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsStateGroup()
     {
-        PetriNet net = reader.createFromFile(doc);
+        net = reader.createFromFile(net, doc);
         Collection<StateGroup> groups = net.getStateGroups();
         assertEquals(1, groups.size());
         assertTrue(groups.contains(group));

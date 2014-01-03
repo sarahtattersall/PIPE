@@ -329,8 +329,10 @@ class TransModel {
 		  		modString += "\t\t\\action{\n";
 		  		arcToTransitions = _transitionViews[i]. getConnectToIterator();
 			  	arcFromTransitions = _transitionViews[i]. getConnectFromIterator();
-			  	
-			  	int[][] incidenceMatrix = _pnmldata.getActiveTokenView().simpleMatrix();
+
+            //TODO: REIMPLEMENT
+            int[][] incidenceMatrix = new int[0][];
+//			  	int[][] incidenceMatrix = _pnmldata.getActiveTokenView().simpleMatrix();
 			  	
 			  	while (arcToTransitions.hasNext()) 
 			  	{

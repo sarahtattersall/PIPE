@@ -1,34 +1,42 @@
 package pipe.models.component;
 
+import pipe.models.PetriNet;
+import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.visitor.PetriNetComponentVisitor;
+
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
+public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
 
     @Pnml("source")
-    private S source;
+    protected S source;
 
     @Pnml("target")
-    private T target;
+    protected T target;
 
     @Pnml("id")
-    private String id;
+    protected String id;
 
-    private boolean tagged = false;
+    protected boolean tagged = false;
 
     /**
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
      */
     @Pnml("inscription")
-    private Map<Token, String> tokenWeights = new HashMap<Token, String>();
+    protected Map<Token, String> tokenWeights = new HashMap<Token, String>();
+
+    private final ArcStrategy strategy;
 
     public Arc(S source, T target,
-               Map<Token, String> tokenWeights) {
+               Map<Token, String> tokenWeights, ArcStrategy strategy) {
         this.source = source;
         this.target = target;
         this.tokenWeights = tokenWeights;
+        this.strategy = strategy;
+
         this.id = source.getId() + " TO " + target.getId();
 
 
@@ -95,6 +103,16 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
         return true;
     }
 
+    @Override
+    public boolean isDraggable() {
+        return true;
+    }
+
+    @Override
+    public void accept(final PetriNetComponentVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public boolean isTagged() {
         return tagged;
     }
@@ -145,4 +163,15 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
         }
         return false;
     }
+
+    public boolean canFire() {
+        return strategy.canFire(this);
+    }
+
+    public ArcType getType() {
+        return strategy.getType();
+
+    }
+
+
 }

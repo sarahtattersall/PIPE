@@ -752,7 +752,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         if (on) {
             PetriNetView petriNetView = getCurrentPetriNetView();
 //            animator.storeModel(petriNetView);
-            petriNetView.setEnabledTransitions();
+//            petriNetView.setEnabledTransitions();
 //            animator.highlightEnabledTransitions();
             addAnimationHistory();
             applicationModel

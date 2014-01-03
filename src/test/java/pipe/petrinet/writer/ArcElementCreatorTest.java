@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
 import pipe.petrinet.writer.reflectionCreator.ElementCreator;
 import utils.TokenUtils;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class ArcElementCreatorTest {
     private ElementCreator creator;
@@ -39,7 +41,8 @@ public class ArcElementCreatorTest {
         Place source = new Place(SOURCE, SOURCE);
         Transition target = new Transition(TARGET, TARGET);
         Map<Token, String> tokenCounts = createTokenCounts();
-        Arc arc = new NormalArc(source, target, tokenCounts);
+        ArcStrategy mockStrategy = mock(ArcStrategy.class);
+        Arc arc = new Arc<Place, Transition>(source, target, tokenCounts, mockStrategy);
         arc.setId(ID);
         return arc;
     }

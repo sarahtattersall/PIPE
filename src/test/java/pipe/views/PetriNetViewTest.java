@@ -45,12 +45,12 @@ public class PetriNetViewTest
 	protected void checkAnimationModePossibleForNewPetriNet(String net)
 			throws TransformerFactoryConfigurationError
 	{
-		assertNotNull("not null at creation",petriNetView.getTokenViews());
-		buildPetriNetViewFromXmlString(net); 
-		assertNotNull("emptied, but token set controller re-created",petriNetView.getTokenViews());
-		assertNull("no matrices created yet",petriNetView.getTokenViews().get(0).getForwardsIncidenceMatrix()); 
-		petriNetView.setEnabledTransitions(); 
-		assertNotNull("matrices should be created now",petriNetView.getTokenViews().get(0).getForwardsIncidenceMatrix());
+//		assertNotNull("not null at creation",petriNetView.getTokenViews());
+//		buildPetriNetViewFromXmlString(net);
+//		assertNotNull("emptied, but token set controller re-created",petriNetView.getTokenViews());
+//		assertNull("no matrices created yet",petriNetView.getTokenViews().get(0).getForwardsIncidenceMatrix());
+//		petriNetView.setEnabledTransitions();
+//		assertNotNull("matrices should be created now",petriNetView.getTokenViews().get(0).getForwardsIncidenceMatrix());
 	}
 	protected void buildPetriNetViewFromXmlString(String net)
 			throws TransformerFactoryConfigurationError

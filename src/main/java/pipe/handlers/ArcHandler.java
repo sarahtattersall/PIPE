@@ -5,7 +5,6 @@ import pipe.controllers.PetriNetController;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.Arc;
 import pipe.views.ArcView;
-import pipe.views.InhibitorArcView;
 import pipe.views.NormalArcView;
 import pipe.views.PlaceView;
 
@@ -40,7 +39,7 @@ public class ArcHandler
       JPopupMenu popup = super.getPopup(e);
       
  
-      if (viewComponent instanceof InhibitorArcView) {
+      if (viewComponent instanceof ArcView) {
           menuItem = new JMenuItem("Edit Weight");
           menuItem.addActionListener(new ActionListener(){
              public void actionPerformed(ActionEvent e) {
@@ -55,7 +54,7 @@ public class ArcHandler
          popup.insert(menuItem, popupIndex++);
 
          popup.insert(new JPopupMenu.Separator(), popupIndex++);
-      } else if (viewComponent instanceof NormalArcView) {
+      } else if (viewComponent instanceof ArcView) {
          if (((NormalArcView) viewComponent).isJoined()){
             NormalArcView PTArc;
             NormalArcView TPArc;
@@ -176,21 +175,22 @@ public class ArcHandler
    
    class SplitArcsAction extends AbstractAction {
 
-      final NormalArcView _arcView;
+      final ArcView _arcView;
       final boolean joined;
       
       
-      public SplitArcsAction(NormalArcView _arc, boolean _joined){
+      public SplitArcsAction(ArcView _arc, boolean _joined){
          _arcView = _arc;
          joined = _joined;
       }
-      
+
+       //TODO: REIMPLEMENT
       public void actionPerformed(ActionEvent e) {
-         if (joined) {
-            petriNetController.getHistoryManager().addNewEdit(_arcView.split());
-         } else {
-             petriNetController.getHistoryManager().addNewEdit(_arcView.join());
-         }
+//         if (joined) {
+//            petriNetController.getHistoryManager().addNewEdit(_arcView.split());
+//         } else {
+//             petriNetController.getHistoryManager().addNewEdit(_arcView.join());
+//         }
       }
       
    }

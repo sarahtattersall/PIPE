@@ -108,40 +108,40 @@ public class Matrices
                 try
                 {
 
-                    PNMLWriter.saveTemporaryFile(data, this.getClass().getName());
-
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Forwards incidence matrix <i>I<sup>+</sup></i>",
-                            renderMatrix(data, data.getActiveTokenView().getForwardsIncidenceMatrix(
-                                    data.getModel().getArcs(), data.getModel().getTransitions(),
-                                    data.getModel().getPlaces()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Backwards incidence matrix <i>I<sup>-</sup></i>",
-                            renderMatrix(data, data.getActiveTokenView().getBackwardsIncidenceMatrix(
-                                    data.getModel().getArcs(), data.getModel().getTransitions(),
-                                    data.getModel().getPlaces()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Combined incidence matrix <i>I</i>",
-                            renderMatrix(data, data.getActiveTokenView().getIncidenceMatrix(
-                                    data.getModel().getArcs(), data.getModel().getTransitions(),
-                                    data.getModel().getPlaces()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Inhibition matrix <i>H</i>",
-                            renderMatrix(data, data.getActiveTokenView().getInhibitionMatrix(
-                                    data.getInhibitorsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Marking",
-                            renderMarkingMatrices(data)
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Enabled transitions",
-                            renderTransitionStates(data)
-                    }, 1, false, false, true, false);
+//                    PNMLWriter.saveTemporaryFile(data, this.getClass().getName());
+//
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Forwards incidence matrix <i>I<sup>+</sup></i>",
+//                            renderMatrix(data, data.getActiveTokenView().getForwardsIncidenceMatrix(
+//                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+//                                    data.getModel().getPlaces()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Backwards incidence matrix <i>I<sup>-</sup></i>",
+//                            renderMatrix(data, data.getActiveTokenView().getBackwardsIncidenceMatrix(
+//                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+//                                    data.getModel().getPlaces()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Combined incidence matrix <i>I</i>",
+//                            renderMatrix(data, data.getActiveTokenView().getIncidenceMatrix(
+//                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+//                                    data.getModel().getPlaces()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Inhibition matrix <i>H</i>",
+//                            renderMatrix(data, data.getActiveTokenView().getInhibitionMatrix(
+//                                    data.getInhibitorsArrayList(), data.getTransitionsArrayList(),
+//                                    data.getPlacesArrayList()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Marking",
+//                            renderMarkingMatrices(data)
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Enabled transitions",
+//                            renderTransitionStates(data)
+//                    }, 1, false, false, true, false);
                 }
                 catch(OutOfMemoryError oome)
                 {
@@ -244,25 +244,26 @@ public class Matrices
     }
 
     private String renderTransitionStates(PetriNetView data) throws Exception {
-        TransitionView[] transitionViews = data.getTransitionViews();
-        if(transitionViews.length == 0)
-        {
-            return "n/a";
-        }
-
-        ArrayList result = new ArrayList();
-        data.setEnabledTransitions();
-        for(TransitionView transitionView1 : transitionViews)
-        {
-            result.add(transitionView1.getName());
-        }
-        for(TransitionView transitionView : transitionViews)
-        {
-            result.add((transitionView.isEnabled() ? "yes" : "no"));
-        }
-        data.resetEnabledTransitions();
-
-        return ResultsHTMLPane.makeTable(
-                result.toArray(), transitionViews.length, false, true, true, false);
+//        TransitionView[] transitionViews = data.getTransitionViews();
+//        if(transitionViews.length == 0)
+//        {
+//            return "n/a";
+//        }
+//
+//        ArrayList result = new ArrayList();
+//        data.setEnabledTransitions();
+//        for(TransitionView transitionView1 : transitionViews)
+//        {
+//            result.add(transitionView1.getName());
+//        }
+//        for(TransitionView transitionView : transitionViews)
+//        {
+//            result.add((transitionView.isEnabled() ? "yes" : "no"));
+//        }
+//        data.resetEnabledTransitions();
+//
+//        return ResultsHTMLPane.makeTable(
+//                result.toArray(), transitionViews.length, false, true, true, false);
+        return "";
     }
 }

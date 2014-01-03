@@ -4,6 +4,10 @@ import pipe.controllers.interfaces.IController;
 import pipe.historyActions.*;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.strategy.arc.ForwardsNormalStrategy;
+import pipe.models.strategy.arc.InhibitorStrategy;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -22,6 +26,10 @@ public class PetriNetController implements IController, Serializable {
     private final Set<PetriNetComponent> selectedComponents = new
             HashSet<PetriNetComponent>();
     private Token selectedToken;
+    private final ArcStrategy inhibitorStrategy = new InhibitorStrategy();
+    private final ArcStrategy forwardNormalStrategy;
+    private final ArcStrategy backwardsNormalStrategy;
+
 
     public PetriNetController(PetriNet model, HistoryManager historyManager) {
         petriNet = model;
@@ -29,6 +37,8 @@ public class PetriNetController implements IController, Serializable {
             selectedToken = model.getTokens().iterator().next();
         }
         this.historyManager = historyManager;
+        forwardNormalStrategy = new ForwardsNormalStrategy(petriNet);
+        backwardsNormalStrategy = new BackwardsNormalStrategy(petriNet);
     }
 
     public void addArcPoint(double x, double y, boolean shiftDown) {
@@ -78,35 +88,33 @@ public class PetriNetController implements IController, Serializable {
      * @param source
      * @return inhibitor arc
      */
-    private InhibitorArc buildEmptyInhibitorArc(Place source, Token token) {
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-        return new InhibitorArc<TemporaryArcTarget>(source,
+    private Arc buildEmptyInhibitorArc(Place source, Token token) {
+         return new Arc<Place, TemporaryArcTarget>(source,
                 new TemporaryArcTarget(source.getX(),
                         source.getY()),
-                tokens);
+                new HashMap<Token, String>(), inhibitorStrategy);
     }
 
     private void addArcToCurrentPetriNet(Arc arc) {
         petriNet.addArc(arc);
     }
 
-    private NormalArc buildEmptyArc(Place source, Token token) {
+    private Arc buildEmptyArc(Place source, Token token) {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
-        return new NormalArc<Place, TemporaryArcTarget>(source,
+        return new Arc<Place, TemporaryArcTarget>(source,
                 new TemporaryArcTarget(source.getX(),
                         source.getY()),
-                tokens);
+                tokens, backwardsNormalStrategy);
     }
 
-    private NormalArc buildEmptyArc(Transition source, Token token) {
+    private Arc buildEmptyArc(Transition source, Token token) {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
-        return new NormalArc<Transition, TemporaryArcTarget>(source,
+        return new Arc<Transition, TemporaryArcTarget>(source,
                              new TemporaryArcTarget(source.getX(),
                                                     source.getY()),
-                             tokens);
+                             tokens, forwardNormalStrategy);
     }
 
     public boolean isCurrentlyCreatingArc() {

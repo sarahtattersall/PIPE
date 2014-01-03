@@ -3,6 +3,8 @@ package pipe.petrinet.reader.creator;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.component.*;
+import pipe.models.strategy.arc.ArcStrategy;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +16,15 @@ public class ArcCreator implements ComponentCreator<Arc> {
     private Map<String, Place> places = new HashMap<String, Place>();
     private Map<String, Transition> transitions = new HashMap<String, Transition>();
     private Map<String, Token> tokens = new HashMap<String, Token>();
+    private ArcStrategy inhibitorStrategy;
+    private ArcStrategy normalForwardStrategy;
+    private ArcStrategy normalBackwardStrategy;
+
+    public ArcCreator(ArcStrategy inhibitorStrategy, ArcStrategy normalForwardStrategy, ArcStrategy normalBackwardStrategy) {
+        this.inhibitorStrategy = inhibitorStrategy;
+        this.normalForwardStrategy = normalForwardStrategy;
+        this.normalBackwardStrategy = normalBackwardStrategy;
+    }
 
     /**
      *
@@ -62,22 +73,16 @@ public class ArcCreator implements ComponentCreator<Arc> {
         if (isInhibitorArc(element)) {
             Place source = places.get(sourceId);
             Transition target = transitions.get(targetId);
-            arc = new InhibitorArc<Transition>(source, target, tokenWeights);
-            source.addOutbound(arc);
-            target.addInbound(arc);
+            arc = new Arc<Place, Transition>(source, target, tokenWeights, inhibitorStrategy);
         } else {
             if (places.containsKey(sourceId)) {
                 Place source = places.get(sourceId);
                 Transition target = transitions.get(targetId);
-                arc = new NormalArc<Place, Transition>(source, target, tokenWeights);
-                source.addOutbound(arc);
-                target.addInbound(arc);
+                arc = new Arc<Place, Transition>(source, target, tokenWeights, normalBackwardStrategy);
             } else {
                 Place target = places.get(targetId);
                 Transition source = transitions.get(sourceId);
-                arc = new NormalArc<Transition, Place>(source, target, tokenWeights);
-                source.addOutbound(arc);
-                target.addInbound(arc);
+                arc = new Arc<Transition, Place>(source, target, tokenWeights, normalForwardStrategy);
             }
         }
         arc.setId(id);

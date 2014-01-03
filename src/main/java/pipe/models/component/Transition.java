@@ -2,6 +2,7 @@ package pipe.models.component;
 
 import parser.ExprEvaluator;
 import pipe.gui.Constants;
+import pipe.models.PetriNet;
 import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
@@ -255,6 +256,18 @@ public class Transition extends Connectable<Place, Transition> implements Serial
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean isEnabled(PetriNet net) {
+        boolean enabledForArcs = true;
+        for (Arc<Place, Transition> arc : inboundArcs()) {
+            enabledForArcs &= arc.canFire();
+        }
+
+        for (Arc<Transition, Place> arc : outboundArcs()) {
+            enabledForArcs &= arc.canFire();
+        }
+        return enabledForArcs;
     }
 
     /**
