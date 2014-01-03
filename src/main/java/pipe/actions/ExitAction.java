@@ -14,7 +14,9 @@ public class ExitAction extends GuiAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         PipeApplicationView view = ApplicationSettings.getApplicationView();
-        view.dispose();
-        System.exit(0);
+        if (view.checkForSaveAll()) {
+            view.dispose();
+            System.exit(0);
+        }
     }
 }
