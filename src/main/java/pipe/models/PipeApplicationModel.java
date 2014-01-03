@@ -124,7 +124,7 @@ public class PipeApplicationModel implements Serializable
 
 
     @ApplicationAction(ActionEnum.START)
-    public AnimateAction startAction = new StartAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
+    public AnimateAction startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
 
     @ApplicationAction(ActionEnum.STEP_BACK)
     public AnimateAction stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4");

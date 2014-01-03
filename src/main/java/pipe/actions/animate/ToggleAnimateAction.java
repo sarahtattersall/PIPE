@@ -1,8 +1,11 @@
 package pipe.actions.animate;
 
+import pipe.controllers.PetriNetController;
+import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
+import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PetriNetViewComponent;
 import pipe.views.PipeApplicationView;
@@ -10,30 +13,32 @@ import pipe.views.PipeApplicationView;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class StartAnimateAction extends AnimateAction {
-    public StartAnimateAction(final String name, final String tooltip, final String keystroke) {
+public class ToggleAnimateAction extends AnimateAction {
+    public ToggleAnimateAction(final String name, final String tooltip, final String keystroke) {
         super(name, tooltip, keystroke);
     }
 
     @Override
-    public void actionPerformed(final ActionEvent event) {
+    public void actionPerformed(ActionEvent event) {
 
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
         PetriNetTab currentTab = pipeApplicationView.getCurrentTab();
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         try
         {
-            pipeApplicationView.setAnimationMode(!currentTab.isInAnimationMode());
-            if(!currentTab.isInAnimationMode())
+            boolean isTabAnimated = currentTab.isInAnimationMode();
+            pipeApplicationView.setAnimationMode(!isTabAnimated);
+            PetriNetController controller = currentTab.getPetriNetController();
+            if(!isTabAnimated)
             {
                 applicationModel.restoreMode();
                 PetriNetViewComponent.ignoreSelection(false);
             }
             else
             {
-                applicationModel.setMode(Constants.START);
-                currentTab.getPetriNetController().getPetriNet().markEnabledTransitions();
                 PetriNetViewComponent.ignoreSelection(true);
+                Animator animator = controller.getAnimator();
+                animator.clear();
                 // Do we keep the selection??
                 currentTab.getSelectionObject().clearSelection();
             }

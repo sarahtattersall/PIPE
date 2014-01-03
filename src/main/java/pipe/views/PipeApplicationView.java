@@ -36,13 +36,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public JComboBox tokenClassComboBox;
     private HelpBox helpAction;
 
-    private final JSplitPane _moduleAndAnimationHistoryFrame;
-    private static JScrollPane _scroller;
+    private final JSplitPane moduleAndAnimationHistoryFrame;
+    private JScrollPane scroller;
 
     private final JTabbedPane frameForPetriNetTabs = new JTabbedPane();
     private final ArrayList<PetriNetTab> petriNetTabs;
 
-    private static AnimationHistoryView animationHistoryView;
+    private AnimationHistoryView currentAnimationView;
     private final PipeApplicationController applicationController;
     private final PipeApplicationModel applicationModel;
 
@@ -53,7 +53,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      */
     public PipeApplicationView() {
         statusBar = null;
-        _moduleAndAnimationHistoryFrame = null;
+        moduleAndAnimationHistoryFrame = null;
         petriNetTabs = null;
         applicationController = null;
         applicationModel = null;
@@ -97,11 +97,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         ModuleManager moduleManager = new ModuleManager();
         JTree moduleTree = moduleManager.getModuleTree();
-        _moduleAndAnimationHistoryFrame = new JSplitPane(JSplitPane.VERTICAL_SPLIT, moduleTree, null);
-        _moduleAndAnimationHistoryFrame.setContinuousLayout(true);
-        _moduleAndAnimationHistoryFrame.setDividerSize(0);
+        moduleAndAnimationHistoryFrame = new JSplitPane(JSplitPane.VERTICAL_SPLIT, moduleTree, null);
+        moduleAndAnimationHistoryFrame.setContinuousLayout(true);
+        moduleAndAnimationHistoryFrame.setDividerSize(0);
         JSplitPane pane =
-                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _moduleAndAnimationHistoryFrame, frameForPetriNetTabs);
+                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, moduleAndAnimationHistoryFrame, frameForPetriNetTabs);
         pane.setContinuousLayout(true);
         pane.setOneTouchExpandable(true);
         pane.setBorder(null); // avoid multiple borders
@@ -114,28 +114,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         PetriNetTab tab = applicationController.createEmptyPetriNet();
         applicationController.setActiveTab(tab);
-        setTab();
+        setTabChangeListener();
     }
 
     public JTabbedPane getFrameForPetriNetTabs() {
         return frameForPetriNetTabs;
     }
 
-
-    public int numberOfTabs() {
-        return petriNetTabs.size();
-    }
-
     /**
-     * This method does build the menus.
-     *
-     * @author unknown
-     * @author Dave Patterson - fixed problem on OSX due to invalid character in
-     * URI caused by unescaped blank. The code changes one blank
-     * character if it exists in the string version of the URL. This way
-     * works safely in both OSX and Windows. I also added a
-     * printStackTrace if there is an exception caught in the setup for
-     * the "extras.examples" folder.
+     * This method builds the menus for the application
      */
     private void buildMenus() {
         JMenuBar menuBar = new JMenuBar();
@@ -264,7 +251,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     /**
-     * Creates an example file menu
+     * Creates an example file menu based on examples in resources/extras/examples
      */
     private JMenu createExampleFileMenu() {
         JMenu exampleMenu = new JMenu("Examples");
@@ -436,10 +423,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     /**
-     * @param -        the menu to add the submenu to
      * @param zoomMenu
-     * @author Ben Kirby Takes the method of setting up the Zoom menu out of the
-     * main buildMenus method.
      */
     private void addZoomMenuItems(JMenu zoomMenu) {
         for (ZoomAction zoomAction : applicationModel.getZoomActions()) {
@@ -478,7 +462,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * Initially populated with a single option:  "Default"
      */
     protected void addTokenClassComboBox(JToolBar toolBar, Action action) {
-//        String[] tokenClassChoices = buildTokenClassChoices(); // Steve Doubleday: can't be used until we have an active PetriNetView
         String[] tokenClassChoices = new String[]{"Default"};
         DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
         tokenClassComboBox = new JComboBox(model);
@@ -491,13 +474,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         toolBar.add(tokenClassComboBox);
     }
 
+    /**
+     * @return names of Tokens for the combo box
+     */
     protected String[] buildTokenClassChoices() {
-//        LinkedList<TokenView> tokenViews = getCurrentPetriNetView().getTokenViews();
-//        int size = tokenViews.size();
-//        for (int i = 0; i < size; i++) {
-//            tokenClassChoices[i] = tokenViews.get(i).getID();
-//        }
-
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Collection<Token> tokens = petriNetController.getNetTokens();
         String[] tokenClassChoices = new String[tokens.size()];
@@ -531,13 +511,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
-    public void setObjectsNull(int index) {
-        removeTab(index);
-    }
-
     // set tabbed pane properties and add change listener that updates tab with
     // linked model and view
-    void setTab() {
+    private void setTabChangeListener() {
         frameForPetriNetTabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 CopyPasteManager copyPasteManager = applicationController.getCopyPasteManager();
@@ -545,31 +521,27 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     copyPasteManager.cancelPaste();
                 }
 
-                PetriNetView _petriNetView = getCurrentPetriNetView();
                 PetriNetTab petriNetTab = getCurrentTab();
-
                 applicationController.setActiveTab(petriNetTab);
-                if (petriNetTab != null) {
-                    petriNetTab.setVisible(true);
-                    petriNetTab.repaint();
-                    updateZoomCombo();
+                petriNetTab.setVisible(true);
+                petriNetTab.repaint();
+                updateZoomCombo();
 
-                    applicationModel
-                            .enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
+                applicationModel
+                        .enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
 
-                    setTitle(getCurrentTab().getName());
-                } else {
-                    setTitle(null);
-                }
+                setTitle(petriNetTab.getName());
 
-//                if (_petriNetView != null) {
+                setAnimationMode(petriNetTab.isInAnimationMode());
+
                 refreshTokenClassChoices();
-//                }
             }
-
         });
     }
 
+    /**
+     * Displays contributors
+     */
     public void actionPerformed(ActionEvent e) {
 
         JOptionPane.showMessageDialog(this, "PIPE: Platform Independent Petri Net Ediror\n\n" + "Authors:\n" +
@@ -583,6 +555,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    //TODO: Find out if this actually ever gets called
     public void update(Observable o, Object obj) {
         PetriNetTab currentTab = getCurrentTab();
         if ((applicationModel.getMode() != Constants.CREATING) && (!currentTab.isInAnimationMode())) {
@@ -590,6 +563,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
+    //TODO: Move out into save actions
     public void saveOperation(boolean forceSaveAs) {
 
         if (getCurrentTab() == null) {
@@ -628,10 +602,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         try {
 
             applicationController.saveCurrentPetriNet(outFile, saveFunctional);
-//
-//            PNMLWriter saveModel = new PNMLWriter(getCurrentPetriNetView());
-//            saveModel.saveTo(outFile, saveFunctional);
-
             setFile(outFile, frameForPetriNetTabs.getSelectedIndex());
             PetriNetTab currentTab = getCurrentTab();
             currentTab.setNetChanged(false);
@@ -656,35 +626,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         petriNetTabs.add(tab);
         frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
     }
-
-    /*
-      * public class ExperimentRunner extends Thread{
-      *
-      * private String path;
-      *
-      * public ExperimentRunner(String path){ this.path=path; }
-      *
-      * public void run(){ Experiment exp = new Experiment(path,_petriNetView); try{
-      * exp.Load(); } catch(org.xml.sax.SAXParseException spe) { //if the
-      * experiment file does not fit the schema. String message =
-      * spe.getMessage().replaceAll("\\. ",".\n"); message =
-      * message.replaceAll(",",",\n");
-      * JOptionPane.showMessageDialog(PipeApplicationView.this,
-      * "The Experiment file is not valid."+
-      * System.getProperty("line.separator")+ "Line "+spe.getLineNumber()+": "+
-      * message, "Experiment Input Error", JOptionPane.ERROR_MESSAGE); }
-      * catch(pipe.experiment.validation.NotMatchingException nme) { //if the
-      * experiment file does not match with the current net.
-      * JOptionPane.showMessageDialog(PipeApplicationView.this,
-      * "The Experiment file is not valid."+
-      * System.getProperty("line.separator")+ nme.getMessage(),
-      * "Experiment Input Error", JOptionPane.ERROR_MESSAGE); }
-      * catch(pipe.experiment.InvalidExpressionException iee) {
-      * JOptionPane.showMessageDialog(PipeApplicationView.this,
-      * "The Experiment file is not valid."+
-      * System.getProperty("line.separator")+ iee.getMessage(),
-      * "Experiment Input Error", JOptionPane.ERROR_MESSAGE); } } }
-      */
 
     /**
      * If current net has modifications, asks if you want to save and does it if
@@ -725,45 +666,61 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return true;
     }
 
-    public void setRandomAnimationMode(boolean on) {
-        PetriNetController petriNetController = applicationController.getActivePetriNetController();
-        Animator animator = petriNetController.getAnimator();
-        if (!on) {
-            applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
-            applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
-        } else {
-            applicationModel.stepbackwardAction.setEnabled(false);
-            applicationModel.stepforwardAction.setEnabled(false);
-        }
-        applicationModel.randomAction.setEnabled(!on);
-        applicationModel.randomAnimateAction.setSelected(on);
-    }
+    public void setAnimationMode(boolean on) {
 
-    public void setAnimationMode(boolean on) throws Exception {
         applicationModel.randomAnimateAction.setSelected(false);
+        applicationModel.startAction.setSelected(on);
+        PetriNetTab petriNetTab = getCurrentTab();
+        petriNetTab.changeAnimationMode(on);
+
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Animator animator = petriNetController.getAnimator();
-        applicationModel.startAction.setSelected(on);
-        getCurrentTab().changeAnimationMode(on);
         if (on) {
-            PetriNetView petriNetView = getCurrentPetriNetView();
-//            animator.storeModel(petriNetView);
-//            petriNetView.setEnabledTransitions();
-//            animator.highlightEnabledTransitions();
-            addAnimationHistory();
             applicationModel
                     .enableActions(false, applicationController.isPasteEnabled());// disables all non-animation buttons
             applicationModel.setEditionAllowed(false);
             statusBar.changeText(statusBar.textforAnimation);
+            createAnimationViewPane();
+
         } else {
             applicationModel.setEditionAllowed(true);
             statusBar.changeText(statusBar.textforDrawing);
             animator.restoreModel();
-            removeAnimationHistory();
+            removeAnimationViewPlane();
             applicationModel
                     .enableActions(true, applicationController.isPasteEnabled()); // renables all non-animation buttons
         }
     }
+
+    private void changeAnimationViewPlane() {
+        removeAnimationViewPlane();
+        createAnimationViewPane();
+    }
+
+
+    /**
+     * Creates a new currentAnimationView text area, and returns a reference to it
+     */
+    private void createAnimationViewPane() {
+        AnimationHistoryView animationHistoryView = getCurrentTab().getAnimationView();
+        scroller = new JScrollPane(animationHistoryView);
+        scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
+
+        moduleAndAnimationHistoryFrame.setBottomComponent(scroller);
+
+        moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
+        moduleAndAnimationHistoryFrame.setDividerSize(8);
+    }
+
+
+    void removeAnimationViewPlane() {
+        if (scroller != null) {
+            moduleAndAnimationHistoryFrame.remove(scroller);
+            moduleAndAnimationHistoryFrame.setDividerLocation(0);
+            moduleAndAnimationHistoryFrame.setDividerSize(0);
+        }
+    }
+
 
     public void setTitle(String title) {
         String name = applicationModel.getName();
@@ -772,7 +729,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
 
     /**
-     * @author Ben Kirby Remove the listener from the zoomComboBox, so that when
+     * Remove the listener from the zoomComboBox, so that when
      * the box's selected item is updated to keep track of ZoomActions
      * called from other sources, a duplicate ZoomAction is not called
      */
@@ -787,18 +744,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return statusBar;
     }
 
-    private Component c = null; // arreglantzoom
-    private final Component p = new BlankLayer();
+    private Component currentComponent = null; // arreglantzoom
+    private final Component blankLayer = new BlankLayer();
 
     /* */
     public void hideNet(boolean doHide) {
         if (doHide) {
-            c = frameForPetriNetTabs.getComponentAt(frameForPetriNetTabs.getSelectedIndex());
-            frameForPetriNetTabs.setComponentAt(frameForPetriNetTabs.getSelectedIndex(), p);
+            currentComponent = frameForPetriNetTabs.getComponentAt(frameForPetriNetTabs.getSelectedIndex());
+            frameForPetriNetTabs.setComponentAt(frameForPetriNetTabs.getSelectedIndex(), blankLayer);
         } else {
-            if (c != null) {
-                frameForPetriNetTabs.setComponentAt(frameForPetriNetTabs.getSelectedIndex(), c);
-                c = null;
+            if (currentComponent != null) {
+                frameForPetriNetTabs.setComponentAt(frameForPetriNetTabs.getSelectedIndex(), currentComponent);
+                currentComponent = null;
             }
         }
         frameForPetriNetTabs.repaint();
@@ -840,36 +797,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void removeTab(int index) {
         petriNetTabs.remove(index);
-    }
-
-
-    /**
-     * Creates a new animationHistoryView text area, and returns a reference to it
-     */
-    void addAnimationHistory() {
-        animationHistoryView = getCurrentTab().getAnimationView();
-        animationHistoryView.setEditable(false);
-
-        _scroller = new JScrollPane(animationHistoryView);
-        _scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
-
-        _moduleAndAnimationHistoryFrame.setBottomComponent(_scroller);
-
-        _moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
-        _moduleAndAnimationHistoryFrame.setDividerSize(8);
-    }
-
-
-    void removeAnimationHistory() {
-        if (_scroller != null) {
-            _moduleAndAnimationHistoryFrame.remove(_scroller);
-            _moduleAndAnimationHistoryFrame.setDividerLocation(0);
-            _moduleAndAnimationHistoryFrame.setDividerSize(0);
-        }
-    }
-
-    public AnimationHistoryView getAnimationHistory() {
-        return animationHistoryView;
     }
 
 

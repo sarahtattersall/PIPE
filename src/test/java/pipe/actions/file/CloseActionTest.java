@@ -31,7 +31,7 @@ public class CloseActionTest {
         when(mockpane.getSelectedIndex()).thenReturn(selectedIndex);
         when(mockView.getFrameForPetriNetTabs()).thenReturn(mockpane);
         closeAction.actionPerformed(null);
-        verify(mockView).setObjectsNull(selectedIndex);
+        verify(mockView).removeTab(selectedIndex);
         verify(mockpane).remove(selectedIndex);
     }
 

@@ -37,7 +37,7 @@ public class Animator {
                 PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
                 if ((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode()) {
                     timer.stop();
-                    applicationView.setRandomAnimationMode(false);
+//                    applicationView.setAnimationMode(false);
                     return;
                 }
                 try {
@@ -99,7 +99,7 @@ public class Animator {
                 timer.setDelay(Integer.parseInt(s));
                 timer.start();
             } catch (NumberFormatException e) {
-                ApplicationSettings.getApplicationView().setRandomAnimationMode(false);
+                ApplicationSettings.getApplicationView().setAnimationMode(false);
             }
         }
     }
@@ -183,4 +183,7 @@ public class Animator {
     }
 
 
+    public void clear() {
+        animationHistory.clear();
+    }
 }

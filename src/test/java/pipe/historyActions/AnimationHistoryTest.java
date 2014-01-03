@@ -37,6 +37,14 @@ public class AnimationHistoryTest {
     }
 
     @Test
+    public void clearNotifiesObserver() {
+        Transition transition = mock(Transition.class);
+        history.registerObserver(observer);
+        history.clear();
+        verify(observer).update();
+    }
+
+    @Test
     public void steppingForwardNotifiesObserver() {
         Transition transition = mock(Transition.class);
         history.addHistoryItem(transition);

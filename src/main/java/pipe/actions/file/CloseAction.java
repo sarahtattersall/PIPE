@@ -15,7 +15,7 @@ public class CloseAction extends FileAction {
     public void actionPerformed(ActionEvent e) {
         final PipeApplicationView view = ApplicationSettings.getApplicationView();
         final JTabbedPane appTab = view.getFrameForPetriNetTabs();
-        view.setObjectsNull(appTab.getSelectedIndex());
+        view.removeTab(appTab.getSelectedIndex());
 
         if( (appTab.getTabCount() > 0) ){
             appTab.remove(appTab.getSelectedIndex());

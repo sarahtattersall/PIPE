@@ -114,7 +114,7 @@ public class PipeTest {
     	checkAction("Zoom in", model.zoomInAction, ZoomAction.class); 
     	checkAction("Cycle grid", model.toggleGrid, GridAction.class); 
     	checkAction("Drag", model.dragAction, DragAction.class);
-    	checkAction("Animation mode", model.startAction, StartAnimateAction.class);
+    	checkAction("Animation mode", model.startAction, ToggleAnimateAction.class);
     	checkAction("Back", model.stepbackwardAction, StepBackwardAction.class);
     	checkAction("Forward", model.stepforwardAction, StepForwardAction.class);
     	checkAction("Random", model.randomAction, RandomAnimateAction.class);
@@ -434,9 +434,7 @@ public class PipeTest {
 	private void savePetriNet()
 	{
 		fileForTesting = new File("PipeTestFile.xml"); 
-		if (fileForTesting.exists()) fileForTesting.delete(); 
-//		System.out.println(fileForTesting.getAbsolutePath());
-		applicationView.saveNet(fileForTesting, false); 
+		applicationView.saveNet(fileForTesting, false);
 	}
 	protected void openTokenDialogDisableDefaultTokenAddNewToken() throws InterruptedException
 	{ // To get access to the table in TokenPanel, SpecifyTokenAction.actionPerformed refactored to three methods:

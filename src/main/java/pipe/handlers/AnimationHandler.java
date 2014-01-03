@@ -45,7 +45,7 @@ public class AnimationHandler
              Animator animator = petriNetController.getAnimator();
              animator.fireTransition(transitionView.getModel());
 
-             ApplicationSettings.getApplicationView().setRandomAnimationMode(false);
+             ApplicationSettings.getApplicationView().setAnimationMode(false);
             if(!_lastGroupTransitionView.isEmpty()){
             	for(GroupTransitionView groupTransitionView : _lastGroupTransitionView){
 	        		for (TransitionView t : groupTransitionView.getTransitions()) {

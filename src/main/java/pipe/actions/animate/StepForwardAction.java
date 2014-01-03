@@ -17,8 +17,6 @@ public class StepForwardAction extends AnimateAction {
 
     @Override
     public void actionPerformed(final ActionEvent event) {
-        PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-        AnimationHistoryView animationHistoryView = pipeApplicationView.getAnimationHistory();
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();

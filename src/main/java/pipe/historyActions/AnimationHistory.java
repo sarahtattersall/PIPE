@@ -111,4 +111,10 @@ public class AnimationHistory implements IObservable {
         }
         throw new RuntimeException("Index is greater than number of transitions stored");
     }
+
+    public void clear() {
+        currentPosition = -1;
+        firingSequence.clear();
+        notifyObservers();
+    }
 }
