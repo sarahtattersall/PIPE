@@ -1,17 +1,15 @@
 package pipe.actions.animate;
 
-import pipe.actions.AnimateAction;
 import pipe.gui.AnimationHistory;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 
 public class StepForwardAction extends AnimateAction {
-    public StepForwardAction(final String name, final int typeID, final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public StepForwardAction(final String name, final String tooltip, final String keystroke) {
+        super(name, tooltip, keystroke);
     }
 
     @Override

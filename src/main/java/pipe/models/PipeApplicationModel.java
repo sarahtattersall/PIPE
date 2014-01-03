@@ -124,20 +124,20 @@ public class PipeApplicationModel implements Serializable
 
 
     @ApplicationAction(ActionEnum.START)
-    public AnimateAction startAction = new StartAnimateAction("Animation mode", Constants.START, "Toggle Animation Mode", "Ctrl A");
+    public AnimateAction startAction = new StartAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
 
     @ApplicationAction(ActionEnum.STEP_BACK)
-    public AnimateAction stepbackwardAction = new StepBackwardAction("Back", Constants.STEPBACKWARD, "Step backward a firing", "4");
+    public AnimateAction stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4");
 
 
     @ApplicationAction(ActionEnum.STEP_FORWARD)
-    public AnimateAction stepforwardAction = new StepForwardAction("Forward", Constants.STEPFORWARD, "Step forward a firing", "6");
+    public AnimateAction stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6");
 
     @ApplicationAction(ActionEnum.RANDOM)
-    public AnimateAction randomAction = new RandomAnimateAction("Random", Constants.RANDOM, "Randomly fire a transition", "5");
+    public AnimateAction randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5");
 
     @ApplicationAction(ActionEnum.ANIMATE)
-    public AnimateAction randomAnimateAction = new AnimationAction("Animate", Constants.ANIMATE, "Randomly fire a number of transitions", "7");
+    public AnimateAction randomAnimateAction = new AnimationAction("Animate", "Randomly fire a number of transitions", "7");
 
     @ApplicationAction(ActionEnum.SPECIFY_TOKEN)
     public SpecifyTokenAction specifyTokenClasses = new SpecifyTokenAction();

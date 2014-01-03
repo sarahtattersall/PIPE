@@ -19,42 +19,20 @@ import java.util.*;
 /**
  * This class is used to process clicks by the user to manually step
  * through enabled transitions in the net.
- *
- * @author unspecified     wrote this code
- * @author David Patterson fixed a bug with double-firing transitions
- *         in the doRandomFiring method. I also renamed the fireTransition
- *         method to recordFiredTransition to better describe what it does.
- * @author Pere Bonet modified the recordFiredTransition method to
- *         fix the unexcepted behaviour observed during animation playback.
- *         The method is renamed back to fireTransition.
- * @author Edwin Chung fixed the bug where users can still step forward to
- *         previous firing sequence even though it has been reset. The issue where an
- *         unexpected behaviour will occur when the firing sequence has been altered
- *         has been resolved. The problem where animation will freeze halfway while
- *         stepping back a firing sequence has also been fixed (Feb 2007)
- * @author Dave Patterson The code now outputs an error message in the status
- *         bar if there is no transition to be found when picking a random transition
- *         to fire. This is related to the problem described in bug 1699546.
  */
-public class Animator
-{
+public class Animator {
 
-    private Timer timer;
+    private final Timer timer;
     private int numberSequences;
     private final List<Transition> firedTransitions = new ArrayList<Transition>();
     private int count = 0;
 
 
-    public Animator()
-    {
-
-        timer = new Timer(0, new ActionListener()
-        {
-            public void actionPerformed(ActionEvent evt)
-            {
+    public Animator() {
+        timer = new Timer(0, new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-                if((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode())
-                {
+                if ((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode()) {
                     timer.stop();
                     applicationView.setRandomAnimationMode(false);
                     return;
@@ -63,7 +41,7 @@ public class Animator
                     doRandomFiring();
                 } catch (Exception e) {
                     //TODO: HANDLE EXCEPTION
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    e.printStackTrace();
                 }
                 setNumberSequences(getNumberSequences() - 1);
             }
@@ -71,79 +49,22 @@ public class Animator
     }
 
 
-    /**
-     * Highlights enabled transitions
-     */
-    public void highlightEnabledTransitions()
-    {
-        /* rewritten by wjk 03/10/2007 */
-        PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-
-        //current.setEnabledTransitions();
-
-        Iterator transitionIterator = petriNetView.returnTransitions();
-        while(transitionIterator.hasNext())
-        {
-            TransitionView tempTransitionView = (TransitionView) transitionIterator.next();
-            if(tempTransitionView.isEnabled(true))
-            {
-                petriNetView.notifyObservers();
-                tempTransitionView.repaint();
-            }
-        }
-    }
-
-
-    /**
-     * Called during animation to unhighlight previously highlighted transitions
-     */
-    void unhighlightDisabledTransitions()
-    {
-        PetriNetView current = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-
-        //current.setEnabledTransitions();
-
-        Iterator transitionIterator = current.returnTransitions();
-        while(transitionIterator.hasNext())
-        {
-            TransitionView tempTransitionView = (TransitionView) transitionIterator.next();
-            if(!tempTransitionView.isEnabled(true))
-            {
-                current.notifyObservers();
-                tempTransitionView.repaint();
-            }
-        }
-    }
-
 
     /**
      * Called at end of animation and resets all Transitions to false and
      * unhighlighted
      */
-    private void disableTransitions(PetriNet net)
-    {
-        for (Transition transition : net.getTransitions()) {
-            transition.disable();
-        }
-
-//        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-//        Iterator transitionIterator =
-//                applicationView.getCurrentPetriNetView().returnTransitions();
-//        while(transitionIterator.hasNext())
-//        {
-//            TransitionView tempTransitionView = (TransitionView) transitionIterator.next();
-//            tempTransitionView.setEnabledFalse();
-//            applicationView.getCurrentPetriNetView().notifyObservers();
-//            tempTransitionView.repaint();
+//    private void disableTransitions(PetriNet net) {
+//        for (Transition transition : net.getTransitions()) {
+//            transition.disable();
 //        }
-    }
+//    }
 
 
     /**
      * Stores model at start of animation
      */
-    public void storeModel(PetriNetView petriNetView)
-    {
+    public void storeModel(PetriNetView petriNetView) {
         petriNetView.storeCurrentMarking();
     }
 
@@ -152,26 +73,20 @@ public class Animator
      * Restores model at end of animation and sets all transitions to false and
      * unhighlighted
      */
-    public void restoreModel()
-    {
+    public void restoreModel() {
         PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
         petriNetView.restorePreviousMarking();
-        disableTransitions(petriNetView.getModel());
+//        disableTransitions(petriNetView.getModel());
         count = 0;
     }
 
 
-    public void startRandomFiring()
-    {
-        if(getNumberSequences() > 0)
-        {
+    public void startRandomFiring() {
+        if (getNumberSequences() > 0) {
             // stop animation
             setNumberSequences(0);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 String s = JOptionPane.showInputDialog(
                         "Enter number of firings to perform", "1");
                 this.numberSequences = Integer.parseInt(s);
@@ -179,17 +94,14 @@ public class Animator
                         "Enter time delay between firing /ms", "50");
                 timer.setDelay(Integer.parseInt(s));
                 timer.start();
-            }
-            catch(NumberFormatException e)
-            {
+            } catch (NumberFormatException e) {
                 ApplicationSettings.getApplicationView().setRandomAnimationMode(false);
             }
         }
     }
 
 
-    public void stopRandomFiring()
-    {
+    public void stopRandomFiring() {
         numberSequences = 0;
     }
 
@@ -203,16 +115,6 @@ public class Animator
         PetriNet net = petriNetController.getPetriNet();
         Transition transition = net.getRandomTransition();
         fireTransition(transition);
-
-//        if(t != null)
-//        {
-//            fireTransition(t); //revisar
-//        }
-//        else
-//        {
-//            applicationView.getStatusBar().changeText(
-//                    "ERROR: No transition to fire.");
-//        }
     }
 
 
@@ -220,14 +122,10 @@ public class Animator
      * Steps back through previously fired transitions
      */
     public void stepBack() {
-        if(count > 0)
-        {
+        if (count > 0) {
             Transition previousTransition = firedTransitions.get(--count);
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
             applicationView.getCurrentPetriNetView().getModel().fireTransitionBackwards(previousTransition);
-//            applicationView.getCurrentPetriNetView().setEnabledTransitions();
-//            unhighlightDisabledTransitions();
-//            highlightEnabledTransitions();
         }
     }
 
@@ -236,14 +134,10 @@ public class Animator
      * Steps forward through previously fired transitions
      */
     public void stepForward() {
-        if(count < firedTransitions.size())
-        {
+        if (count < firedTransitions.size()) {
             Transition nextTransition = firedTransitions.get(count++);
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
             applicationView.getCurrentPetriNetView().getModel().fireTransition(nextTransition);
-//            ApplicationSettings.getApplicationView().getCurrentPetriNetView().setEnabledTransitions();
-//            unhighlightDisabledTransitions();
-//            highlightEnabledTransitions();
         }
     }
 
@@ -272,52 +166,40 @@ public class Animator
         applicationView.getAnimationHistory().addHistoryItem(transition.getName());
         net.fireTransition(transition);
 
-//        highlightEnabledTransitions();
-//        animator.unhighlightDisabledTransitions();
-        if(count == firedTransitions.size())
-        {
+        if (count == firedTransitions.size()) {
             firedTransitions.add(transition);
             count++;
-        }
-        else
-        {
+        } else {
             removeStoredTransitions(count + 1);
             firedTransitions.set(count++, transition);
 
         }
-//        updateArcAndTran();
     }
 
-    public void updateArcAndTran(){
-        Collection<ArcView> arcs= ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
-        for (ArcView arc : arcs)
-        {
+    public void updateArcAndTran() {
+        Collection<ArcView> arcs = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
+        for (ArcView arc : arcs) {
             arc.repaint();
         }
         Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
-        for (TransitionView transition : trans)
-        {
+        for (TransitionView transition : trans) {
             transition.update();
         }
     }
 
-    private void removeStoredTransitions(int start)
-    {
-        for(int i = start; i < firedTransitions.size(); i++)
-        {
+    private void removeStoredTransitions(int start) {
+        for (int i = start; i < firedTransitions.size(); i++) {
             firedTransitions.remove(i);
         }
     }
 
 
-    public synchronized int getNumberSequences()
-    {
+    public synchronized int getNumberSequences() {
         return numberSequences;
     }
 
 
-    public synchronized void setNumberSequences(int numberSequences)
-    {
+    public synchronized void setNumberSequences(int numberSequences) {
         this.numberSequences = numberSequences;
     }
 

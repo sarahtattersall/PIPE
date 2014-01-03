@@ -1,6 +1,5 @@
 package pipe.actions.animate;
 
-import pipe.actions.AnimateAction;
 import pipe.gui.AnimationHistory;
 import pipe.gui.ApplicationSettings;
 import pipe.models.PipeApplicationModel;
@@ -9,8 +8,8 @@ import pipe.views.PipeApplicationView;
 import java.awt.event.ActionEvent;
 
 public class StepBackwardAction extends AnimateAction {
-    public StepBackwardAction(final String name, final int typeID, final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public StepBackwardAction(final String name, final String tooltip, final String keystroke) {
+        super(name, tooltip, keystroke);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package pipe.actions.animate;
 
-import pipe.actions.AnimateAction;
-import pipe.gui.AnimationHistory;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -13,8 +11,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class StartAnimateAction extends AnimateAction {
-    public StartAnimateAction(final String name, final int typeID, final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public StartAnimateAction(final String name, final String tooltip, final String keystroke) {
+        super(name, tooltip, keystroke);
     }
 
     @Override
