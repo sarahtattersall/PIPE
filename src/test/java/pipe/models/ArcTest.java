@@ -148,6 +148,13 @@ public class ArcTest {
     }
 
     @Test
+    public void returnsZeroWeightForNonExistantToken() {
+        Token defaultToken = TokenUtils.createDefaultToken();
+        String actualWeight = arc.getWeightForToken(defaultToken);
+        assertEquals("0", actualWeight);
+    }
+
+    @Test
     public void returnTrueIfHasFunctionalWeight() {
         Token defaultToken = TokenUtils.createDefaultToken();
         Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));

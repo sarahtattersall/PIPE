@@ -140,7 +140,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
             return tokenWeights.get(token);
         }
         else {
-            return "";
+            return "0";
         }
     }
 
