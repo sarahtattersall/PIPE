@@ -3,23 +3,15 @@
  */
 package pipe.common;
 
+import pipe.handlers.SoftExceptionHandler;
+import pipe.server.serverCommon.ThreadGroupNameFilter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.SocketTimeoutException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Filter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.SocketHandler;
-
-import pipe.handlers.SoftExceptionHandler;
-import pipe.server.serverCommon.ThreadGroupNameFilter;
+import java.util.logging.*;
 
 /**
  * @author dazz

@@ -50,8 +50,13 @@ public class ViewExpansionComponent
       return 0;
    }
 
-   
-   public void translate(int x, int y) {
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    public void translate(int x, int y) {
    }
 
 }

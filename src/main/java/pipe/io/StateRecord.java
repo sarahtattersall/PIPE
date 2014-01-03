@@ -3,10 +3,10 @@
  */
 package pipe.io;
 
+import pipe.calculations.MarkingState;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
-
-import pipe.calculations.MarkingState;
 
 
 /**

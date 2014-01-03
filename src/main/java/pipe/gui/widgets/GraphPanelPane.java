@@ -5,19 +5,17 @@
  */
 package pipe.gui.widgets;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Export;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Export;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
 
 /**

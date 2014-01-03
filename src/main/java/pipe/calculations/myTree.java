@@ -51,15 +51,14 @@ public class myTree
     public final PetriNetView _petriNetView;
 
     //Tree Constructor
-    public myTree(PetriNetView petriNetView, int[] treeRoot) throws TreeTooBigException
-    {
+    public myTree(PetriNetView petriNetView, int[] treeRoot) throws TreeTooBigException {
 
         _petriNetView = petriNetView;
 
         _CPlus = new Matrix(petriNetView.getTokenViews().getFirst().getForwardsIncidenceMatrix(
-                petriNetView.getArcsArrayList(), petriNetView.getTransitionsArrayList(), petriNetView.getPlacesArrayList()));
+                petriNetView.getModel().getArcs(), petriNetView.getModel().getTransitions(), petriNetView.getModel().getPlaces()));
         _CMinus = new Matrix(petriNetView.getTokenViews().getFirst().getBackwardsIncidenceMatrix(
-                petriNetView.getArcsArrayList(), petriNetView.getTransitionsArrayList(), petriNetView.getPlacesArrayList()));
+                petriNetView.getModel().getArcs(), petriNetView.getModel().getTransitions(), petriNetView.getModel().getPlaces()));
         _inhibition = new Matrix(petriNetView.getTokenViews().getFirst().getInhibitionMatrix(
                 petriNetView.getInhibitorsArrayList(), petriNetView.getTransitionsArrayList(), petriNetView.getPlacesArrayList()));
         capacity = petriNetView.getCapacityMatrix();
@@ -91,9 +90,9 @@ public class myTree
         _petriNetView = data;
 
         _CPlus = new Matrix(data.getTokenViews().getFirst().getForwardsIncidenceMatrix(
-                data.getArcsArrayList(), data.getTransitionsArrayList(), data.getPlacesArrayList()));
+                data.getModel().getArcs(), data.getModel().getTransitions(), data.getModel().getPlaces()));
         _CMinus = new Matrix(data.getTokenViews().getFirst().getBackwardsIncidenceMatrix(
-                data.getArcsArrayList(), data.getTransitionsArrayList(), data.getPlacesArrayList()));
+                data.getModel().getArcs(), data.getModel().getTransitions(), data.getModel().getPlaces()));
         _inhibition = new Matrix(data.getTokenViews().getFirst().getInhibitionMatrix(
                 data.getInhibitorsArrayList(), data.getTransitionsArrayList(), data.getPlacesArrayList()));
 
@@ -202,7 +201,8 @@ public class myTree
             state[i] = mlist;
         }
 
-        boolean[] enabledTransitions = _petriNetView.areTransitionsEnabled(state);
+        boolean[] enabledTransitions = new boolean[0];
+//        _petriNetView.areTransitionsEnabled(state);
 
         //emmagatzemar estat nou
         writeNode(root.id, root.markup, esoFile, true);
@@ -229,7 +229,9 @@ public class myTree
             }
 
             enabledTransitions =
-                    _petriNetView.areTransitionsEnabled(state);
+//                    _petriNetView.areTransitionsEnabled(state);
+                      new boolean[0];
+
             //For each transition
             for(int i = 0; i < enabledTransitions.length; i++)
             {
@@ -374,8 +376,6 @@ public class myTree
      * Adds a compressed version of a tangible state to the explored states
      * hashtable and also writes the full state to a file for later use.
      *
-     * @param newstate The explored state to be added
-     * @param es       A reference to the hashtable
      * @param stateId
      * @param marking
      * @param opfile   The file to write the state to

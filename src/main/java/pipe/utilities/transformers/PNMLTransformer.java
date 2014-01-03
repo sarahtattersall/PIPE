@@ -12,8 +12,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 

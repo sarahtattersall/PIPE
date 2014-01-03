@@ -1,25 +1,15 @@
 package pipe.modules.queryeditor.evaluator.gui;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import pipe.common.AnalysisSettings;
+import pipe.modules.queryeditor.evaluator.SettingsManager;
+
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.logging.Level;
-
-import javax.swing.Box;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-
-import pipe.common.AnalysisSettings;
-import pipe.modules.queryeditor.evaluator.SettingsManager;
 
 public class EvaluationSettingsPanel implements ItemListener
 {

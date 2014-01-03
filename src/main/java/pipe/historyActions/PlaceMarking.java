@@ -4,11 +4,9 @@
 
 package pipe.historyActions;
 
-import pipe.gui.ApplicationSettings;
-import pipe.views.MarkingView;
-import pipe.views.PlaceView;
-
-import java.util.LinkedList;
+import pipe.models.PetriNet;
+import pipe.models.component.Place;
+import pipe.models.component.Token;
 
 /**
  * 
@@ -17,35 +15,62 @@ import java.util.LinkedList;
 public class PlaceMarking extends HistoryItem
 {
 
-	private final PlaceView _placeView;
-	private final LinkedList<MarkingView> newMarking;
-	private final LinkedList<MarkingView> oldMarking;
+    private final Place place;
+    private final Token token;
+    private final int previousCount;
+    private final int newCount;
 
-	public PlaceMarking(PlaceView _placeView, LinkedList<MarkingView> _oldMarking,
-                        LinkedList<MarkingView> _newMarking) {
-		this._placeView = _placeView;
-		oldMarking = _oldMarking;
-		newMarking = _newMarking;
-	}
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final PlaceMarking that = (PlaceMarking) o;
+
+        if (newCount != that.newCount) {
+            return false;
+        }
+        if (previousCount != that.previousCount) {
+            return false;
+        }
+        if (place != null ? !place.equals(that.place) : that.place != null) {
+            return false;
+        }
+        if (token != null ? !token.equals(that.token) : that.token != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = place != null ? place.hashCode() : 0;
+        result = 31 * result + (token != null ? token.hashCode() : 0);
+        result = 31 * result + previousCount;
+        result = 31 * result + newCount;
+        return result;
+    }
+
+    public PlaceMarking(Place place,Token token, int previousCount, int newCount) {
+		this.place = place;
+        this.token = token;
+        this.previousCount = previousCount;
+        this.newCount = newCount;
+    }
 
 	public void undo() {
-		// Restore references to tokenClasses so that updates are reflected
-		// in marking.
-		for (MarkingView m : oldMarking) {
-            m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(
-                    m.getToken().getID()));
-		}
-		_placeView.setCurrentMarking(oldMarking);
+        place.setTokenCount(token, previousCount);
+
 	}
 
 	public void redo() {
-		// Restore references to tokenClasses so that updates are reflected
-		// in marking.
-		for (MarkingView m : newMarking) {
-            m.setToken(ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenClassFromID(
-                    m.getToken().getID()));
-		}
-		_placeView.setCurrentMarking(newMarking);
+        place.setTokenCount(token, newCount);
+
 	}
 
 }

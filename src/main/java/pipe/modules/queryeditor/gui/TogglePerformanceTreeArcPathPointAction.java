@@ -7,12 +7,10 @@
 
 package pipe.modules.queryeditor.gui;
 
-
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArcPathPoint;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 
 class TogglePerformanceTreeArcPathPointAction extends AbstractAction {

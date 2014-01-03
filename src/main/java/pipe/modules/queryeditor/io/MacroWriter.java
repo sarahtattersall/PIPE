@@ -10,12 +10,19 @@
 
 package pipe.modules.queryeditor.io;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import pipe.common.PetriNetNode;
+import pipe.modules.queryeditor.QueryManager;
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
+import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+import pipe.modules.queryeditor.gui.performancetrees.macros.MacroDefinition;
+import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
+import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
+import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ActionsNode;
+import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StatesNode;
+import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ValueNode;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,21 +34,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import pipe.common.PetriNetNode;
-import pipe.modules.queryeditor.QueryManager;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroDefinition;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ActionsNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ValueNode;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class MacroWriter
 {

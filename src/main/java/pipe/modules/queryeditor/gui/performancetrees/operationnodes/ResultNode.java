@@ -11,12 +11,12 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.operationnodes;
 
-import java.util.ArrayList;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+
+import java.util.ArrayList;
 
 public class ResultNode extends OperationNode
 {

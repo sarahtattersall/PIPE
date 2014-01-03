@@ -9,35 +9,25 @@
 
 package pipe.modules.queryeditor.io;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.imageio.ImageIO;
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.ServiceUI;
-import javax.print.SimpleDoc;
-import javax.print.StreamPrintServiceFactory;
-import javax.print.attribute.DocAttributeSet;
-import javax.print.attribute.HashDocAttributeSet;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-
 import pipe.gui.Grid;
 import pipe.gui.widgets.FileBrowser;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.QueryView;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeObject;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroView;
+
+import javax.imageio.ImageIO;
+import javax.print.*;
+import javax.print.attribute.DocAttributeSet;
+import javax.print.attribute.HashDocAttributeSet;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 
 public class PerformanceTreeExporter {
@@ -188,12 +178,12 @@ public class PerformanceTreeExporter {
 		// Output stream MIME type
 		String psMimeType = DocFlavor.BYTE_ARRAY.POSTSCRIPT.getMimeType();
 
-		// Look up a print service factory that can handle this job
+		// Look up a print service builder that can handle this job
 		StreamPrintServiceFactory[] factories = StreamPrintServiceFactory.lookupStreamPrintServiceFactories(flavour, psMimeType);
-		if (factories.length == 0) throw new RuntimeException("No suitable factory found for export to EPS");
+		if (factories.length == 0) throw new RuntimeException("No suitable builder found for export to EPS");
 
 		FileOutputStream f = new FileOutputStream(filename);
-		// Get a print service from the factory, create a print job and print
+		// Get a print service from the builder, create a print job and print
 		factories[0].getPrintService(f).createPrintJob().print(
 				new SimpleDoc(g, flavour, null), 
 				new HashPrintRequestAttributeSet()

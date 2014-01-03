@@ -91,7 +91,8 @@ public class StateViewer extends JLayeredPane implements Constants
 	{
 		if (currentObj instanceof PlaceView)
 		{
-			ConditionPlaceView placeView = new ConditionPlaceView((PlaceView)currentObj);
+            PlaceView currentPlace = (PlaceView) currentObj;
+			ConditionPlaceView placeView = new ConditionPlaceView(currentPlace, currentPlace.getPetriNetController());
 			
 			// Set the state group condition associated with the place
 			StateElement placeCondition = activeStateGroup.getCondition(placeView.getId());
@@ -101,7 +102,8 @@ public class StateViewer extends JLayeredPane implements Constants
 
 			ConditionPlaceHandler handler = new ConditionPlaceHandler(parent, placeView);
 			placeView.addMouseListener(handler);
-			placeView.deselect();
+            //TODO: DESELECT
+//			placeView.deselect();
 					
 			super.add(placeView);
 			
@@ -116,7 +118,8 @@ public class StateViewer extends JLayeredPane implements Constants
 			
 		else
 		{
-			currentObj.deselect();
+            //TODO: DESELECT
+//			currentObj.deselect();
 			super.add(currentObj);
 			
 	

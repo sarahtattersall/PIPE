@@ -1,12 +1,13 @@
 package pipe.views;
 
 import pipe.gui.*;
+import pipe.gui.widgets.EscapableDialog;
+import pipe.gui.widgets.GroupTransitionEditorPanel;
+import pipe.handlers.GroupTransitionHandler;
 import pipe.historyActions.GroupTransitionRotation;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.UngroupTransition;
-import pipe.gui.widgets.EscapableDialog;
-import pipe.gui.widgets.GroupTransitionEditorPanel;
-import pipe.models.Transition;
+import pipe.models.component.Transition;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,8 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class GroupTransitionView extends ConnectableView implements Serializable
-{
+public class GroupTransitionView extends ConnectableView<Transition> implements Serializable {
     private static final long serialVersionUID = 1L;
     private GeneralPath transition;
     private Shape proximityTransition;
@@ -37,100 +37,78 @@ public class GroupTransitionView extends ConnectableView implements Serializable
     private final ArrayList<TransitionView> _groupedTransitionViews = new ArrayList<TransitionView>();
     private TransitionView _foldedInto;
 
-    public GroupTransitionView(TransitionView _foldedInto, double positionXInput, double positionYInput)
-    {
+    public GroupTransitionView(TransitionView _foldedInto, double positionXInput, double positionYInput) {
         //MODEL
-        super(positionXInput, positionYInput, new Transition("",""));
+        super(new Transition("", ""));
         this._foldedInto = _foldedInto;
-        _componentWidth = TRANSITION_HEIGHT;
-        _componentHeight = TRANSITION_HEIGHT;
         constructTransition();
-        setCentre((int) _positionX, (int) _positionY);
         updateBounds();
         updateEndPoints();
     }
 
-    public GroupTransitionView paste(double x, double y, boolean fromAnotherView, PetriNetView model)
-    {
-        GroupTransitionView copy = new GroupTransitionView(_foldedInto, Grid.getModifiedX(x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2), Grid.getModifiedY(y + this.getY() + Constants.PLACE_TRANSITION_HEIGHT / 2));
+    public GroupTransitionView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
+        GroupTransitionView copy = new GroupTransitionView(_foldedInto,
+                Grid.getModifiedX(x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2),
+                Grid.getModifiedY(y + this.getY() + Constants.PLACE_TRANSITION_HEIGHT / 2));
 
         String newName = this._nameLabel.getName() + "(" + this.getCopyNumber() + ")";
         boolean properName = false;
 
-        while(!properName)
-        {
-            if(model.checkTransitionIDAvailability(newName))
-            {
+        while (!properName) {
+            if (model.checkTransitionIDAvailability(newName)) {
                 copy._nameLabel.setName(newName);
                 properName = true;
-            }
-            else
-            {
+            } else {
                 newName = newName + "'";
             }
         }
 
         this.newCopy(copy);
 
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
 
         copy.angle = this.angle;
 
         copy._attributesVisible = this._attributesVisible;
-        copy.transition.transform(AffineTransform.getRotateInstance(Math
-                                                                            .toRadians(copy.angle), GroupTransitionView.TRANSITION_HEIGHT / 2,
-                                                                    GroupTransitionView.TRANSITION_HEIGHT / 2));
+        copy.transition.transform(AffineTransform
+                .getRotateInstance(Math.toRadians(copy.angle), GroupTransitionView.TRANSITION_HEIGHT / 2,
+                        GroupTransitionView.TRANSITION_HEIGHT / 2));
         return copy;
     }
 
-    public GroupTransitionView copy()
-    {
-        GroupTransitionView copy = new GroupTransitionView(_foldedInto, ZoomController.getUnzoomedValue(this.getX(),
-                                                                                               _zoomPercentage), ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
+    public GroupTransitionView copy() {
+        GroupTransitionView copy =
+                new GroupTransitionView(_foldedInto, ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
+                        ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
         copy._nameLabel.setName(this.getName());
-        copy._nameOffsetX = this._nameOffsetX;
-        copy._nameOffsetY = this._nameOffsetY;
         copy.angle = this.angle;
         copy._attributesVisible = this._attributesVisible;
         copy.setOriginal(this);
         return copy;
     }
 
-    public void paintComponent(Graphics g)
-    {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if(_selected && !_ignoreSelection)
-        {
+        if (isSelected() && !_ignoreSelection) {
             g2.setColor(Constants.SELECTION_FILL_COLOUR);
-        }
-        else
-        {
+        } else {
             g2.setColor(Constants.ELEMENT_FILL_COLOUR);
         }
 
         //if (timed) {
         //	if (infiniteServer) {
-        for(int i = 2; i >= 1; i--)
-        {
+        for (int i = 2; i >= 1; i--) {
             g2.translate(2 * i, -2 * i);
             g2.fill(transition);
             Paint pen = g2.getPaint();
-            if(highlighted)
-            {
+            if (highlighted) {
                 g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
-            }
-            else if(_selected && !_ignoreSelection)
-            {
+            } else if (isSelected() && !_ignoreSelection) {
                 g2.setPaint(Constants.SELECTION_LINE_COLOUR);
-            }
-            else
-            {
+            } else {
                 g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
             }
             g2.draw(transition);
@@ -141,16 +119,11 @@ public class GroupTransitionView extends ConnectableView implements Serializable
         g2.fill(transition);
         //}
 
-        if(highlighted)
-        {
+        if (highlighted) {
             g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
-        }
-        else if(_selected && !_ignoreSelection)
-        {
+        } else if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
-        }
-        else
-        {
+        } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
 
@@ -172,21 +145,29 @@ public class GroupTransitionView extends ConnectableView implements Serializable
           }*/
     }
 
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        GroupTransitionHandler groupTransitionHandler = new GroupTransitionHandler(this, tab, this, petriNetController);
+        addMouseListener(groupTransitionHandler);
+        addMouseMotionListener(groupTransitionHandler);
+        addMouseWheelListener(groupTransitionHandler);
+        addMouseListener(tab.getAnimationHandler());
+    }
+
     /**
      * Rotates the GroupTransition through the specified angle around the midpoint
+     *
      * @param angleInc
      * @return
      */
-    public HistoryItem rotate(int angleInc)
-    {
+    public HistoryItem rotate(int angleInc) {
         angle = (angle + angleInc) % 360;
-        transition.transform(AffineTransform.getRotateInstance(Math
-                                                                       .toRadians(angleInc), _componentWidth / 2, _componentHeight / 2));
+        transition.transform(
+                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
         outlineTransition();
 
         Iterator<?> arcIterator = arcAngleList.iterator();
-        while(arcIterator.hasNext())
-        {
+        while (arcIterator.hasNext()) {
             ((ArcAngleCompare) arcIterator.next()).calcAngle();
         }
         Collections.sort(arcAngleList);
@@ -197,11 +178,9 @@ public class GroupTransitionView extends ConnectableView implements Serializable
         return new GroupTransitionRotation(this, angleInc);
     }
 
-    private void outlineTransition()
-    {
-        proximityTransition = (new BasicStroke(
-                Constants.PLACE_TRANSITION_PROXIMITY_RADIUS))
-                .createStrokedShape(transition);
+    private void outlineTransition() {
+        proximityTransition =
+                (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(transition);
     }
 
     /**
@@ -210,17 +189,12 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      * @param animationStatus Anamation status
      * @return True if enabled
      */
-    public boolean isEnabled(boolean animationStatus)
-    {
-        if(animationStatus)
-        {
-            if(enabled > 0)
-            {
+    public boolean isEnabled(boolean animationStatus) {
+        if (animationStatus) {
+            if (enabled > 0) {
                 highlighted = true;
                 return true;
-            }
-            else
-            {
+            } else {
                 highlighted = false;
             }
         }
@@ -232,8 +206,7 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      *
      * @return True if enabled
      */
-    public boolean isEnabledBackwards()
-    {
+    public boolean isEnabledBackwards() {
         return enabledBackwards;
     }
 
@@ -242,13 +215,11 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      *
      * @return True if enabled
      */
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return enabled > 0;
     }
 
-    public void setHighlighted(boolean status)
-    {
+    public void setHighlighted(boolean status) {
         highlighted = status;
     }
 
@@ -257,22 +228,15 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      *
      * @return enabled if True
      */
-    public void setEnabled(boolean status)
-    {
-        if(enabled > 0 && !status)
-        { // going from enabled to disabled
+    public void setEnabled(boolean status) {
+        if (enabled > 0 && !status) { // going from enabled to disabled
             delayValid = false; // mark that delay is not valid
         }
-        if(status)
-        {
+        if (status) {
             enabled++;
-        }
-        else if(enabled > 0)
-        {
+        } else if (enabled > 0) {
             enabled--;
-        }
-        else
-        {
+        } else {
             highlighted = false;
         }
     }
@@ -284,8 +248,7 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      * @author Dave Patterson as part of the Exponential Distribution support
      * for timed transitions.
      */
-    public void setDelay(double _delay)
-    {
+    public void setDelay(double _delay) {
         delay = _delay;
         delayValid = true;
     }
@@ -297,8 +260,7 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      * @author Dave Patterson as part of the Exponential Distribution support
      * for timed transitions.
      */
-    public double getDelay()
-    {
+    public double getDelay() {
         return delay;
     }
 
@@ -311,8 +273,7 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      * @author Dave Patterson as part of the Exponential Distribution support
      * for timed transitions.
      */
-    public boolean isDelayValid()
-    {
+    public boolean isDelayValid() {
         return delayValid;
     }
 
@@ -324,8 +285,7 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      * @author Dave Patterson as part of the Exponential Distribution support
      * for timed transitions.
      */
-    public void setDelayValid(boolean _delayValid)
-    {
+    public void setDelayValid(boolean _delayValid) {
         delayValid = _delayValid;
     }
 
@@ -335,80 +295,62 @@ public class GroupTransitionView extends ConnectableView implements Serializable
      * @param status
      * @return enabled if True
      */
-    public void setEnabledBackwards(boolean status)
-    {
+    public void setEnabledBackwards(boolean status) {
         enabledBackwards = status;
     }
 
     /* Called at the end of animation to reset Transitions to false */
-    public void setEnabledFalse()
-    {
+    public void setEnabledFalse() {
         enabled = 0;
         highlighted = false;
     }
 
-    int getAngle()
-    {
+    int getAngle() {
         return angle;
     }
 
-    private void constructTransition()
-    {
+    private void constructTransition() {
         transition = new GeneralPath();
-        transition.append(new Rectangle2D.Double(
-                (_componentWidth - TRANSITION_WIDTH) / 2, 0, TRANSITION_WIDTH,
+        transition.append(new Rectangle2D.Double((model.getHeight() - TRANSITION_WIDTH) / 2, 0, TRANSITION_WIDTH,
                 TRANSITION_HEIGHT), false);
         outlineTransition();
     }
 
-    public boolean contains(int x, int y)
-    {
+    public boolean contains(int x, int y) {
         int zoomPercentage = _zoomPercentage;
 
-        double unZoomedX = (x - getComponentDrawOffset())
-                / (zoomPercentage / 100.0);
-        double unZoomedY = (y - getComponentDrawOffset())
-                / (zoomPercentage / 100.0);
+        double unZoomedX = (x - getComponentDrawOffset()) / (zoomPercentage / 100.0);
+        double unZoomedY = (y - getComponentDrawOffset()) / (zoomPercentage / 100.0);
 
-        ArcView someArcView = ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-        if(someArcView != null)
-        { // Must be drawing a new Arc if non-NULL.
-            if((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) || transition
-                    .contains((int) unZoomedX, (int) unZoomedY))
-                    && areNotSameType(someArcView.getSource()))
-            {
+
+        //TODO: FIGURE OUT WHAT THIS DOES
+        ArcView someArcView =  null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
+        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
+            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
+                    transition.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
                 // assume we are only snapping the target...
-                if(someArcView.getTarget() != this)
-                {
+                if (someArcView.getTarget() != this) {
                     someArcView.setTarget(this);
                 }
                 someArcView.updateArcPosition();
                 return true;
-            }
-            else
-            {
-                if(someArcView.getTarget() == this)
-                {
+            } else {
+                if (someArcView.getTarget() == this) {
                     someArcView.setTarget(null);
                     removeArcCompareObject(someArcView);
                     updateConnected();
                 }
                 return false;
             }
-        }
-        else
-        {
+        } else {
             return transition.contains((int) unZoomedX, (int) unZoomedY);
         }
     }
 
-    void removeArcCompareObject(ArcView a)
-    {
+    void removeArcCompareObject(ArcView a) {
         Iterator<?> arcIterator = arcAngleList.iterator();
-        while(arcIterator.hasNext())
-        {
-            if(((ArcAngleCompare) arcIterator.next())._arcView == a)
-            {
+        while (arcIterator.hasNext()) {
+            if (((ArcAngleCompare) arcIterator.next())._arcView == a) {
                 arcIterator.remove();
             }
         }
@@ -418,26 +360,22 @@ public class GroupTransitionView extends ConnectableView implements Serializable
       * (non-Javadoc)
       *
       * @see
-      * pipe.models.Connectable#updateEndPoint(pipe.models.Arc)
+      * pipe.models.component.Connectable#updateEndPoint(pipe.models.component.Arc)
       */
-    public void updateEndPoint(ArcView arcView)
-    {
+    public void updateEndPoint(ArcView arcView) {
         boolean match = false;
 
         Iterator<?> arcIterator = arcAngleList.iterator();
-        while(arcIterator.hasNext())
-        {
+        while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            if(thisArc._arcView == arcView || !arcView.inView())
-            {
+            if (thisArc._arcView == arcView || !arcView.inView()) {
                 thisArc.calcAngle();
                 match = true;
                 break;
             }
         }
 
-        if(!match)
-        {
+        if (!match) {
             arcAngleList.add(new ArcAngleCompare(arcView, this));
         }
 
@@ -445,106 +383,77 @@ public class GroupTransitionView extends ConnectableView implements Serializable
         updateEndPoints();
     }
 
-    void updateEndPoints()
-    {
+    void updateEndPoints() {
         ArrayList<ArcAngleCompare> top = new ArrayList<ArcAngleCompare>();
         ArrayList<ArcAngleCompare> bottom = new ArrayList<ArcAngleCompare>();
         ArrayList<ArcAngleCompare> left = new ArrayList<ArcAngleCompare>();
         ArrayList<ArcAngleCompare> right = new ArrayList<ArcAngleCompare>();
 
         Iterator<?> arcIterator = arcAngleList.iterator();
-        while(arcIterator.hasNext())
-        {
+        while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
             double thisAngle = thisArc.angle - Math.toRadians(angle);
-            if(Math.cos(thisAngle) > (rootThreeOverTwo))
-            {
+            if (Math.cos(thisAngle) > (rootThreeOverTwo)) {
                 top.add(thisArc);
                 thisArc._arcView.setPathToTransitionAngle(angle + 90);
-            }
-            else if(Math.cos(thisAngle) < -rootThreeOverTwo)
-            {
+            } else if (Math.cos(thisAngle) < -rootThreeOverTwo) {
                 bottom.add(thisArc);
                 thisArc._arcView.setPathToTransitionAngle(angle + 270);
-            }
-            else if(Math.sin(thisAngle) > 0)
-            {
+            } else if (Math.sin(thisAngle) > 0) {
                 left.add(thisArc);
                 thisArc._arcView.setPathToTransitionAngle(angle + 180);
-            }
-            else
-            {
+            } else {
                 right.add(thisArc);
                 thisArc._arcView.setPathToTransitionAngle(angle);
             }
         }
 
-        AffineTransform transform = AffineTransform.getRotateInstance(Math
-                                                                              .toRadians(angle + Math.PI));
+        AffineTransform transform = AffineTransform.getRotateInstance(Math.toRadians(angle + Math.PI));
         Point2D.Double transformed = new Point2D.Double();
 
         transform.concatenate(ZoomController.getTransform(_zoomPercentage));
 
         arcIterator = top.iterator();
         transform.transform(new Point2D.Double(1, 0.5 * TRANSITION_HEIGHT),
-                            transformed); // +1 due to rounding making it off by 1
-        while(arcIterator.hasNext())
-        {
+                transformed); // +1 due to rounding making it off by 1
+        while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            if(thisArc.sourceOrTarget())
-            {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
-            }
-            else
-            {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
+            if (thisArc.sourceOrTarget()) {
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
+            } else {
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
         }
 
         arcIterator = bottom.iterator();
-        transform.transform(new Point2D.Double(0, -0.5 * TRANSITION_HEIGHT),
-                            transformed);
-        while(arcIterator.hasNext())
-        {
+        transform.transform(new Point2D.Double(0, -0.5 * TRANSITION_HEIGHT), transformed);
+        while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            if(thisArc.sourceOrTarget())
-            {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
-            }
-            else
-            {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
+            if (thisArc.sourceOrTarget()) {
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
+            } else {
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
         }
 
         arcIterator = left.iterator();
         double inc = TRANSITION_HEIGHT / (left.size() + 1);
         double current = TRANSITION_HEIGHT / 2 - inc;
-        while(arcIterator.hasNext())
-        {
+        while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            transform.transform(new Point2D.Double(-0.5 * TRANSITION_WIDTH,
-                                                   current + 1), transformed); // +1 due to rounding making it
+            transform.transform(new Point2D.Double(-0.5 * TRANSITION_WIDTH, current + 1),
+                    transformed); // +1 due to rounding making it
             // off by 1
-            if(thisArc.sourceOrTarget())
-            {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
-            }
-            else
-            {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
+            if (thisArc.sourceOrTarget()) {
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
+            } else {
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
             current -= inc;
         }
@@ -552,58 +461,46 @@ public class GroupTransitionView extends ConnectableView implements Serializable
         inc = TRANSITION_HEIGHT / (right.size() + 1);
         current = -TRANSITION_HEIGHT / 2 + inc;
         arcIterator = right.iterator();
-        while(arcIterator.hasNext())
-        {
+        while (arcIterator.hasNext()) {
             ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            transform.transform(new Point2D.Double(+0.5 * TRANSITION_WIDTH,
-                                                   current), transformed);
-            if(thisArc.sourceOrTarget())
-            {
-                thisArc._arcView.setTargetLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
-            }
-            else
-            {
-                thisArc._arcView.setSourceLocation(_positionX + centreOffsetLeft()
-                                                      + transformed.x, _positionY + centreOffsetTop()
-                        + transformed.y);
+            transform.transform(new Point2D.Double(+0.5 * TRANSITION_WIDTH, current), transformed);
+            if (thisArc.sourceOrTarget()) {
+                thisArc._arcView.setTargetLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
+            } else {
+                thisArc._arcView.setSourceLocation(getX() + centreOffsetLeft() + transformed.x,
+                        getY() + centreOffsetTop() + transformed.y);
             }
             current += inc;
         }
     }
 
-    public void addedToGui()
-    {
+    public void addedToGui() {
         super.addedToGui();
         update();
     }
 
-    private String getAttributes()
-    { // NOU-PERE
+    private String getAttributes() { // NOU-PERE
         return "";
     }
 
-    void setCentre(double x, double y)
-    {
+    void setCentre(double x, double y) {
         super.setCentre(x, y);
         update();
     }
 
-    public void toggleAttributesVisible()
-    {
+    public void toggleAttributesVisible() {
         _attributesVisible = !_attributesVisible;
         _nameLabel.setText(getAttributes());
     }
 
-    public void showEditor()
-    {
+    public void showEditor() {
         // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(),
-                                                        "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
-        GroupTransitionEditorPanel te = new GroupTransitionEditorPanel(guiDialog
-                                                                               .getRootPane(), this, ApplicationSettings.getApplicationView().getCurrentPetriNetView(), ApplicationSettings.getApplicationView().getCurrentTab());
+        GroupTransitionEditorPanel te = new GroupTransitionEditorPanel(guiDialog.getRootPane(), this,
+                ApplicationSettings.getApplicationView().getCurrentPetriNetView(),
+                ApplicationSettings.getApplicationView().getCurrentTab());
 
         guiDialog.add(te);
 
@@ -623,23 +520,20 @@ public class GroupTransitionView extends ConnectableView implements Serializable
     }
 
 
-    public void update()
-    {
+    public void update() {
         _nameLabel.setText(getAttributes());
         _nameLabel.zoomUpdate(_zoomPercentage);
         super.update();
         this.repaint();
     }
 
-    public void delete()
-    {
+    public void delete() {
         JOptionPane.showMessageDialog(null, "You cannot delete a Group Transition." +
                 " To delete transitions within a Group Transition " +
                 "first ungroup the Group Transition");
     }
 
-    class ArcAngleCompare implements Comparable
-    {
+    class ArcAngleCompare implements Comparable {
 
         private final static boolean SOURCE = false;
         private final static boolean TARGET = true;
@@ -647,35 +541,27 @@ public class GroupTransitionView extends ConnectableView implements Serializable
         private final GroupTransitionView _transitionView;
         private double angle;
 
-        public ArcAngleCompare(ArcView _arcView, GroupTransitionView _transitionView)
-        {
+        public ArcAngleCompare(ArcView _arcView, GroupTransitionView _transitionView) {
             this._arcView = _arcView;
             this._transitionView = _transitionView;
             calcAngle();
         }
 
-        public int compareTo(Object arg0)
-        {
+        public int compareTo(Object arg0) {
             double angle2 = ((ArcAngleCompare) arg0).angle;
 
             return (angle < angle2 ? -1 : (angle == angle2 ? 0 : 1));
         }
 
-        private void calcAngle()
-        {
-            int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1
-                    : 1;
-            Point2D.Double p1 = new Point2D.Double(_positionX
-                                                           + centreOffsetLeft(), _positionY + centreOffsetTop());
-            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(
-                    index).x, _arcView.getArcPath().getPoint(index).y);
+        private void calcAngle() {
+            int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
+            Point2D.Double p1 = new Point2D.Double(getX() + centreOffsetLeft(), getY() + centreOffsetTop());
+            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).x,
+                    _arcView.getArcPath().getPoint(index).y);
 
-            if(p1.y <= p2.y)
-            {
+            if (p1.y <= p2.y) {
                 angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y));
-            }
-            else
-            {
+            } else {
                 angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y)) + Math.PI;
             }
 
@@ -683,36 +569,30 @@ public class GroupTransitionView extends ConnectableView implements Serializable
             // between
             // edges of a transition
             // Yes it is a nasty hack (a.k.a. ingeneous solution). But it works!
-            if(angle < (Math.toRadians(30 + _transitionView.getAngle())))
-            {
+            if (angle < (Math.toRadians(30 + _transitionView.getAngle()))) {
                 angle += (2 * Math.PI);
             }
 
             // Needed to eliminate an exception on Windows
-            if(p1.equals(p2))
-            {
+            if (p1.equals(p2)) {
                 angle = 0;
             }
 
         }
 
-        private boolean sourceOrTarget()
-        {
+        private boolean sourceOrTarget() {
             return (_arcView.getSource() == _transitionView ? SOURCE : TARGET);
         }
 
     }
 
-    public HistoryItem ungroupTransitions()
-    {
+    public HistoryItem ungroupTransitions() {
         ungroupTransitionsHelper();
         return new UngroupTransition(this);
     }
 
-    public void ungroupTransitionsHelper()
-    {
-        for(TransitionView t : _groupedTransitionViews)
-        {
+    public void ungroupTransitionsHelper() {
+        for (TransitionView t : _groupedTransitionViews) {
             t.unhideFromCanvas();
             t.showAssociatedArcs();
             t.ungroupTransition();
@@ -722,55 +602,53 @@ public class GroupTransitionView extends ConnectableView implements Serializable
         getNameLabel().setVisible(false);
     }
 
-    public void deleteAssociatedArcs()
-    {
-        for(ArcView tempArcView : inboundArcs())
+    public void deleteAssociatedArcs() {
+        for (ArcView tempArcView : inboundArcs()) {
             tempArcView.removeFromView();
+        }
 
-        for(ArcView tempArcView : outboundArcs())
+        for (ArcView tempArcView : outboundArcs()) {
             tempArcView.removeFromView();
+        }
     }
 
-    public void hideAssociatedArcs()
-    {
-        for(ArcView tempArcView : inboundArcs())
+    public void hideAssociatedArcs() {
+        for (ArcView tempArcView : inboundArcs()) {
             tempArcView.setVisible(false);
+        }
 
-        for (ArcView tempArcView : outboundArcs())
+        for (ArcView tempArcView : outboundArcs()) {
             tempArcView.setVisible(false);
+        }
     }
 
-    public void showAssociatedArcs()
-    {
-        for (ArcView tempArcView : this.inboundArcs())
+    public void showAssociatedArcs() {
+        for (ArcView tempArcView : this.inboundArcs()) {
             tempArcView.setVisible(true);
+        }
 
-        for (ArcView tempArcView : this.outboundArcs())
+        for (ArcView tempArcView : this.outboundArcs()) {
             tempArcView.setVisible(true);
+        }
     }
 
-    public void addTransition(TransitionView t)
-    {
+    public void addTransition(TransitionView t) {
         _groupedTransitionViews.add(t);
     }
 
-    public void removeTransition(TransitionView t)
-    {
+    public void removeTransition(TransitionView t) {
         _groupedTransitionViews.remove(t);
     }
 
-    public ArrayList<TransitionView> getTransitions()
-    {
+    public ArrayList<TransitionView> getTransitions() {
         return _groupedTransitionViews;
     }
 
-    public void setFoldedInto(TransitionView t)
-    {
+    public void setFoldedInto(TransitionView t) {
         _foldedInto = t;
     }
 
-    public TransitionView getFoldedInto()
-    {
+    public TransitionView getFoldedInto() {
         return _foldedInto;
     }
 

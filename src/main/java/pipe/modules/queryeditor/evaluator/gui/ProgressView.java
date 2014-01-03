@@ -10,35 +10,26 @@
 
 package pipe.modules.queryeditor.evaluator.gui;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
-
-import javax.swing.JDialog;
-import javax.swing.JLayeredPane;
-
-import pipe.modules.interfaces.Cleanable;
 import pipe.common.EvaluationStatus;
+import pipe.modules.interfaces.Cleanable;
 import pipe.modules.interfaces.QueryConstants;
-import pipe.modules.queryresult.ResultWrapper;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.evaluator.NodeStatusUpdater;
 import pipe.modules.queryeditor.evaluator.QueryAnalysisException;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArcPathPoint;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeObject;
-import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeObjectLabel;
+import pipe.modules.queryeditor.gui.performancetrees.*;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.RangeNode;
 import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ValueNode;
 import pipe.modules.queryeditor.io.QueryData;
+import pipe.modules.queryresult.ResultWrapper;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.logging.Level;
 
 public class ProgressView extends JLayeredPane implements QueryConstants, EvaluatorGuiLoggingHandler
 {

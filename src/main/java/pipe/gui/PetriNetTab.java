@@ -1,17 +1,13 @@
 package pipe.gui;
 
-import pipe.handlers.*;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
-import pipe.models.PipeApplicationModel;
-import pipe.views.*;
-import pipe.views.viewComponents.*;
+import pipe.controllers.PetriNetController;
+import pipe.handlers.AnimationHandler;
+import pipe.views.PetriNetView;
+import pipe.views.PetriNetViewComponent;
+import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -28,22 +24,27 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
 
     public boolean netChanged = false;
     private boolean animationmode = false;
-    public ArcView _createArcView;
+    //public ArcView _createArcView;
     private final AnimationHandler animationHandler = new AnimationHandler();
     private boolean metaDown = false;
     private final SelectionManager selection;
-    private final HistoryManager _historyManager;
+//    private final HistoryManager _historyManager;
     private final PipeApplicationView _pipeApplicationView;
-    private final ArrayList<PetriNetViewComponent> petriNetComponents = new ArrayList();
+    private final ArrayList<PetriNetViewComponent> petriNetComponents = new ArrayList<PetriNetViewComponent>();
     private final ZoomController zoomControl;
     public boolean _wasNewPertiNetComponentCreated = false;
     private boolean _zoomCalled = true;
     private final Point viewPosition = new Point(0, 0);
+    private final PetriNetController petriNetController;
+    private final AnimationHistoryView animationHistoryView;
 
 
-    public PetriNetTab(PetriNetView petriNetView)
+    public PetriNetTab(PetriNetView petriNetView, PetriNetController controller, AnimationHistoryView animationHistoryView)
     {
         _petriNetView = petriNetView;
+        petriNetController = controller;
+        this.animationHistoryView = animationHistoryView;
+
         _pipeApplicationView = ApplicationSettings.getApplicationView();
         setLayout(null);
         setOpaque(true);
@@ -51,21 +52,16 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         setAutoscrolls(true);
         setBackground(Constants.ELEMENT_FILL_COLOUR);
         zoomControl = new ZoomController(100);
-        MouseHandler handler = new MouseHandler(this, _petriNetView);
+
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        addMouseListener(handler);
-        addMouseMotionListener(handler);
-        try
-        {
-            addMouseWheelListener(handler);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        selection = new SelectionManager(this);
-        _historyManager = new HistoryManager(this, _petriNetView);
+        selection = new SelectionManager(this, controller);
+//        _historyManager = new HistoryManager(this, _petriNetView);
     }
+
+    public PetriNetController getPetriNetController() {
+        return petriNetController;
+    }
+
 
     public void addNewPetriNetObject(PetriNetViewComponent newPetriNetViewComponent)
     {
@@ -73,63 +69,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         {
             if(newPetriNetViewComponent.getMouseListeners().length == 0)
             {
-                NameLabel nameLabel = newPetriNetViewComponent.getNameLabel();
-                if(newPetriNetViewComponent instanceof PlaceView)
-                {
-                    LabelHandler labelHandler = new LabelHandler(nameLabel,(PlaceView) newPetriNetViewComponent);
-                    nameLabel.addMouseListener(labelHandler);
-                    nameLabel.addMouseMotionListener(labelHandler);
-                    nameLabel.addMouseWheelListener(labelHandler);
-
-                    PlaceHandler placeHandler = new PlaceHandler(this, (PlaceView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(placeHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(placeHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(placeHandler);
-                }
-                else if(newPetriNetViewComponent instanceof TransitionView)
-                {
-                    LabelHandler labelHandler = new LabelHandler(nameLabel,(TransitionView) newPetriNetViewComponent);
-                    nameLabel.addMouseListener(labelHandler);
-                    nameLabel.addMouseMotionListener(labelHandler);
-                    nameLabel.addMouseWheelListener(labelHandler);
-
-                    TransitionHandler transitionHandler = new TransitionHandler(this, (TransitionView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(transitionHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(transitionHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(transitionHandler);
-                    newPetriNetViewComponent.addMouseListener(animationHandler);
-                }
-                else if(newPetriNetViewComponent instanceof GroupTransitionView)
-                {
-                    GroupTransitionHandler groupTransitionHandler = new GroupTransitionHandler(this, (GroupTransitionView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(groupTransitionHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(groupTransitionHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(groupTransitionHandler);
-                    newPetriNetViewComponent.addMouseListener(animationHandler);
-                }
-                else if(newPetriNetViewComponent instanceof ArcView)
-                {
-                    ArcHandler arcHandler = new ArcHandler(this, (ArcView) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(arcHandler);
-                    newPetriNetViewComponent.addMouseWheelListener(arcHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(arcHandler);
-                }
-                else if(newPetriNetViewComponent instanceof AnnotationNote)
-                {
-                    AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(this, (AnnotationNote) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(noteHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(noteHandler);
-                    ((Note) newPetriNetViewComponent).getNote().addMouseListener(noteHandler);
-                    ((Note) newPetriNetViewComponent).getNote().addMouseMotionListener(noteHandler);
-                }
-                else if(newPetriNetViewComponent instanceof Parameter)
-                {
-                    ParameterHandler parameterHandler = new ParameterHandler(this, (Parameter) newPetriNetViewComponent);
-                    newPetriNetViewComponent.addMouseListener(parameterHandler);
-                    newPetriNetViewComponent.addMouseMotionListener(parameterHandler);
-                    ((Parameter) newPetriNetViewComponent).getNote().addMouseListener(parameterHandler);
-                    ((Parameter) newPetriNetViewComponent).getNote().addMouseMotionListener(parameterHandler);
-                }
+                newPetriNetViewComponent.addToPetriNetTab(this);
                 add(newPetriNetViewComponent);
                 newPetriNetViewComponent.zoomUpdate(getZoom());
             }
@@ -143,9 +83,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     {
         if((diffObj instanceof PetriNetViewComponent) && (diffObj != null))
         {
-            if(ApplicationSettings.getApplicationModel().getMode() == Constants.CREATING)
-                addNewPetriNetObject((PetriNetViewComponent) diffObj);
-            repaint();
+            PetriNetViewComponent component = (PetriNetViewComponent) diffObj;
+            addNewPetriNetObject(component);
         }
     }
 
@@ -239,10 +178,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         return selection;
     }
 
-    public HistoryManager getHistoryManager()
-    {
-        return _historyManager;
-    }
+//    public HistoryManager getHistoryManager()
+//    {
+//        return _historyManager;
+//    }
 
     public ZoomController getZoomController()
     {
@@ -259,6 +198,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
                 ((Zoomable) aChildren).zoomUpdate(zoomControl.getPercent());
         }
         _zoomCalled = true;
+        selection.setZoom(zoomControl.getPercent());
     }
 
 
@@ -274,6 +214,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     public void setMetaDown(boolean down)
     {
         metaDown = down;
+    }
+
+    public boolean isMetaDown() {
+        return metaDown;
     }
 
     public AnimationHandler getAnimationHandler()
@@ -385,258 +329,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         return zoomControl.getPercent();
     }
 
-    class Handler extends MouseInputAdapter
-    {
-    }
-
-    public class MouseHandler extends MouseInputAdapter
-    {
-        private PetriNetViewComponent pn;
-        private final PetriNetTab _petriNetTab;
-        private final PetriNetView _model;
-        private Point dragStart;
-
-        public MouseHandler(PetriNetTab petriNetTab, PetriNetView _model)
-        {
-            super();
-            this._petriNetTab = petriNetTab;
-            this._model = _model;
-        }
-
-
-        private Point adjustPoint(Point p, int zoom)
-        {
-            int offset = (int) (ZoomController.getScaleFactor(zoom) * Constants.PLACE_TRANSITION_HEIGHT / 2);
-
-            int x = ZoomController.getUnzoomedValue(p.x - offset, zoom);
-            int y = ZoomController.getUnzoomedValue(p.y - offset, zoom);
-
-            p.setLocation(x, y);
-            return p;
-        }
-
-
-        private ConnectableView newPlace(Point p)
-        {
-            p = adjustPoint(p, _petriNetTab.getZoom());
-
-            pn = new PlaceView((double) Grid.getModifiedX(p.x), (double) Grid.getModifiedY(p.y));
-            _model.addPetriNetObject(pn);
-            _petriNetTab.addNewPetriNetObject(pn);
-            return (ConnectableView) pn;
-        }
-
-
-        private ConnectableView newTransition(Point p, boolean timed)
-        {
-            p = adjustPoint(p, _petriNetTab.getZoom());
-
-            pn = new TransitionView((double) Grid.getModifiedX(p.x), (double) Grid.getModifiedY(p.y));
-            ((TransitionView) pn).setTimed(timed);
-            _model.addPetriNetObject(pn);
-            _petriNetTab.addNewPetriNetObject(pn);
-            return (ConnectableView) pn;
-        }
-
-
-        public void mousePressed(MouseEvent e)
-        {
-            PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-            Point start = e.getPoint();
-            Point p;
-
-            if(SwingUtilities.isLeftMouseButton(e))
-            {
-                int mode = applicationModel.getMode();
-                switch(mode)
-                {
-                    case Constants.PLACE:
-                        ConnectableView pto = newPlace(e.getPoint());
-                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pto, _petriNetTab, _model));
-                        if(e.isControlDown())
-                        {
-                            applicationModel.enterFastMode(Constants.FAST_TRANSITION);
-                            pn.dispatchEvent(e);
-                        }
-                        break;
-
-                    case Constants.IMMTRANS:
-                    case Constants.TIMEDTRANS:
-                        boolean timed = (mode == Constants.TIMEDTRANS);
-                        pto = newTransition(e.getPoint(), timed);
-                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pto, _petriNetTab, _model));
-                        if(e.isControlDown())
-                        {
-                            applicationModel.enterFastMode(Constants.FAST_PLACE);
-                            pn.dispatchEvent(e);
-                        }
-                        break;
-
-                    case Constants.ARC:
-                    case Constants.INHIBARC:
-                        if(_createArcView != null)
-                            addPoint(_createArcView, e);
-                        break;
-
-                    case Constants.ANNOTATION:
-                        p = adjustPoint(e.getPoint(), _petriNetTab.getZoom());
-                        pn = new AnnotationNote(p.x, p.y);
-                        _model.addPetriNetObject(pn);
-                        _petriNetTab.addNewPetriNetObject(pn);
-                        _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, _petriNetTab, _model));
-                        ((AnnotationNote) pn).enableEditMode();
-                        break;
-
-                    case Constants.RATE:
-                        try
-                        {
-                            String label = JOptionPane.showInputDialog("Rate Parameter Label:", "");
-                            if(label == null)
-                                break;
-
-                            if(label.length() == 0)
-                                throw new Exception("label Incorrect");
-                            else if(_model.existsRateParameter(label))
-                                throw new Exception("label Already Defined");
-
-                            String value = JOptionPane.showInputDialog("Rate Parameter Value:", "");
-
-                            p = adjustPoint(e.getPoint(), _petriNetTab.getZoom());
-
-                            pn = new RateParameter(label,Double.parseDouble(value), p.x, p.y);
-                            _model.addPetriNetObject(pn);
-                            _petriNetTab.addNewPetriNetObject(pn);
-                            _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, _petriNetTab, _model));
-                        }
-                        catch(java.lang.NumberFormatException nfe)
-                        {
-                            JOptionPane.showMessageDialog(null, "Enter a rate","Invalid entry", JOptionPane.ERROR_MESSAGE);
-                        }
-                        catch(Exception exc)
-                        {
-                            String message = exc.getMessage();
-                            if(message == null)
-                            {
-                                message = "Unknown Error!";
-                            }
-                            JOptionPane.showMessageDialog(null, message,"Invalid entry", JOptionPane.ERROR_MESSAGE);
-                        }
-                        break;
-
-                    case Constants.FAST_PLACE:
-                        ConnectableView createPTO;
-                        if(e.isMetaDown() || metaDown)
-                        {
-                            if(_createArcView != null)
-                            {
-                                addPoint(_createArcView, e);
-                            }
-                        }
-                        else
-                        {
-                            if(_createArcView == null)
-                                break;
-                            _petriNetTab._wasNewPertiNetComponentCreated = true;
-                            createPTO = newPlace(e.getPoint());
-                            _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(createPTO, _petriNetTab, _model));
-                            pn.getMouseListeners()[0].mouseReleased(e);
-                            if(e.isControlDown())
-                            {
-                                applicationModel.setMode(Constants.FAST_TRANSITION);
-                                pn.getMouseListeners()[0].mousePressed(e);
-                            }
-                            else
-                                applicationModel.resetMode();
-                        }
-                        break;
-
-                    case Constants.FAST_TRANSITION:
-                        if(e.isMetaDown() || metaDown)
-                        {
-                            if(_createArcView != null)
-                                addPoint(_createArcView, e);
-                        }
-                        else
-                        {
-                            if(_createArcView == null)
-                                break;
-                            _petriNetTab._wasNewPertiNetComponentCreated = true;
-                            timed = e.isAltDown();
-                            if(applicationModel.getOldMode() == Constants.TIMEDTRANS)
-                                timed = !timed;
-                            createPTO = newTransition(e.getPoint(), timed);
-                            _petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(createPTO, _petriNetTab, _model));
-                            pn.getMouseListeners()[0].mouseReleased(e);
-                            if(e.isControlDown())
-                            {
-                                applicationModel.setMode(Constants.FAST_PLACE);
-                                pn.getMouseListeners()[0].mousePressed(e);
-                            }
-                            else
-                                applicationModel.resetMode();
-                        }
-                        break;
-
-                    case Constants.DRAG:
-                        dragStart = new Point(start);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                _petriNetTab.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-                dragStart = new Point(start);
-            }
-            _petriNetTab.updatePreferredSize();
-        }
-
-
-        private void addPoint(final ArcView createArcView, final MouseEvent e)
-        {
-            int x = Grid.getModifiedX(e.getX());
-            int y = Grid.getModifiedY(e.getY());
-            boolean shiftDown = e.isShiftDown();
-            createArcView.setEndPoint(x, y, shiftDown);
-            createArcView.getArcPath().addPoint(x, y, shiftDown);
-        }
-
-
-        public void mouseReleased(MouseEvent e)
-        {
-            _petriNetTab.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        }
-
-
-        public void mouseMoved(MouseEvent e)
-        {
-            if(_createArcView != null)
-                _createArcView.setEndPoint(Grid.getModifiedX(e.getX()), Grid.getModifiedY(e.getY()), e.isShiftDown());
-        }
-
-
-        public void mouseDragged(MouseEvent e)
-        {
-            _petriNetTab.drag(dragStart, e.getPoint());
-        }
-
-
-        public void mouseWheelMoved(MouseWheelEvent e)
-        {
-            if(!e.isControlDown())
-            {
-            }
-            else
-            {
-                if(e.getWheelRotation() > 0)
-                    _petriNetTab.zoomIn();
-                else
-                    _petriNetTab.zoomOut();
-            }
-        }
-
+    public AnimationHistoryView getAnimationView() {
+        return animationHistoryView;
     }
 }
 

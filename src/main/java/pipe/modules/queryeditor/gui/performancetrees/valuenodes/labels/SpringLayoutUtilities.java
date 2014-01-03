@@ -10,11 +10,8 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.valuenodes.labels;
 
-import java.awt.Component;
-import java.awt.Container;
-
-import javax.swing.Spring;
-import javax.swing.SpringLayout;
+import javax.swing.*;
+import java.awt.*;
 
 
 public class SpringLayoutUtilities {

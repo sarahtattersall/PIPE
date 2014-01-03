@@ -1,21 +1,19 @@
 package pipe.modules.tagged;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-
-import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Export;
 import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.FileBrowser;
 import pipe.gui.widgets.GraphPanel;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * This class is based on the one found in pipe.gui.widgets but is customised

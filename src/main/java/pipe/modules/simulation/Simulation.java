@@ -14,6 +14,7 @@ import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
+import pipe.models.component.Transition;
 import pipe.modules.interfaces.IModule;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.MarkingView;
@@ -28,7 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 
 public class Simulation extends SwingWorker
@@ -161,11 +162,11 @@ public class Simulation extends SwingWorker
     };
 
 
-    public String simulate(PetriNetView data, int cycles, int firings)
+    public String simulate(PetriNetView petriNetView, int cycles, int firings)
     {
-        data.storeCurrentMarking();
+        petriNetView.storeCurrentMarking();
 
-        LinkedList<MarkingView>[] markings = data.getInitialMarkingVector();
+        List<MarkingView>[] markings = petriNetView.getInitialMarkingVector();
         if(markings == null)
             return "No markings present. Try to add coloured tokens.";
         int length = markings.length;
@@ -175,7 +176,7 @@ public class Simulation extends SwingWorker
         {
             if(markings[i]!= null && markings[i].size() > 0)
             {
-                MarkingView first = markings[i].getFirst();
+                MarkingView first = markings[i].get(0);
                 if(first != null)
                     marking[i] = first.getCurrentMarking();
             }
@@ -213,18 +214,18 @@ public class Simulation extends SwingWorker
             int transCount = 0;
 
             //Get initial marking
-            markings = data.getInitialMarkingVector();
+            markings = petriNetView.getInitialMarkingVector();
             marking = new int[length];
             for(int k = 0; k < length; k++)
             {
                 if(markings[k]!= null && markings[k].size() > 0)
                 {
-                    MarkingView first = markings[k].getFirst();
+                    MarkingView first = markings[k].get(0);
                     if(first!=null)
                         marking[k] = first.getCurrentMarking();
                 }
             }
-            if(ApplicationSettings.getApplicationView() != null) data.restorePreviousMarking();
+            if(ApplicationSettings.getApplicationView() != null) petriNetView.restorePreviousMarking();
 
             //Initialise matrices for each new cycle
             for(j = 0; j < length; j++)
@@ -245,7 +246,7 @@ public class Simulation extends SwingWorker
             {
                 System.out.println("Firing " + j + " now");
                 //Fire a random transition
-                TransitionView fired = data.getRandomTransition();
+                Transition fired = petriNetView.getModel().getRandomTransition();
                 if(fired == null)
                 {
                     ApplicationSettings.getApplicationView().getStatusBar().changeText(
@@ -255,15 +256,15 @@ public class Simulation extends SwingWorker
                 else
                 {
                     //data.createCurrentMarkingVector();
-                    data.fireTransition(fired); //NOU-PERE
+                    petriNetView.getModel().fireTransition(fired); //NOU-PERE
                     //Get the new marking from the _dataLayer object
-                    markings = data.getCurrentMarkingVector();
+                    markings = petriNetView.getCurrentMarkingVector();
                     marking = new int[length];
                     for(int k = 0; k < length; k++)
                     {
                         if(markings[k]!= null && markings[k].size() > 0)
                         {
-                            MarkingView first = markings[k].getFirst();
+                            MarkingView first = markings[k].get(0);
                             if(first != null)
                                 marking[k] = first.getCurrentMarking();
                         }
@@ -343,12 +344,12 @@ public class Simulation extends SwingWorker
             results.add("95% confidence interval (+/-)");
             for(i = 0; i < averageTokens.length; i++)
             {
-                results.add(data.getPlace(i).getName());
+                results.add(petriNetView.getPlace(i).getName());
                 results.add(f.format(averageTokens[i]));
                 results.add(f.format(errorResult[i]));
             }
         }
-        if(ApplicationSettings.getApplicationView() != null) data.restorePreviousMarking();
+        if(ApplicationSettings.getApplicationView() != null) petriNetView.restorePreviousMarking();
         return ResultsHTMLPane.makeTable(results.toArray(), 3, false, true, true, true);
     }
 

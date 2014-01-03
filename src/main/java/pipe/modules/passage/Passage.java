@@ -6,9 +6,8 @@ package pipe.modules.passage;
  * @author Barry Kearns 
  */
 
-
-import pipe.common.dataLayer.StateGroup;
 import pipe.common.AnalysisSettings;
+import pipe.common.dataLayer.StateGroup;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.widgets.ButtonBar;
 import pipe.modules.clientCommon.ServerInfo;

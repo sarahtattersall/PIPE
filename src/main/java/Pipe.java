@@ -1,9 +1,10 @@
-import java.lang.reflect.InvocationTargetException;
-
 import pipe.controllers.PipeApplicationController;
+import pipe.gui.CopyPasteManager;
 import pipe.models.PipeApplicationModel;
+import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 public class Pipe
 {
 
@@ -11,10 +12,16 @@ public class Pipe
 	@SuppressWarnings("unused")
 	private PipeApplicationController applicationController;
 
+    private PipeApplicationView applicationView;
+
 	private Pipe(String version)
     {
-        applicationModel = new PipeApplicationModel(version);
-        applicationController = new PipeApplicationController(applicationModel);
+
+        CopyPasteManager copyPaste = new CopyPasteManager();
+        applicationController = new PipeApplicationController(copyPaste);
+        applicationModel = new PipeApplicationModel(applicationController, version);
+        applicationController.setApplicationModel(applicationModel);
+        applicationView = new PipeApplicationView(applicationController, applicationModel);
     }
     public static void main(String args[])
     {

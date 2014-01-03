@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.Observable;
 
 /**
- * A general sub-class of Observable, created for convenience in implementing the observer pattern in classes that already have an inheritance hierarchy, and that wish to use update(Object obj).  See {@link MarkingView} for an example of usage. 
+ * A general sub-class of Observable, created for convenience in implementing
+ * the observer pattern in classes that already have an inheritance hierarchy,
+ * and that wish to use update(Object obj).  See {@link MarkingView} for an example of usage.
  * <p>
- * The class wishing to be observed creates an instance of PipeObservable, passing itself in the constructor, and delegates the Observable methods to the PipeObservable
+ * The class wishing to be observed creates an instance of PipeObservable,
+ * passing itself in the constructor, and delegates the Observable methods to
+ * the PipeObservable
  * @author stevedoubleday
  */
 public class PipeObservable extends Observable implements Serializable

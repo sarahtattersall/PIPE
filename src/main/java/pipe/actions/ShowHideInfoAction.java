@@ -1,8 +1,8 @@
 package pipe.actions;
 
-import java.awt.event.ActionEvent;
-
 import pipe.views.ConnectableView;
+
+import java.awt.event.ActionEvent;
 
 
 /**

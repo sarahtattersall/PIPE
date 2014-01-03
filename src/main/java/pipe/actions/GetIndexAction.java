@@ -3,12 +3,11 @@
  */
 package pipe.actions;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import pipe.views.viewComponents.ArcPathPoint;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 
 /**

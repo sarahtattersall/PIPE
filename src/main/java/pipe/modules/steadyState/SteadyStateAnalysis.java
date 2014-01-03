@@ -1,19 +1,5 @@
 package pipe.modules.steadyState;
 
-import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
 import pipe.calculations.StateList;
 import pipe.calculations.StateSpaceGenerator;
 import pipe.calculations.SteadyStateSolver;
@@ -31,6 +17,16 @@ import pipe.utilities.Expander;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class SteadyStateAnalysis implements IModule{
 
@@ -219,8 +215,11 @@ public class SteadyStateAnalysis implements IModule{
 								JOptionPane.showMessageDialog(null,
 										"Weighting cannot be less than 0. Please re-enter");
 								return null;
-							}
-						}
+							} catch (Exception e) {
+                                //TODO: WHAT EXCEPTION IS THIS?
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                        }
 					}
 					return null;
 				}

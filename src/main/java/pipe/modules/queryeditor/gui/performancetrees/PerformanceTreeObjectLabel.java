@@ -7,11 +7,10 @@
 
 package pipe.modules.queryeditor.gui.performancetrees;
 
-
-import javax.swing.JLabel;
-
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
+
+import javax.swing.*;
 
 
 public class PerformanceTreeObjectLabel extends JLabel implements Cloneable {

@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 /**
  * @author Matthew Cook after James Bloom/Clare Clark
- * Class used in state space and GSPN modules for generation of trees and arrays
+ * Class used in state space and GSPN modules for generation git of trees and arrays
  * of possible state spaces
  */
 public class  myNode {
@@ -130,9 +130,11 @@ public class  myNode {
 			mlist.add(m);
 			state[i]= mlist;
 		}
-		
-      boolean[] enabledTransitions =
-              tree._petriNetView.areTransitionsEnabled(state);
+
+          //TODO: REDO
+          boolean[] enabledTransitions = new boolean[0];
+//      boolean[] enabledTransitions =
+//              tree._petriNetView.areTransitionsEnabled(state);
       
       //For each transition
       for (int i = 0; i < enabledTransitions.length; i++) {

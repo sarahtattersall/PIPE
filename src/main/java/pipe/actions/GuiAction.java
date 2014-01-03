@@ -27,7 +27,6 @@ public abstract class GuiAction
     {
 
         super(name);
-        ApplicationSettings applicationSettings = new ApplicationSettings();
         URL iconURL = Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + name + ".png");
         if(iconURL != null)
         {

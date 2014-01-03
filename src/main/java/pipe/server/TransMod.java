@@ -1,10 +1,7 @@
 package pipe.server;
 
-import pipe.common.SimpleArc;
-import pipe.common.SimplePlaces;
-import pipe.common.SimpleTransitions;
-import pipe.common.dataLayer.StateGroup;
 import pipe.common.*;
+import pipe.common.dataLayer.StateGroup;
 
 import java.io.File;
 import java.io.FileWriter;

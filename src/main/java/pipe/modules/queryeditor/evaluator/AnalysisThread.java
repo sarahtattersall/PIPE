@@ -10,7 +10,6 @@
 
 package pipe.modules.queryeditor.evaluator;
 
-import pipe.common.SimplePlaces;
 import pipe.common.*;
 import pipe.common.dataLayer.StateGroup;
 import pipe.gui.ApplicationSettings;

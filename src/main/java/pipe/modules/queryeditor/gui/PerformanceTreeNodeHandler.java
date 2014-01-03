@@ -9,19 +9,16 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.Container;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
 import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StatesNode;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class PerformanceTreeNodeHandler extends PerformanceTreeObjectHandler implements QueryConstants
 {

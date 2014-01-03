@@ -6,8 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.awt.Container;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -20,21 +21,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import pipe.actions.AnimateAction;
-import pipe.actions.ChooseTokenClassAction;
-import pipe.actions.DeleteAction;
-import pipe.actions.EditAction;
-import pipe.actions.FileAction;
-import pipe.actions.GridAction;
-import pipe.actions.GroupTransitionsAction;
-import pipe.actions.GuiAction;
-import pipe.actions.TokenAction;
-import pipe.actions.TypeAction;
-import pipe.actions.UnfoldAction;
-import pipe.actions.UngroupTransitionsAction;
-import pipe.actions.ZoomAction;
+import pipe.actions.*;
+import pipe.actions.animate.*;
+import pipe.actions.edit.*;
+import pipe.actions.file.*;
+import pipe.actions.type.*;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.TestingPlaceHandler;
 import pipe.gui.TokenPanel;
 import pipe.models.PipeApplicationModel;
 import pipe.utilities.Copier;
@@ -55,22 +47,22 @@ public class PipeTest {
 	
 	private PipeApplicationView applicationView;
 	private JToolBar toolbar;
-	private ArrayList<PlaceView> placeViews;
-	private ArrayList<ArcView> arcViews;
+	private Collection<PlaceView> placeViews;
+	private Collection<ArcView> arcViews;
 	private LinkedList<TokenView> tokenViews;
 	private int numTokens;
 	private JMenu menu;
 	private JMenu subMenu;
 	private File fileForTesting;
-	private LinkedList<MarkingView> markingViews;
+	private List<MarkingView> markingViews;
 	private PlaceView placeView;
 	private MarkingView markingView;
 	private PetriNetView petriNetView;
 	private TokenView defaultTokenView;
 	private TokenView redTokenView;
-	private TokenAction tokenAction;
+	private SpecifyTokenAction tokenAction;
 	private TokenView greenTokenView;
-	private LinkedList<MarkingView> newMarkingViews;
+	private List<MarkingView> newMarkingViews;
     @BeforeClass
 	public static void setUpLog4J() throws Exception
 	{
@@ -88,47 +80,47 @@ public class PipeTest {
     public void verifyActionsAddedToGui() throws Exception
     {
     	PipeApplicationModel model = ApplicationSettings.getApplicationModel();  
-    	checkAction("New", model.createAction, FileAction.class); 
-    	checkAction("Open", model.openAction, FileAction.class); 
-    	checkAction("Close", model.closeAction, FileAction.class); 
-    	checkAction("Save", model.saveAction, FileAction.class); 
-    	checkAction("Save as", model.saveAsAction, FileAction.class); 
-    	checkAction("Import", model.importAction, FileAction.class); 
-    	checkAction("PNG", model.exportPNGAction, FileAction.class); 
-    	checkAction("PostScript", model.exportPSAction, FileAction.class); 
-    	checkAction("eDSPN", model.exportTNAction, FileAction.class); 
-    	checkAction("Print", model.printAction, FileAction.class); 
-    	checkAction("Undo", model.undoAction, EditAction.class); 
-    	checkAction("Redo", model.redoAction, EditAction.class); 
-    	checkAction("Cut", model.cutAction, EditAction.class); 
-    	checkAction("Copy", model.copyAction, EditAction.class); 
-    	checkAction("Paste", model.pasteAction, EditAction.class); 
+    	checkAction("New", model.createAction, CreateAction.class);
+    	checkAction("Open", model.openAction, OpenAction.class);
+    	checkAction("Close", model.closeAction, CloseAction.class);
+    	checkAction("Save", model.saveAction, SaveAction.class);
+    	checkAction("Save as", model.saveAsAction, SaveAsAction.class);
+    	checkAction("Import", model.importAction, ImportAction.class);
+    	checkAction("PNG", model.exportPNGAction, ExportPNGAction.class);
+    	checkAction("PostScript", model.exportPSAction, ExportPSAction.class);
+    	checkAction("eDSPN", model.exportTNAction, ExportTNAction.class);
+    	checkAction("Print", model.printAction, PrintAction.class);
+    	checkAction("Undo", model.undoAction, UndoAction.class);
+    	checkAction("Redo", model.redoAction, RedoAction.class);
+    	checkAction("Cut", model.cutAction, CutAction.class);
+    	checkAction("Copy", model.copyAction, CopyAction.class);
+    	checkAction("Paste", model.pasteAction, PasteAction.class);
     	checkAction("Delete", model.deleteAction, DeleteAction.class); 
-    	checkAction("Select", model.selectAction, TypeAction.class); 
-    	checkAction("Place", model.placeAction, TypeAction.class); 
-    	checkAction("Immediate transition", model.transAction, TypeAction.class); 
-    	checkAction("Timed transition", model.timedtransAction, TypeAction.class); 
-    	checkAction("Arc", model.arcAction, TypeAction.class); 
-    	checkAction("Inhibitor Arc", model.inhibarcAction, TypeAction.class); 
-    	checkAction("Annotation", model.annotationAction, TypeAction.class); 
-    	checkAction("Add token", model.tokenAction, TypeAction.class); 
-    	checkAction("Delete token", model.deleteTokenAction, TypeAction.class); 
-    	checkAction("SpecifyTokenClasses", model._specifyTokenClasses, TokenAction.class); 
+    	checkAction("Select", model.selectAction, SelectAction.class);
+    	checkAction("Place", model.placeAction, PlaceAction.class);
+    	checkAction("Immediate transition", model.transAction, ImmediateTransitionAction.class);
+    	checkAction("Timed transition", model.timedtransAction, TimedTransitionAction.class);
+    	checkAction("Arc", model.arcAction, ArcAction.class);
+    	checkAction("Inhibitor Arc", model.inhibarcAction, ArcAction.class);
+    	checkAction("Annotation", model.annotationAction, AnnotationAction.class);
+    	checkAction("Add token", model.tokenAction, AddTokenAction.class);
+    	checkAction("Delete token", model.deleteTokenAction, DeleteTokenAction.class);
+    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, SpecifyTokenAction.class);
     	checkAction("groupTransitions", model.groupTransitions, GroupTransitionsAction.class); 
     	checkAction("ungroupTransitions", model.ungroupTransitions, UngroupTransitionsAction.class); 
     	checkAction("unfoldAction", model.unfoldAction, UnfoldAction.class); 
-    	checkAction("Rate Parameter", model.rateAction, TypeAction.class); 
+    	checkAction("Rate Parameter", model.rateAction, RateAction.class);
     	checkAction("Zoom out", model.zoomOutAction, ZoomAction.class); 
     	checkAction("Zoom in", model.zoomInAction, ZoomAction.class); 
     	checkAction("Cycle grid", model.toggleGrid, GridAction.class); 
-    	checkAction("Drag", model.dragAction, TypeAction.class); 
-    	checkAction("Animation mode", model.startAction, AnimateAction.class); 
-    	checkAction("Back", model.stepbackwardAction, AnimateAction.class); 
-    	checkAction("Forward", model.stepforwardAction, AnimateAction.class); 
-    	checkAction("Random", model.randomAction, AnimateAction.class); 
-    	checkAction("Animate", model.randomAnimateAction, AnimateAction.class); 
+    	checkAction("Drag", model.dragAction, DragAction.class);
+    	checkAction("Animation mode", model.startAction, ToggleAnimateAction.class);
+    	checkAction("Back", model.stepbackwardAction, StepBackwardAction.class);
+    	checkAction("Forward", model.stepforwardAction, StepForwardAction.class);
+    	checkAction("Random", model.randomAction, RandomAnimateAction.class);
+    	checkAction("Animate", model.randomAnimateAction, AnimationAction.class);
     	checkAction("chooseTokenClass", model.chooseTokenClassAction, ChooseTokenClassAction.class); 
-    	checkAction("Exit", model.exitAction, FileAction.class); 
+    	checkAction("Exit", model.exitAction, ExitAction.class);
     	for (int i = 0; i < model.getZoomActions().size(); i++)
 		{
     		checkAction(model.getZoomExamples()[i], model.getZoomActions().get(i), ZoomAction.class); 
@@ -316,7 +308,7 @@ public class PipeTest {
 		checkButton("Animate", 3);
 	}
 	@Test
-	public void verifyExampleNetLoadsAndAnimatesFixingBug45() throws Exception
+	public void verifyExampleNetLoadsAndAnimates() throws Exception
 	{
 		menu = applicationView.getJMenuBar().getMenu(0); 
 		subMenu = (JMenu) menu.getMenuComponent(12); 
@@ -328,8 +320,8 @@ public class PipeTest {
 		assertTrue(applicationView.getCurrentTab().isInAnimationMode());
 		selectMenuItem(menu, 2); 
 	}
+
 	@Test
-	//TODO refactor
 	public void verifyNetLoadsTokenViewsEditedNetSavesLoadsVerifies() throws Exception
 	{
 		menu = applicationView.getJMenuBar().getMenu(0); 
@@ -345,7 +337,7 @@ public class PipeTest {
 		tokenViews = petriNetView.getTokenViews(); 
 		defaultTokenView = tokenViews.get(0);
 		redTokenView = tokenViews.get(1);
-		placeView = placeViews.get(0);
+		placeView = placeViews.iterator().next();
 		markingViews = placeView.getCurrentMarkingView();
 		markingView = markingViews.get(0);
 		assertEquals(defaultTokenView, markingView.getToken()); 
@@ -383,13 +375,13 @@ public class PipeTest {
 		menu = applicationView.getJMenuBar().getMenu(0);
 		savePetriNet();
 		
-		selectMenuItem(menu, CLOSE); 
-		
+		selectMenuItem(menu, CLOSE);
+
 		reloadPetriNet();
 		petriNetView = applicationView.getCurrentPetriNetView();
 		placeViews = petriNetView.getPlacesArrayList();
 		assertEquals(2, placeViews.size()); 
-		placeView = placeViews.get(0);
+		placeView = placeViews.iterator().next();
 		markingViews = placeView.getCurrentMarkingView();
 		markingView = markingViews.get(0);
 		tokenViews = petriNetView.getTokenViews(); 
@@ -408,9 +400,10 @@ public class PipeTest {
 		assertEquals("red", tokenViews.get(1).getID()); 
 		assertTrue(tokenViews.get(1).isLocked()); 
 	}
+
 	protected void showTokenDialogAndJustClickOk()
 	{
-		tokenAction = (TokenAction) getActionForMenuItem(menu, 11);  
+		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
 		tokenAction.forceOkForTesting();
 		tokenAction.actionPerformed(null);
 	}
@@ -420,9 +413,9 @@ public class PipeTest {
 		markingView = markingViews.get(0);
 		assertEquals(1, markingViews.get(0).getCurrentMarking() ); 
 		assertEquals(1, markingViews.get(1).getCurrentMarking() ); 
-		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView);
-        LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
-		handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager()); 
+//		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView.getModel());
+        List<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
+		//handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager());
 		newMarkingViews = placeView.getCurrentMarkingView();
 		assertEquals(markingViews.get(0), newMarkingViews.get(0));
 		assertEquals(markingViews.get(1), newMarkingViews.get(1));
@@ -434,21 +427,19 @@ public class PipeTest {
 	}
 	private void reloadPetriNet()
 	{
-		FileAction action = (FileAction) getActionForMenuItem(menu,OPEN);
-		action.setFileForTesting(fileForTesting); 
-		action.actionPerformed(null); 
+        OpenAction action = (OpenAction) getActionForMenuItem(menu,OPEN);
+		action.setFileForTesting(fileForTesting);
+		action.actionPerformed(null);
 	}
 	private void savePetriNet()
 	{
 		fileForTesting = new File("PipeTestFile.xml"); 
-		if (fileForTesting.exists()) fileForTesting.delete(); 
-//		System.out.println(fileForTesting.getAbsolutePath());
-		applicationView.saveNet(fileForTesting, false); 
+		applicationView.saveNet(fileForTesting, false);
 	}
 	protected void openTokenDialogDisableDefaultTokenAddNewToken() throws InterruptedException
-	{ // To get access to the table in TokenPanel, TokenAction.actionPerformed refactored to three methods:
+	{ // To get access to the table in TokenPanel, SpecifyTokenAction.actionPerformed refactored to three methods:
 	  // buildTokenGuiClasses(), finishBuildingGui(), updateTokenViewsFromGui(); invoked separately.  
-		tokenAction = (TokenAction) getActionForMenuItem(menu, 11);  
+		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
 		tokenAction.forceOkForTesting();
 		tokenAction.buildTokenGuiClasses();
 		TokenPanel dialogContent = tokenAction.getDialogContentForTesting(); 
@@ -495,7 +486,9 @@ public class PipeTest {
 		for (ArcView arcView : arcViews)
 		{
 			assertEquals(numTokens, arcView.getWeight().size());
-			assertEquals(tokenView, arcView.getWeight().get(i).getToken()); 
+            List<MarkingView> markings = arcView.getWeight();
+            MarkingView marking = markings.get(i);
+			assertEquals(tokenView, marking.getToken());
 		}
 	}
 	private void checkButton(String name, int index)

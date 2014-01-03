@@ -10,13 +10,13 @@
 
 package pipe.server.performancequery;
 
-import java.io.File;
-import java.io.IOException;
-
 import pipe.common.AnalysisInstruction;
 import pipe.modules.interfaces.Cleanable;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.server.CommunicationsManager;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ClientCommunicator implements ServerLoggingHandler, StatusIndicatorUpdater
 {

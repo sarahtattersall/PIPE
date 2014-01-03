@@ -10,19 +10,15 @@
 
 package pipe.modules.queryeditor.evaluator.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import pipe.modules.interfaces.Cleanable;
+import pipe.modules.interfaces.QueryConstants;
+import pipe.modules.queryeditor.QueryManager;
+import pipe.modules.queryeditor.evaluator.QueryEvaluator;
+
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
+import java.awt.event.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -30,25 +26,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.swing.Box;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
-import javax.swing.WindowConstants;
-import javax.swing.border.EtchedBorder;
-
-import pipe.modules.interfaces.Cleanable;
-import pipe.modules.interfaces.QueryConstants;
-import pipe.modules.queryeditor.QueryManager;
-import pipe.modules.queryeditor.evaluator.QueryEvaluator;
 
 public class ProgressWindow extends JDialog implements EvaluatorGuiLoggingHandler, MouseListener, Cleanable
 {

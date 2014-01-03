@@ -19,12 +19,11 @@ import pipe.views.PlaceView;
 import pipe.views.TransitionView;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 public class Matrices
         implements IModule
@@ -109,40 +108,40 @@ public class Matrices
                 try
                 {
 
-                    PNMLWriter.saveTemporaryFile(data, this.getClass().getName());
-
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Forwards incidence matrix <i>I<sup>+</sup></i>",
-                            renderMatrix(data, data.getActiveTokenView().getForwardsIncidenceMatrix(
-                                    data.getArcsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Backwards incidence matrix <i>I<sup>-</sup></i>",
-                            renderMatrix(data, data.getActiveTokenView().getBackwardsIncidenceMatrix(
-                                    data.getArcsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Combined incidence matrix <i>I</i>",
-                            renderMatrix(data, data.getActiveTokenView().getIncidenceMatrix(
-                                    data.getArcsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Inhibition matrix <i>H</i>",
-                            renderMatrix(data, data.getActiveTokenView().getInhibitionMatrix(
-                                    data.getInhibitorsArrayList(), data.getTransitionsArrayList(),
-                                    data.getPlacesArrayList()))
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Marking",
-                            renderMarkingMatrices(data)
-                    }, 1, false, false, true, false);
-                    s += ResultsHTMLPane.makeTable(new String[]{
-                            "Enabled transitions",
-                            renderTransitionStates(data)
-                    }, 1, false, false, true, false);
+//                    PNMLWriter.saveTemporaryFile(data, this.getClass().getName());
+//
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Forwards incidence matrix <i>I<sup>+</sup></i>",
+//                            renderMatrix(data, data.getActiveTokenView().getForwardsIncidenceMatrix(
+//                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+//                                    data.getModel().getPlaces()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Backwards incidence matrix <i>I<sup>-</sup></i>",
+//                            renderMatrix(data, data.getActiveTokenView().getBackwardsIncidenceMatrix(
+//                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+//                                    data.getModel().getPlaces()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Combined incidence matrix <i>I</i>",
+//                            renderMatrix(data, data.getActiveTokenView().getIncidenceMatrix(
+//                                    data.getModel().getArcs(), data.getModel().getTransitions(),
+//                                    data.getModel().getPlaces()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Inhibition matrix <i>H</i>",
+//                            renderMatrix(data, data.getActiveTokenView().getInhibitionMatrix(
+//                                    data.getInhibitorsArrayList(), data.getTransitionsArrayList(),
+//                                    data.getPlacesArrayList()))
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Marking",
+//                            renderMarkingMatrices(data)
+//                    }, 1, false, false, true, false);
+//                    s += ResultsHTMLPane.makeTable(new String[]{
+//                            "Enabled transitions",
+//                            renderTransitionStates(data)
+//                    }, 1, false, false, true, false);
                 }
                 catch(OutOfMemoryError oome)
                 {
@@ -203,14 +202,14 @@ public class Matrices
             return "n/a";
         }
 
-        LinkedList<MarkingView>[] markings = data.getInitialMarkingVector();
+        List<MarkingView>[] markings = data.getInitialMarkingVector();
         int[] initial = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
         	if(markings[i].size()==0){
         		initial[i] = 0;
         	}else{
-        		initial[i] = markings[i].getFirst().getCurrentMarking();
+        		initial[i] = markings[i].get(0).getCurrentMarking();
         	}
         }	
 
@@ -218,7 +217,7 @@ public class Matrices
         int[] current = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            current[i] = markings[i].getFirst().getCurrentMarking();
+            current[i] = markings[i].get(0).getCurrentMarking();
         }
 
         ArrayList result = new ArrayList();
@@ -244,27 +243,27 @@ public class Matrices
                 result.toArray(), placeViews.length + 1, false, true, true, true);
     }
 
-    private String renderTransitionStates(PetriNetView data)
-    {
-        TransitionView[] transitionViews = data.getTransitionViews();
-        if(transitionViews.length == 0)
-        {
-            return "n/a";
-        }
-
-        ArrayList result = new ArrayList();
-        data.setEnabledTransitions();
-        for(TransitionView transitionView1 : transitionViews)
-        {
-            result.add(transitionView1.getName());
-        }
-        for(TransitionView transitionView : transitionViews)
-        {
-            result.add((transitionView.isEnabled() ? "yes" : "no"));
-        }
-        data.resetEnabledTransitions();
-
-        return ResultsHTMLPane.makeTable(
-                result.toArray(), transitionViews.length, false, true, true, false);
+    private String renderTransitionStates(PetriNetView data) throws Exception {
+//        TransitionView[] transitionViews = data.getTransitionViews();
+//        if(transitionViews.length == 0)
+//        {
+//            return "n/a";
+//        }
+//
+//        ArrayList result = new ArrayList();
+//        data.setEnabledTransitions();
+//        for(TransitionView transitionView1 : transitionViews)
+//        {
+//            result.add(transitionView1.getName());
+//        }
+//        for(TransitionView transitionView : transitionViews)
+//        {
+//            result.add((transitionView.isEnabled() ? "yes" : "no"));
+//        }
+//        data.resetEnabledTransitions();
+//
+//        return ResultsHTMLPane.makeTable(
+//                result.toArray(), transitionViews.length, false, true, true, false);
+        return "";
     }
 }

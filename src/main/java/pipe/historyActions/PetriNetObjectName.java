@@ -3,8 +3,8 @@
  */
 package pipe.historyActions;
 
-import pipe.views.PetriNetViewComponent;
-
+import pipe.models.PetriNet;
+import pipe.models.component.PetriNetComponent;
 
 /**
  *
@@ -13,35 +13,30 @@ import pipe.views.PetriNetViewComponent;
 public class PetriNetObjectName
         extends HistoryItem
 {
-   
-   private final PetriNetViewComponent pno;
-   private final String oldName;
-   private final String newName;
-   
-   
-   /** Creates a new instance of placeNameEdit
-    * @param _pno
-    * @param _oldName
-    * @param _newName*/
-   public PetriNetObjectName(PetriNetViewComponent _pno,
-                             String _oldName, String _newName) {
-      pno = _pno;
-      oldName = _oldName;      
-      newName = _newName;
-   }
 
-   
-   /** */
+    private final String oldName;
+    private final String newName;
+    private final PetriNetComponent component;
+
+
+    public PetriNetObjectName(PetriNetComponent component, String oldName, String newName) {
+        this.component = component;
+        this.oldName = oldName;
+        this.newName = newName;
+    }
+
+
+    /** */
    public void undo() {
-      pno.setName(oldName);
-      pno.setId(oldName);
+       component.setName(oldName);
+       component.setId(oldName);
    }
 
    
    /** */
    public void redo() {
-      pno.setName(newName);
-      pno.setId(newName);
+       component.setName(newName);
+       component.setId(newName);
    }
    
 }

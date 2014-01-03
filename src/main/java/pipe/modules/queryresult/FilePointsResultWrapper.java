@@ -4,7 +4,6 @@ import pipe.common.PetriNetNode;
 import pipe.handlers.StringHelper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 

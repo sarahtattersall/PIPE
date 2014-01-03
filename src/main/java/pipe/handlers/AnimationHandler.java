@@ -1,6 +1,10 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
+import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
+import pipe.models.PetriNet;
 import pipe.views.GroupTransitionView;
 import pipe.views.TransitionView;
 
@@ -29,15 +33,19 @@ public class AnimationHandler
 	// recover the group transition.
 	private final LinkedList<GroupTransitionView> _lastGroupTransitionView = new LinkedList<GroupTransitionView>();
    
-   public void mouseClicked(MouseEvent e){      
+   public void mouseClicked(MouseEvent e){
+
       if (e.getComponent() instanceof TransitionView) {
          TransitionView transitionView = (TransitionView)e.getComponent();
          
          if (SwingUtilities.isLeftMouseButton(e)
-                 && (transitionView.isEnabled(true))) {
-             ApplicationSettings.getApplicationView().getAnimationHistory().clearStepsForward();
-             ApplicationSettings.getApplicationView().getAnimator().fireTransition(transitionView);
-             ApplicationSettings.getApplicationView().setRandomAnimationMode(false);
+                 && (transitionView.getModel().isEnabled())) {
+             PipeApplicationController controller = ApplicationSettings.getApplicationController();
+             PetriNetController petriNetController = controller.getActivePetriNetController();
+             Animator animator = petriNetController.getAnimator();
+             animator.fireTransition(transitionView.getModel());
+
+             ApplicationSettings.getApplicationView().setAnimationMode(false);
             if(!_lastGroupTransitionView.isEmpty()){
             	for(GroupTransitionView groupTransitionView : _lastGroupTransitionView){
 	        		for (TransitionView t : groupTransitionView.getTransitions()) {

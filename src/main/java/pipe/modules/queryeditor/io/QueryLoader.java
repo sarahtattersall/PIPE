@@ -9,13 +9,10 @@
 
 package pipe.modules.queryeditor.io;
 
-import java.util.ArrayList;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
@@ -25,33 +22,10 @@ import pipe.modules.queryeditor.gui.performancetrees.macros.ArgumentNode;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroDefinition;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
 import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ArithCompNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ArithOpNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ConvolutionNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.DisconNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.DistributionNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.FiringRateNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.InIntervalNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.MomentNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.NegationNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.OperationNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.PassageTimeDensityNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.PercentileNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ProbInIntervalNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ProbInStatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.RangeNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ResultNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SequentialNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.StatesAtTimeNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SteadyStateProbNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SteadyStateStatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SubsetNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ActionsNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.BoolNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.NumNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StateFunctionNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.StatesNode;
-import pipe.modules.queryeditor.gui.performancetrees.valuenodes.ValueNode;
+import pipe.modules.queryeditor.gui.performancetrees.operationnodes.*;
+import pipe.modules.queryeditor.gui.performancetrees.valuenodes.*;
+
+import java.util.ArrayList;
 
 public class QueryLoader implements QueryConstants
 {

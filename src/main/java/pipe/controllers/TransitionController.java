@@ -1,48 +1,82 @@
 package pipe.controllers;
 
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import pipe.controllers.interfaces.IController;
-import pipe.models.Transition;
+import pipe.historyActions.*;
+import pipe.models.component.Arc;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
 import pipe.views.TransitionView;
+import pipe.views.viewComponents.RateParameter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
-public class TransitionController implements IController
+public class TransitionController extends AbstractPetriNetComponentController<Transition>
 {
-    private ArrayList<Transition> _models;
-    private ArrayList<TransitionView> _views;
 
-    public TransitionController(Transition model)
-    {
-        if(_models == null)
-            _models = new ArrayList<Transition>();
-        if(_views == null)
-            _views = new ArrayList<TransitionView>();
-        _models.add(model);
-        _views.add(new TransitionView(this, model));
+    protected TransitionController(Transition component,
+                                   HistoryManager historyManager) {
+        super(component, historyManager);
     }
 
-    public TransitionController()
-    {
-        
+    public boolean isTimed() {
+        return component.isTimed();
     }
 
-    public void addModel(Transition model)
-    {
-        _models.add(model);
+    public boolean isInfiniteServer() {
+        return component.isInfiniteServer();
     }
 
-    public void removeModel(Transition model)
-    {
-        _models.remove(model);
+    public RateParameter getRateParameter() {
+        return component.getRateParameter();
     }
 
-    public void addView(TransitionView view)
-    {
-        _views.add(view);
+    public String getName() {
+        return component.getName();
     }
 
-    public void removeView(TransitionView view)
-    {
-        _views.remove(view);
+    public String getRateExpr() {
+        return component.getRateExpr();
+    }
+
+    public int getPriority() {
+        return component.getPriority();
+    }
+
+    public Collection<Arc<Place, Transition>> inboundArcs() {
+        return component.inboundArcs();
+    }
+
+    /**
+     *
+     * @param infiniteValue
+     */
+    public void setInfiniteServer(
+                                  final boolean infiniteValue) {
+        TransitionInfiniteServer infiniteAction = new TransitionInfiniteServer(component, infiniteValue);
+        infiniteAction.redo();
+        historyManager.addNewEdit(infiniteAction);
+    }
+
+    public void setTimed(final boolean timedValue) {
+        TransitionTiming timedAction = new TransitionTiming(component, timedValue);
+        timedAction.redo();
+        historyManager.addNewEdit(timedAction);
+    }
+
+    public void setPriority(
+                            final int priorityValue) {
+        int oldPriority = component.getPriority();
+        TransitionPriority priorityAction = new TransitionPriority(component, oldPriority, priorityValue);
+        priorityAction.redo();
+        historyManager.addNewEdit(priorityAction);
+    }
+
+    public void setAngle(final int angle) {
+        int oldAngle = component.getAngle();
+        TransitionRotation angleAction = new TransitionRotation(component, oldAngle, angle);
+        angleAction.redo();
+        historyManager.addNewEdit(angleAction);
     }
 }

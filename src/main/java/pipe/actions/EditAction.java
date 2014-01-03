@@ -1,15 +1,12 @@
 package pipe.actions;
 
+import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.views.ArcView;
-import pipe.views.PipeApplicationView;
-import pipe.views.PlaceView;
 import pipe.models.PipeApplicationModel;
+import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 public class EditAction extends GuiAction
 {
@@ -24,43 +21,38 @@ public class EditAction extends GuiAction
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         PipeApplicationController applicationController = ApplicationSettings.getApplicationController();
-        PetriNetTab appView = pipeApplicationView.getCurrentTab();
+        PetriNetController controller = applicationController.getActivePetriNetController();
         if(applicationModel.isEditionAllowed())
         {
-            if(this == applicationModel.cutAction)
+            //TODO: REIMPLEMENT THE BELOW COMMENTED METHODS
+//            if(this == applicationModel.cutAction)
+//            {
+//                ArrayList selection = appView.getSelectionObject()
+//                        .getSelection();
+//
+//                applicationController.copy(selection, appView);
+//                controller.getHistoryManager().newEdit(); // new "transaction""
+//                controller.getHistoryManager().deleteSelection(selection);
+//                controller.getSelectionObject().deleteSelection();
+//                applicationModel.pasteAction.setEnabled(applicationController.isPasteEnabled());
+//            }
+//            else if(this == applicationModel.copyAction)
+//            {
+//                applicationController.copy(appView.getSelectionObject().getSelection(), appView);
+//                applicationModel.pasteAction.setEnabled(applicationController.isPasteEnabled());
+//            }
+//            else if(this == applicationModel.pasteAction)
+//            {
+//                appView.getSelectionObject().clearSelection();
+//                applicationController.showPasteRectangle(appView);
+//            }
+            if(this == applicationModel.undoAction)
             {
-                ArrayList selection = appView.getSelectionObject()
-                        .getSelection();
-//                for(Object item : selection){
-//                	if(item instanceof ArcView){
-//                		System.out.println("arcdetected");
-//                	}
-//                }
-//               System.out.println("item number:"+selection.size());
-                
-                applicationController.copy(selection, appView);
-                appView.getHistoryManager().newEdit(); // new "transaction""
-                appView.getHistoryManager().deleteSelection(selection);
-                appView.getSelectionObject().deleteSelection();
-                applicationModel.pasteAction.setEnabled(applicationController.isPasteEnabled());
-            }
-            else if(this == applicationModel.copyAction)
-            {
-                applicationController.copy(appView.getSelectionObject().getSelection(), appView);
-                applicationModel.pasteAction.setEnabled(applicationController.isPasteEnabled());
-            }
-            else if(this == applicationModel.pasteAction)
-            {
-                appView.getSelectionObject().clearSelection();
-                applicationController.showPasteRectangle(appView);
-            }
-            else if(this == applicationModel.undoAction)
-            {
-                appView.getHistoryManager().doUndo();
+                controller.getHistoryManager().doUndo();
             }
             else if(this == applicationModel.redoAction)
             {
-                appView.getHistoryManager().doRedo();
+                controller.getHistoryManager().doRedo();
             }
         }
     }

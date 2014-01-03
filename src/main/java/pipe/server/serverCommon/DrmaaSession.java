@@ -1,12 +1,6 @@
 package pipe.server.serverCommon;
 
-import java.io.IOException;
-
-import org.ggf.drmaa.DrmaaException;
-import org.ggf.drmaa.JobInfo;
-import org.ggf.drmaa.JobTemplate;
-import org.ggf.drmaa.Session;
-import org.ggf.drmaa.SessionFactory;
+import org.ggf.drmaa.*;
 
 public abstract class DrmaaSession
 {

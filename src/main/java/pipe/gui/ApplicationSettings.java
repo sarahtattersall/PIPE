@@ -1,6 +1,5 @@
 package pipe.gui;
 
-import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.models.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
@@ -50,10 +49,5 @@ public class ApplicationSettings
     public static PipeApplicationModel getApplicationModel()
     {
         return _applicationModel;
-    }
-
-    public static PetriNetController getPetriNetController()
-    {
-        return _applicationController.getPetriNetController();
     }
 }

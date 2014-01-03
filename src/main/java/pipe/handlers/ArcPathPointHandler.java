@@ -7,6 +7,7 @@ package pipe.handlers;
 
 import pipe.actions.SplitArcPointAction;
 import pipe.actions.ToggleArcPointAction;
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.ArcPathPoint;
 
@@ -21,8 +22,10 @@ public class ArcPathPointHandler
 {
 
    
-   public ArcPathPointHandler(Container contentpane, ArcPathPoint obj) {
-      super(contentpane, obj);
+   public ArcPathPointHandler(Container contentpane, ArcPathPoint obj, PetriNetController controller) {
+       //TODO: FIX THIS WITH TYPING
+       super(null, contentpane, null, controller);
+//      super(contentpane, obj);
       enablePopup = true;
    }
    
@@ -31,32 +34,32 @@ public class ArcPathPointHandler
    public JPopupMenu getPopup(MouseEvent e) {
       JPopupMenu popup = super.getPopup(e);
       
-      if (!((ArcPathPoint) my).isDeleteable()) {
+      if (!((ArcPathPoint) component).isDeleteable()) {
          popup.getComponent(0).setEnabled(false);
       }
       
       popup.insert(new JPopupMenu.Separator(), 0);
       
-      if (((ArcPathPoint) my).getIndex()==0) {
+      if (((ArcPathPoint) component).getIndex()==0) {
          return null;
       } else {
          JMenuItem menuItem = 
-                 new JMenuItem(new ToggleArcPointAction((ArcPathPoint) my));
-         if (!((ArcPathPoint) my).getPointType()) {
+                 new JMenuItem(new ToggleArcPointAction((ArcPathPoint) component));
+         if (!((ArcPathPoint) component).getPointType()) {
             menuItem.setText("Change to Curved");
          } else{
             menuItem.setText("Change to Straight");
          }
          popup.insert(menuItem,0);
          
-         menuItem = new JMenuItem(new SplitArcPointAction((ArcPathPoint) my));
+         menuItem = new JMenuItem(new SplitArcPointAction((ArcPathPoint) component));
          menuItem.setText("Split Point");
          popup.add(menuItem,1);
          
          // The following commented out code can be used for
          // debugging arc issues - Nadeem 18/07/2005
          /*
-         menuItem = new JMenuItem(new GetIndexAction((ArcPathPoint)my,
+         menuItem = new JMenuItem(new GetIndexAction((ArcPathPoint)component,
                                                      e.getPoint()));
          menuItem.setText("Point Index");
          menuItem.setEnabled(false);
@@ -68,10 +71,10 @@ public class ArcPathPointHandler
    
    
    public void mousePressed(MouseEvent e) {
-      if (my.isEnabled()) {
-         ((ArcPathPoint)e.getComponent()).setVisibilityLock(true);
-         super.mousePressed(e);
-      }
+//      if (component.isEnabled()) {
+//         ((ArcPathPoint)e.getComponent()).setVisibilityLock(true);
+//         super.mousePressed(e);
+//      }
    }
    
    
@@ -94,8 +97,9 @@ public class ArcPathPointHandler
       }
       
       if (e.isShiftDown()) {
-          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-                 ((ArcPathPoint) my).togglePointType());
+          //TODO: PASS THIS IN!
+          ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager().addNewEdit(
+                 ((ArcPathPoint) component).togglePointType());
       }
    }  
    

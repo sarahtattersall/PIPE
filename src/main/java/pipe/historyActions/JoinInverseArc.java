@@ -2,6 +2,7 @@
  * JoinInverseArcEdit.java
  */
 package pipe.historyActions;
+
 import pipe.views.NormalArcView;
 
 /**

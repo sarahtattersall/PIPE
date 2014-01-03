@@ -3,7 +3,9 @@
  */
 package pipe.modules.gspn;
 
-import pipe.calculations.*;
+import pipe.calculations.StateList;
+import pipe.calculations.StateSpaceGenerator;
+import pipe.calculations.SteadyStateSolver;
 import pipe.exceptions.MarkingNotIntegerException;
 import pipe.exceptions.StateSpaceTooBigException;
 import pipe.exceptions.TimelessTrapException;
@@ -13,16 +15,15 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
 import pipe.io.ImmediateAbortException;
-import pipe.views.MarkingView;
+import pipe.modules.interfaces.IModule;
+import pipe.utilities.Expander;
 import pipe.utilities.writers.PNMLWriter;
+import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
-import pipe.utilities.Expander;
 import pipe.views.TransitionView;
-import pipe.modules.interfaces.IModule;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -210,14 +211,14 @@ public class GSPNNew extends GSPN implements IModule {
 								s += "<br>Error: " + e.getMessage();
 								results.setText(s);
 								return null;
-							} catch (TimelessTrapException e) {
-								s += "<br>" + e.getMessage();
-								results.setText(s);
-								return null;
-							} catch (IOException e) {
-								s += "<br>" + e.getMessage();
-								results.setText(s);
-								return null;
+//							} catch (TimelessTrapException e) {
+//								s += "<br>" + e.getMessage();
+//								results.setText(s);
+//								return null;
+//							} catch (IOException e) {
+//								s += "<br>" + e.getMessage();
+//								results.setText(s);
+//								return null;
 							} catch (MarkingNotIntegerException e) {
 								JOptionPane.showMessageDialog(null,
 										"Functional arc weight cannot have non-integer value. Please check again.");
@@ -625,18 +626,22 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            //TODO: WAHT EXCEPTION
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-		return result;
+        return result;
 	}
 
 	/*
@@ -679,18 +684,22 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            //TODO: WAHT EXCEPTION
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-	}
+    }
 
 	/*
 	 * It returns a two-dimensional array containing the token distribution for
@@ -733,18 +742,21 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-	}
+    }
 
 	/*
 	 * It returns a two-dimensional array containing the token distribution for
@@ -787,18 +799,21 @@ public class GSPNNew extends GSPN implements IModule {
 		} catch (StateSpaceTooBigException e) {
 			System.out.println(e);
 			return null;
-		} catch (TimelessTrapException e) {
-			System.out.println(e);
-			return null;
+//		} catch (TimelessTrapException e) {
+//			System.out.println(e);
+//			return null;
 		} catch (ImmediateAbortException e) {
 			System.out.println(e);
 			return null;
 		} catch (IOException e) {
 			System.out.println(e);
 			return null;
-		}
+		} catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
 
-	}
+    }
 
 	// </Marc>
 
@@ -1062,11 +1077,7 @@ public class GSPNNew extends GSPN implements IModule {
 	/**
 	 * This function determines the sojourn time for each state in a specified
 	 * set of states.
-	 * 
-	 * @param DataLater
-	 *            - the net to be analysed
-	 * @param StateList
-	 *            - the list of tangible markings
+	 *
 	 * @return double[] - the array of sojourn times for each specific state
 	 * @param pnmldata
 	 * @param tangibleStates

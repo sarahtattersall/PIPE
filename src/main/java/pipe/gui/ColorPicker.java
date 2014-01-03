@@ -1,15 +1,10 @@
 package pipe.gui;
 
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.AbstractCellEditor;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.table.TableCellEditor;
-import javax.swing.JTable;
-import java.awt.Color;
-import java.awt.Component;
 
 /**
  * @author Alex Charalambous, June 2010: ColorDrawer, ColorPicker, 

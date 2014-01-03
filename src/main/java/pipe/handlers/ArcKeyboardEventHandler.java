@@ -1,5 +1,6 @@
 package pipe.handlers;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -13,14 +14,16 @@ import java.awt.event.KeyEvent;
 * @authors Michael Camacho and Tom Barnwell
 *
 */
-class ArcKeyboardEventHandler
+public class ArcKeyboardEventHandler
         extends KeyAdapter {
    
    private final ArcView _arcViewBeingDrawn;
+    private final PetriNetController petriNetController;
    
    
-   public ArcKeyboardEventHandler(ArcView anArcView) {
+   public ArcKeyboardEventHandler(ArcView anArcView, PetriNetController controller) {
       _arcViewBeingDrawn = anArcView;
+       petriNetController = controller;
    }
    
 
@@ -29,7 +32,7 @@ class ArcKeyboardEventHandler
          case KeyEvent.VK_META:
          case KeyEvent.VK_WINDOWS:
             // I don't know if it's a java's bug or if I have a configuration 
-            // problem with my linux box, but there is an issue with the 
+            // problem with component linux box, but there is an issue with the
             // Windows key under linux, so the space key is used as a provisional
             // solution
          case KeyEvent.VK_SPACE: //provisional
@@ -39,8 +42,10 @@ class ArcKeyboardEventHandler
          case KeyEvent.VK_ESCAPE:
          case KeyEvent.VK_DELETE:
             PetriNetTab aView = ((PetriNetTab) _arcViewBeingDrawn.getParent());
-            aView._createArcView = null;
-            _arcViewBeingDrawn.delete();
+            //TODO: CANCEL ARC
+             petriNetController.cancelArcCreation();
+            //aView._createArcView = null;
+            //_arcViewBeingDrawn.delete();
              if ((ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_PLACE) ||
                     (ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_TRANSITION)) {
                  ApplicationSettings.getApplicationModel().resetMode();

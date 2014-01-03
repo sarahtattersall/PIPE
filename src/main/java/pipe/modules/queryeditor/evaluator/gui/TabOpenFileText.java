@@ -3,10 +3,10 @@
  */
 package pipe.modules.queryeditor.evaluator.gui;
 
+import pipe.modules.queryeditor.evaluator.QueryAnalysisException;
+
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
-
-import pipe.modules.queryeditor.evaluator.QueryAnalysisException;
 
 /**
  * @author dazz

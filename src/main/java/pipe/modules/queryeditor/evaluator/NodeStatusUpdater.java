@@ -3,10 +3,10 @@
  */
 package pipe.modules.queryeditor.evaluator;
 
-import java.io.Serializable;
-
 import pipe.common.EvaluationStatus;
 import pipe.modules.interfaces.QueryConstants;
+
+import java.io.Serializable;
 
 /**
  * @author dazz

@@ -185,6 +185,9 @@
          <xsl:attribute name="target">
             <xsl:value-of select="@target"/>
          </xsl:attribute>
+          <xsl:attribute name="id">
+              <xsl:value-of select="@id"/>
+          </xsl:attribute>
          <xsl:choose>
              <xsl:when test="inscription/value">
                  <xsl:attribute name="inscription">
@@ -219,6 +222,10 @@
          <xsl:attribute name="name">
             <xsl:value-of select="name/value"/>
          </xsl:attribute>
+         <xsl:attribute name="statecondition">
+             <xsl:value-of select="statecondition/value"/>
+         </xsl:attribute>
+          <!--TODO: DELETE THIS LINE ONCE NEW CHANGES ARE IN-->
          <xsl:apply-templates select="statecondition"/>
       </xsl:element>
    </xsl:template>

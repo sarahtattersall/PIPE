@@ -5,35 +5,29 @@ import pipe.models.interfaces.IObserver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Observable implements IObservable, Serializable
+/**
+ * Observable class can be used in classes that implement IObservable
+ */
+public class Observable implements IObservable, Serializable
 {
-    private final ArrayList<IObserver> _observers;
-
-    Observable()
-    {
-        _observers = new ArrayList<IObserver>();
-    }
+    private final List<IObserver> observers = new ArrayList<IObserver>();
 
     public void registerObserver(IObserver observer)
     {
-        if(!_observers.contains(observer))
-            _observers.add(observer);
+        if(!observers.contains(observer))
+            observers.add(observer);
     }
 
     public void removeObserver(IObserver observer)
     {
-        _observers.remove(observer);
+        observers.remove(observer);
     }
 
     public void notifyObservers()
     {
-        for(IObserver observer : _observers)
+        for(IObserver observer : observers)
             observer.update();
-    }
-
-    public ArrayList<IObserver> observers()
-    {
-        return _observers;
     }
 }

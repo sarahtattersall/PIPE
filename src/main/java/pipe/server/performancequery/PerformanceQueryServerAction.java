@@ -1,9 +1,7 @@
 package pipe.server.performancequery;
 
-import pipe.common.SimplePlaces;
-import pipe.common.SimpleTransitions;
-import pipe.common.dataLayer.StateGroup;
 import pipe.common.*;
+import pipe.common.dataLayer.StateGroup;
 import pipe.modules.interfaces.Cleanable;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryresult.ResultWrapper;

@@ -1,15 +1,10 @@
 package pipe.modules.tagged;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 
 

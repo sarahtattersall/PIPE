@@ -9,33 +9,25 @@
 
 package pipe.modules.queryeditor.gui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.event.MouseInputAdapter;
-
 import pipe.common.PetriNetNode;
-import pipe.modules.interfaces.QueryConstants;
 import pipe.gui.Grid;
+import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArcPathPoint;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeObject;
-import pipe.modules.queryeditor.gui.performancetrees.macros.ArgumentNode;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroEditor;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroManager;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroNode;
-import pipe.modules.queryeditor.gui.performancetrees.macros.MacroView;
+import pipe.modules.queryeditor.gui.performancetrees.macros.*;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.FiringRateNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.MomentNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.ResultNode;
 import pipe.modules.queryeditor.gui.performancetrees.operationnodes.SequentialNode;
 import pipe.modules.queryeditor.gui.performancetrees.valuenodes.NumNode;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class PerformanceTreeObjectHandler extends MouseInputAdapter implements QueryConstants
 {

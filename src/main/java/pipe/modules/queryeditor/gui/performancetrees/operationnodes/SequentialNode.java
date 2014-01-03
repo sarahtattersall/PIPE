@@ -10,13 +10,13 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.operationnodes;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import pipe.common.PetriNetNode;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeArc;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class SequentialNode extends OperationNode {

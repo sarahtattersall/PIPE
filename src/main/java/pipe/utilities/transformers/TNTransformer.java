@@ -11,11 +11,11 @@
 package pipe.utilities.transformers;
 
 //Collections
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import pipe.views.MarkingView;
 import pipe.utilities.Copier;
 import pipe.views.*;
 
@@ -227,8 +227,8 @@ public class TNTransformer {
                         }
                         placeElement.setAttribute("type","node");
                         
-                        Double x = inputPlaceView.getPositionXObject();
-                        Double y = inputPlaceView.getPositionYObject();
+                        Double x = new Double(inputPlaceView.getX());
+                        Double y = new Double(inputPlaceView.getY());
                         
                         Element placeGraphics = createTNGraphics(0,x.intValue(),y.intValue(),document); 
                         placeGraphics.setAttribute("orientation","0"); //de moment
@@ -252,8 +252,8 @@ public class TNTransformer {
 
 		if(inputTransitionView != null ) {
 			Integer attrValue = null;
-			Double positionXInput = inputTransitionView.getPositionXObject();
-			Double positionYInput = inputTransitionView.getPositionYObject();
+			Double positionXInput = new Double(inputTransitionView.getX());
+			Double positionYInput = new Double(inputTransitionView.getY());
                         String idInput;
                         String nameInput;
                         if (fullyCompatible){
@@ -288,8 +288,8 @@ public class TNTransformer {
 
 		if(inputTransitionView != null ) {
 			Integer attrValue = null;
-			Double positionXInput = inputTransitionView.getPositionXObject();
-			Double positionYInput = inputTransitionView.getPositionYObject();
+            Double positionXInput = new Double(inputTransitionView.getX());
+            Double positionYInput = new Double(inputTransitionView.getY());
                         String idInput;
                         String nameInput;
                         if(fullyCompatible){

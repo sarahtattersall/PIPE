@@ -4,12 +4,13 @@
  */
 package pipe.actions;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.AnnotationNote;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 
 public class EditAnnotationBorderAction
@@ -25,7 +26,10 @@ public class EditAnnotationBorderAction
       
    /** Action for editing the text in an AnnotationNote */
    public void actionPerformed(ActionEvent e) {
-       ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
+
+       PipeApplicationController controller = ApplicationSettings.getApplicationController();
+       PetriNetController petriNetController = controller.getActivePetriNetController();
+       petriNetController.getHistoryManager().addNewEdit(
                selected.showBorder(!selected.isShowingBorder()));
    }
 

@@ -47,8 +47,8 @@ public class LabelHandler
       //obj.setNameOffsetX((e.getXOnScreen() - dragInit.x)); //causes exception in Windows!
       //obj.setNameOffsetY((e.getYOnScreen() - dragInit.y)); //causes exception in Windows!
       //dragInit = e.getLocationOnScreen(); //causes exception in Windows!
-      _obj.setNameOffsetX((p.x - dragInit.x));
-      _obj.setNameOffsetY((p.y - dragInit.y));
+//      _obj.setNameOffsetX((p.x - dragInit.x));
+//      _obj.setNameOffsetY((p.y - dragInit.y));
       dragInit = p;
       _obj.update();
    }   

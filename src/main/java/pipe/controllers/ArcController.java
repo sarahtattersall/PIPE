@@ -1,69 +1,64 @@
 package pipe.controllers;
 
-import pipe.models.Arc;
-import pipe.models.NormalArc;
-import pipe.views.ArcView;
-import pipe.views.ConnectableView;
-import pipe.views.NormalArcView;
+import pipe.historyActions.ArcWeight;
+import pipe.historyActions.HistoryManager;
+import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
+import pipe.models.component.Token;
 
-import java.util.ArrayList;
+import java.util.Map;
 
-public class ArcController
+public class ArcController extends AbstractPetriNetComponentController
 {
-    private ArrayList<Arc> _models;
-    private ArrayList<ArcView> _views;
+    private final Arc arc;
+    private final HistoryManager historyManager;
 
-    public ArcController(NormalArc model)
-    {
-        if(_models == null)
-            _models = new ArrayList<Arc>();
-        if(_views == null)
-            _views = new ArrayList<ArcView>();
-        _models.add(model);
-        _views.add(new NormalArcView(this, model));
+    ArcController(Arc arc, HistoryManager historyManager) {
+
+        super(arc, historyManager);
+        this.arc = arc;
+        this.historyManager = historyManager;
     }
 
-    public void addModel(Arc arc)
-    {
-        _models.add(arc);
+    /**
+     * Sets the weight for the current arc
+     * @param token
+     * @param expr
+     */
+    public void setWeight(final Token token, final String expr) {
+        historyManager.newEdit();
+        updateWeightForArc(token, expr);
     }
 
-    public void removeModel(Arc arc)
-    {
-        _models.remove(arc);
+    /**
+     * Creates a historyItem for updating weight and applies it
+     * @param token
+     * @param expr
+     */
+    private void updateWeightForArc(final Token token,
+                                    final String expr) {
+        String oldWeight = arc.getWeightForToken(token);
+        ArcWeight weightAction = new ArcWeight(arc, token, oldWeight, expr);
+        weightAction.redo();
+        historyManager.addEdit(weightAction);
     }
 
-    public void addView(ArcView arc)
-    {
-        _views.add(arc);
+    public void setWeights(final Map<Token, String> newWeights) {
+        historyManager.newEdit();
+        for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
+            updateWeightForArc(entry.getKey(), entry.getValue());
+        }
     }
 
-    public void removeView(ArcView arc)
-    {
-        _views.remove(arc);
+    public String getWeightForToken(final Token token) {
+        return arc.getWeightForToken(token);
     }
 
-
-
-    public NormalArcView copy(NormalArcView normalArcView)
-    {
-        return new NormalArcView(normalArcView);
+    public boolean hasFunctionalWeight() {
+        return arc.hasFunctionalWeight();
     }
 
-    public ConnectableView getSourceOf(ArcView arc) throws Exception
-    {
-        int index = _views.indexOf(arc);
-        if (index <0)
-            throw new Exception("An arc is not registered with the controller");
-        return arc.getSource();
-    }
-
-
-    public ConnectableView getTargetOf(ArcView arc) throws Exception
-    {
-        int index = _views.indexOf(arc);
-        if (index <0)
-            throw new Exception("An arc is not registered with the controller");
+    public Connectable getTarget() {
         return arc.getTarget();
     }
 }

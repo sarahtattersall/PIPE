@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pipe.exceptions.TokenLockedException;
-import pipe.models.Token;
+import pipe.models.component.Token;
 import pipe.utilities.math.Matrix;
 
 public class TokenViewTest implements Observer
@@ -79,32 +79,32 @@ public class TokenViewTest implements Observer
              "Details: TokenView: Enabled=true, Id=Default, Color=java.awt.Color[r=0,g=0,b=0], Lock count=1", e.getMessage()); 
 		}
 	}
-	@Test
-	public void verifyTokenViewCanBeReplacedWithNewInstancePreservingInternalState() throws Exception
-	{
-		tokenView.addObserver(this); 
-		Token model = tokenView.getModel();
-		//TODO previousIncidenceMatrix is populated by getIncidenceMatrix(); reconcile this 
-		
-		assertNull(tokenView.getIncidenceMatrix()); 
-		tokenView.createIncidenceMatrix(new ArrayList<ArcView>(), new ArrayList<TransitionView>(), new ArrayList<PlaceView>());
-		Matrix matrix = tokenView.getIncidenceMatrix(); 
-		assertEquals("previousIncidenceMatrix is populated by getIncidenceMatrix()",
-				matrix, tokenView.getPreviousIncidenceMatrix()); 
-		assertNotNull(matrix);
-		newTokenView = new TokenView(true, "Fred", Color.blue); 
-		newTokenView.updateModelFromPrevious(tokenView); 
-		assertEquals(model,newTokenView.getModel()); 
-		assertEquals(matrix,newTokenView.getPreviousIncidenceMatrix()); 
-		assertEquals(matrix,newTokenView.getIncidenceMatrix()); 
-		assertEquals(true,newTokenView.isEnabled()); 
-		assertEquals("Fred",newTokenView.getID()); 
-		assertEquals(Color.blue,newTokenView.getColor()); 
-		while (!called)
-		{
-			Thread.sleep(10);
-		}	
-	}
+//	@Test
+//	public void verifyTokenViewCanBeReplacedWithNewInstancePreservingInternalState() throws Exception
+//	{
+//		tokenView.addObserver(this);
+//		Token model = tokenView.getModel();
+//		//TODO previousIncidenceMatrix is populated by getIncidenceMatrix(); reconcile this
+//
+//		assertNull(tokenView.getIncidenceMatrix());
+//		tokenView.createIncidenceMatrix(new ArrayList<ArcView>(), new ArrayList<TransitionView>(), new ArrayList<PlaceView>());
+//		Matrix matrix = tokenView.getIncidenceMatrix();
+//		assertEquals("previousIncidenceMatrix is populated by getIncidenceMatrix()",
+//				matrix, tokenView.getPreviousIncidenceMatrix());
+//		assertNotNull(matrix);
+//		newTokenView = new TokenView(true, "Fred", Color.blue);
+//		newTokenView.updateModelFromPrevious(tokenView);
+//		assertEquals(model,newTokenView.getModel());
+//		assertEquals(matrix,newTokenView.getPreviousIncidenceMatrix());
+//		assertEquals(matrix,newTokenView.getIncidenceMatrix());
+//		assertEquals(true,newTokenView.isEnabled());
+//		assertEquals("Fred",newTokenView.getID());
+//		assertEquals(Color.blue,newTokenView.getColor());
+//		while (!called)
+//		{
+//			Thread.sleep(10);
+//		}
+//	}
 	@Test
 	public void verifyTokenViewTellsObserversToDeleteSelfIfUpdatedTokenViewIsDisabled() throws Exception
 	{

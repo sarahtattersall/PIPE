@@ -1,146 +1,220 @@
 package pipe.models;
 
 import pipe.actions.*;
+import pipe.actions.edit.*;
+import pipe.actions.file.*;
+import pipe.actions.type.*;
+import pipe.actions.animate.*;
+import pipe.actions.type.AddTokenAction;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
+import pipe.models.visitor.connectable.arc.InhibitorCreatorVisitor;
+import pipe.models.visitor.connectable.arc.InhibitorSourceVisitor;
+import pipe.models.visitor.connectable.arc.NormalArcCreatorVisitor;
+import pipe.models.visitor.connectable.arc.NormalArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PipeApplicationModel implements Serializable
 {
-    public FileAction createAction;
-    public FileAction openAction;
-    public FileAction closeAction;
-    public FileAction saveAction;
-    public FileAction saveAsAction;
-    public FileAction exitAction;
-    public FileAction printAction;
-    public FileAction exportPNGAction;
-    public FileAction exportTNAction;
-    public FileAction exportPSAction;
-    public FileAction importAction;
+    @ApplicationAction(ActionEnum.CREATE)
+    public FileAction createAction = new CreateAction();
 
-    public EditAction copyAction;
-    public EditAction cutAction;
-    public EditAction pasteAction;
-    public EditAction undoAction;
-    public EditAction redoAction;
-    public GridAction toggleGrid;
-    public ZoomAction zoomOutAction, zoomInAction, zoomAction;
-    public DeleteAction deleteAction;
-    public TypeAction annotationAction;
-    public TypeAction arcAction;
-    public TypeAction inhibarcAction;
-    public TypeAction placeAction;
-    public TypeAction transAction;
-    public TypeAction timedtransAction;
-    public TypeAction tokenAction;
-    public TypeAction selectAction;
-    public TypeAction rateAction;
-    public TypeAction deleteTokenAction;
-    public TypeAction dragAction;
-    public AnimateAction startAction;
-    public AnimateAction stepforwardAction;
-    public AnimateAction stepbackwardAction;
-    public AnimateAction randomAction;
-    public AnimateAction randomAnimateAction;
-    public TokenAction _specifyTokenClasses;
-    public GroupTransitionsAction groupTransitions;
-    public UnfoldAction unfoldAction;
-    public UngroupTransitionsAction ungroupTransitions;
-    public ChooseTokenClassAction chooseTokenClassAction;
-    private ArrayList<ZoomAction> _zoomActions;
+    @ApplicationAction(ActionEnum.OPEN)
+    public FileAction openAction = new OpenAction();
 
+    @ApplicationAction(ActionEnum.CLOSE)
+    public FileAction closeAction = new CloseAction();
+
+    @ApplicationAction(ActionEnum.SAVE)
+    public FileAction saveAction = new SaveAction();
+
+    @ApplicationAction(ActionEnum.SAVEAS)
+    public FileAction saveAsAction = new SaveAsAction();
+
+    @ApplicationAction(ActionEnum.PRINT)
+    public FileAction printAction = new PrintAction();
+
+    @ApplicationAction(ActionEnum.EXPORTPNG)
+    public FileAction exportPNGAction = new ExportPNGAction();
+
+    @ApplicationAction(ActionEnum.EXPORTTN)
+    public FileAction exportTNAction = new ExportTNAction();
+
+    @ApplicationAction(ActionEnum.EXPORTPS)
+    public FileAction exportPSAction = new ExportPSAction();
+
+    @ApplicationAction(ActionEnum.IMPORT)
+    public FileAction importAction = new ImportAction();
+
+
+    @ApplicationAction(ActionEnum.EXIT)
+    public GuiAction exitAction = new ExitAction();
+
+    @ApplicationAction(ActionEnum.UNDO)
+    public GuiAction undoAction = new UndoAction();
+
+    @ApplicationAction(ActionEnum.REDO)
+    public GuiAction redoAction = new RedoAction();
+
+    @ApplicationAction(ActionEnum.COPY)
+    public GuiAction copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+
+    @ApplicationAction(ActionEnum.CUT)
+    public GuiAction cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X");
+
+    @ApplicationAction(ActionEnum.PASTE)
+    public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
+
+    @ApplicationAction(ActionEnum.DELETE)
+    public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
+
+
+    @ApplicationAction(ActionEnum.SELECT)
+    public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
+
+    @ApplicationAction(ActionEnum.PLACE)
+    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
+
+    @ApplicationAction(ActionEnum.TRANSACTION)
+    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I");
+
+    @ApplicationAction(ActionEnum.TIMED_TRANSACTION)
+    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
+
+    @ApplicationAction(ActionEnum.ARC)
+    public final TypeAction arcAction;
+
+    @ApplicationAction(ActionEnum.INHIBITOR_ARC)
+    public final TypeAction inhibarcAction;
+
+    @ApplicationAction(ActionEnum.ANNOTATION)
+    public TypeAction annotationAction = new AnnotationAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N");
+
+    @ApplicationAction(ActionEnum.TOKEN)
+    public TypeAction tokenAction = new AddTokenAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD");
+
+    @ApplicationAction(ActionEnum.DELETE_TOKEN)
+    public TypeAction deleteTokenAction = new DeleteTokenAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT");
+
+    @ApplicationAction(ActionEnum.DRAG)
+    public TypeAction dragAction = new DragAction("Drag", Constants.DRAG, "Drag the drawing", "D");
+
+    @ApplicationAction(ActionEnum.RATE_PARAMETER)
+    public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
+
+    @ApplicationAction(ActionEnum.TOGGLE_GRID)
+    public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");;
+
+
+    @ApplicationAction(ActionEnum.ZOOM_OUT)
+    public ZoomAction zoomOutAction = new ZoomAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS");
+
+    @ApplicationAction(ActionEnum.ZOOM_IN)
+    public ZoomAction zoomInAction = new ZoomAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS");
+
+    public ZoomAction zoomAction;
+
+
+    @ApplicationAction(ActionEnum.START)
+    public AnimateAction startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
+
+    @ApplicationAction(ActionEnum.STEP_BACK)
+    public AnimateAction stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4");
+
+
+    @ApplicationAction(ActionEnum.STEP_FORWARD)
+    public AnimateAction stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6");
+
+    @ApplicationAction(ActionEnum.RANDOM)
+    public AnimateAction randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5");
+
+    @ApplicationAction(ActionEnum.ANIMATE)
+    public AnimateAction randomAnimateAction = new AnimationAction("Animate", "Randomly fire a number of transitions", "7");
+
+    @ApplicationAction(ActionEnum.SPECIFY_TOKEN)
+    public SpecifyTokenAction specifyTokenClasses = new SpecifyTokenAction();
+
+    @ApplicationAction(ActionEnum.GROUP_TRANSITIONS)
+    public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
+
+    @ApplicationAction(ActionEnum.UNFOLD)
+    public UnfoldAction unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U");
+
+    @ApplicationAction(ActionEnum.UNGROUP_TRANSITIONS)
+    public UngroupTransitionsAction ungroupTransitions = new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
+
+    @ApplicationAction(ActionEnum.CHOOSE_TOKEN_CLASS)
+    public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
+
+    private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%","120%", "140%", "160%", "180%", "200%", "300%"};
+    private List<ZoomAction> zoomActions = new ArrayList<ZoomAction>();
     private final String _name;
-    private final String[] _zoomExamples;
-    private boolean _editionAllowed;
-    private int mode, prev_mode, old_mode;
+    private boolean editionAllowed = true;
+    private int mode;
+    private int prev_mode;
+    private int old_mode;
     private PipeApplicationView _observer;
+    private int newNameCounter = 0;
 
-    private int newNameCounter;
+    Map<ActionEnum, GuiAction> actionMap = new HashMap<ActionEnum, GuiAction>();
 
-    public PipeApplicationModel(String version)
+    /**
+     * Type that is currently selected on the petrinet
+     */
+    private TypeAction selectedType;
+
+    public PipeApplicationModel(PipeApplicationController controller, String version)
     {
+        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreatorVisitor(controller));
+        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalArcCreatorVisitor(controller));
         ApplicationSettings.register(this);
-
         _name = "PIPE: Platform Independent Petri Net Editor " + version;
-        _zoomExamples = new String[]{"40%", "60%", "80%", "100%","120%", "140%", "160%", "180%", "200%", "300%"};
-        _editionAllowed = true;
-        boolean dragging = false;
-        newNameCounter = 0;
-        registerActions();
-        ArrayList<PetriNet> petriNets = new ArrayList<PetriNet>();
-
+        registerZoomActions();
+        populateActionMap();
     }
 
-    private void registerActions()
+    private void populateActionMap()
     {
-        createAction = new FileAction("New", "Create a new Petri net", "ctrl N");
-        openAction = new FileAction("Open", "Open", "ctrl O");
-        closeAction = new FileAction("Close", "Close the current tab", "ctrl W");
-        saveAction = new FileAction("Save", "Save", "ctrl S");
-        saveAsAction = new FileAction("Save as", "Save as...", "shift ctrl S");
-        importAction = new FileAction("Import", "Import from eDSPN", "ctrl I");
-        exportPNGAction = new FileAction("PNG", "Export the net to PNG format", "ctrl G");
-        exportPSAction = new FileAction("PostScript", "Export the net to PostScript format", "ctrl T");
-        exportTNAction = new FileAction("eDSPN", "Export the net to Timenet format", "ctrl E");
-        printAction = new FileAction("Print", "Print", "ctrl P");
-        undoAction = new EditAction("Undo", "Undo (Ctrl-Z)", "ctrl Z");
-        redoAction = new EditAction("Redo", "Redo (Ctrl-Y)", "ctrl Y");
-        cutAction = new EditAction("Cut", "Cut (Ctrl-X)", "ctrl X");
-        copyAction = new EditAction("Copy", "Copy (Ctrl-C)", "ctrl C");
-        pasteAction = new EditAction("Paste", "Paste (Ctrl-V)", "ctrl V");
-        deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
-        selectAction = new TypeAction("Select", Constants.SELECT, "Select components", "S", true);
-
-        Action actionListener = new AbstractAction()
+        for (Field field : this.getClass().getDeclaredFields())
         {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                if(isEditionAllowed())
+            if (field.isAnnotationPresent(ApplicationAction.class)) {
+                ApplicationAction annotation = field.getAnnotation(ApplicationAction.class);
+                if (GuiAction.class.isAssignableFrom(field.getType()))
                 {
-                    selectAction.actionPerformed(null);
+                    try {
+                        GuiAction action = (GuiAction) field.get(this);
+                        actionMap.put(annotation.value(), action);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
-        };
+        }
+    }
 
-        placeAction = new TypeAction("Place", Constants.PLACE, "Add a place", "P", true);
-        transAction = new TypeAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I", true);
-        timedtransAction = new TypeAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T", true);
-        arcAction = new TypeAction("Arc", Constants.ARC, "Add an arc", "A", true);
-        inhibarcAction = new TypeAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", true);
-        annotationAction = new TypeAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N", true);
-        tokenAction = new TypeAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD", true);
-        deleteTokenAction = new TypeAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT", true);
-        _specifyTokenClasses = new TokenAction();
-        groupTransitions = new GroupTransitionsAction();
-        ungroupTransitions = new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
-        unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U");
-        rateAction = new TypeAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
-        zoomOutAction = new ZoomAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS");
-        zoomInAction = new ZoomAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS");
-        toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");
-        dragAction = new TypeAction("Drag", Constants.DRAG, "Drag the drawing", "D", true);
-        startAction = new AnimateAction("Animation mode", Constants.START, "Toggle Animation Mode", "Ctrl A");
-        stepbackwardAction = new AnimateAction("Back", Constants.STEPBACKWARD, "Step backward a firing", "4");
-        stepforwardAction = new AnimateAction("Forward", Constants.STEPFORWARD, "Step forward a firing", "6");
-        randomAction = new AnimateAction("Random", Constants.RANDOM, "Randomly fire a transition", "5");
-        randomAnimateAction = new AnimateAction("Animate", Constants.ANIMATE, "Randomly fire a number of transitions", "7");
-        chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
-        exitAction = new FileAction("Exit", "Close the program", "ctrl Q");
+    public GuiAction getAction(ActionEnum type)
+    {
+        return actionMap.get(type);
+    }
 
-        _zoomActions = new ArrayList<ZoomAction>();
-        for(int i=0; i<_zoomExamples.length; i++)
-            _zoomActions.add(new ZoomAction(_zoomExamples[i], "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
+    private void registerZoomActions()
+    {
+        for(int i = 0; i < zoomExamples.length; i++)
+            zoomActions.add(new ZoomAction(zoomExamples[i], "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
     }
 
     public String[] getZoomExamples()
     {
-        return _zoomExamples;
+        return zoomExamples;
     }
 
     public String getName()
@@ -150,12 +224,12 @@ public class PipeApplicationModel implements Serializable
 
     public boolean isEditionAllowed()
     {
-        return _editionAllowed;
+        return editionAllowed;
     }
 
     public void setEditionAllowed(boolean flag)
     {
-        _editionAllowed = flag;
+        editionAllowed = flag;
     }
 
     public void resetMode()
@@ -176,6 +250,7 @@ public class PipeApplicationModel implements Serializable
 
     public void setMode(int _mode)
     {
+
         // Don't bother unless new mode is different.
         if(mode != _mode)
         {
@@ -260,9 +335,9 @@ public class PipeApplicationModel implements Serializable
         _observer = observer;
     }
 
-    public ArrayList<ZoomAction> getZoomActions()
+    public List<ZoomAction> getZoomActions()
     {
-        return _zoomActions;
+        return zoomActions;
     }
 
     public void setUndoActionEnabled(boolean flag)
@@ -278,5 +353,14 @@ public class PipeApplicationModel implements Serializable
     public int newPetriNetNumber()
     {
         return ++newNameCounter;
+    }
+
+
+    public void selectTypeAction(TypeAction action) {
+        selectedType = action;
+    }
+
+    public TypeAction getSelectedAction() {
+        return selectedType;
     }
 }

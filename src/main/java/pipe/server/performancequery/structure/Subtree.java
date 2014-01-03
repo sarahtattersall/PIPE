@@ -10,15 +10,15 @@
 
 package pipe.server.performancequery.structure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-
 import pipe.common.EvaluationStatus;
 import pipe.common.PetriNetNode;
 import pipe.modules.queryresult.ResultWrapper;
 import pipe.server.performancequery.SimpleNode;
 import pipe.server.performancequery.StatusIndicatorUpdater;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public abstract class Subtree implements StructureLoggingHandler, ResultGetter
 {

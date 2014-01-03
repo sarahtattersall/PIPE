@@ -1,6 +1,7 @@
 package pipe.common;
 
 import pipe.views.ArcView;
+import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 import pipe.views.TransitionView;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class SimpleTransitions implements Serializable
@@ -68,7 +70,9 @@ public class SimpleTransitions implements Serializable
 				// Passing an unfolded net, so need a simple method that returns an int for each transition.
 				// currentArc.getWeight().getFirst().getCurrentMarking() returns an int corresponding to the weight of the first arc class
 				// in the simple arc. since the net is unfolded there should only be one class in the linked list, hence getFirst() is sufficient.
-				final SimpleArc newTransArc = new SimpleArc(currentArc.getSource().getId(),currentArc.getWeight().getFirst().getCurrentMarking());
+                List<MarkingView> markingViews = currentArc.getWeight();
+                MarkingView firstMarking = markingViews.get(0);
+				final SimpleArc newTransArc = new SimpleArc(currentArc.getSource().getId(), firstMarking.getCurrentMarking());
 				this.arcsTo.get(i).add(newTransArc);
 			}
 
@@ -77,8 +81,10 @@ public class SimpleTransitions implements Serializable
 			{
 				final ArcView currentArc = (ArcView) arcsFromIter.next();
 				
-				// TODO: Same as above
-				final SimpleArc newTransArc = new SimpleArc(currentArc.getTarget().getId(),currentArc.getWeight().getFirst().getCurrentMarking());
+				// TODO: Same as aboveList<MarkingView> markingViews = currentArc.getWeight();
+                List<MarkingView> markingViews = currentArc.getWeight();
+                MarkingView firstMarking = markingViews.get(0);
+				final SimpleArc newTransArc = new SimpleArc(currentArc.getTarget().getId(), firstMarking.getCurrentMarking());
 				this.arcsFrom.get(i).add(newTransArc);
 			}
 		}

@@ -4,11 +4,12 @@
  */
 package pipe.gui;
 
+import pipe.io.JarUtilities;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.jar.JarEntry;
-import pipe.io.JarUtilities;
 
 
 /**

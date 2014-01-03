@@ -3,56 +3,64 @@
  */
 package pipe.historyActions;
 
-import pipe.gui.PetriNetTab;
-import pipe.views.PetriNetView;
-import pipe.views.PetriNetViewComponent;
+import pipe.models.PetriNet;
+import pipe.models.component.PetriNetComponent;
 
 
 /**
  * @author Pere Bonet
  */
 public class DeletePetriNetObject
-        extends HistoryItem
-{
+        extends HistoryItem {
 
-    private PetriNetViewComponent _viewComponent;
-    private final PetriNetView _model;
-    private final PetriNetTab _view;
+    private PetriNetComponent component;
+    private final PetriNet petriNet;
 
 
     /**
-     * Creates a new instance of placeWeightEdit
-     * @param viewComponent
-     * @param tab
-     * @param view
+     * @param component
+     * @param petriNet
      */
-    public DeletePetriNetObject(PetriNetViewComponent viewComponent, PetriNetTab tab, PetriNetView view)
-    {
-        _viewComponent = viewComponent;
-        _view = tab;
-        _model = view;
-        _viewComponent.markAsDeleted();
+    public DeletePetriNetObject(PetriNetComponent component, PetriNet petriNet) {
+        this.component = component;
+        this.petriNet = petriNet;
     }
 
 
     /** */
-    public void redo()
-    {
-        _viewComponent.delete();
+    public void redo() {
+        petriNet.remove(component);
     }
 
 
     /** */
-    public void undo()
-    {
-        _viewComponent.undelete(_model, _view);
+    public void undo() {
+        petriNet.add(component);
     }
 
 
-    public String toString()
-    {
-        return super.toString() + " " + _viewComponent.getClass().getSimpleName()
-                + " [" + _viewComponent.getId() + "]";
+    public String toString() {
+        return super.toString() + " " + component.getClass().getSimpleName()
+                + " [" + component + "]";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeletePetriNetObject that = (DeletePetriNetObject) o;
+
+        if (!component.equals(that.component)) return false;
+        if (!petriNet.equals(that.petriNet)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = component.hashCode();
+        result = 31 * result + petriNet.hashCode();
+        return result;
+    }
 }

@@ -7,12 +7,11 @@
 
 package pipe.modules.queryeditor.evaluator;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.evaluator.gui.QueryOperationNode;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 class EditQueryTreeNodeAction extends AbstractAction implements QueryConstants
 {

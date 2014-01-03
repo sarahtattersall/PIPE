@@ -10,8 +10,8 @@
 
 package pipe.modules.queryeditor.io;
 
-import pipe.common.dataLayer.StateGroup;
 import pipe.common.PetriNetNode;
+import pipe.common.dataLayer.StateGroup;
 import pipe.gui.ApplicationSettings;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
@@ -1154,7 +1154,7 @@ public class QueryData extends Observable implements QueryConstants, Cloneable
 				int placeCount = 0;
 				for (PlaceView p : placeViews)
 				{
-					placeCount += p.getCurrentMarkingView().getFirst().getCurrentMarking();
+					placeCount += p.getCurrentMarkingView().get(0).getCurrentMarking();
 
 					String placeLabel = p.getNameLabel().getName();
 					System.out.println(placeLabel);

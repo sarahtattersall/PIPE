@@ -1,9 +1,9 @@
 package pipe.io;
 
+import pipe.calculations.MarkingState;
+
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
-
-import pipe.calculations.MarkingState;
 
 /**
  * Implementation of TransitionRecord using java.nio.* classes

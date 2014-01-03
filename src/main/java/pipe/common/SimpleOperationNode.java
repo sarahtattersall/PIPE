@@ -11,10 +11,9 @@
 
 package pipe.common;
 
-import java.util.HashMap;
-
-import pipe.common.PetriNetNode;
 import pipe.server.performancequery.SimpleNode;
+
+import java.util.HashMap;
 
 public class SimpleOperationNode extends SimpleNode
 {

@@ -5,8 +5,10 @@
  */
 package pipe.actions;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.views.PetriNetViewComponent;
+import pipe.models.component.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,20 +16,20 @@ import java.awt.event.ActionEvent;
 
 public class DeletePetriNetObjectAction extends AbstractAction {
 
-   private final PetriNetViewComponent selected;
+    private final PetriNetComponent component;
 
-   
-   public DeletePetriNetObjectAction(PetriNetViewComponent component) {
-      selected = component;
-   }
 
-   /* (non-Javadoc)
-    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-    */
-   public void actionPerformed(ActionEvent e) {
-       ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().newEdit(); // new "transaction""
-       ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().deleteSelection(selected);
-      selected.delete();
-   }
+    public DeletePetriNetObjectAction(PetriNetComponent component) {
+        this.component = component;
+    }
+
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        petriNetController.delete(component);
+    }
 
 }

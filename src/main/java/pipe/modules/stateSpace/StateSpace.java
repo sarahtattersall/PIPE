@@ -1,23 +1,23 @@
 package pipe.modules.stateSpace;
 
-import pipe.gui.ApplicationSettings;
-import pipe.modules.interfaces.IModule;
-import pipe.utilities.writers.PNMLWriter;
-import pipe.exceptions.TreeTooBigException;
-import pipe.views.MarkingView;
 import pipe.calculations.myTree;
+import pipe.exceptions.EmptyNetException;
+import pipe.exceptions.TreeTooBigException;
+import pipe.gui.ApplicationSettings;
 import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
-import pipe.exceptions.EmptyNetException;
+import pipe.modules.interfaces.IModule;
+import pipe.utilities.writers.PNMLWriter;
+import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
+import java.util.List;
 
 
 public class StateSpace
@@ -79,11 +79,11 @@ public class StateSpace
             PetriNetView sourceDataLayer = sourceFilePanel.getDataLayer();
 
             //Get the new marking from the _dataLayer object
-            LinkedList<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+            List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
             int[] markup = new int[markings.length];
             for(int k = 0; k < markings.length; k++)
             {
-                markup[k] = markings[k].getFirst().getCurrentMarking();
+                markup[k] = markings[k].get(0).getCurrentMarking();
             }
 
 
@@ -189,11 +189,11 @@ public class StateSpace
         boolean[] result = new boolean[3];
 
         //Get the new marking from the _dataLayer object
-        LinkedList<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
+        List<MarkingView>[] markings = sourceDataLayer.getCurrentMarkingVector();
         int[] markup = new int[markings.length];
         for(int k = 0; k < markings.length; k++)
         {
-            markup[k] = markings[k].getFirst().getCurrentMarking();
+            markup[k] = markings[k].get(0).getCurrentMarking();
         }
 
 

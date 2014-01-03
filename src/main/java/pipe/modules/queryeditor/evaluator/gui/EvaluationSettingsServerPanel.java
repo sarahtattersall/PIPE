@@ -1,15 +1,10 @@
 package pipe.modules.queryeditor.evaluator.gui;
 
-import java.awt.Dimension;
-
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 import pipe.common.AnalysisSettings;
 import pipe.modules.queryeditor.evaluator.SettingsManager;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class EvaluationSettingsServerPanel extends ServerSettingsBasicPanel
 {

@@ -1,15 +1,12 @@
 package pipe.modules.queryeditor.evaluator.gui;
 
+import pipe.modules.interfaces.QueryConstants;
+import pipe.modules.queryeditor.QueryManager;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.Timer;
-
-import pipe.modules.interfaces.QueryConstants;
-import pipe.modules.queryeditor.QueryManager;
 
 public class StatusIndicator extends JLabel
 implements

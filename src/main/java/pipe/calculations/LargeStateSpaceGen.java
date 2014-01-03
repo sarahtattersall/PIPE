@@ -18,6 +18,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -117,11 +118,11 @@ public class LargeStateSpaceGen
         //Get current/initial marking of PetriNetViewComponent and decide whether tangible or vanishing
         //Expects an array of ints. getCurrentMarkingVector now returns a linked list.
         //Code below generates an int array based on the linked list.
-        LinkedList<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
+        List<MarkingView>[] markings = pnmlData.getCurrentMarkingVector();
         int[] markingsArray = new int[markings.length];
         for(int i = 0; i < markings.length; i++)
         {
-            markingsArray[i] = markings[i].getFirst().getCurrentMarking();
+            markingsArray[i] = markings[i].get(0).getCurrentMarking();
         }
 
         //ok
@@ -396,14 +397,13 @@ public class LargeStateSpaceGen
      * @author Matthew Cook, James Bloom and Clare Clark (original code)
      * Nadeem Akharware (optimisation)
      */
-    private static int[] fireTransition(PetriNetView pnmlData, int[] marking, int transIndex)
-    {
+    private static int[] fireTransition(PetriNetView pnmlData, int[] marking, int transIndex) {
         int count;               //index for 'for loop'
         int CMinusValue;         //Value from C- matrix
         int CPlusValue;          //Value from C+ matrix
 
-        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
-        int[][] CPlus = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
+        int[][] CPlus = pnmlData.getActiveTokenView().getForwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
 
         //Create marking array to return
         int[] newmarking = new int[marking.length];
@@ -436,7 +436,7 @@ public class LargeStateSpaceGen
 
         TransitionView[] transArray = pnmlData.getTransitionViews();
 
-        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
+        int[][] CMinus = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(), pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
         int placeCount = pnmlData.numberOfPlaces();
 
         // Initialise the result array
@@ -596,7 +596,7 @@ public class LargeStateSpaceGen
      * intersection of the two.  Then sums the firing rates of the intersection
      * and divides it by the sum of the firing rates of the enabled transitions.
      *
-     * @param pnmlData
+     * @param petriNetView
      * @param s
      * @param sprime
      * @param rp
@@ -605,15 +605,15 @@ public class LargeStateSpaceGen
      * optimisation)
      */
 
-    private static double rateorprob(PetriNetView pnmlData, State s, State sprime, boolean rp)
+    private static double rateorprob(PetriNetView petriNetView, State s, State sprime, boolean rp)
     {
 
         int[] marking1 = s.getState();
         int[] marking2 = sprime.getState();
         int markSize = marking1.length;
-        int[][] incidenceMatrix = pnmlData.getActiveTokenView().getIncidenceMatrix(pnmlData.getArcsArrayList(), pnmlData.getTransitionsArrayList(), pnmlData.getPlacesArrayList());
-        int transCount = pnmlData.numberOfTransitions();
-        boolean[] marking1EnabledTransitions = getTransitionEnabledStatusArray(pnmlData, marking1, false); //get list of transitions enabled at marking1
+        int[][] incidenceMatrix = petriNetView.getActiveTokenView().getIncidenceMatrix(petriNetView.getModel().getArcs(), petriNetView.getModel().getTransitions(), petriNetView.getModel().getPlaces());
+        int transCount = petriNetView.numberOfTransitions();
+        boolean[] marking1EnabledTransitions = getTransitionEnabledStatusArray(petriNetView, marking1, false); //get list of transitions enabled at marking1
         boolean[] matchingTransition = new boolean[transCount];
 
 
@@ -644,7 +644,7 @@ public class LargeStateSpaceGen
         // as immediate transitions will always fire first.
         if(rp)
         {
-            TransitionView[] transitionViews = pnmlData.getTransitionViews();
+            TransitionView[] transitionViews = petriNetView.getTransitionViews();
             for(int i = 0; i < transCount; i++)
             {
                 if(transitionViews[i].isTimed())
@@ -680,7 +680,7 @@ public class LargeStateSpaceGen
         {
             if((matchingTransition[i]) && (marking1EnabledTransitions[i]))
             {
-                candidateTransitionWeighting += pnmlData.getTransitionViews()[i].getRate();
+                candidateTransitionWeighting += petriNetView.getTransitionViews()[i].getRate();
             }
         }
         if(!rp)
@@ -696,7 +696,7 @@ public class LargeStateSpaceGen
             {
                 if(marking1EnabledTransitions[i])
                 {
-                    enabledTransitionWeighting += pnmlData.getTransitionViews()[i].getRate();
+                    enabledTransitionWeighting += petriNetView.getTransitionViews()[i].getRate();
                 }
             }
             return (candidateTransitionWeighting / enabledTransitionWeighting);

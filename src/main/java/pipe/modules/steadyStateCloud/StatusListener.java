@@ -1,9 +1,9 @@
 package pipe.modules.steadyStateCloud;
 
-import java.io.IOException;
-
 import pipe.modules.clientCommon.HTMLPane;
 import pipe.modules.clientCommon.SocketIO;
+
+import java.io.IOException;
 
 public class StatusListener
 {

@@ -3,15 +3,15 @@
  */
 package pipe.modules.queryeditor.gui.performancetrees.operationnodes;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import pipe.common.PetriNetNode;
-import pipe.modules.interfaces.QueryConstants;
 import pipe.handlers.StringHelper;
+import pipe.modules.interfaces.QueryConstants;
 import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 import pipe.modules.queryeditor.gui.performancetrees.valuenodes.NumNode;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author dazz

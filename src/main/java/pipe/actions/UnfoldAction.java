@@ -5,9 +5,8 @@ import pipe.utilities.Expander;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
-
-import javax.swing.JOptionPane;
 
 /**
  * @author Alex Charalambous, June 2010: Unfolds a coloured Petri net
@@ -38,6 +37,7 @@ public class UnfoldAction extends GuiAction
         }
         Expander expander = new Expander(ApplicationSettings.getApplicationView().getCurrentPetriNetView());
         PetriNetView unfolded = expander.unfold();
-        pipeApplicationView.createNewTab(expander.saveAsXml(unfolded), false);
+        ApplicationSettings.getApplicationController().createNewTabFromFile(
+                expander.saveAsXml(unfolded), false);
     }
 }

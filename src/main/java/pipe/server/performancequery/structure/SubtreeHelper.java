@@ -3,18 +3,18 @@
  */
 package pipe.server.performancequery.structure;
 
+import pipe.common.PetriNetNode;
+import pipe.common.SimpleOperationNode;
+import pipe.server.performancequery.QueryServerException;
+import pipe.server.performancequery.SimpleNode;
+import pipe.server.performancequery.StatusIndicatorUpdater;
+import pipe.server.performancequery.nodeanalyser.InvalidNodeAnalyserException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
-
-import pipe.common.SimpleOperationNode;
-import pipe.common.PetriNetNode;
-import pipe.server.performancequery.QueryServerException;
-import pipe.server.performancequery.SimpleNode;
-import pipe.server.performancequery.StatusIndicatorUpdater;
-import pipe.server.performancequery.nodeanalyser.InvalidNodeAnalyserException;
 
 /**
  * @author dazz

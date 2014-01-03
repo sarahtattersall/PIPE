@@ -3,16 +3,18 @@
  */
 package pipe.gui;
 
+import pipe.controllers.PetriNetController;
 import pipe.views.ArcView;
-import pipe.views.viewComponents.ArcPath;
 import pipe.views.ConnectableView;
 import pipe.views.PetriNetViewComponent;
-import pipe.views.PlaceView;
+import pipe.views.viewComponents.ArcPath;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -32,16 +34,26 @@ public class SelectionManager
    private static final Color selectionColorOutline = new Color(0, 0, 100);
    private final PetriNetTab _view;
    private boolean enabled = true;
+   private final PetriNetController petriNetController;
 
-   
-   public SelectionManager(PetriNetTab _view) {
+    /**
+     * Zoom as a percentage e.g. 100%
+     */
+   private int zoom = 100;
+
+   public SelectionManager(PetriNetTab _view, PetriNetController controller) {
       addMouseListener(this);
       addMouseMotionListener(this);
       addMouseWheelListener(this);
       this._view = _view;
+       this.petriNetController = controller;
    }
    
-   
+   public void setZoom(int zoom) {
+       this.zoom = zoom;
+   }
+
+
    public void updateBounds() {
       if (enabled) {
          setBounds(0,0, _view.getWidth(), _view.getHeight());
@@ -72,11 +84,27 @@ public class SelectionManager
       }
       
       // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-      for (PetriNetViewComponent pn : pns) {
-         pn.select(selectionRectangle);
-      }      
+//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//      for (PetriNetViewComponent pn : pns) {
+//         pn.select(selectionRectangle);
+//      }
+
+       Rectangle unzoomedRectangle = calculateUnzoomedSelection();
+       petriNetController.select(unzoomedRectangle);
    }
+
+
+    /**
+     * uses zoom and the ZoomController to calculate what the
+     * unzoomed selection rectangle would be
+     */
+    private Rectangle calculateUnzoomedSelection() {
+        int x = ZoomController.getUnzoomedValue((int) selectionRectangle.getX(), zoom);
+        int y = ZoomController.getUnzoomedValue((int) selectionRectangle.getY(), zoom);
+        int height = ZoomController.getUnzoomedValue((int) selectionRectangle.getHeight(), zoom);
+        int width = ZoomController.getUnzoomedValue((int) selectionRectangle.getWidth(), zoom);
+        return new Rectangle(x, y, width, height);
+    }
 
    
    public void paintComponent(Graphics g) {
@@ -91,44 +119,38 @@ public class SelectionManager
    
    public void deleteSelection() {
       // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-       for(PetriNetViewComponent pn : pns)
-       {
-           if(pn.isSelected())
-           {
-               pn.delete();
-           }
-       }
-      _view.updatePreferredSize();
+//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//       for(PetriNetViewComponent pn : pns)
+//       {
+//           if(pn.isSelected())
+//           {
+//               pn.delete();
+//           }
+//       }
+//      _view.updatePreferredSize();
+//       petriNetController.deleteSelection();
    }
 
    
    public void clearSelection() {
-      // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-      for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelectable()) {
-            pn.deselect();
-         }
-      }
+       petriNetController.deselectAll();
    }
 
    
    public void translateSelection(int transX, int transY) {
-      
+
       if (transX == 0 && transY == 0) {
          return;
       }
 
       // First see if translation will put anything at a negative location
-      Point point = null;
       Point topleft = null;
 
       // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+      List<PetriNetViewComponent> pns = _view.getPNObjects();
       for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelected()){
-            point = pn.getLocation();
+         if (petriNetController.isSelected(pn.getModel())){
+            Point point = pn.getLocation();
             if (topleft == null) {
                topleft = point;
             } else {
@@ -154,12 +176,14 @@ public class SelectionManager
             return;
          }
       }
-      
-      for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelected()) {
-            pn.translate(transX, transY);
-         }
-      }
+
+       petriNetController.translateSelected(new Point2D.Double(transX, transY));
+
+//      for (PetriNetViewComponent pn : pns) {
+//         if (pn.isSelected()) {
+//            pn.translate(transX, transY);
+//         }
+//      }
       _view.updatePreferredSize();
    }
 
@@ -170,7 +194,7 @@ public class SelectionManager
       // Get all the objects in the current window
       ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
       for (PetriNetViewComponent pn : pns) {
-         if (pn.isSelected()){
+         if (petriNetController.isSelected(pn.getModel())){
 //        	 if(pn instanceof ArcView)
 //        		 System.out.println("arc found");
         	 selection.add(pn);
@@ -263,40 +287,6 @@ public class SelectionManager
     */
    public void mouseMoved(MouseEvent e) {
        // Not needed
-   }   
-   
-   
-   public int getSelectionCount() {
-      Component netObj[] = _view.getComponents();
-      int selectionCount = 0;
-      // Get all the objects in the current window
-       for(Component aNetObj : netObj)
-       {
-           // Handle Arcs and Arc Points
-           if((aNetObj instanceof ArcView) && ((PetriNetViewComponent) aNetObj).isSelectable())
-           {
-               ArcView thisArcView = (ArcView) aNetObj;
-               ArcPath thisArcPath = thisArcView.getArcPath();
-               for(int j = 1; j < thisArcPath.getEndIndex(); j++)
-               {
-                   if(thisArcPath.isPointSelected(j))
-                   {
-                       selectionCount++;
-                   }
-               }
-           }
-
-           // Handle PlaceTransition Objects
-           if((aNetObj instanceof ConnectableView) &&
-                   ((PetriNetViewComponent) aNetObj).isSelectable())
-           {
-               if(((ConnectableView) aNetObj).isSelected())
-               {
-                   selectionCount++;
-               }
-           }
-       }
-      return selectionCount;
    }
 
 }

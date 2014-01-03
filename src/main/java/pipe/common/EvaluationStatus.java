@@ -5,7 +5,7 @@ package pipe.common;
 
 import pipe.modules.interfaces.QueryConstants;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.Serializable;
 
 /**

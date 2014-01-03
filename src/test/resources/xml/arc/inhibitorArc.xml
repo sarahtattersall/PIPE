@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><pnml>
+    <net id="Net-One" type="P/T net">
+        <arc id="Arc0" source="P0" target="T0">
+        	<name>
+        		<value>arc0</value>
+        		<graphics>
+        			<offset x="25" y="-19"/>
+        		</graphics>
+        	</name>
+        	<inscription>
+        		<graphics>
+        			<offset x="10" y="20"/>
+        		</graphics>
+        	</inscription>
+        	<tagged>false</tagged>
+        	<arcpath x="40" y="60" curvePoint="false"/>
+        	<type value="inhibitor"/>
+        </arc>
+    </net>
+</pnml>

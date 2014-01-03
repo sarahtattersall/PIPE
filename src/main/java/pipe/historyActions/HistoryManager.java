@@ -5,9 +5,12 @@ package pipe.historyActions;
 
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
+import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
-import pipe.views.*;
+import pipe.views.ArcView;
+import pipe.views.ConnectableView;
+import pipe.views.NormalArcView;
+import pipe.views.PetriNetViewComponent;
 import pipe.views.viewComponents.ArcPathPoint;
 
 import java.util.ArrayList;
@@ -30,20 +33,17 @@ public class HistoryManager
 
     private final ArrayList<ArrayList> edits = new ArrayList(UNDO_BUFFER_CAPACITY);
 
-    private final PetriNetTab _view;
-    private final PetriNetView _model;
+    private final PetriNet petriNet;
     private final PipeApplicationModel app;
 
 
     /**
      * Creates a new instance of HistoryManager
-     * @param _view
-     * @param _model
+     * @param petriNet
      */
-    public HistoryManager(PetriNetTab _view, PetriNetView _model)
+    public HistoryManager(PetriNet petriNet)
     {
-        this._view = _view;
-        this._model = _model;
+        this.petriNet = petriNet;
         app = ApplicationSettings.getApplicationModel();
         app.setUndoActionEnabled(false);
         app.setRedoActionEnabled(false);
@@ -133,7 +133,7 @@ public class HistoryManager
         undoneEdits = 0;
         app.setUndoActionEnabled(true);
         app.setRedoActionEnabled(false);
-        _view.setNetChanged(true);
+//        petriNetTab.setNetChanged(true);
 
         ArrayList<HistoryItem> compoundEdit = new ArrayList();
         edits.set(freePosition, compoundEdit);
@@ -206,15 +206,16 @@ public class HistoryManager
     // removes the arc currently being drawn if any
     private void checkArcBeingDrawn()
     {
-        ArcView arcBeingDrawn = _view._createArcView;
-        if(arcBeingDrawn != null)
-        {
-            if(arcBeingDrawn.getParent() != null)
-            {
-                arcBeingDrawn.getParent().remove(arcBeingDrawn);
-            }
-            _view._createArcView = null;
-        }
+        //TODO: WORK OUT WAHT THIS DOS
+//        ArcView arcBeingDrawn = petriNetTab._createArcView;
+//        if(arcBeingDrawn != null)
+//        {
+//            if(arcBeingDrawn.getParent() != null)
+//            {
+//                arcBeingDrawn.getParent().remove(arcBeingDrawn);
+//            }
+//            petriNetTab._createArcView = null;
+//        }
     }
 
 
@@ -251,7 +252,7 @@ public class HistoryManager
                     ArcView anArc = (ArcView) arcsTo.next();
                     if(!anArc.isDeleted())
                     {
-                        addEdit(new DeletePetriNetObject(anArc, _view, _model));
+                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNet));
                     }
                 }
                 //
@@ -262,12 +263,12 @@ public class HistoryManager
                     ArcView anArc = (ArcView) arcsFrom.next();
                     if(!anArc.isDeleted())
                     {
-                        addEdit(new DeletePetriNetObject(anArc, _view, _model));
+                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNet));
                     }
                 }
 
             }
-            else if(pn instanceof NormalArcView)
+            else if(pn instanceof ArcView)
             {
                 if(((NormalArcView) pn).hasInverse())
                 {
@@ -276,38 +277,23 @@ public class HistoryManager
                         addEdit(((NormalArcView) pn).split());
                         NormalArcView inverse = ((NormalArcView) pn).getInverse();
                         addEdit(((NormalArcView) pn).clearInverse());
-                        addEdit(new DeletePetriNetObject(inverse, _view, _model));
+                        addEdit(new DeletePetriNetObject(inverse.getModel(), petriNet));
                         inverse.delete();
                     }
                     else
                     {
-                        addEdit(((NormalArcView) pn).clearInverse());
+                        //TODO: PUT BACK IN?
+//                        addEdit(((ArcView) pn).clearInverse());
                     }
                 }
             }
 
             if(!pn.isDeleted())
             {
-                addEdit(new DeletePetriNetObject(pn, _view, _model));
-                pn.delete();
+                //TODO: COMMENT BACK IN
+//                addEdit(new DeletePetriNetObject(pn, petriNetTab, petriNet));
+//                pn.delete();
             }
         }
     }
-
-
-    private void debug()
-    {
-        int i = startOfBuffer;
-        System.out.println("");
-        for(int k = 0; k < fillCount; k++)
-        {
-            Iterator<HistoryItem> currentEdit = edits.get(i).iterator();
-            while(currentEdit.hasNext())
-            {
-                System.out.println("[" + i + "]" + currentEdit.next().toString());
-            }
-            i = (i + 1) % UNDO_BUFFER_CAPACITY;
-        }
-    }
-
 }
