@@ -1,7 +1,6 @@
 package pipe.gui;
 
-import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.historyActions.AnimationHistory;
 import pipe.models.PetriNet;
 import pipe.models.component.Transition;
 import pipe.views.ArcView;
@@ -26,9 +25,13 @@ public class Animator {
     private int numberSequences;
     private final List<Transition> firedTransitions = new ArrayList<Transition>();
     private int count = 0;
+    private PetriNet petriNet;
+    private AnimationHistory animationHistory;
 
 
-    public Animator() {
+    public Animator(PetriNet petriNet, AnimationHistory animationHistory) {
+        this.petriNet = petriNet;
+        this.animationHistory = animationHistory;
         timer = new Timer(0, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
@@ -82,6 +85,7 @@ public class Animator {
 
 
     public void startRandomFiring() {
+        animationHistory.clearStepsForward();
         if (getNumberSequences() > 0) {
             // stop animation
             setNumberSequences(0);
@@ -110,10 +114,7 @@ public class Animator {
      * Randomly fires one of the enabled transitions.
      */
     public void doRandomFiring() {
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        PetriNetController petriNetController = controller.getActivePetriNetController();
-        PetriNet net = petriNetController.getPetriNet();
-        Transition transition = net.getRandomTransition();
+        Transition transition = petriNet.getRandomTransition();
         fireTransition(transition);
     }
 
@@ -122,10 +123,11 @@ public class Animator {
      * Steps back through previously fired transitions
      */
     public void stepBack() {
-        if (count > 0) {
-            Transition previousTransition = firedTransitions.get(--count);
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            applicationView.getCurrentPetriNetView().getModel().fireTransitionBackwards(previousTransition);
+        if (animationHistory.isStepBackAllowed()) {
+            Transition transition = animationHistory.getCurrentTransition();
+            animationHistory.stepBackwards();
+            petriNet.fireTransitionBackwards(transition);
+
         }
     }
 
@@ -134,15 +136,16 @@ public class Animator {
      * Steps forward through previously fired transitions
      */
     public void stepForward() {
-        if (count < firedTransitions.size()) {
-            Transition nextTransition = firedTransitions.get(count++);
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            applicationView.getCurrentPetriNetView().getModel().fireTransition(nextTransition);
+        if (isStepForwardAllowed()) {
+            int nextPosition = animationHistory.getCurrentPosition() + 1;
+            Transition transition = animationHistory.getTransition(nextPosition);
+            petriNet.fireTransition(transition);
+            animationHistory.stepForward();
         }
     }
 
     /**
-     * This method keeps track of a fired transition in the AnimationHistory
+     * This method keeps track of a fired transition in the AnimationHistoryView
      * object, enables transitions after the recent firing, and properly displays
      * the transitions.
      *
@@ -157,42 +160,10 @@ public class Animator {
      * The method is renamed back to fireTransition.
      */
     public void fireTransition(Transition transition) {
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        PetriNetController petriNetController = controller.getActivePetriNetController();
-        PetriNet net = petriNetController.getPetriNet();
-
-        PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-
-        applicationView.getAnimationHistory().addHistoryItem(transition.getName());
-        net.fireTransition(transition);
-
-        if (count == firedTransitions.size()) {
-            firedTransitions.add(transition);
-            count++;
-        } else {
-            removeStoredTransitions(count + 1);
-            firedTransitions.set(count++, transition);
-
-        }
+        animationHistory.clearStepsForward();
+        animationHistory.addHistoryItem(transition);
+        petriNet.fireTransition(transition);
     }
-
-    public void updateArcAndTran() {
-        Collection<ArcView> arcs = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getArcsArrayList();
-        for (ArcView arc : arcs) {
-            arc.repaint();
-        }
-        Collection<TransitionView> trans = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTransitionsArrayList();
-        for (TransitionView transition : trans) {
-            transition.update();
-        }
-    }
-
-    private void removeStoredTransitions(int start) {
-        for (int i = start; i < firedTransitions.size(); i++) {
-            firedTransitions.remove(i);
-        }
-    }
-
 
     public synchronized int getNumberSequences() {
         return numberSequences;
@@ -202,5 +173,14 @@ public class Animator {
     public synchronized void setNumberSequences(int numberSequences) {
         this.numberSequences = numberSequences;
     }
+
+    public boolean isStepForwardAllowed() {
+        return animationHistory.isStepForwardAllowed();
+    }
+
+    public boolean isStepBackAllowed() {
+        return animationHistory.isStepBackAllowed();
+    }
+
 
 }

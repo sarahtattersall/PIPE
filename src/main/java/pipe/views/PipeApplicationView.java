@@ -27,8 +27,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-//
-// Steve Doubleday (Sept 2013):  refactored to simplify testing of TokenSetController changes
+
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer, Serializable {
     public final StatusBar statusBar;
@@ -43,9 +42,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final JTabbedPane frameForPetriNetTabs = new JTabbedPane();
     private final ArrayList<PetriNetTab> petriNetTabs;
 
-    private static AnimationHistory animationHistory;
-    private final Animator animator;
-
+    private static AnimationHistoryView animationHistoryView;
     private final PipeApplicationController applicationController;
     private final PipeApplicationModel applicationModel;
 
@@ -58,7 +55,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         statusBar = null;
         _moduleAndAnimationHistoryFrame = null;
         petriNetTabs = null;
-        animator = null;
         applicationController = null;
         applicationModel = null;
     }
@@ -98,8 +94,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setBackground(java.awt.Color.WHITE);
 
         Grid.enableGrid();
-
-        animator = new Animator();
 
         ModuleManager moduleManager = new ModuleManager();
         JTree moduleTree = moduleManager.getModuleTree();
@@ -271,7 +265,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     /**
      * Creates an example file menu
-     *
      */
     private JMenu createExampleFileMenu() {
         JMenu exampleMenu = new JMenu("Examples");
@@ -570,7 +563,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 }
 
 //                if (_petriNetView != null) {
-                    refreshTokenClassChoices();
+                refreshTokenClassChoices();
 //                }
             }
 
@@ -733,9 +726,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     public void setRandomAnimationMode(boolean on) {
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        Animator animator = petriNetController.getAnimator();
         if (!on) {
-            applicationModel.stepforwardAction.setEnabled(getAnimationHistory().isStepForwardAllowed());
-            applicationModel.stepbackwardAction.setEnabled(getAnimationHistory().isStepBackAllowed());
+            applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
+            applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
         } else {
             applicationModel.stepbackwardAction.setEnabled(false);
             applicationModel.stepforwardAction.setEnabled(false);
@@ -746,7 +741,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void setAnimationMode(boolean on) throws Exception {
         applicationModel.randomAnimateAction.setSelected(false);
-        animator.setNumberSequences(0);
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        Animator animator = petriNetController.getAnimator();
         applicationModel.startAction.setSelected(on);
         getCurrentTab().changeAnimationMode(on);
         if (on) {
@@ -762,13 +758,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         } else {
             applicationModel.setEditionAllowed(true);
             statusBar.changeText(statusBar.textforDrawing);
-            getAnimator().restoreModel();
+            animator.restoreModel();
             removeAnimationHistory();
             applicationModel
                     .enableActions(true, applicationController.isPasteEnabled()); // renables all non-animation buttons
         }
-        getAnimator().updateArcAndTran();
-
     }
 
     public void setTitle(String title) {
@@ -850,23 +844,19 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
 
     /**
-     * Creates a new animationHistory text area, and returns a reference to it
+     * Creates a new animationHistoryView text area, and returns a reference to it
      */
     void addAnimationHistory() {
-        try {
-            animationHistory = new AnimationHistory("Animation history\n");
-            animationHistory.setEditable(false);
+        animationHistoryView = getCurrentTab().getAnimationView();
+        animationHistoryView.setEditable(false);
 
-            _scroller = new JScrollPane(animationHistory);
-            _scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
+        _scroller = new JScrollPane(animationHistoryView);
+        _scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
 
-            _moduleAndAnimationHistoryFrame.setBottomComponent(_scroller);
+        _moduleAndAnimationHistoryFrame.setBottomComponent(_scroller);
 
-            _moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
-            _moduleAndAnimationHistoryFrame.setDividerSize(8);
-        } catch (javax.swing.text.BadLocationException be) {
-            be.printStackTrace();
-        }
+        _moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
+        _moduleAndAnimationHistoryFrame.setDividerSize(8);
     }
 
 
@@ -878,8 +868,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
-    public AnimationHistory getAnimationHistory() {
-        return animationHistory;
+    public AnimationHistoryView getAnimationHistory() {
+        return animationHistoryView;
     }
 
 
@@ -919,10 +909,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         PetriNetTab petriNetTab = petriNetTabs.get(fileNo);
         petriNetTab._appFile = modelfile;
-    }
-
-    public Animator getAnimator() {
-        return animator;
     }
 }
 

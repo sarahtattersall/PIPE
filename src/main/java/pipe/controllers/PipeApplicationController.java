@@ -4,11 +4,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import pipe.actions.ActionEnum;
 import pipe.actions.GuiAction;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.CopyPasteManager;
-import pipe.gui.PetriNetTab;
+import pipe.gui.*;
 import pipe.handlers.MouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
+import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
@@ -24,6 +23,7 @@ import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
 import pipe.views.PetriNetView;
 
+import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
@@ -33,18 +33,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PipeApplicationController
-{
+public class PipeApplicationController {
 
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
     private final CopyPasteManager copyPasteManager;
 
     //TODO: Circular dependency between these two classes
-    private  PipeApplicationModel applicationModel;
+    private PipeApplicationModel applicationModel;
     private PetriNetTab activeTab;
 
-    public PipeApplicationController(CopyPasteManager copyPasteManager)
-    {
+    public PipeApplicationController(CopyPasteManager copyPasteManager) {
         this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
     }
@@ -53,8 +51,7 @@ public class PipeApplicationController
         this.applicationModel = applicationModel;
     }
 
-    private PetriNet loadPetriNetFromFile(File file, boolean isTN)
-    {
+    private PetriNet loadPetriNetFromFile(File file, boolean isTN) {
 
         try {
             // BK 10/02/07: Changed loading of PNML to accomodate new
@@ -118,10 +115,23 @@ public class PipeApplicationController
     }
 
     private PetriNetTab createNewTab(PetriNet net) {
-        PetriNetController controller = new PetriNetController(net, new HistoryManager(net));
-        PetriNetView view = new PetriNetView(controller, net);
+        AnimationHistory animationHistory = new AnimationHistory();
+        Animator animator = new Animator(net, animationHistory);
 
-        PetriNetTab petriNetTab = new PetriNetTab(view, controller);
+        PetriNetController controller = new PetriNetController(net, new HistoryManager(net), animator);
+        PetriNetView view = new PetriNetView(controller, net);
+        AnimationHistoryView animationHistoryView;
+        try {
+            animationHistoryView = new AnimationHistoryView(animationHistory, "Animation History");
+        } catch (BadLocationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException();
+        }
+
+        animationHistory.registerObserver(animationHistoryView);
+
+
+        PetriNetTab petriNetTab = new PetriNetTab(view, controller, animationHistoryView);
         netControllers.put(petriNetTab, controller);
 
         MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), controller, net, petriNetTab, view);
@@ -132,22 +142,7 @@ public class PipeApplicationController
         net.registerObserver(view);
 //        TODO: WHY? also why should I add a the pipe application view as an obsever?
         view.addObserver(petriNetTab);
-        //view.addObserver(ApplicationSettings.getApplicationView());
 
-
-
-//        int freeSpace = addEmptyPetriNetTo(petriNetTabs);
-//
-//        String name = "";
-
-
-        //TODO: This assumes a 1:1 relationship. Store in map?
-//        PetriNetView petriNetView = getPetriNetView(petriNetTabs.size() - 1);
-//        PetriNetTab petriNetTab = getTab(petriNetTabs.size() - 1);
-
-//        petriNetView.addObserver(petriNetTab); // Add the view as Observer
-//        petriNetView.addObserver(this); // Add the app window as
-        // observer
 
         String name;
         if (net.getPnmlName().isEmpty()) {
@@ -160,16 +155,9 @@ public class PipeApplicationController
 
         ApplicationSettings.getApplicationView().addNewTab(name, petriNetTab);
 
-//        frameForPetriNetTabs.addTab(name, null, scroller, null);
-//        frameForPetriNetTabs.setSelectedIndex(freeSpace);
-
         petriNetTab.updatePreferredSize();
 
 
-//        refreshTokenClassChoices(); // Steve Doubleday: ensure combo box reflects tokens that were loaded
-//        setTitle(name);// Change the program caption
-//        frameForPetriNetTabs.setTitleAt(freeSpace, name);
-        //applicationModel.selectAction.actionPerformed(null);
         net.notifyObservers();
         return petriNetTab;
     }
@@ -178,33 +166,27 @@ public class PipeApplicationController
         return applicationModel.getAction(actionType);
     }
 
-    public CopyPasteManager getCopyPasteManager()
-    {
+    public CopyPasteManager getCopyPasteManager() {
         return copyPasteManager;
     }
 
-    public boolean isPasteEnabled()
-    {
+    public boolean isPasteEnabled() {
         return copyPasteManager.pasteEnabled();
     }
 
-    public boolean isPasteInProgress()
-    {
+    public boolean isPasteInProgress() {
         return copyPasteManager.pasteInProgress();
     }
 
-    public void cancelPaste()
-    {
+    public void cancelPaste() {
         copyPasteManager.cancelPaste();
     }
 
-    public void copy(ArrayList selection, PetriNetTab appView)
-    {
+    public void copy(ArrayList selection, PetriNetTab appView) {
         copyPasteManager.doCopy(selection, appView);
     }
 
-    public void showPasteRectangle(PetriNetTab appView)
-    {
+    public void showPasteRectangle(PetriNetTab appView) {
         copyPasteManager.showPasteRectangle(appView);
     }
 
@@ -221,7 +203,7 @@ public class PipeApplicationController
     }
 
     public void saveCurrentPetriNet(File outFile, boolean saveFunctional) throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        PetriNetController petriNetController =  getActivePetriNetController();
+        PetriNetController petriNetController = getActivePetriNetController();
         PetriNet petriNet = petriNetController.getPetriNet();
 
 

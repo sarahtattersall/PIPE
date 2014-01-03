@@ -2,6 +2,7 @@ package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.models.PetriNet;
 import pipe.views.GroupTransitionView;
@@ -39,14 +40,11 @@ public class AnimationHandler
          
          if (SwingUtilities.isLeftMouseButton(e)
                  && (transitionView.getModel().isEnabled())) {
-             ApplicationSettings.getApplicationView().getAnimationHistory().clearStepsForward();
-
              PipeApplicationController controller = ApplicationSettings.getApplicationController();
              PetriNetController petriNetController = controller.getActivePetriNetController();
-             PetriNet petriNet = petriNetController.getPetriNet();
-             petriNet.fireTransition(transitionView.getModel());
+             Animator animator = petriNetController.getAnimator();
+             animator.fireTransition(transitionView.getModel());
 
-//             ApplicationSettings.getApplicationView().getAnimator().fireTransition(transitionView);
              ApplicationSettings.getApplicationView().setRandomAnimationMode(false);
             if(!_lastGroupTransitionView.isEmpty()){
             	for(GroupTransitionView groupTransitionView : _lastGroupTransitionView){

@@ -1,6 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.gui.Animator;
 import pipe.historyActions.*;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
@@ -29,10 +30,12 @@ public class PetriNetController implements IController, Serializable {
     private final ArcStrategy inhibitorStrategy = new InhibitorStrategy();
     private final ArcStrategy forwardNormalStrategy;
     private final ArcStrategy backwardsNormalStrategy;
+    private Animator animator;
 
 
-    public PetriNetController(PetriNet model, HistoryManager historyManager) {
+    public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator) {
         petriNet = model;
+        this.animator = animator;
         if (model.getTokens().size() > 0) {
             selectedToken = model.getTokens().iterator().next();
         }
@@ -345,5 +348,9 @@ public class PetriNetController implements IController, Serializable {
     }
     public Token getSelectedToken() {
         return selectedToken;
+    }
+
+    public Animator getAnimator() {
+        return animator;
     }
 }

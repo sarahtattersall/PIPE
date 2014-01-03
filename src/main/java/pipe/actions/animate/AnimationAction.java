@@ -1,6 +1,8 @@
 package pipe.actions.animate;
 
-import pipe.gui.AnimationHistory;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
+import pipe.gui.AnimationHistoryView;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.models.PipeApplicationModel;
@@ -15,15 +17,14 @@ public class AnimationAction extends AnimateAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-        AnimationHistory animationHistory = pipeApplicationView.getAnimationHistory();
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
 
-
-        Animator a = pipeApplicationView.getAnimator();
-        if(a.getNumberSequences() > 0)
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        Animator animator = petriNetController.getAnimator();
+        if(animator.getNumberSequences() > 0)
         {
-            a.setNumberSequences(0); // stop animation
+            animator.setNumberSequences(0); // stop animation
             setSelected(false);
         }
         else
@@ -32,9 +33,7 @@ public class AnimationAction extends AnimateAction {
             applicationModel.stepforwardAction.setEnabled(false);
             applicationModel.randomAction.setEnabled(false);
             setSelected(true);
-            animationHistory.clearStepsForward();
-            pipeApplicationView.getAnimator().startRandomFiring();
-            pipeApplicationView.getAnimator().updateArcAndTran();
+            animator.startRandomFiring();
         }
     }
 }

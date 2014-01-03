@@ -36,12 +36,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     private boolean _zoomCalled = true;
     private final Point viewPosition = new Point(0, 0);
     private final PetriNetController petriNetController;
+    private final AnimationHistoryView animationHistoryView;
 
 
-    public PetriNetTab(PetriNetView petriNetView, PetriNetController controller)
+    public PetriNetTab(PetriNetView petriNetView, PetriNetController controller, AnimationHistoryView animationHistoryView)
     {
         _petriNetView = petriNetView;
         petriNetController = controller;
+        this.animationHistoryView = animationHistoryView;
 
         _pipeApplicationView = ApplicationSettings.getApplicationView();
         setLayout(null);
@@ -327,6 +329,9 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         return zoomControl.getPercent();
     }
 
+    public AnimationHistoryView getAnimationView() {
+        return animationHistoryView;
+    }
 }
 
 

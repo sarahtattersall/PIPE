@@ -4,8 +4,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
+import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
@@ -27,6 +29,7 @@ public class PetriNetControllerTest {
     private PetriNet net;
 
     private HistoryManager mockHistoryManager;
+    private Animator mockAnimator;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -35,7 +38,8 @@ public class PetriNetControllerTest {
     public void setUp() {
         net = new PetriNet();
         mockHistoryManager = mock(HistoryManager.class);
-        controller = new PetriNetController(net, mockHistoryManager);
+        mockAnimator = mock(Animator.class);
+        controller = new PetriNetController(net, mockHistoryManager, mockAnimator);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.
