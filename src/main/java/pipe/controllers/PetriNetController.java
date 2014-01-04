@@ -286,13 +286,7 @@ public class PetriNetController implements IController, Serializable {
      * @throw RuntimeException if the token does not exist
      */
     private Token getTokenForName(String name) {
-        //TODO: Find an O(1) way to do this.... maybe map id to name?
-        for (Token token : petriNet.getTokens()) {
-            if (token.getId().equals(name)) {
-                return token;
-            }
-        }
-        throw new RuntimeException("No " + name + " token found in current petri net");
+        return petriNet.getToken(name);
     }
 
     /**

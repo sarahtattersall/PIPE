@@ -165,6 +165,7 @@ public class PetriNet extends Observable implements IObserver {
     }
 
     public Token getToken(String tokenId) {
+        //TODO: Find an O(1) name to do this, perhaps Map?
         for (Token token : tokens) {
             if (token.getId().equals(tokenId)) {
                 return token;
