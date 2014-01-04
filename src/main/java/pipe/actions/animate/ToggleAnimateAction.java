@@ -33,6 +33,8 @@ public class ToggleAnimateAction extends AnimateAction {
             {
                 applicationModel.restoreMode();
                 PetriNetViewComponent.ignoreSelection(false);
+                PetriNet petriNet = controller.getPetriNet();
+                petriNet.markEnabledTransitions();
             }
             else
             {
