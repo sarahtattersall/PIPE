@@ -59,7 +59,6 @@ public class HistoryManager
 
         if(undoneEdits > 0)
         {
-            checkArcBeingDrawn();
             checkMode();
 
             // The currentEdit to redo
@@ -85,7 +84,6 @@ public class HistoryManager
 
         if(fillCount > 0)
         {
-            checkArcBeingDrawn();
             checkMode();
 
             if(--freePosition < 0)
@@ -201,23 +199,6 @@ public class HistoryManager
         }
         return lastAdd;
     }
-
-
-    // removes the arc currently being drawn if any
-    private void checkArcBeingDrawn()
-    {
-        //TODO: WORK OUT WAHT THIS DOS
-//        ArcView arcBeingDrawn = petriNetTab._createArcView;
-//        if(arcBeingDrawn != null)
-//        {
-//            if(arcBeingDrawn.getParent() != null)
-//            {
-//                arcBeingDrawn.getParent().remove(arcBeingDrawn);
-//            }
-//            petriNetTab._createArcView = null;
-//        }
-    }
-
 
     private void checkMode()
     {
