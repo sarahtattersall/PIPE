@@ -128,12 +128,6 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
         repaint();
     }
 
-
-    @Override
-    public void updateEndPoint(ArcView arcView) {
-    }
-
-
     @Override
     public void showEditor() {
         // TODO Auto-generated method stub

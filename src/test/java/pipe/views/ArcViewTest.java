@@ -42,7 +42,7 @@ public class ArcViewTest
         when(mockArc.getStartPoint()).thenReturn(start);
         when(mockArc.getEndPoint()).thenReturn(end);
 
-        arcView = new NormalArcView(0, 0, 0, 0, null, null, new LinkedList<MarkingView>(),"id", true,  mockArc, mockController);
+        arcView = new NormalArcView(mockArc, mockController);
         ArcPath path = arcView.getArcPath();
 
         assertEquals(2, path.getNumPoints());

@@ -37,7 +37,7 @@ public class NormalArcViewBuilder {
 //        }
 
         NormalArcView view =
-                new NormalArcView(startX, startY, endX, endY, null, null, markings, arc.getId(), arc.isTagged(), arc, controller);
+                new NormalArcView(arc, controller);
         return view;
 
     }

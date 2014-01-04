@@ -174,9 +174,6 @@ public class Transition extends Connectable<Place, Transition> implements Serial
         notifyObservers();
 	}
 
-
-
-
     public int getAngle() {
         return angle;
     }

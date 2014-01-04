@@ -14,7 +14,6 @@ import pipe.models.PipeObservable;
 import pipe.models.component.Arc;
 import pipe.models.component.Token;
 import pipe.models.interfaces.IObserver;
-import pipe.utilities.Copier;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.ArcPathPoint;
 import pipe.views.viewComponents.NameLabel;
@@ -28,12 +27,9 @@ import java.util.List;
 
 public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         implements Cloneable, IObserver, Serializable, Observer {
-    private static final long serialVersionUID = 1L;
+
     List<NameLabel> weightLabel = new LinkedList<NameLabel>();
     List<MarkingView> _weight = new LinkedList<MarkingView>();
-
-    private ConnectableView _source = null;
-    private ConnectableView _target = null;
 
     final ArcPath myPath = new ArcPath(this);
 
@@ -44,12 +40,10 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     final int zoomGrow = 10;
     private boolean _noFunctionalWeights = true;
 
-    ArcView(double startPositionXInput, double startPositionYInput,
-            double endPositionXInput, double endPositionYInput,
-            ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, T model,
+    ArcView(T model,
             PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
+
         Point2D.Double startPoint = model.getStartPoint();
         myPath.addPoint(startPoint.getX(), startPoint.getY(),
                 ArcPathPoint.STRAIGHT);
@@ -60,10 +54,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         myPath.createPath();
 
         updateBounds();
-        _id = idInput;
-        setSource(sourceInput);
-        setTarget(targetInput);
-        setWeight(Copier.mediumCopy(weightInput));
     }
 
     private double zoom(double x) {
@@ -77,7 +67,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     }
 
     ArcView(ConnectableView newSource) {
-        _source = newSource;
         myPath.addPoint();
         myPath.addPoint();
         myPath.createPath();
@@ -87,12 +76,15 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         super();
     }
 
+
+    //TODO: DELETE
     void setSource(ConnectableView sourceInput) {
-        _source = sourceInput;
+         throw new RuntimeException("Should be setting models source");
     }
 
+    //TODO: DELETE
     public void setTarget(ConnectableView targetInput) {
-        _target = targetInput;
+        throw new RuntimeException("Should be setting models target");
     }
 
     public HistoryItem setWeight(List<MarkingView> weightInput) {
@@ -127,76 +119,63 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     }
 
     public String getId() {
-        if (_id != null) {
-            return _id;
-        }
-        else {
-            if (_source != null && _target != null) {
-                return _source.getId() + " to " + _target.getId();
-            }
-        }
-        return "";
+        return model.getId();
     }
 
     public String getName() {
         return getId();
     }
 
+    //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
     public ConnectableView getSource() {
-        return _source;
+        return null;
     }
 
+
+    //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
     public ConnectableView getTarget() {
-        return _target;
-    }
-
-    public ConnectableView getTheOtherEndFor(ConnectableView connectableView) {
-        if (_source == connectableView) {
-            return _target;
-        }
-        return _source;
-    }
-
-    public double getStartPositionX() {
-        return myPath.getPoint(0).getX();
-    }
-
-    public double getStartPositionY() {
-        return myPath.getPoint(0).getY();
+        return null;
     }
 
     public int getSimpleWeight() {
         return 1;
     }
 
+    //TODO: DELETE
     public void updateArcPosition() {
         //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
         //        setSourceLocation(points.first.x, points.first.y);
         //        setTargetLocation(points.second.x, points.second.y);
-        if (_source != null) {
-            _source.updateEndPoint(this);
-        }
-        if (_target != null) {
-            _target.updateEndPoint(this);
-        }
-        myPath.createPath();
+//        if (_source != null) {
+//            _source.updateEndPoint(this);
+//        }
+//        if (_target != null) {
+//            _target.updateEndPoint(this);
+//        }
+//        myPath.createPath();
     }
 
-    public void setEndPoint(double x, double y, boolean type) {
-        myPath.setPointLocation(myPath.getEndIndex(), x, y);
+
+    public void setEndPoint(boolean type) {
+        Point2D.Double endPoint = model.getEndPoint();
+        myPath.setPointLocation(myPath.getEndIndex(), endPoint);
         myPath.setPointType(myPath.getEndIndex(), type);
         updateArcPosition();
     }
 
-    public void setTargetLocation(double x, double y) {
-        myPath.setPointLocation(myPath.getEndIndex(), x, y);
+
+    //TODO: DELETE
+    public void setTargetLocation() {
+        Point2D.Double endPoint = model.getEndPoint();
+        myPath.setPointLocation(myPath.getEndIndex(), endPoint);
         myPath.createPath();
         updateBounds();
         repaint();
     }
 
-    public void setSourceLocation(double x, double y) {
-        myPath.setPointLocation(0, x, y);
+    public void setSourceLocation() {
+        Point2D.Double startPoint = model.getStartPoint();
+        myPath.setPointLocation(0, startPoint);
         myPath.createPath();
         updateBounds();
         repaint();
@@ -206,10 +185,10 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
      * Updates the bounding box of the arc component based on the arcs bounds
      */
     void updateBounds() {
-        _bounds = myPath.getBounds();
-        _bounds.grow(getComponentDrawOffset() + zoomGrow,
+        bounds = myPath.getBounds();
+        bounds.grow(getComponentDrawOffset() + zoomGrow,
                 getComponentDrawOffset() + zoomGrow);
-        setBounds(_bounds);
+        setBounds(bounds);
     }
 
     public ArcPath getArcPath() {
@@ -496,12 +475,9 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
 
     @Override
     public void update() {
-        Point2D.Double startCoord = zoomPoint(model.getStartPoint());
-        setSourceLocation(startCoord.getX(), startCoord.getY());
-
-        Point2D.Double endCoord = zoomPoint(model.getEndPoint());
+        setSourceLocation();
         //TODO: THIS FALSE IS MEANT TO BE 'SHIFT UP'
-        setEndPoint(endCoord.getX(), endCoord.getY(), false);
+        setEndPoint(false);
         updateWeights();
         updateBounds();
         repaint();

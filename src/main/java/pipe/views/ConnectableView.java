@@ -83,10 +83,10 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         double scaleFactor = ZoomController.getScaleFactor(_zoomPercentage);
         double x = model.getX() * scaleFactor;
         double y = model.getY() * scaleFactor;
-        _bounds.setBounds((int) x, (int) y, (int) (model.getHeight() * scaleFactor),
+        bounds.setBounds((int) x, (int) y, (int) (model.getHeight() * scaleFactor),
                 (int) (model.getHeight() * scaleFactor));
-        _bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
-        setBounds(_bounds);
+        bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
+        setBounds(bounds);
     }
 
     public void addInbound(ArcView newArcView) {
@@ -112,15 +112,6 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     public void updateConnected() {
 //        updateArcs(model.outboundArcs());
 //        updateArcs(model.inboundArcs());
-    }
-
-    private void updateArcs(LinkedList<ArcView> arcsFrom) {
-        for (ArcView someArcView : arcsFrom) {
-            updateEndPoint(someArcView);
-            if (someArcView != null) {
-                someArcView.updateArcPosition();
-            }
-        }
     }
 
     public LinkedList<ArcView> outboundArcs() {
@@ -186,8 +177,6 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
     public Iterator getConnectToIterator() {
         return model.inboundArcs().iterator();
     }
-
-    public abstract void updateEndPoint(ArcView arcView);
 
     int getCopyNumber() {
         if (_original != null) {

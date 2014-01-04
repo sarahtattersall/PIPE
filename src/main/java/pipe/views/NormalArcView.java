@@ -28,14 +28,11 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
     private Boolean tagged = false;
     private ArcController _controller;
 
-    public NormalArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
-            double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, boolean taggedInput, Arc model,
+    public NormalArcView(Arc model,
             PetriNetController controller) {
 
-        super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
-                weightInput, idInput, model, controller);
-        setTagged(taggedInput);
+        super(model, controller);
+        setTagged(model.isTagged());
     }
 
     /**
@@ -56,8 +53,6 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
         this.myPath.createPath();
         this.updateBounds();
         this._id = arc._id;
-        this.setSource(arc.getSource());
-        this.setTarget(arc.getTarget());
         this.setWeight(Copier.mediumCopy(arc.getWeight()));
         this.inView = arc.inView;
         this.joined = arc.joined;

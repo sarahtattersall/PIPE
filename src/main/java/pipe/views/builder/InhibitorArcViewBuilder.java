@@ -23,13 +23,8 @@ public class InhibitorArcViewBuilder {
     ConnectableView targetInput, LinkedList<MarkingView> weightInput,
     String idInput, boolean taggedInput, NormalArc model) {     */
     public InhibitorArcView build() {
-        double startX = arc.getSource().getX();
-        double startY = arc.getSource().getY();
-        double endX = arc.getTarget().getX();
-        double endY = arc.getTarget().getY();
         InhibitorArcView view =
-                new InhibitorArcView(startX, startY, endX, endY, null, null, new LinkedList<MarkingView>(), arc.getId(),
-                        arc, controller);
+                new InhibitorArcView(arc, controller);
         return view;
 
     }

@@ -27,38 +27,11 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
     private final static int OVAL_Y = -8;
     private final static int OVAL_WIDTH = 8;
     private final static int OVAL_HEIGHT = 8;
-    //NOU-PERE
 
 
-    /**
-     * Create Petri-Net Arc object
-     *
-     * @param startPositionXInput Start X-axis Position
-     * @param startPositionYInput Start Y-axis Position
-     * @param endPositionXInput   End X-axis Position
-     * @param endPositionYInput   End Y-axis Position
-     * @param sourceInput         Arc source
-     * @param targetInput         Arc target
-     * @param weightInput
-     * @param idInput             Arc id
-     */
-    public InhibitorArcView(double startPositionXInput, double startPositionYInput, double endPositionXInput,
-            double endPositionYInput, ConnectableView sourceInput, ConnectableView targetInput,
-            List<MarkingView> weightInput, String idInput, Arc model, PetriNetController controller) {
-        super(startPositionXInput, startPositionYInput, endPositionXInput, endPositionYInput, sourceInput, targetInput,
-                weightInput, idInput, model, controller);
+    public InhibitorArcView(Arc model, PetriNetController controller) {
+        super(model, controller);
     }
-
-
-    /**
-     * Create Petri-Net Arc object
-     *
-     * @param newSource
-     */
-    public InhibitorArcView(ConnectableView newSource) {
-        super(newSource);
-    }
-
 
     private InhibitorArcView(InhibitorArcView arcView) {
         weightLabel = new LinkedList<NameLabel>();
@@ -73,8 +46,6 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
         this.myPath.createPath();
         this.updateBounds();
         this._id = arcView._id;
-        this.setSource(arcView.getSource());
-        this.setTarget(arcView.getTarget());
         this.setWeight(Copier.mediumCopy(arcView.getWeight()));
     }
 

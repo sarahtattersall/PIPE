@@ -75,7 +75,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         rotate(angleInput);
         updateBounds();
-        updateEndPoints();
     }
 
     public TransitionView(TransitionController transitionController, Transition model) {
@@ -418,116 +417,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             if (((ArcAngleCompare) arcIterator.next())._arcView == arcView) {
                 arcIterator.remove();
             }
-        }
-    }
-
-    public void updateEndPoint(ArcView arcView) {
-        boolean match = false;
-
-        Iterator arcIterator = _arcAngleList.iterator();
-        while (arcIterator.hasNext()) {
-            ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            if (thisArc._arcView == arcView || !arcView.inView()) {
-                thisArc.calcAngle();
-                match = true;
-                break;
-            }
-        }
-
-        if (!match) {
-            _arcAngleList.add(new ArcAngleCompare(arcView, this));
-        }
-
-        Collections.sort(_arcAngleList);
-        updateEndPoints();
-    }
-
-    void updateEndPoints() {
-        ArrayList top = new ArrayList();
-        ArrayList bottom = new ArrayList();
-        ArrayList left = new ArrayList();
-        ArrayList right = new ArrayList();
-
-        Iterator arcIterator = _arcAngleList.iterator();
-        while (arcIterator.hasNext()) {
-            ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            double thisAngle = thisArc.angle - Math.toRadians(model.getAngle());
-            if (Math.cos(thisAngle) > (_rootThreeOverTwo)) {
-                top.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(model.getAngle() + 90);
-            } else if (Math.cos(thisAngle) < -_rootThreeOverTwo) {
-                bottom.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(model.getAngle() + 270);
-            } else if (Math.sin(thisAngle) > 0) {
-                left.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(model.getAngle() + 180);
-            } else {
-                right.add(thisArc);
-                thisArc._arcView.setPathToTransitionAngle(model.getAngle());
-            }
-        }
-
-        AffineTransform transform = AffineTransform.getRotateInstance(Math.toRadians(model.getAngle() + Math.PI));
-        Point2D.Double transformed = new Point2D.Double();
-
-        transform.concatenate(ZoomController.getTransform(_zoomPercentage));
-
-        arcIterator = top.iterator();
-        transform.transform(new Point2D.Double(1, 0.5 * model.getHeight()), transformed);
-        while (arcIterator.hasNext()) {
-            ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            } else {
-                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            }
-        }
-
-        arcIterator = bottom.iterator();
-        transform.transform(new Point2D.Double(0, -0.5 * model.getHeight()), transformed);
-        while (arcIterator.hasNext()) {
-            ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            } else {
-                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            }
-        }
-
-        arcIterator = left.iterator();
-        double inc = model.getHeight() / (left.size() + 1);
-        double current = model.getHeight() / 2 - inc;
-        while (arcIterator.hasNext()) {
-            ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            transform.transform(new Point2D.Double(-0.5 * model.getWidth(), current + 1), transformed);
-            if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            } else {
-                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            }
-            current -= inc;
-        }
-
-        inc = model.getHeight() / (right.size() + 1);
-        current = -model.getHeight() / 2 + inc;
-        arcIterator = right.iterator();
-        while (arcIterator.hasNext()) {
-            ArcAngleCompare thisArc = (ArcAngleCompare) arcIterator.next();
-            transform.transform(new Point2D.Double(+0.5 * model.getWidth(), current), transformed);
-            if (thisArc.sourceOrTarget()) {
-                thisArc._arcView.setTargetLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            } else {
-                thisArc._arcView.setSourceLocation(model.getX() + centreOffsetLeft() + transformed.x,
-                        model.getY() + centreOffsetTop() + transformed.y);
-            }
-            current += inc;
         }
     }
 

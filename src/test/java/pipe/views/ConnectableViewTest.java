@@ -55,10 +55,6 @@ public class ConnectableViewTest {
         }
 
         @Override
-        public void updateEndPoint(ArcView arcView) {
-        }
-
-        @Override
         public void showEditor() {
         }
 

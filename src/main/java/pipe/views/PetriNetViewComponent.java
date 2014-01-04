@@ -22,7 +22,7 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
     private boolean _draggable;
     protected boolean _copyPasteable;
     protected static boolean _ignoreSelection;
-    protected Rectangle _bounds;
+    protected Rectangle bounds;
     protected boolean _deleted;
     protected boolean _markedAsDeleted;
     private ZoomController zoomControl;
@@ -41,7 +41,7 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         _draggable = true;
         _copyPasteable = true;
         _ignoreSelection = false;
-        _bounds = new Rectangle();
+        bounds = new Rectangle();
         _deleted = false;
         _markedAsDeleted = false;
         _zoomPercentage = 100;

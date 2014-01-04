@@ -404,22 +404,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
     }
 
-    public void updateEndPoint(ArcView arcView) {
-        if (arcView.getSource() == this) {
-            arcView.setSourceLocation(model.getX() + (getDiameter() * 0.5), model.getY() + (getDiameter() * 0.5));
-            double angle = arcView.getArcPath().getStartAngle();
-            arcView.setSourceLocation(model.getX() + centreOffsetLeft() - (0.5 * getDiameter() * (Math.sin(angle))),
-                    model.getY() + centreOffsetTop() + (0.5 * getDiameter() * (Math.cos(angle))));
-        } else {
-            // Make it calculate the angle from the centre of the place rather
-            // than the current target point
-            arcView.setTargetLocation(model.getX() + (getDiameter() * 0.5), model.getY() + (getDiameter() * 0.5));
-            double angle = arcView.getArcPath().getEndAngle();
-            arcView.setTargetLocation(model.getX() + centreOffsetLeft() - (0.5 * getDiameter() * (Math.sin(angle))),
-                    model.getY() + centreOffsetTop() + (0.5 * getDiameter() * (Math.cos(angle))));
-        }
-    }
-
     public void toggleAttributesVisible() {
         _attributesVisible = !_attributesVisible;
         update();

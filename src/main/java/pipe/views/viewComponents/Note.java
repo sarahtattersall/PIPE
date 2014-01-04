@@ -89,13 +89,13 @@ public abstract class Note extends PetriNetViewComponent implements Translatable
         note.setLocation((int) noteRect.getX() + (rectWidth - note.getWidth()) / 2,
                 (int) noteRect.getY() + (rectHeight - note.getHeight()) / 2);
 
-        _bounds.setBounds(ZoomController.getZoomedValue(originalX, _zoomPercentage) - 20,
+        bounds.setBounds(ZoomController.getZoomedValue(originalX, _zoomPercentage) - 20,
                 ZoomController.getZoomedValue(originalY, _zoomPercentage) - 20,
                 (int) ((rectWidth + Constants.RESERVED_BORDER + Constants.ANNOTATION_SIZE_OFFSET) *
                         ZoomController.getScaleFactor(_zoomPercentage)) + 20,
                 (int) ((rectHeight + Constants.RESERVED_BORDER +
                         +Constants.ANNOTATION_SIZE_OFFSET) * ZoomController.getScaleFactor(_zoomPercentage)) + 20);
-        setBounds(_bounds);
+        setBounds(bounds);
     }
 
 
