@@ -21,56 +21,16 @@ import java.util.*;
  */
 public class Animator {
 
-    private final Timer timer;
-    private int numberSequences;
-    private final List<Transition> firedTransitions = new ArrayList<Transition>();
-    private int count = 0;
-    private PetriNet petriNet;
-    private AnimationHistory animationHistory;
+    private final Timer timer = new Timer(0, new TimedTransitionActionListener());;
+    private int numberSequences = 0;
+    private final PetriNet petriNet;
+    private final AnimationHistory animationHistory;
 
 
     public Animator(PetriNet petriNet, AnimationHistory animationHistory) {
         this.petriNet = petriNet;
         this.animationHistory = animationHistory;
-        timer = new Timer(0, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-                if ((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode()) {
-                    timer.stop();
-//                    applicationView.setAnimationMode(false);
-                    return;
-                }
-                try {
-                    doRandomFiring();
-                } catch (Exception e) {
-                    //TODO: HANDLE EXCEPTION
-                    e.printStackTrace();
-                }
-                setNumberSequences(getNumberSequences() - 1);
-            }
-        });
     }
-
-
-
-    /**
-     * Called at end of animation and resets all Transitions to false and
-     * unhighlighted
-     */
-//    private void disableTransitions(PetriNet net) {
-//        for (Transition transition : net.getTransitions()) {
-//            transition.disable();
-//        }
-//    }
-
-
-    /**
-     * Stores model at start of animation
-     */
-    public void storeModel(PetriNetView petriNetView) {
-        petriNetView.storeCurrentMarking();
-    }
-
 
     /**
      * Restores model at end of animation and sets all transitions to false and
@@ -80,7 +40,6 @@ public class Animator {
         PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
         petriNetView.restorePreviousMarking();
 //        disableTransitions(petriNetView.getModel());
-        count = 0;
     }
 
 
@@ -103,12 +62,6 @@ public class Animator {
             }
         }
     }
-
-
-    public void stopRandomFiring() {
-        numberSequences = 0;
-    }
-
 
     /**
      * Randomly fires one of the enabled transitions.
@@ -185,5 +138,18 @@ public class Animator {
 
     public void clear() {
         animationHistory.clear();
+    }
+
+    private class TimedTransitionActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(final ActionEvent actionEvent) {
+            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+            if ((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode()) {
+                timer.stop();
+                return;
+            }
+            doRandomFiring();
+            setNumberSequences(getNumberSequences() - 1);
+        }
     }
 }
