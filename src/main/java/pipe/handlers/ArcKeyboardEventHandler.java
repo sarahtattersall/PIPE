@@ -31,21 +31,14 @@ public class ArcKeyboardEventHandler
       switch (e.getKeyCode()) {
          case KeyEvent.VK_META:
          case KeyEvent.VK_WINDOWS:
-            // I don't know if it's a java's bug or if I have a configuration 
-            // problem with component linux box, but there is an issue with the
-            // Windows key under linux, so the space key is used as a provisional
-            // solution
-         case KeyEvent.VK_SPACE: //provisional
+         case KeyEvent.VK_SPACE:
             ((PetriNetTab) _arcViewBeingDrawn.getParent()).setMetaDown(true);
             break;
             
          case KeyEvent.VK_ESCAPE:
          case KeyEvent.VK_DELETE:
             PetriNetTab aView = ((PetriNetTab) _arcViewBeingDrawn.getParent());
-            //TODO: CANCEL ARC
              petriNetController.cancelArcCreation();
-            //aView._createArcView = null;
-            //_arcViewBeingDrawn.delete();
              if ((ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_PLACE) ||
                     (ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_TRANSITION)) {
                  ApplicationSettings.getApplicationModel().resetMode();
