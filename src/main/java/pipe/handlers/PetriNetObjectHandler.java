@@ -23,8 +23,7 @@ import java.awt.event.MouseEvent;
  * @author unknown
  */
 public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriNetViewComponent>
-        extends javax.swing.event.MouseInputAdapter
-{
+        extends javax.swing.event.MouseInputAdapter {
     final Container contentPane;
     final T component;
     final V viewComponent;
@@ -41,8 +40,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
     protected final PetriNetController petriNetController;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(V viewComponent, Container contentpane, T obj, PetriNetController controller)
-    {
+    PetriNetObjectHandler(V viewComponent, Container contentpane, T obj, PetriNetController controller) {
         this.viewComponent = viewComponent;
         contentPane = contentpane;
         component = obj;
@@ -54,11 +52,11 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
     /**
      * Creates the popup menu that the user will see when they right click on a
      * component
+     *
      * @param e
      * @return
      */
-    protected JPopupMenu getPopup(MouseEvent e)
-    {
+    protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem =
                 new JMenuItem(new DeletePetriNetObjectAction(component));
@@ -70,37 +68,30 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
 
     /**
      * Displays the popup menu
+     *
      * @param e
      */
-    private void checkForPopup(MouseEvent e)
-    {
-        if(e.isPopupTrigger())
-        {
+    private void checkForPopup(MouseEvent e) {
+        if (e.isPopupTrigger()) {
             JPopupMenu m = getPopup(e);
             m.show(viewComponent, e.getX(), e.getY());
         }
     }
 
 
-    public void mousePressed(MouseEvent e)
-    {
+    public void mousePressed(MouseEvent e) {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-        if(applicationModel.isEditionAllowed() && enablePopup)
-        {
+        if (applicationModel.isEditionAllowed() && enablePopup) {
             checkForPopup(e);
         }
 
-        if(!SwingUtilities.isLeftMouseButton(e))
-        {
+        if (!SwingUtilities.isLeftMouseButton(e)) {
             return;
         }
 
-        if(applicationModel.getMode() == Constants.SELECT)
-        {
-            if(!petriNetController.isSelected(component))
-            {
-                if(!e.isShiftDown())
-                {
+        if (applicationModel.getMode() == Constants.SELECT) {
+            if (!petriNetController.isSelected(component)) {
+                if (!e.isShiftDown()) {
                     ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
                 }
                 petriNetController.select(component);
@@ -115,45 +106,24 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
      * Event handler for when the user releases the mouse, used in conjunction
      * with mouseDragged and mouseReleased to implement the moving action
      */
-    public void mouseReleased(MouseEvent e)
-    {
+    public void mouseReleased(MouseEvent e) {
         // Have to check for popup here as well as on pressed for crossplatform!!
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-        if(applicationModel.isEditionAllowed() && enablePopup)
-        {
+        if (applicationModel.isEditionAllowed() && enablePopup) {
             checkForPopup(e);
         }
 
-        if(!SwingUtilities.isLeftMouseButton(e))
-        {
+        if (!SwingUtilities.isLeftMouseButton(e)) {
             return;
         }
 
-        if(applicationModel.getMode() == Constants.SELECT)
-        {
-            if(isDragging)
-            {
-                isDragging = false;
-                petriNetController.getHistoryManager().translateSelection(
-                        ((PetriNetTab) contentPane).getSelectionObject().getSelection(),
-                        totalX,
-                        totalY);
-                totalX = 0;
-                totalY = 0;
-            }
-            else
-            {
-                if(!justSelected)
-                {
-                    if(e.isShiftDown())
-                    {
-                        petriNetController.deselect(component);
-                    }
-                    else
-                    {
-                        ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
-                        petriNetController.select(component);
-                    }
+        if (applicationModel.getMode() == Constants.SELECT) {
+            if (!justSelected) {
+                if (e.isShiftDown()) {
+                    petriNetController.deselect(component);
+                } else {
+                    ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
+                    petriNetController.select(component);
                 }
             }
         }
@@ -164,20 +134,15 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
     /**
      * Handler for dragging objects around
      */
-    public void mouseDragged(MouseEvent e)
-    {
+    public void mouseDragged(MouseEvent e) {
 
-        if(!SwingUtilities.isLeftMouseButton(e))
-        {
+        if (!SwingUtilities.isLeftMouseButton(e)) {
             return;
         }
 
-        if(ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT)
-        {
-            if(component.isDraggable())
-            {
-                if(!isDragging)
-                {
+        if (ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT) {
+            if (component.isDraggable()) {
+                if (!isDragging) {
                     isDragging = true;
                 }
             }

@@ -15,6 +15,7 @@ import pipe.views.viewComponents.ArcPathPoint;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -31,9 +32,8 @@ public class HistoryManager
     private int startOfBuffer = 0; // index of the eldest element
     private int undoneEdits = 0;
 
-    private final ArrayList<ArrayList> edits = new ArrayList(UNDO_BUFFER_CAPACITY);
+    private final ArrayList<List<HistoryItem>> edits = new ArrayList<List <HistoryItem>>(UNDO_BUFFER_CAPACITY);
 
-    private final PetriNet petriNet;
     private final PipeApplicationModel app;
 
 
@@ -43,7 +43,6 @@ public class HistoryManager
      */
     public HistoryManager(PetriNet petriNet)
     {
-        this.petriNet = petriNet;
         app = ApplicationSettings.getApplicationModel();
         app.setUndoActionEnabled(false);
         app.setRedoActionEnabled(false);
@@ -94,7 +93,7 @@ public class HistoryManager
             undoneEdits++;
 
             // The currentEdit to undo (reverse order)
-            ArrayList<HistoryItem> currentEdit = edits.get(freePosition);
+            List<HistoryItem> currentEdit = edits.get(freePosition);
             for(int i = currentEdit.size() - 1; i >= 0; i--)
             {
                 currentEdit.get(i).undo();
@@ -122,7 +121,7 @@ public class HistoryManager
 
     public void newEdit()
     {
-        ArrayList lastEdit = edits.get(currentIndex());
+        List<HistoryItem> lastEdit = edits.get(currentIndex());
         if((lastEdit != null) && (lastEdit.isEmpty()))
         {
             return;
@@ -131,9 +130,8 @@ public class HistoryManager
         undoneEdits = 0;
         app.setUndoActionEnabled(true);
         app.setRedoActionEnabled(false);
-//        petriNetTab.setNetChanged(true);
 
-        ArrayList<HistoryItem> compoundEdit = new ArrayList();
+        List<HistoryItem> compoundEdit = new ArrayList<HistoryItem>();
         edits.set(freePosition, compoundEdit);
         freePosition = (freePosition + 1) % UNDO_BUFFER_CAPACITY;
         if(fillCount < UNDO_BUFFER_CAPACITY)
@@ -150,9 +148,9 @@ public class HistoryManager
     public void addEdit(HistoryItem historyItem)
     {  //FIXME can throw if edits list is not yet full of compoundEdits (still has nulls)
     	
-        ArrayList<HistoryItem> compoundEdit = edits.get(currentIndex());
+        List<HistoryItem> compoundEdit = edits.get(currentIndex());
         compoundEdit.add(historyItem);
-        //debug();
+
     }
 
 
@@ -161,34 +159,6 @@ public class HistoryManager
         newEdit(); // mark for a new "transtaction""
         addEdit(historyItem);
     }
-
-
-    public void deleteSelection(PetriNetViewComponent pn)
-    {
-        deleteObject(pn);
-    }
-
-
-    public void deleteSelection(ArrayList<PetriNetViewComponent> selection)
-    {
-        for(PetriNetViewComponent pn : selection)
-        {
-            deleteObject(pn);
-        }
-    }
-
-
-    public void translateSelection(ArrayList objects, int transX, int transY)
-    {
-        newEdit(); // new "transaction""
-        Iterator<PetriNetViewComponent> iterator = objects.iterator();
-        while(iterator.hasNext())
-        {
-            addEdit(new TranslatePetriNetObject(
-                    iterator.next(), transX, transY));
-        }
-    }
-
 
     private int currentIndex()
     {
@@ -206,75 +176,6 @@ public class HistoryManager
                 (app.getMode() == Constants.FAST_TRANSITION))
         {
             app.resetMode();
-        }
-    }
-
-
-    private void deleteObject(PetriNetViewComponent pn)
-    {
-        if(pn instanceof ArcPathPoint)
-        {
-            if(!((ArcPathPoint) pn).getArcPath().getArc().isSelected())
-            {
-                addEdit(new DeleteArcPathPoint(
-                        ((ArcPathPoint) pn).getArcPath().getArc(),
-                        (ArcPathPoint) pn, ((ArcPathPoint) pn).getIndex()));
-            }
-        }
-        else
-        {
-            if(pn instanceof ConnectableView)
-            {
-                //
-                Iterator arcsTo =
-                        ((ConnectableView) pn).getConnectToIterator();
-                while(arcsTo.hasNext())
-                {
-                    ArcView anArc = (ArcView) arcsTo.next();
-                    if(!anArc.isDeleted())
-                    {
-                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNet));
-                    }
-                }
-                //
-                Iterator arcsFrom =
-                        ((ConnectableView) pn).getConnectFromIterator();
-                while(arcsFrom.hasNext())
-                {
-                    ArcView anArc = (ArcView) arcsFrom.next();
-                    if(!anArc.isDeleted())
-                    {
-                        addEdit(new DeletePetriNetObject(anArc.getModel(), petriNet));
-                    }
-                }
-
-            }
-            else if(pn instanceof ArcView)
-            {
-                if(((NormalArcView) pn).hasInverse())
-                {
-                    if(((NormalArcView) pn).hasInvisibleInverse())
-                    {
-                        addEdit(((NormalArcView) pn).split());
-                        NormalArcView inverse = ((NormalArcView) pn).getInverse();
-                        addEdit(((NormalArcView) pn).clearInverse());
-                        addEdit(new DeletePetriNetObject(inverse.getModel(), petriNet));
-                        inverse.delete();
-                    }
-                    else
-                    {
-                        //TODO: PUT BACK IN?
-//                        addEdit(((ArcView) pn).clearInverse());
-                    }
-                }
-            }
-
-            if(!pn.isDeleted())
-            {
-                //TODO: COMMENT BACK IN
-//                addEdit(new DeletePetriNetObject(pn, petriNetTab, petriNet));
-//                pn.delete();
-            }
         }
     }
 }

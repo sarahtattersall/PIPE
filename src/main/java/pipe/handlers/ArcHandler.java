@@ -219,7 +219,7 @@ public class ArcHandler
          } else {
             historyManager.addNewEdit(_inverse.split());
          }
-         historyManager.deleteSelection(_arcView);
+//         historyManager.deleteSelection(_arcView);
 
          _arcView.delete();
       }
