@@ -7,11 +7,6 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
-import pipe.views.ArcView;
-import pipe.views.ConnectableView;
-import pipe.views.NormalArcView;
-import pipe.views.PetriNetViewComponent;
-import pipe.views.viewComponents.ArcPathPoint;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,8 +18,7 @@ import java.util.List;
  *
  * @author pere
  */
-public class HistoryManager
-{
+public class HistoryManager {
     private static final int UNDO_BUFFER_CAPACITY = Constants.DEFAULT_BUFFER_SIZE;
 
     private int freePosition = 0; //index for new edits
@@ -32,45 +26,40 @@ public class HistoryManager
     private int startOfBuffer = 0; // index of the eldest element
     private int undoneEdits = 0;
 
-    private final ArrayList<List<HistoryItem>> edits = new ArrayList<List <HistoryItem>>(UNDO_BUFFER_CAPACITY);
+    private final ArrayList<List<HistoryItem>> edits = new ArrayList<List<HistoryItem>>(UNDO_BUFFER_CAPACITY);
 
     private final PipeApplicationModel app;
 
 
     /**
      * Creates a new instance of HistoryManager
+     *
      * @param petriNet
      */
-    public HistoryManager(PetriNet petriNet)
-    {
+    public HistoryManager(PetriNet petriNet) {
         app = ApplicationSettings.getApplicationModel();
         app.setUndoActionEnabled(false);
         app.setRedoActionEnabled(false);
-        for(int i = 0; i < UNDO_BUFFER_CAPACITY; i++)
-        {
+        for (int i = 0; i < UNDO_BUFFER_CAPACITY; i++) {
             edits.add(null);
         }
     }
 
 
-    public void doRedo()
-    {
+    public void doRedo() {
 
-        if(undoneEdits > 0)
-        {
+        if (undoneEdits > 0) {
             checkMode();
 
             // The currentEdit to redo
             Iterator<HistoryItem> currentEdit = edits.get(freePosition).iterator();
-            while(currentEdit.hasNext())
-            {
+            while (currentEdit.hasNext()) {
                 currentEdit.next().redo();
             }
             freePosition = (freePosition + 1) % UNDO_BUFFER_CAPACITY;
             fillCount++;
             undoneEdits--;
-            if(undoneEdits == 0)
-            {
+            if (undoneEdits == 0) {
                 app.setRedoActionEnabled(false);
             }
             app.setUndoActionEnabled(true);
@@ -78,15 +67,12 @@ public class HistoryManager
     }
 
 
-    public void doUndo()
-    {
+    public void doUndo() {
 
-        if(fillCount > 0)
-        {
+        if (fillCount > 0) {
             checkMode();
 
-            if(--freePosition < 0)
-            {
+            if (--freePosition < 0) {
                 freePosition += UNDO_BUFFER_CAPACITY;
             }
             fillCount--;
@@ -94,13 +80,11 @@ public class HistoryManager
 
             // The currentEdit to undo (reverse order)
             List<HistoryItem> currentEdit = edits.get(freePosition);
-            for(int i = currentEdit.size() - 1; i >= 0; i--)
-            {
+            for (int i = currentEdit.size() - 1; i >= 0; i--) {
                 currentEdit.get(i).undo();
             }
 
-            if(fillCount == 0)
-            {
+            if (fillCount == 0) {
                 app.setUndoActionEnabled(false);
             }
             app.setRedoActionEnabled(true);
@@ -108,8 +92,7 @@ public class HistoryManager
     }
 
 
-    public void clear()
-    {
+    public void clear() {
         freePosition = 0;
         fillCount = 0;
         startOfBuffer = 0;
@@ -119,11 +102,9 @@ public class HistoryManager
     }
 
 
-    public void newEdit()
-    {
+    public void newEdit() {
         List<HistoryItem> lastEdit = edits.get(currentIndex());
-        if((lastEdit != null) && (lastEdit.isEmpty()))
-        {
+        if ((lastEdit != null) && (lastEdit.isEmpty())) {
             return;
         }
 
@@ -134,47 +115,38 @@ public class HistoryManager
         List<HistoryItem> compoundEdit = new ArrayList<HistoryItem>();
         edits.set(freePosition, compoundEdit);
         freePosition = (freePosition + 1) % UNDO_BUFFER_CAPACITY;
-        if(fillCount < UNDO_BUFFER_CAPACITY)
-        {
+        if (fillCount < UNDO_BUFFER_CAPACITY) {
             fillCount++;
-        }
-        else
-        {
+        } else {
             startOfBuffer = (startOfBuffer + 1) % UNDO_BUFFER_CAPACITY;
         }
     }
 
 
-    public void addEdit(HistoryItem historyItem)
-    {  //FIXME can throw if edits list is not yet full of compoundEdits (still has nulls)
-    	
+    public void addEdit(HistoryItem historyItem) {  //FIXME can throw if edits list is not yet full of compoundEdits (still has nulls)
+
         List<HistoryItem> compoundEdit = edits.get(currentIndex());
         compoundEdit.add(historyItem);
 
     }
 
 
-    public void addNewEdit(HistoryItem historyItem)
-    {
+    public void addNewEdit(HistoryItem historyItem) {
         newEdit(); // mark for a new "transtaction""
         addEdit(historyItem);
     }
 
-    private int currentIndex()
-    {
+    private int currentIndex() {
         int lastAdd = freePosition - 1;
-        if(lastAdd < 0)
-        {
+        if (lastAdd < 0) {
             lastAdd += UNDO_BUFFER_CAPACITY;
         }
         return lastAdd;
     }
 
-    private void checkMode()
-    {
-        if((app.getMode() == Constants.FAST_PLACE) ||
-                (app.getMode() == Constants.FAST_TRANSITION))
-        {
+    private void checkMode() {
+        if ((app.getMode() == Constants.FAST_PLACE) ||
+                (app.getMode() == Constants.FAST_TRANSITION)) {
             app.resetMode();
         }
     }
