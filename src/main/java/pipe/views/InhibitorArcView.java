@@ -4,16 +4,13 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.component.Arc;
-import pipe.models.component.Token;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -33,20 +30,29 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
         super(model, controller);
     }
 
-    private InhibitorArcView(InhibitorArcView arcView) {
-        weightLabel = new LinkedList<NameLabel>();
-        for (int i = 0; i < 100; i++) {
-            weightLabel.add(new NameLabel(_zoomPercentage));
-        }
+    @Override
+    protected void arcSpecificUpdate() {
 
-        for (int i = 0; i <= arcView.myPath.getEndIndex(); i++) {
-            this.myPath.addPoint(arcView.myPath.getPoint(i).getX(), arcView.myPath.getPoint(i).getY(),
-                    arcView.myPath.getPointType(i));
+    }
+
+    @Override
+    protected void arcSpecificDelete() {
+
+    }
+
+    @Override
+    protected void arcSpecificAdd() {
+
+    }
+
+    private InhibitorArcView(InhibitorArcView arcView) {
+        for (int i = 0; i <= arcView.arcPath.getEndIndex(); i++) {
+            this.arcPath.addPoint(arcView.arcPath.getPoint(i).getX(), arcView.arcPath.getPoint(i).getY(),
+                    arcView.arcPath.getPointType(i));
         }
-        this.myPath.createPath();
+        this.arcPath.createPath();
         this.updateBounds();
         this._id = arcView._id;
-        this.setWeight(Copier.mediumCopy(arcView.getWeight()));
     }
 
 
@@ -85,11 +91,11 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
 //                new InhibitorArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, this.getWeight(),
 //                        source.getId() + " to " + target.getId(), arc, petriNetController);
 //
-//        copy.myPath.delete();
-//        for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
-//            copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
-//                    this.myPath.getPointType(i));
-//            //copy.myPath.selectPoint(i);
+//        copy.arcPath.delete();
+//        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
+//            copy.arcPath.addPoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
+//                    this.arcPath.getPointType(i));
+//            //copy.arcPath.selectPoint(i);
 //        }
 //
 //        source.addOutbound(copy);
@@ -115,8 +121,8 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.translate(getComponentDrawOffset() + zoomGrow - myPath.getBounds().getX(),
-                getComponentDrawOffset() + zoomGrow - myPath.getBounds().getY());
+        g2.translate(getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getX(),
+                getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getY());
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
@@ -125,11 +131,11 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
         }
 
         g2.setStroke(new BasicStroke(0.01f * _zoomPercentage));
-        g2.draw(myPath);
+        g2.draw(arcPath);
 
-        g2.translate(myPath.getPoint(myPath.getEndIndex()).getX(), myPath.getPoint(myPath.getEndIndex()).getY());
+        g2.translate(arcPath.getPoint(arcPath.getEndIndex()).getX(), arcPath.getPoint(arcPath.getEndIndex()).getY());
 
-        g2.rotate(myPath.getEndAngle() + Math.PI);
+        g2.rotate(arcPath.getEndAngle() + Math.PI);
         g2.setColor(java.awt.Color.WHITE);
 
         AffineTransform reset = g2.getTransform();

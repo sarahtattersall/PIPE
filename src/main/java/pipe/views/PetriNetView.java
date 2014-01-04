@@ -1525,38 +1525,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         return false;
     }
 
-    public int getEnablingDegree(TransitionView tran) {
-
-        int enablingDegree = Integer.MAX_VALUE;
-
-        Iterator to = tran.getConnectToIterator();
-        while (to.hasNext()) {
-            ArcView arcTo = ((ArcView) to.next());
-            PlaceView source = ((PlaceView) arcTo.getSource());
-
-            List<MarkingView> weight = arcTo.getWeight();
-            List<MarkingView> sourceMarking = source.getCurrentMarkingView();
-            for (int i = 0; i < weight.size(); i++) {
-                int current = sourceMarking.get(i).getCurrentMarking();
-
-                for (MarkingView w : weight) {
-                    if (w.getToken().getID().equals(sourceMarking.get(i).getToken().getID())) {
-                        if (w.getCurrentMarking() == 0) {
-                            enablingDegree = 0;
-                        } else {
-                            int ed = (int) Math.floor(current / w.getCurrentMarking());
-                            if (ed < enablingDegree) {
-                                enablingDegree = ed;
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-        return enablingDegree;
-    }
-
     @Override
     public void update(Observable arg0, Object arg1) {
         if ((arg0.equals(_tokenSetController)) && (arg1 instanceof TokenView)) {

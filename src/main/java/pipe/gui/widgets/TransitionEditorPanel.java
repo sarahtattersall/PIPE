@@ -3,6 +3,8 @@ package pipe.gui.widgets;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
+import pipe.models.component.Arc;
+import pipe.models.component.Place;
 import pipe.models.component.Transition;
 import pipe.views.ArcView;
 import pipe.views.PetriNetView;
@@ -612,11 +614,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     }
 
     private boolean checkIfArcsAreFunctional() {
-        Iterator to = transitionController.inboundArcs().iterator();
-        while (to.hasNext()) {
-            ArcView arcTo = ((ArcView) to.next());
-            arcTo.checkIfFunctionalWeightExists();
-            if (arcTo.isWeightFunctional()) {
+        for (Arc<Place, Transition> arc : transitionController.inboundArcs()) {
+            if (arc.hasFunctionalWeight()) {
                 return true;
             }
         }

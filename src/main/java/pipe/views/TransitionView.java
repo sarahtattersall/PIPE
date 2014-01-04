@@ -838,8 +838,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public double getRate() {
         if (isInfiniteServer()) {
-            return (double) ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(
-                    this);
+            return model.getEnablingDegree(new ExprEvaluator(petriNetController.getPetriNet()));
         }
 
         if (model.getRateExpr() == null) {

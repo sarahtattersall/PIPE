@@ -7,12 +7,15 @@ import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.historyActions.*;
 import pipe.models.component.Arc;
+import pipe.models.component.Token;
 import pipe.utilities.Copier;
+import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
+import java.awt.List;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
 
 public class NormalArcView extends ArcView<Arc> implements Serializable {
@@ -28,32 +31,118 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
     private Boolean tagged = false;
     private ArcController _controller;
 
+    private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
+    private final java.util.List<MarkingView> _weight = new LinkedList<MarkingView>();
+
     public NormalArcView(Arc model,
             PetriNetController controller) {
-
         super(model, controller);
         setTagged(model.isTagged());
     }
 
     /**
-     * Create Petri-Net Arc object
-     *
-     * @param newSource
+     * Updates the weights associated with the arc
      */
+    @Override
+    protected void arcSpecificUpdate() {
+       updateWeights();
+    }
+
+    @Override
+    protected void arcSpecificDelete() {
+        for (NameLabel label : weightLabel) {
+            removeLabelFromParentContainer(label);
+        }
+    }
+
+    @Override
+    protected void arcSpecificAdd() {
+        for (NameLabel label : weightLabel) {
+            getParent().add(label);
+        }
+    }
+
+    @Override
+    public void zoomUpdate(int percent) {
+        super.zoomUpdate(percent);
+        for (NameLabel label : weightLabel) {
+            label.zoomUpdate(percent);
+            label.updateSize();
+        }
+
+    }
+
+    private void updateWeights() {
+        removeCurrentWeights();
+        createWeightLabels();
+        setWeightLabelPosition();
+
+        Container parent = getParent();
+        if (parent != null) {
+            addWeightLabelsToContainer(parent);
+        }
+    }
+
+    protected void setWeightLabelPosition() {
+        int originalX = (int) (arcPath.midPoint.x);
+        int originalY = (int) (arcPath.midPoint.y) - 10;
+        int x = originalX;
+        int y = originalY;
+        int yCount = 0;
+
+        for (NameLabel label : weightLabel) {
+            if (yCount >= 4) {
+                y = originalY;
+                x += 17;
+                yCount = 0;
+            }
+            label.setPosition(x + label.getWidth() / 2 - 4, y);
+            y += 10;
+            yCount++;
+        }
+    }
+
+
+    private void removeCurrentWeights() {
+        for (NameLabel name : weightLabel) {
+            removeLabelFromParentContainer(name);
+        }
+        weightLabel.clear();
+    }
+
+    private void createWeightLabels() {
+        final Map<Token, String> weights = model.getTokenWeights();
+        for (Map.Entry<Token, String> entry : weights.entrySet()) {
+            Token token = entry.getKey();
+            String weight = entry.getValue();
+
+            NameLabel label = new NameLabel(_zoomPercentage);
+            label.setText(weight);
+            label.setColor(token.getColor());
+            label.updateSize();
+            weightLabel.add(label);
+        }
+    }
+
+    private void addWeightLabelsToContainer(Container container) {
+        for (NameLabel label : weightLabel) {
+            container.add(label);
+        }
+    }
+
     public NormalArcView(ConnectableView newSource) {
         super(newSource);
     }
 
     public NormalArcView(NormalArcView arc) {
 
-        for (int i = 0; i <= arc.myPath.getEndIndex(); i++) {
-            this.myPath
-                    .addPoint(arc.myPath.getPoint(i).getX(), arc.myPath.getPoint(i).getY(), arc.myPath.getPointType(i));
+        for (int i = 0; i <= arc.arcPath.getEndIndex(); i++) {
+            this.arcPath
+                    .addPoint(arc.arcPath.getPoint(i).getX(), arc.arcPath.getPoint(i).getY(), arc.arcPath.getPointType(i));
         }
-        this.myPath.createPath();
+        this.arcPath.createPath();
         this.updateBounds();
         this._id = arc._id;
-        this.setWeight(Copier.mediumCopy(arc.getWeight()));
         this.inView = arc.inView;
         this.joined = arc.joined;
     }
@@ -63,6 +152,7 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
         this.model = model;
         this.model.registerObserver(this);
     }
+
 
     public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
 //        ConnectableView source = this.getSource().getLastCopy();
@@ -99,12 +189,12 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
 //                                target.getId(), false,
 //                        new Arc(source.getModel(), target.getModel(), this.model.getTokenWeights()), petriNetController);
 //
-//        copy.myPath.delete();
-//        for (int i = 0; i <= this.myPath.getEndIndex(); i++) {
-//            copy.myPath.addPoint(this.myPath.getPoint(i).getX() + despX, this.myPath.getPoint(i).getY() + despY,
-//                    this.myPath.getPointType(i));
+//        copy.arcPath.delete();
+//        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
+//            copy.arcPath.addPoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
+//                    this.arcPath.getPointType(i));
 //            //TODO: REIMPLEMENT
-////            copy.myPath.selectPoint(i);
+////            copy.arcPath.selectPoint(i);
 //        }
 //
 //        source.addOutbound(copy);
@@ -271,8 +361,8 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.translate(getComponentDrawOffset() + zoomGrow - myPath.getBounds().getX(),
-                getComponentDrawOffset() + zoomGrow - myPath.getBounds().getY());
+        g2.translate(getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getX(),
+                getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getY());
 
         AffineTransform reset = g2.getTransform();
 
@@ -283,19 +373,19 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
         }
 
         if (joined) {
-            g2.translate(myPath.getPoint(0).getX(), myPath.getPoint(0).getY());
-            g2.rotate(myPath.getStartAngle() + Math.PI);
+            g2.translate(arcPath.getPoint(0).getX(), arcPath.getPoint(0).getY());
+            g2.rotate(arcPath.getStartAngle() + Math.PI);
             g2.transform(ZoomController.getTransform(_zoomPercentage));
             g2.fillPolygon(head);
             g2.setTransform(reset);
         }
 
         g2.setStroke(new BasicStroke(0.01f * _zoomPercentage));
-        g2.draw(myPath);
+        g2.draw(arcPath);
 
-        g2.translate(myPath.getPoint(myPath.getEndIndex()).getX(), myPath.getPoint(myPath.getEndIndex()).getY());
+        g2.translate(arcPath.getPoint(arcPath.getEndIndex()).getX(), arcPath.getPoint(arcPath.getEndIndex()).getY());
 
-        g2.rotate(myPath.getEndAngle() + Math.PI);
+        g2.rotate(arcPath.getEndAngle() + Math.PI);
         g2.setColor(java.awt.Color.WHITE);
 
         g2.transform(ZoomController.getTransform(_zoomPercentage));
