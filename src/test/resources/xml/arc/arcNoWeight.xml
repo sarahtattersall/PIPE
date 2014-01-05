@@ -13,7 +13,9 @@
         		</graphics>
         	</inscription>
         	<tagged>false</tagged>
-        	<arcpath x="40" y="60" curvePoint="false"/>
+            <arcpath id="000" x="294" y="259" curvePoint="false"/>
+            <arcpath id="001" x="395" y="243" curvePoint="true"/>
+            <arcpath id="002" x="417" y="297" curvePoint="false"/>
         	<type value="normal"/>
         </arc>
     </net>

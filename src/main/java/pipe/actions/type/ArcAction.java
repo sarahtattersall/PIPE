@@ -2,12 +2,11 @@ package pipe.actions.type;
 
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Grid;
 import pipe.models.component.Connectable;
 import pipe.models.visitor.connectable.arc.ArcCreatorVisitor;
 import pipe.models.visitor.connectable.arc.ArcSourceVisitor;
 
-import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class ArcAction extends TypeAction {
 
@@ -22,14 +21,14 @@ public class ArcAction extends TypeAction {
     }
 
     /**
-     * Changes the arc end point to the place clicked
-     * @param point
+     * Adds an intermediate point to the point clicked
+     * @param event
      * @param petriNetController
      */
     @Override
-    public void doAction(Point point, PetriNetController petriNetController) {
+    public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (petriNetController.isCurrentlyCreatingArc()) {
-            petriNetController.addArcPoint(point.x, point.y, false);
+            petriNetController.addPoint(event.getPoint(), event.isShiftDown());
         }
     }
 

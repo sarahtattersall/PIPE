@@ -1,11 +1,15 @@
 package pipe.petrinet.reader.creator;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import pipe.models.component.*;
 import pipe.models.strategy.arc.ArcStrategy;
 
+import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,14 +56,12 @@ public class ArcCreator implements ComponentCreator<Arc> {
 
     /**
      *
-     * Creates either a {@link pipe.models.component.InhibitorArc} or a {@link pipe.models.component.NormalArc}
-     * based on the elements arc type
-     *
      * Sets it source/target to those found in {@link this.connectables}
      *
      * @param element PNML XML Arc element
      * @return
      */
+    @Override
     public Arc create(Element element) {
         String id = element.getAttribute("id");
         String sourceId = element.getAttribute("source");
@@ -87,7 +89,32 @@ public class ArcCreator implements ComponentCreator<Arc> {
         }
         arc.setId(id);
         arc.setTagged(tagged);
+
+        List<ArcPoint> points = getArcPaths(element);
+        arc.addPoints(points);
         return arc;
+    }
+
+    private List<ArcPoint> getArcPaths(Element element) {
+        List<ArcPoint> points = new LinkedList<ArcPoint>();
+        NodeList nodes = element.getElementsByTagName("arcpath");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if (node instanceof Element) {
+                Element arcPointInfo = (Element) node;
+                if ("arcpath".equals(arcPointInfo.getNodeName())) {
+                    double x = Double.valueOf(arcPointInfo.getAttribute("x"));
+                    double y = Double.valueOf(arcPointInfo.getAttribute("y"));
+//                    arcPointX += Constants.ARC_CONTROL_POINT_CONSTANT + 1;
+//                    arcPointY += Constants.ARC_CONTROL_POINT_CONSTANT + 1;
+                    boolean isCurved = Boolean.valueOf(arcPointInfo.getAttribute("arcPointType"));
+                    Point2D point = new Point2D.Double(x, y);
+                    ArcPoint arcPoint = new ArcPoint(point, isCurved);
+                    points.add(arcPoint);
+                }
+            }
+        }
+        return points;
     }
 
     /**

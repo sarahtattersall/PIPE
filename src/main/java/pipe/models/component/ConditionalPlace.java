@@ -26,13 +26,8 @@ public class ConditionalPlace extends Connectable<Transition, ConditionalPlace> 
     }
 
     @Override
-    public double getCentreX() {
-        return getX() - getWidth()/2;
-    }
-
-    @Override
-    public double getCentreY() {
-        return getX() - getWidth()/2;
+    public Point2D.Double getCentre() {
+        return new Point2D.Double(getX() - getWidth()/2, getX() - getWidth()/2);
     }
 
     @Override

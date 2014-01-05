@@ -46,13 +46,13 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
     }
 
     private InhibitorArcView(InhibitorArcView arcView) {
-        for (int i = 0; i <= arcView.arcPath.getEndIndex(); i++) {
-            this.arcPath.addPoint(arcView.arcPath.getPoint(i).getX(), arcView.arcPath.getPoint(i).getY(),
-                    arcView.arcPath.getPointType(i));
-        }
-        this.arcPath.createPath();
-        this.updateBounds();
-        this._id = arcView._id;
+//        for (int i = 0; i <= arcView.arcPath.getEndIndex(); i++) {
+//            this.arcPath.addPoint(arcView.arcPath.getPoint(i).getX(), arcView.arcPath.getPoint(i).getY(),
+//                    arcView.arcPath.getPointType(i));
+//        }
+//        this.arcPath.createPath();
+//        this.updateBounds();
+//        this._id = arcView._id;
     }
 
 
@@ -94,7 +94,7 @@ public class InhibitorArcView extends ArcView<Arc> implements Serializable {
 //        copy.arcPath.delete();
 //        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
 //            copy.arcPath.addPoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
-//                    this.arcPath.getPointType(i));
+//                    this.arcPath.isCurved(i));
 //            //copy.arcPath.selectPoint(i);
 //        }
 //

@@ -140,9 +140,7 @@ public abstract class Connectable<S extends Connectable, T extends Connectable> 
 
     public abstract int getWidth();
 
-    public abstract double getCentreX();
-
-    public abstract double getCentreY();
+    public abstract Point2D.Double getCentre();
 
     /**
      * @return coords for an arc to connect to

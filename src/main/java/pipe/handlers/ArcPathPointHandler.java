@@ -9,6 +9,7 @@ import pipe.actions.SplitArcPointAction;
 import pipe.actions.ToggleArcPointAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
+import pipe.models.component.ArcPoint;
 import pipe.views.viewComponents.ArcPathPoint;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ import java.awt.event.MouseWheelEvent;
 
 
 public class ArcPathPointHandler 
-        extends PetriNetObjectHandler
+        extends PetriNetObjectHandler<ArcPoint, ArcPathPoint>
 {
 
    
@@ -34,25 +35,25 @@ public class ArcPathPointHandler
    public JPopupMenu getPopup(MouseEvent e) {
       JPopupMenu popup = super.getPopup(e);
       
-      if (!((ArcPathPoint) component).isDeleteable()) {
+      if (!(viewComponent.isDeleteable())) {
          popup.getComponent(0).setEnabled(false);
       }
       
       popup.insert(new JPopupMenu.Separator(), 0);
       
-      if (((ArcPathPoint) component).getIndex()==0) {
+      if (viewComponent.getIndex()==0) {
          return null;
       } else {
          JMenuItem menuItem = 
-                 new JMenuItem(new ToggleArcPointAction((ArcPathPoint) component));
-         if (!((ArcPathPoint) component).getPointType()) {
+                 new JMenuItem(new ToggleArcPointAction(viewComponent));
+         if (!viewComponent.isCurved()) {
             menuItem.setText("Change to Curved");
          } else{
             menuItem.setText("Change to Straight");
          }
          popup.insert(menuItem,0);
          
-         menuItem = new JMenuItem(new SplitArcPointAction((ArcPathPoint) component));
+         menuItem = new JMenuItem(new SplitArcPointAction(viewComponent));
          menuItem.setText("Split Point");
          popup.add(menuItem,1);
          
@@ -99,7 +100,7 @@ public class ArcPathPointHandler
       if (e.isShiftDown()) {
           //TODO: PASS THIS IN!
           ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager().addNewEdit(
-                 ((ArcPathPoint) component).togglePointType());
+                  viewComponent.togglePointType());
       }
    }  
    

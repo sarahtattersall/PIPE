@@ -15,6 +15,7 @@ import pipe.models.PetriNet;
 import pipe.models.component.Transition;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -44,8 +45,10 @@ public class TimedTransactionActionTest {
     @Test
     public void createsTimedTransition() {
         Point point = new Point(10, 20);
+        MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getPoint()).thenReturn(point);
 
-        action.doAction(point, mockController);
+        action.doAction(mockEvent, mockController);
 
         verify(mockNet).addTransition(argThat(
                 new HasMultiple<Transition>(
@@ -57,8 +60,10 @@ public class TimedTransactionActionTest {
     @Test
     public void createsUndoAction() {
         Point point = new Point(10, 20);
+        MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getPoint()).thenReturn(point);
 
-        action.doAction(point, mockController);
+        action.doAction(mockEvent, mockController);
 
         verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }

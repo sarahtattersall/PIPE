@@ -11,6 +11,7 @@ import pipe.models.component.Pnml;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class ElementCreator {
         handlers.add(new MapHandler());
         handlers.add(new ColorHandler());
         handlers.add(new DefaultHandler());
+        handlers.add(new CollectionHandler(this));
     }
 
     public <T extends PetriNetComponent> Element createElement(T component, Document document) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -47,12 +49,16 @@ public class ElementCreator {
         Pnml pnml = field.getAnnotation(Pnml.class);
         if (pnml != null) {
             Object fieldValue = PropertyUtils.getProperty(component, field.getName());
+            handleObject(pnml, fieldValue, element);
 
-            for (TypeHandler handler : handlers) {
-                if (handler.canHandle(fieldValue)) {
-                    handler.handle(pnml, fieldValue, element);
-                    return;
-                }
+        }
+    }
+
+    private void handleObject(Pnml pnmlAnnotation, Object object, Element element) {
+        for (TypeHandler handler : handlers) {
+            if (handler.canHandle(object)) {
+                handler.handle(pnmlAnnotation, object, element);
+                return;
             }
         }
     }
@@ -98,6 +104,28 @@ public class ElementCreator {
             element.setAttribute("red", String.valueOf(color.getRed()));
             element.setAttribute("green", String.valueOf(color.getGreen()));
             element.setAttribute("blue", String.valueOf(color.getBlue()));
+        }
+    }
+
+    private static class CollectionHandler implements TypeHandler {
+        private final ElementCreator creator;
+
+        private CollectionHandler(final ElementCreator creator) {
+            this.creator = creator;
+        }
+
+
+        @Override
+        public boolean canHandle(Object object) {
+            return object instanceof Collection;
+        }
+
+        @Override
+        public void handle(Pnml pnmlAnnotation, Object object, Element element) {
+            Collection<Object> collection = (Collection<Object>) object;
+            for (Object item : collection) {
+                creator.handleObject(pnmlAnnotation, object, element);
+            }
         }
     }
 

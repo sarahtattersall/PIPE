@@ -14,6 +14,7 @@ import pipe.models.PetriNet;
 import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.models.visitor.TranslationVisitor;
 import pipe.views.PipeApplicationView;
 
 import java.awt.*;
@@ -195,10 +196,8 @@ public class PetriNetControllerTest {
         controller.translateSelected(new Point2D.Double(translate_value, translate_value));
 
         double expected_value = x_y_value + translate_value;
-        verify(place).setX(expected_value);
-        verify(place).setY(expected_value);
-        verify(transition).setX(expected_value);
-        verify(transition).setY(expected_value);
+        verify(place).accept(any(TranslationVisitor.class));
+        verify(transition).accept(any(TranslationVisitor.class));
     }
 
     private PetriNetTab createMockTab()
@@ -218,6 +217,40 @@ public class PetriNetControllerTest {
         Token token = mock(Token.class);
         controller.startCreatingNormalArc(source, token);
         assertEquals(1, net.getArcs().size());
+    }
+
+    @Test
+    public void addPointCreatesIntermediateStraightPoint()
+    {
+        PetriNet net = setupPetriNet();
+        Place source = createFakePlace();
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
+        Arc arc = net.getArcs().iterator().next();
+
+        Point2D point = new Point2D.Double(10, 5);
+        ArcPoint arcPoint = new ArcPoint(point, false);
+        controller.addPoint(point, false);
+
+        assertEquals(1, arc.getPoints().size());
+        assertEquals(arcPoint, arc.getPoints().iterator().next());
+    }
+
+    @Test
+    public void addPointCreatesIntermediateCurvedPoint()
+    {
+        PetriNet net = setupPetriNet();
+        Place source = createFakePlace();
+        Token token = mock(Token.class);
+        controller.startCreatingNormalArc(source, token);
+        Arc arc = net.getArcs().iterator().next();
+
+        Point2D point = new Point2D.Double(10, 5);
+        ArcPoint arcPoint = new ArcPoint(point, true);
+        controller.addPoint(point, true);
+
+        assertEquals(1, arc.getPoints().size());
+        assertEquals(arcPoint, arc.getPoints().iterator().next());
     }
 
     @Test
@@ -287,19 +320,6 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void notifiesObserversAfterTranslation() {
-        Place place = mock(Place.class);
-        net.addPlace(place);
-
-        IObserver mockObserver = mock(IObserver.class);
-        net.registerObserver(mockObserver);
-
-        controller.translateSelected(new Point2D.Double(5,5));
-        verify(mockObserver).update();
-    }
-
-
-    @Test
     public void createNewToken() {
         String name = "testToken";
         boolean enabled = true;
@@ -313,17 +333,6 @@ public class PetriNetControllerTest {
         assertEquals(enabled, token.isEnabled());
         assertEquals(color, token.getColor());
     }
-
-
-    @Test
-    public void throwsErrorIfCannotFindTokenName() {
-        expectedEx.expect(RuntimeException.class);
-        expectedEx.expectMessage("No foo token found in current petri net");
-        Place place = mock(Place.class);
-
-        controller.getToken("foo");
-    }
-
 
     private class DummyPetriNetComponent extends AbstractPetriNetComponent {
         @Override

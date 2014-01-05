@@ -12,12 +12,13 @@ import pipe.models.component.PetriNetComponent;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 public abstract class TypeAction extends GuiAction
 {
     //TODO: Eventually a handler can tell the GUI Action to do its thing
     // for each type of type clicked on.
-    public abstract void doAction(Point point, PetriNetController petriNetController);
+    public abstract void doAction(MouseEvent event, PetriNetController petriNetController);
     public abstract void doConnectableAction(Connectable connectable, PetriNetController petriNetController);
 
     private final int typeID;

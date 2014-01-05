@@ -14,6 +14,7 @@ import pipe.models.PetriNet;
 import pipe.models.component.Transition;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -42,8 +43,10 @@ public class ImmediateTransitionActionTest {
     @Test
     public void createsTimedTransition() {
         Point point = new Point(10, 20);
+        MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getPoint()).thenReturn(point);
 
-        action.doAction(point, mockController);
+        action.doAction(mockEvent, mockController);
 
         verify(mockNet).addTransition(argThat(
                 new HasMultiple<Transition>(
@@ -55,8 +58,10 @@ public class ImmediateTransitionActionTest {
     @Test
     public void createsUndoAction() {
         Point point = new Point(10, 20);
+        MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getPoint()).thenReturn(point);
 
-        action.doAction(point, mockController);
+        action.doAction(mockEvent, mockController);
 
         verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }

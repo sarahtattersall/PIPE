@@ -10,9 +10,9 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
-import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.HistoryItem;
+import pipe.models.component.ArcPoint;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 import pipe.views.PipeApplicationView;
@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
 
-public class ArcPathPoint extends PetriNetViewComponent {
+public final class ArcPathPoint extends PetriNetViewComponent {
 
     /**
      *
@@ -36,16 +36,15 @@ public class ArcPathPoint extends PetriNetViewComponent {
     private static final int SIZE_OFFSET = 1;
 
     private ArcPath myArcPath;
+    private final ArcPoint model;
+
     private final Point2D.Double point = new Point2D.Double();
     private final Point2D.Double realPoint = new Point2D.Double();
 
     private final Point2D.Double control1 = new Point2D.Double();
     private final Point2D.Double control2 = new Point2D.Double();
 
-    private boolean pointType; // STRAIGHT or CURVED
-
-
-    private ArcPathPoint() {
+    private void setup() {
         _copyPasteable = false; //we can't copy & paste indivial arc points!
         _zoomPercentage = 100;
         PipeApplicationView view = ApplicationSettings.getApplicationView();
@@ -58,7 +57,8 @@ public class ArcPathPoint extends PetriNetViewComponent {
 
 
     public ArcPathPoint(ArcPath a) {
-        this();
+        setup();
+        model = null;
         myArcPath = a;
         setPointLocation(0, 0);
         if (ApplicationSettings.getApplicationView() != null) {
@@ -67,32 +67,38 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
-    public ArcPathPoint(double x, double y, boolean _pointType, ArcPath a) {
-        this();
+    public ArcPathPoint(ArcPoint point, ArcPath a) {
+        setup();
+        model = point;
+        setPointLocation(model.getPoint());
         myArcPath = a;
-        setPointLocation(x, y);
-        pointType = _pointType;
+//        setPointLocation(x, y);
+//        pointType = _pointType;
         if (ApplicationSettings.getApplicationView() != null) {
             this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
         }
     }
 
-
-    /**
-     * @param point
-     * @param _pointType
-     * @param a
-     * @author Nadeem
-     */
-    public ArcPathPoint(Point2D.Double point, boolean _pointType, ArcPath a) {
-        this(point.x, point.y, _pointType, a);
-    }
+//
+//    /**
+//     * @param point
+//     * @param _pointType
+//     * @param a
+//     * @author Nadeem
+//     */
+//    public ArcPathPoint(Point2D.Double point, boolean _pointType, ArcPath a) {
+//        this(point.x, point.y, _pointType, a);
+//    }
 
 
     public Point2D.Double getPoint() {
         return point;
     }
 
+
+    public void setPointLocation(Point2D point) {
+        setPointLocation(point.getX(), point.getY());
+    }
 
     //
     public void setPointLocation(double x, double y) {
@@ -104,8 +110,8 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
-    public boolean getPointType() {
-        return pointType;
+    public boolean isCurved() {
+        return model.isCurved();
     }
 
 
@@ -115,19 +121,20 @@ public class ArcPathPoint extends PetriNetViewComponent {
 
 
     public void setPointType(boolean type) {
-        if (pointType != type) {
-            pointType = type;
-            myArcPath.createPath();
-            myArcPath.getArc().updateArcPosition();
-        }
+//        if (pointType != type) {
+//            pointType = type;
+//            myArcPath.createPath();
+//            myArcPath.getArc().updateArcPosition();
+//        }
     }
 
 
     public HistoryItem togglePointType() {
-        pointType = !pointType;
-        myArcPath.createPath();
-        myArcPath.getArc().updateArcPosition();
-        return new ArcPathPointType(this);
+//        pointType = !pointType;
+//        myArcPath.createPath();
+//        myArcPath.getArc().updateArcPosition();
+//        return new ArcPathPointType(this);
+        return null;
     }
 
 
@@ -153,6 +160,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (!_ignoreSelection) {
@@ -162,7 +170,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
             g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 
             RectangularShape shape;
-            if (pointType) {
+            if (model.isCurved()) {
                 shape = new Ellipse2D.Double(0, 0, 2 * SIZE, 2 * SIZE);
             } else {
                 shape = new Rectangle2D.Double(0, 0, 2 * SIZE, 2 * SIZE);
@@ -203,14 +211,16 @@ public class ArcPathPoint extends PetriNetViewComponent {
      *
      * @return
      */
+    //TODO: IMPLEMENT
     public HistoryItem splitPoint() {
-        int i = getIndex(); // Get the index of this point
-
-        int DELTA = 10;
-        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, myArcPath);
-        myArcPath.insertPoint(i + 1, newPoint);
-        myArcPath.getArc().updateArcPosition();
-        return new AddArcPathPoint(myArcPath.getArc(), newPoint);
+//        int i = getIndex(); // Get the index of this point
+//
+//        int DELTA = 10;
+//        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, myArcPath);
+//        myArcPath.insertPoint(i + 1, newPoint);
+//        myArcPath.getArc().updateArcPosition();
+//        return new AddArcPathPoint(myArcPath.getArc(), newPoint);
+        return null;
     }
 
 
@@ -225,6 +235,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
+    @Override
     public void delete() {// Won't delete if only two points left. General delete.
         if (isDeleteable()) {
             if (getArcPath().getArc().isSelected()) {
@@ -238,7 +249,8 @@ public class ArcPathPoint extends PetriNetViewComponent {
 
     public void kill() {        // delete without the safety check :)
         super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
-        myArcPath.deletePoint(this);
+//        myArcPath.deletePoint(this);
+        super.delete();
     }
 
 
@@ -281,6 +293,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
+    @Override
     public void addedToGui() {
     }
 
@@ -290,16 +303,19 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
+    @Override
     public PetriNetViewComponent paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
         return null;
     }
 
 
+    @Override
     public PetriNetViewComponent copy() {
         return null;
     }
 
 
+    @Override
     public int getLayerOffset() {
         return Constants.ARC_POINT_LAYER_OFFSET;
     }
@@ -310,6 +326,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
+    @Override
     public void translate(int x, int y) {
         this.setPointLocation(point.x + x, point.y + y);
         myArcPath.updateArc();
@@ -320,11 +337,13 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
+    @Override
     public String getName() {
         return this.getArcPath().getArc().getName() + " - Point " + this.getIndex();
     }
 
 
+    @Override
     public void zoomUpdate(int zoom) {
         this._zoomPercentage = zoom;
         // change ArcPathPoint's size a little bit when it's zoomed in or zoomed out

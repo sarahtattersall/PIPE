@@ -8,14 +8,14 @@ import pipe.gui.ZoomController;
 import pipe.historyActions.*;
 import pipe.models.component.Arc;
 import pipe.models.component.Token;
-import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
-import java.awt.List;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 
 
 public class NormalArcView extends ArcView<Arc> implements Serializable {
@@ -136,15 +136,15 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
 
     public NormalArcView(NormalArcView arc) {
 
-        for (int i = 0; i <= arc.arcPath.getEndIndex(); i++) {
-            this.arcPath
-                    .addPoint(arc.arcPath.getPoint(i).getX(), arc.arcPath.getPoint(i).getY(), arc.arcPath.getPointType(i));
-        }
-        this.arcPath.createPath();
-        this.updateBounds();
-        this._id = arc._id;
-        this.inView = arc.inView;
-        this.joined = arc.joined;
+//        for (int i = 0; i <= arc.arcPath.getEndIndex(); i++) {
+//            this.arcPath
+//                    .addPoint(arc.arcPath.getPoint(i).getX(), arc.arcPath.getPoint(i).getY(), arc.arcPath.getPointType(i));
+//        }
+//        this.arcPath.createPath();
+//        this.updateBounds();
+//        this._id = arc._id;
+//        this.inView = arc.inView;
+//        this.joined = arc.joined;
     }
 
     public NormalArcView(ArcController arcController, Arc model) {
@@ -192,7 +192,7 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
 //        copy.arcPath.delete();
 //        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
 //            copy.arcPath.addPoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
-//                    this.arcPath.getPointType(i));
+//                    this.arcPath.isCurved(i));
 //            //TODO: REIMPLEMENT
 ////            copy.arcPath.selectPoint(i);
 //        }
@@ -376,7 +376,6 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
             g2.translate(arcPath.getPoint(0).getX(), arcPath.getPoint(0).getY());
             g2.rotate(arcPath.getStartAngle() + Math.PI);
             g2.transform(ZoomController.getTransform(_zoomPercentage));
-            g2.fillPolygon(head);
             g2.setTransform(reset);
         }
 
@@ -389,7 +388,6 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
         g2.setColor(java.awt.Color.WHITE);
 
         g2.transform(ZoomController.getTransform(_zoomPercentage));
-        g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);

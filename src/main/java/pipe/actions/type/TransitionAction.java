@@ -6,10 +6,10 @@ import pipe.gui.Grid;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.models.PetriNet;
 import pipe.models.component.Connectable;
-import pipe.models.component.Place;
 import pipe.models.component.Transition;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  *  Abstract class to created timed/untimed transactions
@@ -41,9 +41,9 @@ public abstract class TransitionAction extends TypeAction {
     }
 
     @Override
-    public void doAction(Point point, PetriNetController petriNetController) {
+    public void doAction(MouseEvent event, PetriNetController petriNetController) {
 
-        Transition transition = newTransition(point, petriNetController);
+        Transition transition = newTransition(event.getPoint(), petriNetController);
         PetriNet net = petriNetController.getPetriNet();
         petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(transition, net));
     }

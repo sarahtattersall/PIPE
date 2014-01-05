@@ -56,13 +56,8 @@ public class Place extends Connectable<Transition, Place> implements Serializabl
     }
 
     @Override
-    public double getCentreX() {
-        return getX() + getWidth()/2;
-    }
-
-    @Override
-    public double getCentreY() {
-        return getY() + getHeight()/2;
+    public Point2D.Double getCentre() {
+        return new Point2D.Double(getX() + getWidth()/2, getY() + getHeight()/2);
     }
 
     /**

@@ -3,13 +3,11 @@ package pipe.actions.type;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
-import pipe.views.PipeApplicationView;
 
-import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public abstract class TokenAction extends TypeAction {
 
@@ -25,7 +23,7 @@ public abstract class TokenAction extends TypeAction {
     protected abstract void performTokenAction(PlaceController placeController, Token token);
 
     @Override
-    public void doAction(Point point, PetriNetController petriNetController) {
+    public void doAction(MouseEvent event, PetriNetController petriNetController) {
         // Do nothing unless clicked a connectable
     }
 

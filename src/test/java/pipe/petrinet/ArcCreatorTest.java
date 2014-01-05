@@ -17,70 +17,27 @@ import pipe.petrinet.reader.creator.ArcCreator;
 import pipe.utilities.transformers.PNMLTransformer;
 import utils.TokenUtils;
 
+import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ArcCreatorTest {
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
     ArcCreator creator;
     PetriNet mockNet;
     Map<String, Place> places = new HashMap<String, Place>();
     Map<String, Transition> transitions = new HashMap<String, Transition>();
     Place source = new Place("P0", "P0");
     Transition target = new Transition("T0", "T0");
-
     Map<String, Token> tokens = new HashMap<String, Token>();
 
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
-
-
-    private Element createNormalArcNoWeight()
-    {
-        return createFromFile("src/test/resources/xml/arc/arcNoWeight.xml");
-    }
-
-    private Element createInhibitorArc() {
-        return createFromFile("src/test/resources/xml/arc/inhibitorArc.xml");
-    }
-
-    private Element createArcWeightNoToken() {
-        return createFromFile("src/test/resources/xml/arc/arcWeightNoToken.xml");
-    }
-
-    private Element createFromFile(String path)
-    {
-        PNMLTransformer transformer = new PNMLTransformer();
-        Document document = transformer.transformPNML(path);
-        Element rootElement = document.getDocumentElement();
-        NodeList nodes = rootElement.getChildNodes();
-        Element arcElement = (Element) nodes.item(1);
-        return arcElement;
-    }
-
-    private Element createNormalArcWithWeight()
-    {
-        return createFromFile("src/test/resources/xml/arc/normalArcWithWeight.xml");
-    }
-
-    private Token addDefaultTokenToTokens()
-    {
-        Token token = TokenUtils.createDefaultToken();
-        tokens.put(token.getId(), token);
-        return token;
-    }
-
-
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         mockNet = mock(PetriNet.class);
         places.put(source.getId(), source);
         transitions.put(target.getId(), target);
@@ -106,6 +63,25 @@ public class ArcCreatorTest {
         assertEquals(source, arc.getSource());
         assertEquals(target, arc.getTarget());
         assertEquals("Arc0", arc.getId());
+    }
+
+    private Token addDefaultTokenToTokens() {
+        Token token = TokenUtils.createDefaultToken();
+        tokens.put(token.getId(), token);
+        return token;
+    }
+
+    private Element createNormalArcNoWeight() {
+        return createFromFile("src/test/resources/xml/arc/arcNoWeight.xml");
+    }
+
+    private Element createFromFile(String path) {
+        PNMLTransformer transformer = new PNMLTransformer();
+        Document document = transformer.transformPNML(path);
+        Element rootElement = document.getDocumentElement();
+        NodeList nodes = rootElement.getChildNodes();
+        Element arcElement = (Element) nodes.item(1);
+        return arcElement;
     }
 
     @Test
@@ -155,6 +131,10 @@ public class ArcCreatorTest {
         assertEquals("4", weight);
     }
 
+    private Element createNormalArcWithWeight() {
+        return createFromFile("src/test/resources/xml/arc/normalArcWithWeight.xml");
+    }
+
     @Test
     public void createsMarkingWithCorrectToken() {
         Token token = addDefaultTokenToTokens();
@@ -169,8 +149,7 @@ public class ArcCreatorTest {
     }
 
     @Test
-    public void createsInhibitoryArc()
-    {
+    public void createsInhibitoryArc() {
         addDefaultTokenToTokens();
         creator.setTokens(tokens);
         Element arcElement = createInhibitorArc();
@@ -178,6 +157,10 @@ public class ArcCreatorTest {
 
         assertNotNull(arc);
         assertEquals(ArcType.INHIBITOR, arc.getType());
+    }
+
+    private Element createInhibitorArc() {
+        return createFromFile("src/test/resources/xml/arc/inhibitorArc.xml");
     }
 
     @Test
@@ -192,5 +175,28 @@ public class ArcCreatorTest {
         Map<Token, String> weights = arc.getTokenWeights();
         assertEquals(1, weights.size());
         assertTrue(weights.containsKey(token));
+    }
+
+    private Element createArcWeightNoToken() {
+        return createFromFile("src/test/resources/xml/arc/arcWeightNoToken.xml");
+    }
+
+    @Test
+    public void addsPoints() {
+        Token token = addDefaultTokenToTokens();
+        creator.setTokens(tokens);
+        Element arcElement = createNormalArcNoWeight();
+        Arc arc = creator.create(arcElement);
+
+        List<ArcPoint> points = arc.getPoints();
+        assertEquals(3, points.size());
+        ArcPoint point1 = new ArcPoint(new Point2D.Double(294, 259), false);
+        assertEquals(point1, points.get(0));
+
+        ArcPoint point2 = new ArcPoint(new Point2D.Double(395, 243), true);
+        assertEquals(point2, points.get(1));
+
+        ArcPoint point3 = new ArcPoint(new Point2D.Double(417, 297), false);
+        assertEquals(point3, points.get(2));
     }
 }

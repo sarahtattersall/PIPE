@@ -1,18 +1,15 @@
 package pipe.actions.type;
 
-import pipe.actions.GuiAction;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Grid;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.models.PetriNet;
-import pipe.models.PipeApplicationModel;
 import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
 import pipe.models.component.Place;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * Creates a new Place, adds it to a petri net and adds a history item
@@ -40,8 +37,8 @@ public class PlaceAction extends TypeAction {
     }
 
     @Override
-    public void doAction(Point point, PetriNetController petriNetController) {
-        Place place = newPlace(point, petriNetController);
+    public void doAction(MouseEvent event, PetriNetController petriNetController) {
+        Place place = newPlace(event.getPoint(), petriNetController);
         PetriNet net = petriNetController.getPetriNet();
         petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(place, net));
 

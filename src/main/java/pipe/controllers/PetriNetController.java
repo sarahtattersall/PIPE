@@ -9,6 +9,8 @@ import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.strategy.arc.BackwardsNormalStrategy;
 import pipe.models.strategy.arc.ForwardsNormalStrategy;
 import pipe.models.strategy.arc.InhibitorStrategy;
+import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.models.visitor.TranslationVisitor;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -44,12 +46,16 @@ public class PetriNetController implements IController, Serializable {
         backwardsNormalStrategy = new BackwardsNormalStrategy(petriNet);
     }
 
-    public void addArcPoint(double x, double y, boolean shiftDown) {
+    public void setEndPoint(double x, double y, boolean shiftDown) {
         if (currentlyCreatingArc) {
             arc.setTarget(new TemporaryArcTarget(x, y));
 
             petriNet.notifyObservers();
         }
+    }
+
+    public void addPoint(Point2D point, boolean curved) {
+        arc.addPoint(new ArcPoint(point, curved));
     }
 
     /**
@@ -197,15 +203,10 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void translateSelected(Point2D.Double translation) {
+        PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, this);
         for (PetriNetComponent component : selectedComponents) {
-            if (component instanceof Connectable) {
-                Connectable connectable = (Connectable) component;
-                connectable.setX(connectable.getX() + translation.getX());
-                connectable.setY(connectable.getY() + translation.getY());
-            }
-
+            component.accept(translationVisitor);
         }
-        petriNet.notifyObservers();
     }
 
 
@@ -347,4 +348,6 @@ public class PetriNetController implements IController, Serializable {
     public Animator getAnimator() {
         return animator;
     }
+
+
 }

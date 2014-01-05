@@ -56,13 +56,8 @@ public class Transition extends Connectable<Place, Transition> implements Serial
     }
 
     @Override
-    public double getCentreX() {
-        return getX() + getHeight()/2;
-    }
-
-    @Override
-    public double getCentreY() {
-        return getY() + getHeight()/2;
+    public Point2D.Double getCentre() {
+        return new Point2D.Double(getX() + getHeight()/2, getY() + getHeight()/2);
     }
 
     /**
@@ -74,7 +69,8 @@ public class Transition extends Connectable<Place, Transition> implements Serial
     private Point2D.Double rotateAroundCenter(double angle, Point2D.Double point)
     {
         AffineTransform tx = new AffineTransform();
-        tx.rotate(angle, getCentreX(), getCentreY());
+        Point2D center = getCentre();
+        tx.rotate(angle, center.getX(), center.getY());
         Point2D.Double rotatedPoint = new Point2D.Double();
         tx.transform(point, rotatedPoint);
         return rotatedPoint;

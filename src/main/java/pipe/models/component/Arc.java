@@ -6,6 +6,8 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
@@ -29,6 +31,12 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     protected Map<Token, String> tokenWeights = new HashMap<Token, String>();
 
     private final ArcStrategy strategy;
+
+    /**
+     * Intermediate path points
+     */
+    @Pnml("arcpath")
+    private List<ArcPoint> points = new LinkedList<ArcPoint>();
 
     public Arc(S source, T target,
                Map<Token, String> tokenWeights, ArcStrategy strategy) {
@@ -83,8 +91,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
      * @return The start coordinate of the arc
      */
     public Point2D.Double getStartPoint() {
-        double angle = getAngleBetweenSourceAndTarget();
-        return source.getArcEdgePoint(angle);
+//        double angle = getAngleBetweenSourceAndTarget();
+//        return source.getArcEdgePoint(angle);
+        return source.getCentre();
     }
 
     /**
@@ -174,4 +183,15 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
 
+    public void addPoints(final List<ArcPoint> points) {
+        this.points = points;
+    }
+
+    public List<ArcPoint> getPoints() {
+        return points;
+    }
+
+    public void addPoint(ArcPoint point) {
+        points.add(point);
+    }
 }

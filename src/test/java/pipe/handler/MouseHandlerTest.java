@@ -64,6 +64,6 @@ public class MouseHandlerTest {
         ApplicationSettings.register(mockModel);
 
         handler.mousePressed(mockEvent);
-        verify(mockAction).doAction(mockEvent.getPoint(), mockController);
+        verify(mockAction).doAction(mockEvent, mockController);
     }
 }

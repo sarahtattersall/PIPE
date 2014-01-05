@@ -4,11 +4,11 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.models.component.Connectable;
 
-import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class SelectAction extends TypeAction {
     @Override
-    public void doAction(Point point, PetriNetController petriNetController) {
+    public void doAction(MouseEvent event, PetriNetController petriNetController) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

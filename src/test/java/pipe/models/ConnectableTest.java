@@ -122,13 +122,8 @@ public class ConnectableTest {
         }
 
         @Override
-        public double getCentreX() {
-            return 0;
-        }
-
-        @Override
-        public double getCentreY() {
-            return 0;
+        public Point2D.Double getCentre() {
+            return new Point2D.Double(0,0);
         }
 
         @Override

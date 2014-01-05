@@ -15,6 +15,10 @@ import pipe.models.visitor.connectable.arc.ArcCreatorVisitor;
 import pipe.models.visitor.connectable.arc.ArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+
 import static org.mockito.Mockito.*;
 
 public class ArcActionTest {
@@ -94,5 +98,31 @@ public class ArcActionTest {
         action.doConnectableAction(place, mockController);
         verify(mockController).finishCreatingArc(place);
 
+    }
+
+    @Test
+    public void addsIntermediateCurvedPointIfClicked() {
+        when(mockController.isCurrentlyCreatingArc()).thenReturn(true);
+
+        MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.isShiftDown()).thenReturn(true);
+        Point point = mock(Point.class);
+        when(mockEvent.getPoint()).thenReturn(point);
+
+        action.doAction(mockEvent, mockController);
+        verify(mockController).addPoint(point, true);
+    }
+
+    @Test
+    public void addsIntermediateStraightPointIfClicked() {
+        when(mockController.isCurrentlyCreatingArc()).thenReturn(true);
+
+        MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.isShiftDown()).thenReturn(false);
+        Point point = mock(Point.class);
+        when(mockEvent.getPoint()).thenReturn(point);
+
+        action.doAction(mockEvent, mockController);
+        verify(mockController).addPoint(point, false);
     }
 }

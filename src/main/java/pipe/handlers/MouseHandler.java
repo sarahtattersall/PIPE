@@ -9,7 +9,6 @@ import pipe.models.PipeApplicationModel;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
-import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -53,18 +52,18 @@ public class MouseHandler extends MouseInputAdapter
 
 
 
-    public void mousePressed(MouseEvent e)
+    public void mousePressed(MouseEvent event)
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         TypeAction action = applicationModel.getSelectedAction();
 //        Point start = e.getPoint();
 //        Point p;
 
-        if(mouseUtilities.isLeftMouse(e))
+        if(mouseUtilities.isLeftMouse(event))
         {
 
-            Point point = adjustPoint(e.getPoint(), petriNetTab.getZoom());
-            action.doAction(point, petriNetController);
+            Point point = adjustPoint(event.getPoint(), petriNetTab.getZoom());
+            action.doAction(event, petriNetController);
         }
 
 //            int mode = applicationModel.getMode();
@@ -200,7 +199,7 @@ public class MouseHandler extends MouseInputAdapter
         int x = Grid.getModifiedX(e.getX());
         int y = Grid.getModifiedY(e.getY());
         boolean shiftDown = e.isShiftDown();
-        petriNetController.addArcPoint(x, y, shiftDown);
+        petriNetController.setEndPoint(x, y, shiftDown);
     }
 
 
@@ -214,7 +213,7 @@ public class MouseHandler extends MouseInputAdapter
     {
         if(petriNetController.isCurrentlyCreatingArc())
         {
-            petriNetController.addArcPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(
+            petriNetController.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(
                     event.getY()), event.isShiftDown());
         }
         //TODO: THIS SHOULDNT BE IN PipeApplicationController
