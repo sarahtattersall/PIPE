@@ -23,7 +23,7 @@ public class InsertPointAction
         extends javax.swing.AbstractAction{
    
    private final ArcView _selected;
-   private final Point2D.Float mouseposition;
+   private final Point2D.Double mouseposition;
    
    
    public InsertPointAction(ArcView arcView, Point mousepos) {
@@ -33,7 +33,7 @@ public class InsertPointAction
       // Need to convert this into actual coordinates
       Point2D.Float offset = new Point2D.Float(_selected.getX(),
                                                _selected.getY());
-      mouseposition = new Point2D.Float(mousepos.x + offset.x, 
+      mouseposition = new Point2D.Double(mousepos.x + offset.x,
                                         mousepos.y + offset.y);
    }
    

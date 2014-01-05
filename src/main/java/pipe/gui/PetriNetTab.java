@@ -192,10 +192,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     {
         Component[] children = getComponents();
 
-        for(Component aChildren : children)
+        for(Component child : children)
         {
-            if(aChildren instanceof Zoomable)
-                ((Zoomable) aChildren).zoomUpdate(zoomControl.getPercent());
+            if(child instanceof Zoomable)
+                ((Zoomable) child).zoomUpdate(zoomControl.getPercent());
         }
         _zoomCalled = true;
         selection.setZoom(zoomControl.getPercent());
@@ -304,7 +304,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
     {
         int zoom = zoomControl.getPercent();
         JViewport viewport = (JViewport) getParent();
-        double currentXNoZoom = ZoomController.getUnzoomedValue(viewport.getViewPosition().x + (viewport.getWidth() * 0.5), zoom);
         double newZoomedX = ZoomController.getZoomedValue(point.x, zoom);
         double newZoomedY = ZoomController.getZoomedValue(point.y, zoom);
 
@@ -319,6 +318,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         viewPosition.setLocation(newViewX, newViewY);
         viewport.setViewPosition(viewPosition);
         zoom();
+
+        //TODO: CAN WE DELETE THIS CALL?
         _pipeApplicationView.hideNet(true);
         updatePreferredSize();
     }

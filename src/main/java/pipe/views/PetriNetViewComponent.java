@@ -25,7 +25,7 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
     protected Rectangle bounds;
     protected boolean _deleted;
     protected boolean _markedAsDeleted;
-    private ZoomController zoomControl;
+    protected ZoomController zoomControl;
 
     protected T model;
     protected int _zoomPercentage;
@@ -80,20 +80,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         }
     }
 
-//    public void select() {
-//        if (_selectable && !_selected) {
-//            _selected = true;
-//            repaint();
-//        }
-//    }
-//
-//    public void deselect() {
-//        if (_selected) {
-//            _selected = false;
-//            repaint();
-//        }
-//    }
-
     public boolean isSelectable() {
         return _selectable;
     }
@@ -122,11 +108,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         removeAll();
     }
 
-    public void undelete(PetriNetView model, PetriNetTab view) {
-        model.addPetriNetObject(this);
-        view.add(this);
-    }
-
     protected void removeFromContainer() {
         Container c = getParent();
 
@@ -146,10 +127,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     public boolean isDeleted() {
         return _deleted || _markedAsDeleted;
-    }
-
-    public void markAsDeleted() {
-        _markedAsDeleted = true;
     }
 
     public void paintComponent(Graphics g) {
@@ -196,10 +173,6 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
 
     static int getComponentDrawOffset() {
         return COMPONENT_DRAW_OFFSET;
-    }
-
-    ZoomController getZoomController() {
-        return this.zoomControl;
     }
 
     String getNameLabelName() {

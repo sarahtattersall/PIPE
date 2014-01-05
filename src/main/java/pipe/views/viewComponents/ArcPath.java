@@ -33,7 +33,7 @@ public class ArcPath implements Shape, Cloneable {
     private Shape shape, proximityShape;
     private int _transitionAngle;
 
-    public final Point2D.Float midPoint = new Point2D.Float();
+    public final Point2D.Double midPoint = new Point2D.Double();
 
 
     public ArcPath(ArcView a) {
@@ -121,8 +121,8 @@ public class ArcPath implements Shape, Cloneable {
 
 
     /* returns a control point for curve CD with incoming vector AB*/
-    private Point2D.Float getControlPoint(Point2D.Float A, Point2D.Float B, Point2D.Float C, Point2D.Float D) {
-        Point2D.Float p = new Point2D.Float(0, 0);
+    private Point2D.Double getControlPoint(Point2D.Double A, Point2D.Double B, Point2D.Double C, Point2D.Double D) {
+        Point2D.Double p = new Point2D.Double(0, 0);
 
         double modAB = getMod(A, B);
         double modCD = getMod(C, D);
@@ -133,16 +133,16 @@ public class ArcPath implements Shape, Cloneable {
         if (modAB < 7) {
             // hack, stops division by zero, modAB can only be this low if the
             // points are virtually superimposed anyway
-            p = (Point2D.Float) C.clone();
+            p = (Point2D.Double) C.clone();
         } else {
-            p.x = C.x + (float) (ABx * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
-            p.y = C.y + (float) (ABy * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
+            p.x = C.x + (ABx * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
+            p.y = C.y + (ABy * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
         }
         return p;
     }
 
 
-    private double getMod(Point2D.Float A, Point2D.Float B) {
+    private double getMod(Point2D.Double A, Point2D.Double B) {
         double ABx = A.x - B.x;
         double ABy = A.y - B.y;
 
@@ -341,7 +341,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
 
-    public Point2D.Float getPoint(int index) {
+    public Point2D.Double getPoint(int index) {
         return pathPoints.get(index).getPoint();
     }
 
@@ -691,7 +691,7 @@ public class ArcPath implements Shape, Cloneable {
      * @param mouseposition
      * @return
      */
-    public ArcPathPoint splitSegment(Point2D.Float mouseposition) {
+    public ArcPathPoint splitSegment(Point2D.Double mouseposition) {
         int wantedpoint = findPoint(mouseposition);
 
         // wantedpoint is now the index of the first point in the pair of arc
@@ -708,7 +708,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
 
-    public HistoryItem insertPointAt(Point2D.Float mouseposition, boolean flag) {
+    public HistoryItem insertPointAt(Point2D.Double mouseposition, boolean flag) {
         int wantedpoint = findPoint(mouseposition);
 
         // wantedpoint is now the index of the first point in the pair of arc
@@ -723,7 +723,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
 
-    private int findPoint(final Point2D.Float mouseposition) {
+    private int findPoint(final Point2D.Double mouseposition) {
         // An array to store all the distances from the midpoints
         double[] distances = new double[pathPoints.size() - 1];
 
@@ -731,7 +731,7 @@ public class ArcPath implements Shape, Cloneable {
         for (int index = 0; index < (pathPoints.size() - 1); index++) {
             ArcPathPoint first = pathPoints.get(index);
             ArcPathPoint second = pathPoints.get(index + 1);
-            Point2D.Float midpoint = first.getMidPoint(second);
+            Point2D.Double midpoint = first.getMidPoint(second);
             distances[index] = midpoint.distance(mouseposition);
         }
 

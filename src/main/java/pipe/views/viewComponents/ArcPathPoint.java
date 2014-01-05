@@ -36,11 +36,11 @@ public class ArcPathPoint extends PetriNetViewComponent {
     private static final int SIZE_OFFSET = 1;
 
     private ArcPath myArcPath;
-    private final Point2D.Float point = new Point2D.Float();
-    private final Point2D.Float realPoint = new Point2D.Float();
+    private final Point2D.Double point = new Point2D.Double();
+    private final Point2D.Double realPoint = new Point2D.Double();
 
-    private final Point2D.Float control1 = new Point2D.Float();
-    private final Point2D.Float control2 = new Point2D.Float();
+    private final Point2D.Double control1 = new Point2D.Double();
+    private final Point2D.Double control2 = new Point2D.Double();
 
     private boolean pointType; // STRAIGHT or CURVED
 
@@ -67,7 +67,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
-    public ArcPathPoint(float x, float y, boolean _pointType, ArcPath a) {
+    public ArcPathPoint(double x, double y, boolean _pointType, ArcPath a) {
         this();
         myArcPath = a;
         setPointLocation(x, y);
@@ -84,18 +84,18 @@ public class ArcPathPoint extends PetriNetViewComponent {
      * @param a
      * @author Nadeem
      */
-    public ArcPathPoint(Point2D.Float point, boolean _pointType, ArcPath a) {
+    public ArcPathPoint(Point2D.Double point, boolean _pointType, ArcPath a) {
         this(point.x, point.y, _pointType, a);
     }
 
 
-    public Point2D.Float getPoint() {
+    public Point2D.Double getPoint() {
         return point;
     }
 
 
     //
-    public void setPointLocation(float x, float y) {
+    public void setPointLocation(double x, double y) {
         double realX = ZoomController.getUnzoomedValue(x, _zoomPercentage);
         double realY = ZoomController.getUnzoomedValue(y, _zoomPercentage);
         realPoint.setLocation(realX, realY);
@@ -136,7 +136,7 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
-    public double getAngle(Point2D.Float p2) {
+    public double getAngle(Point2D.Double p2) {
         double angle;
 
         if (point.y <= p2.y) {
@@ -214,8 +214,8 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
-    public Point2D.Float getMidPoint(ArcPathPoint target) {
-        return new Point2D.Float((target.point.x + point.x) / 2, (target.point.y + point.y) / 2);
+    public Point2D.Double getMidPoint(ArcPathPoint target) {
+        return new Point2D.Double((target.point.x + point.x) / 2, (target.point.y + point.y) / 2);
     }
 
 
@@ -242,35 +242,35 @@ public class ArcPathPoint extends PetriNetViewComponent {
     }
 
 
-    public Point2D.Float getControl1() {
+    public Point2D.Double getControl1() {
         return control1;
     }
 
 
-    public Point2D.Float getControl2() {
+    public Point2D.Double getControl2() {
         return control2;
     }
 
 
-    public void setControl1(float _x, float _y) {
+    public void setControl1(double _x, double _y) {
         control1.x = _x;
         control1.y = _y;
     }
 
 
-    public void setControl2(float _x, float _y) {
+    public void setControl2(double _x, double _y) {
         control2.x = _x;
         control2.y = _y;
     }
 
 
-    public void setControl1(Point2D.Float p) {
+    public void setControl1(Point2D.Double p) {
         control1.x = p.x;
         control1.y = p.y;
     }
 
 
-    public void setControl2(Point2D.Float p) {
+    public void setControl2(Point2D.Double p) {
         control2.x = p.x;
         control2.y = p.y;
     }
@@ -335,8 +335,8 @@ public class ArcPathPoint extends PetriNetViewComponent {
         } else {
             SIZE = 3;
         }
-        float x = ZoomController.getZoomedValue(realPoint.x, zoom);
-        float y = ZoomController.getZoomedValue(realPoint.y, zoom);
+        double x = ZoomController.getZoomedValue(realPoint.x, zoom);
+        double y = ZoomController.getZoomedValue(realPoint.y, zoom);
         point.setLocation(x, y);
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }

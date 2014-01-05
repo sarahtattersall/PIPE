@@ -1,6 +1,8 @@
 package pipe.gui;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 public class ZoomController implements Serializable
@@ -66,15 +68,15 @@ public class ZoomController implements Serializable
     }
 
 
-    public static float getZoomedValue(float x, int zoom)
+    public static float getZoomedValue(float value, int zoom)
     {
-        return (float) (x * zoom * 0.01);
+        return (float) (value * zoom * 0.01);
     }
 
 
-    public static double getZoomedValue(double x, int zoom)
+    public static double getZoomedValue(double value, int zoom)
     {
-        return (x * zoom * 0.01);
+        return (value * zoom * 0.01);
     }
 
 
@@ -90,15 +92,20 @@ public class ZoomController implements Serializable
     }
 
 
-    public static int getUnzoomedValue(int x, int zoom)
+    public static int getUnzoomedValue(int value, int zoom)
     {
-        return (int) (x / (zoom * 0.01));
+        return (int) (value / (zoom * 0.01));
     }
 
 
-    public static double getUnzoomedValue(double x, int zoom)
+    public static double getUnzoomedValue(double value, int zoom)
     {
-        return (x / (zoom * 0.01));
+        return (value / (zoom * 0.01));
+    }
+
+    public static Point2D.Double getZoomedValue(Point2D.Double point, int zoom)
+    {
+        return new Point2D.Double(getZoomedValue(point.getX(), zoom), getZoomedValue(point.getY(), zoom));
     }
 
     public AffineTransform getTransform()

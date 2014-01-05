@@ -37,7 +37,7 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
 
         Graphics2D g2 = (Graphics2D) g;
         AffineTransform saveXform = g2.getTransform();
-        AffineTransform scaledXform = getZoomController().getTransform();
+        AffineTransform scaledXform = zoomControl.getTransform();
         Insets insets = getInsets();
         int x = insets.left;
         int y = insets.top;
@@ -80,12 +80,12 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
     }
 
     public int getDiameter() {
-        int zoomBy = getZoomController().getPercent();
+        int zoomBy = zoomControl.getPercent();
         return (int) (DIAMETER * zoomBy * 0.01);
     }
 
     public boolean contains(int x, int y) {
-        int zoomPercentage = getZoomController().getPercent();
+        int zoomPercentage = zoomControl.getPercent();
         double unZoomedX = (x - COMPONENT_DRAW_OFFSET) / (zoomPercentage / 100.0);
         double unZoomedY = (y - COMPONENT_DRAW_OFFSET) / (zoomPercentage / 100.0);
 

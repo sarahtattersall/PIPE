@@ -27,7 +27,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         implements Cloneable, IObserver, Serializable, Observer {
 
 
-
     final ArcPath arcPath = new ArcPath(this);
 
     // true if arc is not hidden when a bidirectional arc is used
@@ -71,8 +70,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     protected abstract void arcSpecificAdd();
 
 
-
-
     private double zoom(double x) {
         return ZoomController.getZoomedValue(x, _zoomPercentage);
     }
@@ -90,7 +87,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
 
     //TODO: DELETE
     void setSource(ConnectableView sourceInput) {
-         throw new RuntimeException("Should be setting models source");
+        throw new RuntimeException("Should be setting models source");
     }
 
     //TODO: DELETE
@@ -105,7 +102,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         //        return new ArcWeight(this, oldWeight, _weight);
         return null;
     }
-
 
 
     protected void removeLabelFromParentContainer(NameLabel label) {
@@ -152,14 +148,14 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
 
     private void updatePathEndPoint(boolean type) {
         Point2D.Double endPoint = model.getEndPoint();
-        arcPath.setPointLocation(arcPath.getEndIndex(), endPoint);
+        arcPath.setPointLocation(arcPath.getEndIndex(), zoom(endPoint));
         arcPath.setPointType(arcPath.getEndIndex(), type);
         updateArcPosition();
     }
 
     private void updatePathSourceLocation() {
         Point2D.Double startPoint = model.getStartPoint();
-        arcPath.setPointLocation(0, startPoint);
+        arcPath.setPointLocation(0, zoom(startPoint));
         arcPath.createPath();
         updateBounds();
         repaint();
@@ -190,8 +186,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
             if (arcPath.proximityContains(point) || isSelected()) {
                 // show also if Arc itself selected
                 arcPath.showPoints();
-            }
-            else {
+            } else {
                 //TODO: HIDEPOINTS
 //                arcPath.hidePoints();
             }
@@ -207,8 +202,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
 
         if (getParent() instanceof PetriNetTab) {
             arcPath.addPointsToGui((PetriNetTab) getParent());
-        }
-        else {
+        } else {
             arcPath.addPointsToGui((JLayeredPane) getParent());
         }
         updateArcPosition();
@@ -230,7 +224,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         arcPath.set_transitionAngle(angle);
     }
 
-    public HistoryItem split(Point2D.Float mouseposition) {
+    public HistoryItem split(Point2D.Double mouseposition) {
         ArcPathPoint newPoint = arcPath.splitSegment(mouseposition);
         return new AddArcPathPoint(this, newPoint);
     }
@@ -244,8 +238,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     public TransitionView getTransition() {
         if (getTarget() instanceof TransitionView) {
             return (TransitionView) getTarget();
-        }
-        else {
+        } else {
             return (TransitionView) getSource();
         }
     }
@@ -277,7 +270,11 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     public void zoomUpdate(int percent) {
         _zoomPercentage = percent;
         update();
+    }
 
+    public Point2D.Double zoom(Point2D.Double point) {
+        return new Point2D.Double(ZoomController.getZoomedValue(point.x, _zoomPercentage),
+                ZoomController.getZoomedValue(point.y, _zoomPercentage));
     }
 
     public void setZoom(int percent) {
@@ -384,11 +381,6 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
         updateBounds();
         repaint();
     }
-
-
-
-
-
 
 
 }

@@ -18,8 +18,8 @@ public class ZoomInAction extends GuiAction {
     @Override
     public void actionPerformed(final ActionEvent actionEvent) {
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-        PetriNetTab appView = pipeApplicationView.getCurrentTab();
-        ZoomController zoomer = appView.getZoomController();
+        PetriNetTab petriNetTab = pipeApplicationView.getCurrentTab();
+        ZoomController zoomer = petriNetTab.getZoomController();
 
         boolean zoomed = zoomer.zoomIn();
 
@@ -34,7 +34,7 @@ public class ZoomInAction extends GuiAction {
                     + (currentView.getHeight() * 0.5), zoomer.getPercent());
 
             pipeApplicationView.updateZoomCombo();
-            appView.zoomTo(new java.awt.Point((int) midpointX,
+            petriNetTab.zoomTo(new java.awt.Point((int) midpointX,
                     (int) midpointY));
         }
     }

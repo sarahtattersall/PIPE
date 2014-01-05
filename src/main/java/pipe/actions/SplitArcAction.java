@@ -23,7 +23,7 @@ public class SplitArcAction
         extends javax.swing.AbstractAction {
 
     private final ArcView _selected;
-    private final Point2D.Float mouseposition;
+    private final Point2D.Double mouseposition;
 
 
     public SplitArcAction(ArcView arcView, Point mousepos) {
@@ -31,9 +31,9 @@ public class SplitArcAction
 
         // Mousepos is relative to selected component i.e. the arc
         // Need to convert this into actual coordinates
-        Point2D.Float offset = new Point2D.Float(_selected.getX(),
+        Point2D.Double offset = new Point2D.Double(_selected.getX(),
                 _selected.getY());
-        mouseposition = new Point2D.Float(mousepos.x + offset.x,
+        mouseposition = new Point2D.Double(mousepos.x + offset.x,
                 mousepos.y + offset.y);
     }
 
