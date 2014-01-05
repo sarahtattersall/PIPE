@@ -319,8 +319,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable
         viewport.setViewPosition(viewPosition);
         zoom();
 
-        //TODO: CAN WE DELETE THIS CALL?
-        _pipeApplicationView.hideNet(true);
         updatePreferredSize();
     }
 

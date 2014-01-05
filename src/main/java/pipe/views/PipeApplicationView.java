@@ -802,23 +802,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return statusBar;
     }
 
-    private Component currentComponent = null; // arreglantzoom
-    private final Component blankLayer = new BlankLayer();
-
-    /* */
-    public void hideNet(boolean doHide) {
-        if (doHide) {
-            currentComponent = frameForPetriNetTabs.getComponentAt(frameForPetriNetTabs.getSelectedIndex());
-            frameForPetriNetTabs.setComponentAt(frameForPetriNetTabs.getSelectedIndex(), blankLayer);
-        } else {
-            if (currentComponent != null) {
-                frameForPetriNetTabs.setComponentAt(frameForPetriNetTabs.getSelectedIndex(), currentComponent);
-                currentComponent = null;
-            }
-        }
-        frameForPetriNetTabs.repaint();
-    }
-
     /* This method can be used for simulating button clicks during testing
     *
     */
