@@ -7,7 +7,6 @@ import org.junit.rules.ExpectedException;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
@@ -177,6 +176,39 @@ public class PetriNetControllerTest {
     }
 
     @Test
+    public void selectsArcIfIntersects() {
+        Arc arc = mock(Arc.class);
+        Point2D.Double start = new Point2D.Double(0,0);
+        when(arc.getStartPoint()).thenReturn(start);
+
+        Point2D.Double end = new Point2D.Double(10,10);
+        when(arc.getEndPoint()).thenReturn(end);
+
+        net.addArc(arc);
+
+        Rectangle selectionRectangle = new Rectangle(0, 0, 2, 2);
+        controller.select(selectionRectangle);
+        assertTrue(controller.isSelected(arc));
+    }
+
+
+    @Test
+    public void doesNotSelectArcIfDoesntIntersect() {
+        Arc arc = mock(Arc.class);
+        Point2D.Double start = new Point2D.Double(0,0);
+        when(arc.getStartPoint()).thenReturn(start);
+
+        Point2D.Double end = new Point2D.Double(10,10);
+        when(arc.getEndPoint()).thenReturn(end);
+
+        net.addArc(arc);
+
+        Rectangle selectionRectangle = new Rectangle(30, 30, 40, 40);
+        controller.select(selectionRectangle);
+        assertFalse(controller.isSelected(arc));
+    }
+
+    @Test
     public void translatesSelectedItemsCorrectly() {
         Transition transition = mock(Transition.class);
         Place place = mock(Place.class);
@@ -232,8 +264,8 @@ public class PetriNetControllerTest {
         ArcPoint arcPoint = new ArcPoint(point, false);
         controller.addPoint(point, false);
 
-        assertEquals(1, arc.getPoints().size());
-        assertEquals(arcPoint, arc.getPoints().iterator().next());
+        assertEquals(1, arc.getIntermediatePoints().size());
+        assertEquals(arcPoint, arc.getIntermediatePoints().iterator().next());
     }
 
     @Test
@@ -249,8 +281,8 @@ public class PetriNetControllerTest {
         ArcPoint arcPoint = new ArcPoint(point, true);
         controller.addPoint(point, true);
 
-        assertEquals(1, arc.getPoints().size());
-        assertEquals(arcPoint, arc.getPoints().iterator().next());
+        assertEquals(1, arc.getIntermediatePoints().size());
+        assertEquals(arcPoint, arc.getIntermediatePoints().iterator().next());
     }
 
     @Test

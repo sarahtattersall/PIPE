@@ -10,7 +10,6 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.HistoryItem;
-import pipe.models.PetriNet;
 import pipe.models.PipeObservable;
 import pipe.models.component.Arc;
 import pipe.models.component.ArcPoint;
@@ -268,7 +267,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     }
 
     private void addIntermediatePoints() {
-        List<ArcPoint> points = model.getPoints();
+        List<ArcPoint> points = model.getIntermediatePoints();
         for (ArcPoint arcPoint : points) {
             arcPath.addPoint(arcPoint);
         }

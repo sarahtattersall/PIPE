@@ -39,7 +39,7 @@ public class TranslationVisitorTest {
         Point2D point = new Point2D.Double(10,5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
-        when(arc.getPoints()).thenReturn(points);
+        when(arc.getIntermediatePoints()).thenReturn(points);
 
         when(mockController.isSelected(place)).thenReturn(true);
         when(mockController.isSelected(transition)).thenReturn(true);
@@ -63,7 +63,7 @@ public class TranslationVisitorTest {
         Point2D point = new Point2D.Double(10,5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
-        when(arc.getPoints()).thenReturn(points);
+        when(arc.getIntermediatePoints()).thenReturn(points);
 
         when(mockController.isSelected(place)).thenReturn(true);
         when(mockController.isSelected(transition)).thenReturn(false);
@@ -88,7 +88,7 @@ public class TranslationVisitorTest {
         Point2D point = new Point2D.Double(10,5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
-        when(arc.getPoints()).thenReturn(points);
+        when(arc.getIntermediatePoints()).thenReturn(points);
 
         when(mockController.isSelected(place)).thenReturn(false);
         when(mockController.isSelected(transition)).thenReturn(true);

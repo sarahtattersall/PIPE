@@ -138,7 +138,7 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
 
 //        for (int i = 0; i <= arc.arcPath.getEndIndex(); i++) {
 //            this.arcPath
-//                    .addPoint(arc.arcPath.getPoint(i).getX(), arc.arcPath.getPoint(i).getY(), arc.arcPath.getPointType(i));
+//                    .addIntermediatePoint(arc.arcPath.getPoint(i).getX(), arc.arcPath.getPoint(i).getY(), arc.arcPath.getPointType(i));
 //        }
 //        this.arcPath.createPath();
 //        this.updateBounds();
@@ -191,7 +191,7 @@ public class NormalArcView extends ArcView<Arc> implements Serializable {
 //
 //        copy.arcPath.delete();
 //        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
-//            copy.arcPath.addPoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
+//            copy.arcPath.addIntermediatePoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
 //                    this.arcPath.isCurved(i));
 //            //TODO: REIMPLEMENT
 ////            copy.arcPath.selectPoint(i);

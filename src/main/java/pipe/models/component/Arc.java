@@ -1,6 +1,5 @@
 package pipe.models.component;
 
-import pipe.models.PetriNet;
 import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
@@ -33,10 +32,10 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     private final ArcStrategy strategy;
 
     /**
-     * Intermediate path points
+     * Intermediate path intermediatePoints
      */
     @Pnml("arcpath")
-    private List<ArcPoint> points = new LinkedList<ArcPoint>();
+    private List<ArcPoint> intermediatePoints = new LinkedList<ArcPoint>();
 
     public Arc(S source, T target,
                Map<Token, String> tokenWeights, ArcStrategy strategy) {
@@ -183,15 +182,15 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
 
-    public void addPoints(final List<ArcPoint> points) {
-        this.points = points;
+    public void addIntermediatePoints(final List<ArcPoint> points) {
+        this.intermediatePoints = points;
     }
 
-    public List<ArcPoint> getPoints() {
-        return points;
+    public List<ArcPoint> getIntermediatePoints() {
+        return intermediatePoints;
     }
 
-    public void addPoint(ArcPoint point) {
-        points.add(point);
+    public void addIntermediatePoint(ArcPoint point) {
+        intermediatePoints.add(point);
     }
 }

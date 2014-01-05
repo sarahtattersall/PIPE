@@ -91,7 +91,7 @@ public class ArcCreator implements ComponentCreator<Arc> {
         arc.setTagged(tagged);
 
         List<ArcPoint> points = getArcPaths(element);
-        arc.addPoints(points);
+        arc.addIntermediatePoints(points);
         return arc;
     }
 

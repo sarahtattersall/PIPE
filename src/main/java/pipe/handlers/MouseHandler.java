@@ -73,7 +73,7 @@ public class MouseHandler extends MouseInputAdapter
 //                case Constants.ARC:
 //                case Constants.INHIBARC:
 //                    if(petriNetController.isCurrentlyCreatingArc())
-//                        addPoint(e);
+//                        addIntermediatePoint(e);
 //                    break;
 //
 //                case Constants.ANNOTATION:
@@ -128,7 +128,7 @@ public class MouseHandler extends MouseInputAdapter
 //                    {
 //                        if(petriNetController.isCurrentlyCreatingArc())
 //                        {
-//                            addPoint(e);
+//                            addIntermediatePoint(e);
 //                        }
 //                    }
 //                    else
@@ -154,7 +154,7 @@ public class MouseHandler extends MouseInputAdapter
 //                    if(e.isMetaDown() || petriNetTab.isMetaDown())
 //                    {
 //                        if(petriNetController.isCurrentlyCreatingArc())
-//                            addPoint(e);
+//                            addIntermediatePoint(e);
 //                    }
 //                    else
 //                    {

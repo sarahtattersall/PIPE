@@ -2,7 +2,9 @@ package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
 import pipe.gui.Animator;
-import pipe.historyActions.*;
+import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.DeletePetriNetObject;
+import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 import pipe.models.strategy.arc.ArcStrategy;
@@ -13,6 +15,7 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.models.visitor.TranslationVisitor;
 
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
@@ -21,17 +24,16 @@ public class PetriNetController implements IController, Serializable {
 
     private final HistoryManager historyManager;
     private final PetriNet petriNet;
+    private final Set<PetriNetComponent> selectedComponents = new
+            HashSet<PetriNetComponent>();
+    private final ArcStrategy inhibitorStrategy = new InhibitorStrategy();
+    private final ArcStrategy forwardNormalStrategy;
+    private final ArcStrategy backwardsNormalStrategy;
     private int placeNumber = 0;
     private int transitionNumber = 0;
     private boolean currentlyCreatingArc = false;
     private Arc arc;
-
-    private final Set<PetriNetComponent> selectedComponents = new
-            HashSet<PetriNetComponent>();
     private Token selectedToken;
-    private final ArcStrategy inhibitorStrategy = new InhibitorStrategy();
-    private final ArcStrategy forwardNormalStrategy;
-    private final ArcStrategy backwardsNormalStrategy;
     private Animator animator;
 
 
@@ -55,7 +57,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void addPoint(Point2D point, boolean curved) {
-        arc.addPoint(new ArcPoint(point, curved));
+        arc.addIntermediatePoint(new ArcPoint(point, curved));
     }
 
     /**
@@ -69,6 +71,19 @@ public class PetriNetController implements IController, Serializable {
         addArcToCurrentPetriNet(arc);
     }
 
+    private Arc buildEmptyArc(Place source, Token token) {
+        Map<Token, String> tokens = new HashMap<Token, String>();
+        tokens.put(token, "1");
+        return new Arc<Place, TemporaryArcTarget>(source,
+                new TemporaryArcTarget(source.getX(),
+                        source.getY()),
+                tokens, backwardsNormalStrategy);
+    }
+
+    private void addArcToCurrentPetriNet(Arc arc) {
+        petriNet.addArc(arc);
+    }
+
     /**
      * Starts creating an arc from the source.
      *
@@ -78,6 +93,15 @@ public class PetriNetController implements IController, Serializable {
         currentlyCreatingArc = true;
         this.arc = buildEmptyArc(source, currentToken);
         addArcToCurrentPetriNet(arc);
+    }
+
+    private Arc buildEmptyArc(Transition source, Token token) {
+        Map<Token, String> tokens = new HashMap<Token, String>();
+        tokens.put(token, "1");
+        return new Arc<Transition, TemporaryArcTarget>(source,
+                new TemporaryArcTarget(source.getX(),
+                        source.getY()),
+                tokens, forwardNormalStrategy);
     }
 
     /**
@@ -98,32 +122,10 @@ public class PetriNetController implements IController, Serializable {
      * @return inhibitor arc
      */
     private Arc buildEmptyInhibitorArc(Place source, Token token) {
-         return new Arc<Place, TemporaryArcTarget>(source,
-                new TemporaryArcTarget(source.getX(),
-                        source.getY()),
-                new HashMap<Token, String>(), inhibitorStrategy);
-    }
-
-    private void addArcToCurrentPetriNet(Arc arc) {
-        petriNet.addArc(arc);
-    }
-
-    private Arc buildEmptyArc(Place source, Token token) {
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
         return new Arc<Place, TemporaryArcTarget>(source,
                 new TemporaryArcTarget(source.getX(),
                         source.getY()),
-                tokens, backwardsNormalStrategy);
-    }
-
-    private Arc buildEmptyArc(Transition source, Token token) {
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-        return new Arc<Transition, TemporaryArcTarget>(source,
-                             new TemporaryArcTarget(source.getX(),
-                                                    source.getY()),
-                             tokens, forwardNormalStrategy);
+                new HashMap<Token, String>(), inhibitorStrategy);
     }
 
     public boolean isCurrentlyCreatingArc() {
@@ -137,6 +139,7 @@ public class PetriNetController implements IController, Serializable {
 
     /**
      * Finishes creating an arc if the target is an applicable end point
+     *
      * @param target
      * @return true if could create an arc, false otherwise
      */
@@ -186,10 +189,6 @@ public class PetriNetController implements IController, Serializable {
         return returnValue;
     }
 
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
-    }
-
     public boolean isSelected(PetriNetComponent component) {
         return selectedComponents.contains(component);
     }
@@ -209,7 +208,6 @@ public class PetriNetController implements IController, Serializable {
         }
     }
 
-
     /**
      * Selects all components within this rectangle
      *
@@ -223,12 +221,44 @@ public class PetriNetController implements IController, Serializable {
             selectConnectable(transition, selectionRectangle);
         }
         for (Arc arc : petriNet.getArcs()) {
-            if (selectedComponents.contains(arc.getSource()) ||
+            if (isArcSelected(arc, selectionRectangle) ||
+                    selectedComponents.contains(arc.getSource()) ||
                     selectedComponents.contains(arc.getTarget())) {
                 select(arc);
             }
         }
+    }
 
+    /**
+     * A crude method for selecting arcs, does not take into account bezier curves
+     *
+     * @param arc
+     * @param selectionRectangle
+     * @return if selectionRectangle intersects the path
+     */
+    private boolean isArcSelected(Arc arc, Rectangle selectionRectangle) {
+        GeneralPath path = createStraightPath(arc);
+        return path.intersects(selectionRectangle);
+    }
+
+    /**
+     * @param arc
+     * @return Straight path for arc, ignoring Bezier curves
+     */
+    private GeneralPath createStraightPath(Arc arc) {
+        GeneralPath path = new GeneralPath();
+        Point2D start = arc.getStartPoint();
+        path.moveTo(start.getX(), start.getY());
+
+        Collection<ArcPoint> arcPoints = arc.getIntermediatePoints();
+        for (ArcPoint arcPoint : arcPoints) {
+            Point2D point = arcPoint.getPoint();
+            path.lineTo(point.getX(), point.getY());
+        }
+
+        Point2D end = arc.getEndPoint();
+        path.lineTo(end.getX(), end.getY());
+        return path;
     }
 
     /**
@@ -243,10 +273,14 @@ public class PetriNetController implements IController, Serializable {
         int x = new Double(connectable.getX()).intValue();
         int y = new Double(connectable.getY()).intValue();
         Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
-                                            connectable.getWidth());
+                connectable.getWidth());
         if (selectionRectangle.intersects(rectangle)) {
             select(connectable);
         }
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
     }
 
     /**
@@ -262,16 +296,8 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     * Deletes single component, starts a newEdit for history manager
-     * @param component
-     */
-    public void delete(PetriNetComponent component) {
-        historyManager.newEdit();
-        deleteComponent(component);
-    }
-
-    /**
      * Deletes a component adding it to the history managers current edit
+     *
      * @param component
      */
     private void deleteComponent(PetriNetComponent component) {
@@ -281,17 +307,18 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
+     * Deletes single component, starts a newEdit for history manager
      *
-     * @param name token name to find
-     * @return Token from PetriNet
-     * @throw RuntimeException if the token does not exist
+     * @param component
      */
-    private Token getTokenForName(String name) {
-        return petriNet.getToken(name);
+    public void delete(PetriNetComponent component) {
+        historyManager.newEdit();
+        deleteComponent(component);
     }
 
     /**
      * Adds a new token to the petrinet
+     *
      * @param name
      * @param enabled
      * @param color
@@ -317,12 +344,18 @@ public class PetriNetController implements IController, Serializable {
         return petriNet;
     }
 
-
     public Token getToken(String tokenName) {
         return getTokenForName(tokenName);
     }
 
-
+    /**
+     * @param name token name to find
+     * @return Token from PetriNet
+     * @throw RuntimeException if the token does not exist
+     */
+    private Token getTokenForName(String name) {
+        return petriNet.getToken(name);
+    }
 
     public ArcController getArcController(Arc arc) {
         return new ArcController(arc, historyManager);
@@ -341,6 +374,7 @@ public class PetriNetController implements IController, Serializable {
     public void selectToken(Token token) {
         this.selectedToken = token;
     }
+
     public Token getSelectedToken() {
         return selectedToken;
     }

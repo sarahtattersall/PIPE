@@ -188,7 +188,7 @@ public class ArcCreatorTest {
         Element arcElement = createNormalArcNoWeight();
         Arc arc = creator.create(arcElement);
 
-        List<ArcPoint> points = arc.getPoints();
+        List<ArcPoint> points = arc.getIntermediatePoints();
         assertEquals(3, points.size());
         ArcPoint point1 = new ArcPoint(new Point2D.Double(294, 259), false);
         assertEquals(point1, points.get(0));
