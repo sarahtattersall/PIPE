@@ -5,9 +5,11 @@
  */
 package pipe.actions;
 
+import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
+import pipe.models.component.ArcPoint;
 import pipe.views.viewComponents.ArcPathPoint;
 
 import java.awt.event.ActionEvent;
@@ -21,18 +23,18 @@ import java.awt.event.ActionEvent;
 public class SplitArcPointAction 
         extends javax.swing.AbstractAction {
    
-   private final ArcPathPoint arcPathPoint;
-   
-   
-   public SplitArcPointAction(ArcPathPoint _arcPathPoint) {
-      arcPathPoint = _arcPathPoint;
+    private final ArcPoint arcPoint;
+    private final ArcController arcController;
+
+
+    public SplitArcPointAction(ArcPoint arcPoint, ArcController arcController) {
+        this.arcPoint = arcPoint;
+        this.arcController = arcController;
    }
    
    
    public void actionPerformed(ActionEvent e) {
-       PipeApplicationController controller = ApplicationSettings.getApplicationController();
-       PetriNetController petriNetController = controller.getActivePetriNetController();
-       petriNetController.getHistoryManager().addNewEdit(arcPathPoint.splitPoint());
+       arcController.splitArcPoint(arcPoint);
    }
    
 }

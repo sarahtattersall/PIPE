@@ -4,41 +4,46 @@
 
 package pipe.historyActions;
 
-import pipe.views.viewComponents.ArcPathPoint;
+import pipe.models.component.ArcPoint;
 
-/**
- *
- * @author corveau
- */
+
 public class ArcPathPointType
         extends HistoryItem
 {
    
-   private final ArcPathPoint arcPathPoint;
+   private final ArcPoint arcPoint;
   
    
-   /** Creates a new instance of placeWeightEdit
-    * @param _arcPathPoint*/
-   public ArcPathPointType(ArcPathPoint _arcPathPoint) {
-      arcPathPoint = _arcPathPoint;
+   public ArcPathPointType(ArcPoint arcPoint) {
+      this.arcPoint = arcPoint;
    }
-   
-   
-   /** */
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final ArcPathPointType that = (ArcPathPointType) o;
+
+        if (!arcPoint.equals(that.arcPoint)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return arcPoint.hashCode();
+    }
+
+    @Override
    public void undo() {
-      arcPathPoint.togglePointType();
+      arcPoint.setCurved(!arcPoint.isCurved());
    }
 
    
    /** */
+   @Override
    public void redo() {
-      arcPathPoint.togglePointType();
+       arcPoint.setCurved(!arcPoint.isCurved());
    }
-
-   
-   
-   public String toString(){
-      return super.toString() + " " + arcPathPoint.getName();
-   }
-      
 }

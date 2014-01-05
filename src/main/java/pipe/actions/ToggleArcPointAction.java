@@ -5,33 +5,36 @@
  */
 package pipe.actions;
 
+import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.views.viewComponents.ArcPathPoint;
+import pipe.models.component.ArcPoint;
 
 import java.awt.event.ActionEvent;
 
 
-public class ToggleArcPointAction 
+public class ToggleArcPointAction
         extends javax.swing.AbstractAction {
 
-   private final ArcPathPoint arcPathPoint;
+    private final ArcPoint arcPoint;
+    private final ArcController arcController;
 
-   
-   public ToggleArcPointAction(ArcPathPoint _arcPathPoint) {
-      arcPathPoint = _arcPathPoint;
-   }
 
-   
-   /* (non-Javadoc)
-    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-    */
-   public void actionPerformed(ActionEvent e) {
+    public ToggleArcPointAction(ArcPoint _arcPathPoint, ArcController arcController) {
+        arcPoint = _arcPathPoint;
+        this.arcController = arcController;
+    }
 
-       PipeApplicationController controller = ApplicationSettings.getApplicationController();
-       PetriNetController petriNetController = controller.getActivePetriNetController();
-       petriNetController.getHistoryManager().addNewEdit(arcPathPoint.togglePointType());
-   }
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        arcController.toggleArcPointType(arcPoint);
+//        petriNetController.getHistoryManager().addNewEdit(arcPoint.togglePointType());
+    }
 
 }

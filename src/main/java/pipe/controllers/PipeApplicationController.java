@@ -136,6 +136,7 @@ public class PipeApplicationController {
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
 
+        //TODO: CAN DELETE THIS?
         net.registerObserver(view);
 //        TODO: WHY? also why should I add a the pipe application view as an obsever?
         view.addObserver(petriNetTab);
@@ -155,7 +156,6 @@ public class PipeApplicationController {
         petriNetTab.updatePreferredSize();
 
 
-        net.notifyObservers();
         return petriNetTab;
     }
 

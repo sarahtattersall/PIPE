@@ -1,11 +1,13 @@
 package pipe.controllers;
 
-import pipe.historyActions.ArcWeight;
-import pipe.historyActions.HistoryManager;
+import pipe.actions.SplitArcPointAction;
+import pipe.historyActions.*;
 import pipe.models.component.Arc;
+import pipe.models.component.ArcPoint;
 import pipe.models.component.Connectable;
 import pipe.models.component.Token;
 
+import java.awt.geom.Point2D;
 import java.util.Map;
 
 public class ArcController extends AbstractPetriNetComponentController
@@ -60,5 +62,31 @@ public class ArcController extends AbstractPetriNetComponentController
 
     public Connectable getTarget() {
         return arc.getTarget();
+    }
+
+    public void toggleArcPointType(ArcPoint arcPoint) {
+        HistoryItem historyItem = new ArcPathPointType(arcPoint);
+        historyItem.redo();
+        historyManager.addNewEdit(historyItem);
+    }
+
+    public void splitArcPoint(final ArcPoint arcPoint) {
+        ArcPoint nextPoint = arc.getNextPoint(arcPoint);
+
+        double x = (arcPoint.getPoint().getX() + nextPoint.getPoint().getX())/2;
+        double y = (arcPoint.getPoint().getY() + nextPoint.getPoint().getY())/2;
+
+        Point2D point = new Point2D.Double(x,y);
+        ArcPoint newPoint = new ArcPoint(point, arcPoint.isCurved());
+        HistoryItem historyItem = new AddArcPathPoint(arc, newPoint);
+        historyItem.redo();
+        historyManager.addNewEdit(historyItem);
+    }
+
+    public void addPoint(final Point2D point) {
+        ArcPoint newPoint = new ArcPoint(point, false);
+        HistoryItem historyItem = new AddArcPathPoint(arc, newPoint);
+        historyItem.redo();
+        historyManager.addNewEdit(historyItem);
     }
 }

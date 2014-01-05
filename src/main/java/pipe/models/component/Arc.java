@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import pipe.models.interfaces.IObserver;
 import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
@@ -9,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
+public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent implements IObserver {
 
     @Pnml("source")
     protected S source;
@@ -183,7 +184,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
 
     public void addIntermediatePoints(final List<ArcPoint> points) {
-        this.intermediatePoints = points;
+        for (ArcPoint point : points) {
+            addIntermediatePoint(point);
+        }
     }
 
     public List<ArcPoint> getIntermediatePoints() {
@@ -192,5 +195,37 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
     public void addIntermediatePoint(ArcPoint point) {
         intermediatePoints.add(point);
+        point.registerObserver(this);
+        notifyObservers();
+    }
+
+    public void removeIntermediatePoint(final ArcPoint point) {
+        intermediatePoints.remove(point);
+        point.removeObserver(this);
+        notifyObservers();
+    }
+
+    @Override
+    public void update() {
+        notifyObservers();
+    }
+
+
+    public ArcPoint getNextPoint(final ArcPoint arcPoint) {
+        if (arcPoint.getPoint().equals(source.getCentre())) {
+            if (intermediatePoints.isEmpty()) {
+                return new ArcPoint(getEndPoint(), false);
+            }
+            return intermediatePoints.get(0);
+        }
+        int location = intermediatePoints.indexOf(arcPoint);
+        if (location == intermediatePoints.size() - 1) {
+            return new ArcPoint(getEndPoint(), false);
+        }
+        if (location == -1 || location + 1 > intermediatePoints.size()) {
+
+            throw new RuntimeException("No next point");
+        }
+        return intermediatePoints.get(location + 1);
     }
 }

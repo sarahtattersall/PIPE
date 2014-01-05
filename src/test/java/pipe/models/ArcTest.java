@@ -1,8 +1,11 @@
 package pipe.models;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import pipe.models.component.Arc;
+import pipe.models.component.ArcPoint;
 import pipe.models.component.Token;
 import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
@@ -16,6 +19,7 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +30,9 @@ public class ArcTest {
     IObserver mockObserver;
     Arc arc;
     ArcStrategy mockStrategy;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp()
@@ -95,17 +102,28 @@ public class ArcTest {
         return angle;
     }
 
+//    @Test
+//    public void gettingStartUsesSourceMathematicsCalculation()
+//    {
+//        double angle = setUpSourceXAndYAndReturnAngle();
+//
+//
+//        Point2D.Double expectedSourcePoint = new Point2D.Double(100, 100);
+//        when(mockSource.getArcEdgePoint(angle)).thenReturn(expectedSourcePoint);
+//
+//        Point2D.Double arcSourcePoint = arc.getStartPoint();
+//        assertEquals(expectedSourcePoint, arcSourcePoint);
+//    }
+
     @Test
-    public void gettingStartUsesSourceMathematicsCalculation()
+    public void gettingStartReturnsCenter()
     {
-        double angle = setUpSourceXAndYAndReturnAngle();
+        Point2D.Double center = new Point2D.Double(100, 401);
 
-
-        Point2D.Double expectedSourcePoint = new Point2D.Double(100, 100);
-        when(mockSource.getArcEdgePoint(angle)).thenReturn(expectedSourcePoint);
+        when(mockSource.getCentre()).thenReturn(center);
 
         Point2D.Double arcSourcePoint = arc.getStartPoint();
-        assertEquals(expectedSourcePoint, arcSourcePoint);
+        assertEquals(center, arcSourcePoint);
     }
 
     @Test
@@ -189,4 +207,112 @@ public class ArcTest {
     public void createsId() {
         assertEquals("source TO target", arc.getId());
     }
+
+    @Test
+    public void arcRegistersAsPointObserver() {
+        ArcPoint mockPoint = mock(ArcPoint.class);
+        arc.addIntermediatePoint(mockPoint);
+        verify(mockPoint).registerObserver(arc);
+    }
+
+    @Test
+    public void arcDeregistersAsPointObserver() {
+        ArcPoint mockPoint = mock(ArcPoint.class);
+        arc.addIntermediatePoint(mockPoint);
+        arc.removeIntermediatePoint(mockPoint);
+        verify(mockPoint).removeObserver(arc);
+    }
+
+
+    @Test
+    public void registeringPointNotifiesObservers() {
+        ArcPoint mockPoint = mock(ArcPoint.class);
+        arc.registerObserver(mockObserver);
+        arc.addIntermediatePoint(mockPoint);
+        verify(mockObserver).update();
+    }
+
+    @Test
+    public void removingPointNotifiesObservers() {
+        ArcPoint mockPoint = mock(ArcPoint.class);
+        arc.addIntermediatePoint(mockPoint);
+        arc.registerObserver(mockObserver);
+        arc.removeIntermediatePoint(mockPoint);
+        verify(mockObserver).update();
+    }
+
+
+    @Test
+    public void arcObservesArcPoints() {
+        ArcPoint point = new ArcPoint(new Point2D.Double(0,0), false);
+        arc.addIntermediatePoint(point);
+        arc.registerObserver(mockObserver);
+        point.notifyObservers();
+        verify(mockObserver).update();
+    }
+
+    @Test
+    public void sourceReturnsTargetAsNextIfNoIntermediatePoints() {
+        Point2D.Double center = mock(Point2D.Double.class);
+        when(mockSource.getCentre()).thenReturn(center);
+        when(mockSource.getX()).thenReturn(0.);
+        when(mockSource.getY()).thenReturn(0.);
+        when(mockTarget.getX()).thenReturn(0.);
+        when(mockTarget.getY()).thenReturn(0.);
+
+        Point2D.Double targetEnd = mock(Point2D.Double.class);
+        when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);
+
+        ArcPoint point = new ArcPoint(center, false);
+        ArcPoint actualPoint = arc.getNextPoint(point);
+        ArcPoint expectedPoint = new ArcPoint(targetEnd, false);
+        assertEquals(expectedPoint, actualPoint);
+    }
+
+
+    @Test
+    public void sourceReturnsFirstIntermediatePoint() {
+        Point2D.Double center = mock(Point2D.Double.class);
+        when(mockSource.getCentre()).thenReturn(center);
+
+        ArcPoint point = new ArcPoint(center, false);
+        ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 5), false);
+        arc.addIntermediatePoint(intermediate);
+        ArcPoint actualPoint = arc.getNextPoint(point);
+        assertEquals(intermediate, actualPoint);
+    }
+
+    @Test
+    public void intermediateReturnsNextIntermediatePoint() {
+        Point2D.Double center = mock(Point2D.Double.class);
+        when(mockSource.getCentre()).thenReturn(center);
+
+        ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 5), false);
+        ArcPoint intermediate2 = new ArcPoint(new Point2D.Double(5, 6), true);
+        arc.addIntermediatePoint(intermediate);
+        arc.addIntermediatePoint(intermediate2);
+        ArcPoint actualPoint = arc.getNextPoint(intermediate);
+        assertEquals(intermediate2, actualPoint);
+    }
+
+    @Test
+    public void lastIntermediateReturnsTarget() {
+        Point2D.Double targetEnd = mock(Point2D.Double.class);
+        when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);
+
+        ArcPoint intermediate = new ArcPoint(new Point2D.Double(1,1), false);
+        arc.addIntermediatePoint(intermediate);
+        ArcPoint actualPoint = arc.getNextPoint(intermediate);
+        ArcPoint expectedPoint = new ArcPoint(targetEnd, false);
+        assertEquals(expectedPoint, actualPoint);
+    }
+
+    @Test
+    public void throwsExceptionIfNoNextPoint() {
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage("No next point");
+        ArcPoint point = new ArcPoint(new Point2D.Double(0,0), false);
+        arc.getNextPoint(point);
+    }
+
 }

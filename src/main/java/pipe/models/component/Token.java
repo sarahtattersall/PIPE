@@ -188,8 +188,8 @@ public class Token extends AbstractPetriNetComponent {
 //                            enablingDegree = ApplicationSettings.getApplicationView().getCurrentPetriNetView().getEnablingDegree(transitionView);
 //                        }
 //                        //TODO: Broken this
-//                        int transitionNo = 0; //transitionsArray.indexOf(transitionView);
-//                        int placeNo = 0; //placesArray.indexOf(placeView);
+//                        int transitionNo = 0; //transitionsArray.nextPoint(transitionView);
+//                        int placeNo = 0; //placesArray.nextPoint(placeView);
 //                        List<MarkingView> markings = arcView.getWeight();
 //                        for (MarkingView token : markings) {
 //                            if (token.getToken().getID().equals(id)) {

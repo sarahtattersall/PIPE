@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
+public abstract class ArcView extends PetriNetViewComponent<Arc>
         implements Cloneable, IObserver, Serializable, Observer {
 
 
@@ -39,7 +39,7 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     final int zoomGrow = 10;
     private boolean _noFunctionalWeights = true;
 
-    public ArcView(T model,
+    public ArcView(Arc model,
             PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
 
@@ -303,8 +303,9 @@ public abstract class ArcView<T extends Arc> extends PetriNetViewComponent<T>
     }
 
     public HistoryItem split(Point2D.Double mouseposition) {
-        ArcPathPoint newPoint = arcPath.splitSegment(mouseposition);
-        return new AddArcPathPoint(this, newPoint);
+//        ArcPathPoint newPoint = arcPath.splitSegment(mouseposition);
+//        return new AddArcPathPoint(getModel(), newPoint);
+        return null;
     }
 
     public abstract String getType();

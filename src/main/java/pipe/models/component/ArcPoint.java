@@ -36,9 +36,12 @@ public class ArcPoint extends AbstractPetriNetComponent {
         return true;
     }
 
-
     public Point2D getPoint() {
         return point;
+    }
+
+    public void setPoint(final Point2D point) {
+        this.point = point;
     }
 
     @Override
@@ -75,7 +78,8 @@ public class ArcPoint extends AbstractPetriNetComponent {
         return curved;
     }
 
-    public void setPoint(final Point2D point) {
-        this.point = point;
+    public void setCurved(final boolean curved) {
+        this.curved = curved;
+        notifyObservers();
     }
 }

@@ -3,6 +3,9 @@
  */
 package pipe.views.viewComponents;
 
+import pipe.controllers.ArcController;
+import pipe.controllers.PetriNetController;
+import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
@@ -27,7 +30,7 @@ public class ArcPath implements Shape, Cloneable {
     private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
     public final Point2D.Double midPoint = new Point2D.Double();
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
-    private final ArcView _myArcView;
+    private final ArcView parent;
     private GeneralPath path = new GeneralPath();
     private boolean pointLock = false;
     private Shape shape, proximityShape;
@@ -35,10 +38,9 @@ public class ArcPath implements Shape, Cloneable {
 
 
     public ArcPath(ArcView a) {
-        _myArcView = a;
+        parent = a;
         _transitionAngle = 0;
     }
-
 
     /**
      * Moves the path to the first point specified on the arc
@@ -49,6 +51,7 @@ public class ArcPath implements Shape, Cloneable {
 
     /**
      * Creates a straight line
+     *
      * @param point point to create line to
      */
     private void createStraightPoint(ArcPathPoint point) {
@@ -60,9 +63,9 @@ public class ArcPath implements Shape, Cloneable {
                 point.getControl2().y, point.getPoint().x, point.getPoint().y);
     }
 
-
     /**
      * Sets the midpoint which is used to relocate the arcs label
+     *
      * @param length path length
      */
     private void setMidPoint(double length) {
@@ -95,6 +98,7 @@ public class ArcPath implements Shape, Cloneable {
                     (float) ((currentPoint.getPoint().y - previousPoint.getPoint().y) * percent);
         }
     }
+
     public void createPath() {
         setControlPoints();
 
@@ -148,7 +152,6 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     *
      * @param A
      * @param B
      * @return modulus of vector A -> B
@@ -291,7 +294,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public void updateArc() {
-        _myArcView.updateArcPosition();
+        parent.updateArcPosition();
     }
 
     public void setPointLocation(int index, Point2D point) {
@@ -379,7 +382,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public ArcView getArc() {
-        return _myArcView;
+        return parent;
     }
 
     public double getStartAngle() {
@@ -564,47 +567,10 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
-        if (_myArcView.getParent() instanceof PetriNetTab) {
-            addPointsToGui((PetriNetTab) _myArcView.getParent());
+        if (parent.getParent() instanceof PetriNetTab) {
+            addPointsToGui((PetriNetTab) parent.getParent());
         } else {
-            addPointsToGui((JLayeredPane) _myArcView.getParent());
-        }
-    }
-
-    public void addPointsToGui(PetriNetTab petriNetTab) {
-        ArcPathPointHandler pointHandler;
-
-        pathPoints.get(0).setDraggable(false);
-        pathPoints.get(pathPoints.size() - 1).setDraggable(false);
-
-        for (ArcPathPoint point : pathPoints) {
-            point.setVisible(false);
-
-            // Check whether the point has already been added to the gui
-            // as addPointsToGui() may have been called after the user
-            // split an existing point. If this is the case, we don't want
-            // to add all the points again along with new action listeners,
-            // we just want to add the new point.
-            // Nadeem 21/06/2005
-            if (petriNetTab.getIndexOf(point) < 0) {
-                petriNetTab.add(point);
-
-                //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
-                pointHandler = new ArcPathPointHandler(petriNetTab, point, null);
-
-                if (point.getMouseListeners().length == 0) {
-                    point.addMouseListener(pointHandler);
-                }
-
-                if (point.getMouseMotionListeners().length == 0) {
-                    point.addMouseMotionListener(pointHandler);
-                }
-
-                if (point.getMouseWheelListeners().length == 0) {
-                    point.addMouseWheelListener(pointHandler);
-                }
-                point.updatePointLocation();
-            }
+            addPointsToGui((JLayeredPane) parent.getParent());
         }
     }
 
@@ -628,7 +594,8 @@ public class ArcPath implements Shape, Cloneable {
             if (editWindow.getIndexOf(pathPoint) < 0) {
                 editWindow.add(pathPoint);
                 //TODO: SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER
-                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, null);
+                PetriNetController petriNetController = ApplicationSettings.getApplicationController().getActivePetriNetController();
+                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, petriNetController, petriNetController.getArcController(parent.getModel()));
 
                 if (pathPoint.getMouseListeners().length == 0) {
                     pathPoint.addMouseListener(pointHandler);
@@ -642,6 +609,45 @@ public class ArcPath implements Shape, Cloneable {
                     pathPoint.addMouseWheelListener(pointHandler);
                 }
                 pathPoint.updatePointLocation();
+            }
+        }
+    }
+
+    public void addPointsToGui(PetriNetTab petriNetTab) {
+        ArcPathPointHandler pointHandler;
+
+        pathPoints.get(0).setDraggable(false);
+        pathPoints.get(pathPoints.size() - 1).setDraggable(false);
+
+        for (ArcPathPoint point : pathPoints) {
+            point.setVisible(false);
+
+            // Check whether the point has already been added to the gui
+            // as addPointsToGui() may have been called after the user
+            // split an existing point. If this is the case, we don't want
+            // to add all the points again along with new action listeners,
+            // we just want to add the new point.
+            // Nadeem 21/06/2005
+            if (petriNetTab.getIndexOf(point) < 0) {
+                petriNetTab.add(point);
+
+                //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
+                PetriNetController petriNetController = ApplicationSettings.getApplicationController().getActivePetriNetController();
+                ArcController arcController = petriNetController.getArcController(parent.getModel());
+                pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
+
+                if (point.getMouseListeners().length == 0) {
+                    point.addMouseListener(pointHandler);
+                }
+
+                if (point.getMouseMotionListeners().length == 0) {
+                    point.addMouseMotionListener(pointHandler);
+                }
+
+                if (point.getMouseWheelListeners().length == 0) {
+                    point.addMouseWheelListener(pointHandler);
+                }
+                point.updatePointLocation();
             }
         }
     }
@@ -669,7 +675,7 @@ public class ArcPath implements Shape, Cloneable {
 //        ArcPathPoint newpoint = new ArcPathPoint(second.getMidPoint(first), first.isCurved(), this);
 //        insertPoint(wantedpoint + 1, newpoint);
 //        createPath();
-//        _myArcView.updateArcPosition();
+//        parent.updateArcPosition();
 //
 //        return newpoint;
         return null;
@@ -685,7 +691,7 @@ public class ArcPath implements Shape, Cloneable {
 //        ArcPathPoint newPoint = new ArcPathPoint(mouseposition, flag, this);
 //        insertPoint(wantedpoint + 1, newPoint);
 //        createPath();
-//        _myArcView.updateArcPosition();
+//        parent.updateArcPosition();
 //
 //        return new AddArcPathPoint(this.getArc(), newPoint);
         return null;

@@ -1,32 +1,46 @@
 package pipe.historyActions;
 
 
-import pipe.views.ArcView;
-import pipe.views.viewComponents.ArcPath;
-import pipe.views.viewComponents.ArcPathPoint;
+import pipe.models.component.Arc;
+import pipe.models.component.ArcPoint;
 
-public class AddArcPathPoint extends HistoryItem
-{
-    private final ArcPath arcPath;
-    private final ArcPathPoint point;
-    private final Integer index;
+public class AddArcPathPoint extends HistoryItem {
+    private final Arc arc;
+    private final ArcPoint point;
 
-    public AddArcPathPoint(ArcView _arc, ArcPathPoint _point)
-    {
-        arcPath = _arc.getArcPath();
-        point = _point;
-        index = point.getIndex();
+    public AddArcPathPoint(Arc arc, ArcPoint point) {
+        this.arc = arc;
+        this.point = point;
     }
 
-    public void undo()
-    {
-        point.delete();
+    @Override
+    public int hashCode() {
+        int result = arc.hashCode();
+        result = 31 * result + point.hashCode();
+        return result;
     }
 
-    public void redo()
-    {
-        arcPath.insertPoint(index, point);
-        arcPath.updateArc();
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final AddArcPathPoint that = (AddArcPathPoint) o;
+
+        if (!arc.equals(that.arc)) return false;
+        if (!point.equals(that.point)) return false;
+
+        return true;
+    }
+
+    @Override
+    public void undo() {
+        arc.removeIntermediatePoint(point);
+    }
+
+    @Override
+    public void redo() {
+        arc.addIntermediatePoint(point);
     }
 
 }

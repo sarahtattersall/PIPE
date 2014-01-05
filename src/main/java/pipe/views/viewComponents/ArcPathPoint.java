@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
 
-public final class ArcPathPoint extends PetriNetViewComponent {
+public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
 
     /**
      *
@@ -57,6 +57,7 @@ public final class ArcPathPoint extends PetriNetViewComponent {
 
 
     public ArcPathPoint(ArcPath a) {
+        System.out.println("A");
         setup();
         model = null;
         myArcPath = a;
@@ -77,6 +78,11 @@ public final class ArcPathPoint extends PetriNetViewComponent {
         if (ApplicationSettings.getApplicationView() != null) {
             this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
         }
+    }
+
+    @Override
+    public ArcPoint getModel() {
+        return model;
     }
 
 //

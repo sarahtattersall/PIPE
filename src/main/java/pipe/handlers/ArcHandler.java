@@ -48,7 +48,7 @@ public class ArcHandler
           });
           popup.insert(menuItem, popupIndex++);
 
-         menuItem = new JMenuItem(new SplitArcAction(viewComponent,
+         menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),
                                                       e.getPoint()));
          menuItem.setText("Split Arc Segment");
          popup.insert(menuItem, popupIndex++);

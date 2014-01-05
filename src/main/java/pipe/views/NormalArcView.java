@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
-public class NormalArcView extends ArcView<Arc> implements Serializable {
+public class NormalArcView extends ArcView implements Serializable {
     private final static String type = "normal";
     private final static Polygon head = new Polygon(new int[]{0, 5, 0, -5}, new int[]{0, -10, -7, -10}, 4);
 

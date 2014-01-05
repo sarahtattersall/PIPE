@@ -230,7 +230,7 @@ class ResultGeneration {
 	    	  System.out.println(line_result);
 	    	  results+=line_result;
 	    	  results+="\n";
-	    	  if( line_result.indexOf("erlang terms have not decayed to 0 by n=10000")>0  )
+	    	  if( line_result.nextPoint("erlang terms have not decayed to 0 by n=10000")>0  )
 	    		  this.errorCalResult = true;
 	    	  
 	    	  

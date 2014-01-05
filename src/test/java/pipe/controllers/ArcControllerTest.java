@@ -2,44 +2,46 @@ package pipe.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.historyActions.AddArcPathPoint;
+import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.Arc;
+import pipe.models.component.ArcPoint;
 import pipe.models.component.Token;
 import utils.TokenUtils;
 
+import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ArcControllerTest {
     HistoryManager historyManager;
-    Arc arc;
+    Arc mockArc;
     ArcController controller;
 
     @Before
     public void setUp() {
-        arc = mock(Arc.class);
+        mockArc = mock(Arc.class);
         historyManager = mock(HistoryManager.class);
 
-        controller = new ArcController(arc, historyManager);
+        controller = new ArcController(mockArc, historyManager);
     }
 
     @Test
     public void setWeightCreatesHistoryItem() {
         Token defaultToken = TokenUtils.createDefaultToken();
         String oldWeight = "5";
-        when(arc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
         controller.setWeight(defaultToken, newWeight);
         verify(historyManager).newEdit();
 
-        ArcWeight weightAction = new ArcWeight(arc, defaultToken, oldWeight, newWeight);
+        ArcWeight weightAction = new ArcWeight(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 
@@ -47,12 +49,12 @@ public class ArcControllerTest {
     public void setWeightUpdatesArcWeight() {
         Token defaultToken = TokenUtils.createDefaultToken();
         String oldWeight = "5";
-        when(arc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
         controller.setWeight(defaultToken, newWeight);
-        verify(arc).setWeight(defaultToken, newWeight);
+        verify(mockArc).setWeight(defaultToken, newWeight);
     }
 
     @Test
@@ -60,7 +62,7 @@ public class ArcControllerTest {
         Map<Token, String> tokenWeights = new HashMap<Token, String>();
         Token defaultToken = TokenUtils.createDefaultToken();
         String oldWeight = "5";
-        when(arc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
@@ -68,7 +70,7 @@ public class ArcControllerTest {
         controller.setWeights(tokenWeights);
         verify(historyManager).newEdit();
 
-        ArcWeight weightAction = new ArcWeight(arc, defaultToken, oldWeight, newWeight);
+        ArcWeight weightAction = new ArcWeight(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 
@@ -77,12 +79,86 @@ public class ArcControllerTest {
         Map<Token, String> tokenWeights = new HashMap<Token, String>();
         Token defaultToken = TokenUtils.createDefaultToken();
         String oldWeight = "5";
-        when(arc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
         tokenWeights.put(defaultToken, newWeight);
         controller.setWeights(tokenWeights);
-        verify(arc).setWeight(defaultToken, newWeight);
+        verify(mockArc).setWeight(defaultToken, newWeight);
     }
+
+    @Test
+    public void splittingArcPointSplitsHalfWay() {
+        ArcPoint nextPoint = new ArcPoint(new Point2D.Double(10, 10), false);
+        ArcPoint splitPoint = new ArcPoint(new Point2D.Double(0, 0), false);
+
+        when(mockArc.getNextPoint(splitPoint)).thenReturn(nextPoint);
+
+        controller.splitArcPoint(splitPoint);
+        ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), false);
+        verify(mockArc).addIntermediatePoint(expected);
+    }
+
+    @Test
+    public void splittingArcPointKeepsArcUncurved() {
+        ArcPoint nextPoint = new ArcPoint(new Point2D.Double(10, 10), false);
+        ArcPoint splitPoint = new ArcPoint(new Point2D.Double(0, 0), false);
+
+        when(mockArc.getNextPoint(splitPoint)).thenReturn(nextPoint);
+
+        controller.splitArcPoint(splitPoint);
+        ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), false);
+        verify(mockArc).addIntermediatePoint(expected);
+    }
+
+    @Test
+    public void splittingArcPointKeepsArcCurved() {
+        ArcPoint nextPoint = new ArcPoint(new Point2D.Double(10, 10), false);
+        ArcPoint splitPoint = new ArcPoint(new Point2D.Double(0, 0), true);
+
+        when(mockArc.getNextPoint(splitPoint)).thenReturn(nextPoint);
+
+        controller.splitArcPoint(splitPoint);
+        ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), true);
+        verify(mockArc).addIntermediatePoint(expected);
+    }
+
+    @Test
+    public void splittingCreatesHistoryItem() {
+        ArcPoint nextPoint = new ArcPoint(new Point2D.Double(10, 10), false);
+        ArcPoint splitPoint = new ArcPoint(new Point2D.Double(0, 0), true);
+
+        when(mockArc.getNextPoint(splitPoint)).thenReturn(nextPoint);
+
+        controller.splitArcPoint(splitPoint);
+        ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), true);
+        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, expected);
+        verify(historyManager).addNewEdit(addArcPointAction);
+    }
+
+    @Test
+    public void toggleCreatesHistoryItem() {
+        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
+        controller.toggleArcPointType(point);
+        ArcPathPointType arcPathPointType = new ArcPathPointType(point);
+        verify(historyManager).addNewEdit(arcPathPointType);
+    }
+
+    @Test
+    public void arcPointCreatesAtSpecifiedPoint() {
+        Point2D.Double point = new Point2D.Double(4, 1);
+        controller.addPoint(point);
+
+        ArcPoint expected = new ArcPoint(point, false);
+        verify(mockArc).addIntermediatePoint(expected);
+    }
+
+//    @Test
+//    public void addPointCreatesHistoryItem() {
+//        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
+//        controller.addPoint(point.getPoint());
+//        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, point);
+//        verify(historyManager).addNewEdit(addArcPointAction);
+//    }
 }

@@ -4,7 +4,6 @@
 
 package pipe.historyActions;
 
-import pipe.models.PetriNet;
 import pipe.models.component.Arc;
 import pipe.models.component.Token;
 
@@ -17,6 +16,38 @@ public class ArcWeight extends HistoryItem {
     private final Token token;
     private final String newWeight;
     private final String oldWeight;
+
+    public ArcWeight(final Arc arc, final Token token,
+                     final String oldWeight, final String newWeight) {
+
+        this.arc = arc;
+        this.token = token;
+        this.oldWeight = oldWeight;
+        this.newWeight = newWeight;
+    }
+
+
+    /** */
+    @Override
+    public void undo() {
+        arc.setWeight(token, oldWeight);
+    }
+
+    /** */
+    @Override
+    public void redo() {
+        arc.setWeight(token, newWeight);
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = arc.hashCode();
+        result = 31 * result + token.hashCode();
+        result = 31 * result + newWeight.hashCode();
+        result = 31 * result + oldWeight.hashCode();
+        return result;
+    }
 
     @Override
     public boolean equals(final Object o) {
@@ -43,34 +74,6 @@ public class ArcWeight extends HistoryItem {
         }
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = arc.hashCode();
-        result = 31 * result + token.hashCode();
-        result = 31 * result + newWeight.hashCode();
-        result = 31 * result + oldWeight.hashCode();
-        return result;
-    }
-
-    public ArcWeight(final Arc arc, final Token token,
-                     final String oldWeight, final String newWeight) {
-
-        this.arc = arc;
-        this.token = token;
-        this.oldWeight = oldWeight;
-        this.newWeight = newWeight;
-    }
-
-    /** */
-    public void undo() {
-        arc.setWeight(token, oldWeight);
-    }
-
-    /** */
-    public void redo() {
-        arc.setWeight(token, newWeight);
     }
 
 }

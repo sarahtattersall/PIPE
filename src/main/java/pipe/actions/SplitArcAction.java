@@ -3,11 +3,12 @@
  */
 package pipe.actions;
 
+import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryManager;
-import pipe.views.ArcView;
+import pipe.models.component.Arc;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,28 +23,18 @@ import java.awt.geom.Point2D;
 public class SplitArcAction
         extends javax.swing.AbstractAction {
 
-    private final ArcView _selected;
-    private final Point2D.Double mouseposition;
+    private final ArcController arcController;
+    private final Point2D.Double point;
 
 
-    public SplitArcAction(ArcView arcView, Point mousepos) {
-        _selected = arcView;
-
-        // Mousepos is relative to selected component i.e. the arc
-        // Need to convert this into actual coordinates
-        Point2D.Double offset = new Point2D.Double(_selected.getX(),
-                _selected.getY());
-        mouseposition = new Point2D.Double(mousepos.x + offset.x,
-                mousepos.y + offset.y);
+    public SplitArcAction(ArcController arcController, Point mousePoint) {
+        this.arcController = arcController;
+        point = new Point2D.Double(mousePoint.getX(), mousePoint.getY());
     }
 
 
     public void actionPerformed(ActionEvent arg0) {
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        PetriNetController petriNetController = controller.getActivePetriNetController();
-        HistoryManager historyManager = petriNetController.getHistoryManager();
-        historyManager.addNewEdit(
-                _selected.getArcPath().insertPointAt(mouseposition, false));
+        arcController.addPoint(point);
     }
 
 }
