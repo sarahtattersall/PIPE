@@ -39,16 +39,13 @@ public class PipeApplicationController {
     private final CopyPasteManager copyPasteManager;
 
     //TODO: Circular dependency between these two classes
-    private PipeApplicationModel applicationModel;
+    private final PipeApplicationModel applicationModel;
     private PetriNetTab activeTab;
 
-    public PipeApplicationController(CopyPasteManager copyPasteManager) {
+    public PipeApplicationController(CopyPasteManager copyPasteManager, PipeApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
         this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
-    }
-
-    public void setApplicationModel(PipeApplicationModel applicationModel) {
-        this.applicationModel = applicationModel;
     }
 
     private PetriNet loadPetriNetFromFile(File file, boolean isTN) {
@@ -118,7 +115,7 @@ public class PipeApplicationController {
         AnimationHistory animationHistory = new AnimationHistory();
         Animator animator = new Animator(net, animationHistory);
 
-        PetriNetController controller = new PetriNetController(net, new HistoryManager(net), animator);
+        PetriNetController controller = new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()), animator);
         PetriNetView view = new PetriNetView(controller, net);
         AnimationHistoryView animationHistoryView;
         try {
@@ -160,10 +157,6 @@ public class PipeApplicationController {
 
         net.notifyObservers();
         return petriNetTab;
-    }
-
-    public GuiAction getAction(ActionEnum actionType) {
-        return applicationModel.getAction(actionType);
     }
 
     public CopyPasteManager getCopyPasteManager() {
@@ -210,5 +203,15 @@ public class PipeApplicationController {
         //TODO: WORK OUT WHAT TO DO WITH SAVE FUNCTIONAL
         PetriNetWriter writer = new PetriNetWriter();
         writer.writeToFile(petriNet, outFile.getAbsolutePath());
+    }
+
+    public void setUndoActionEnabled(final boolean enabled) {
+        ApplicationSettings.getApplicationView().setUndoActionEnabled(enabled);
+    }
+
+
+    public void setRedoActionEnabled(final boolean enabled) {
+        ApplicationSettings.getApplicationView().setRedoActionEnabled(enabled);
+
     }
 }

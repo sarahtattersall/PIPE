@@ -46,14 +46,14 @@ public class EditAction extends GuiAction
 //                appView.getSelectionObject().clearSelection();
 //                applicationController.showPasteRectangle(appView);
 //            }
-            if(this == applicationModel.undoAction)
-            {
-                controller.getHistoryManager().doUndo();
-            }
-            else if(this == applicationModel.redoAction)
-            {
-                controller.getHistoryManager().doRedo();
-            }
+//            if(this == applicationModel.undoAction)
+//            {
+//                controller.getHistoryManager().doUndo();
+//            }
+//            else if(this == applicationModel.redoAction)
+//            {
+//                controller.getHistoryManager().doRedo();
+//            }
         }
     }
 }

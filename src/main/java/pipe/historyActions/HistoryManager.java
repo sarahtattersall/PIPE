@@ -3,6 +3,7 @@
  */
 package pipe.historyActions;
 
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.models.PetriNet;
@@ -28,18 +29,16 @@ public class HistoryManager {
 
     private final ArrayList<List<HistoryItem>> edits = new ArrayList<List<HistoryItem>>(UNDO_BUFFER_CAPACITY);
 
-    private final PipeApplicationModel app;
+    private final PipeApplicationController applicationController;
 
 
     /**
      * Creates a new instance of HistoryManager
-     *
-     * @param petriNet
      */
-    public HistoryManager(PetriNet petriNet) {
-        app = ApplicationSettings.getApplicationModel();
-        app.setUndoActionEnabled(false);
-        app.setRedoActionEnabled(false);
+    public HistoryManager(PipeApplicationController applicationController) {
+        this.applicationController = applicationController;
+        applicationController.setUndoActionEnabled(false);
+        applicationController.setRedoActionEnabled(false);
         for (int i = 0; i < UNDO_BUFFER_CAPACITY; i++) {
             edits.add(null);
         }
@@ -60,9 +59,9 @@ public class HistoryManager {
             fillCount++;
             undoneEdits--;
             if (undoneEdits == 0) {
-                app.setRedoActionEnabled(false);
+                applicationController.setRedoActionEnabled(false);
             }
-            app.setUndoActionEnabled(true);
+            applicationController.setUndoActionEnabled(true);
         }
     }
 
@@ -85,9 +84,9 @@ public class HistoryManager {
             }
 
             if (fillCount == 0) {
-                app.setUndoActionEnabled(false);
+                applicationController.setUndoActionEnabled(false);
             }
-            app.setRedoActionEnabled(true);
+            applicationController.setRedoActionEnabled(true);
         }
     }
 
@@ -97,8 +96,8 @@ public class HistoryManager {
         fillCount = 0;
         startOfBuffer = 0;
         undoneEdits = 0;
-        app.setUndoActionEnabled(false);
-        app.setRedoActionEnabled(false);
+        applicationController.setUndoActionEnabled(false);
+        applicationController.setRedoActionEnabled(false);
     }
 
 
@@ -109,8 +108,8 @@ public class HistoryManager {
         }
 
         undoneEdits = 0;
-        app.setUndoActionEnabled(true);
-        app.setRedoActionEnabled(false);
+        applicationController.setUndoActionEnabled(true);
+        applicationController.setRedoActionEnabled(false);
 
         List<HistoryItem> compoundEdit = new ArrayList<HistoryItem>();
         edits.set(freePosition, compoundEdit);
@@ -145,9 +144,9 @@ public class HistoryManager {
     }
 
     private void checkMode() {
-        if ((app.getMode() == Constants.FAST_PLACE) ||
-                (app.getMode() == Constants.FAST_TRANSITION)) {
-            app.resetMode();
-        }
+//        if ((app.getMode() == Constants.FAST_PLACE) ||
+//                (app.getMode() == Constants.FAST_TRANSITION)) {
+//            app.resetMode();
+//        }
     }
 }

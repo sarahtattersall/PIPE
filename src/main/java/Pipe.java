@@ -18,9 +18,8 @@ public class Pipe
     {
 
         CopyPasteManager copyPaste = new CopyPasteManager();
-        applicationController = new PipeApplicationController(copyPaste);
-        applicationModel = new PipeApplicationModel(applicationController, version);
-        applicationController.setApplicationModel(applicationModel);
+        applicationModel = new PipeApplicationModel(version);
+        applicationController = new PipeApplicationController(copyPaste, applicationModel);
         applicationView = new PipeApplicationView(applicationController, applicationModel);
     }
     public static void main(String args[])

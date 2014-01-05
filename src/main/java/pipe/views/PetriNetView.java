@@ -875,7 +875,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         newDisplayMethod(PNMLDoc);
 
         if (ApplicationSettings.getApplicationView() != null) {
-            ApplicationSettings.getApplicationModel().restoreMode();
+            ApplicationSettings.getApplicationView().restoreMode();
         }
     }
 

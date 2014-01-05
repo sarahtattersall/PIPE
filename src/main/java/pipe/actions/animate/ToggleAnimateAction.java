@@ -31,7 +31,7 @@ public class ToggleAnimateAction extends AnimateAction {
             PetriNetController controller = currentTab.getPetriNetController();
             if(!isTabAnimated)
             {
-                applicationModel.restoreMode();
+                pipeApplicationView.restoreMode();
                 PetriNetViewComponent.ignoreSelection(false);
                 PetriNet petriNet = controller.getPetriNet();
                 petriNet.markEnabledTransitions();
@@ -50,10 +50,10 @@ public class ToggleAnimateAction extends AnimateAction {
             e.printStackTrace();
             JOptionPane.showMessageDialog(pipeApplicationView, e.toString(),
                     "Animation Mode Error", JOptionPane.ERROR_MESSAGE);
-            applicationModel.startAction.setSelected(false);
+//            applicationModel.startAction.setSelected(false);
             currentTab.changeAnimationMode(false);
         }
-        applicationModel.stepforwardAction.setEnabled(false);
-        applicationModel.stepbackwardAction.setEnabled(false);
+//        applicationModel.stepforwardAction.setEnabled(false);
+//        applicationModel.stepbackwardAction.setEnabled(false);
     }
 }

@@ -24,7 +24,7 @@ public class StepForwardAction extends AnimateAction {
         Animator animator = petriNetController.getAnimator();
         animator.stepForward();
 
-        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
-        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
+//        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
+//        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
     }
 }

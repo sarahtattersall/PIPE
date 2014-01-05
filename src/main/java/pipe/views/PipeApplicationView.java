@@ -1,9 +1,13 @@
 package pipe.views;
 
-import pipe.actions.ActionEnum;
-import pipe.actions.ExampleFileAction;
-import pipe.actions.GuiAction;
-import pipe.actions.ZoomAction;
+import pipe.actions.*;
+import pipe.actions.animate.*;
+import pipe.actions.edit.*;
+import pipe.actions.file.*;
+import pipe.actions.type.*;
+import pipe.actions.zoom.SetZoomAction;
+import pipe.actions.zoom.ZoomInAction;
+import pipe.actions.zoom.ZoomOutAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
@@ -11,6 +15,10 @@ import pipe.gui.widgets.FileBrowser;
 import pipe.io.JarUtilities;
 import pipe.models.PipeApplicationModel;
 import pipe.models.component.Token;
+import pipe.models.visitor.connectable.arc.InhibitorCreatorVisitor;
+import pipe.models.visitor.connectable.arc.InhibitorSourceVisitor;
+import pipe.models.visitor.connectable.arc.NormalArcCreatorVisitor;
+import pipe.models.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -46,6 +54,54 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final PipeApplicationController applicationController;
     private final PipeApplicationModel applicationModel;
 
+    private FileAction createAction = new CreateAction();
+    private FileAction openAction = new OpenAction();
+    private FileAction closeAction = new CloseAction();
+    private FileAction saveAction = new SaveAction();
+    private FileAction saveAsAction = new SaveAsAction();
+    public FileAction printAction = new PrintAction();
+    public FileAction exportPNGAction = new ExportPNGAction();
+    public FileAction exportTNAction = new ExportTNAction();
+    public FileAction exportPSAction = new ExportPSAction();
+    public FileAction importAction = new ImportAction();
+    public GuiAction exitAction = new ExitAction(this);
+    public GuiAction undoAction = new UndoAction();
+    public GuiAction redoAction = new RedoAction();
+    public GuiAction copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+    public GuiAction cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X");
+    public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
+    public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
+    public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
+    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
+    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I");
+    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
+
+    public final TypeAction arcAction;
+    public final TypeAction inhibarcAction;
+
+    public TypeAction annotationAction = new AnnotationAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N");
+    public TypeAction tokenAction = new AddTokenAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD");
+    public TypeAction deleteTokenAction = new DeleteTokenAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT");
+    public TypeAction dragAction = new DragAction("Drag", Constants.DRAG, "Drag the drawing", "D");
+    public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
+
+    public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");;
+    public GuiAction zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS");
+    public GuiAction zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS");
+    public GuiAction zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "");
+
+    public AnimateAction startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
+    public AnimateAction stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4");
+    public AnimateAction stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6");
+    public AnimateAction randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5");
+    public AnimateAction multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
+    public SpecifyTokenAction specifyTokenClasses = new SpecifyTokenAction();
+
+    public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
+    public UnfoldAction unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U");
+    public UngroupTransitionsAction ungroupTransitions = new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
+    public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
+
     /**
      * Constructor for unit testing only
      *
@@ -57,14 +113,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         petriNetTabs = null;
         applicationController = null;
         applicationModel = null;
+
+        inhibarcAction = null;
+        arcAction = null;
     }
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
         ApplicationSettings.register(this);
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
-        this.applicationModel.registerObserver(this);
+
         petriNetTabs = new ArrayList<PetriNetTab>();
+
+        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreatorVisitor(applicationController));
+        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalArcCreatorVisitor(applicationController));
+
         setTitle(null);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -88,7 +151,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         // Build menus
         buildToolbar();
 
-        addWindowListener(new WindowHandler());
+        addWindowListener(new WindowHandler(this));
 
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
@@ -110,7 +173,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         setVisible(true);
         this.applicationModel.setMode(Constants.SELECT);
-        this.applicationModel.selectAction.actionPerformed(null);
+        selectAction.actionPerformed(null);
 
         PetriNetTab tab = applicationController.createEmptyPetriNet();
         applicationController.setActiveTab(tab);
@@ -130,15 +193,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.CREATE));
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.OPEN));
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.CLOSE));
+        addMenuItem(fileMenu, createAction);
+        addMenuItem(fileMenu, openAction);
+        addMenuItem(fileMenu, closeAction);
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.SAVE));
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.SAVEAS));
+        addMenuItem(fileMenu, saveAction);
+        addMenuItem(fileMenu, saveAsAction);
 
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.IMPORT));
+        addMenuItem(fileMenu, importAction);
 
         // Export menu
 
@@ -146,12 +209,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenu exportMenu = new JMenu("Export");
         exportMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader()
                 .getResource(ApplicationSettings.getImagePath() + "Export.png")));
-        addMenuItem(exportMenu, applicationController.getAction(ActionEnum.EXPORTPNG));
-        addMenuItem(exportMenu, applicationController.getAction(ActionEnum.EXPORTPS));
-        addMenuItem(exportMenu, applicationController.getAction(ActionEnum.EXPORTTN));
+        addMenuItem(exportMenu, exportPNGAction);
+        addMenuItem(exportMenu, exportPSAction);
+        addMenuItem(exportMenu, exportTNAction);
         fileMenu.add(exportMenu);
         fileMenu.addSeparator();
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.PRINT));
+        addMenuItem(fileMenu, printAction);
         fileMenu.addSeparator();
 
         // Example files menu
@@ -160,44 +223,44 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         fileMenu.add(exampleMenu);
         fileMenu.addSeparator();
 
-        addMenuItem(fileMenu, applicationController.getAction(ActionEnum.EXIT));
+        addMenuItem(fileMenu, exitAction);
 
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
-        addMenuItem(editMenu, applicationController.getAction(ActionEnum.UNDO));
-        addMenuItem(editMenu, applicationController.getAction(ActionEnum.REDO));
+        addMenuItem(editMenu, undoAction);
+        addMenuItem(editMenu, redoAction);
         editMenu.addSeparator();
-        addMenuItem(editMenu, applicationController.getAction(ActionEnum.CUT));
-        addMenuItem(editMenu, applicationController.getAction(ActionEnum.COPY));
-        addMenuItem(editMenu, applicationController.getAction(ActionEnum.PASTE));
-        addMenuItem(editMenu, applicationController.getAction(ActionEnum.DELETE));
+        addMenuItem(editMenu, cutAction);
+        addMenuItem(editMenu, copyAction);
+        addMenuItem(editMenu, pasteAction);
+        addMenuItem(editMenu, deleteAction);
 
         JMenu drawMenu = new JMenu("Draw");
         drawMenu.setMnemonic('D');
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.SELECT));
+        addMenuItem(drawMenu, selectAction);
 
         KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");
         InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(stroke, "ESCAPE");
 
-        rootPane.getActionMap().put("ESCAPE", applicationController.getAction(ActionEnum.SELECT));
+        rootPane.getActionMap().put("ESCAPE", selectAction);
 
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.PLACE));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.TRANSACTION));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.TIMED_TRANSACTION));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.ARC));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.INHIBITOR_ARC));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.ANNOTATION));
+        addMenuItem(drawMenu, placeAction);
+        addMenuItem(drawMenu, transAction);
+        addMenuItem(drawMenu, timedtransAction);
+        addMenuItem(drawMenu, arcAction);
+        addMenuItem(drawMenu, inhibarcAction);
+        addMenuItem(drawMenu, annotationAction);
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.TOKEN));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.DELETE_TOKEN));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.SPECIFY_TOKEN));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.GROUP_TRANSITIONS));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.UNGROUP_TRANSITIONS));
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.UNFOLD));
+        addMenuItem(drawMenu, tokenAction);
+        addMenuItem(drawMenu, deleteTokenAction);
+        addMenuItem(drawMenu, specifyTokenClasses);
+        addMenuItem(drawMenu, groupTransitions);
+        addMenuItem(drawMenu, ungroupTransitions);
+        addMenuItem(drawMenu, unfoldAction);
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, applicationController.getAction(ActionEnum.RATE_PARAMETER));
+        addMenuItem(drawMenu, rateAction);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
@@ -207,23 +270,23 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 .getResource(ApplicationSettings.getImagePath() + "Zoom.png")));
         addZoomMenuItems(zoomMenu);
 
-        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.ZOOM_OUT));
+        addMenuItem(viewMenu, zoomOutAction);
 
-        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.ZOOM_IN));
+        addMenuItem(viewMenu, zoomInAction);
         viewMenu.add(zoomMenu);
 
         viewMenu.addSeparator();
-        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.TOGGLE_GRID));
-        addMenuItem(viewMenu, applicationController.getAction(ActionEnum.DRAG));
+        addMenuItem(viewMenu, toggleGrid);
+        addMenuItem(viewMenu, dragAction);
 
         JMenu animateMenu = new JMenu("Animate");
         animateMenu.setMnemonic('A');
-        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.START));
+        addMenuItem(animateMenu, startAction);
         animateMenu.addSeparator();
-        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.STEP_BACK));
-        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.STEP_FORWARD));
-        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.RANDOM));
-        addMenuItem(animateMenu, applicationController.getAction(ActionEnum.ANIMATE));
+        addMenuItem(animateMenu, stepbackwardAction);
+        addMenuItem(animateMenu, stepforwardAction);
+        addMenuItem(animateMenu, randomAction);
+        addMenuItem(animateMenu, multipleRandomAction);
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -344,61 +407,61 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);// Inhibit toolbar floating
 
-        addButton(toolBar, applicationModel.createAction);
-        addButton(toolBar, applicationModel.openAction);
-        addButton(toolBar, applicationModel.saveAction);
-        addButton(toolBar, applicationModel.saveAsAction);
-        addButton(toolBar, applicationModel.closeAction);
+        addButton(toolBar, createAction);
+        addButton(toolBar, openAction);
+        addButton(toolBar, saveAction);
+        addButton(toolBar, saveAsAction);
+        addButton(toolBar, closeAction);
         toolBar.addSeparator();
-        addButton(toolBar, applicationModel.printAction);
+        addButton(toolBar, printAction);
         toolBar.addSeparator();
-        addButton(toolBar, applicationModel.cutAction);
-        addButton(toolBar, applicationModel.copyAction);
-        addButton(toolBar, applicationModel.pasteAction);
-        addButton(toolBar, applicationModel.deleteAction);
-        addButton(toolBar, applicationModel.undoAction);
-        addButton(toolBar, applicationModel.redoAction);
+        addButton(toolBar, cutAction);
+        addButton(toolBar, copyAction);
+        addButton(toolBar, pasteAction);
+        addButton(toolBar, deleteAction);
+        addButton(toolBar, undoAction);
+        addButton(toolBar, redoAction);
         toolBar.addSeparator();
 
-        addButton(toolBar, applicationModel.zoomOutAction);
-        addZoomComboBox(toolBar, applicationModel.zoomAction = new ZoomAction("Zoom", "Select zoom percentage ", ""));
-        addButton(toolBar, applicationModel.zoomInAction);
+        addButton(toolBar, zoomOutAction);
+        addZoomComboBox(toolBar, zoomAction);
+        addButton(toolBar, zoomInAction);
         toolBar.addSeparator();
-        addButton(toolBar, applicationModel.toggleGrid);
-        addButton(toolBar, applicationModel.dragAction);
-        addButton(toolBar, applicationModel.startAction);
+        addButton(toolBar, toggleGrid);
+        addButton(toolBar, dragAction);
+        addButton(toolBar, startAction);
 
         drawingToolBar = new JToolBar();
         drawingToolBar.setFloatable(false);
 
         toolBar.addSeparator();
-        addButton(drawingToolBar, applicationModel.selectAction);
+        addButton(drawingToolBar, selectAction);
         drawingToolBar.addSeparator();
-        addButton(drawingToolBar, applicationModel.placeAction);// Add Draw Menu Buttons
-        addButton(drawingToolBar, applicationModel.transAction);
-        addButton(drawingToolBar, applicationModel.timedtransAction);
-        addButton(drawingToolBar, applicationModel.arcAction);
-        addButton(drawingToolBar, applicationModel.inhibarcAction);
-        addButton(drawingToolBar, applicationModel.annotationAction);
+        addButton(drawingToolBar, placeAction);// Add Draw Menu Buttons
+        addButton(drawingToolBar, transAction);
+        addButton(drawingToolBar, timedtransAction);
+        addButton(drawingToolBar, arcAction);
+        addButton(drawingToolBar, inhibarcAction);
+        addButton(drawingToolBar, annotationAction);
         drawingToolBar.addSeparator();
-        addButton(drawingToolBar, applicationModel.tokenAction);
-        addButton(drawingToolBar, applicationModel.deleteTokenAction);
-        addTokenClassComboBox(drawingToolBar, applicationModel.chooseTokenClassAction);
-        addButton(drawingToolBar, applicationModel.specifyTokenClasses);
-        addButton(drawingToolBar, applicationModel.groupTransitions);
-        addButton(drawingToolBar, applicationModel.ungroupTransitions);
-        addButton(drawingToolBar, applicationModel.unfoldAction);
+        addButton(drawingToolBar, tokenAction);
+        addButton(drawingToolBar, deleteTokenAction);
+        addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
+        addButton(drawingToolBar, specifyTokenClasses);
+        addButton(drawingToolBar, groupTransitions);
+        addButton(drawingToolBar, ungroupTransitions);
+        addButton(drawingToolBar, unfoldAction);
         drawingToolBar.addSeparator();
-        addButton(drawingToolBar, applicationModel.rateAction);
+        addButton(drawingToolBar, rateAction);
 
         toolBar.add(drawingToolBar);
 
         animationToolBar = new JToolBar();
         animationToolBar.setFloatable(false);
-        addButton(animationToolBar, applicationModel.stepbackwardAction);
-        addButton(animationToolBar, applicationModel.stepforwardAction);
-        addButton(animationToolBar, applicationModel.randomAction);
-        addButton(animationToolBar, applicationModel.randomAnimateAction);
+        addButton(animationToolBar, stepbackwardAction);
+        addButton(animationToolBar, stepforwardAction);
+        addButton(animationToolBar, randomAction);
+        addButton(animationToolBar, multipleRandomAction);
 
         toolBar.add(animationToolBar);
         animationToolBar.setVisible(false);
@@ -527,8 +590,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 petriNetTab.repaint();
                 updateZoomCombo();
 
-                applicationModel
-                        .enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
+                enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
 
                 setTitle(petriNetTab.getName());
 
@@ -610,8 +672,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             setTitle(outFile.getName());
             //TODO: WHY CLEAR THIS?
 //            currentTab.getHistoryManager().clear();
-            applicationModel.undoAction.setEnabled(false);
-            applicationModel.redoAction.setEnabled(false);
+            undoAction.setEnabled(false);
+            redoAction.setEnabled(false);
         } catch (Exception e) {
             System.err.println(e);
             e.printStackTrace();
@@ -666,18 +728,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return true;
     }
 
-    public void setAnimationMode(boolean on) {
+    public void setAnimationMode(boolean animateMode) {
+        enableActions(!animateMode);
 
-        applicationModel.randomAnimateAction.setSelected(false);
-        applicationModel.startAction.setSelected(on);
+        stepforwardAction.setEnabled(false);
+        stepbackwardAction.setEnabled(false);
+        multipleRandomAction.setSelected(false);
+        startAction.setSelected(animateMode);
+
         PetriNetTab petriNetTab = getCurrentTab();
-        petriNetTab.changeAnimationMode(on);
+        petriNetTab.changeAnimationMode(animateMode);
 
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Animator animator = petriNetController.getAnimator();
-        if (on) {
-            applicationModel
-                    .enableActions(false, applicationController.isPasteEnabled());// disables all non-animation buttons
+        if (animateMode) {
+            enableActions(false, applicationController.isPasteEnabled());// disables all non-animation buttons
             applicationModel.setEditionAllowed(false);
             statusBar.changeText(statusBar.textforAnimation);
             createAnimationViewPane();
@@ -687,16 +752,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             statusBar.changeText(statusBar.textforDrawing);
             animator.restoreModel();
             removeAnimationViewPlane();
-            applicationModel
-                    .enableActions(true, applicationController.isPasteEnabled()); // renables all non-animation buttons
+            enableActions(true, applicationController.isPasteEnabled()); // renables all non-animation buttons
         }
     }
-
-    private void changeAnimationViewPlane() {
-        removeAnimationViewPlane();
-        createAnimationViewPane();
-    }
-
 
     /**
      * Creates a new currentAnimationView text area, and returns a reference to it
@@ -766,11 +824,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     */
     public void executeAction(String action) {
         if (action.equals("toggleAnimation")) {
-            applicationModel.startAction.actionPerformed(null);
+            startAction.actionPerformed(null);
         } else if (action.equals("groupTransitionsAction")) {
-            applicationModel.groupTransitions.actionPerformed(null);
+            groupTransitions.actionPerformed(null);
         } else if (action.equals("ungroupTransitionsAction")) {
-            applicationModel.ungroupTransitions.actionPerformed(null);
+            ungroupTransitions.actionPerformed(null);
         } else if (action.equals("exit")) {
             dispose();
             System.exit(0);
@@ -780,7 +838,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     /**
      * Refreshes the combo box that presents the Tokens available for use.
      */
-    // stevedoubleday (Sept 2013):  refactored as part of TokenSetController implementation 
+    // stevedoubleday (Sept 2013):  refactored as part of TokenSetControlxler implementation
     public void refreshTokenClassChoices() {
         getCurrentPetriNetView().setActiveTokenView(getCurrentPetriNetView().getTokenViews().get(0));
         String[] tokenClassChoices = buildTokenClassChoices();
@@ -836,6 +894,68 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         PetriNetTab petriNetTab = petriNetTabs.get(fileNo);
         petriNetTab._appFile = modelfile;
+    }
+
+    public void restoreMode() {
+//        setPreviousMode();
+//        placeAction.setSelected(mode == Constants.PLACE);
+//        transAction.setSelected(mode == Constants.IMMTRANS);
+//        timedtransAction.setSelected(mode == Constants.TIMEDTRANS);
+//        arcAction.setSelected(mode == Constants.ARC);
+//        inhibarcAction.setSelected(mode == Constants.INHIBARC);
+//        tokenAction.setSelected(mode == Constants.ADDTOKEN);
+//        deleteTokenAction.setSelected(mode == Constants.DELTOKEN);
+//        rateAction.setSelected(mode == Constants.RATE);
+//        selectAction.setSelected(mode == Constants.SELECT);
+//        annotationAction.setSelected(mode == Constants.ANNOTATION);
+    }
+
+    private void enableActions(boolean editMode, boolean pasteEnabled) {
+        saveAction.setEnabled(editMode);
+        saveAsAction.setEnabled(editMode);
+
+        placeAction.setEnabled(editMode);
+        arcAction.setEnabled(editMode);
+        inhibarcAction.setEnabled(editMode);
+        annotationAction.setEnabled(editMode);
+        transAction.setEnabled(editMode);
+        timedtransAction.setEnabled(editMode);
+        tokenAction.setEnabled(editMode);
+        deleteAction.setEnabled(editMode);
+        selectAction.setEnabled(editMode);
+        deleteTokenAction.setEnabled(editMode);
+        rateAction.setEnabled(editMode);
+        //toggleGrid.setEnabled(status);
+
+        if (editMode) {
+            startAction.setSelected(false);
+            multipleRandomAction.setSelected(false);
+            stepbackwardAction.setEnabled(false);
+            stepforwardAction.setEnabled(false);
+            pasteAction.setEnabled(pasteEnabled);
+        } else {
+            pasteAction.setEnabled(true);
+            undoAction.setEnabled(true);
+            redoAction.setEnabled(true);
+        }
+        randomAction.setEnabled(!editMode);
+        multipleRandomAction.setEnabled(!editMode);
+        copyAction.setEnabled(editMode);
+        cutAction.setEnabled(editMode);
+        deleteAction.setEnabled(editMode);
+
+    }
+
+    public void close() {
+        exitAction.actionPerformed(null);
+    }
+
+    public void setUndoActionEnabled(boolean flag) {
+        undoAction.setEnabled(flag);
+    }
+
+    public void setRedoActionEnabled(boolean flag) {
+        redoAction.setEnabled(flag);
     }
 }
 

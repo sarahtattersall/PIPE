@@ -7,13 +7,14 @@ import java.awt.event.ActionEvent;
 
 public class ExitAction extends GuiAction {
 
-    public ExitAction() {
+    PipeApplicationView view;
+    public ExitAction(PipeApplicationView view) {
         super("Exit", "Close the program", "ctrl Q");
+        this.view = view;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
         if (view.checkForSaveAll()) {
             view.dispose();
             System.exit(0);

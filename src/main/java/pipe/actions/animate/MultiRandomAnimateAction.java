@@ -10,8 +10,8 @@ import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 
-public class AnimationAction extends AnimateAction {
-    public AnimationAction(String name, String tooltip, String keystroke) {
+public class MultiRandomAnimateAction extends AnimateAction {
+    public MultiRandomAnimateAction(String name, String tooltip, String keystroke) {
         super(name, tooltip, keystroke);
     }
 
@@ -29,9 +29,9 @@ public class AnimationAction extends AnimateAction {
         }
         else
         {
-            applicationModel.stepbackwardAction.setEnabled(false);
-            applicationModel.stepforwardAction.setEnabled(false);
-            applicationModel.randomAction.setEnabled(false);
+//            applicationModel.stepbackwardAction.setEnabled(false);
+//            applicationModel.stepforwardAction.setEnabled(false);
+//            applicationModel.randomAction.setEnabled(false);
             setSelected(true);
             animator.startRandomFiring();
         }

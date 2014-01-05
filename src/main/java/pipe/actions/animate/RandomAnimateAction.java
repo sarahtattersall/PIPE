@@ -23,8 +23,8 @@ public class RandomAnimateAction extends AnimateAction {
 
         Animator animator = petriNetController.getAnimator();
         animator.doRandomFiring();
-        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
-        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
+//        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
+//        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
 //        pipeApplicationView.getAnimator().updateArcAndTran();
     }
 }
