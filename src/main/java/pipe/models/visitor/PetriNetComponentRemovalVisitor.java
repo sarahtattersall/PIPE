@@ -20,16 +20,22 @@ public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor
     @Override
     public void visit(Place place) {
         net.removePlace(place);
+        for (Arc<Place, Transition> arc : place.outboundArcs()) {
+            net.removeArc(arc);
+        }
     }
 
     @Override
     public void visit(Transition transition) {
-       net.removeTransition(transition);
+        net.removeTransition(transition);
+        for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+            net.removeArc(arc);
+        }
     }
 
     @Override
     public void visit(Token token) {
-       net.removeToken(token);
+        net.removeToken(token);
     }
 
     @Override

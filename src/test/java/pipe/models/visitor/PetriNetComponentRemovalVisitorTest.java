@@ -24,7 +24,7 @@ public class PetriNetComponentRemovalVisitorTest {
     }
 
     @Test
-    public void testDeletesArc() throws Exception {
+    public void testDeletesArc() {
         Place place = new Place("","");
         Transition transition = new Transition("","");
         Map<Token, String> weights = new HashMap<Token, String>();
@@ -35,26 +35,49 @@ public class PetriNetComponentRemovalVisitorTest {
     }
 
     @Test
-    public void testDeletesPlace() throws Exception {
+    public void testDeletesPlace() {
         Place place = new Place("","");
         place.accept(visitor);
         verify(mockNet).removePlace(place);
     }
 
     @Test
-    public void testDeletesTransition() throws Exception {
+    public void deletesPlaceOutboundArcs() {
+        Place place = new Place("","");
+        Arc<Place, Transition> arc = mock(Arc.class);
+        place.addOutbound(arc);
+
+        place.accept(visitor);
+        verify(mockNet).removeArc(arc);
+    }
+
+    @Test
+    public void testDeletesTransition() {
         Transition transition = new Transition("","");
         transition.accept(visitor);
         verify(mockNet).removeTransition(transition);
     }
 
+
     @Test
-    public void testDeletesAnnotation() throws Exception {
+    public void deletesTransitionOutboundArcs() {
+        Transition transition = new Transition("","");
+        Arc<Transition, Place> arc = mock(Arc.class);
+        transition.addOutbound(arc);
+
+        transition.accept(visitor);
+        verify(mockNet).removeArc(arc);
+    }
+
+    @Test
+    public void testDeletesAnnotation()  {
         Annotation annotation = new Annotation(0, 0, "", 0, 0, false);
         annotation.accept(visitor);
         verify(mockNet).removeAnnotaiton(annotation);
 
     }
+
+
 
     //TODO: CHange RateParameter to model then test this
 //    @Test
@@ -65,7 +88,7 @@ public class PetriNetComponentRemovalVisitorTest {
 //    }
 
     @Test
-    public void testDeletesToken() throws Exception {
+    public void testDeletesToken() {
         Token token = new Token("", false, 0, new Color(0, 0, 0));
         token.accept(visitor);
         verify(mockNet).removeToken(token);

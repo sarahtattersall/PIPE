@@ -81,7 +81,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
 
     public void mousePressed(MouseEvent e) {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-        System.out.println(applicationModel.isEditionAllowed() && enablePopup);
         if (applicationModel.isEditionAllowed() && enablePopup) {
             checkForPopup(e);
         }
