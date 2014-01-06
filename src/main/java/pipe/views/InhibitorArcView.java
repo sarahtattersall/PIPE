@@ -45,15 +45,7 @@ public class InhibitorArcView extends ArcView implements Serializable {
 
     }
 
-    private InhibitorArcView(InhibitorArcView arcView) {
-//        for (int i = 0; i <= arcView.arcPath.getEndIndex(); i++) {
-//            this.arcPath.addIntermediatePoint(arcView.arcPath.getPoint(i).getX(), arcView.arcPath.getPoint(i).getY(),
-//                    arcView.arcPath.getPointType(i));
-//        }
-//        this.arcPath.createPath();
-//        this.updateBounds();
-//        this._id = arcView._id;
-    }
+
 
 
     public InhibitorArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
@@ -106,7 +98,8 @@ public class InhibitorArcView extends ArcView implements Serializable {
 
 
     public InhibitorArcView copy() {
-        return new InhibitorArcView(this);
+        return null;
+//        return new InhibitorArcView(this);
     }
 
 

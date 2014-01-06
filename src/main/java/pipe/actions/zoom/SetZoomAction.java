@@ -1,6 +1,8 @@
 package pipe.actions.zoom;
 
 import pipe.actions.GuiAction;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -11,8 +13,11 @@ import java.awt.event.ActionEvent;
 
 public class SetZoomAction extends GuiAction {
 
-    public SetZoomAction(final String name, final String tooltip, final String keystroke) {
+    private final PipeApplicationController applicationController;
+
+    public SetZoomAction(final String name, final String tooltip, final String keystroke, final PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
+        this.applicationController = applicationController;
     }
 
     @Override
@@ -38,12 +43,8 @@ public class SetZoomAction extends GuiAction {
             return;
         }
 
-
-        PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-
-        PetriNetTab appView = pipeApplicationView.getCurrentTab();
-        ZoomController zoomer = appView.getZoomController();
-
+        PetriNetController currentPetriNetController = applicationController.getActivePetriNetController();
+        ZoomController zoomer = currentPetriNetController.getZoomController();
 
         if (zoomer.getPercent() != Integer.parseInt(validatedSelection)) {
             zoomer.setZoom(Integer.parseInt(validatedSelection));

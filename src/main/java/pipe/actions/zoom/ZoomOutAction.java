@@ -1,6 +1,8 @@
 package pipe.actions.zoom;
 
 import pipe.actions.GuiAction;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
@@ -10,8 +12,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class ZoomOutAction extends GuiAction {
-    public ZoomOutAction(final String name, final String tooltip, final String keystroke) {
+    private final PipeApplicationController applicationController;
+
+    public ZoomOutAction(final String name, final String tooltip, final String keystroke, final PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
+        this.applicationController = applicationController;
     }
 
 
@@ -19,7 +24,8 @@ public class ZoomOutAction extends GuiAction {
     public void actionPerformed(final ActionEvent actionEvent) {
         PipeApplicationView _pipeApplicationView = ApplicationSettings.getApplicationView();
         PetriNetTab appView = _pipeApplicationView.getCurrentTab();
-        ZoomController zoomer = appView.getZoomController();
+        PetriNetController currentPetriNetController = applicationController.getActivePetriNetController();
+        ZoomController zoomer = currentPetriNetController.getZoomController();
 
         boolean zoomed = zoomer.zoomOut();
 

@@ -265,7 +265,7 @@ public class CopyPasteManager
             historyManager.addEdit(undoIterator.next());
         }
 
-        view.zoom(); //
+//        view.zoom(); //
     }
 
 

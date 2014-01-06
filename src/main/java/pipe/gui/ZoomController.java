@@ -113,4 +113,7 @@ public class ZoomController implements Serializable
         return transform;
     }
 
+    public static Point2D.Double getUnzoomedValue(final Point2D.Double point, final int zoom) {
+        return new Point2D.Double(getUnzoomedValue(point.getX(), zoom), getUnzoomedValue(point.getY(), zoom));
+    }
 }

@@ -30,7 +30,7 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
 
 
     final protected Path2D path = new Path2D.Double();
-    final protected ArcPath arcPath = new ArcPath(this);
+    final protected ArcPath arcPath;
 
     // true if arc is not hidden when a bidirectional arc is used
     boolean inView = true;
@@ -42,23 +42,10 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
     public ArcView(Arc model,
             PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
-
+        arcPath = new ArcPath(this, controller);
 
         updatePath();
         updateBounds();
-    }
-
-
-
-
-    ArcView(ConnectableView newSource) {
-        arcPath.addPoint();
-        arcPath.addPoint();
-        arcPath.createPath();
-    }
-
-    ArcView() {
-        super();
     }
 
     /**

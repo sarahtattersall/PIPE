@@ -86,9 +86,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
 
     public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");;
-    public GuiAction zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS");
-    public GuiAction zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS");
-    public GuiAction zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "");
+    public GuiAction zoomOutAction;
+    public GuiAction zoomInAction;
+    public GuiAction zoomAction;
 
     public AnimateAction startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
     public AnimateAction stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4");
@@ -127,6 +127,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreatorVisitor(applicationController));
         arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalArcCreatorVisitor(applicationController));
+        zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", applicationController);
+        zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
+        zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
+
 
         setTitle(null);
         try {
@@ -794,7 +798,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void updateZoomCombo() {
         ActionListener zoomComboListener = (zoomComboBox.getActionListeners())[0];
         zoomComboBox.removeActionListener(zoomComboListener);
-        zoomComboBox.setSelectedItem(String.valueOf(getCurrentTab().getZoomController().getPercent()) + "%");
+        PetriNetController controller = applicationController.getActivePetriNetController();
+        ZoomController zoomController = controller.getZoomController();
+        zoomComboBox.setSelectedItem(String.valueOf(zoomController.getPercent()) + "%");
         zoomComboBox.addActionListener(zoomComboListener);
     }
 

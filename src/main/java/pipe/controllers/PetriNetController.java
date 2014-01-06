@@ -2,6 +2,7 @@ package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
 import pipe.gui.Animator;
+import pipe.gui.ZoomController;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
@@ -22,6 +23,7 @@ import java.util.*;
 
 public class PetriNetController implements IController, Serializable {
 
+    private final ZoomController zoomController = new ZoomController(100);
     private final HistoryManager historyManager;
     private final PetriNet petriNet;
     private final Set<PetriNetComponent> selectedComponents = new
@@ -384,4 +386,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
 
+    public ZoomController getZoomController() {
+        return zoomController;
+    }
 }

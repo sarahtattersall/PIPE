@@ -28,33 +28,30 @@ public class AnnotationNote extends Note {
     public AnnotationNote(int x, int y) {
         super(x, y);
         setDragPoints();
-        if (ApplicationSettings.getApplicationView() != null) {
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
-        }
+
+        ZoomController zoomController = petriNetController.getZoomController();
+        addZoomController(zoomController);
+
     }
 
 
     public AnnotationNote(String id, String text, int x, int y) {
         super(id, text, x, y);
         setDragPoints();
-        if (ApplicationSettings.getApplicationView() != null) {
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
-        }
+        ZoomController zoomController = petriNetController.getZoomController();
+        addZoomController(zoomController);
     }
 
 
     public AnnotationNote(String text, int x, int y, int w, int h, boolean border) {
         super(text, x, y, w, h, border);
-        setDragPoints();
-        if (ApplicationSettings.getApplicationView() != null) {
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
-        }
+        setDragPoints();         ZoomController zoomController = petriNetController.getZoomController();
+        addZoomController(zoomController);
     }
 
     public void setModel(Annotation model) {
         this.model = model;
     }
-
     public Annotation getModel() {
         return model;
     }

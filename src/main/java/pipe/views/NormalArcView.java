@@ -130,29 +130,6 @@ public class NormalArcView extends ArcView implements Serializable {
         }
     }
 
-    public NormalArcView(ConnectableView newSource) {
-        super(newSource);
-    }
-
-    public NormalArcView(NormalArcView arc) {
-
-//        for (int i = 0; i <= arc.arcPath.getEndIndex(); i++) {
-//            this.arcPath
-//                    .addIntermediatePoint(arc.arcPath.getPoint(i).getX(), arc.arcPath.getPoint(i).getY(), arc.arcPath.getPointType(i));
-//        }
-//        this.arcPath.createPath();
-//        this.updateBounds();
-//        this._id = arc._id;
-//        this.inView = arc.inView;
-//        this.joined = arc.joined;
-    }
-
-    public NormalArcView(ArcController arcController, Arc model) {
-        _controller = arcController;
-        this.model = model;
-        this.model.registerObserver(this);
-    }
-
 
     public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
 //        ConnectableView source = this.getSource().getLastCopy();
@@ -208,7 +185,8 @@ public class NormalArcView extends ArcView implements Serializable {
     }
 
     public NormalArcView copy() {
-        return new NormalArcView(this);
+        return null;
+//        return new NormalArcView(this);
     }
 
     public String getType() {

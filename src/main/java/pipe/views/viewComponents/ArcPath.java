@@ -31,14 +31,16 @@ public class ArcPath implements Shape, Cloneable {
     public final Point2D.Double midPoint = new Point2D.Double();
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
     private final ArcView parent;
+    private final PetriNetController petriNetController;
     private GeneralPath path = new GeneralPath();
     private boolean pointLock = false;
     private Shape shape, proximityShape;
     private int _transitionAngle;
 
 
-    public ArcPath(ArcView a) {
+    public ArcPath(ArcView a, PetriNetController petriNetController) {
         parent = a;
+        this.petriNetController = petriNetController;
         _transitionAngle = 0;
     }
 
@@ -282,7 +284,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public void addPoint(ArcPoint arcPoint) {
-        pathPoints.add(new ArcPathPoint(arcPoint, this));
+        pathPoints.add(new ArcPathPoint(arcPoint, this, petriNetController));
     }
 
     public void addPoint() {
@@ -594,7 +596,6 @@ public class ArcPath implements Shape, Cloneable {
             if (editWindow.getIndexOf(pathPoint) < 0) {
                 editWindow.add(pathPoint);
                 //TODO: SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER
-                PetriNetController petriNetController = ApplicationSettings.getApplicationController().getActivePetriNetController();
                 pointHandler = new ArcPathPointHandler(editWindow, pathPoint, petriNetController, petriNetController.getArcController(parent.getModel()));
 
                 if (pathPoint.getMouseListeners().length == 0) {
@@ -632,7 +633,6 @@ public class ArcPath implements Shape, Cloneable {
                 petriNetTab.add(point);
 
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
-                PetriNetController petriNetController = ApplicationSettings.getApplicationController().getActivePetriNetController();
                 ArcController arcController = petriNetController.getArcController(parent.getModel());
                 pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
 

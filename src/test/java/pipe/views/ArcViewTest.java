@@ -65,20 +65,4 @@ public class ArcViewTest {
 
 
     }
-
-    private class TestingArcView extends NormalArcView {
-        private static final long serialVersionUID = 1L;
-
-        public TestingArcView(ConnectableView newSource) {
-            super(newSource);
-        }
-
-        @Override
-        protected void updateHistory(HistoryItem historyItem) {
-        }
-
-        @Override
-        protected void removeLabelFromParentContainer(NameLabel label) {
-        }
-    }
 }

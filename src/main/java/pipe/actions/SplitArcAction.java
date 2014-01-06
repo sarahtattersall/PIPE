@@ -7,8 +7,10 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
+import pipe.gui.ZoomController;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.Arc;
+import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,17 +26,22 @@ public class SplitArcAction
         extends javax.swing.AbstractAction {
 
     private final ArcController arcController;
+    private final PetriNetController petriNetController;
     private final Point2D.Double point;
 
 
-    public SplitArcAction(ArcController arcController, Point mousePoint) {
+    public SplitArcAction(ArcController arcController, Point mousePoint, PetriNetController petriNetController) {
         this.arcController = arcController;
+        this.petriNetController = petriNetController;
         point = new Point2D.Double(mousePoint.getX(), mousePoint.getY());
     }
 
 
     public void actionPerformed(ActionEvent arg0) {
-        arcController.addPoint(point);
+        ZoomController zoomController = petriNetController.getZoomController();
+        int percent = zoomController.getPercent();
+        Point2D.Double unzoomedPoint = ZoomController.getUnzoomedValue(point, percent);
+        arcController.addPoint(unzoomedPoint);
     }
 
 }

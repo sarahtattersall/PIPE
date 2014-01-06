@@ -6,6 +6,7 @@
  */
 package pipe.views.viewComponents;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -47,37 +48,30 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
     private void setup() {
         _copyPasteable = false; //we can't copy & paste indivial arc points!
         _zoomPercentage = 100;
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        if (view != null) {
-            PetriNetTab tab = view.getCurrentTab();
-            ZoomController controller = tab.getZoomController();
-            this.addZoomController(controller);
-        }
+        ZoomController controller = petriNetController.getZoomController();
+        this.addZoomController(controller);
     }
 
 
     public ArcPathPoint(ArcPath a) {
-        System.out.println("A");
         setup();
         model = null;
         myArcPath = a;
         setPointLocation(0, 0);
-        if (ApplicationSettings.getApplicationView() != null) {
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
-        }
+        ZoomController zoomController = petriNetController.getZoomController();
+        addZoomController(zoomController);
+
     }
 
 
-    public ArcPathPoint(ArcPoint point, ArcPath a) {
+    public ArcPathPoint(ArcPoint point, ArcPath a, PetriNetController petriNetController) {
+        super("", "", 0, 0, point, petriNetController);
         setup();
         model = point;
         setPointLocation(model.getPoint());
         myArcPath = a;
-//        setPointLocation(x, y);
-//        pointType = _pointType;
-        if (ApplicationSettings.getApplicationView() != null) {
-            this.addZoomController(ApplicationSettings.getApplicationView().getCurrentTab().getZoomController());
-        }
+        ZoomController zoomController = petriNetController.getZoomController();
+        addZoomController(zoomController);
     }
 
     @Override

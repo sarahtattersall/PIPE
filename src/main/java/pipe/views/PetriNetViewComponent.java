@@ -35,7 +35,7 @@ public abstract class PetriNetViewComponent<T extends PetriNetComponent> extends
         this(null, null, 0, 0, null, null);
     }
 
-    PetriNetViewComponent(String id, String name, double namePositionX, double namePositionY, T model, PetriNetController controller) {
+    public PetriNetViewComponent(String id, String name, double namePositionX, double namePositionY, T model, PetriNetController controller) {
         _id = id;
         _selectable = true;
         _draggable = true;

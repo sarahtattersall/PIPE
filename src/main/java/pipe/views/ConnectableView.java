@@ -34,12 +34,8 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
             T model, PetriNetController controller) {
         super(id, name, nameOffsetX, nameOffsetY, model, controller);
         setLocation((int) model.getX(),  (int) model.getY());
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        if (view != null) {
-            PetriNetTab tab = view.getCurrentTab();
-            ZoomController zoomController = tab.getZoomController();
-            addZoomController(zoomController);
-        }
+        ZoomController zoomController = controller.getZoomController();
+        addZoomController(zoomController);
     }
 
     public void setName(String nameInput) {
