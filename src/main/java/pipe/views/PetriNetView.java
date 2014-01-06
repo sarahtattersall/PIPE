@@ -1504,24 +1504,25 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         return _tokenSetController.getTokenViews().size();
     }
 
+    //TODO: WORK OUT IF THIS IS STILL AN ISSUE?
     public boolean hasFunctionalRatesOrWeights() {
-        for (ArcView arc : _arcViews.values()) {
-            List<MarkingView> weights = arc.getWeightSimple();
-            for (MarkingView weight : weights) {
-                try {
-                    Integer.parseInt(weight.getCurrentFunctionalMarking());
-                } catch (Exception e) {
-                    return true;
-                }
-            }
-        }
-        for (TransitionView tran : _transitionViews.values()) {
-            try {
-                Double.parseDouble(tran.getRateExpr());
-            } catch (Exception e) {
-                return true;
-            }
-        }
+//        for (ArcView arc : _arcViews.values()) {
+//            List<MarkingView> weights = arc.getWeightSimple();
+//            for (MarkingView weight : weights) {
+//                try {
+//                    Integer.parseInt(weight.getCurrentFunctionalMarking());
+//                } catch (Exception e) {
+//                    return true;
+//                }
+//            }
+//        }
+//        for (TransitionView tran : _transitionViews.values()) {
+//            try {
+//                Double.parseDouble(tran.getRateExpr());
+//            } catch (Exception e) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
