@@ -37,7 +37,7 @@ public class TransitionElementCreatorTest {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         document = builder.newDocument();
-        creator = new ElementCreator();
+        creator = new ElementCreator(document);
     }
 
     private Transition createTransition() {
@@ -56,14 +56,14 @@ public class TransitionElementCreatorTest {
     @Test
     public void createsCorrectTag() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
         assertEquals("transition", element.getTagName());
     }
 
     @Test
     public void writesCorrectId() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String id = element.getAttribute("id");
         assertFalse(id.isEmpty());
@@ -73,7 +73,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectName() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String name = element.getAttribute("name");
         assertFalse(name.isEmpty());
@@ -83,7 +83,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectPosition() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String positionX = element.getAttribute("positionX");
         assertFalse(positionX.isEmpty());
@@ -98,7 +98,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectNameOffset() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String nameOffsetX = element.getAttribute("nameOffsetX");
         assertFalse(nameOffsetX.isEmpty());
@@ -112,7 +112,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectValueForInfiniteServer() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String infiniteServer = element.getAttribute("infiniteServer");
         assertFalse(infiniteServer.isEmpty());
@@ -122,7 +122,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectValueForTimed() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String timed = element.getAttribute("timed");
         assertFalse(timed.isEmpty());
@@ -133,7 +133,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectAngle() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String angle = element.getAttribute("angle");
         assertFalse(angle.isEmpty());
@@ -143,7 +143,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectRate() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String rate = element.getAttribute("rate");
         assertFalse(rate.isEmpty());
@@ -153,7 +153,7 @@ public class TransitionElementCreatorTest {
     @Test
     public void writesCorrectPriority() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Transition transition = createTransition();
-        Element element = creator.createElement(transition, document);
+        Element element = creator.createElement(transition);
 
         String priority = element.getAttribute("priority");
         assertFalse(priority.isEmpty());

@@ -19,15 +19,17 @@ import java.util.Map;
 public class ElementCreator {
 
     private final List<TypeHandler> handlers = new LinkedList<TypeHandler>();
+    private final Document document;
 
-    public ElementCreator() {
+    public ElementCreator(Document document) {
+        this.document = document;
         handlers.add(new MapHandler());
         handlers.add(new ColorHandler());
-        handlers.add(new DefaultHandler());
         handlers.add(new CollectionHandler(this));
+        handlers.add(new DefaultHandler());
     }
 
-    public <T extends PetriNetComponent> Element createElement(T component, Document document) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public <T extends PetriNetComponent> Element createElement(T component) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Class<? extends PetriNetComponent> clazz = component.getClass();
 
 
@@ -107,7 +109,7 @@ public class ElementCreator {
         }
     }
 
-    private static class CollectionHandler implements TypeHandler {
+    private class CollectionHandler implements TypeHandler {
         private final ElementCreator creator;
 
         private CollectionHandler(final ElementCreator creator) {
@@ -121,10 +123,24 @@ public class ElementCreator {
         }
 
         @Override
-        public void handle(Pnml pnmlAnnotation, Object object, Element element) {
-            Collection<Object> collection = (Collection<Object>) object;
-            for (Object item : collection) {
-                creator.handleObject(pnmlAnnotation, object, element);
+        public void handle(final Pnml pnmlAnnotation, final Object object, final Element element) {
+            handlePetriNetComponents(pnmlAnnotation, object, element);
+        }
+
+        public <T extends PetriNetComponent>  void handlePetriNetComponents(Pnml pnmlAnnotation, Object object, Element element) {
+            Collection<T> collection = (Collection<T>) object;
+            for (T item : collection) {
+                Element childElement = null;
+                try {
+                    childElement = creator.createElement(item);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                element.appendChild(childElement);
             }
         }
     }

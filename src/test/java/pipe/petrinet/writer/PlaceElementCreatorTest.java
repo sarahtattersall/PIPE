@@ -35,11 +35,11 @@ public class PlaceElementCreatorTest {
 
     @Before
     public void setUp() throws ParserConfigurationException {
-        creator = new ElementCreator();
         DocumentBuilderFactory builderFactory =
                 DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         document = builder.newDocument();
+        creator = new ElementCreator(document);
     }
 
     private Place createPlace() {
@@ -65,7 +65,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
 
         assertEquals("place", element.getTagName());
     }
@@ -75,7 +75,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
         String attribute = element.getAttribute("id");
 
         assertFalse(attribute.isEmpty());
@@ -87,7 +87,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
         String attribute = element.getAttribute("name");
 
         assertFalse(attribute.isEmpty());
@@ -99,7 +99,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
 
         String nameOffsetX = element.getAttribute("nameOffsetX");
         assertFalse(nameOffsetX.isEmpty());
@@ -115,7 +115,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
 
         String markingOffsetX = element.getAttribute("markingOffsetX");
         assertFalse(markingOffsetX.isEmpty());
@@ -131,7 +131,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
 
         String capacity = element.getAttribute("capacity");
         assertFalse(capacity.isEmpty());
@@ -143,7 +143,7 @@ public class PlaceElementCreatorTest {
             throws IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         Place place = createPlace();
-        Element element = creator.createElement(place, document);
+        Element element = creator.createElement(place);
 
         String tokens = element.getAttribute("initialMarking");
         assertFalse(tokens.isEmpty());

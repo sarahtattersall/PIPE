@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 
 
 public class PetriNetWriter {
-    private final ElementCreator creator = new ElementCreator();
+
 
 
     public void writeToFile(PetriNet net, String path) throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -32,7 +32,7 @@ public class PetriNetWriter {
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         Document document = builder.newDocument();
 
-        writeToDocument(net, document);
+       writeToDocument(net, document);
 
         // Create Transformer with XSL Source File
         Source xsltSource = new StreamSource(Thread.currentThread().
@@ -49,25 +49,25 @@ public class PetriNetWriter {
     public void writeToDocument(PetriNet net, Document document) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Element pnmlElement = createPNMLElement(document);
         Element netElement = createNetElement(document, pnmlElement);
-
+        ElementCreator creator = new ElementCreator(document);
         for (Token token : net.getTokens())
         {
-            Element element = creator.createElement(token, document);
+            Element element = creator.createElement(token);
             netElement.appendChild(element);
         }
 
         for (Place place : net.getPlaces()) {
-            Element element = creator.createElement(place, document);
+            Element element = creator.createElement(place);
             netElement.appendChild(element);
         }
 
         for (Transition transition : net.getTransitions()) {
-            Element element = creator.createElement(transition, document);
+            Element element = creator.createElement(transition);
             netElement.appendChild(element);
         }
 
         for (Arc arc : net.getArcs()) {
-            Element element = creator.createElement(arc, document);
+            Element element = creator.createElement(arc);
             netElement.appendChild(element);
 
         }

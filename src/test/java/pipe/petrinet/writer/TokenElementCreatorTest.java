@@ -26,10 +26,10 @@ public class TokenElementCreatorTest {
 
     @Before
     public void setUp() throws ParserConfigurationException {
-        creator = new ElementCreator();
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         document = builder.newDocument();
+        creator = new ElementCreator(document);
     }
 
     private Token createToken() {
@@ -40,14 +40,14 @@ public class TokenElementCreatorTest {
     @Test
     public void createsCorrectTag() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Token token = createToken();
-        Element element = creator.createElement(token, document);
+        Element element = creator.createElement(token);
         assertEquals("token", element.getTagName());
     }
 
     @Test
     public void writesCorrectId() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Token token = createToken();
-        Element element = creator.createElement(token, document);
+        Element element = creator.createElement(token);
 
         String id = element.getAttribute("id");
         assertFalse(id.isEmpty());
@@ -58,7 +58,7 @@ public class TokenElementCreatorTest {
     @Test
     public void writesCorrectEnabledValue() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Token token = createToken();
-        Element element = creator.createElement(token, document);
+        Element element = creator.createElement(token);
 
         String enabled = element.getAttribute("enabled");
         assertFalse(enabled.isEmpty());
@@ -68,7 +68,7 @@ public class TokenElementCreatorTest {
     @Test
     public void writesCorrectColor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Token token = createToken();
-        Element element = creator.createElement(token, document);
+        Element element = creator.createElement(token);
 
         String red = element.getAttribute("red");
         assertFalse(red.isEmpty());

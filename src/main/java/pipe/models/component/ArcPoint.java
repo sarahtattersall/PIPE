@@ -4,44 +4,42 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 
-public class ArcPoint extends AbstractPetriNetComponent {
-    Point2D point;
+@Pnml("arcpath")
+public final class ArcPoint extends AbstractPetriNetComponent {
+
+    @Pnml("xCoord")
+    private double x;
+
+    @Pnml("yCoord")
+    private double y;
+
     /**
      * If curved is true it implies this point is a bezier curve
      */
-    boolean curved;
+    @Pnml("arcPointType")
+    private boolean curved;
 
     public ArcPoint(Point2D point, boolean curved) {
-        this.point = point;
+        setPoint(point);
         this.curved = curved;
     }
 
-    @Override
-    public int hashCode() {
-        int result = point.hashCode();
-        result = 31 * result + (curved ? 1 : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final ArcPoint arcPoint = (ArcPoint) o;
-
-        if (curved != arcPoint.curved) return false;
-        if (!point.equals(arcPoint.point)) return false;
-
-        return true;
-    }
-
     public Point2D getPoint() {
-        return point;
+        return new Point2D.Double(x, y);
     }
 
     public void setPoint(final Point2D point) {
-        this.point = point;
+        this.x = point.getX();
+        this.y = point.getY();
+        notifyObservers();
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 
     @Override
