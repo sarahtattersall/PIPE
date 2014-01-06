@@ -155,6 +155,7 @@ public class PipeApplicationController {
 
         petriNetTab.updatePreferredSize();
 
+        net.notifyObservers();
 
         return petriNetTab;
     }
