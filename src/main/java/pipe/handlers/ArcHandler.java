@@ -24,7 +24,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         extends PetriNetObjectHandler<Arc<S, T>, ArcView<S,T>> {
 
 
-    public ArcHandler(ArcView view, Container contentpane, Arc<S, T> component, PetriNetController controller) {
+    public ArcHandler(ArcView<S,T> view, Container contentpane, Arc<S, T> component, PetriNetController controller) {
         super(view, contentpane, component, controller);
         enablePopup = true;
     }
@@ -117,29 +117,6 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
     // the weight of the arc because multiple weights for multiple colours exist
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-
-    }
-
-    class SplitArcsAction extends AbstractAction {
-
-        final ArcView _arcView;
-        final boolean joined;
-
-
-        public SplitArcsAction(ArcView _arc, boolean _joined) {
-            _arcView = _arc;
-            joined = _joined;
-        }
-
-        //TODO: REIMPLEMENT
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //         if (joined) {
-            //            petriNetController.getHistoryManager().addNewEdit(_arcView.split());
-            //         } else {
-            //             petriNetController.getHistoryManager().addNewEdit(_arcView.join());
-            //         }
-        }
 
     }
 }
