@@ -19,6 +19,8 @@ import pipe.views.viewComponents.NameLabel;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
@@ -53,6 +55,22 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
 
         updatePath();
         updateBounds();
+        addConnectableListener();
+    }
+
+    private void addConnectableListener() {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("x") || name.equals("y")) {
+                    updatePath();
+                    updateBounds();
+                }
+            }
+        };
+        model.getSource().addPropertyChangeListener(listener);
+        model.getTarget().addPropertyChangeListener(listener);
     }
 
     /**

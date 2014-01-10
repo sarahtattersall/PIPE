@@ -13,6 +13,8 @@ import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -34,6 +36,21 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
                          PetriNetController controller) {
         super(model, controller);
         setTagged(model.isTagged());
+        addConnectableListener();
+    }
+
+    private void addConnectableListener() {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("x") || name.equals("y")) {
+                    updateWeights();
+                }
+            }
+        };
+        model.getSource().addPropertyChangeListener(listener);
+        model.getTarget().addPropertyChangeListener(listener);
     }
 
     /**
