@@ -60,20 +60,4 @@ public class InhibitorCreatorTest {
                 new Arc<Place, Transition>(source, transition, tokens, mockPetriNetController.getInhibitorStrategy());
         verify(mockNet).addArc(expected);
     }
-
-    @Test
-    public void creatingArcAddsToTab() {
-        Place source = new Place("", "");
-        Transition transition = new Transition("", "");
-        creator.create(source, transition);
-
-
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        Arc<Place, Transition> expectedModel =
-                new Arc<Place, Transition>(source, transition, tokens, mockPetriNetController.getBackwardsStrategy());
-
-        InhibitorArcView expectedView =
-                new InhibitorArcView(expectedModel, mockPetriNetController);
-        verify(mockTab).addNewPetriNetObject(expectedView);
-    }
 }

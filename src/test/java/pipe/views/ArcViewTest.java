@@ -1,6 +1,7 @@
 package pipe.views;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,25 +17,30 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.ZoomController;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.Arc;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 
 public class ArcViewTest {
 
-    private ArcView arcView;
-    private PetriNetController mockController;
-    private Arc mockArc;
+    private ArcView<Place, Transition> arcView;
+    private Arc<Place, Transition> mockArc;
     private Point2D.Double start = new Point2D.Double(50, 39);
     private Point2D.Double end = new Point2D.Double(100, 500);
     private static final double DOUBLE_DELTA = 0.0001;
+    private Place source;
 
     @Before
     public void setUp() throws Exception {
-        mockController = mock(PetriNetController.class);
+        PetriNetController mockController = mock(PetriNetController.class);
         mockArc = mock(Arc.class);
+        source = new Place("","");
+        when(mockArc.getSource()).thenReturn(source);
         when(mockArc.getStartPoint()).thenReturn(start);
         when(mockArc.getEndPoint()).thenReturn(end);
-        arcView = new NormalArcView(mockArc, mockController);
+        arcView = new NormalArcView<Place, Transition>(mockArc, mockController);
     }
 
     @Test

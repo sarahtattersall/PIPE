@@ -23,11 +23,14 @@ import pipe.petrinet.writer.PetriNetWriter;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
 import pipe.views.PetriNetView;
+import pipe.views.changeListener.PetriNetChangeListener;
 
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -49,7 +52,7 @@ public class PipeApplicationController {
         ApplicationSettings.register(this);
     }
 
-    private PetriNet loadPetriNetFromFile(File file, boolean isTN) {
+    private PetriNet loadPetriNetFromFile(File file, PetriNet net, boolean isTN) {
 
         try {
             // BK 10/02/07: Changed loading of PNML to accomodate new
@@ -64,7 +67,6 @@ public class PipeApplicationController {
                 document = transformer.transformPNML(file.getPath());
                 //petriNetTab.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
             }
-            PetriNet net = new PetriNet();
             ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
             ArcStrategy<Transition, Place> normalForwardStrategy = new ForwardsNormalStrategy(net);
             ArcStrategy<Place, Transition> normalBackwardStrategy = new BackwardsNormalStrategy(net);
@@ -107,8 +109,11 @@ public class PipeApplicationController {
             cancelPaste();
         }
 
-        PetriNet netModel = loadPetriNetFromFile(file, isTN);
-        return createNewTab(netModel);
+
+        PetriNet net = new PetriNet();
+        PetriNetTab tab = createNewTab(net);
+        loadPetriNetFromFile(file, net, isTN);
+        return tab;
 
     }
 
@@ -116,8 +121,8 @@ public class PipeApplicationController {
         AnimationHistory animationHistory = new AnimationHistory();
         Animator animator = new Animator(net, animationHistory);
 
-        PetriNetController controller = new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()), animator);
-        PetriNetView view = new PetriNetView(controller, net);
+        PetriNetController petriNetController = new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()), animator);
+        PetriNetView view = new PetriNetView(petriNetController, net);
         AnimationHistoryView animationHistoryView;
         try {
             animationHistoryView = new AnimationHistoryView(animationHistory, "Animation History");
@@ -129,10 +134,10 @@ public class PipeApplicationController {
         animationHistory.registerObserver(animationHistoryView);
 
 
-        PetriNetTab petriNetTab = new PetriNetTab(view, controller, animationHistoryView);
-        netControllers.put(petriNetTab, controller);
+        PetriNetTab petriNetTab = new PetriNetTab(view, petriNetController, animationHistoryView);
+        netControllers.put(petriNetTab, petriNetController);
 
-        PetriNetMouseHandler handler = new PetriNetMouseHandler(new SwingMouseUtilities(), controller, net, petriNetTab, view);
+        PetriNetMouseHandler handler = new PetriNetMouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab, view);
         petriNetTab.addMouseListener(handler);
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
@@ -157,6 +162,7 @@ public class PipeApplicationController {
         petriNetTab.updatePreferredSize();
 
 //        net.notifyObservers();
+        net.addPropertyChangeListener(new PetriNetChangeListener(petriNetTab, petriNetController));
 
         return petriNetTab;
     }

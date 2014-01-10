@@ -14,7 +14,7 @@ public class TimedTransitionAction extends TransitionAction {
 
     public TimedTransitionAction(final String name, final int typeID,
                                  final String tooltip,
-                                 final String keystroke, PipeApplicationView applicationView) {
-        super(name, typeID, tooltip, keystroke, applicationView);
+                                 final String keystroke) {
+        super(name, typeID, tooltip, keystroke);
     }
 }

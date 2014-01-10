@@ -35,11 +35,6 @@ public class InhibitorCreator implements ArcActionCreator {
                     arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), petriNetController.getInhibitorStrategy());
             PetriNet petriNet = petriNetController.getPetriNet();
             petriNet.addArc(arc);
-
-            InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(arc, petriNetController);
-            InhibitorArcView view = builder.build();
-            PetriNetTab tab = applicationView.getCurrentTab();
-            tab.addNewPetriNetObject(view);
         }
     }
 

@@ -63,19 +63,6 @@ public class PipeApplicationControllerTest {
     }
 
     @Test
-    public void createNewTabCreatesANewTabForGivenPetriNetFile()
-    {
-        PipeApplicationView mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
-        PetriNetTab mockTab = mock(PetriNetTab.class);
-        when(mockView.getCurrentTab()).thenReturn(mockTab);
-
-        File file = new File("src/test/resources/xml/simpleNet.xml");
-        controller.createNewTabFromFile(file, false);
-        verify(mockView).addNewTab(eq("simpleNet"), any(PetriNetTab.class));
-    }
-
-    @Test
     public void createsNewPetriNetControllerPerPetriNet() {
         PetriNetTab tab = controller.createEmptyPetriNet();
         PetriNetController tabController = tab.getPetriNetController();

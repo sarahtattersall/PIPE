@@ -221,16 +221,6 @@ public class ArcTest {
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
-
-    @Test
-    public void arcObservesArcPoints() {
-        ArcPoint point = new ArcPoint(new Point2D.Double(0,0), false);
-        arc.addIntermediatePoint(point);
-        arc.addPropertyChangeListener(mockListener);
-//        point.notifyObservers();
-        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
-    }
-
     @Test
     public void sourceReturnsTargetAsNextIfNoIntermediatePoints() {
         Point2D.Double center = mock(Point2D.Double.class);

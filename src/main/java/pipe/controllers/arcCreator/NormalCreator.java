@@ -47,11 +47,6 @@ public class NormalCreator implements ArcActionCreator {
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addArc(arc);
-
-        NormalArcViewBuilder builder = new NormalArcViewBuilder(arc, petriNetController);
-        ArcView<? extends Connectable, ? extends Connectable> view = builder.build();
-        PetriNetTab tab = applicationView.getCurrentTab();
-        tab.addNewPetriNetObject(view);
     }
 
     @Override

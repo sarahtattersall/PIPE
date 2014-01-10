@@ -13,7 +13,8 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -25,7 +26,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     private final SelectionManager selection;
     //    private final HistoryManager _historyManager;
     private final PipeApplicationView _pipeApplicationView;
-    private final ArrayList<PetriNetViewComponent> petriNetComponents = new ArrayList<PetriNetViewComponent>();
+    /**
+     * Map of components in the tab with id -> component
+     */
+    private final Map<String, PetriNetViewComponent> petriNetComponents = new HashMap<String, PetriNetViewComponent>();
     private final Point viewPosition = new Point(0, 0);
     private final PetriNetController petriNetController;
     private final AnimationHistoryView animationHistoryView;
@@ -69,6 +73,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Add new component to the petrinet view
+     *
      * @param component
      */
     public void addNewPetriNetObject(AbstractPetriNetViewComponent<?> component) {
@@ -79,20 +84,20 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
                 component.zoomUpdate(getZoom());
             }
         }
-//        validate();
-//        repaint();
-    }
-
-    public int getZoom() {
-        ZoomController zoomController = petriNetController.getZoomController();
-        return zoomController.getPercent();
+        //        validate();
+        //        repaint();
     }
 
     public void add(AbstractPetriNetViewComponent<?> component) {
         setLayer(component, DEFAULT_LAYER + component.getLayerOffset());
         super.add(component);
         component.addedToGui();
-        petriNetComponents.add(component);
+        petriNetComponents.put(component.getId(), component);
+    }
+
+    public int getZoom() {
+        ZoomController zoomController = petriNetController.getZoomController();
+        return zoomController.getPercent();
     }
 
     public int print(Graphics g, PageFormat pageFormat, int pageIndex)
@@ -165,15 +170,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         netChanged = _netChanged;
     }
 
-    public ArrayList<PetriNetViewComponent> getPNObjects() {
-        return petriNetComponents;
-    }
-
-    public void remove(Component comp) {
-        petriNetComponents.remove(comp);
-        super.remove(comp);
-    }
-
     public void drag(Point dragStart, Point dragEnd) {
         if (dragStart == null) {
             return;
@@ -197,6 +193,15 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         if (zoomController.zoomIn()) {
             zoomTo(midpoint(zoom));
         }
+    }
+
+    private Point midpoint(int zoom) {
+        JViewport viewport = (JViewport) getParent();
+        double midpointX = ZoomController.getUnzoomedValue(
+                viewport.getViewPosition().x + (viewport.getWidth() * 0.5), zoom);
+        double midpointY = ZoomController.getUnzoomedValue(
+                viewport.getViewPosition().y + (viewport.getHeight() * 0.5), zoom);
+        return (new java.awt.Point((int) midpointX, (int) midpointY));
     }
 
     public void zoomTo(Point point) {
@@ -224,19 +229,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         updatePreferredSize();
     }
 
-    private void zoom() {
-        ZoomController zoomController = petriNetController.getZoomController();
-        Component[] children = getComponents();
-
-        for (Component child : children) {
-            if (child instanceof Zoomable) {
-                ((Zoomable) child).zoomUpdate(zoomController.getPercent());
-            }
-        }
-        _zoomCalled = true;
-        selection.setZoom(zoomController.getPercent());
-    }
-
     public void updatePreferredSize() {
         Component[] components = getComponents();
         Dimension d = new Dimension(0, 0);
@@ -261,13 +253,17 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
-    private Point midpoint(int zoom) {
-        JViewport viewport = (JViewport) getParent();
-        double midpointX = ZoomController.getUnzoomedValue(
-                viewport.getViewPosition().x + (viewport.getWidth() * 0.5), zoom);
-        double midpointY = ZoomController.getUnzoomedValue(
-                viewport.getViewPosition().y + (viewport.getHeight() * 0.5), zoom);
-        return (new java.awt.Point((int) midpointX, (int) midpointY));
+    private void zoom() {
+        ZoomController zoomController = petriNetController.getZoomController();
+        Component[] children = getComponents();
+
+        for (Component child : children) {
+            if (child instanceof Zoomable) {
+                ((Zoomable) child).zoomUpdate(zoomController.getPercent());
+            }
+        }
+        _zoomCalled = true;
+        selection.setZoom(zoomController.getPercent());
     }
 
     public void zoomOut() {
@@ -280,6 +276,16 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     public AnimationHistoryView getAnimationView() {
         return animationHistoryView;
+    }
+
+    public void deletePetriNetComponent(String id) {
+        PetriNetViewComponent component = petriNetComponents.get(id);
+        if (component != null) {
+            component.delete();
+            remove((Component) component);
+        }
+        validate();
+        repaint();
     }
 }
 

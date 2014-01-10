@@ -64,21 +64,4 @@ public class NormalCreatorTest {
         verify(mockNet).addArc(expected);
     }
 
-    @Test
-    public void creatingArcAddsToTab() {
-        Place source = new Place("", "");
-        Transition transition = new Transition("", "");
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        creator.create(source, transition);
-
-
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-        Arc<Place, Transition> expectedModel =
-                new Arc<Place, Transition>(source, transition, tokens, mockPetriNetController.getBackwardsStrategy());
-
-        ArcView<Place, Transition> expectedView =
-                new NormalArcView<Place, Transition>(expectedModel, mockPetriNetController);
-        verify(mockTab).addNewPetriNetObject(expectedView);
-    }
 }

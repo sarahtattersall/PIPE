@@ -110,7 +110,6 @@ public class PetriNetTest {
 
     @Test
     public void addingRateParameterNotifiesObservers() {
-
         net.addPropertyChangeListener(mockListener);
         RateParameter rateParameter = new RateParameter("", 0., 0, 0);
         net.addRate(rateParameter);

@@ -19,12 +19,10 @@ import java.awt.event.MouseEvent;
  */
 public class PlaceAction extends TypeAction {
 
-    private final PipeApplicationView applicationView;
 
     public PlaceAction(final String name, final int typeID,
-                       final String tooltip, final String keystroke, PipeApplicationView applicationView) {
+                       final String tooltip, final String keystroke) {
         super(name, typeID, tooltip, keystroke);
-        this.applicationView = applicationView;
     }
 
     @Override
@@ -50,11 +48,6 @@ public class PlaceAction extends TypeAction {
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addPlace(place);
-
-        PlaceViewBuilder builder = new PlaceViewBuilder(place, petriNetController);
-        PlaceView view = builder.build();
-
-        applicationView.getCurrentTab().addNewPetriNetObject(view);
 
         return place;
     }

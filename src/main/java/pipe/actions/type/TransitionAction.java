@@ -21,12 +21,9 @@ import java.awt.event.MouseEvent;
  */
 public abstract class TransitionAction extends TypeAction {
 
-    private final PipeApplicationView applicationView;
-
     public TransitionAction(final String name, final int typeID,
-                            final String tooltip, final String keystroke, PipeApplicationView applicationView) {
+                            final String tooltip, final String keystroke) {
         super(name, typeID, tooltip, keystroke);
-        this.applicationView = applicationView;
     }
 
     @Override
@@ -54,10 +51,6 @@ public abstract class TransitionAction extends TypeAction {
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addTransition(transition);
 
-        TransitionViewBuilder builder = new TransitionViewBuilder(transition, petriNetController);
-        TransitionView view = builder.build();
-
-        applicationView.getCurrentTab().addNewPetriNetObject(view);
 
         return transition;
     }

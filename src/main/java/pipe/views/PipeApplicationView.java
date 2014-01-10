@@ -73,9 +73,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
     public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
-    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P", this);
-    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I", this);
-    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T", this);
+    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
+    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I");
+    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
 
     public final TypeAction arcAction;
     public final TypeAction inhibarcAction;
