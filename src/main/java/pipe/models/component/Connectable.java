@@ -135,13 +135,13 @@ public abstract class Connectable extends AbstractPetriNetComponent {
     public void setId(String id) {
         String old = this.id;
         this.id = id;
-        changeSupport.firePropertyChange("changeId", old, id);
+        changeSupport.firePropertyChange("id", old, id);
     }
 
     public void setName(String name) {
         String old = this.name;
         this.name = name;
-        changeSupport.firePropertyChange("changeName", old, name);
+        changeSupport.firePropertyChange("name", old, name);
     }
 
     public abstract void accept(ConnectableVisitor visitor);

@@ -54,6 +54,9 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
                     updateLabelLocation();
                 } else if (name.equals("nameOffsetX") || name.equals("nameOffsetY")) {
                     updateLabelLocation();
+                } else if (name.equals("id") || name.equals("name")) {
+                    String newName = (String) propertyChangeEvent.getNewValue();
+                    setNameLabelName(newName);
                 }
             }
 
