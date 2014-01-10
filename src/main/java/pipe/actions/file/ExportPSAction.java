@@ -16,7 +16,7 @@ public class ExportPSAction extends FileAction {
     public void actionPerformed(ActionEvent e) {
         PipeApplicationView view = ApplicationSettings.getApplicationView();
         PetriNetTab tab = view.getCurrentTab();
-        Export.exportGuiView(tab, Export.POSTSCRIPT, view.getCurrentPetriNetView());
+//        Export.exportGuiView(tab, Export.POSTSCRIPT, view.getCurrentPetriNetView());
     }
 
 }

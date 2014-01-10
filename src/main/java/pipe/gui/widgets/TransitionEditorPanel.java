@@ -23,7 +23,6 @@ import java.util.Enumeration;
 public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private final TransitionController transitionController;
-    private final PetriNetView _pnmlData;
     private final PetriNetController netController;
     private final JRootPane rootPane;
     private final javax.swing.JRadioButton immediateRadioButton =
@@ -62,14 +61,11 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      *
      * @param _rootPane
      * @param transitionController
-     * @param _pnmlData
      * @param netController        petriNetController that transitionController belongs to.
      */
     public TransitionEditorPanel(JRootPane _rootPane, TransitionController transitionController,
-                                 PetriNetView _pnmlData,
                                  PetriNetController netController) {
         this.transitionController = transitionController;
-        this._pnmlData = _pnmlData;
         this.netController = netController;
         rootPane = _rootPane;
 
@@ -515,8 +511,10 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private boolean canSetName() {
         String newName = nameTextField.getText();
         if (!newName.equals(transitionController.getName())) {
-            if (_pnmlData.checkTransitionIDAvailability(newName)) {
-                return true;
+            //TODO: REIMPLEMENT:
+            if(false) {
+//            if (.checkTransitionIDAvailability(newName)) {
+//                return true;
             } else {
                 JOptionPane.showMessageDialog(null,
                         "There is already a transitionController named " + newName,
@@ -630,9 +628,10 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private void rateComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
         int index = rateComboBox.getSelectedIndex();
         if (index > 0) {
-            rateTextField.setText(
-                    _pnmlData.markingRateParameters()[index - 1].getValue()
-                            .toString());
+            //TODO: IMPLEMENT
+//            rateTextField.setText(
+//                    _pnmlData.markingRateParameters()[index - 1].getValue()
+//                            .toString());
         }
     }
 
@@ -685,8 +684,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
                 new EscapableDialog(ApplicationSettings.getApplicationView(),
                         "PIPE2", true);
         TransitionFunctionEditor feditor =
-                new TransitionFunctionEditor(this, guiDialog, _pnmlData,
-                        transitionController);
+                new TransitionFunctionEditor(this, guiDialog,
+                        transitionController, netController.getPetriNet());
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
         guiDialog.setLocationRelativeTo(
@@ -715,12 +714,13 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         priorityLabel.setEnabled(true);
         priorityPanel.setEnabled(true);
 
-        RateParameter[] rates = _pnmlData.markingRateParameters();
-        if (rates.length > 0) {
-            rateComboBox.addItem("");
-            for (RateParameter rate1 : rates) {
-                rateComboBox.addItem(rate1);
-            }
+//        RateParameter[] rates = _pnmlData.markingRateParameters();
+//        if (rates.length > 0) {
+        if (false) {
+//            rateComboBox.addItem("");
+//            for (RateParameter rate1 : rates) {
+//                rateComboBox.addItem(rate1);
+//            }
         } else {
             rateComboBox.setEnabled(false);
         }
@@ -751,12 +751,13 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         priorityLabel.setEnabled(false);
         priorityPanel.setEnabled(false);
 
-        RateParameter[] rates = _pnmlData.markingRateParameters();
-        if (rates.length > 0) {
-            rateComboBox.addItem("");
-            for (RateParameter rate1 : rates) {
-                rateComboBox.addItem(rate1);
-            }
+        //        RateParameter[] rates = _pnmlData.markingRateParameters();
+        //        if (rates.length > 0) {
+        if (false) {
+            //            rateComboBox.addItem("");
+            //            for (RateParameter rate1 : rates) {
+            //                rateComboBox.addItem(rate1);
+            //            }
         } else {
             rateComboBox.setEnabled(false);
         }

@@ -20,7 +20,6 @@ import java.util.Observer;
 
 public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
-    public final PetriNetView _petriNetView;
     //public ArcView _createArcView;
     private final AnimationHandler animationHandler = new AnimationHandler();
     private final SelectionManager selection;
@@ -41,9 +40,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     private boolean _zoomCalled = true;
 
 
-    public PetriNetTab(PetriNetView petriNetView, PetriNetController controller,
+    public PetriNetTab(PetriNetController controller,
                        AnimationHistoryView animationHistoryView) {
-        _petriNetView = petriNetView;
         petriNetController = controller;
         this.animationHistoryView = animationHistoryView;
 

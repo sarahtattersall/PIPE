@@ -122,7 +122,6 @@ public class PipeApplicationController {
         Animator animator = new Animator(net, animationHistory);
 
         PetriNetController petriNetController = new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()), animator);
-        PetriNetView view = new PetriNetView(petriNetController, net);
         AnimationHistoryView animationHistoryView;
         try {
             animationHistoryView = new AnimationHistoryView(animationHistory, "Animation History");
@@ -134,19 +133,13 @@ public class PipeApplicationController {
         animationHistory.registerObserver(animationHistoryView);
 
 
-        PetriNetTab petriNetTab = new PetriNetTab(view, petriNetController, animationHistoryView);
+        PetriNetTab petriNetTab = new PetriNetTab(petriNetController, animationHistoryView);
         netControllers.put(petriNetTab, petriNetController);
 
-        PetriNetMouseHandler handler = new PetriNetMouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab, view);
+        PetriNetMouseHandler handler = new PetriNetMouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab);
         petriNetTab.addMouseListener(handler);
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
-
-        //TODO: CAN DELETE THIS?
-//        net.registerObserver(view);
-//        TODO: WHY? also why should I add a the pipe application view as an obsever?
-        view.addObserver(petriNetTab);
-
 
         String name;
         if (net.getPnmlName().isEmpty()) {

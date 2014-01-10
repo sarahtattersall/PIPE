@@ -37,8 +37,8 @@ public class Animator {
      * unhighlighted
      */
     public void restoreModel() {
-        PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-        petriNetView.restorePreviousMarking();
+//        PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+//        petriNetView.restorePreviousMarking();
 //        disableTransitions(petriNetView.getModel());
     }
 

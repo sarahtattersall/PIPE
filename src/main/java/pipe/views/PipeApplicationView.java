@@ -637,7 +637,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             return;
         }
         boolean saveFunctional = false;
-        if (getCurrentPetriNetView().hasFunctionalRatesOrWeights()) {
+//        if (getCurrentPetriNetView().hasFunctionalRatesOrWeights()) {
+        if(false) {
             if (JOptionPane.showConfirmDialog(null, "This net has functional rates or weights expressions. \r\n" +
                     "Saving these expression will not allow this PNML file compatible with other tools. \r\n" +
                     "Press 'yes' to save them anyway. Press 'no' to save their constant values", "Request",
@@ -830,10 +831,16 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      */
     // stevedoubleday (Sept 2013):  refactored as part of TokenSetControlxler implementation
     public void refreshTokenClassChoices() {
-        getCurrentPetriNetView().setActiveTokenView(getCurrentPetriNetView().getTokenViews().get(0));
         String[] tokenClassChoices = buildTokenClassChoices();
         DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
         tokenClassComboBox.setModel(model);
+    }
+
+    private void setActiveTokenView(TokenView tc) {
+//        _tokenSetController.setActiveTokenView(tc.getID());
+        //TODO: IMPROVE WHERE THIS HAPPENS
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        petriNetController.selectToken(tc.getModel());
     }
 
     public String getSelectedTokenName() {
@@ -859,19 +866,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         return petriNetTabs.get(index);
     }
-
-    public PetriNetView getCurrentPetriNetView() {
-        return getPetriNetView(frameForPetriNetTabs.getSelectedIndex());
-    }
-
-
-    PetriNetView getPetriNetView(int index) {
-        if (index < 0 || index >= petriNetTabs.size()) {
-            return null;
-        }
-        return petriNetTabs.get(index)._petriNetView;
-    }
-
 
     public File getFile() {
         PetriNetTab petriNetTab = petriNetTabs.get(frameForPetriNetTabs.getSelectedIndex());
@@ -946,6 +940,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void setRedoActionEnabled(boolean flag) {
         redoAction.setEnabled(flag);
+    }
+
+    //TODO: DELETE!
+    public PetriNetView getCurrentPetriNetView() {
+        return null;
     }
 
     private static class Line extends JComponent {

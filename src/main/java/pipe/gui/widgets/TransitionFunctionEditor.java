@@ -2,6 +2,9 @@ package pipe.gui.widgets;
 
 import parser.ExprEvaluator;
 import pipe.controllers.TransitionController;
+import pipe.models.PetriNet;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
 
@@ -9,7 +12,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Vector;
 
 /**
@@ -19,23 +24,20 @@ import java.util.Vector;
 //for layout managers and more
 public class TransitionFunctionEditor extends JPanel {
 
-    private PetriNetView _pnmldata;
     private EscapableDialog _rootPane;
     private TransitionController transitionController;
     private TransitionEditorPanel _editor;
 
     public TransitionFunctionEditor(TransitionEditorPanel transitionEditorPanel,
                                     EscapableDialog guiDialog,
-                                    PetriNetView pnmldata,
-                                    TransitionController transitionController) {
+                                    TransitionController transitionController, PetriNet petriNet) {
         _editor = transitionEditorPanel;
-        _pnmldata = pnmldata;
         _rootPane = guiDialog;
-        this.transitionController = null;
-        init(_pnmldata);
+        this.transitionController = transitionController;
+        init(petriNet);
     }
 
-    private void init(PetriNetView pnmldata) {
+    private void init(PetriNet petriNet) {
 
         final JTextArea function = new JTextArea();
         function.setText(transitionController.getRateExpr());
@@ -52,34 +54,21 @@ public class TransitionFunctionEditor extends JPanel {
         //JPanel east = new JPanel(new BorderLayout());
         //JLabel placeLabel = new JLabel("Places");
         // PetriNetViewComponent
-        Iterator iterator1 = pnmldata.getPetriNetObjects();
-        Object pn;
-        Vector<String> placename = new Vector<String>();
-        if (iterator1 != null) {
-            while (iterator1.hasNext()) {
-                pn = iterator1.next();
-                if (pn instanceof PlaceView) {
-                    placename.add(((PlaceView) pn).getName());
-                }
-            }
+        Collection<String> placename = new LinkedList<String>();
+        for (Place place : petriNet.getPlaces()) {
+            placename.add(place.getName());
         }
-        JComboBox places = new JComboBox(placename);
+
+        JComboBox places = new JComboBox(placename.toArray());
         north.add(places);
 
-        // PetriNetViewComponent
-        //		Iterator iterator2 = pnmldata.getPetriNetObjects();
-        //		Object pn2;
-        //		Vector<String> TransitionNames = new Vector<String>();
-        //		if (iterator2 != null) {
-        //			while (iterator2.hasNext()) {
-        //				pn = iterator2.next();
-        //				if (pn instanceof TransitionView) {
-        //					TransitionNames.add(((TransitionView) pn).getName());
-        //				}
-        //			}
-        //		}
-        //JComboBox transitions = new JComboBox(TransitionNames);
-        //	north.add(transitions);
+        Collection<String> transitionNames = new LinkedList<String>();
+        for(Transition transition : petriNet.getTransitions()) {
+            transitionNames.add(transition.getName());
+        }
+
+        JComboBox transitions = new JComboBox(transitionNames.toArray());
+        north.add(transitions);
 
         JPanel south = new JPanel(new FlowLayout());
         JButton okbutton = new JButton("OK");

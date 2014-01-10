@@ -23,17 +23,15 @@ public class PetriNetMouseHandler extends MouseInputAdapter
 {
     private PetriNetViewComponent pn;
     private final PetriNetTab petriNetTab;
-    private final PetriNetView petriNetView;
     private Point dragStart;
     private PetriNetController petriNetController;
     private final MouseUtilities mouseUtilities;
 
     public PetriNetMouseHandler(MouseUtilities mouseUtilities, PetriNetController controller, PetriNet net,
-                                PetriNetTab petriNetTab, PetriNetView petriNetView)
+                                PetriNetTab petriNetTab)
     {
         super();
         this.petriNetTab = petriNetTab;
-        this.petriNetView = petriNetView;
         this.petriNetController = controller;
         this.mouseUtilities = mouseUtilities;
     }

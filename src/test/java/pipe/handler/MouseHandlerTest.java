@@ -21,7 +21,6 @@ public class MouseHandlerTest {
     PetriNetController mockController;
     PetriNet mockNet;
     PetriNetTab mockTab;
-    PetriNetView mockView;
     MouseUtilities mockUtilities;
     PetriNetMouseHandler handler;
 
@@ -35,10 +34,9 @@ public class MouseHandlerTest {
     public void setup() {
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
-        mockView = mock(PetriNetView.class);
         mockTab = mock(PetriNetTab.class);
         mockUtilities = mock(MouseUtilities.class);
-        handler = new PetriNetMouseHandler(mockUtilities, mockController, mockNet, mockTab, mockView);
+        handler = new PetriNetMouseHandler(mockUtilities, mockController, mockNet, mockTab);
 
         mockModel = mock(PipeApplicationModel.class);
         mockEvent = mock(MouseEvent.class);

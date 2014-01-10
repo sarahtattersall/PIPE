@@ -3,27 +3,21 @@ package pipe.views;
 import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
-import pipe.handlers.ConnectableHandler;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
 import pipe.models.PetriNet;
-import pipe.models.component.Arc;
 import pipe.models.component.Connectable;
-import pipe.models.component.Token;
 import pipe.models.component.Transition;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,37 +28,31 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
 
 
 public class TransitionView extends ConnectableView<Transition> implements Serializable {
-    @Override
-    public boolean isShowing() {
-        return super.isShowing();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
+    public boolean _highlighted;
     private GeneralPath _path;
     private boolean _enabled;
     private boolean _enabledBackwards;
-    public boolean _highlighted;
     private double _delay;
     private boolean _delayValid;
     private RateParameter _rateParameter;
     private GroupTransitionView _groupTransitionView;
-
     private int _delayForShowingWarnings;
-
 
     public TransitionView() {
         this("", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false,
                 false, 0, new Transition("", "", "1", 1), null);
     }
 
-    public TransitionView( String id, String name, double nameOffsetX,
-            double nameOffsetY, boolean timed, boolean infServer, int angleInput, Transition model,
-            PetriNetController controller) {
-        super(id, name,  model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(), model,
-                 controller);
+
+    public TransitionView(String id, String name, double nameOffsetX,
+                          double nameOffsetY, boolean timed, boolean infServer, int angleInput, Transition model,
+                          PetriNetController controller) {
+        super(id, name, model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(), model,
+                controller);
         constructTransition();
         setChangeListener();
 
@@ -76,8 +64,37 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         rotate(angleInput);
         updateBounds();
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
-//        changeToolTipText();
+        //        changeToolTipText();
 
+    }
+
+    private void constructTransition() {
+        _path = new GeneralPath();
+        //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
+        _path.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
+                model.getHeight()), false);
+    }
+
+    //TODO: RE-IMPLEMENT
+    //TODO: DELETE
+    public HistoryItem rotate(int angleInc) {
+        //        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
+        //        _angle = (_angle + angleInc) % 360;
+        //        _path.transform(
+        //                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
+        //        outlineTransition();
+        ////
+        //        Iterator arcIterator = _arcAngleList.iterator();
+        //        while (arcIterator.hasNext()) {
+        //            ((ArcAngleCompare) arcIterator.next()).calcAngle();
+        //        }
+        //        Collections.sort(_arcAngleList);
+        //
+        //        updateEndPoints();
+        //        repaint();
+        //
+        //        return new TransitionRotation(this, angleInc);
+        return null;
     }
 
     private void setChangeListener() {
@@ -97,11 +114,76 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     public TransitionView(TransitionController transitionController, Transition model) {
         super(model);
         model = model;
-//        model.registerObserver(this);
+        //        model.registerObserver(this);
+    }
+
+    @Override
+    public boolean isShowing() {
+        return super.isShowing();    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    public boolean isEnabled() {
+        return _enabled;
+    }
+
+    public void setEnabled(boolean status) {
+        if (_enabled && !status) {
+            _delayValid = false;
+        }
+        if (_groupTransitionView != null) {
+            _groupTransitionView.setEnabled(status);
+        }
+        _enabled = status;
+
     }
 
     public void setDelayForShowingWarnings(int delayForShowingWarnings) {
         _delayForShowingWarnings = delayForShowingWarnings;
+    }
+
+    public TransitionView copy() {
+        TransitionView copy = new TransitionView();
+        copy._nameLabel.setName(this.getName());
+        copy.model.setRateExpr(getRate());
+        copy._attributesVisible = this._attributesVisible;
+        copy.model.setPriority(model.getPriority());
+        copy.setOriginal(this);
+        copy._rateParameter = this._rateParameter;
+        return copy;
+    }
+
+    public double getRate() {
+        if (isInfiniteServer()) {
+            PetriNet petriNet = petriNetController.getPetriNet();
+            return petriNet.getEnablingDegree(model);
+        }
+
+        if (model.getRateExpr() == null) {
+            return -1;
+        }
+        try {
+            return Double.parseDouble(model.getRateExpr());
+        } catch (Exception e) {
+            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
+            try {
+                return parser.parseAndEvalExprForTransition(model.getRateExpr());
+            } catch (EvaluationException ee) {
+                showErrorMessage();
+                return 1.0;
+            }
+
+        }
+    }
+
+    private void showErrorMessage() {
+        String message =
+                "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
+        String title = "Error";
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+    }
+
+    public boolean isInfiniteServer() {
+        return model.isInfiniteServer();
     }
 
     public TransitionView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
@@ -126,34 +208,12 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         copy._attributesVisible = this._attributesVisible;
         copy.model.setPriority(this.model.getPriority());
         copy._path.transform(AffineTransform
-                .getRotateInstance(Math.toRadians(this.model.getAngle()), this.model.getHeight() / 2, this.model.getHeight() / 2));
+                .getRotateInstance(Math.toRadians(this.model.getAngle()), this.model.getHeight() / 2,
+                        this.model.getHeight() / 2));
         copy._rateParameter = null;
 
 
         return copy;
-    }
-
-    public TransitionView copy() {
-        TransitionView copy = new TransitionView();
-        copy._nameLabel.setName(this.getName());
-        copy.model.setRateExpr(getRate());
-        copy._attributesVisible = this._attributesVisible;
-        copy.model.setPriority(model.getPriority());
-        copy.setOriginal(this);
-        copy._rateParameter = this._rateParameter;
-        return copy;
-    }
-
-    /**
-     *
-     * @return true if in animate mode and the model is enabled
-     */
-    private boolean highlightView() {
-        //TODO: GET THIS IN A BETTER WAY
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        PetriNetTab tab = view.getCurrentTab();
-
-        return model.isEnabled() && tab.isInAnimationMode();
     }
 
     public void paintComponent(Graphics g) {
@@ -218,222 +278,29 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     }
 
-    private void changeToolTipText() {
-        try {
-            Double.parseDouble(getRateExpr());
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRate());
-            } else {
-                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
-            }
-        } catch (Exception e) {
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
-            } else {
-                setToolTipText(
-                        "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
-            }
+    void setCentre(double x, double y) {
+        super.setCentre(x, y);
+        update();
+    }
+
+    public void delete() {
+        if (_rateParameter != null) {
+            _rateParameter.remove(this);
+            _rateParameter = null;
         }
-    }
-
-    @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
-        LabelHandler labelHandler = new LabelHandler(_nameLabel, this);
-        _nameLabel.addMouseListener(labelHandler);
-        _nameLabel.addMouseMotionListener(labelHandler);
-        _nameLabel.addMouseWheelListener(labelHandler);
-
-        TransitionHandler transitionHandler = new TransitionHandler(this, tab, this.model, petriNetController);
-        addMouseListener(transitionHandler);
-        addMouseMotionListener(transitionHandler);
-        addMouseWheelListener(transitionHandler);
-        addMouseListener(tab.getAnimationHandler());
-    }
-
-    //TODO: RE-IMPLEMENT
-    //TODO: DELETE
-    public HistoryItem rotate(int angleInc) {
-//        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
-//        _angle = (_angle + angleInc) % 360;
-//        _path.transform(
-//                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
-//        outlineTransition();
-////
-//        Iterator arcIterator = _arcAngleList.iterator();
-//        while (arcIterator.hasNext()) {
-//            ((ArcAngleCompare) arcIterator.next()).calcAngle();
-//        }
-//        Collections.sort(_arcAngleList);
-//
-//        updateEndPoints();
-//        repaint();
-//
-//        return new TransitionRotation(this, angleInc);
-        return null;
-    }
-
-    public boolean isEnabled(boolean animationStatus) {
-        if (_groupTransitionView != null) {
-            _groupTransitionView.isEnabled(animationStatus);
-        }
-        if (animationStatus) {
-            if (_enabled) {
-                _highlighted = true;
-                return true;
-            } else {
-                _highlighted = false;
-            }
-        }
-        return false;
-    }
-
-    public boolean isEnabledBackwards() {
-        return _enabledBackwards;
-    }
-
-    public boolean isEnabled() {
-        return _enabled;
-    }
-
-    public void setHighlighted(boolean status) {
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setHighlighted(status);
-        }
-        _highlighted = status;
-    }
-
-    //TODO: RE-IMPLEMENT
-    public HistoryItem setInfiniteServer(boolean status) {
-        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
-//        _infiniteServer = status;
-//        repaint();
-//        return new TransitionInfiniteServer(this);
-    }
-
-    public boolean isInfiniteServer() {
-        return model.isInfiniteServer();
-    }
-
-    public void setEnabled(boolean status) {
-        if (_enabled && !status) {
-            _delayValid = false;
-        }
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setEnabled(status);
-        }
-        _enabled = status;
-
-    }
-
-    public void setEnabledBackwards(boolean status) {
-        _enabledBackwards = status;
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setEnabledBackwards(status);
-        }
-    }
-
-    public void setEnabledFalse() {
-        _enabled = false;
-        _highlighted = false;
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setEnabled(false);
-        }
-    }
-
-
-    public int getAngle() {
-        return model.getAngle();
-    }
-
-    public int getPriority() {
-        return model.
-                getPriority();
-    }
-
-    public HistoryItem setPriority(int newPriority) {
-//        int oldPriority = getPriority();
-//
-//        model.setPriority(newPriority);
-//        _nameLabel.setText(getAttributes());
-//        repaint();
-//        return new TransitionPriority(this, oldPriority, model.getPriority());
-        return null;
-    }
-
-    //TODO: RE-IMPLEMENT
-    public HistoryItem setTimed(boolean change) {
-        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
-//        _timed = change;
-//        _nameLabel.setText(getAttributes());
-//        repaint();
-//        return new TransitionTiming(this);
-    }
-
-    public boolean isTimed() {
-        return model.isTimed();
-    }
-
-    public void setDelay(double _delay) {
-        this._delay = _delay;
-        _delayValid = true;
-    }
-
-    public double getDelay() {
-        return _delay;
-    }
-
-    public boolean isDelayValid() {
-        return _delayValid;
-    }
-
-    public void setDelayValid(boolean _delayValid) {
-        this._delayValid = _delayValid;
-    }
-
-    private void constructTransition() {
-        _path = new GeneralPath();
-        //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
-        _path.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
-                model.getHeight()), false);
-    }
-
-    public boolean contains(int x, int y) {
-        int zoomPercentage = _zoomPercentage;
-
-        double unZoomedX = (x - getComponentDrawOffset()) / (zoomPercentage / 100.0);
-        double unZoomedY = (y - getComponentDrawOffset()) / (zoomPercentage / 100.0);
-
-        //TODO: WORK OUT WHAT THIS DOES AND REMOVE DUPLICATED CODE BETWEEN THIS AND PLACE
-        ArcView someArcView = null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-//        if (someArcView != null) {
-//            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
-//                    _path.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-//                if (someArcView.getTarget() != this) {
-//                    someArcView.setTarget(this);
-//                }
-//                someArcView.updateArcPosition();
-//                return true;
-//            } else {
-//                if (someArcView.getTarget() == this) {
-//                    if (!ConnectableHandler.isMouseDown()) {
-//                        someArcView.setTarget(null);
-//                        removeArcCompareObject(someArcView);
-//                        updateConnected();
-//                    }
-//                }
-//                return false;
-//            }
-//        } else {
-            return _path.contains((int) unZoomedX, (int) unZoomedY);
-//        }
-    }
-
-    public void removeArcCompareObject(ArcView arcView) {
+        super.delete();
     }
 
     public void addedToGui() {
         super.addedToGui();
         update();
+    }
+
+    public void update() {
+        _nameLabel.setText(getAttributes());
+        _nameLabel.zoomUpdate(_zoomPercentage);
+        //        super.update();
+        this.repaint();
     }
 
     private String getAttributes() {
@@ -478,20 +345,10 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         return "";
     }
 
-    void setCentre(double x, double y) {
-        super.setCentre(x, y);
-        update();
-    }
-
-    public void toggleAttributesVisible() {
-        _attributesVisible = !_attributesVisible;
-        _nameLabel.setText(getAttributes());
-    }
-
     public void showEditor() {
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(), petriNetController.getTransitionController(this.model),
-                ApplicationSettings.getApplicationView().getCurrentPetriNetView(),
+        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(),
+                petriNetController.getTransitionController(this.model),
                 petriNetController);
         guiDialog.add(te);
         guiDialog.getRootPane().setDefaultButton(null);
@@ -500,6 +357,181 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         guiDialog.setLocationRelativeTo(null);
         guiDialog.setVisible(true);
         guiDialog.dispose();
+    }
+
+    public void toggleAttributesVisible() {
+        _attributesVisible = !_attributesVisible;
+        _nameLabel.setText(getAttributes());
+    }
+
+    private void changeToolTipText() {
+        try {
+            Double.parseDouble(getRateExpr());
+            if (this.isTimed()) {
+                setToolTipText("r = " + this.getRate());
+            } else {
+                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
+            }
+        } catch (Exception e) {
+            if (this.isTimed()) {
+                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
+            } else {
+                setToolTipText(
+                        "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
+            }
+        }
+    }
+
+    public String getRateExpr() {
+        return model.getRateExpr();
+    }
+
+    public boolean isTimed() {
+        return model.isTimed();
+    }
+
+    public int getPriority() {
+        return model.
+                getPriority();
+    }
+
+    /**
+     * @return true if in animate mode and the model is enabled
+     */
+    private boolean highlightView() {
+        //TODO: GET THIS IN A BETTER WAY
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        PetriNetTab tab = view.getCurrentTab();
+
+        return model.isEnabled() && tab.isInAnimationMode();
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        LabelHandler labelHandler = new LabelHandler(_nameLabel, this);
+        _nameLabel.addMouseListener(labelHandler);
+        _nameLabel.addMouseMotionListener(labelHandler);
+        _nameLabel.addMouseWheelListener(labelHandler);
+
+        TransitionHandler transitionHandler = new TransitionHandler(this, tab, this.model, petriNetController);
+        addMouseListener(transitionHandler);
+        addMouseMotionListener(transitionHandler);
+        addMouseWheelListener(transitionHandler);
+        addMouseListener(tab.getAnimationHandler());
+    }
+
+    public boolean isEnabled(boolean animationStatus) {
+        if (_groupTransitionView != null) {
+            _groupTransitionView.isEnabled(animationStatus);
+        }
+        if (animationStatus) {
+            if (_enabled) {
+                _highlighted = true;
+                return true;
+            } else {
+                _highlighted = false;
+            }
+        }
+        return false;
+    }
+
+    public boolean isEnabledBackwards() {
+        return _enabledBackwards;
+    }
+
+    public void setEnabledBackwards(boolean status) {
+        _enabledBackwards = status;
+        if (_groupTransitionView != null) {
+            _groupTransitionView.setEnabledBackwards(status);
+        }
+    }
+
+    public void setHighlighted(boolean status) {
+        if (_groupTransitionView != null) {
+            _groupTransitionView.setHighlighted(status);
+        }
+        _highlighted = status;
+    }
+
+    //TODO: RE-IMPLEMENT
+    public HistoryItem setInfiniteServer(boolean status) {
+        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
+        //        _infiniteServer = status;
+        //        repaint();
+        //        return new TransitionInfiniteServer(this);
+    }
+
+    public void setEnabledFalse() {
+        _enabled = false;
+        _highlighted = false;
+        if (_groupTransitionView != null) {
+            _groupTransitionView.setEnabled(false);
+        }
+    }
+
+    public int getAngle() {
+        return model.getAngle();
+    }
+
+    public HistoryItem setPriority(int newPriority) {
+        //        int oldPriority = getPriority();
+        //
+        //        model.setPriority(newPriority);
+        //        _nameLabel.setText(getAttributes());
+        //        repaint();
+        //        return new TransitionPriority(this, oldPriority, model.getPriority());
+        return null;
+    }
+
+    public double getDelay() {
+        return _delay;
+    }
+
+    public void setDelay(double _delay) {
+        this._delay = _delay;
+        _delayValid = true;
+    }
+
+    public boolean isDelayValid() {
+        return _delayValid;
+    }
+
+    public void setDelayValid(boolean _delayValid) {
+        this._delayValid = _delayValid;
+    }
+
+    public boolean contains(int x, int y) {
+        int zoomPercentage = _zoomPercentage;
+
+        double unZoomedX = (x - getComponentDrawOffset()) / (zoomPercentage / 100.0);
+        double unZoomedY = (y - getComponentDrawOffset()) / (zoomPercentage / 100.0);
+
+        //TODO: WORK OUT WHAT THIS DOES AND REMOVE DUPLICATED CODE BETWEEN THIS AND PLACE
+        ArcView someArcView = null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
+        //        if (someArcView != null) {
+        //            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
+        //                    _path.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
+        //                if (someArcView.getTarget() != this) {
+        //                    someArcView.setTarget(this);
+        //                }
+        //                someArcView.updateArcPosition();
+        //                return true;
+        //            } else {
+        //                if (someArcView.getTarget() == this) {
+        //                    if (!ConnectableHandler.isMouseDown()) {
+        //                        someArcView.setTarget(null);
+        //                        removeArcCompareObject(someArcView);
+        //                        updateConnected();
+        //                    }
+        //                }
+        //                return false;
+        //            }
+        //        } else {
+        return _path.contains((int) unZoomedX, (int) unZoomedY);
+        //        }
+    }
+
+    public void removeArcCompareObject(ArcView arcView) {
     }
 
     public RateParameter getRateParameter() {
@@ -533,69 +565,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
     }
 
-    public void update() {
-        _nameLabel.setText(getAttributes());
-        _nameLabel.zoomUpdate(_zoomPercentage);
-//        super.update();
-        this.repaint();
-    }
-
-    public void delete() {
-        if (_rateParameter != null) {
-            _rateParameter.remove(this);
-            _rateParameter = null;
-        }
-        super.delete();
-    }
-
     public void setModel(Transition model) {
         this.model = model;
-    }
-
-    class ArcAngleCompare implements Comparable {
-
-        private final static boolean SOURCE = false;
-        private final static boolean TARGET = true;
-        private final ArcView<? extends Connectable, ? extends Connectable> _arcView;
-        private final TransitionView _transitionView;
-        private double angle;
-
-        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> arcView, TransitionView transitionView) {
-            this._arcView = arcView;
-            this._transitionView = transitionView;
-            calcAngle();
-        }
-
-        public int compareTo(Object arg0) {
-            double angle2 = ((ArcAngleCompare) arg0).angle;
-            return (angle < angle2 ? -1 : (angle == angle2 ? 0 : 1));
-        }
-
-        private void calcAngle() {
-            int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
-            Point2D.Double p1 = new Point2D.Double(model.getX() + centreOffsetLeft(), model.getY() + centreOffsetTop());
-            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).x,
-                    _arcView.getArcPath().getPoint(index).y);
-
-            if (p1.y <= p2.y) {
-                angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y));
-            } else {
-                angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y)) + Math.PI;
-            }
-
-            if (angle < (Math.toRadians(30 + _transitionView.getAngle()))) {
-                angle += (2 * Math.PI);
-            }
-
-            if (p1.equals(p2)) {
-                angle = 0;
-            }
-        }
-
-        private boolean sourceOrTarget() {
-            return (_arcView.getModel().getSource() instanceof Transition ? SOURCE : TARGET);
-        }
-
     }
 
     public void bindToGroup(GroupTransitionView groupTransitionView) {
@@ -612,74 +583,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public void ungroupTransition() {
         _groupTransitionView = null;
-    }
-
-    private ArrayList<TransitionView> groupTransitionsValidation() {
-//        if (!this.isSelected()) {
-//            JOptionPane.showMessageDialog(null, "You can only choose this option on selected transitions",
-//                    "Invalid selection", JOptionPane.ERROR_MESSAGE);
-//            return null;
-//        }
-//        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
-//        ArrayList<PetriNetViewComponent> pns = view.getPNObjects();
-        ArrayList<TransitionView> transitionsToHide = new ArrayList<TransitionView>();
-//
-//        ArrayList<PlaceView> thisOutputPlaceViews = new ArrayList<PlaceView>();
-//        for (ArcView tempArcView : outboundArcs()) {
-//            thisOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
-//        }
-//
-//        ArrayList<PlaceView> thisInputPlaceViews = new ArrayList<PlaceView>();
-//        for (ArcView tempArcView : inboundArcs()) {
-//            thisInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
-//        }
-//
-//        ArrayList<PlaceView> currentOutputPlaceViews;
-//        ArrayList<PlaceView> currentInputPlaceViews;
-//
-//        for (PetriNetViewComponent pn : pns) {
-//            if (pn.isSelected()) {
-//                //TODO: HOW TO DESELECT?
-////                pn.deselect();
-//                if (pn instanceof TransitionView) {
-//                    if (this != pn) {
-//                        currentOutputPlaceViews = new ArrayList<PlaceView>();
-//
-//                        LinkedList<ArcView> outboundArcViews = ((TransitionView) pn).outboundArcs();
-//                        for (ArcView tempArcView : outboundArcViews) {
-//                            currentOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
-//                        }
-//
-//                        if (!thisOutputPlaceViews.equals(currentOutputPlaceViews)) {
-//                            showWarningDialog(
-//                                    "In order to be grouped, selected transitions must have the same output places");
-//                            return null;
-//                        }
-//
-//                        currentInputPlaceViews = new ArrayList<PlaceView>();
-//
-//                        LinkedList<ArcView> inboundArcViews = ((TransitionView) pn).inboundArcs();
-//                        for (ArcView tempArcView : inboundArcViews) {
-//                            currentInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
-//                        }
-//
-//                        if (!thisInputPlaceViews.equals(currentInputPlaceViews)) {
-//                            showWarningDialog(
-//                                    "In order to be grouped, selected transitions must have the same input places");
-//                            return null;
-//                        }
-//                    }
-//                    transitionsToHide.add(((TransitionView) pn));
-//                }
-//            }
-//        }
-//
-//        if (transitionsToHide.size() < 2) {
-//            JOptionPane.showMessageDialog(null, "Please select 2 or more transitions to group", "Invalid selection",
-//                    JOptionPane.ERROR_MESSAGE);
-//            return null;
-//        }
-        return transitionsToHide;
     }
 
     private void showWarningDialog(String message) {
@@ -737,54 +640,122 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide,
-            GroupTransitionView newGroupTransitionView) {
-//        if (transitionsToHide == null) {
-//            return;
-//        }
-//
-//        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
-//        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-//
-//        int i = 0;
-//        for (TransitionView transitionViewToGroup : transitionsToHide) {
-//            transitionViewToGroup.hideFromCanvas();
-//            transitionViewToGroup.hideAssociatedArcs();
-//            transitionViewToGroup.bindToGroup(newGroupTransitionView);
-//            newGroupTransitionView.addTransition(transitionViewToGroup);
-//            if (i == 0) {
-//                newGroupTransitionView.setName(transitionViewToGroup.getName());
-//            } else {
-//                newGroupTransitionView
-//                        .setName(newGroupTransitionView.getName() + "_" + transitionViewToGroup.getName());
-//            }
-//            i++;
-//        }
-//
-//        for (ArcView tempArcView : inboundArcs()) {
-//            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
-//                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
-//                    tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false,
-//                    new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(),
-//                            new HashMap<Token, String>()), petriNetController);
-//            newGroupTransitionView.addInbound(newArcView);
-//            tempArcView.getSource().addOutbound(newArcView);
-//            newArcView.addToView(view);
-//        }
-//        for (ArcView tempArcView : outboundArcs()) {
-//            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
-//                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
-//                    newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false,
-//                    new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(),
-//                            new HashMap<Token, String>()), petriNetController);
-//            newGroupTransitionView.addOutbound(newArcView);
-//            tempArcView.getTarget().addInbound(newArcView);
-//            newArcView.addToView(view);
-//        }
-//        newGroupTransitionView.setVisible(true);
-//        newGroupTransitionView.getNameLabel().setVisible(true);
-//        view.addNewPetriNetObject(newGroupTransitionView);
-//        model.addPetriNetObject(newGroupTransitionView);
-//        newGroupTransitionView.repaint();
+                                       GroupTransitionView newGroupTransitionView) {
+        //        if (transitionsToHide == null) {
+        //            return;
+        //        }
+        //
+        //        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
+        //        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+        //
+        //        int i = 0;
+        //        for (TransitionView transitionViewToGroup : transitionsToHide) {
+        //            transitionViewToGroup.hideFromCanvas();
+        //            transitionViewToGroup.hideAssociatedArcs();
+        //            transitionViewToGroup.bindToGroup(newGroupTransitionView);
+        //            newGroupTransitionView.addTransition(transitionViewToGroup);
+        //            if (i == 0) {
+        //                newGroupTransitionView.setName(transitionViewToGroup.getName());
+        //            } else {
+        //                newGroupTransitionView
+        //                        .setName(newGroupTransitionView.getName() + "_" + transitionViewToGroup.getName());
+        //            }
+        //            i++;
+        //        }
+        //
+        //        for (ArcView tempArcView : inboundArcs()) {
+        //            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
+        //                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
+        //                    tempArcView.getSource(), newGroupTransitionView, new LinkedList<MarkingView>(), "", false,
+        //                    new NormalArc(tempArcView.getSource().getModel(), newGroupTransitionView.getModel(),
+        //                            new HashMap<Token, String>()), petriNetController);
+        //            newGroupTransitionView.addInbound(newArcView);
+        //            tempArcView.getSource().addOutbound(newArcView);
+        //            newArcView.addToView(view);
+        //        }
+        //        for (ArcView tempArcView : outboundArcs()) {
+        //            ArcView newArcView = new NormalArcView(tempArcView.getStartPositionX(), tempArcView.getStartPositionY(),
+        //                    tempArcView.getArcPath().getPoint(1).getX(), tempArcView.getArcPath().getPoint(1).getY(),
+        //                    newGroupTransitionView, tempArcView.getTarget(), new LinkedList<MarkingView>(), "", false,
+        //                    new NormalArc(newGroupTransitionView.getModel(), tempArcView.getSource().getModel(),
+        //                            new HashMap<Token, String>()), petriNetController);
+        //            newGroupTransitionView.addOutbound(newArcView);
+        //            tempArcView.getTarget().addInbound(newArcView);
+        //            newArcView.addToView(view);
+        //        }
+        //        newGroupTransitionView.setVisible(true);
+        //        newGroupTransitionView.getNameLabel().setVisible(true);
+        //        view.addNewPetriNetObject(newGroupTransitionView);
+        //        model.addPetriNetObject(newGroupTransitionView);
+        //        newGroupTransitionView.repaint();
+    }
+
+    private ArrayList<TransitionView> groupTransitionsValidation() {
+        //        if (!this.isSelected()) {
+        //            JOptionPane.showMessageDialog(null, "You can only choose this option on selected transitions",
+        //                    "Invalid selection", JOptionPane.ERROR_MESSAGE);
+        //            return null;
+        //        }
+        //        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
+        //        ArrayList<PetriNetViewComponent> pns = view.getPNObjects();
+        ArrayList<TransitionView> transitionsToHide = new ArrayList<TransitionView>();
+        //
+        //        ArrayList<PlaceView> thisOutputPlaceViews = new ArrayList<PlaceView>();
+        //        for (ArcView tempArcView : outboundArcs()) {
+        //            thisOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
+        //        }
+        //
+        //        ArrayList<PlaceView> thisInputPlaceViews = new ArrayList<PlaceView>();
+        //        for (ArcView tempArcView : inboundArcs()) {
+        //            thisInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
+        //        }
+        //
+        //        ArrayList<PlaceView> currentOutputPlaceViews;
+        //        ArrayList<PlaceView> currentInputPlaceViews;
+        //
+        //        for (PetriNetViewComponent pn : pns) {
+        //            if (pn.isSelected()) {
+        //                //TODO: HOW TO DESELECT?
+        ////                pn.deselect();
+        //                if (pn instanceof TransitionView) {
+        //                    if (this != pn) {
+        //                        currentOutputPlaceViews = new ArrayList<PlaceView>();
+        //
+        //                        LinkedList<ArcView> outboundArcViews = ((TransitionView) pn).outboundArcs();
+        //                        for (ArcView tempArcView : outboundArcViews) {
+        //                            currentOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
+        //                        }
+        //
+        //                        if (!thisOutputPlaceViews.equals(currentOutputPlaceViews)) {
+        //                            showWarningDialog(
+        //                                    "In order to be grouped, selected transitions must have the same output places");
+        //                            return null;
+        //                        }
+        //
+        //                        currentInputPlaceViews = new ArrayList<PlaceView>();
+        //
+        //                        LinkedList<ArcView> inboundArcViews = ((TransitionView) pn).inboundArcs();
+        //                        for (ArcView tempArcView : inboundArcViews) {
+        //                            currentInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
+        //                        }
+        //
+        //                        if (!thisInputPlaceViews.equals(currentInputPlaceViews)) {
+        //                            showWarningDialog(
+        //                                    "In order to be grouped, selected transitions must have the same input places");
+        //                            return null;
+        //                        }
+        //                    }
+        //                    transitionsToHide.add(((TransitionView) pn));
+        //                }
+        //            }
+        //        }
+        //
+        //        if (transitionsToHide.size() < 2) {
+        //            JOptionPane.showMessageDialog(null, "Please select 2 or more transitions to group", "Invalid selection",
+        //                    JOptionPane.ERROR_MESSAGE);
+        //            return null;
+        //        }
+        return transitionsToHide;
     }
 
     public void hideFromCanvas() {
@@ -796,7 +767,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         this.setVisible(true);
         this.getNameLabel().setVisible(true);
     }
-
 
     public void hideAssociatedArcs() {
         for (ArcView tempArcView : outboundArcs()) {
@@ -843,37 +813,50 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         return new TransitionRate(this, oldRate, model.getRateExpr());
     }
 
-    public String getRateExpr() {
-        return model.getRateExpr();
-    }
+    class ArcAngleCompare implements Comparable {
 
-    public double getRate() {
-        if (isInfiniteServer()) {
-            PetriNet petriNet = petriNetController.getPetriNet();
-            return petriNet.getEnablingDegree(model);
+        private final static boolean SOURCE = false;
+        private final static boolean TARGET = true;
+        private final ArcView<? extends Connectable, ? extends Connectable> _arcView;
+        private final TransitionView _transitionView;
+        private double angle;
+
+        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> arcView,
+                               TransitionView transitionView) {
+            this._arcView = arcView;
+            this._transitionView = transitionView;
+            calcAngle();
         }
 
-        if (model.getRateExpr() == null) {
-            return -1;
-        }
-        try {
-            return Double.parseDouble(model.getRateExpr());
-        } catch (Exception e) {
-            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
-            try {
-                return parser.parseAndEvalExprForTransition(model.getRateExpr());
-            } catch (EvaluationException ee) {
-                showErrorMessage();
-                return 1.0;
+        private void calcAngle() {
+            int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
+            Point2D.Double p1 = new Point2D.Double(model.getX() + centreOffsetLeft(), model.getY() + centreOffsetTop());
+            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).x,
+                    _arcView.getArcPath().getPoint(index).y);
+
+            if (p1.y <= p2.y) {
+                angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y));
+            } else {
+                angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y)) + Math.PI;
             }
 
-        }
-    }
+            if (angle < (Math.toRadians(30 + _transitionView.getAngle()))) {
+                angle += (2 * Math.PI);
+            }
 
-    private void showErrorMessage() {
-        String message =
-                "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
-        String title = "Error";
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+            if (p1.equals(p2)) {
+                angle = 0;
+            }
+        }
+
+        private boolean sourceOrTarget() {
+            return (_arcView.getModel().getSource() instanceof Transition ? SOURCE : TARGET);
+        }
+
+        public int compareTo(Object arg0) {
+            double angle2 = ((ArcAngleCompare) arg0).angle;
+            return (angle < angle2 ? -1 : (angle == angle2 ? 0 : 1));
+        }
+
     }
 }

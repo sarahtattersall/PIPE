@@ -48,19 +48,6 @@ public class PipeApplicationControllerTest {
         assertEquals(controller, ApplicationSettings.getApplicationController());
     }
 
-    @Test
-//    TODO: NEED TO CHECK THAT VIEW IS AN OBSERVER....
-    public void createNewTabCreatesANewTabForPetriNetWithDefaultToken()
-    {
-        PipeApplicationView mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
-
-        when(mockModel.newPetriNetNumber()).thenReturn(1);
-
-        controller.createEmptyPetriNet();
-
-        verify(mockView).addNewTab(eq("Petri net 1"), argThat(new ContainsPetriNetWithDefaultToken()));
-    }
 
     @Test
     public void createsNewPetriNetControllerPerPetriNet() {
@@ -69,34 +56,4 @@ public class PipeApplicationControllerTest {
         assertEquals(tabController, controller.getControllerForTab(tab));
     }
 
-    private static class ContainsPetriNetWithDefaultToken extends ArgumentMatcher<PetriNetTab> {
-
-        @Override
-        public boolean matches(Object argument) {
-            PetriNetTab petriNetTabArgument = (PetriNetTab) argument;
-            if (petriNetTabArgument._petriNetView == null)
-            {
-                return false;
-            } else {
-                PetriNetView view = petriNetTabArgument._petriNetView;
-                PetriNet model = view.getModel();
-                Collection<Token> tokens = model.getTokens();
-                if(tokens.isEmpty() || tokens.size() > 1) {
-                    return false;
-                }
-
-                Token token = tokens.iterator().next();
-                return token.isEnabled() &&
-                        token.getId().equals("Default") &&
-                        token.getColor().equals(Color.BLACK) &&
-                        model.getAnnotations().isEmpty() &&
-                        model.getTransitions().isEmpty() &&
-                        model.getPlaces().isEmpty() &&
-                        model.getArcs().isEmpty() &&
-                        model.getRateParameters().isEmpty() &&
-                        model.getTokens().size() == 1 &&
-                        model.getStateGroups().isEmpty();
-            }
-        }
-    }
 }
