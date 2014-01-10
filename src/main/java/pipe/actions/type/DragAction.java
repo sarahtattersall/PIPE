@@ -15,7 +15,7 @@ public class DragAction extends TypeAction {
     }
 
     @Override
-    public void doConnectableAction(Connectable connectable, PetriNetController petriNetController) {
+    public <S extends Connectable<T, S>, T extends Connectable<S, T>> void doConnectableAction(Connectable<S,T> connectable, PetriNetController petriNetController) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

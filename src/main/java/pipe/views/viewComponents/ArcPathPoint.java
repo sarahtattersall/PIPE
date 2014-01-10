@@ -7,16 +7,13 @@
 package pipe.views.viewComponents;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
-import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.ArcPoint;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
-import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -36,14 +33,14 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
     private static int SIZE = 3;
     private static final int SIZE_OFFSET = 1;
 
-    private ArcPath myArcPath;
+    private ArcPath<?,?> myArcPath;
     private final ArcPoint model;
 
     private final Point2D.Double point = new Point2D.Double();
     private final Point2D.Double realPoint = new Point2D.Double();
 
     private final Point2D.Double control1 = new Point2D.Double();
-    private final Point2D.Double control2 = new Point2D.Double();
+    private final Point2D.Double control = new Point2D.Double();
 
     private void setup() {
         _copyPasteable = false; //we can't copy & paste indivial arc points!
@@ -53,7 +50,7 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
     }
 
 
-    public ArcPathPoint(ArcPath a) {
+    public ArcPathPoint(ArcPath<?,?> a) {
         setup();
         model = null;
         myArcPath = a;
@@ -64,7 +61,7 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
     }
 
 
-    public ArcPathPoint(ArcPoint point, ArcPath a, PetriNetController petriNetController) {
+    public ArcPathPoint(ArcPoint point, ArcPath<?,?> a, PetriNetController petriNetController) {
         super("", "", 0, 0, point, petriNetController);
         setup();
         model = point;
@@ -259,8 +256,8 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
     }
 
 
-    public Point2D.Double getControl2() {
-        return control2;
+    public Point2D.Double getControl() {
+        return control;
     }
 
 
@@ -271,8 +268,8 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
 
 
     public void setControl2(double _x, double _y) {
-        control2.x = _x;
-        control2.y = _y;
+        control.x = _x;
+        control.y = _y;
     }
 
 
@@ -282,13 +279,13 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
     }
 
 
-    public void setControl2(Point2D.Double p) {
-        control2.x = p.x;
-        control2.y = p.y;
+    public void setControl(Point2D.Double p) {
+        control.x = p.x;
+        control.y = p.y;
     }
 
 
-    public ArcPath getArcPath() {
+    public ArcPath<?,?> getArcPath() {
         return myArcPath;
     }
 
@@ -304,13 +301,13 @@ public final class ArcPathPoint extends PetriNetViewComponent<ArcPoint> {
 
 
     @Override
-    public PetriNetViewComponent paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
+    public PetriNetViewComponent<?> paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
         return null;
     }
 
 
     @Override
-    public PetriNetViewComponent copy() {
+    public PetriNetViewComponent<?> copy() {
         return null;
     }
 

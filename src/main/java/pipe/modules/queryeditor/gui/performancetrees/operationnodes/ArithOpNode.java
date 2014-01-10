@@ -14,6 +14,7 @@ import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 
@@ -88,7 +89,7 @@ public class ArithOpNode extends OperationNode {
 		else if (getOperation().equals("power"))
 			op = QueryManager.addColouring(" raised to the power of ");
 					
-		ArrayList children = getChildNodes();
+		Collection<PerformanceTreeNode> children = getChildNodes();
 		if (children != null) {
 			Iterator<PerformanceTreeNode> i = children.iterator();
 			while (i.hasNext()) {

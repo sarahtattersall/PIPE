@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent implements IObserver {
+public class Arc<S extends Connectable<T, S>, T extends Connectable<S, T>> extends AbstractPetriNetComponent implements IObserver {
 
     @Pnml("source")
     protected S source;
@@ -30,7 +30,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     @Pnml("inscription")
     protected Map<Token, String> tokenWeights = new HashMap<Token, String>();
 
-    private final ArcStrategy strategy;
+    private final ArcStrategy<S, T> strategy;
 
     /**
      * Intermediate path intermediatePoints
@@ -39,7 +39,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     private List<ArcPoint> intermediatePoints = new LinkedList<ArcPoint>();
 
     public Arc(S source, T target,
-               Map<Token, String> tokenWeights, ArcStrategy strategy) {
+               Map<Token, String> tokenWeights, ArcStrategy<S, T> strategy) {
         this.source = source;
         this.target = target;
         this.tokenWeights = tokenWeights;
@@ -118,7 +118,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     @Override
-    public void accept(final PetriNetComponentVisitor visitor) {
+    public void accept(PetriNetComponentVisitor visitor) {
         visitor.visit(this);
     }
 
@@ -131,15 +131,18 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         notifyObservers();
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
         notifyObservers();
     }
 
+    @Override
     public void setName(String name) {
         setId(name);
     }
@@ -166,8 +169,8 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
             try {
                 Integer.parseInt(weight);
-            } catch (Exception e) {
-                return true;
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
         return false;
@@ -183,7 +186,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
 
-    public void addIntermediatePoints(final List<ArcPoint> points) {
+    public void addIntermediatePoints(List<ArcPoint> points) {
         for (ArcPoint point : points) {
             addIntermediatePoint(point);
         }
@@ -199,7 +202,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         notifyObservers();
     }
 
-    public void removeIntermediatePoint(final ArcPoint point) {
+    public void removeIntermediatePoint(ArcPoint point) {
         intermediatePoints.remove(point);
         point.removeObserver(this);
         notifyObservers();

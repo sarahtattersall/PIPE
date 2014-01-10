@@ -19,7 +19,7 @@ public abstract class TypeAction extends GuiAction
     //TODO: Eventually a handler can tell the GUI Action to do its thing
     // for each type of type clicked on.
     public abstract void doAction(MouseEvent event, PetriNetController petriNetController);
-    public abstract void doConnectableAction(Connectable connectable, PetriNetController petriNetController);
+    public abstract <S extends Connectable<T, S>, T extends Connectable<S, T>> void doConnectableAction(Connectable<S,T> connectable, PetriNetController petriNetController);
 
     private final int typeID;
 
@@ -35,6 +35,7 @@ public abstract class TypeAction extends GuiAction
         this.typeID = typeID;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e)
     {
         PipeApplicationModel pipeApplicationView = ApplicationSettings.getApplicationModel();

@@ -5,18 +5,15 @@ package pipe.views.viewComponents;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.*;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
-import pipe.views.ConnectableView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,13 +21,13 @@ import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArcPath implements Shape, Cloneable {
+public class ArcPath<S extends Connectable<T, S>, T extends Connectable<S, T>> implements Shape, Cloneable {
 
     private static final Stroke proximityStroke = new BasicStroke(Constants.ARC_PATH_PROXIMITY_WIDTH);
     private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
     public final Point2D.Double midPoint = new Point2D.Double();
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
-    private final ArcView parent;
+    private final ArcView<S, T> parent;
     private final PetriNetController petriNetController;
     private GeneralPath path = new GeneralPath();
     private boolean pointLock = false;
@@ -38,7 +35,7 @@ public class ArcPath implements Shape, Cloneable {
     private int _transitionAngle;
 
 
-    public ArcPath(ArcView a, PetriNetController petriNetController) {
+    public ArcPath(ArcView<S, T> a, PetriNetController petriNetController) {
         parent = a;
         this.petriNetController = petriNetController;
         _transitionAngle = 0;
@@ -61,8 +58,8 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     private void createCurvedPoint(ArcPathPoint point) {
-        path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl2().x,
-                point.getControl2().y, point.getPoint().x, point.getPoint().y);
+        path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x,
+                point.getControl().y, point.getPoint().x, point.getPoint().y);
     }
 
     /**
@@ -229,7 +226,7 @@ public class ArcPath implements Shape, Cloneable {
             if (!currentPoint.isCurved()) {
                 currentPoint.setControl1(getControlPoint(previousPoint.getPoint(), currentPoint.getPoint(),
                         previousPoint.getPoint(), currentPoint.getPoint()));
-                currentPoint.setControl2(getControlPoint(currentPoint.getPoint(), previousPoint.getPoint(),
+                currentPoint.setControl(getControlPoint(currentPoint.getPoint(), previousPoint.getPoint(),
                         currentPoint.getPoint(), previousPoint.getPoint()));
             } else {
                 if (c > 1 && !previousPoint.isCurved()) {
@@ -241,7 +238,7 @@ public class ArcPath implements Shape, Cloneable {
                 if (c < getEndIndex()) {
                     ArcPathPoint nextPoint = pathPoints.get(c + 1);
                     if (!nextPoint.isCurved()) {
-                        currentPoint.setControl2(getControlPoint(nextPoint.getPoint(), currentPoint.getPoint(),
+                        currentPoint.setControl(getControlPoint(nextPoint.getPoint(), currentPoint.getPoint(),
                                 currentPoint.getPoint(), previousPoint.getPoint()));
                     }
                 }
@@ -249,38 +246,60 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
+    private void setControlPoint(Place<Transition> foo) {
+
+    }
+
     private void setEndControlPoints() {
-        ConnectableView source = getArc().getSource();
-        ConnectableView target = getArc().getTarget();
-        double anAngle = Math.toRadians(_transitionAngle);
+        ConnectableVisitor endPointVisitor = new ConnectableVisitor() {
+            @Override
+            public void visit(Place<?> place) {
+                if (pathPoints.get(getEndIndex()).isCurved()) {
+                    double angle = Math.toRadians(_transitionAngle);
+                    ArcPathPoint myPoint = pathPoints.get(getEndIndex());
+                    ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
+                    float distance =
+                            (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
+                    myPoint.setControl2((float) (myPoint.getPoint().x + Math.cos(angle) * distance),
+                            (float) (myPoint.getPoint().y + Math.sin(angle) * distance));
 
-        if (!(getEndIndex() > 0)) {
-        } else if (source != null && source instanceof TransitionView &&
-                pathPoints.get(1).isCurved()) {
-            ArcPathPoint myPoint = pathPoints.get(1);
-            ArcPathPoint myLastPoint = pathPoints.get(0);
-            float distance =
-                    (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
-            myPoint.setControl1((float) (myLastPoint.getPoint().x + Math.cos(anAngle) * distance),
-                    (float) (myLastPoint.getPoint().y + Math.sin(anAngle) * distance));
+                    myPoint = pathPoints.get(1);
+                    myPoint.setControl(
+                            getControlPoint(pathPoints.get(0).getPoint(), myPoint.getControl(), pathPoints.get(0).getPoint(),
+                                    myPoint.getControl()));
+                }
+            }
 
-            myPoint = pathPoints.get(getEndIndex());
-            myPoint.setControl2(getControlPoint(myPoint.getPoint(), myPoint.getControl1(), myPoint.getPoint(),
-                    myPoint.getControl1()));
-        } else if (target != null && source instanceof PlaceView &&
-                pathPoints.get(getEndIndex()).isCurved()) {
-            ArcPathPoint myPoint = pathPoints.get(getEndIndex());
-            ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
-            float distance =
-                    (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
-            myPoint.setControl2((float) (myPoint.getPoint().x + Math.cos(anAngle) * distance),
-                    (float) (myPoint.getPoint().y + Math.sin(anAngle) * distance));
+            @Override
+            public void visit(Transition transition) {
+                if (pathPoints.get(1).isCurved()) {
+                    double angle = Math.toRadians(_transitionAngle);
+                    ArcPathPoint myPoint = pathPoints.get(1);
+                    ArcPathPoint myLastPoint = pathPoints.get(0);
+                    float distance =
+                            (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
+                    myPoint.setControl1((float) (myLastPoint.getPoint().x + Math.cos(angle) * distance),
+                            (float) (myLastPoint.getPoint().y + Math.sin(angle) * distance));
 
-            myPoint = pathPoints.get(1);
-            myPoint.setControl1(
-                    getControlPoint(pathPoints.get(0).getPoint(), myPoint.getControl2(), pathPoints.get(0).getPoint(),
-                            myPoint.getControl2()));
-        }
+                    myPoint = pathPoints.get(getEndIndex());
+                    myPoint.setControl(getControlPoint(myPoint.getPoint(), myPoint.getControl1(), myPoint.getPoint(),
+                            myPoint.getControl1()));
+                }
+            }
+
+            @Override
+            public void visit(TemporaryArcTarget arcTarget) {
+
+            }
+
+            @Override
+            public void visit(ConditionalPlace conditionalPlace) {
+
+            }
+        };
+
+        Connectable<T, S> source = getArc().getModel().getSource();
+        source.accept(endPointVisitor);
     }
 
     public void addPoint(ArcPoint arcPoint) {
@@ -374,22 +393,14 @@ public class ArcPath implements Shape, Cloneable {
     /* modified to use control points, ensures a curve hits a place tangetially */
     public double getEndAngle() {
         if (getEndIndex() > 0) {
-            if (getArc().getTarget() instanceof TransitionView) {
-                return pathPoints.get(getEndIndex()).getAngle(pathPoints.get(getEndIndex()).getControl2());
-            } else {
-                return pathPoints.get(getEndIndex()).getAngle(pathPoints.get(getEndIndex()).getControl1());
-            }
+            return pathPoints.get(getEndIndex()).getAngle(pathPoints.get(getEndIndex()).getControl());
         }
         return 0;
     }
 
-    public ArcView getArc() {
-        return parent;
-    }
-
     public double getStartAngle() {
         if (getEndIndex() > 0) {
-            return pathPoints.get(0).getAngle(pathPoints.get(1).getControl2());
+            return pathPoints.get(0).getAngle(pathPoints.get(1).getControl());
         }
         return 0;
     }
@@ -492,7 +503,7 @@ public class ArcPath implements Shape, Cloneable {
         float[] gamma = new float[n + 1];
         float[] delta = new float[n + 1];
         float[] D = new float[n + 1];
-   
+
       /* We solve the equation
          [2 1       ] [D[0]]   [3(x[1] - x[0])  ]
          |1 4 1     | |D[1]|   |3(x[2] - x[0])  |
@@ -500,7 +511,7 @@ public class ArcPath implements Shape, Cloneable {
          |    ..... | | .  |   |      .         |
          |     1 4 1| | .  |   |3(x[n] - x[n-2])|
          [       1 2] [D[n]]   [3(x[n] - x[n-1])]
-                 
+
          by using row operations to convert the matrix to upper triangular
          and then back sustitution.  The D[i] are the derivatives at the knots.
        */
@@ -521,7 +532,7 @@ public class ArcPath implements Shape, Cloneable {
         for (int i = n - 1; i >= 0; i--) {
             D[i] = delta[i] - gamma[i] * D[i + 1];
         }
-      
+
       /* now compute the coefficients of the cubics */
         Cubic[] C = new Cubic[n];
         for (int i = 0; i < n; i++) {
@@ -551,6 +562,10 @@ public class ArcPath implements Shape, Cloneable {
             details[c][2] = String.valueOf(pathPoints.get(c).isCurved());
         }
         return details;
+    }
+
+    public ArcView<S, T> getArc() {
+        return parent;
     }
 
     public void set_transitionAngle(int angle) {

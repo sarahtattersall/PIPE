@@ -29,7 +29,7 @@ import java.util.Iterator;
 public abstract class OperationNode extends PerformanceTreeNode
 {
 
-	protected ArrayList	outgoingArcIDs;
+	protected ArrayList<String>	outgoingArcIDs;
 	// the set of IDs of outgoing arcs connecting the node to its children
 
 	private int		requiredArguments;
@@ -103,7 +103,7 @@ public abstract class OperationNode extends PerformanceTreeNode
 
 	private void setupNode()
 	{
-		this.outgoingArcIDs = new ArrayList();
+		this.outgoingArcIDs = new ArrayList<String>();
         this.optionalChildNodes = new HashMap();
 		this.optionalChildNodesOrdered = new ArrayList();
 		this.requiredChildNodes = new HashMap();
@@ -316,9 +316,9 @@ public abstract class OperationNode extends PerformanceTreeNode
 		this.requiredChildNodes.put(role, nodeTypes);
 	}
 
-	protected ArrayList getChildNodes()
+	protected ArrayList<PerformanceTreeNode> getChildNodes()
 	{
-		ArrayList children = new ArrayList();
+		ArrayList<PerformanceTreeNode> children = new ArrayList<PerformanceTreeNode>();
 		if (this.outgoingArcIDs != null)
 		{
 			// node could have some children

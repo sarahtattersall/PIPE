@@ -15,16 +15,16 @@ import java.util.Map;
 /**
  * Creates an {@link pipe.models.component.Arc} based on an {@link Element}'s information
  */
-public class ArcCreator implements ComponentCreator<Arc> {
+public class ArcCreator implements ComponentCreator<Arc<?,?>> {
 
-    private Map<String, Place> places = new HashMap<String, Place>();
+    private Map<String, Place<?>> places = new HashMap<String, Place<?>>();
     private Map<String, Transition> transitions = new HashMap<String, Transition>();
     private Map<String, Token> tokens = new HashMap<String, Token>();
-    private ArcStrategy inhibitorStrategy;
-    private ArcStrategy normalForwardStrategy;
-    private ArcStrategy normalBackwardStrategy;
+    private ArcStrategy<Place<Transition>,Transition> inhibitorStrategy;
+    private ArcStrategy<?,?> normalForwardStrategy;
+    private ArcStrategy<?,?> normalBackwardStrategy;
 
-    public ArcCreator(ArcStrategy inhibitorStrategy, ArcStrategy normalForwardStrategy, ArcStrategy normalBackwardStrategy) {
+    public ArcCreator(ArcStrategy<Place<Transition>, Transition> inhibitorStrategy, ArcStrategy<?,?> normalForwardStrategy, ArcStrategy<?,?> normalBackwardStrategy) {
         this.inhibitorStrategy = inhibitorStrategy;
         this.normalForwardStrategy = normalForwardStrategy;
         this.normalBackwardStrategy = normalBackwardStrategy;

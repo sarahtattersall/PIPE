@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 
-public class Transition extends Connectable<Place, Transition> implements Serializable
+public class Transition extends Connectable<Place<Transition>, Transition> implements Serializable
 {
 
     @Pnml("priority")

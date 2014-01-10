@@ -16,7 +16,7 @@ public class DeleteArcPathPoint
         extends HistoryItem
 {
    
-   private final ArcPath arcPath;
+   private final ArcPath<?,?> arcPath;
    private final ArcPathPoint point;
    private final Integer index;
 
@@ -24,7 +24,7 @@ public class DeleteArcPathPoint
     * @param _arc
     * @param _point
     * @param _index*/
-   public DeleteArcPathPoint(ArcView _arc, ArcPathPoint _point, Integer _index) {
+   public DeleteArcPathPoint(ArcView<?,?> _arc, ArcPathPoint _point, Integer _index) {
       arcPath = _arc.getArcPath();
       point = _point;
       index = _index;
@@ -32,6 +32,7 @@ public class DeleteArcPathPoint
 
    
    /** */
+   @Override
    public void undo() {
       arcPath.insertPoint(index, point);
       arcPath.updateArc();      
@@ -39,6 +40,7 @@ public class DeleteArcPathPoint
 
    
    /** */
+   @Override
    public void redo() {
       point.delete();
    }

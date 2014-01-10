@@ -16,6 +16,7 @@ import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class DistributionNode extends OperationNode {
@@ -72,7 +73,7 @@ public class DistributionNode extends OperationNode {
 	
 	public String printTextualRepresentation() {
 		String description = QueryManager.addColouring("the cumulative distribution function ");	
-		ArrayList children = getChildNodes();
+		List<PerformanceTreeNode> children = getChildNodes();
 		if (children != null) {
 			description += QueryManager.addColouring("calculated from ");
 			Iterator<PerformanceTreeNode> i = children.iterator();

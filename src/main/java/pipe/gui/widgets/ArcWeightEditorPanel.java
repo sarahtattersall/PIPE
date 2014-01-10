@@ -25,7 +25,7 @@ import java.util.Map;
 public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
     private final PetriNetController petriNetController;
-    private final ArcController arcController;
+    private final ArcController<?,?> arcController;
     private JRootPane _rootPane;
 
     private javax.swing.JButton okButton = new javax.swing.JButton();
@@ -43,7 +43,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
      */
     public ArcWeightEditorPanel(JRootPane rootPane,
                                 PetriNetController petriNetController,
-                                ArcController arcController) {
+                                ArcController<?,?> arcController) {
         _rootPane = rootPane;
         this.petriNetController = petriNetController;
         this.arcController = arcController;
@@ -290,6 +290,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             }
         }
 
+        //TODO: PUSH THIS METHOD DOWN
         if (arcController.hasFunctionalWeight()) {
             Connectable target = arcController.getTarget();
             if (target instanceof Transition) {

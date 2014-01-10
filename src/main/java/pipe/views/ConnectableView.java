@@ -15,9 +15,13 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public abstract class ConnectableView<T extends Connectable> extends PetriNetViewComponent<T> implements Cloneable, IObserver, Serializable {
-    private ConnectableView _lastCopy = null;
-    private ConnectableView _original = null;
+/**
+ *
+ * @param <T> Connectable model
+ */
+public abstract class ConnectableView<T extends Connectable<?,?>> extends PetriNetViewComponent<T> implements Cloneable, IObserver, Serializable {
+//    private ConnectableView _lastCopy = null;
+//    private ConnectableView _original = null;
     private int _copyNumber = 0;
 
     boolean _attributesVisible = false;
@@ -38,23 +42,28 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         addZoomController(zoomController);
     }
 
+    @Override
     public void setName(String nameInput) {
         super.setNameLabelName(nameInput);
     }
 
+    @Override
     public void setId(String idInput) {
         _id = idInput;
     }
 
+    @Override
     public String getId() {
         return (_id != null) ? _id : _nameLabel.getName();
     }
 
+    @Override
     public String getName() {
         return (_nameLabel != null) ? super.getNameLabelName() : _id;
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -85,23 +94,23 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         setBounds(bounds);
     }
 
-    public void addInbound(ArcView newArcView) {
+    public void addInbound(ArcView<?,?> newArcView) {
 //        model.addInbound(newArcView);
     }
 
-    public void addOutbound(ArcView newArcView) {
+    public void addOutbound(ArcView<?,?> newArcView) {
 //        model.addOutbound(newArcView);
     }
 
-    public void addInboundOrOutbound(ArcView newArcView) {
+    public void addInboundOrOutbound(ArcView<?,?> newArcView) {
 //        model.addInboundOrOutbound(newArcView);
     }
 
-    public void removeFromArc(ArcView oldArcView) {
+    public void removeFromArc(ArcView<?,?> oldArcView) {
 //        model.removeFromArcs(oldArcView);
     }
 
-    public void removeToArc(ArcView oldArcView) {
+    public void removeToArc(ArcView<?,?> oldArcView) {
 //        model.removeToArc(oldArcView);
     }
 
@@ -110,16 +119,17 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
 //        updateArcs(model.inboundArcs());
     }
 
-    public LinkedList<ArcView> outboundArcs() {
+    public LinkedList<ArcView<?,?>> outboundArcs() {
 //        return model.outboundArcs();
         return null;
     }
 
-    public LinkedList<ArcView> inboundArcs() {
+    public LinkedList<ArcView<?,?>> inboundArcs() {
 //        return model.inboundArcs();
         return null;
     }
 
+    @Override
     public void translate(int x, int y) {
 //        setPositionX(_positionX + x);
 //        setPositionY(_positionY + y);
@@ -132,6 +142,7 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         update();
     }
 
+    @Override
     public void update() {
         updateBounds();
         updateLabelLocation();
@@ -148,6 +159,7 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         _nameLabel.setPosition(zoomedX + model.getNameXOffset(), zoomedY + model.getNameYOffset());
     }
 
+    @Override
     public void delete() {
         if (getParent() != null) {
             getParent().remove(_nameLabel);
@@ -155,6 +167,7 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         super.delete();
     }
 
+    @Override
     public void addedToGui() {
         _deleted = false;
         _markedAsDeleted = false;
@@ -162,47 +175,52 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         update();
     }
 
-    boolean areNotSameType(ConnectableView o) {
+    boolean areNotSameType(ConnectableView<?> o) {
         return (this.getClass() != o.getClass());
     }
 
-    public Iterator getConnectFromIterator() {
+    public Iterator<?> getConnectFromIterator() {
         return model.outboundArcs().iterator();
     }
 
-    public Iterator getConnectToIterator() {
+    public Iterator<?> getConnectToIterator() {
         return model.inboundArcs().iterator();
     }
 
+    //TODO: DELETE
     int getCopyNumber() {
-        if (_original != null) {
-            _original._copyNumber++;
-            return _original._copyNumber;
-        } else {
-            return 0;
-        }
+//        if (_original != null) {
+//            _original._copyNumber++;
+//            return _original._copyNumber;
+//        } else {
+//            return 0;
+//        }
+        return 0;
     }
 
-    void newCopy(ConnectableView ptObject) {
-        if (_original != null) {
-            _original._lastCopy = ptObject;
-        }
+    void newCopy(ConnectableView<?> ptObject) {
+//        if (_original != null) {
+//            _original._lastCopy = ptObject;
+//        };
     }
 
-    public ConnectableView getLastCopy() {
-        return _lastCopy;
+    //TODO: DELETE
+    public ConnectableView<?> getLastCopy() {
+        return null;
     }
 
     public void resetLastCopy() {
-        _lastCopy = null;
+//        _lastCopy = null;
     }
 
-    void setOriginal(ConnectableView ptObject) {
-        _original = ptObject;
+    void setOriginal(ConnectableView<?> ptObject) {
+//        _original = ptObject;
     }
 
-    public ConnectableView getOriginal() {
-        return _original;
+        //TODO: DELETE
+    public ConnectableView<?> getOriginal() {
+//        return _original;
+            return null;
     }
 
     public abstract void showEditor();
@@ -215,23 +233,27 @@ public abstract class ConnectableView<T extends Connectable> extends PetriNetVie
         return _attributesVisible;
     }
 
+    @Override
     public int getLayerOffset() {
         return Constants.PLACE_TRANSITION_LAYER_OFFSET;
     }
 
     public abstract void toggleAttributesVisible();
 
+    @Override
     public void zoomUpdate(int value) {
         _zoomPercentage = value;
         update();
     }
 
-    public PetriNetViewComponent clone() {
-        PetriNetViewComponent pnCopy = super.clone();
+    @Override
+    public PetriNetViewComponent<?> clone() {
+        PetriNetViewComponent<?> pnCopy = super.clone();
         pnCopy.setNameLabel((NameLabel) _nameLabel.clone());
         return pnCopy;
     }
 
+    @Override
     public T getModel() {
         return model;
     }

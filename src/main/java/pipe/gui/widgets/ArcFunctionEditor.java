@@ -17,13 +17,13 @@ import java.util.List;
 public class ArcFunctionEditor extends JPanel {
     private PetriNet petriNet;
     private EscapableDialog _rootPane;
-    private ArcController arcController;
+    private ArcController<?,?> arcController;
     private Token token;
     private ArcWeightEditorPanel awep;
 
     public ArcFunctionEditor(ArcWeightEditorPanel awep,
                              EscapableDialog guiDialog, PetriNet petriNet,
-                             ArcController arcController, Token token) {
+                             ArcController<?,?> arcController, Token token) {
         this.awep = awep;
         this.petriNet = petriNet;
         _rootPane = guiDialog;
@@ -45,7 +45,7 @@ public class ArcFunctionEditor extends JPanel {
                 javax.swing.BorderFactory.createTitledBorder("Places input:"));
 
         List<String> placename = new LinkedList<String>();
-        for (Place place : petriNet.getPlaces()) {
+        for (Place<?> place : petriNet.getPlaces()) {
             placename.add(place.getName());
         }
 

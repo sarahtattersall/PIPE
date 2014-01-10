@@ -19,7 +19,7 @@ public interface CopyPasteable {
     * copy()
     * @return a copy of the PetriNetViewComponent
     */
-   public PetriNetViewComponent copy();
+   public PetriNetViewComponent<?> copy();
 
    /** 
     * paste()
@@ -30,7 +30,7 @@ public interface CopyPasteable {
     * @return a copy of the saved PetriNetViewComponent that can be added to a PetriNetTab
     * instance
     */
-   public PetriNetViewComponent paste(double despX, double despY,
+   public PetriNetViewComponent<?> paste(double despX, double despY,
            boolean notInTheSameView, PetriNetView model);
    
    /**

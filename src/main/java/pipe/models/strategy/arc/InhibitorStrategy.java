@@ -5,9 +5,9 @@ import pipe.models.component.ArcType;
 import pipe.models.component.Place;
 import pipe.models.component.Transition;
 
-public class InhibitorStrategy implements  ArcStrategy<Place, Transition>{
+public class InhibitorStrategy implements  ArcStrategy<Place<Transition>, Transition>{
     @Override
-    public boolean canFire(final Arc<Place, Transition> arc) {
+    public boolean canFire(final Arc<Place<Transition>, Transition> arc) {
         return arc.getSource().getNumberOfTokensStored() == 0;
     }
 

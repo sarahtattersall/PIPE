@@ -4,6 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
 import pipe.utilities.Copier;
 import pipe.views.viewComponents.NameLabel;
 
@@ -17,7 +18,7 @@ import java.util.LinkedList;
  * @author Pere Bonet
  * @version 1.0
  */
-public class InhibitorArcView extends ArcView implements Serializable {
+public class InhibitorArcView<S extends Connectable<T, S>, T extends Connectable<S, T>> extends ArcView<S,T> implements Serializable {
 
     private final static String type = "inhibitor";
     private final static int OVAL_X = -4;
@@ -26,7 +27,7 @@ public class InhibitorArcView extends ArcView implements Serializable {
     private final static int OVAL_HEIGHT = 8;
 
 
-    public InhibitorArcView(Arc model, PetriNetController controller) {
+    public InhibitorArcView(Arc<S,T> model, PetriNetController controller) {
         super(model, controller);
     }
 

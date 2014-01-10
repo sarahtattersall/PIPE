@@ -14,6 +14,7 @@ import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FiringRateNode extends OperationNode {
@@ -72,7 +73,7 @@ public class FiringRateNode extends OperationNode {
 	public String printTextualRepresentation() {
 		// set this node's textual description
 		String description = QueryManager.addColouring("the average rate of occurrence of ");	
-		ArrayList children = getChildNodes();
+		List<PerformanceTreeNode> children = getChildNodes();
 		if (children != null) {
 			PerformanceTreeNode child = (PerformanceTreeNode)children.get(0);
 			// print out child's textual representation

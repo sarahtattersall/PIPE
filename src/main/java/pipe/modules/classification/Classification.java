@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -571,13 +572,13 @@ public class Classification
     {
         int[][] forwards = pnmlData.getActiveTokenView().getBackwardsIncidenceMatrix(pnmlData.getModel().getArcs(),
                 pnmlData.getModel().getTransitions(), pnmlData.getModel().getPlaces());
-        ArrayList postsetArrayList = new ArrayList();
+        List<Integer> postsetArrayList = new ArrayList<Integer>();
 
         for(int TransitionNo = 0; TransitionNo < forwards[PlaceNo].length; TransitionNo++)
         {
             if(forwards[PlaceNo][TransitionNo] != 0)
             {
-                postsetArrayList.add(new Integer(TransitionNo));
+                postsetArrayList.add(TransitionNo);
             }
         }
 
@@ -585,8 +586,7 @@ public class Classification
 
         for(int postsetPosition = 0; postsetPosition < postset.length; postsetPosition++)
         {
-            postset[postsetPosition] =
-                    ((Integer) postsetArrayList.get(postsetPosition)).intValue();
+            postset[postsetPosition] = postsetArrayList.get(postsetPosition);
         }
 
         return postset;

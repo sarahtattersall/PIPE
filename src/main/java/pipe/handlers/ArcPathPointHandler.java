@@ -23,9 +23,9 @@ public class ArcPathPointHandler
         extends PetriNetObjectHandler<ArcPoint, ArcPathPoint> {
 
 
-    private final ArcController arcController;
+    private final ArcController<?,?> arcController;
 
-    public ArcPathPointHandler(Container contentpane, ArcPathPoint arcPathPoint, PetriNetController controller, ArcController arcController) {
+    public ArcPathPointHandler(Container contentpane, ArcPathPoint arcPathPoint, PetriNetController controller, ArcController<?,?> arcController) {
         //TODO: FIX THIS WITH TYPING
         super(arcPathPoint, contentpane, arcPathPoint.getModel(), controller);
         this.arcController = arcController;

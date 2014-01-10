@@ -12,6 +12,7 @@ import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import javax.print.*;
 import javax.print.attribute.DocAttributeSet;
 import javax.print.attribute.HashDocAttributeSet;
@@ -67,7 +68,7 @@ public class Export
 
     public static void toPNG(JComponent g, String filename) throws IOException
     {
-        Iterator i = ImageIO.getImageWritersBySuffix("png");
+        Iterator<ImageWriter> i = ImageIO.getImageWritersBySuffix("png");
         if(!i.hasNext())
         {
             throw new RuntimeException("No ImageIO exporters can handle PNG");

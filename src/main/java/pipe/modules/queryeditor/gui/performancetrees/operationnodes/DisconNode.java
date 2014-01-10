@@ -15,7 +15,7 @@ import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import java.util.List;
 
 
 public class DisconNode extends OperationNode {
@@ -83,7 +83,7 @@ public class DisconNode extends OperationNode {
 		else if (getOperation().equals("or"))
 			op = " or ";
 					
-		ArrayList children = getChildNodes();
+		List<PerformanceTreeNode> children = getChildNodes();
 		if (children != null) {
 			Iterator<PerformanceTreeNode> i = children.iterator();
 			while (i.hasNext()) {

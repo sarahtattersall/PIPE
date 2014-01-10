@@ -2,6 +2,7 @@ package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
 import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
 import pipe.views.MarkingView;
 import pipe.views.NormalArcView;
 
@@ -11,7 +12,7 @@ public class NormalArcViewBuilder {
     private final Arc arc;
     private final PetriNetController controller;
 
-    public NormalArcViewBuilder(Arc arc, PetriNetController controller) {
+    public <S extends Connectable<T, S>, T extends Connectable<S, T>> NormalArcViewBuilder(Arc<S, T> arc, PetriNetController controller) {
         this.arc = arc;
         this.controller = controller;
     }

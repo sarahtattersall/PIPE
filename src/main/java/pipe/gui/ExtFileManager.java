@@ -21,8 +21,8 @@ class ExtFileManager {
    }
 
    
-   public static Class loadExtClass(String className) {
-      Class c = null;
+   public static Class<?> loadExtClass(String className) {
+      Class<?> c = null;
       
       try {
          c = cLoader.loadClass(className);
@@ -33,8 +33,8 @@ class ExtFileManager {
    }
 
    
-   public static Class loadExtClass(File classFile) {
-      Class myClass = null;
+   public static Class<?> loadExtClass(File classFile) {
+      Class<?> myClass = null;
       File path = classFile.getParentFile();
       String name = classFile.getName();
       

@@ -13,6 +13,7 @@ import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
 import pipe.models.component.Arc;
 import pipe.models.component.ArcPoint;
+import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.ArcPathPoint;
@@ -25,12 +26,12 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public abstract class ArcView extends PetriNetViewComponent<Arc>
+public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable<S, T>> extends PetriNetViewComponent<Arc<S,T>>
         implements Cloneable, IObserver, Serializable, Observer {
 
 
     final protected Path2D path = new Path2D.Double();
-    final protected ArcPath arcPath;
+    final protected ArcPath<S,T> arcPath;
 
     // true if arc is not hidden when a bidirectional arc is used
     boolean inView = true;
@@ -39,10 +40,10 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
     final int zoomGrow = 10;
     private boolean _noFunctionalWeights = true;
 
-    public ArcView(Arc model,
+    public ArcView(Arc<S,T> model,
             PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
-        arcPath = new ArcPath(this, controller);
+        arcPath = new ArcPath<S,T>(this, controller);
 
         updatePath();
         updateBounds();
@@ -144,15 +145,15 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
      * Method to clone an Arc object
      */
     @Override
-    public PetriNetViewComponent clone() {
+    public PetriNetViewComponent<?> clone() {
         return super.clone();
     }
 
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler arcHandler =
-                new ArcHandler(this, tab, this.model, petriNetController);
+        ArcHandler<S,T> arcHandler =
+                new ArcHandler<S,T>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -184,12 +185,12 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
 
 
     //TODO: DELETE
-    void setSource(ConnectableView sourceInput) {
+    void setSource(ConnectableView<?> sourceInput) {
         throw new RuntimeException("Should be setting models source");
     }
 
     //TODO: DELETE
-    public void setTarget(ConnectableView targetInput) {
+    public void setTarget(ConnectableView<?> targetInput) {
         throw new RuntimeException("Should be setting models target");
     }
 
@@ -209,13 +210,13 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
 
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView getSource() {
+    public ConnectableView<S> getSource() {
         return null;
     }
 
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView getTarget() {
+    public ConnectableView<T> getTarget() {
         return null;
     }
 
@@ -273,14 +274,14 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
     /**
      * Updates the bounding box of the arc component based on the arcs bounds
      */
-    void updateBounds() {
+    protected void updateBounds() {
         bounds = arcPath.getBounds();
         bounds.grow(getComponentDrawOffset() + zoomGrow,
                 getComponentDrawOffset() + zoomGrow);
         setBounds(bounds);
     }
 
-    public ArcPath getArcPath() {
+    public ArcPath<S,T> getArcPath() {
         return arcPath;
     }
 
@@ -301,12 +302,15 @@ public abstract class ArcView extends PetriNetViewComponent<Arc>
         return inView;
     }
 
+
+    //TODO: DELETE
     public TransitionView getTransition() {
-        if (getTarget() instanceof TransitionView) {
-            return (TransitionView) getTarget();
-        } else {
-            return (TransitionView) getSource();
-        }
+//        if (getTarget() instanceof TransitionView) {
+//            return (TransitionView) getTarget();
+//        } else {
+//            return (TransitionView) getSource();
+//        }
+        return null;
     }
 
     public void removeFromView() {

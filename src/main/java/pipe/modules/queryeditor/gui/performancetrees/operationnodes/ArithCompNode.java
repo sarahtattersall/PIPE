@@ -14,6 +14,7 @@ import pipe.modules.queryeditor.QueryManager;
 import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 
@@ -90,7 +91,7 @@ public class ArithCompNode extends OperationNode {
 		if (getParentNode().getNodeType().equals(PetriNetNode.SEQUENTIAL))
 			description += QueryManager.addColouring("is it true that ");
 		
-		ArrayList children = getChildNodes();
+		Collection<PerformanceTreeNode> children = getChildNodes();
 		if (children != null) {
 			Iterator<PerformanceTreeNode> i = children.iterator();
 			while (i.hasNext()) {

@@ -206,7 +206,7 @@ public class Comparison implements IModule {
             boolean compareMarking, boolean compareCapacity) {
         int j = 0, k = -1;
         String s;
-        ArrayList results = new ArrayList(); // arraylist for creating the table
+        List<String> results = new ArrayList<String>(); // arraylist for creating the table
 
         results.add("Source place name");
         results.add("Comparison place name");
@@ -341,7 +341,7 @@ public class Comparison implements IModule {
             boolean compareName, boolean compareRate, boolean comparePriority) {
         int j = 0, k = -1;
         String s;
-        ArrayList results = new ArrayList(); // arraylist for creating the table
+        List<String> results = new ArrayList<String>(); // arraylist for creating the table
 
         results.add("Source transition name");
         results.add("Comparison transition name");
@@ -473,7 +473,7 @@ public class Comparison implements IModule {
             boolean compareWeighting, boolean inhibitorArcs) {
         int j = 0, k = -1;
         String s;
-        ArrayList results = new ArrayList(); // arraylist for creating the table
+        List<String> results = new ArrayList<String>(); // arraylist for creating the table
 
         results.add("Source arc");
         results.add("Comparison arc");

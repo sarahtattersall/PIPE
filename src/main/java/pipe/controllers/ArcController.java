@@ -10,12 +10,12 @@ import pipe.models.component.Token;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
-public class ArcController extends AbstractPetriNetComponentController
+public class ArcController<S extends Connectable<T, S>, T extends Connectable<S, T>> extends AbstractPetriNetComponentController<Arc<S, T>>
 {
-    private final Arc arc;
+    private final Arc<S, T> arc;
     private final HistoryManager historyManager;
 
-    ArcController(Arc arc, HistoryManager historyManager) {
+    ArcController(Arc<S, T> arc, HistoryManager historyManager) {
 
         super(arc, historyManager);
         this.arc = arc;
@@ -40,7 +40,7 @@ public class ArcController extends AbstractPetriNetComponentController
     private void updateWeightForArc(final Token token,
                                     final String expr) {
         String oldWeight = arc.getWeightForToken(token);
-        ArcWeight weightAction = new ArcWeight(arc, token, oldWeight, expr);
+        ArcWeight<S,T> weightAction = new ArcWeight<S,T>(arc, token, oldWeight, expr);
         weightAction.redo();
         historyManager.addEdit(weightAction);
     }
@@ -60,7 +60,7 @@ public class ArcController extends AbstractPetriNetComponentController
         return arc.hasFunctionalWeight();
     }
 
-    public Connectable getTarget() {
+    public Connectable<S, T> getTarget() {
         return arc.getTarget();
     }
 
@@ -78,14 +78,14 @@ public class ArcController extends AbstractPetriNetComponentController
 
         Point2D point = new Point2D.Double(x,y);
         ArcPoint newPoint = new ArcPoint(point, arcPoint.isCurved());
-        HistoryItem historyItem = new AddArcPathPoint(arc, newPoint);
+        HistoryItem historyItem = new AddArcPathPoint<S,T>(arc, newPoint);
         historyItem.redo();
         historyManager.addNewEdit(historyItem);
     }
 
     public void addPoint(final Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
-        HistoryItem historyItem = new AddArcPathPoint(arc, newPoint);
+        HistoryItem historyItem = new AddArcPathPoint<S,T>(arc, newPoint);
         historyItem.redo();
         historyManager.addNewEdit(historyItem);
     }

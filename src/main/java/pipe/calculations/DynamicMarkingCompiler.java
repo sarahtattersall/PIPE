@@ -85,7 +85,7 @@ public class DynamicMarkingCompiler
 	    // Load class "sample.PostmanImpl" with our own classloader.
 	    URLClassLoader loader1 = new URLClassLoader(
 	            new URL[] { classesDir.toURL() }, parentLoader);
-	    Class cls1 = loader1.loadClass("pipe.models.DynamicMarking");
+	    Class<?> cls1 = loader1.loadClass("pipe.models.DynamicMarking");
         return (IDynamicMarking) cls1.newInstance();
 
     }

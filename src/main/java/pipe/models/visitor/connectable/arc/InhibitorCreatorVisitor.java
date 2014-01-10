@@ -13,7 +13,7 @@ public class InhibitorCreatorVisitor implements ArcCreatorVisitor {
     }
 
     @Override
-    public void visit(final Place place) {
+    public void visit(final Place<?> place) {
         PetriNetController netController = controller.getActivePetriNetController();
         Token token = netController.getSelectedToken();
         netController.startCreatingInhibitorArc(place, token);

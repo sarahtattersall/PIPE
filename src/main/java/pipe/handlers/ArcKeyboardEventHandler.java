@@ -17,16 +17,17 @@ import java.awt.event.KeyEvent;
 public class ArcKeyboardEventHandler
         extends KeyAdapter {
    
-   private final ArcView _arcViewBeingDrawn;
+   private final ArcView<?,?> _arcViewBeingDrawn;
     private final PetriNetController petriNetController;
    
    
-   public ArcKeyboardEventHandler(ArcView anArcView, PetriNetController controller) {
+   public ArcKeyboardEventHandler(ArcView<?,?> anArcView, PetriNetController controller) {
       _arcViewBeingDrawn = anArcView;
        petriNetController = controller;
    }
    
 
+   @Override
    public void keyPressed(KeyEvent e) {
       switch (e.getKeyCode()) {
          case KeyEvent.VK_META:
@@ -52,7 +53,8 @@ public class ArcKeyboardEventHandler
    }
    
    
-   public void keyReleased(KeyEvent e) {   
+   @Override
+   public void keyReleased(KeyEvent e) {
       switch (e.getKeyCode()) {
          case KeyEvent.VK_META:
          case KeyEvent.VK_WINDOWS:

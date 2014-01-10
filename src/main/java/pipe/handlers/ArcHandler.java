@@ -5,6 +5,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
 import pipe.views.ArcView;
 import pipe.views.NormalArcView;
 import pipe.views.PlaceView;
@@ -19,11 +20,11 @@ import java.awt.event.MouseWheelEvent;
 /**
  * Class used to implement methods corresponding to mouse events on arcs.
  */
-public class ArcHandler
-        extends PetriNetObjectHandler<Arc, ArcView> {
+public class ArcHandler<S extends Connectable<T, S>, T extends Connectable<S, T>>
+        extends PetriNetObjectHandler<Arc<S,T>, ArcView<S,T>> {
 
 
-    public ArcHandler(ArcView view, Container contentpane, Arc obj, PetriNetController controller) {
+    public ArcHandler(ArcView<S,T> view, Container contentpane, Arc<S,T> obj, PetriNetController controller) {
         super(view, contentpane, obj, controller);
         enablePopup = true;
     }
@@ -53,7 +54,7 @@ public class ArcHandler
             popup.insert(menuItem, popupIndex++);
 
             popup.insert(new JPopupMenu.Separator(), popupIndex++);
-        } else if (viewComponent instanceof ArcView) {
+        } else if (viewComponent instanceof NormalArcView) {
             if (((NormalArcView) viewComponent).isJoined()) {
                 NormalArcView PTArc;
                 NormalArcView TPArc;

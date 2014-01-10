@@ -17,7 +17,7 @@ import pipe.modules.queryeditor.gui.performancetrees.PerformanceTreeNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import java.util.List;
 
 
 public class ConvolutionNode extends OperationNode {
@@ -77,7 +77,7 @@ public class ConvolutionNode extends OperationNode {
 	public String printTextualRepresentation() {
 		String description = QueryManager.addColouring("the convolution of ");	
 		String op = " and ";
-		ArrayList children = getChildNodes();
+		List<PerformanceTreeNode> children = getChildNodes();
 		if (children != null) {
 			Iterator<PerformanceTreeNode> i = children.iterator();
 			while (i.hasNext()) {

@@ -10,7 +10,7 @@ import java.util.HashSet;
  * @param <S> class that T connects to type
  * @param <T> current class type
  */
-public abstract class Connectable<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
+public abstract class Connectable<S extends Connectable<T,S>, T extends Connectable<S,T>> extends AbstractPetriNetComponent {
     protected final Collection<Arc<S, T>> inboundArcs = new HashSet<Arc<S, T>>();
     protected final Collection<Arc<T, S>> outboundArcs = new HashSet<Arc<T, S>>();
 
@@ -97,11 +97,11 @@ public abstract class Connectable<S extends Connectable, T extends Connectable> 
 //        }
 //    }
 
-    public void removeOutboundArc(Arc arc) {
+    public void removeOutboundArc(Arc<T,S> arc) {
         outboundArcs.remove(arc);
     }
 
-    public void removeInboundArc(Arc arc) {
+    public void removeInboundArc(Arc<S,T> arc) {
         inboundArcs.remove(arc);
     }
 

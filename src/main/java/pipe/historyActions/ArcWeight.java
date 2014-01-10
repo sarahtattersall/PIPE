@@ -5,19 +5,20 @@
 package pipe.historyActions;
 
 import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
 import pipe.models.component.Token;
 
 /**
  * @author Alex Charalambous
  */
-public class ArcWeight extends HistoryItem {
+public class ArcWeight<S extends Connectable<T, S>, T extends Connectable<S, T>> extends HistoryItem {
 
-    private final Arc arc;
+    private final Arc<S,T> arc;
     private final Token token;
     private final String newWeight;
     private final String oldWeight;
 
-    public ArcWeight(final Arc arc, final Token token,
+    public ArcWeight(final Arc<S,T> arc, final Token token,
                      final String oldWeight, final String newWeight) {
 
         this.arc = arc;
@@ -39,6 +40,20 @@ public class ArcWeight extends HistoryItem {
         arc.setWeight(token, newWeight);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArcWeight arcWeight = (ArcWeight) o;
+
+        if (!arc.equals(arcWeight.arc)) return false;
+        if (!newWeight.equals(arcWeight.newWeight)) return false;
+        if (!oldWeight.equals(arcWeight.oldWeight)) return false;
+        if (!token.equals(arcWeight.token)) return false;
+
+        return true;
+    }
 
     @Override
     public int hashCode() {
@@ -48,32 +63,4 @@ public class ArcWeight extends HistoryItem {
         result = 31 * result + oldWeight.hashCode();
         return result;
     }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final ArcWeight arcWeight = (ArcWeight) o;
-
-        if (!arc.equals(arcWeight.arc)) {
-            return false;
-        }
-        if (!newWeight.equals(arcWeight.newWeight)) {
-            return false;
-        }
-        if (!oldWeight.equals(arcWeight.oldWeight)) {
-            return false;
-        }
-        if (!token.equals(arcWeight.token)) {
-            return false;
-        }
-
-        return true;
-    }
-
 }

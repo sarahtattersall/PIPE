@@ -65,7 +65,7 @@ public class ElementCreator {
         }
     }
 
-    private String getTagForClass(Class clazz) {
+    private String getTagForClass(Class<?> clazz) {
         if (clazz.getAnnotation(Pnml.class) != null) {
             Pnml pnml = (Pnml) clazz.getAnnotation(Pnml.class);
             return pnml.value();
@@ -87,7 +87,7 @@ public class ElementCreator {
 
         @Override
         public void handle(Pnml pnmlAnnotation, Object object, Element element) {
-            Map map = (Map) object;
+            Map<?,?> map = (Map) object;
             element.setAttribute(pnmlAnnotation.value(),
                     Joiner.on(",").withKeyValueSeparator(",").join(map));
         }

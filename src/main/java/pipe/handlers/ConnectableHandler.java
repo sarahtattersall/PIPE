@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
 /**
  * ConnectableHandler handles mouse clicks on Connectables.
  */
-public class ConnectableHandler<T extends Connectable, V extends ConnectableView>
+public class ConnectableHandler<T extends Connectable<?,?>, V extends ConnectableView<T>>
         extends PetriNetObjectHandler<T, V> {
 
 
@@ -37,6 +37,7 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
         enablePopup = true;
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
         mouseDown = true;

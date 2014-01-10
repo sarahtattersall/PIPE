@@ -73,17 +73,19 @@ public class PetriNetController implements IController, Serializable {
         addArcToCurrentPetriNet(arc);
     }
 
-    private Arc buildEmptyArc(Place source, Token token) {
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-        return new Arc<Place, TemporaryArcTarget>(source,
-                new TemporaryArcTarget(source.getX(),
-                        source.getY()),
-                tokens, backwardsNormalStrategy);
-    }
-
     private void addArcToCurrentPetriNet(Arc arc) {
         petriNet.addArc(arc);
+    }
+
+    // TODO: MOVE OUT TO TEMPORARYARCVIEW
+    private Arc buildEmptyArc(Place source, Token token) {
+        return null;
+//        Map<Token, String> tokens = new HashMap<Token, String>();
+//        tokens.put(token, "1");
+//        return new Arc<Place<?>>, TemporaryArcTarget>(source,
+//                new TemporaryArcTarget(source.getX(),
+//                        source.getY()),
+//                tokens, backwardsNormalStrategy);
     }
 
     /**
@@ -97,13 +99,15 @@ public class PetriNetController implements IController, Serializable {
         addArcToCurrentPetriNet(arc);
     }
 
+    //TODO: MOVE OUT TO TEMPORARYARCVIEW
     private Arc buildEmptyArc(Transition source, Token token) {
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-        return new Arc<Transition, TemporaryArcTarget>(source,
-                new TemporaryArcTarget(source.getX(),
-                        source.getY()),
-                tokens, forwardNormalStrategy);
+        return null;
+//        Map<Token, String> tokens = new HashMap<Token, String>();
+//        tokens.put(token, "1");
+//        return new Arc<Transition, TemporaryArcTarget>(source,
+//                new TemporaryArcTarget(source.getX(),
+//                        source.getY()),
+//                tokens, forwardNormalStrategy);
     }
 
     /**
@@ -232,6 +236,28 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
+     * Currently must be of type Connectable, since yhis is the only abstract
+     * class containing getters for X and Y
+     *
+     * @param connectable        object to select
+     * @param selectionRectangle
+     */
+    private void selectConnectable(Connectable connectable,
+                                   Rectangle selectionRectangle) {
+        int x = new Double(connectable.getX()).intValue();
+        int y = new Double(connectable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
+                connectable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(connectable);
+        }
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
+    }
+
+    /**
      * A crude method for selecting arcs, does not take into account bezier curves
      *
      * @param arc
@@ -261,28 +287,6 @@ public class PetriNetController implements IController, Serializable {
         Point2D end = arc.getEndPoint();
         path.lineTo(end.getX(), end.getY());
         return path;
-    }
-
-    /**
-     * Currently must be of type Connectable, since yhis is the only abstract
-     * class containing getters for X and Y
-     *
-     * @param connectable        object to select
-     * @param selectionRectangle
-     */
-    private void selectConnectable(Connectable connectable,
-                                   Rectangle selectionRectangle) {
-        int x = new Double(connectable.getX()).intValue();
-        int y = new Double(connectable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
-                connectable.getWidth());
-        if (selectionRectangle.intersects(rectangle)) {
-            select(connectable);
-        }
-    }
-
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
     }
 
     /**
@@ -359,8 +363,8 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getToken(name);
     }
 
-    public ArcController getArcController(Arc arc) {
-        return new ArcController(arc, historyManager);
+    public <S extends Connectable<T, S>, T extends Connectable<S, T>> ArcController<S, T> getArcController(Arc<S, T> arc) {
+        return new ArcController<S, T>(arc, historyManager);
     }
 
     public PlaceController getPlaceController(Place place) {
@@ -384,7 +388,6 @@ public class PetriNetController implements IController, Serializable {
     public Animator getAnimator() {
         return animator;
     }
-
 
     public ZoomController getZoomController() {
         return zoomController;

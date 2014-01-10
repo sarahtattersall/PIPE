@@ -50,7 +50,7 @@ class Analyse implements Runnable
 	  this.serverAddr = serverAddr;
 	  this.serverPort = serverPort;
 	}
-	
+
 	public void setPassageParameters(ArrayList sourceStateGroups, ArrayList destStateGroups, AnalysisSettings analysisSetting)
 	{
 		this.sourceStateGroups = sourceStateGroups;
