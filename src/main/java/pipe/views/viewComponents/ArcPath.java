@@ -27,7 +27,7 @@ public class ArcPath implements Shape, Cloneable {
     private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
     public final Point2D.Double midPoint = new Point2D.Double();
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
-    private final ArcView parent;
+    private final ArcView<? extends Connectable, ? extends Connectable> parent;
     private final PetriNetController petriNetController;
     private GeneralPath path = new GeneralPath();
     private boolean pointLock = false;
@@ -565,7 +565,7 @@ public class ArcPath implements Shape, Cloneable {
         return details;
     }
 
-    public ArcView getArc() {
+    public ArcView<? extends Connectable, ? extends Connectable> getArc() {
         return parent;
     }
 
@@ -649,7 +649,7 @@ public class ArcPath implements Shape, Cloneable {
                 petriNetTab.add(point);
 
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
-                ArcController arcController = petriNetController.getArcController(parent.getModel());
+                ArcController<? extends  Connectable, ? extends Connectable> arcController = petriNetController.getArcController(parent.getModel());
                 pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
 
                 if (point.getMouseListeners().length == 0) {

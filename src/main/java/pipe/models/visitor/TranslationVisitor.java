@@ -21,7 +21,7 @@ public class TranslationVisitor implements PetriNetComponentVisitor {
     }
 
     @Override
-    public void visit(final Arc arc) {
+    public void visit(final Arc<? extends Connectable, ? extends Connectable> arc) {
         if (controller.isSelected(arc.getSource()) && controller.isSelected(arc.getTarget())) {
             List<ArcPoint> points = arc.getIntermediatePoints();
             for (ArcPoint arcPoint : points) {

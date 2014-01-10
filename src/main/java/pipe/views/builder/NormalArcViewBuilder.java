@@ -9,10 +9,10 @@ import pipe.views.NormalArcView;
 import java.util.LinkedList;
 
 public class NormalArcViewBuilder {
-    private final Arc arc;
+    private final Arc<? extends Connectable, ? extends Connectable> arc;
     private final PetriNetController controller;
 
-    public <S extends Connectable, T extends Connectable> NormalArcViewBuilder(Arc<S, T> arc, PetriNetController controller) {
+    public NormalArcViewBuilder(Arc<? extends Connectable, ? extends Connectable> arc, PetriNetController controller) {
         this.arc = arc;
         this.controller = controller;
     }
@@ -23,22 +23,9 @@ public class NormalArcViewBuilder {
     ConnectableView sourceInput,
     ConnectableView targetInput, LinkedList<MarkingView> weightInput,
     String idInput, boolean taggedInput, NormalArc model) {     */
-    public NormalArcView build() {
-        double startX = arc.getSource().getX();
-        double startY = arc.getSource().getY();
-        double endX = arc.getTarget().getX();
-        double endY = arc.getTarget().getY();
-
-        LinkedList<MarkingView> markings = new LinkedList<MarkingView>();
-//        for (Marking marking : arc.getWeight()) {
-//            TokenViewBuilder builder = new TokenViewBuilder(marking.getToken());
-//            TokenView token = builder.build();
-//            MarkingView view = new MarkingView(token, marking.getCurrentMarking());
-//            markings.add(view);
-//        }
-
-        NormalArcView view =
-                new NormalArcView(arc, controller);
+    public NormalArcView<Connectable, Connectable> build() {
+        NormalArcView<Connectable, Connectable> view =
+                new NormalArcView<Connectable, Connectable>((Arc<Connectable,Connectable>) arc, controller);
         return view;
 
     }

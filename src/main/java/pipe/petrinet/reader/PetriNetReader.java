@@ -121,7 +121,7 @@ public class PetriNetReader {
         creators.arcCreator.setPlaces(places);
         creators.arcCreator.setTransitions(transitions);
         creators.arcCreator.setTokens(tokens);
-        Arc arc = creators.arcCreator.create(element);
+        Arc<? extends Connectable, ? extends Connectable> arc = creators.arcCreator.create(element);
         net.addArc(arc);
     }
 

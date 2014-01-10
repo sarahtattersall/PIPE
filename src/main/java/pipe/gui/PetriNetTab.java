@@ -62,7 +62,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     @Override
     public void update(Observable o, Object diffObj) {
         if ((diffObj instanceof AbstractPetriNetViewComponent) && (diffObj != null)) {
-            AbstractPetriNetViewComponent component = (AbstractPetriNetViewComponent) diffObj;
+            AbstractPetriNetViewComponent<?> component = (AbstractPetriNetViewComponent<?>) diffObj;
             addNewPetriNetObject(component);
         }
     }
@@ -71,7 +71,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      * Add new component to the petrinet view
      * @param component
      */
-    public void addNewPetriNetObject(AbstractPetriNetViewComponent component) {
+    public void addNewPetriNetObject(AbstractPetriNetViewComponent<?> component) {
         if (component != null) {
             if (component.getMouseListeners().length == 0) {
                 component.addToPetriNetTab(this);
@@ -88,7 +88,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         return zoomController.getPercent();
     }
 
-    public void add(AbstractPetriNetViewComponent component) {
+    public void add(AbstractPetriNetViewComponent<?> component) {
         setLayer(component, DEFAULT_LAYER + component.getLayerOffset());
         super.add(component);
         component.addedToGui();

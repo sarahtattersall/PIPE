@@ -10,7 +10,9 @@ import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
+import pipe.models.component.Place;
 import pipe.models.component.Token;
+import pipe.models.component.Transition;
 import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.strategy.arc.BackwardsNormalStrategy;
 import pipe.models.strategy.arc.ForwardsNormalStrategy;
@@ -63,9 +65,9 @@ public class PipeApplicationController {
                 //petriNetTab.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
             }
             PetriNet net = new PetriNet();
-            ArcStrategy inhibitorStrategy = new InhibitorStrategy();
-            ArcStrategy normalForwardStrategy = new ForwardsNormalStrategy(net);
-            ArcStrategy normalBackwardStrategy = new BackwardsNormalStrategy(net);
+            ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
+            ArcStrategy<Transition, Place> normalForwardStrategy = new ForwardsNormalStrategy(net);
+            ArcStrategy<Place, Transition> normalBackwardStrategy = new BackwardsNormalStrategy(net);
 
 
             CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),

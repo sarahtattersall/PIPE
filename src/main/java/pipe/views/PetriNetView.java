@@ -86,8 +86,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
             newClone = (PetriNetView) super.clone();
             newClone._placeViews = deepCopy(_placeViews);
             newClone._transitionViews = deepCopy(_transitionViews);
-            newClone._arcViews = deepCopy(_arcViews);
-            newClone._inhibitorViews = deepCopy(_inhibitorViews);
+//            newClone._arcViews = deepCopy(_arcViews);
+//            newClone._inhibitorViews = deepCopy(_inhibitorViews);
             newClone._labels = deepCopy(_labels);
             newClone._tokenSetController =
                     (TokenSetController) Copier.deepCopy(_tokenSetController); //TODO test this SJD
@@ -162,7 +162,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     //TODO: need to clone values!
-    private static <K extends PetriNetComponent, V extends AbstractPetriNetViewComponent> Map<K, V> deepCopy(Map<K, V> original) {
+    private static <K extends PetriNetComponent, V extends AbstractPetriNetViewComponent<K>> Map<K, V> deepCopy(Map<K, V> original) {
         Map<K, V> result = new HashMap<K, V>();
         for (Map.Entry<K, V> entry : original.entrySet()) {
             result.put(entry.getKey(), entry.getValue());
@@ -919,8 +919,8 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
     }
 
-    private void displayArcs(Collection<Arc> arcs) {
-        for (Arc arc : arcs) {
+    private void displayArcs(Collection<Arc<? extends Connectable, ? extends Connectable>> arcs) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
             ArcView view;
             if (_arcViews.containsKey(arc)) {
                 view = _arcViews.get(arc);
@@ -965,7 +965,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
      * Removes a component view if it is no longer in components.
      * That is if it has been deleted from the model.
      */
-    private <M extends PetriNetComponent, V extends AbstractPetriNetViewComponent>
+    private <M extends PetriNetComponent, V extends AbstractPetriNetViewComponent<M>>
     void removeNoLongerThereComponents(Map<M, V> componentsToViews, Collection<M> components) {
         final Iterator<Map.Entry<M, V>> itr = componentsToViews.entrySet().iterator();
         while (itr.hasNext()) {
@@ -1309,7 +1309,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         removeNoLongerThereComponents(_placeViews, _model.getPlaces());
         removeNoLongerThereComponents(_transitionViews, _model.getTransitions());
         //TODO: TOKENS
-        removeNoLongerThereComponents(_arcViews, _model.getArcs());
+//        removeNoLongerThereComponents(_arcViews, _model.getArcs());
         removeNoLongerThereComponents(_labels, _model.getAnnotations());
         //TODO: Rate params, state groups
 

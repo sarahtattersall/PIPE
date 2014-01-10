@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent;
  *
  * @author unknown
  */
-public class PetriNetObjectHandler<T extends PetriNetComponent, V extends AbstractPetriNetViewComponent>
+public class PetriNetObjectHandler<T extends PetriNetComponent, V extends AbstractPetriNetViewComponent<T>>
         extends javax.swing.event.MouseInputAdapter {
     final Container contentPane;
     final T component;

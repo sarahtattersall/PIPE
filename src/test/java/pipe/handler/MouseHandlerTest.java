@@ -47,12 +47,4 @@ public class MouseHandlerTest {
         mockAction = mock(TypeAction.class);
     }
 
-    @Test
-    public void callsActionDoActionMethod() {
-        when(mockModel.getSelectedAction()).thenReturn(mockAction);
-        ApplicationSettings.register(mockModel);
-
-        handler.mousePressed(mockEvent);
-        verify(mockAction).doAction(mockEvent, mockController);
-    }
 }

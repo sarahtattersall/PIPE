@@ -166,7 +166,7 @@ public class PetriNetReaderTest {
     {
         net = reader.createFromFile(net, doc);
 
-        Collection<Arc> arcs = net.getArcs();
+        Collection<Arc<? extends Connectable, ? extends Connectable>> arcs = net.getArcs();
         assertEquals(1, arcs.size());
         assertTrue(arcs.contains(arc));
     }

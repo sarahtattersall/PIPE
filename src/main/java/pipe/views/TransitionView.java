@@ -17,6 +17,7 @@ import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
 import pipe.models.PetriNet;
 import pipe.models.component.Arc;
+import pipe.models.component.Connectable;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
 import pipe.views.viewComponents.RateParameter;
@@ -47,8 +48,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     public boolean _highlighted;
     private double _delay;
     private boolean _delayValid;
-    private double _rootThreeOverTwo = 0.5 * Math.sqrt(3);
-    private ArrayList _arcAngleList;
     private RateParameter _rateParameter;
     private GroupTransitionView _groupTransitionView;
 
@@ -70,8 +69,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _enabled = false;
         _enabledBackwards = false;
         _highlighted = false;
-        _rootThreeOverTwo = 0.5 * Math.sqrt(3);
-        _arcAngleList = new ArrayList();
         _delayForShowingWarnings = 10000;
 
         rotate(angleInput);
@@ -413,12 +410,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     public void removeArcCompareObject(ArcView arcView) {
-        Iterator arcIterator = _arcAngleList.iterator();
-        while (arcIterator.hasNext()) {
-            if (((ArcAngleCompare) arcIterator.next())._arcView == arcView) {
-                arcIterator.remove();
-            }
-        }
     }
 
     public void addedToGui() {
@@ -546,11 +537,11 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         private final static boolean SOURCE = false;
         private final static boolean TARGET = true;
-        private final ArcView _arcView;
+        private final ArcView<? extends Connectable, ? extends Connectable> _arcView;
         private final TransitionView _transitionView;
         private double angle;
 
-        public ArcAngleCompare(ArcView arcView, TransitionView transitionView) {
+        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> arcView, TransitionView transitionView) {
             this._arcView = arcView;
             this._transitionView = transitionView;
             calcAngle();

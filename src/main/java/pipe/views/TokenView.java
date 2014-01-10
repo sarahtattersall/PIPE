@@ -2,10 +2,7 @@ package pipe.views;
 
 import pipe.controllers.TokenController;
 import pipe.exceptions.TokenLockedException;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
+import pipe.models.component.*;
 import pipe.models.interfaces.IObserver;
 import pipe.utilities.math.Matrix;
 
@@ -266,12 +263,12 @@ public class TokenView extends Observable implements Serializable, IObserver {
     }
 
     //TODO: DELETE STUB
-    public int[][] getBackwardsIncidenceMatrix(final Collection<Arc> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
+    public int[][] getBackwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
         return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 
     //TODO: DELETE STUB
-    public int[][] getForwardsIncidenceMatrix(final Collection<Arc> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
+    public int[][] getForwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
         return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 
@@ -281,7 +278,7 @@ public class TokenView extends Observable implements Serializable, IObserver {
     }
 
     //TODO: DELETE STUB
-    public int[][] getIncidenceMatrix(final Collection<Arc> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
+    public int[][] getIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
         return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 }

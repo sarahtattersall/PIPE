@@ -9,7 +9,6 @@ import pipe.models.component.ArcType;
 import pipe.models.component.Connectable;
 import pipe.views.ArcView;
 import pipe.views.NormalArcView;
-import pipe.views.PlaceView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,10 +21,10 @@ import java.awt.event.MouseWheelEvent;
  * Class used to implement methods corresponding to mouse events on arcs.
  */
 public class ArcHandler<S extends Connectable, T extends Connectable>
-        extends PetriNetObjectHandler<Arc<S,T>, ArcView> {
+        extends PetriNetObjectHandler<Arc<S, T>, ArcView<S,T>> {
 
 
-    public ArcHandler(ArcView view, Container contentpane, Arc<S,T> component, PetriNetController controller) {
+    public ArcHandler(ArcView view, Container contentpane, Arc<S, T> component, PetriNetController controller) {
         super(view, contentpane, component, controller);
         enablePopup = true;
     }
@@ -34,6 +33,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
      * Creates the popup menu that the user will see when they right click on a
      * component
      */
+    @Override
     public JPopupMenu getPopup(MouseEvent e) {
         int popupIndex = 0;
         JMenuItem menuItem;
@@ -42,12 +42,14 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
 
         menuItem = new JMenuItem("Edit Weight");
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    viewComponent.showEditor();
-                }
-            });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewComponent.showEditor();
+            }
+        });
         popup.insert(menuItem, popupIndex++);
-        MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e, ApplicationSettings.getApplicationView().getCurrentTab());
+        MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e,
+                ApplicationSettings.getApplicationView().getCurrentTab());
         menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),
                 accurateEvent.getPoint(), petriNetController));
         menuItem.setText("Split Arc Segment");
@@ -55,118 +57,65 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
 
         popup.insert(new JPopupMenu.Separator(), popupIndex++);
 
-       if (component.getType().equals(ArcType.NORMAL)) {
-//            if (((NormalArcView) viewComponent).isJoined()) {
-//                NormalArcView PTArc;
-//                NormalArcView TPArc;
-//
-//                if (((NormalArcView) viewComponent).getSource() instanceof PlaceView) {
-//                    PTArc = (NormalArcView) viewComponent;
-//                    TPArc = ((NormalArcView) viewComponent).getInverse();
-//                } else {
-//                    PTArc = ((NormalArcView) viewComponent).getInverse();
-//                    TPArc = (NormalArcView) viewComponent;
-//                }
-//
-//                menuItem = new JMenuItem("Edit Weight");
-//                menuItem.addActionListener(new ActionListener() {
-//                    public void actionPerformed(ActionEvent e) {
-//                        viewComponent.showEditor();
-//                    }
-//                });
-//                popup.insert(menuItem, popupIndex++);
-//                popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//                popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//
-////            menuItem = new JMenuItem(new InsertPointAction(viewComponent,
-////                                                         e.getPoint()));
-////            menuItem.setText("Insert Point");
-////            popup.insert(menuItem, popupIndex++);
-//
-//                menuItem = new JMenuItem(
-//                        new SplitArcsAction((NormalArcView) viewComponent, true));
-//                menuItem.setText("Split Arcs (PT / TP)");
-//                popup.insert(menuItem, popupIndex++);
-//
-//                popup.insert(new JPopupMenu.Separator(), popupIndex++);
-//
-//                menuItem = new JMenuItem(new DeleteInverseArcAction(PTArc));
-//                menuItem.setText("Delete (PT Arc)");
-//                popup.insert(menuItem, popupIndex++);
-//
-//                menuItem = new JMenuItem(new DeleteInverseArcAction(TPArc));
-//                menuItem.setText("Delete (TP Arc)");
-//                popup.insert(menuItem, popupIndex++);
-//
-//            } else {
-           if (true) {
-                menuItem = new JMenuItem("Edit Weight");
-                menuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        viewComponent.showEditor();
-                    }
-                });
-                popup.insert(menuItem, popupIndex++);
-
-//            menuItem = new JMenuItem(new SplitArcAction(viewComponent,
-//                                                         e.getPoint()));
-//            menuItem.setText("Insert Point");
-//            popup.insert(menuItem, popupIndex++);
-
-                if (((NormalArcView) viewComponent).hasInverse()) {
-                    menuItem = new JMenuItem(
-                            new SplitArcsAction((NormalArcView) viewComponent, false));
-
-                    menuItem.setText("Join Arcs (PT / TP)");
-                    popup.insert(menuItem, popupIndex++);
+        if (component.getType().equals(ArcType.NORMAL)) {
+            menuItem = new JMenuItem("Edit Weight");
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    viewComponent.showEditor();
                 }
-                popup.insert(new JPopupMenu.Separator(), popupIndex);
-            }
+            });
+            popup.insert(menuItem, popupIndex++);
+
+            popup.insert(new JPopupMenu.Separator(), popupIndex);
         }
         return popup;
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-//       if (!ApplicationSettings.getApplicationModel().isEditionAllowed()){
-//         return;
-//      }
-//      if (e.getClickCount() == 2){
-//         ArcView arcView = (ArcView) component;
-//         if (e.isControlDown()){
-//             ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-//                    arcView.getArcPath().insertPointAt(
-//                            new Point2D.Float(arcView.getX() + e.getX(),
-//                            arcView.getY() + e.getY()), e.isAltDown()));
-//         } else {
-//            arcView.getSource().select();
-//            arcView.getTarget().select();
-//            justSelected = true;
-//         }
-//      }
+        //       if (!ApplicationSettings.getApplicationModel().isEditionAllowed()){
+        //         return;
+        //      }
+        //      if (e.getClickCount() == 2){
+        //         ArcView arcView = (ArcView) component;
+        //         if (e.isControlDown()){
+        //             ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
+        //                    arcView.getArcPath().insertPointAt(
+        //                            new Point2D.Float(arcView.getX() + e.getX(),
+        //                            arcView.getY() + e.getY()), e.isAltDown()));
+        //         } else {
+        //            arcView.getSource().select();
+        //            arcView.getTarget().select();
+        //            justSelected = true;
+        //         }
+        //      }
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
-//       switch (ApplicationSettings.getApplicationModel().getMode()) {
-//         case Constants.SELECT:
-//            if (!isDragging){
-//               break;
-//            }
-//            ArcView currentObject = (ArcView) component;
-//            Point oldLocation = currentObject.getLocation();
-//            // Calculate translation in mouse
-//            int transX = Grid.getModifiedX(e.getX() - dragInit.x);
-//            int transY = Grid.getModifiedY(e.getY() - dragInit.y);
-//            ((PetriNetTab)contentPane).getSelectionObject().translateSelection(
-//                     transX, transY);
-//            dragInit.translate(
-//                     -(currentObject.getLocation().x - oldLocation.x - transX),
-//                     -(currentObject.getLocation().y - oldLocation.y - transY));
-//      }
+        //       switch (ApplicationSettings.getApplicationModel().getMode()) {
+        //         case Constants.SELECT:
+        //            if (!isDragging){
+        //               break;
+        //            }
+        //            ArcView currentObject = (ArcView) component;
+        //            Point oldLocation = currentObject.getLocation();
+        //            // Calculate translation in mouse
+        //            int transX = Grid.getModifiedX(e.getX() - dragInit.x);
+        //            int transY = Grid.getModifiedY(e.getY() - dragInit.y);
+        //            ((PetriNetTab)contentPane).getSelectionObject().translateSelection(
+        //                     transX, transY);
+        //            dragInit.translate(
+        //                     -(currentObject.getLocation().x - oldLocation.x - transX),
+        //                     -(currentObject.getLocation().y - oldLocation.y - transY));
+        //      }
     }
 
     // Alex Charalambous: No longer does anything since you can't simply increment
     // the weight of the arc because multiple weights for multiple colours exist
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
 
     }
@@ -183,42 +132,14 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         }
 
         //TODO: REIMPLEMENT
+        @Override
         public void actionPerformed(ActionEvent e) {
-//         if (joined) {
-//            petriNetController.getHistoryManager().addNewEdit(_arcView.split());
-//         } else {
-//             petriNetController.getHistoryManager().addNewEdit(_arcView.join());
-//         }
+            //         if (joined) {
+            //            petriNetController.getHistoryManager().addNewEdit(_arcView.split());
+            //         } else {
+            //             petriNetController.getHistoryManager().addNewEdit(_arcView.join());
+            //         }
         }
 
     }
-
-    class DeleteInverseArcAction extends AbstractAction {
-
-        final NormalArcView _arcView;
-        final NormalArcView _inverse;
-        final boolean switchArcs;
-
-
-        public DeleteInverseArcAction(NormalArcView _arc) {
-            _arcView = _arc;
-            _inverse = _arcView.getInverse();
-            switchArcs = _arcView.inView();
-        }
-
-
-        public void actionPerformed(ActionEvent e) {
-            HistoryManager historyManager = petriNetController.getHistoryManager();
-
-            if (switchArcs) {
-                historyManager.addNewEdit(_arcView.split());
-            } else {
-                historyManager.addNewEdit(_inverse.split());
-            }
-//         historyManager.deleteSelection(_arcView);
-
-            _arcView.delete();
-        }
-    }
-
 }

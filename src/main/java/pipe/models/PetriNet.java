@@ -13,20 +13,18 @@ import pipe.views.viewComponents.RateParameter;
 import java.util.*;
 
 public class PetriNet extends Observable implements IObserver {
+    //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
+    private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
     public String _pnmlName = "";
     private boolean _validated = false;
-    private ArrayList _changeArrayList;
-
     private Set<Transition> transitions = new HashSet<Transition>();
     private Set<Place> places = new HashSet<Place>();
     private Set<Token> tokens = new HashSet<Token>();
-    private Set<Arc> arcs = new HashSet<Arc>();
+    private Set<Arc<? extends Connectable, ? extends Connectable>> arcs =
+            new HashSet<Arc<? extends Connectable, ? extends Connectable>>();
     private Set<Annotation> annotations = new HashSet<Annotation>();
     private Set<RateParameter> rates = new HashSet<RateParameter>();
     private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
-
-    //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
-    private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
     private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
 
     public String getPnmlName() {
@@ -61,7 +59,7 @@ public class PetriNet extends Observable implements IObserver {
         notifyObservers();
     }
 
-    public void addArc(Arc arc) {
+    public void addArc(Arc<? extends Connectable, ? extends Connectable> arc) {
         arcs.add(arc);
         arc.registerObserver(this);
         notifyObservers();
@@ -105,11 +103,7 @@ public class PetriNet extends Observable implements IObserver {
         return stateGroups;
     }
 
-    public Collection<Transition> getTransitions() {
-        return transitions;
-    }
-
-    public Collection<Arc> getArcs() {
+    public Collection<Arc<? extends Connectable, ? extends Connectable>> getArcs() {
         return arcs;
     }
 
@@ -119,18 +113,38 @@ public class PetriNet extends Observable implements IObserver {
 
     public void removePlace(Place place) {
         this.places.remove(place);
-        for (Arc arc : outboundArcs(place)) {
+        for (Arc<Place, Transition> arc : outboundArcs(place)) {
             removeArc(arc);
         }
         notifyObservers();
     }
 
-    public void removeTransition(Transition transition) {
-        this.transitions.remove(transition);
-        for (Arc<Transition, Place> arc : outboundArcs(transition)) {
-            removeArc(arc);
+    /**
+     * @param transition
+     * @return arcs that are outbound from transition
+     */
+    private Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
+        Collection<Arc<Transition, Place> > outbound = new LinkedList<Arc<Transition, Place>>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            if (arc.getSource().equals(transition)) {
+                outbound.add((Arc<Transition, Place>) arc);
+            }
         }
-        notifyObservers();
+        return outbound;
+    }
+
+    /**
+     * @param place
+     * @return arcs that are outbound from place
+     */
+    private Collection<Arc<Place, Transition>> outboundArcs(Place place) {
+        Collection<Arc<Place, Transition> > outbound = new LinkedList<Arc<Place, Transition>>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            if (arc.getSource().equals(place)) {
+                outbound.add((Arc<Place, Transition>) arc);
+            }
+        }
+        return outbound;
     }
 
     public void removeArc(Arc arc) {
@@ -142,9 +156,17 @@ public class PetriNet extends Observable implements IObserver {
     /**
      * Removes the arc from the source and target inbound/outbound Collections
      */
-    private <S extends  Connectable, T extends  Connectable> void removeArcFromSourceAndTarget(Arc<S,T> arc) {
+    private <S extends Connectable, T extends Connectable> void removeArcFromSourceAndTarget(Arc<S, T> arc) {
         Connectable source = arc.getSource();
         Connectable target = arc.getTarget();
+    }
+
+    public void removeTransition(Transition transition) {
+        this.transitions.remove(transition);
+        for (Arc<Transition, Place> arc : outboundArcs(transition)) {
+            removeArc(arc);
+        }
+        notifyObservers();
     }
 
     public void remove(PetriNetComponent component) {
@@ -188,63 +210,22 @@ public class PetriNet extends Observable implements IObserver {
         notifyObservers();
     }
 
-    /**
-     * Calculates weights of connections from places to transitions for given token
-     *
-     * @param token calculates backwards incidence matrix for this token
-     */
-    public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
-        ExprEvaluator paser = new ExprEvaluator(this);
-        IncidenceMatrix backwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc arc : arcs) {
-            Connectable target = arc.getTarget();
-            Connectable source = arc.getSource();
-            if (target instanceof Transition) {
-                Transition transition = (Transition) target;
-                if (source instanceof Place) {
-                    Place place = (Place) source;
-                    int enablingDegree = transition.isInfiniteServer() ? getEnablingDegree(transition) : 0;
+    public Transition getRandomTransition() {
 
-
-                    String expression = arc.getWeightForToken(token);
-                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    int totalWeight = transition.isInfiniteServer() ? weight * enablingDegree : weight;
-                    backwardsIncidenceMatrix.put(place, transition, totalWeight);
-                }
-            }
+        Collection<Transition> enabledTransitions = getEnabledTransitions(false);
+        if (enabledTransitions.isEmpty()) {
+            throw new RuntimeException("Error - no transitions to fire!");
         }
-        return backwardsIncidenceMatrix;
-    }
 
-    /**
-     * Calculates weights of connections from transitions to places for given token
-     *
-     * @param token
-     * @return
-     * @throws Exception
-     */
-    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+        Random random = new Random();
+        int index = random.nextInt(enabledTransitions.size());
 
-        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc arc : arcs) {
-            Connectable target = arc.getTarget();
-            Connectable source = arc.getSource();
-
-            if (target instanceof Place) {
-                Place place = (Place) target;
-                if (source instanceof Transition) {
-                    Transition transition = (Transition) source;
-
-                    String expression = arc.getWeightForToken(token);
-
-                    ExprEvaluator paser = new ExprEvaluator(this);
-
-                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    forwardsIncidenceMatrix.put(place, transition, weight);
-                }
-            }
+        Iterator<Transition> iter = enabledTransitions.iterator();
+        Transition transition = iter.next();
+        for (int i = 1; i < index; i++) {
+            transition = iter.next();
         }
-        return forwardsIncidenceMatrix;
+        return transition;
     }
 
     /**
@@ -273,7 +254,7 @@ public class PetriNet extends Observable implements IObserver {
             }
         }
 
-//        Now make sure that if any of the enabled transitions are immediate
+        //        Now make sure that if any of the enabled transitions are immediate
         // transitions, only they can fire as this must then be a vanishing
         // state. That is:
         // - disable the immediate transitions with lower priority.
@@ -294,7 +275,6 @@ public class PetriNet extends Observable implements IObserver {
     }
 
     /**
-     *
      * @param transition
      * @return true if transition is enabled
      */
@@ -302,38 +282,39 @@ public class PetriNet extends Observable implements IObserver {
         boolean enabledForArcs = true;
         for (Arc<Place, Transition> arc : inboundArcs(transition)) {
             enabledForArcs &= arc.canFire();
-//            enabledForArcs &= allPlaceTokensEnabled(backwards, arc);
+            //            enabledForArcs &= allPlaceTokensEnabled(backwards, arc);
         }
 
         for (Arc<Transition, Place> arc : outboundArcs(transition)) {
-//            Place place = arc.getTarget();
+            //            Place place = arc.getTarget();
             enabledForArcs &= arc.canFire();
         }
         return enabledForArcs;
     }
 
-    public Transition getRandomTransition() {
-
-        Collection<Transition> enabledTransitions = getEnabledTransitions(false);
-        if (enabledTransitions.isEmpty()) {
-            throw new RuntimeException("Error - no transitions to fire!");
+    /**
+     * @param transition
+     * @return arcs that are inbound to transition
+     */
+    private Collection<Arc<Place, Transition>> inboundArcs(Transition transition) {
+        Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            if (arc.getTarget().equals(transition)) {
+                outbound.add((Arc<Place, Transition>) arc);
+            }
         }
+        return outbound;
+    }
 
-        Random random = new Random();
-        int index = random.nextInt(enabledTransitions.size());
-
-        Iterator<Transition> iter = enabledTransitions.iterator();
-        Transition transition = iter.next();
-        for (int i = 1; i < index; i++) {
-            transition = iter.next();
-        }
-        return transition;
+    public Collection<Transition> getTransitions() {
+        return transitions;
     }
 
     /**
      * Removes tokens from places into the transition
      * Adds tokens to the places out of the transition according to the arc weight
      * Disables fired transition
+     *
      * @param transition
      */
     public void fireTransition(Transition transition) {
@@ -364,36 +345,6 @@ public class PetriNet extends Observable implements IObserver {
     }
 
     /**
-     *
-     * @param connectable
-     * @return arcs that are outbound from connectable
-     */
-    private Collection<Arc> outboundArcs(Connectable connectable) {
-        Collection<Arc> outbound = new LinkedList<Arc>();
-        for (Arc arc : arcs) {
-            if (arc.getSource().equals(connectable)) {
-                outbound.add(arc);
-            }
-        }
-        return outbound;
-    }
-
-    /**
-     *
-     * @param connectable
-     * @return arcs that are inbound to connectable
-     */
-    private Collection<Arc> inboundArcs(Connectable connectable) {
-        Collection<Arc> outbound = new LinkedList<Arc>();
-        for (Arc arc : arcs) {
-            if (arc.getTarget().equals(connectable)) {
-                outbound.add(arc);
-            }
-        }
-        return outbound;
-    }
-
-    /**
      * Calculates enabled transitions and enables them.
      */
     public void markEnabledTransitions() {
@@ -407,11 +358,107 @@ public class PetriNet extends Observable implements IObserver {
         }
     }
 
+    /**
+     * Calculates weights of connections from transitions to places for given token
+     *
+     * @param token
+     * @return
+     * @throws Exception
+     */
+    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+
+        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+
+            if (target instanceof Place) {
+                Place place = (Place) target;
+                if (source instanceof Transition) {
+                    Transition transition = (Transition) source;
+
+                    String expression = arc.getWeightForToken(token);
+
+                    ExprEvaluator paser = new ExprEvaluator(this);
+
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    forwardsIncidenceMatrix.put(place, transition, weight);
+                }
+            }
+        }
+        return forwardsIncidenceMatrix;
+    }
+
+    /**
+     * Calculates weights of connections from places to transitions for given token
+     *
+     * @param token calculates backwards incidence matrix for this token
+     */
+    public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
+        ExprEvaluator paser = new ExprEvaluator(this);
+        IncidenceMatrix backwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+            if (target instanceof Transition) {
+                Transition transition = (Transition) target;
+                if (source instanceof Place) {
+                    Place place = (Place) source;
+                    int enablingDegree = transition.isInfiniteServer() ? getEnablingDegree(transition) : 0;
+
+
+                    String expression = arc.getWeightForToken(token);
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    int totalWeight = transition.isInfiniteServer() ? weight * enablingDegree : weight;
+                    backwardsIncidenceMatrix.put(place, transition, totalWeight);
+                }
+            }
+        }
+        return backwardsIncidenceMatrix;
+    }
+
+    /**
+     * A Transition is enabled if all its input places are marked with at least one token
+     * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
+     *
+     * @param transition
+     * @return the transitions enabling degree
+     */
+    public int getEnablingDegree(Transition transition) {
+        ExprEvaluator evaluator = new ExprEvaluator(this);
+        int enablingDegree = Integer.MAX_VALUE;
+
+
+        for (Arc<Place, Transition> arc : inboundArcs(transition)) {
+            Place place = (Place) arc.getSource();
+            Map<Token, String> arcWeights = arc.getTokenWeights();
+            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
+                Token arcToken = entry.getKey();
+                String arcTokenExpression = entry.getValue();
+
+                int placeTokenCount = place.getTokenCount(arcToken);
+                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
+
+                if (requiredTokenCount == 0) {
+                    enablingDegree = 0;
+                } else {
+                    //TODO: WHY DIVIDE?
+                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
+                    if (currentDegree < enablingDegree) {
+                        enablingDegree = currentDegree;
+                    }
+
+                }
+            }
+        }
+        return enablingDegree;
+    }
 
     /**
      * Removes tokens from places out of the transition
      * Adds tokens to the places into the transition according to the arc weight
      * Enables fired transition
+     *
      * @param transition
      */
     //TODO: NOT SURE IF BETTER TO JUST HAVE UNDO/REDO IN ANIMATION HISTORY? HAVE TO STORE ENTIRE PETRI
@@ -439,44 +486,6 @@ public class PetriNet extends Observable implements IObserver {
             }
         }
         markEnabledTransitions();
-    }
-
-    /**
-     * A Transition is enabled if all its input places are marked with at least one token
-     * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
-     *
-     * @param evaluator used to evaluate an arcs expression in the petrinet the
-     *                  transition belongs to.
-     * @return
-     */
-    public int getEnablingDegree(Transition transition) {
-        ExprEvaluator evaluator = new ExprEvaluator(this);
-        int enablingDegree = Integer.MAX_VALUE;
-
-
-        for (Arc arc : inboundArcs(transition)) {
-            Place place = (Place) arc.getSource();
-            Map<Token, String> arcWeights = arc.getTokenWeights();
-            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
-                Token arcToken = entry.getKey();
-                String arcTokenExpression = entry.getValue();
-
-                int placeTokenCount = place.getTokenCount(arcToken);
-                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
-
-                if (requiredTokenCount == 0) {
-                    enablingDegree = 0;
-                } else {
-                    //TODO: WHY DIVIDE?
-                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
-                    if (currentDegree < enablingDegree) {
-                        enablingDegree = currentDegree;
-                    }
-
-                }
-            }
-        }
-        return enablingDegree;
     }
 
 }

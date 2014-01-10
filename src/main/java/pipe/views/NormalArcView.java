@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
-public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView implements Serializable {
+public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T> implements Serializable {
     private final static String type = "normal";
     private final static Polygon head = new Polygon(new int[]{0, 5, 0, -5}, new int[]{0, -10, -7, -10}, 4);
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
@@ -27,11 +27,10 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     // bidirectional arc?
     private boolean joined = false;
     // Whether or not exists an inverse arc
-    private NormalArcView _inverse = null;
+    private NormalArcView<S, T> _inverse = null;
     private Boolean tagged = false;
-    private ArcController _controller;
 
-    public NormalArcView(Arc model,
+    public NormalArcView(Arc<S, T> model,
                          PetriNetController controller) {
         super(model, controller);
         setTagged(model.isTagged());
@@ -126,7 +125,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         }
     }
 
-    @Override public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
+    @Override public NormalArcView<S,T> paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
 //        ConnectableView source = this.getSource().getLastCopy();
 //        ConnectableView target = this.getTarget().getLastCopy();
 //
@@ -179,7 +178,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         return null;
     }
 
-    @Override public NormalArcView copy() {
+    @Override public NormalArcView<S,T> copy() {
         return null;
 //        return new NormalArcView(this);
     }
@@ -253,7 +252,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         return _inverse;
     }
 
-    public HistoryItem setInverse(NormalArcView _inverse, boolean joined) {
+    public HistoryItem setInverse(NormalArcView<S,T> _inverse, boolean joined) {
         this._inverse = _inverse;
         this._inverse._inverse = this;
         updateArc(joined);

@@ -131,14 +131,17 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         return _deleted || _markedAsDeleted;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
 
+    @Override
     public boolean isCopyPasteable() {
         return _copyPasteable;
     }
 
+    @Override
     public abstract int getLayerOffset();
 
     public int getZoomPercentage() {
@@ -146,9 +149,10 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
     }
 
 
-    public AbstractPetriNetViewComponent clone() {
+    @Override
+    public AbstractPetriNetViewComponent<T> clone() {
         try {
-            AbstractPetriNetViewComponent pnCopy = (AbstractPetriNetViewComponent) super.clone();
+            AbstractPetriNetViewComponent<T> pnCopy = (AbstractPetriNetViewComponent) super.clone();
 
             EventListener[] mouseListeners = pnCopy.getListeners(MouseListener.class);
             for (EventListener mouseListener2 : mouseListeners) {

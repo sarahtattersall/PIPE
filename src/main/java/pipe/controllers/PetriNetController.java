@@ -104,7 +104,7 @@ public class PetriNetController implements IController, Serializable {
         }
     }
 
-    private void addArcToCurrentPetriNet(Arc arc) {
+    private void addArcToCurrentPetriNet(Arc<? extends Connectable, ? extends Connectable> arc) {
         petriNet.addArc(arc);
     }
 

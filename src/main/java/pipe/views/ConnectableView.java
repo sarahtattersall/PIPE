@@ -247,7 +247,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     @Override
-    public AbstractPetriNetViewComponent<?> clone() {
+    public AbstractPetriNetViewComponent clone() {
         AbstractPetriNetViewComponent<?> pnCopy = super.clone();
         pnCopy.setNameLabel((NameLabel) _nameLabel.clone());
         return pnCopy;

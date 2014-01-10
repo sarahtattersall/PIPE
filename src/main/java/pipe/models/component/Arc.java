@@ -166,12 +166,11 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
             try {
                 Integer.parseInt(weight);
-                return false;
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean canFire() {

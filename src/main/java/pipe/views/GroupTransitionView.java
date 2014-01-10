@@ -7,6 +7,7 @@ import pipe.handlers.GroupTransitionHandler;
 import pipe.historyActions.GroupTransitionRotation;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.UngroupTransition;
+import pipe.models.component.Connectable;
 import pipe.models.component.Transition;
 
 import javax.swing.*;
@@ -449,11 +450,11 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
         private final static boolean SOURCE = false;
         private final static boolean TARGET = true;
-        private final ArcView _arcView;
+        private final ArcView<? extends Connectable, ? extends Connectable> _arcView;
         private final GroupTransitionView _transitionView;
         private double angle;
 
-        public ArcAngleCompare(ArcView _arcView, GroupTransitionView _transitionView) {
+        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> _arcView, GroupTransitionView _transitionView) {
             this._arcView = _arcView;
             this._transitionView = _transitionView;
             calcAngle();

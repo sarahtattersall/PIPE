@@ -4,10 +4,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import pipe.models.PetriNet;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
+import pipe.models.component.*;
 import pipe.petrinet.writer.reflectionCreator.ElementCreator;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -66,7 +63,7 @@ public class PetriNetWriter {
             netElement.appendChild(element);
         }
 
-        for (Arc arc : net.getArcs()) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : net.getArcs()) {
             Element element = creator.createElement(arc);
             netElement.appendChild(element);
 

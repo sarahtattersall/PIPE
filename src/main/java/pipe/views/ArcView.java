@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public abstract class ArcView extends AbstractPetriNetViewComponent<Arc<Connectable, Connectable>>
+public abstract class ArcView<S extends Connectable, T extends Connectable> extends AbstractPetriNetViewComponent<Arc<S, T>>
         implements Cloneable, IObserver, Serializable, Observer {
 
 
@@ -46,7 +46,7 @@ public abstract class ArcView extends AbstractPetriNetViewComponent<Arc<Connecta
 //        updateBounds();
     }
 
-    public ArcView(Arc<Connectable, Connectable> model,
+    public ArcView(Arc<S, T> model,
             PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
         arcPath = new ArcPath(this, controller);
@@ -151,15 +151,15 @@ public abstract class ArcView extends AbstractPetriNetViewComponent<Arc<Connecta
      * Method to clone an Arc object
      */
     @Override
-    public AbstractPetriNetViewComponent<?> clone() {
+    public AbstractPetriNetViewComponent clone() {
         return super.clone();
     }
 
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler<Connectable, Connectable> arcHandler =
-                new ArcHandler<Connectable, Connectable>(this, tab, this.model, petriNetController);
+        ArcHandler<S, T> arcHandler =
+                new ArcHandler<S, T>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);

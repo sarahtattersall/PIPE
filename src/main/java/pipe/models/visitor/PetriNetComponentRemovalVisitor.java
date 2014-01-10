@@ -13,12 +13,12 @@ public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor
     }
 
     @Override
-    public <S extends Connectable, T extends Connectable> void visit(Arc<S,T> arc) {
+    public void visit(Arc<? extends Connectable, ? extends Connectable> arc) {
         net.removeArc(arc);
     }
 
     @Override
-    public <T extends Connectable> void visit(Place place) {
+    public void visit(Place place) {
         net.removePlace(place);
 
     }
