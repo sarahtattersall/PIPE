@@ -78,7 +78,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     public TransitionView(TransitionController transitionController, Transition model) {
         super(model);
         model = model;
-        model.registerObserver(this);
+//        model.registerObserver(this);
     }
 
     public void setDelayForShowingWarnings(int delayForShowingWarnings) {
@@ -517,7 +517,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     public void update() {
         _nameLabel.setText(getAttributes());
         _nameLabel.zoomUpdate(_zoomPercentage);
-        super.update();
+//        super.update();
         this.repaint();
     }
 

@@ -22,6 +22,30 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
     boolean _selectable;
     private boolean _draggable;
     protected boolean _copyPasteable;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        AbstractPetriNetViewComponent that = (AbstractPetriNetViewComponent) o;
+
+        if (!model.equals(that.model)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return model.hashCode();
+    }
+
     protected static boolean _ignoreSelection;
     protected Rectangle bounds;
     protected boolean _deleted;

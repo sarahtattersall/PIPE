@@ -99,7 +99,7 @@ public class ArcActionTest {
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         action.doConnectableAction(place, mockController);
-        verify(mockCreatorVisitor).create(transition, place, activeToken);
+        verify(mockCreatorVisitor).create(transition, place);
     }
 
 

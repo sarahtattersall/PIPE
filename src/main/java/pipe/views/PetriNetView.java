@@ -62,7 +62,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
 
     public PetriNetView(String pnmlFileName) {
         _model = new PetriNet();
-        _model.registerObserver(this);
         PNMLTransformer transform = new PNMLTransformer();
         File temp = new File(pnmlFileName);
         _model.setPnmlName(temp.getName());
@@ -73,8 +72,6 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     public PetriNetView(PetriNetController petriNetController, PetriNet model) {
         _tokenSetController.addObserver(this);
         _model = model;
-        model.registerObserver(this);
-        _model.registerObserver(this);
         this.petriNetController = petriNetController;
     }
 
@@ -920,27 +917,27 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     private void displayArcs(Collection<Arc<? extends Connectable, ? extends Connectable>> arcs) {
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            ArcView view;
-            if (_arcViews.containsKey(arc)) {
-                view = _arcViews.get(arc);
-                view.update();
-            } else if (arc.getType().equals(ArcType.NORMAL)) {
-                NormalArcViewBuilder builder = new NormalArcViewBuilder(arc, petriNetController);
-                view = builder.build();
-                _arcViews.put(arc, view);
-                //TODO: Add back in:
-                //checkForInverseArc(view);
-            } else {
-                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(arc, petriNetController);
-                view = builder.build();
-                _arcViews.put(arc, view);
-            }
-
-//            addArcToArcsMap(view);
-            setChanged();
-            notifyObservers(view);
-        }
+//        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+//            ArcView view;
+//            if (_arcViews.containsKey(arc)) {
+//                view = _arcViews.get(arc);
+//                view.update();
+//            } else if (arc.getType().equals(ArcType.NORMAL)) {
+//                NormalArcViewBuilder builder = new NormalArcViewBuilder(arc, petriNetController);
+//                view = builder.build();
+//                _arcViews.put(arc, view);
+//                //TODO: Add back in:
+//                //checkForInverseArc(view);
+//            } else {
+//                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(arc, petriNetController);
+//                view = builder.build();
+//                _arcViews.put(arc, view);
+//            }
+//
+////            addArcToArcsMap(view);
+//            setChanged();
+//            notifyObservers(view);
+//        }
     }
 
     private void displayPlaces(Collection<Place> places) {

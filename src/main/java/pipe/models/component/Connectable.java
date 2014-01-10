@@ -59,13 +59,15 @@ public abstract class Connectable extends AbstractPetriNetComponent {
     }
 
     public void setNameXOffset(double nameXOffset) {
+        double oldValue = this.nameXOffset;
         this.nameXOffset = nameXOffset;
-        notifyObservers();
+        changeSupport.firePropertyChange("nameOffsetX", oldValue, nameXOffset);
     }
 
     public void setNameYOffset(double nameYOffset) {
+        double oldValue = this.nameYOffset;
         this.nameYOffset = nameYOffset;
-        notifyObservers();
+        changeSupport.firePropertyChange("nameOffsetY", oldValue, nameXOffset);
     }
 
 //    public void addInboundOrOutbound(ArcView newArcView) {
@@ -89,8 +91,10 @@ public abstract class Connectable extends AbstractPetriNetComponent {
     }
 
     public void setX(double x) {
+        double oldValue = this.x;
         this.x = x;
-        notifyObservers();
+        changeSupport.firePropertyChange("x", oldValue, x);
+
     }
 
     public double getY() {
@@ -98,13 +102,9 @@ public abstract class Connectable extends AbstractPetriNetComponent {
     }
 
     public void setY(double y) {
+        double oldValue = this.y;
         this.y = y;
-        notifyObservers();
-    }
-
-    public void setCentre(double x, double y) {
-        setX(x - (getWidth() / 2.0));
-        setY(y - (getHeight() / 2.0));
+        changeSupport.firePropertyChange("y", oldValue, y);
     }
 
     public abstract int getHeight();
@@ -133,13 +133,15 @@ public abstract class Connectable extends AbstractPetriNetComponent {
     public abstract boolean isEndPoint();
 
     public void setId(String id) {
+        String old = this.id;
         this.id = id;
-        notifyObservers();
+        changeSupport.firePropertyChange("changeId", old, id);
     }
 
     public void setName(String name) {
+        String old = this.name;
         this.name = name;
-        notifyObservers();
+        changeSupport.firePropertyChange("changeName", old, name);
     }
 
     public abstract void accept(ConnectableVisitor visitor);

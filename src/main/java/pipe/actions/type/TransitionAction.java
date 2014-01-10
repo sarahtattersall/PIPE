@@ -7,6 +7,11 @@ import pipe.historyActions.AddPetriNetObject;
 import pipe.models.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.Transition;
+import pipe.views.PipeApplicationView;
+import pipe.views.PlaceView;
+import pipe.views.TransitionView;
+import pipe.views.builder.PlaceViewBuilder;
+import pipe.views.builder.TransitionViewBuilder;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -16,9 +21,12 @@ import java.awt.event.MouseEvent;
  */
 public abstract class TransitionAction extends TypeAction {
 
+    private final PipeApplicationView applicationView;
+
     public TransitionAction(final String name, final int typeID,
-                            final String tooltip, final String keystroke) {
+                            final String tooltip, final String keystroke, PipeApplicationView applicationView) {
         super(name, typeID, tooltip, keystroke);
+        this.applicationView = applicationView;
     }
 
     @Override
@@ -45,7 +53,11 @@ public abstract class TransitionAction extends TypeAction {
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addTransition(transition);
-        petriNet.notifyObservers();
+
+        TransitionViewBuilder builder = new TransitionViewBuilder(transition, petriNetController);
+        TransitionView view = builder.build();
+
+        applicationView.getCurrentTab().addNewPetriNetObject(view);
 
         return transition;
     }

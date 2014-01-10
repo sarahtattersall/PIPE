@@ -4,7 +4,6 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
-import pipe.handlers.ConnectableHandler;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryItem;
@@ -18,6 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
@@ -25,17 +26,14 @@ import java.util.List;
 // Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
 public class PlaceView extends ConnectableView<Place> implements Serializable, Observer {
 
+    private final Ellipse2D.Double place;
+    private final Shape proximityPlace;
     //transferred
     private List<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
     //transferred
     private List<MarkingView> _currentMarkingView = new LinkedList<MarkingView>();
-
     //transferred
     private Integer totalMarking = 0;
-
-    private final Ellipse2D.Double place;
-    private final Shape proximityPlace;
-
     //transferred
     private TokenView _activeTokenView;
     private List<MarkingView> initBackUp;
@@ -51,10 +49,10 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
 
     public PlaceView(String idInput, String nameInput,
-            LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
+                     LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
         //MODEL
         super(idInput, nameInput, model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(),
-               model, controller);
+                model, controller);
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         totalMarking = getTotalMarking();
@@ -63,50 +61,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         proximityPlace =
                 (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
         updateDisplayTokens();
-    }
-
-    private void updateDisplayTokens() {
-        removeExistingTokens();
-
-        Map<Token, Integer> tokenCounts = model.getTokenCounts();
-        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
-            Token token = entry.getKey();
-            Integer count = entry.getValue();
-
-            TokenViewBuilder builder = new TokenViewBuilder(token);
-            TokenView tokenView = builder.build();
-            MarkingView markingView = new MarkingView(tokenView, count);
-            markingView.addObserver(this);
-            _currentMarkingView.add(markingView);
-        }
-    }
-
-    private void removeExistingTokens() {
-        for (MarkingView view : _currentMarkingView) {
-            //TODO: THIS NEEDS TO BE DONE IN A LESS HACKY WAY
-            this.getParent().remove(view);
-        }
-        _currentMarkingView.clear();
-    }
-
-    /**
-     * Create Petri-Net Place object returns the position of the element in the
-     * list "markings" where the token class with this ID is.
-     *
-     * @param id
-     * @param markingViews
-     * @return
-     */
-//transferred
-    private int getMarkingListPos(String id, List<MarkingView> markingViews) {
-        int size = markingViews.size();
-        for (int i = 0; i < size; i++) {
-            if (markingViews.get(i).getToken().getID().equals(id)) {
-                return i;
-            }
-        }
-        // marking with such an ID does not exist
-        return -1;
+        setChangeListener();
     }
 
     /**
@@ -125,10 +80,46 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return totalMarking;
     }
 
+    private void updateDisplayTokens() {
+        removeExistingTokens();
+
+        Map<Token, Integer> tokenCounts = model.getTokenCounts();
+        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
+            Token token = entry.getKey();
+            Integer count = entry.getValue();
+
+            TokenViewBuilder builder = new TokenViewBuilder(token);
+            TokenView tokenView = builder.build();
+            MarkingView markingView = new MarkingView(tokenView, count);
+            _currentMarkingView.add(markingView);
+        }
+        repaint();
+    }
+
+    private void removeExistingTokens() {
+        for (MarkingView view : _currentMarkingView) {
+            //TODO: THIS NEEDS TO BE DONE IN A LESS HACKY WAY
+            this.getParent().remove(view);
+        }
+        _currentMarkingView.clear();
+    }
+
+    private void setChangeListener() {
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("tokens")) {
+                    updateDisplayTokens();
+                }
+                repaint();
+            }
+        });
+    }
+
     public TokenView getActiveTokenView() {
         return _activeTokenView;
     }
-
 
     public void setActiveTokenView(TokenView tokenView) {
         this._activeTokenView = tokenView;
@@ -138,6 +129,38 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             m.addObserver(this);
             //_currentMarkingView.add(m);
         }
+    }
+
+    /**
+     * Create Petri-Net Place object returns the position of the element in the
+     * list "markings" where the token class with this ID is.
+     *
+     * @param id
+     * @param markingViews
+     * @return
+     */
+    //transferred
+    private int getMarkingListPos(String id, List<MarkingView> markingViews) {
+        int size = markingViews.size();
+        for (int i = 0; i < size; i++) {
+            if (markingViews.get(i).getToken().getID().equals(id)) {
+                return i;
+            }
+        }
+        // marking with such an ID does not exist
+        return -1;
+    }
+
+    @Override
+    public PlaceView copy() {
+        PlaceView copy = new PlaceView((double) ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
+                (double) ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
+        copy._nameLabel.setName(this.getName());
+        copy._attributesVisible = this._attributesVisible;
+        copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
+        copy.totalMarking = this.totalMarking;
+        copy.setOriginal(this);
+        return copy;
     }
 
     @Override
@@ -161,20 +184,17 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         copy._attributesVisible = this._attributesVisible;
         copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
         copy.totalMarking = this.totalMarking;
-        copy.update();
         return copy;
     }
 
-    @Override
-    public PlaceView copy() {
-        PlaceView copy = new PlaceView((double) ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
-                (double) ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
-        copy._nameLabel.setName(this.getName());
-        copy._attributesVisible = this._attributesVisible;
-        copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
-        copy.totalMarking = this.totalMarking;
-        copy.setOriginal(this);
-        return copy;
+    private void updateNameLabel() {
+        if (_attributesVisible) {
+            _nameLabel.setText("\nk=" + (model.getCapacity() > 0 ? model.getCapacity() : "\u221E"));
+        } else {
+            _nameLabel.setText("");
+        }
+        _nameLabel.zoomUpdate(_zoomPercentage);
+        _nameLabel.setName(model.getName());
     }
 
     /**
@@ -256,6 +276,59 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
     }
 
+    private boolean isTagged() {
+        return false;
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
+    }
+
+    @Override
+    public void addedToGui() {
+        super.addedToGui();
+    }
+
+    @Override
+    public void showEditor() {
+        // Build interface
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+
+        Container contentPane = guiDialog.getContentPane();
+
+        // 1 Set layout
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+
+        // 2 Add Place editor
+        contentPane.add(
+                new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
+                        ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
+
+        guiDialog.setResizable(false);
+
+        // Make window fit contents' preferred size
+        guiDialog.pack();
+
+        // Move window to the middle of the screen
+        guiDialog.setLocationRelativeTo(null);
+        guiDialog.setVisible(true);
+    }
+
+    @Override
+    public void toggleAttributesVisible() {
+        _attributesVisible = !_attributesVisible;
+    }
+
+    boolean hasCapacity() {
+        return model.getCapacity() > 0;
+    }
+
+    public int getCapacity() {
+        return (int) model.getCapacity();
+    }
+
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         LabelHandler labelHandler = new LabelHandler(_nameLabel, this);
@@ -270,84 +343,84 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     public HistoryItem setCurrentMarking(List<MarkingView> currentMarkingViewInput) {
-//        if (_initialMarkingView.size() == 0) {
-//            _initialMarkingView = Copier.mediumCopy(_currentMarkingView);
-//        }
-//
-//
-//        int totalMarking = 0;
-//        for (MarkingView inputtedMarkingView : currentMarkingViewInput) {
-//            totalMarking += inputtedMarkingView.getCurrentMarking();
-//        }
-//        // If total marking exceeds capacity then leave the marking as is
-//        if (model.getCapacity() != 0 && totalMarking > model.getCapacity()) {
-//            return new PlaceMarking(this, _currentMarkingView, _currentMarkingView);
-//        }
-//
-//        List<MarkingView> oldMarkingView = Copier.mediumCopy(_currentMarkingView);
-//
-//        // if a marking for a specific class that existed before does not exist
-//        // in
-//        // the new input then this place must release the lock for that token
-//        // class
-//        // to allow it to be edited. Also if a previously positive marking is
-//        // now
-//        // 0 then the same should happen.
-//        for (MarkingView m : _currentMarkingView) {
-//            int newMarkingPos = getMarkingListPos(m.getToken().getID(), currentMarkingViewInput);
-//            if ((newMarkingPos == -1) || (currentMarkingViewInput.get(newMarkingPos).getCurrentMarking() == 0 &&
-//                    m.getCurrentMarking() != 0)) {
-//                ApplicationSettings.getApplicationView().getCurrentPetriNetView()
-//                        .unlockTokenClass(m.getToken().getID());
-//            }
-//        }
-//        // if a marking for a specific class that didnt exist before is in
-//        // the new input then this place must acquire the lock for that token
-//        // class
-//        // to avoid it from being edited. Also if a now positive marking was
-//        // previously
-//        // 0 then the same should happen.
-//        for (MarkingView m : currentMarkingViewInput) {
-//            int oldMarkingPos = getMarkingListPos(m.getToken().getID(), _currentMarkingView);
-//            if ((oldMarkingPos == -1 && m.getCurrentMarking() > 0) ||
-//                    (_currentMarkingView.get(oldMarkingPos).getCurrentMarking() == 0 && m.getCurrentMarking() != 0)) {
-//                ApplicationSettings.getApplicationView().getCurrentPetriNetView().lockTokenClass(m.getToken().getID());
-//            }
-//            // Now update the current marking if such a marking exists, otherwise create a new one
-//            if (oldMarkingPos == -1) {
-//                m.addObserver(this);
-//                _currentMarkingView.add(m);
-//            } else {
-//                _currentMarkingView.get(oldMarkingPos).setCurrentMarking(m.getCurrentMarking());
-//            }
-//        }
-//        LinkedList<TokenView> tokenViews =
-//                ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenViews();
-//        for (TokenView tc : tokenViews) {
-//            if (tc.isEnabled()) {
-//                if (getMarkingListPos(tc.getID(), _currentMarkingView) == -1) {
-//                    MarkingView m = new MarkingView(tc, 0);
-//                    m.addObserver(this);
-//                    _currentMarkingView.add(m);
-//                }
-//            }
-//        }
-//        repaint();
-//        List<MarkingView> newMarkingView = Copier.mediumCopy(_currentMarkingView);
-//        return new PlaceMarking(this, oldMarkingView, newMarkingView);
+        //        if (_initialMarkingView.size() == 0) {
+        //            _initialMarkingView = Copier.mediumCopy(_currentMarkingView);
+        //        }
+        //
+        //
+        //        int totalMarking = 0;
+        //        for (MarkingView inputtedMarkingView : currentMarkingViewInput) {
+        //            totalMarking += inputtedMarkingView.getCurrentMarking();
+        //        }
+        //        // If total marking exceeds capacity then leave the marking as is
+        //        if (model.getCapacity() != 0 && totalMarking > model.getCapacity()) {
+        //            return new PlaceMarking(this, _currentMarkingView, _currentMarkingView);
+        //        }
+        //
+        //        List<MarkingView> oldMarkingView = Copier.mediumCopy(_currentMarkingView);
+        //
+        //        // if a marking for a specific class that existed before does not exist
+        //        // in
+        //        // the new input then this place must release the lock for that token
+        //        // class
+        //        // to allow it to be edited. Also if a previously positive marking is
+        //        // now
+        //        // 0 then the same should happen.
+        //        for (MarkingView m : _currentMarkingView) {
+        //            int newMarkingPos = getMarkingListPos(m.getToken().getID(), currentMarkingViewInput);
+        //            if ((newMarkingPos == -1) || (currentMarkingViewInput.get(newMarkingPos).getCurrentMarking() == 0 &&
+        //                    m.getCurrentMarking() != 0)) {
+        //                ApplicationSettings.getApplicationView().getCurrentPetriNetView()
+        //                        .unlockTokenClass(m.getToken().getID());
+        //            }
+        //        }
+        //        // if a marking for a specific class that didnt exist before is in
+        //        // the new input then this place must acquire the lock for that token
+        //        // class
+        //        // to avoid it from being edited. Also if a now positive marking was
+        //        // previously
+        //        // 0 then the same should happen.
+        //        for (MarkingView m : currentMarkingViewInput) {
+        //            int oldMarkingPos = getMarkingListPos(m.getToken().getID(), _currentMarkingView);
+        //            if ((oldMarkingPos == -1 && m.getCurrentMarking() > 0) ||
+        //                    (_currentMarkingView.get(oldMarkingPos).getCurrentMarking() == 0 && m.getCurrentMarking() != 0)) {
+        //                ApplicationSettings.getApplicationView().getCurrentPetriNetView().lockTokenClass(m.getToken().getID());
+        //            }
+        //            // Now update the current marking if such a marking exists, otherwise create a new one
+        //            if (oldMarkingPos == -1) {
+        //                m.addObserver(this);
+        //                _currentMarkingView.add(m);
+        //            } else {
+        //                _currentMarkingView.get(oldMarkingPos).setCurrentMarking(m.getCurrentMarking());
+        //            }
+        //        }
+        //        LinkedList<TokenView> tokenViews =
+        //                ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenViews();
+        //        for (TokenView tc : tokenViews) {
+        //            if (tc.isEnabled()) {
+        //                if (getMarkingListPos(tc.getID(), _currentMarkingView) == -1) {
+        //                    MarkingView m = new MarkingView(tc, 0);
+        //                    m.addObserver(this);
+        //                    _currentMarkingView.add(m);
+        //                }
+        //            }
+        //        }
+        //        repaint();
+        //        List<MarkingView> newMarkingView = Copier.mediumCopy(_currentMarkingView);
+        //        return new PlaceMarking(this, oldMarkingView, newMarkingView);
         return null;
     }
 
     public HistoryItem setCapacity(int newCapacity) {
 
         throw new RuntimeException("NEED TO EXECUTE THIS IN CONTROLLER");
-//        int oldCapacity = (int)_model.getCapacity();
-//
-//        if (capacity != newCapacity) {
-//            capacity = newCapacity;
-//            update();
-//        }
-//        return new PlaceCapacity(this, oldCapacity, newCapacity);
+        //        int oldCapacity = (int)_model.getCapacity();
+        //
+        //        if (capacity != newCapacity) {
+        //            capacity = newCapacity;
+        //            update();
+        //        }
+        //        return new PlaceCapacity(this, oldCapacity, newCapacity);
     }
 
     public List<MarkingView> getInitialMarkingView() {
@@ -356,10 +429,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     public List<MarkingView> getCurrentMarkingView() {
         return _currentMarkingView;
-    }
-
-    public int getCapacity() {
-        return (int) model.getCapacity();
     }
 
     public List<MarkingView> getCurrentMarkingObject() {
@@ -385,93 +454,27 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
         //TODO: WORK OUT WHAT THIS DOES
         ArcView someArcView = null;//ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-//        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
-//            if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
-//                    place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-//                // assume we are only snapping the target...
-//                if (someArcView.getTarget() != this) {
-//                    someArcView.setTarget(this);
-//                }
-//                someArcView.updateArcPosition();
-//                return true;
-//            } else {
-//                if (someArcView.getTarget() == this) {
-//                    if (!ConnectableHandler.isMouseDown()) {
-//                        someArcView.setTarget(null);
-//                        updateConnected();
-//                    }
-//                }
-//                return false;
-//            }
-//        } else {
-            return place.contains((int) unZoomedX, (int) unZoomedY);
-//        }
-    }
-
-    @Override
-    public void toggleAttributesVisible() {
-        _attributesVisible = !_attributesVisible;
-        update();
-    }
-
-    boolean hasCapacity() {
-        return model.getCapacity() > 0;
-    }
-
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
-        update();
-    }
-
-    @Override
-    public void showEditor() {
-        // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-
-        Container contentPane = guiDialog.getContentPane();
-
-        // 1 Set layout
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-
-        // 2 Add Place editor
-        contentPane.add(new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
-                ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
-
-        guiDialog.setResizable(false);
-
-        // Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-        guiDialog.setVisible(true);
-    }
-
-    @Override
-    public void update() {
-        if (_attributesVisible) {
-            _nameLabel.setText("\nk=" + (model.getCapacity() > 0 ? model.getCapacity() : "\u221E"));
-        } else {
-            _nameLabel.setText("");
-        }
-        _nameLabel.zoomUpdate(_zoomPercentage);
-        _nameLabel.setName(model.getName());
-
-        updateDisplayTokens();
-
-        super.update();
-        repaint();
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-        //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
-    }
-
-    private boolean isTagged() {
-        return false;
+        //        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
+        //            if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
+        //                    place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
+        //                // assume we are only snapping the target...
+        //                if (someArcView.getTarget() != this) {
+        //                    someArcView.setTarget(this);
+        //                }
+        //                someArcView.updateArcPosition();
+        //                return true;
+        //            } else {
+        //                if (someArcView.getTarget() == this) {
+        //                    if (!ConnectableHandler.isMouseDown()) {
+        //                        someArcView.setTarget(null);
+        //                        updateConnected();
+        //                    }
+        //                }
+        //                return false;
+        //            }
+        //        } else {
+        return place.contains((int) unZoomedX, (int) unZoomedY);
+        //        }
     }
 
     public void backUpMarking() {
@@ -483,7 +486,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     public void restoreMarking() {
         _initialMarkingView = initBackUp;
         _currentMarkingView = currentBackUp;
-        update();
     }
 
     @Override
@@ -498,10 +500,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
         if (obj instanceof Place) {
             Place place = (Place) obj;
-            this.model  = place;
-//            setPositionX(_model.getX());
-//            setPositionY(_model.getY());
-            update();
+            this.model = place;
+            //            setPositionX(_model.getX());
+            //            setPositionY(_model.getY());
         }
     }
 

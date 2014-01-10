@@ -20,7 +20,7 @@ public class TokenView extends Observable implements Serializable, IObserver {
     public TokenView(TokenController controller, Token model) {
         _controller = controller;
         _model = model;
-        _model.registerObserver(this);
+//        _model.registerObserver(this);
     }
 
     public TokenView(boolean enabled, String id, Color color) {

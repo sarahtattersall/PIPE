@@ -73,9 +73,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
     public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
-    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
-    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I");
-    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
+    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P", this);
+    public TypeAction transAction = new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition", "I", this);
+    public TypeAction timedtransAction = new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T", this);
 
     public final TypeAction arcAction;
     public final TypeAction inhibarcAction;
@@ -126,8 +126,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         petriNetTabs = new ArrayList<PetriNetTab>();
 
-        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController), applicationController, this);
-        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController), applicationController, this);
+        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this), applicationController, this);
+        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController, this), applicationController, this);
         zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", applicationController);
         zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);

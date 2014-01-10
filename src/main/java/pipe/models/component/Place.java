@@ -4,17 +4,17 @@ import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @param <T> the connectable that this Place connects to
+ * This class maps to the Place in PNML
  */
 public class Place extends Connectable implements Serializable
 {
-
     /**
      * Marking x offset relative to the place x coordinate
      */
@@ -149,8 +149,9 @@ public class Place extends Connectable implements Serializable
                 throw new RuntimeException("Count of tokens exceeds capacity!");
             }
         }
+        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         this.tokenCounts = tokenCounts;
-        notifyObservers();
+        changeSupport.firePropertyChange("tokens", old, tokenCounts);
     }
 
     /**
@@ -166,7 +167,9 @@ public class Place extends Connectable implements Serializable
         {
             count = 1;
         }
+        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         setTokenCount(token, count);
+        changeSupport.firePropertyChange("tokens", old, tokenCounts);
     }
 
     public int getTokenCount(Token token) {
@@ -177,12 +180,14 @@ public class Place extends Connectable implements Serializable
     }
 
     public void decrementTokenCount(Token token) {
+        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         Integer count;
         if (tokenCounts.containsKey(token)) {
             count = tokenCounts.get(token);
             count--;
             tokenCounts.put(token, count);
         }
+        changeSupport.firePropertyChange("tokens", old, tokenCounts);
     }
 
     public void setTokenCount(Token token, int count) {
@@ -194,8 +199,9 @@ public class Place extends Connectable implements Serializable
                         "the capacity of " + count);
             }
         }
+        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         tokenCounts.put(token, count);
-        notifyObservers();
+        changeSupport.firePropertyChange("tokens", old, tokenCounts);
     }
 
     /**

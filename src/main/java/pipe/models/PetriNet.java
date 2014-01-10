@@ -10,9 +10,13 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.utilities.math.IncidenceMatrix;
 import pipe.views.viewComponents.RateParameter;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 
-public class PetriNet extends Observable implements IObserver {
+public class PetriNet {
+
+
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
     public String _pnmlName = "";
@@ -26,6 +30,16 @@ public class PetriNet extends Observable implements IObserver {
     private Set<RateParameter> rates = new HashSet<RateParameter>();
     private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
     private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
+
+    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void  removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
+    }
 
     public String getPnmlName() {
         return _pnmlName;
@@ -49,26 +63,22 @@ public class PetriNet extends Observable implements IObserver {
 
     public void addPlace(Place place) {
         places.add(place);
-        place.registerObserver(this);
-        notifyObservers();
+        changeSupport.firePropertyChange("newPlace", null, place);
     }
 
     public void addTransition(Transition transition) {
         transitions.add(transition);
-        transition.registerObserver(this);
-        notifyObservers();
+        changeSupport.firePropertyChange("newTransition", null, transition);
     }
 
     public void addArc(Arc<? extends Connectable, ? extends Connectable> arc) {
         arcs.add(arc);
-        arc.registerObserver(this);
-        notifyObservers();
+        changeSupport.firePropertyChange("newArc", null, arc);
     }
 
     public void addToken(Token token) {
         tokens.add(token);
-        token.registerObserver(this);
-        notifyObservers();
+        changeSupport.firePropertyChange("newToken", null, token);
     }
 
     public Collection<Place> getPlaces() {
@@ -77,7 +87,7 @@ public class PetriNet extends Observable implements IObserver {
 
     public void addRate(RateParameter parameter) {
         rates.add(parameter);
-        notifyObservers();
+        changeSupport.firePropertyChange("newRate", null, parameter);
     }
 
     public Collection<RateParameter> getRateParameters() {
@@ -86,8 +96,7 @@ public class PetriNet extends Observable implements IObserver {
 
     public void addAnnotaiton(Annotation annotation) {
         annotations.add(annotation);
-        annotation.registerObserver(this);
-        notifyObservers();
+        changeSupport.firePropertyChange("addAnnotation", null, annotation);
     }
 
     public Collection<Annotation> getAnnotations() {
@@ -96,7 +105,7 @@ public class PetriNet extends Observable implements IObserver {
 
     public void addStateGroup(StateGroup group) {
         stateGroups.add(group);
-        notifyObservers();
+        changeSupport.firePropertyChange("newStateGroup", null, group);
     }
 
     public Collection<StateGroup> getStateGroups() {
@@ -116,7 +125,7 @@ public class PetriNet extends Observable implements IObserver {
         for (Arc<Place, Transition> arc : outboundArcs(place)) {
             removeArc(arc);
         }
-        notifyObservers();
+        changeSupport.firePropertyChange("deletePlace", place, null);
     }
 
     /**
@@ -150,7 +159,7 @@ public class PetriNet extends Observable implements IObserver {
     public void removeArc(Arc arc) {
         this.arcs.remove(arc);
         removeArcFromSourceAndTarget(arc);
-        notifyObservers();
+        changeSupport.firePropertyChange("deleteArc", arc, null);
     }
 
     /**
@@ -166,12 +175,11 @@ public class PetriNet extends Observable implements IObserver {
         for (Arc<Transition, Place> arc : outboundArcs(transition)) {
             removeArc(arc);
         }
-        notifyObservers();
+        changeSupport.firePropertyChange("deleteTransition", transition, null);
     }
 
     public void remove(PetriNetComponent component) {
         component.accept(deleteVisitor);
-        notifyObservers();
     }
 
     public void removeToken(Token token) {
@@ -202,12 +210,6 @@ public class PetriNet extends Observable implements IObserver {
 
     public void add(PetriNetComponent component) {
         component.accept(addVisitor);
-        notifyObservers();
-    }
-
-    @Override
-    public void update() {
-        notifyObservers();
     }
 
     public Transition getRandomTransition() {

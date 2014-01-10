@@ -9,11 +9,14 @@ import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -40,10 +43,10 @@ public class ConnectableTest {
     @Test
     public void notifiesObserversOnXChange()
     {
-        IObserver mockObserver = mock(IObserver.class);
-        connectable.registerObserver(mockObserver);
+        PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
+        connectable.addPropertyChangeListener(mockListener);
         connectable.setX(10);
-        verify(mockObserver).update();
+        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
@@ -56,19 +59,19 @@ public class ConnectableTest {
     @Test
     public void notifiesObserversOnNameChange()
     {
-        IObserver mockObserver = mock(IObserver.class);
-        connectable.registerObserver(mockObserver);
+        PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
+        connectable.addPropertyChangeListener(mockListener);
         connectable.setName("");
-        verify(mockObserver).update();
+        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
     public void notifiesObserversOnIdChange()
     {
-        IObserver mockObserver = mock(IObserver.class);
-        connectable.registerObserver(mockObserver);
+        PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
+        connectable.addPropertyChangeListener(mockListener);
         connectable.setId("");
-        verify(mockObserver).update();
+        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     private class DummyConnectable extends Connectable {

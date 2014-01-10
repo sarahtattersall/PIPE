@@ -436,7 +436,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
     public void update() {
         _nameLabel.setText(getAttributes());
         _nameLabel.zoomUpdate(_zoomPercentage);
-        super.update();
+//        super.update();
         this.repaint();
     }
 

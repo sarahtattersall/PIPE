@@ -18,6 +18,8 @@ import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -132,12 +134,12 @@ public class PetriNetControllerTest {
         Place place = new Place("", "");
         net.addPlace(place);
 
-        IObserver mockObserver = mock(IObserver.class);
-        net.registerObserver(mockObserver);
+        PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
+        net.addPropertyChangeListener(mockListener);
 
         controller.select(place);
         controller.deleteSelection();
-        verify(mockObserver, atLeastOnce()).update();
+        verify(mockListener, atLeastOnce()).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
@@ -239,25 +241,6 @@ public class PetriNetControllerTest {
         PetriNetTab mockTab = mock(PetriNetTab.class);
         when(mockView.getCurrentTab()).thenReturn(mockTab);
         return mockTab;
-    }
-
-    @Test
-    public void creatingArcAddsItToPetriNet()
-    {
-        PetriNet net = setupPetriNet();
-        Place source = new Place("","");
-        Transition transition = new Transition("","");
-        Token token = mock(Token.class);
-        controller.createNormalArc(source, transition, token);
-        assertEquals(1, net.getArcs().size());
-    }
-
-    private Place createFakePlace() {
-        Place source = mock(Place.class);
-        when(source.getX()).thenReturn(0.);
-        when(source.getY()).thenReturn(0.);
-        when(source.getArcEdgePoint(anyDouble())).thenReturn(new Point2D.Double());
-        return source;
     }
 
     private PetriNet setupPetriNet() {

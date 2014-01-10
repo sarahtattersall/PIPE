@@ -61,69 +61,6 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     * Starts creating an arc from the source.
-     *
-     * @param source source model
-     * @param target
-     */
-    public <S extends Connectable, T extends Connectable> void createNormalArc(S source, T target,
-                                                                               Token currentToken) {
-        buildArc(source, target, currentToken);
-    }
-
-    /**
-     *
-     * Creates a Normal Arc starting at source and ending at transition.
-     *
-     * Gives it an initial weighting of 1 x token
-     *
-     * @param source arc source
-     * @param target arc targets
-     * @param token  token to assign initial default weight to
-     * @param <S>    Source type
-     * @param <T>    Target type
-     */
-    //TODO: Work out how to avoid the cast?
-    private <S extends Connectable, T extends Connectable> void buildArc(S source, T target, Token token) {
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-
-        Arc<? extends Connectable, ? extends Connectable> arc = null;
-        if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
-            Place place = (Place) source;
-            Transition transition = (Transition) target;
-            arc = new Arc<Place, Transition>(place, transition, tokens, backwardsNormalStrategy);
-        }else if (source.getClass().equals(Transition.class) && target.getClass().equals(Place.class)) {
-            Place place = (Place) target;
-            Transition transition = (Transition) source;
-            arc = new Arc<Transition, Place>(transition, place, tokens, forwardNormalStrategy);
-        }
-
-        if (arc != null) {
-            addArcToCurrentPetriNet(arc);
-        }
-    }
-
-    private void addArcToCurrentPetriNet(Arc<? extends Connectable, ? extends Connectable> arc) {
-        petriNet.addArc(arc);
-    }
-
-
-    /**
-     * Start creating an inhibitor arc starting at the source
-     *
-     * @param source
-     */
-    public <S extends  Connectable, T extends  Connectable> void startCreatingInhibitorArc(S source, T target, Token currentToken) {
-        if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
-            Place place = (Place) source;
-            Transition transition = (Transition) target;
-            Arc<Place, Transition>  arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), inhibitorStrategy);
-            addArcToCurrentPetriNet(arc);
-        }
-    }
-
-    /**
      * Creates unique petri net numbers for each tab
      *
      * @return A unique number for the petrinet in the current tab
@@ -341,5 +278,17 @@ public class PetriNetController implements IController, Serializable {
 
     public ZoomController getZoomController() {
         return zoomController;
+    }
+
+    public ArcStrategy<Place, Transition> getBackwardsStrategy() {
+        return backwardsNormalStrategy;
+    }
+
+    public ArcStrategy<Transition, Place> getForwardStrategy() {
+        return forwardNormalStrategy;
+    }
+
+    public ArcStrategy<Place, Transition> getInhibitorStrategy() {
+        return inhibitorStrategy;
     }
 }

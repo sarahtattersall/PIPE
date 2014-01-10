@@ -268,7 +268,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             TransitionView transitionView = this.getTransition();
             transitionView.removeFromArc(_inverse);
             transitionView.removeArcCompareObject(_inverse);
-            transitionView.updateConnected();
+//            transitionView.updateConnected();
             joined = isJoined;
         }
         updateWeightLabel();

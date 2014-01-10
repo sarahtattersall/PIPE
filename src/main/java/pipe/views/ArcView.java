@@ -254,10 +254,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         addPathEndLocation();
         arcPath.createPath();
 
-        //TODO: PASS IN INSTEAD
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        PetriNetTab tab = view.getCurrentTab();
-        arcPath.addPointsToGui(tab);
+        //TODO: REIMPLEMENT
+//        PipeApplicationView view = ApplicationSettings.getApplicationView();
+//        PetriNetTab tab = view.getCurrentTab();
+//        arcPath.addPointsToGui(tab);
     }
 
     private void addIntermediatePoints() {

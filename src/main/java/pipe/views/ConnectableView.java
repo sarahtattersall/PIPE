@@ -4,25 +4,25 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.component.Connectable;
-import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- *
  * @param <T> Connectable model
  */
-public abstract class ConnectableView<T extends Connectable> extends AbstractPetriNetViewComponent<T> implements Cloneable, IObserver, Serializable {
-//    private ConnectableView _lastCopy = null;
-//    private ConnectableView _original = null;
-    private int _copyNumber = 0;
-
+public abstract class ConnectableView<T extends Connectable> extends AbstractPetriNetViewComponent<T>
+        implements Cloneable, Serializable {
     boolean _attributesVisible = false;
+    //    private ConnectableView _lastCopy = null;
+    //    private ConnectableView _original = null;
+    private int _copyNumber = 0;
 
     ConnectableView(T model) {
         this("", model);
@@ -33,11 +33,36 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     ConnectableView(String id, String name, double nameOffsetX, double nameOffsetY,
-            T model, PetriNetController controller) {
+                    T model, PetriNetController controller) {
         super(id, name, nameOffsetX, nameOffsetY, model, controller);
-        setLocation((int) model.getX(),  (int) model.getY());
+        setLocation((int) model.getX(), (int) model.getY());
         ZoomController zoomController = controller.getZoomController();
         addZoomController(zoomController);
+
+        addChangeListener();
+        updateLabelLocation();
+        updateBounds();
+    }
+
+    private void addChangeListener() {
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("x") || name.equals("y")) {
+                    updateBounds();
+                    updateLabelLocation();
+                } else if (name.equals("nameOffsetX") || name.equals("nameOffsetY")) {
+                    updateLabelLocation();
+                }
+            }
+
+        });
+    }
+
+    @Override
+    public String getName() {
+        return (_nameLabel != null) ? super.getNameLabelName() : _id;
     }
 
     @Override
@@ -50,28 +75,13 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         _id = idInput;
     }
 
+    public Point2D getIntersectOffset(Point2D start) {
+        return new Point2D.Double();
+    }
+
     @Override
     public String getId() {
         return (_id != null) ? _id : _nameLabel.getName();
-    }
-
-    @Override
-    public String getName() {
-        return (_nameLabel != null) ? super.getNameLabelName() : _id;
-    }
-
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        Graphics2D g2 = (Graphics2D) g;
-        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
-        g2.transform(ZoomController.getTransform(_zoomPercentage));
-    }
-
-    public Point2D getIntersectOffset(Point2D start) {
-        return new Point2D.Double();
     }
 
     public int centreOffsetTop() {
@@ -82,71 +92,51 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         return (int) (ZoomController.getZoomedValue(model.getWidth() / 2.0, _zoomPercentage));
     }
 
-    void updateBounds() {
-        double scaleFactor = ZoomController.getScaleFactor(_zoomPercentage);
-        double x = model.getX() * scaleFactor;
-        double y = model.getY() * scaleFactor;
-        bounds.setBounds((int) x, (int) y, (int) (model.getHeight() * scaleFactor),
-                (int) (model.getHeight() * scaleFactor));
-        bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
-        setBounds(bounds);
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
+        g2.transform(ZoomController.getTransform(_zoomPercentage));
     }
 
     public void addInbound(ArcView newArcView) {
-//        model.addInbound(newArcView);
+        //        model.addInbound(newArcView);
     }
 
     public void addOutbound(ArcView newArcView) {
-//        model.addOutbound(newArcView);
+        //        model.addOutbound(newArcView);
     }
 
     public void addInboundOrOutbound(ArcView newArcView) {
-//        model.addInboundOrOutbound(newArcView);
+        //        model.addInboundOrOutbound(newArcView);
     }
 
     public void removeFromArc(ArcView oldArcView) {
-//        model.removeFromArcs(oldArcView);
+        //        model.removeFromArcs(oldArcView);
     }
 
     public void removeToArc(ArcView oldArcView) {
-//        model.removeToArc(oldArcView);
-    }
-
-    public void updateConnected() {
-//        updateArcs(model.outboundArcs());
-//        updateArcs(model.inboundArcs());
+        //        model.removeToArc(oldArcView);
     }
 
     public LinkedList<ArcView> outboundArcs() {
-//        return model.outboundArcs();
+        //        return model.outboundArcs();
         return null;
     }
 
     public LinkedList<ArcView> inboundArcs() {
-//        return model.inboundArcs();
+        //        return model.inboundArcs();
         return null;
     }
 
     @Override
     public void translate(int x, int y) {
-//        setPositionX(_positionX + x);
-//        setPositionY(_positionY + y);
-        update();
+        //        setPositionX(_positionX + x);
+        //        setPositionY(_positionY + y);
+//        update();
     }
-
-    void setCentre(double x, double y) {
-//        setPositionX(x - (getWidth() / 2.0));
-//        setPositionY(y - (getHeight() / 2.0));
-        update();
-    }
-
-    @Override
-    public void update() {
-        updateBounds();
-        updateLabelLocation();
-        updateConnected();
-    }
-
 
     /**
      * Updates label position according to the Connectable location
@@ -157,20 +147,20 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         _nameLabel.setPosition(zoomedX + model.getNameXOffset(), zoomedY + model.getNameYOffset());
     }
 
-    @Override
-    public void delete() {
-        if (getParent() != null) {
-            getParent().remove(_nameLabel);
-        }
-        super.delete();
+    protected void updateBounds() {
+        double scaleFactor = ZoomController.getScaleFactor(_zoomPercentage);
+        double x = model.getX() * scaleFactor;
+        double y = model.getY() * scaleFactor;
+        bounds.setBounds((int) x, (int) y, (int) (model.getHeight() * scaleFactor),
+                (int) (model.getHeight() * scaleFactor));
+        bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
+        setBounds(bounds);
     }
 
-    @Override
-    public void addedToGui() {
-        _deleted = false;
-        _markedAsDeleted = false;
-        addLabelToContainer();
-        update();
+    void setCentre(double x, double y) {
+        //        setPositionX(x - (getWidth() / 2.0));
+        //        setPositionY(y - (getHeight() / 2.0));
+//        update();
     }
 
     boolean areNotSameType(ConnectableView<?> o) {
@@ -179,29 +169,45 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
 
     public Iterator<?> getConnectFromIterator() {
         return null;
-//        return model.outboundArcs().iterator();
+        //        return model.outboundArcs().iterator();
     }
 
     public Iterator<?> getConnectToIterator() {
         return null;
-//        return model.inboundArcs().iterator();
+        //        return model.inboundArcs().iterator();
     }
 
     //TODO: DELETE
     int getCopyNumber() {
-//        if (_original != null) {
-//            _original._copyNumber++;
-//            return _original._copyNumber;
-//        } else {
-//            return 0;
-//        }
+        //        if (_original != null) {
+        //            _original._copyNumber++;
+        //            return _original._copyNumber;
+        //        } else {
+        //            return 0;
+        //        }
         return 0;
     }
 
+    @Override
+    public void delete() {
+        if (getParent() != null) {
+            getParent().remove(_nameLabel);
+        }
+        super.delete();
+    }
+
     void newCopy(ConnectableView<?> ptObject) {
-//        if (_original != null) {
-//            _original._lastCopy = ptObject;
-//        };
+        //        if (_original != null) {
+        //            _original._lastCopy = ptObject;
+        //        };
+    }
+
+    @Override
+    public void addedToGui() {
+        _deleted = false;
+        _markedAsDeleted = false;
+        addLabelToContainer();
+//        update();
     }
 
     //TODO: DELETE
@@ -210,32 +216,27 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     public void resetLastCopy() {
-//        _lastCopy = null;
+        //        _lastCopy = null;
+    }
+
+    //TODO: DELETE
+    public ConnectableView<?> getOriginal() {
+        //        return _original;
+        return null;
     }
 
     void setOriginal(ConnectableView<?> ptObject) {
-//        _original = ptObject;
-    }
-
-        //TODO: DELETE
-    public ConnectableView<?> getOriginal() {
-//        return _original;
-            return null;
+        //        _original = ptObject;
     }
 
     public abstract void showEditor();
-
-    public void setAttributesVisible(boolean flag) {
-        _attributesVisible = flag;
-    }
 
     public boolean getAttributesVisible() {
         return _attributesVisible;
     }
 
-    @Override
-    public int getLayerOffset() {
-        return Constants.PLACE_TRANSITION_LAYER_OFFSET;
+    public void setAttributesVisible(boolean flag) {
+        _attributesVisible = flag;
     }
 
     public abstract void toggleAttributesVisible();
@@ -243,8 +244,15 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     @Override
     public void zoomUpdate(int value) {
         _zoomPercentage = value;
-        update();
+//        update();
     }
+
+
+    @Override
+    public int getLayerOffset() {
+        return Constants.PLACE_TRANSITION_LAYER_OFFSET;
+    }
+
 
     @Override
     public AbstractPetriNetViewComponent clone() {

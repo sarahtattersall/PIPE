@@ -70,9 +70,7 @@ public class ArcAction extends TypeAction {
 
     private <T extends Connectable> void createArc(T connectable) {
 
-        PetriNetController netController = controller.getActivePetriNetController();
-        Token token = netController.getSelectedToken();
-        arcCreator.create(temporaryArcView.getSourceConnectable(), connectable, token);
+        arcCreator.create(temporaryArcView.getSourceConnectable(), connectable);
         PetriNetTab tab = applicationView.getCurrentTab();
         tab.remove(temporaryArcView);
         temporaryArcView = null;

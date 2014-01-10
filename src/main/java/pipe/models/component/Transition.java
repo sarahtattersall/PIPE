@@ -150,10 +150,11 @@ public class Transition extends Connectable implements Serializable
         return priority;
     }
 
-    public void setPriority(Integer priority)
+    public void setPriority(int priority)
     {
+        int old = this.priority;
         this.priority = priority;
-        notifyObservers();
+        changeSupport.firePropertyChange("priority", old, priority);
     }
 
 	public String getRateExpr() {
@@ -162,11 +163,9 @@ public class Transition extends Connectable implements Serializable
 
 	public void setRateExpr(String string) {
 		rateExpr = string;
-        notifyObservers();
 	}
 	public void setRateExpr(double expr) {
 		rateExpr = Double.toString(expr);
-        notifyObservers();
 	}
 
     public int getAngle() {
@@ -185,31 +184,30 @@ public class Transition extends Connectable implements Serializable
         return infiniteServer;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-        notifyObservers();
-    }
-
     public void setOrientation(int orientation) {
+        int old = this.orientation;
         this.orientation = orientation;
-        notifyObservers();
+        changeSupport.firePropertyChange("oritentation", old, orientation);
     }
 
     public void setTimed(boolean timed) {
+        boolean old = this.timed;
         this.timed = timed;
-        notifyObservers();
+        changeSupport.firePropertyChange("oritentation", old, timed);
     }
 
     public void setInfiniteServer(boolean infiniteServer) {
+        boolean old = this.infiniteServer;
         this.infiniteServer = infiniteServer;
-        notifyObservers();
+        changeSupport.firePropertyChange("infiniteServer", old, infiniteServer);
     }
 
 
 
     public void setAngle(int angle) {
+        int old = this.angle;
         this.angle = angle;
-        notifyObservers();
+        changeSupport.firePropertyChange("angle", old, angle);
     }
 
     public RateParameter getRateParameter() {
@@ -218,7 +216,6 @@ public class Transition extends Connectable implements Serializable
 
     public void setRateParameter(RateParameter rateParameter) {
         this.rateParameter = rateParameter;
-        notifyObservers();
     }
 
     @Override
@@ -238,12 +235,12 @@ public class Transition extends Connectable implements Serializable
 
     public void enable() {
         enabled = true;
-        notifyObservers();
+//        notifyObservers();
     }
 
     public void disable() {
         enabled = false;
-        notifyObservers();
+//        notifyObservers();
     }
 
     public boolean isEnabled() {

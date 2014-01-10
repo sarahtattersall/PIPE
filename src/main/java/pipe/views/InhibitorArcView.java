@@ -5,6 +5,8 @@ import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.models.component.Arc;
 import pipe.models.component.Connectable;
+import pipe.models.component.Place;
+import pipe.models.component.Transition;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -15,7 +17,7 @@ import java.io.Serializable;
  * @author Pere Bonet
  * @version 1.0
  */
-public class InhibitorArcView extends ArcView implements Serializable {
+public class InhibitorArcView extends ArcView<Place, Transition> implements Serializable {
 
     private final static String type = "inhibitor";
     private final static int OVAL_X = -4;
@@ -24,7 +26,7 @@ public class InhibitorArcView extends ArcView implements Serializable {
     private final static int OVAL_HEIGHT = 8;
 
 
-    public InhibitorArcView(Arc<Connectable, Connectable> model, PetriNetController controller) {
+    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller) {
         super(model, controller);
     }
 

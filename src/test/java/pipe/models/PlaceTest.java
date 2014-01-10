@@ -11,11 +11,14 @@ import utils.TokenUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -232,24 +235,24 @@ public class PlaceTest {
 
     @Test
     public void notifiesObserverOnTokenChange() {
-        IObserver mockObserver = mock(IObserver.class);
+        PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
         Token defaultToken = TokenUtils.createDefaultToken();
-        place.registerObserver(mockObserver);
+        place.addPropertyChangeListener(mockListener);
 
         place.setTokenCount(defaultToken, 7);
-        verify(mockObserver).update();
+        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
     public void notifiesObserverOnTokenMapChange() {
         Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
-        IObserver mockObserver = mock(IObserver.class);
+        PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
         Token defaultToken = TokenUtils.createDefaultToken();
         tokenCounts.put(defaultToken, 7);
-        place.registerObserver(mockObserver);
+        place.addPropertyChangeListener(mockListener);
 
         place.setTokenCounts(tokenCounts);
-        verify(mockObserver).update();
+        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
 

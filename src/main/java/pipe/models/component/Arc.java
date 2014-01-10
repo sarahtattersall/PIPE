@@ -12,26 +12,20 @@ import java.util.Map;
 
 public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent implements IObserver {
 
+    private final ArcStrategy<S, T> strategy;
     @Pnml("source")
     protected S source;
-
     @Pnml("target")
     protected T target;
-
     @Pnml("id")
     protected String id;
-
     protected boolean tagged = false;
-
     /**
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
      */
     @Pnml("inscription")
     protected Map<Token, String> tokenWeights = new HashMap<Token, String>();
-
-    private final ArcStrategy<S, T> strategy;
-
     /**
      * Intermediate path intermediatePoints
      */
@@ -48,8 +42,8 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         this.id = source.getId() + " TO " + target.getId();
 
 
-//        source.addOutbound(this);
-//        target.addInbound(this);
+        //        source.addOutbound(this);
+        //        target.addInbound(this);
     }
 
     public Map<Token, String> getTokenWeights() {
@@ -61,8 +55,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     public void setSource(S source) {
+        S old = this.source;
         this.source = source;
-        notifyObservers();
+        changeSupport.firePropertyChange("source", old, source);
     }
 
     public T getTarget() {
@@ -70,35 +65,19 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     public void setTarget(T target) {
+        T old = this.target;
         this.target = target;
-//        target.addInbound(this);
-        notifyObservers();
-    }
-
-    /**
-     * @return angle in randians between source and target
-     */
-    private double getAngleBetweenSourceAndTarget() {
-        double deltax = source.getX() - target.getX();
-        double deltay = source.getY() - target.getY();
-        return Math.atan2(deltax, deltay);
+        //        target.addInbound(this);
+        changeSupport.firePropertyChange("target", old, target);
     }
 
     /**
      * @return The start coordinate of the arc
      */
     public Point2D.Double getStartPoint() {
-//        double angle = getAngleBetweenSourceAndTarget();
-//        return source.getArcEdgePoint(angle);
+        //        double angle = getAngleBetweenSourceAndTarget();
+        //        return source.getArcEdgePoint(angle);
         return source.getCentre();
-    }
-
-    /**
-     * @return The end coordinate of the arc
-     */
-    public Point2D.Double getEndPoint() {
-        double angle = getAngleBetweenSourceAndTarget();
-        return target.getArcEdgePoint(Math.PI + angle);
     }
 
     /**
@@ -119,15 +98,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         visitor.visit(this);
     }
 
-    public boolean isTagged() {
-        return tagged;
-    }
-
-    public void setTagged(boolean tagged) {
-        this.tagged = tagged;
-        notifyObservers();
-    }
-
     @Override
     public String getId() {
         return id;
@@ -136,7 +106,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     @Override
     public void setId(String id) {
         this.id = id;
-        notifyObservers();
     }
 
     @Override
@@ -144,18 +113,26 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         setId(name);
     }
 
+    public boolean isTagged() {
+        return tagged;
+    }
+
+    public void setTagged(boolean tagged) {
+        this.tagged = tagged;
+    }
+
     public String getWeightForToken(Token token) {
         if (tokenWeights.containsKey(token)) {
             return tokenWeights.get(token);
-        }
-        else {
+        } else {
             return "0";
         }
     }
 
     public void setWeight(Token defaultToken, String weight) {
+        Map<Token, String> old = new HashMap<Token, String>(tokenWeights);
         tokenWeights.put(defaultToken, weight);
-        notifyObservers();
+        changeSupport.firePropertyChange("weight", old, tokenWeights);
     }
 
     /**
@@ -182,34 +159,27 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
     }
 
-
     public void addIntermediatePoints(List<ArcPoint> points) {
         for (ArcPoint point : points) {
             addIntermediatePoint(point);
         }
     }
 
+    public void addIntermediatePoint(ArcPoint point) {
+        intermediatePoints.add(point);
+    }
+
     public List<ArcPoint> getIntermediatePoints() {
         return intermediatePoints;
     }
 
-    public void addIntermediatePoint(ArcPoint point) {
-        intermediatePoints.add(point);
-        point.registerObserver(this);
-        notifyObservers();
-    }
-
     public void removeIntermediatePoint(ArcPoint point) {
         intermediatePoints.remove(point);
-        point.removeObserver(this);
-        notifyObservers();
     }
 
     @Override
     public void update() {
-        notifyObservers();
     }
-
 
     public ArcPoint getNextPoint(ArcPoint arcPoint) {
         if (arcPoint.getPoint().equals(source.getCentre())) {
@@ -227,5 +197,66 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
             throw new RuntimeException("No next point");
         }
         return intermediatePoints.get(location + 1);
+    }
+
+    /**
+     * @return The end coordinate of the arc
+     */
+    public Point2D.Double getEndPoint() {
+        double angle = getAngleBetweenSourceAndTarget();
+        return target.getArcEdgePoint(Math.PI + angle);
+    }
+
+    /**
+     * @return angle in randians between source and target
+     */
+    private double getAngleBetweenSourceAndTarget() {
+        double deltax = source.getX() - target.getX();
+        double deltay = source.getY() - target.getY();
+        return Math.atan2(deltax, deltay);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Arc arc = (Arc) o;
+
+        if (tagged != arc.tagged) {
+            return false;
+        }
+        if (!id.equals(arc.id)) {
+            return false;
+        }
+        if (!intermediatePoints.equals(arc.intermediatePoints)) {
+            return false;
+        }
+        if (!source.equals(arc.source)) {
+            return false;
+        }
+        if (!target.equals(arc.target)) {
+            return false;
+        }
+        if (!tokenWeights.equals(arc.tokenWeights)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = source.hashCode();
+        result = 31 * result + target.hashCode();
+        result = 31 * result + id.hashCode();
+        result = 31 * result + (tagged ? 1 : 0);
+        result = 31 * result + tokenWeights.hashCode();
+        result = 31 * result + intermediatePoints.hashCode();
+        return result;
     }
 }

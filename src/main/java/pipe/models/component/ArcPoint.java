@@ -31,7 +31,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
     public void setPoint(final Point2D point) {
         this.x = point.getX();
         this.y = point.getY();
-        notifyObservers();
+//        notifyObservers();
     }
 
     public double getX() {
@@ -78,7 +78,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
 
     public void setCurved(final boolean curved) {
         this.curved = curved;
-        notifyObservers();
+//        notifyObservers();
     }
 
     @Override

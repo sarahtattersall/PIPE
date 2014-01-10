@@ -50,7 +50,7 @@ public class LabelHandler
 //      _obj.setNameOffsetX((p.x - dragInit.x));
 //      _obj.setNameOffsetY((p.y - dragInit.y));
       dragInit = p;
-      _obj.update();
+//      _obj.update();
    }   
    
    public void mouseWheelMoved(MouseWheelEvent e) {
