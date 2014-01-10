@@ -4,9 +4,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.models.component.Token;
 import pipe.models.component.Place;
-import pipe.models.interfaces.IObserver;
+import pipe.models.component.Token;
 import utils.TokenUtils;
 
 import java.awt.*;
@@ -24,29 +23,24 @@ import static org.mockito.Mockito.verify;
 
 public class PlaceTest {
 
-    Place place;
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
-
+    Place place;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         place = new Place("test", "test");
-    };
-
-
-    @Test
-    public void placeObjectIsSelectable()
-    {
-       assertTrue(place.isSelectable());
     }
 
+    ;
 
     @Test
-    public void calculatesCorrectArcAttachmentPointsDirectlyAbove()
-    {
+    public void placeObjectIsSelectable() {
+        assertTrue(place.isSelectable());
+    }
+
+    @Test
+    public void calculatesCorrectArcAttachmentPointsDirectlyAbove() {
         double x1 = 10;
         double y1 = 100;
         double x2 = 10;
@@ -57,13 +51,18 @@ public class PlaceTest {
         place.setY(y1);
 
         Point2D.Double point = place.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + place.getWidth()/2, y1);
+        Point2D.Double expected = new Point2D.Double(x1 + place.getWidth() / 2, y1);
         assertEquals(expected, point);
     }
 
+    private double getAngleBetweenObjects(double x1, double y1, double x2, double y2) {
+        double deltax = x1 - x2;
+        double deltay = y1 - y2;
+        return Math.atan2(deltax, deltay);
+    }
+
     @Test
-    public void calculatesCorrectArcAttachmentPointsDirectlyRight()
-    {
+    public void calculatesCorrectArcAttachmentPointsDirectlyRight() {
         double x1 = 100;
         double y1 = 100;
         double x2 = 200;
@@ -74,13 +73,12 @@ public class PlaceTest {
         place.setY(y1);
 
         Point2D.Double point = place.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + place.getWidth(), y1 + place.getHeight()/2);
+        Point2D.Double expected = new Point2D.Double(x1 + place.getWidth(), y1 + place.getHeight() / 2);
         assertEquals(expected, point);
     }
 
     @Test
-    public void calculatesCorrectArcAttachmentPointsDirectlyLeft()
-    {
+    public void calculatesCorrectArcAttachmentPointsDirectlyLeft() {
         double x1 = 100;
         double y1 = 100;
         double x2 = 0;
@@ -91,7 +89,7 @@ public class PlaceTest {
         place.setY(y1);
 
         Point2D.Double point = place.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1, y1 + place.getHeight()/2);
+        Point2D.Double expected = new Point2D.Double(x1, y1 + place.getHeight() / 2);
         assertEquals(expected, point);
     }
 
@@ -99,8 +97,7 @@ public class PlaceTest {
      * I.e. A->B we're calculating B
      */
     @Test
-    public void calculatesCorrectArcAttachmentPointsAsSource()
-    {
+    public void calculatesCorrectArcAttachmentPointsAsSource() {
         Point2D.Double source = new Point2D.Double(0, 0);
         Point2D.Double target = new Point2D.Double(30, 30);
         double angle = getAngleBetweenObjects(source.x, source.y, target.x, target.y);
@@ -109,16 +106,15 @@ public class PlaceTest {
         place.setY(source.y);
 
         double FOURTY_FIVE_RADIANS = Math.toRadians(45);
-        Point2D.Double expected = new Point2D.Double(Math.sin(FOURTY_FIVE_RADIANS) * place.getWidth()/2 + 15,
-                Math.cos(FOURTY_FIVE_RADIANS) * place.getWidth()/2 + 15);
+        Point2D.Double expected = new Point2D.Double(Math.sin(FOURTY_FIVE_RADIANS) * place.getWidth() / 2 + 15,
+                Math.cos(FOURTY_FIVE_RADIANS) * place.getWidth() / 2 + 15);
 
         Point2D.Double point = place.getArcEdgePoint(angle);
         assertEquals(expected, point);
     }
 
     @Test
-    public void calculatesCorrectArcAttachmentPointsAsTarget()
-    {
+    public void calculatesCorrectArcAttachmentPointsAsTarget() {
         Point2D.Double source = new Point2D.Double(0, 0);
         Point2D.Double target = new Point2D.Double(30, 30);
         double angle = getAngleBetweenObjects(source.x, source.y, target.x, target.y);
@@ -127,8 +123,8 @@ public class PlaceTest {
         place.setY(target.y);
 
         double FOURTY_FIVE_RADIANS = Math.toRadians(45);
-        Point2D.Double expected = new Point2D.Double(45 - Math.sin(FOURTY_FIVE_RADIANS) * place.getWidth()/2,
-                45 - Math.cos(FOURTY_FIVE_RADIANS) * place.getWidth()/2);
+        Point2D.Double expected = new Point2D.Double(45 - Math.sin(FOURTY_FIVE_RADIANS) * place.getWidth() / 2,
+                45 - Math.cos(FOURTY_FIVE_RADIANS) * place.getWidth() / 2);
 
         Point2D.Double point = place.getArcEdgePoint(Math.PI + angle);
         assertEquals(expected, point);
@@ -159,7 +155,6 @@ public class PlaceTest {
         assertEquals(0, place.getTokenCount(token));
     }
 
-
     @Test
     public void tokenCountIsZeroIfPlaceDoesNotContainToken() {
         Token token = new Token("red", false, 0, new Color(255, 0, 0));
@@ -185,7 +180,6 @@ public class PlaceTest {
         place.incrementTokenCount(token);
         place.incrementTokenCount(token);
     }
-
 
     @Test
     public void capacityZeroMeansNoRestriction() {
@@ -215,7 +209,8 @@ public class PlaceTest {
         Token token = new Token("red", false, 0, new Color(255, 0, 0));
         place.incrementTokenCount(token);
 
-        place.setTokenCount(token, 1);;
+        place.setTokenCount(token, 1);
+        ;
     }
 
     @Test
@@ -253,14 +248,6 @@ public class PlaceTest {
 
         place.setTokenCounts(tokenCounts);
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
-    }
-
-
-    private double getAngleBetweenObjects(double x1, double y1, double x2, double y2)
-    {
-        double deltax = x1 - x2;
-        double deltay = y1 - y2;
-        return Math.atan2(deltax, deltay);
     }
 
 

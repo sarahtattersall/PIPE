@@ -4,18 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.Arc;
 import pipe.models.component.Connectable;
-import pipe.models.interfaces.IObserver;
-import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.models.visitor.connectable.ConnectableVisitor;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -27,22 +23,19 @@ public class ConnectableTest {
     private Arc mockArc;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         connectable = new DummyConnectable("test", "test");
         mockArc = mock(Arc.class);
     }
 
-//    TODO: This cant be easily tested. Dont like this method anyway so it will get deleted
+    //    TODO: This cant be easily tested. Dont like this method anyway so it will get deleted
     @Test
-    public void addInBoundOrOutboundCorrectlyChoses()
-    {
+    public void addInBoundOrOutboundCorrectlyChoses() {
 
     }
 
     @Test
-    public void notifiesObserversOnXChange()
-    {
+    public void notifiesObserversOnXChange() {
         PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
         connectable.addPropertyChangeListener(mockListener);
         connectable.setX(10);
@@ -50,15 +43,13 @@ public class ConnectableTest {
     }
 
     @Test
-    public void defaultNameOffsetValues()
-    {
+    public void defaultNameOffsetValues() {
         assertEquals(-5, connectable.getNameXOffset(), DOUBLE_DELTA);
         assertEquals(35, connectable.getNameYOffset(), DOUBLE_DELTA);
     }
 
     @Test
-    public void notifiesObserversOnNameChange()
-    {
+    public void notifiesObserversOnNameChange() {
         PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
         connectable.addPropertyChangeListener(mockListener);
         connectable.setName("");
@@ -66,8 +57,7 @@ public class ConnectableTest {
     }
 
     @Test
-    public void notifiesObserversOnIdChange()
-    {
+    public void notifiesObserversOnIdChange() {
         PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
         connectable.addPropertyChangeListener(mockListener);
         connectable.setId("");
@@ -92,12 +82,12 @@ public class ConnectableTest {
 
         @Override
         public Point2D.Double getCentre() {
-            return new Point2D.Double(0,0);
+            return new Point2D.Double(0, 0);
         }
 
         @Override
         public Point2D.Double getArcEdgePoint(double angle) {
-            return new Point2D.Double(0,0);
+            return new Point2D.Double(0, 0);
         }
 
         @Override

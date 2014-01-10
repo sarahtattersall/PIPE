@@ -1,15 +1,13 @@
 package pipe.historyActions;
 
 import pipe.models.component.Transition;
-import pipe.models.interfaces.IObservable;
-import pipe.models.interfaces.IObserver;
 
 import java.util.*;
 
 /**
  * AnimationHistory for an individual PetriNet
  */
-public class AnimationHistory implements IObservable {
+public class AnimationHistory extends Observable {
     /**
      * List to hold transitions fired in their order
      * Used for going back/forward in time
@@ -22,25 +20,6 @@ public class AnimationHistory implements IObservable {
      */
     private int currentPosition = -1;
 
-
-    private Set<IObserver> observers = new HashSet<IObserver>();
-
-    @Override
-    public void registerObserver(final IObserver observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(final IObserver observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (IObserver observer : observers) {
-            observer.update();
-        }
-    }
 
     /**
      * Cannot step forward if head of the list
@@ -62,16 +41,16 @@ public class AnimationHistory implements IObservable {
     public void stepForward() {
         if (isStepForwardAllowed()) {
             currentPosition++;
+            flagChanged();
         }
-        notifyObservers();
     }
 
 
     public void stepBackwards() {
         if (isStepBackAllowed()) {
             currentPosition--;
+            flagChanged();
         }
-        notifyObservers();
     }
 
     public void clearStepsForward() {
@@ -95,7 +74,7 @@ public class AnimationHistory implements IObservable {
     public void addHistoryItem(Transition transition) {
         firingSequence.add(transition);
         currentPosition++;
-        notifyObservers();
+        flagChanged();
     }
 
     public Transition getCurrentTransition() {
@@ -115,6 +94,15 @@ public class AnimationHistory implements IObservable {
     public void clear() {
         currentPosition = -1;
         firingSequence.clear();
+        flagChanged();
+    }
+
+    /**
+     * Rolls the setting changed and notifying observers into one method call.
+     * It tells Observers that it has changed
+     */
+    private void flagChanged() {
+        setChanged();
         notifyObservers();
     }
 }

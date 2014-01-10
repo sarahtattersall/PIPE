@@ -3,7 +3,6 @@ package pipe.views;
 import pipe.controllers.TokenController;
 import pipe.exceptions.TokenLockedException;
 import pipe.models.component.*;
-import pipe.models.interfaces.IObserver;
 import pipe.utilities.math.Matrix;
 
 import java.awt.*;
@@ -12,7 +11,7 @@ import java.util.Collection;
 import java.util.Observable;
 
 
-public class TokenView extends Observable implements Serializable, IObserver {
+public class TokenView extends Observable implements Serializable {
     private Token _model;  // Steve Doubleday was final, but changed for replace(tokenView)
     private TokenController _controller;
     private Matrix previousIncidenceMatrix;
@@ -20,19 +19,15 @@ public class TokenView extends Observable implements Serializable, IObserver {
     public TokenView(TokenController controller, Token model) {
         _controller = controller;
         _model = model;
-//        _model.registerObserver(this);
+        //        _model.registerObserver(this);
     }
 
     public TokenView(boolean enabled, String id, Color color) {
         _model = new Token(id, enabled, 0, color);
     }
 
-    public Color getColor() {
-        return _model.getColor();
-    }
-
-    public void setColor(Color colour) {
-        _model.setColor(colour);
+    public void update(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
+        paint(canvas, insets, offset, tempTotalMarking, currentMarking);
     }
 
     void paint(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
@@ -41,6 +36,29 @@ public class TokenView extends Observable implements Serializable, IObserver {
         } else {
             paintAsAnOval(canvas, insets, tempTotalMarking, currentMarking);
         }
+    }
+
+    void paintAsANumber(Graphics canvas, Insets insets, int offset, int currentMarking) {
+        int x = insets.left;
+        int y = insets.top;
+        canvas.setColor(getColor());
+        if (currentMarking > 999) {
+            canvas.drawString(String.valueOf(currentMarking), x, y + 10 + offset);
+        } else if (currentMarking > 99) {
+            canvas.drawString(String.valueOf(currentMarking), x + 3, y + 10 + offset);
+        } else if (currentMarking > 9) {
+            canvas.drawString(String.valueOf(currentMarking), x + 7, y + 10 + offset);
+        } else if (currentMarking != 0) {
+            canvas.drawString(String.valueOf(currentMarking), x + 12, y + 10 + offset);
+        }
+    }
+
+    public Color getColor() {
+        return _model.getColor();
+    }
+
+    public void setColor(Color colour) {
+        _model.setColor(colour);
     }
 
     void paintAsAnOval(Graphics canvas, Insets insets, int tempTotalMarking, int currentMarking) {
@@ -81,41 +99,16 @@ public class TokenView extends Observable implements Serializable, IObserver {
         }
     }
 
-    void paintAsANumber(Graphics canvas, Insets insets, int offset, int currentMarking) {
-        int x = insets.left;
-        int y = insets.top;
-        canvas.setColor(getColor());
-        if (currentMarking > 999) {
-            canvas.drawString(String.valueOf(currentMarking), x, y + 10 + offset);
-        } else if (currentMarking > 99) {
-            canvas.drawString(String.valueOf(currentMarking), x + 3, y + 10 + offset);
-        } else if (currentMarking > 9) {
-            canvas.drawString(String.valueOf(currentMarking), x + 7, y + 10 + offset);
-        } else if (currentMarking != 0) {
-            canvas.drawString(String.valueOf(currentMarking), x + 12, y + 10 + offset);
-        }
-    }
-
-
-    @Override
-    public void update() {
-        //paint
-    }
-
-    public void update(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
-        paint(canvas, insets, offset, tempTotalMarking, currentMarking);
-    }
-
     public Token getModel() {
         return _model;
     }
 
-    public void setCurrentMarking(int marking) {
-        _model.setCurrentMarking(marking);
-    }
-
     public int getCurrentMarking() {
         return _model.getCurrentMarking();
+    }
+
+    public void setCurrentMarking(int marking) {
+        _model.setCurrentMarking(marking);
     }
 
     public Matrix getPreviousIncidenceMatrix() {
@@ -142,18 +135,8 @@ public class TokenView extends Observable implements Serializable, IObserver {
         _model.setLockCount(newLockCount);
     }
 
-    public boolean isEnabled() {
-        return _model.isEnabled();
-    }
-
-    /**
-     * Disabling a TokenView should be done through disableAndNotifyObservers()
-     *
-     * @param enabled
-     * @throws TokenLockedException
-     */
-    protected void setEnabled(boolean enabled) throws TokenLockedException {
-        _model.setEnabled(enabled);
+    public boolean hasSameId(TokenView otherTokenView) {
+        return otherTokenView.getID().equals(getID());
     }
 
     public String getID() {
@@ -164,30 +147,14 @@ public class TokenView extends Observable implements Serializable, IObserver {
         _model.setId(id);
     }
 
-    public boolean hasSameId(TokenView otherTokenView) {
-        return otherTokenView.getID().equals(getID());
-    }
-
     public void createIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray,
-            Collection<PlaceView> placesArray) {
-//        _model.createIncidenceMatrix(arcsArray, transitionsArray, placesArray);
+                                      Collection<PlaceView> placesArray) {
+        //        _model.createIncidenceMatrix(arcsArray, transitionsArray, placesArray);
     }
 
     public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray,
-            Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
-//        _model.createInhibitionMatrix(inhibitorsArray, transitionsArray, placesArray);
-    }
-
-    protected String getNormalizedID() {
-        return normalize(getID());
-    }
-
-    private String normalize(String target) {
-        if (target == null) {
-            return "";
-        } else {
-            return target.trim().toLowerCase();
-        }
+                                       Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
+        //        _model.createInhibitionMatrix(inhibitorsArray, transitionsArray, placesArray);
     }
 
     /**
@@ -232,6 +199,20 @@ public class TokenView extends Observable implements Serializable, IObserver {
         }
     }
 
+    public boolean isEnabled() {
+        return _model.isEnabled();
+    }
+
+    /**
+     * Disabling a TokenView should be done through disableAndNotifyObservers()
+     *
+     * @param enabled
+     * @throws TokenLockedException
+     */
+    protected void setEnabled(boolean enabled) throws TokenLockedException {
+        _model.setEnabled(enabled);
+    }
+
     /**
      * Returns false if this TokenView is invalid.
      * An invalid TokenView is disabled (isEnabled() == false), with a blank or null Id.
@@ -245,6 +226,18 @@ public class TokenView extends Observable implements Serializable, IObserver {
             return false;
         } else {
             return true;
+        }
+    }
+
+    protected String getNormalizedID() {
+        return normalize(getID());
+    }
+
+    private String normalize(String target) {
+        if (target == null) {
+            return "";
+        } else {
+            return target.trim().toLowerCase();
         }
     }
 
@@ -263,22 +256,29 @@ public class TokenView extends Observable implements Serializable, IObserver {
     }
 
     //TODO: DELETE STUB
-    public int[][] getBackwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
+    public int[][] getBackwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs,
+                                               final Collection<Transition> transitions,
+                                               final Collection<Place> places) {
         return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 
     //TODO: DELETE STUB
-    public int[][] getForwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
+    public int[][] getForwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs,
+                                              final Collection<Transition> transitions,
+                                              final Collection<Place> places) {
         return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 
     //TODO: DELETE STUB
-    public Matrix getInhibitionMatrix(final Collection<InhibitorArcView> inhibitorsArrayList, final Collection<TransitionView> transitionsArrayList, final Collection<PlaceView> placesArrayList) {
+    public Matrix getInhibitionMatrix(final Collection<InhibitorArcView> inhibitorsArrayList,
+                                      final Collection<TransitionView> transitionsArrayList,
+                                      final Collection<PlaceView> placesArrayList) {
         return null;
     }
 
     //TODO: DELETE STUB
-    public int[][] getIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs, final Collection<Transition> transitions, final Collection<Place> places) {
+    public int[][] getIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs,
+                                      final Collection<Transition> transitions, final Collection<Place> places) {
         return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 }

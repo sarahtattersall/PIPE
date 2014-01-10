@@ -11,7 +11,6 @@ import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
-import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.models.visitor.TranslationVisitor;
 import pipe.views.PipeApplicationView;
@@ -26,15 +25,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class PetriNetControllerTest {
-    private PetriNetController controller;
-
-    private PetriNet net;
-
-    private HistoryManager mockHistoryManager;
-    private Animator mockAnimator;
-
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+    private PetriNetController controller;
+    private PetriNet net;
+    private HistoryManager mockHistoryManager;
+    private Animator mockAnimator;
 
     @Before
     public void setUp() {
@@ -50,8 +46,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void returnsUniqueNumberForPetriNet()
-    {
+    public void returnsUniqueNumberForPetriNet() {
         assertEquals(0, controller.getUniquePlaceNumber());
         assertEquals(1, controller.getUniquePlaceNumber());
     }
@@ -62,7 +57,6 @@ public class PetriNetControllerTest {
         controller.select(dummyComponent);
         assertTrue(controller.isSelected(dummyComponent));
     }
-
 
     @Test
     public void doesNotContainDeselected() {
@@ -104,7 +98,6 @@ public class PetriNetControllerTest {
         verify(mockHistoryManager).addEdit(deleteAction);
     }
 
-
     @Test
     public void deleteComponentRemovesFromPetriNet() {
         Place place = new Place("", "");
@@ -114,7 +107,6 @@ public class PetriNetControllerTest {
 
         assertFalse("Petrinet contains place after deletion", net.getPlaces().contains(place));
     }
-
 
     @Test
     public void deletingComponentAddsToHistoryManager() {
@@ -180,10 +172,10 @@ public class PetriNetControllerTest {
     @Test
     public void selectsArcIfIntersects() {
         Arc arc = mock(Arc.class);
-        Point2D.Double start = new Point2D.Double(0,0);
+        Point2D.Double start = new Point2D.Double(0, 0);
         when(arc.getStartPoint()).thenReturn(start);
 
-        Point2D.Double end = new Point2D.Double(10,10);
+        Point2D.Double end = new Point2D.Double(10, 10);
         when(arc.getEndPoint()).thenReturn(end);
 
         net.addArc(arc);
@@ -193,14 +185,13 @@ public class PetriNetControllerTest {
         assertTrue(controller.isSelected(arc));
     }
 
-
     @Test
     public void doesNotSelectArcIfDoesntIntersect() {
         Arc arc = mock(Arc.class);
-        Point2D.Double start = new Point2D.Double(0,0);
+        Point2D.Double start = new Point2D.Double(0, 0);
         when(arc.getStartPoint()).thenReturn(start);
 
-        Point2D.Double end = new Point2D.Double(10,10);
+        Point2D.Double end = new Point2D.Double(10, 10);
         when(arc.getEndPoint()).thenReturn(end);
 
         net.addArc(arc);
@@ -234,19 +225,18 @@ public class PetriNetControllerTest {
         verify(transition).accept(any(TranslationVisitor.class));
     }
 
-    private PetriNetTab createMockTab()
-    {
+    private PetriNet setupPetriNet() {
+        createMockTab();
+        assertEquals(0, net.getArcs().size());
+        return net;
+    }
+
+    private PetriNetTab createMockTab() {
         PipeApplicationView mockView = mock(PipeApplicationView.class);
         ApplicationSettings.register(mockView);
         PetriNetTab mockTab = mock(PetriNetTab.class);
         when(mockView.getCurrentTab()).thenReturn(mockTab);
         return mockTab;
-    }
-
-    private PetriNet setupPetriNet() {
-        createMockTab();
-        assertEquals(0, net.getArcs().size());
-        return net;
     }
 
     @Test
@@ -258,7 +248,7 @@ public class PetriNetControllerTest {
         controller.createNewToken(name, enabled, color);
         Collection<Token> tokens = net.getTokens();
         assertEquals(1, tokens.size());
-        Token token  = tokens.iterator().next();
+        Token token = tokens.iterator().next();
         assertEquals(name, token.getId());
         assertEquals(enabled, token.isEnabled());
         assertEquals(color, token.getColor());

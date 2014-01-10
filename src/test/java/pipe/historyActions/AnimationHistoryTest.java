@@ -5,43 +5,42 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pipe.models.component.Transition;
-import pipe.models.interfaces.IObserver;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Observable;
+import java.util.Observer;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class AnimationHistoryTest {
 
-    private AnimationHistory history;
-    private IObserver observer;
-
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private AnimationHistory history;
+    private Observer observer;
 
     @Before
     public void setUp() {
         history = new AnimationHistory();
-        observer = mock(IObserver.class);
+        observer = mock(Observer.class);
     }
 
     @Test
     public void addingTransitionNotifiesObserver() {
         Transition transition = mock(Transition.class);
-        history.registerObserver(observer);
+        history.addObserver(observer);
         history.addHistoryItem(transition);
-        verify(observer).update();
+        verify(observer).update(any(Observable.class), any(Object.class));
     }
 
     @Test
     public void clearNotifiesObserver() {
         Transition transition = mock(Transition.class);
-        history.registerObserver(observer);
+        history.addObserver(observer);
         history.clear();
-        verify(observer).update();
+        verify(observer).update(any(Observable.class), any(Object.class));
     }
 
     @Test
@@ -49,18 +48,18 @@ public class AnimationHistoryTest {
         Transition transition = mock(Transition.class);
         history.addHistoryItem(transition);
         history.stepBackwards();
-        history.registerObserver(observer);
+        history.addObserver(observer);
         history.stepForward();
-        verify(observer).update();
+        verify(observer).update(any(Observable.class), any(Object.class));
     }
 
     @Test
     public void steppingBackwardNotifiesObserver() {
         Transition transition = mock(Transition.class);
         history.addHistoryItem(transition);
-        history.registerObserver(observer);
+        history.addObserver(observer);
         history.stepBackwards();
-        verify(observer).update();
+        verify(observer).update(any(Observable.class), any(Object.class));
     }
 
     @Test
@@ -97,7 +96,6 @@ public class AnimationHistoryTest {
         assertTrue(history.isStepBackAllowed());
     }
 
-
     @Test
     public void whenAtTailCannotStepBackward() {
         Transition transition = mock(Transition.class);
@@ -105,7 +103,6 @@ public class AnimationHistoryTest {
         history.stepBackwards();
         assertFalse(history.isStepBackAllowed());
     }
-
 
     @Test
     public void whenAtHeadCannotStepForward() {

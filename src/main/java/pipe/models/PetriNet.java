@@ -3,7 +3,6 @@ package pipe.models;
 import parser.ExprEvaluator;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.component.*;
-import pipe.models.interfaces.IObserver;
 import pipe.models.visitor.PetriNetComponentAddVisitor;
 import pipe.models.visitor.PetriNetComponentRemovalVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
@@ -20,6 +19,7 @@ public class PetriNet {
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
     public String _pnmlName = "";
+    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
     private boolean _validated = false;
     private Set<Transition> transitions = new HashSet<Transition>();
     private Set<Place> places = new HashSet<Place>();
@@ -31,13 +31,11 @@ public class PetriNet {
     private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
     private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
 
-    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
     }
 
-    public void  removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);
     }
 
@@ -128,34 +126,6 @@ public class PetriNet {
         changeSupport.firePropertyChange("deletePlace", place, null);
     }
 
-    /**
-     * @param transition
-     * @return arcs that are outbound from transition
-     */
-    private Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
-        Collection<Arc<Transition, Place> > outbound = new LinkedList<Arc<Transition, Place>>();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            if (arc.getSource().equals(transition)) {
-                outbound.add((Arc<Transition, Place>) arc);
-            }
-        }
-        return outbound;
-    }
-
-    /**
-     * @param place
-     * @return arcs that are outbound from place
-     */
-    private Collection<Arc<Place, Transition>> outboundArcs(Place place) {
-        Collection<Arc<Place, Transition> > outbound = new LinkedList<Arc<Place, Transition>>();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            if (arc.getSource().equals(place)) {
-                outbound.add((Arc<Place, Transition>) arc);
-            }
-        }
-        return outbound;
-    }
-
     public void removeArc(Arc arc) {
         this.arcs.remove(arc);
         removeArcFromSourceAndTarget(arc);
@@ -170,12 +140,40 @@ public class PetriNet {
         Connectable target = arc.getTarget();
     }
 
+    /**
+     * @param place
+     * @return arcs that are outbound from place
+     */
+    private Collection<Arc<Place, Transition>> outboundArcs(Place place) {
+        Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            if (arc.getSource().equals(place)) {
+                outbound.add((Arc<Place, Transition>) arc);
+            }
+        }
+        return outbound;
+    }
+
     public void removeTransition(Transition transition) {
         this.transitions.remove(transition);
         for (Arc<Transition, Place> arc : outboundArcs(transition)) {
             removeArc(arc);
         }
         changeSupport.firePropertyChange("deleteTransition", transition, null);
+    }
+
+    /**
+     * @param transition
+     * @return arcs that are outbound from transition
+     */
+    private Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
+        Collection<Arc<Transition, Place>> outbound = new LinkedList<Arc<Transition, Place>>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            if (arc.getSource().equals(transition)) {
+                outbound.add((Arc<Transition, Place>) arc);
+            }
+        }
+        return outbound;
     }
 
     public void remove(PetriNetComponent component) {
@@ -276,6 +274,10 @@ public class PetriNet {
         return enabledTransitions;
     }
 
+    public Collection<Transition> getTransitions() {
+        return transitions;
+    }
+
     /**
      * @param transition
      * @return true if transition is enabled
@@ -306,10 +308,6 @@ public class PetriNet {
             }
         }
         return outbound;
-    }
-
-    public Collection<Transition> getTransitions() {
-        return transitions;
     }
 
     /**
@@ -344,51 +342,6 @@ public class PetriNet {
             }
         }
         markEnabledTransitions();
-    }
-
-    /**
-     * Calculates enabled transitions and enables them.
-     */
-    public void markEnabledTransitions() {
-        Set<Transition> enabledTransitions = getEnabledTransitions(false);
-        for (Transition transition : transitions) {
-            if (enabledTransitions.contains(transition)) {
-                transition.enable();
-            } else {
-                transition.disable();
-            }
-        }
-    }
-
-    /**
-     * Calculates weights of connections from transitions to places for given token
-     *
-     * @param token
-     * @return
-     * @throws Exception
-     */
-    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
-
-        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            Connectable target = arc.getTarget();
-            Connectable source = arc.getSource();
-
-            if (target instanceof Place) {
-                Place place = (Place) target;
-                if (source instanceof Transition) {
-                    Transition transition = (Transition) source;
-
-                    String expression = arc.getWeightForToken(token);
-
-                    ExprEvaluator paser = new ExprEvaluator(this);
-
-                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    forwardsIncidenceMatrix.put(place, transition, weight);
-                }
-            }
-        }
-        return forwardsIncidenceMatrix;
     }
 
     /**
@@ -454,6 +407,51 @@ public class PetriNet {
             }
         }
         return enablingDegree;
+    }
+
+    /**
+     * Calculates weights of connections from transitions to places for given token
+     *
+     * @param token
+     * @return
+     * @throws Exception
+     */
+    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+
+        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+
+            if (target instanceof Place) {
+                Place place = (Place) target;
+                if (source instanceof Transition) {
+                    Transition transition = (Transition) source;
+
+                    String expression = arc.getWeightForToken(token);
+
+                    ExprEvaluator paser = new ExprEvaluator(this);
+
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    forwardsIncidenceMatrix.put(place, transition, weight);
+                }
+            }
+        }
+        return forwardsIncidenceMatrix;
+    }
+
+    /**
+     * Calculates enabled transitions and enables them.
+     */
+    public void markEnabledTransitions() {
+        Set<Transition> enabledTransitions = getEnabledTransitions(false);
+        for (Transition transition : transitions) {
+            if (enabledTransitions.contains(transition)) {
+                transition.enable();
+            } else {
+                transition.disable();
+            }
+        }
     }
 
     /**

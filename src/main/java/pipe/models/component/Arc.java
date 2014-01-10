@@ -1,6 +1,5 @@
 package pipe.models.component;
 
-import pipe.models.interfaces.IObserver;
 import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.visitor.PetriNetComponentVisitor;
 
@@ -10,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent implements IObserver {
+public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
 
     private final ArcStrategy<S, T> strategy;
     @Pnml("source")
@@ -179,10 +178,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         intermediatePoints.remove(point);
     }
 
-    @Override
-    public void update() {
-    }
-
     public ArcPoint getNextPoint(ArcPoint arcPoint) {
         if (arcPoint.getPoint().equals(source.getCentre())) {
             if (intermediatePoints.isEmpty()) {
@@ -219,6 +214,17 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     @Override
+    public int hashCode() {
+        int result = source.hashCode();
+        result = 31 * result + target.hashCode();
+        result = 31 * result + id.hashCode();
+        result = 31 * result + (tagged ? 1 : 0);
+        result = 31 * result + tokenWeights.hashCode();
+        result = 31 * result + intermediatePoints.hashCode();
+        return result;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -249,16 +255,5 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         }
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = source.hashCode();
-        result = 31 * result + target.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + (tagged ? 1 : 0);
-        result = 31 * result + tokenWeights.hashCode();
-        result = 31 * result + intermediatePoints.hashCode();
-        return result;
     }
 }

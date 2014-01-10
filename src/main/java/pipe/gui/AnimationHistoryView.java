@@ -2,25 +2,26 @@ package pipe.gui;
 
 import pipe.historyActions.AnimationHistory;
 import pipe.models.component.Transition;
-import pipe.models.interfaces.IObserver;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * Class to represent the history of the net animation
  */
 public class AnimationHistoryView
-        extends JTextPane implements IObserver {
+        extends JTextPane implements Observer {
 
     private final String initText;
     private final Document doc;
+    private final AnimationHistory history;
     private Style emph;
     private Style bold;
     private Style regular;
-    private final AnimationHistory history;
 
 
     public AnimationHistoryView(AnimationHistory history, String text) throws
@@ -32,21 +33,6 @@ public class AnimationHistoryView
         doc.insertString(doc.getLength(), text, bold);
         updateText();
     }
-
-
-    private void initStyles() {
-        Style def = StyleContext.getDefaultStyleContext().getStyle(
-                StyleContext.DEFAULT_STYLE);
-        regular = addStyle("regular", def);
-        StyleConstants.setFontFamily(def, "SansSerif");
-
-        emph = addStyle("currentTransition", regular);
-        StyleConstants.setBackground(emph, Color.LIGHT_GRAY);
-
-        bold = addStyle("title", regular);
-        StyleConstants.setBold(bold, true);
-    }
-
 
     /**
      * Method reinserts the text highlighting the currentItem
@@ -68,9 +54,21 @@ public class AnimationHistoryView
         }
     }
 
+    private void initStyles() {
+        Style def = StyleContext.getDefaultStyleContext().getStyle(
+                StyleContext.DEFAULT_STYLE);
+        regular = addStyle("regular", def);
+        StyleConstants.setFontFamily(def, "SansSerif");
+
+        emph = addStyle("currentTransition", regular);
+        StyleConstants.setBackground(emph, Color.LIGHT_GRAY);
+
+        bold = addStyle("title", regular);
+        StyleConstants.setBold(bold, true);
+    }
 
     @Override
-    public void update() {
+    public void update(Observable observable, Object o) {
         updateText();
     }
 }

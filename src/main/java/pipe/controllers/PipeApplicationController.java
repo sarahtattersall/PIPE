@@ -2,7 +2,6 @@ package pipe.controllers;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
-import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.*;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
@@ -22,15 +21,12 @@ import pipe.petrinet.reader.creator.*;
 import pipe.petrinet.writer.PetriNetWriter;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
-import pipe.views.PetriNetView;
 import pipe.views.changeListener.PetriNetChangeListener;
 
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,15 +37,98 @@ public class PipeApplicationController {
 
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
     private final CopyPasteManager copyPasteManager;
-
     //TODO: Circular dependency between these two classes
     private final PipeApplicationModel applicationModel;
     private PetriNetTab activeTab;
 
-    public PipeApplicationController(CopyPasteManager copyPasteManager, PipeApplicationModel applicationModel) {
+    public PipeApplicationController(CopyPasteManager copyPasteManager,
+                                     PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
         this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
+    }
+
+    /**
+     * Creates an empty petrinet with a default token
+     */
+    public PetriNetTab createEmptyPetriNet() {
+        PetriNet model = new PetriNet();
+        Token defaultToken = createDefaultToken();
+        model.addToken(defaultToken);
+        return createNewTab(model);
+    }
+
+    private PetriNetTab createNewTab(PetriNet net) {
+        AnimationHistory animationHistory = new AnimationHistory();
+        Animator animator = new Animator(net, animationHistory);
+
+        PetriNetController petriNetController =
+                new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()),
+                        animator);
+        AnimationHistoryView animationHistoryView;
+        try {
+            animationHistoryView = new AnimationHistoryView(animationHistory, "Animation History");
+        } catch (BadLocationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException();
+        }
+
+        animationHistory.addObserver(animationHistoryView);
+
+
+        PetriNetTab petriNetTab = new PetriNetTab(petriNetController, animationHistoryView);
+        netControllers.put(petriNetTab, petriNetController);
+
+        PetriNetMouseHandler handler =
+                new PetriNetMouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab);
+        petriNetTab.addMouseListener(handler);
+        petriNetTab.addMouseMotionListener(handler);
+        petriNetTab.addMouseWheelListener(handler);
+
+        String name;
+        if (net.getPnmlName().isEmpty()) {
+            name = "Petri net " + (applicationModel.newPetriNetNumber());
+        } else {
+            name = FilenameUtils.getBaseName(net.getPnmlName());
+        }
+
+        petriNetTab.setNetChanged(false); // Status is unchanged
+
+        ApplicationSettings.getApplicationView().addNewTab(name, petriNetTab);
+
+        petriNetTab.updatePreferredSize();
+
+        //        net.notifyObservers();
+        net.addPropertyChangeListener(new PetriNetChangeListener(petriNetTab, petriNetController));
+
+        return petriNetTab;
+    }
+
+    private Token createDefaultToken() {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        return token;
+    }
+
+    public PetriNetTab createNewTabFromFile(File file, boolean isTN) {
+
+        if (isPasteInProgress()) {
+            cancelPaste();
+        }
+
+
+        PetriNet net = new PetriNet();
+        PetriNetTab tab = createNewTab(net);
+        loadPetriNetFromFile(file, net, isTN);
+        return tab;
+
+    }
+
+    public void cancelPaste() {
+        copyPasteManager.cancelPaste();
+    }
+
+    public boolean isPasteInProgress() {
+        return copyPasteManager.pasteInProgress();
     }
 
     private PetriNet loadPetriNetFromFile(File file, PetriNet net, boolean isTN) {
@@ -72,7 +151,8 @@ public class PipeApplicationController {
             ArcStrategy<Place, Transition> normalBackwardStrategy = new BackwardsNormalStrategy(net);
 
 
-            CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(), new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
+            CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(),
+                    new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
                     new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
             PetriNetReader reader = new PetriNetReader(struct);
             reader.createFromFile(net, document);
@@ -80,84 +160,11 @@ public class PipeApplicationController {
             return net;
 
         } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this, "Error loading file:\n" + file.getName() + "\n" + e.toString(),
-//                        "File load error", JOptionPane.ERROR_MESSAGE);
+            //                JOptionPane.showMessageDialog(this, "Error loading file:\n" + file.getName() + "\n" + e.toString(),
+            //                        "File load error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return null;
         }
-    }
-
-
-    /**
-     * Creates an empty petrinet with a default token
-     */
-    public PetriNetTab createEmptyPetriNet() {
-        PetriNet model = new PetriNet();
-        Token defaultToken = createDefaultToken();
-        model.addToken(defaultToken);
-        return createNewTab(model);
-    }
-
-    private Token createDefaultToken() {
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        return token;
-    }
-
-    public PetriNetTab createNewTabFromFile(File file, boolean isTN) {
-
-        if (isPasteInProgress()) {
-            cancelPaste();
-        }
-
-
-        PetriNet net = new PetriNet();
-        PetriNetTab tab = createNewTab(net);
-        loadPetriNetFromFile(file, net, isTN);
-        return tab;
-
-    }
-
-    private PetriNetTab createNewTab(PetriNet net) {
-        AnimationHistory animationHistory = new AnimationHistory();
-        Animator animator = new Animator(net, animationHistory);
-
-        PetriNetController petriNetController = new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()), animator);
-        AnimationHistoryView animationHistoryView;
-        try {
-            animationHistoryView = new AnimationHistoryView(animationHistory, "Animation History");
-        } catch (BadLocationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            throw new RuntimeException();
-        }
-
-        animationHistory.registerObserver(animationHistoryView);
-
-
-        PetriNetTab petriNetTab = new PetriNetTab(petriNetController, animationHistoryView);
-        netControllers.put(petriNetTab, petriNetController);
-
-        PetriNetMouseHandler handler = new PetriNetMouseHandler(new SwingMouseUtilities(), petriNetController, net, petriNetTab);
-        petriNetTab.addMouseListener(handler);
-        petriNetTab.addMouseMotionListener(handler);
-        petriNetTab.addMouseWheelListener(handler);
-
-        String name;
-        if (net.getPnmlName().isEmpty()) {
-            name = "Petri net " + (applicationModel.newPetriNetNumber());
-        } else {
-            name = FilenameUtils.getBaseName(net.getPnmlName());
-        }
-
-        petriNetTab.setNetChanged(false); // Status is unchanged
-
-        ApplicationSettings.getApplicationView().addNewTab(name, petriNetTab);
-
-        petriNetTab.updatePreferredSize();
-
-//        net.notifyObservers();
-        net.addPropertyChangeListener(new PetriNetChangeListener(petriNetTab, petriNetController));
-
-        return petriNetTab;
     }
 
     public CopyPasteManager getCopyPasteManager() {
@@ -166,14 +173,6 @@ public class PipeApplicationController {
 
     public boolean isPasteEnabled() {
         return copyPasteManager.pasteEnabled();
-    }
-
-    public boolean isPasteInProgress() {
-        return copyPasteManager.pasteInProgress();
-    }
-
-    public void cancelPaste() {
-        copyPasteManager.cancelPaste();
     }
 
     public void copy(ArrayList selection, PetriNetTab appView) {
@@ -192,11 +191,9 @@ public class PipeApplicationController {
         this.activeTab = tab;
     }
 
-    public PetriNetController getActivePetriNetController() {
-        return netControllers.get(activeTab);  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    public void saveCurrentPetriNet(File outFile, boolean saveFunctional) throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void saveCurrentPetriNet(File outFile, boolean saveFunctional)
+            throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
         PetriNetController petriNetController = getActivePetriNetController();
         PetriNet petriNet = petriNetController.getPetriNet();
 
@@ -206,10 +203,13 @@ public class PipeApplicationController {
         writer.writeToFile(petriNet, outFile.getAbsolutePath());
     }
 
+    public PetriNetController getActivePetriNetController() {
+        return netControllers.get(activeTab);  //To change body of created methods use File | Settings | File Templates.
+    }
+
     public void setUndoActionEnabled(final boolean enabled) {
         ApplicationSettings.getApplicationView().setUndoActionEnabled(enabled);
     }
-
 
     public void setRedoActionEnabled(final boolean enabled) {
         ApplicationSettings.getApplicationView().setRedoActionEnabled(enabled);

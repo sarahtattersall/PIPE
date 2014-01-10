@@ -13,7 +13,6 @@ import pipe.models.PipeObservable;
 import pipe.models.component.Arc;
 import pipe.models.component.ArcPoint;
 import pipe.models.component.Connectable;
-import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 
@@ -22,34 +21,34 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.*;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public abstract class ArcView<S extends Connectable, T extends Connectable> extends AbstractPetriNetViewComponent<Arc<S, T>>
-        implements Cloneable, IObserver, Serializable, Observer {
+public abstract class ArcView<S extends Connectable, T extends Connectable>
+        extends AbstractPetriNetViewComponent<Arc<S, T>>
+        implements Cloneable, Serializable, Observer {
 
 
     final protected ArcPath arcPath;
-
-    // true if arc is not hidden when a bidirectional arc is used
-    boolean inView = true;
-
     // bounds of arc need to be grown in order to avoid clipping problems
     final int zoomGrow = 10;
+    // true if arc is not hidden when a bidirectional arc is used
+    boolean inView = true;
     private boolean _noFunctionalWeights = true;
 
     //TODO: DELETE FOR DEBUG ONLY
     public ArcView() {
-        super("","",0,0,null,ApplicationSettings.getApplicationController().getActivePetriNetController());
-        arcPath=new ArcPath(this,ApplicationSettings.getApplicationController().getActivePetriNetController());
-        arcPath.addPoint(new ArcPoint(new Point2D.Double(100,100), false));
-        arcPath.addPoint(new ArcPoint(new Point2D.Double(200,500), false));
-//        arcPath.createPath();
-//        updateBounds();
+        super("", "", 0, 0, null, ApplicationSettings.getApplicationController().getActivePetriNetController());
+        arcPath = new ArcPath(this, ApplicationSettings.getApplicationController().getActivePetriNetController());
+        arcPath.addPoint(new ArcPoint(new Point2D.Double(100, 100), false));
+        arcPath.addPoint(new ArcPoint(new Point2D.Double(200, 500), false));
+        //        arcPath.createPath();
+        //        updateBounds();
     }
 
     public ArcView(Arc<S, T> model,
-            PetriNetController controller) {
+                   PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
         arcPath = new ArcPath(this, controller);
 
@@ -74,18 +73,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     }
 
     /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
-     */
-    protected abstract void arcSpecificUpdate();
-
-
-    /**
-     * Perform any arc specific deletion acitons
-     */
-    protected abstract void arcSpecificDelete();
-
-    /**
      * Perform any arc specific addition acitons
      */
     protected abstract void arcSpecificAdd();
@@ -104,11 +91,21 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
                 arcPath.showPoints();
             } else {
                 //TODO: HIDEPOINTS
-//                arcPath.hidePoints();
+                //                arcPath.hidePoints();
             }
         }
 
         return arcPath.contains(point);
+    }
+
+    @Override
+    public String getName() {
+        return getId();
+    }
+
+    @Override
+    public String getId() {
+        return model.getId();
     }
 
     @Override
@@ -123,8 +120,21 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
             arcPath.addPointsToGui((JLayeredPane) getParent());
         }
         updateArcPosition();
-        update();
         //addWeightLabelsToContainer(getParent());
+    }
+
+    //TODO: DELETE
+    public void updateArcPosition() {
+        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
+        //        addPathSourceLocation(points.first.x, points.first.y);
+        //        setTargetLocation(points.second.x, points.second.y);
+        //        if (_source != null) {
+        //            _source.updateEndPoint(this);
+        //        }
+        //        if (_target != null) {
+        //            _target.updateEndPoint(this);
+        //        }
+        //        arcPath.createPath();
     }
 
     @Override
@@ -139,30 +149,8 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     }
 
     @Override
-    public String getId() {
-        return model.getId();
-    }
-
-    @Override
-    public String getName() {
-        return getId();
-    }
-
-
-    @Override
     public int getLayerOffset() {
         return Constants.ARC_LAYER_OFFSET;
-    }
-
-    @Override
-    public void translate(int x, int y) {
-        // We don't translate an arc, we translate each selected arc point
-    }
-
-    @Override
-    public void zoomUpdate(int percent) {
-        _zoomPercentage = percent;
-        update();
     }
 
     /**
@@ -173,6 +161,20 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return super.clone();
     }
 
+    /**
+     * Perform any arc specific deletion acitons
+     */
+    protected abstract void arcSpecificDelete();
+
+    @Override
+    public void translate(int x, int y) {
+        // We don't translate an arc, we translate each selected arc point
+    }
+
+    @Override
+    public void zoomUpdate(int percent) {
+        _zoomPercentage = percent;
+    }
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
@@ -183,15 +185,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         addMouseMotionListener(arcHandler);
     }
 
-    @Override
-    public void update() {
-
-        updatePath();
-        arcSpecificUpdate();
-        updateBounds();
-        repaint();
-    }
-
     // Steve Doubleday (Oct 2013): cascading clean up of Marking Views if Token View is disabled
     @Override
     public void update(Observable observable, Object obj) {
@@ -199,23 +192,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
             // if multiple cases are added, consider creating specific subclasses of Observable
             Object originalObject =
                     ((PipeObservable) observable).getObservable();
-//            if (originalObject instanceof MarkingView) {
-//                MarkingView viewToDelete = (MarkingView) originalObject;
-//                _weight.remove(viewToDelete);
-//            }
+            //            if (originalObject instanceof MarkingView) {
+            //                MarkingView viewToDelete = (MarkingView) originalObject;
+            //                _weight.remove(viewToDelete);
+            //            }
         }
-    }
-
-
-
-    //TODO: DELETE
-    void setSource(ConnectableView<?> sourceInput) {
-        throw new RuntimeException("Should be setting models source");
-    }
-
-    //TODO: DELETE
-    public void setTarget(ConnectableView<?> targetInput) {
-        throw new RuntimeException("Should be setting models target");
     }
 
     public HistoryItem setWeight(List<MarkingView> weightInput) {
@@ -226,40 +207,32 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return null;
     }
 
-
     protected void removeLabelFromParentContainer(NameLabel label) {
         getParent().remove(label);
     }
-
-
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
     public ConnectableView<Connectable> getSource() {
         return null;
     }
 
+    //TODO: DELETE
+    void setSource(ConnectableView<?> sourceInput) {
+        throw new RuntimeException("Should be setting models source");
+    }
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
     public ConnectableView<Connectable> getTarget() {
         return null;
     }
 
-    public int getSimpleWeight() {
-        return 1;
+    //TODO: DELETE
+    public void setTarget(ConnectableView<?> targetInput) {
+        throw new RuntimeException("Should be setting models target");
     }
 
-    //TODO: DELETE
-    public void updateArcPosition() {
-        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
-        //        addPathSourceLocation(points.first.x, points.first.y);
-        //        setTargetLocation(points.second.x, points.second.y);
-//        if (_source != null) {
-//            _source.updateEndPoint(this);
-//        }
-//        if (_target != null) {
-//            _target.updateEndPoint(this);
-//        }
-//        arcPath.createPath();
+    public int getSimpleWeight() {
+        return 1;
     }
 
     /**
@@ -273,9 +246,9 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         arcPath.createPath();
 
         //TODO: REIMPLEMENT
-//        PipeApplicationView view = ApplicationSettings.getApplicationView();
-//        PetriNetTab tab = view.getCurrentTab();
-//        arcPath.addPointsToGui(tab);
+        //        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        //        PetriNetTab tab = view.getCurrentTab();
+        //        arcPath.addPointsToGui(tab);
     }
 
     private void addIntermediatePoints() {
@@ -309,14 +282,13 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return arcPath;
     }
 
-
     public void setPathToTransitionAngle(int angle) {
         arcPath.set_transitionAngle(angle);
     }
 
     public HistoryItem split(Point2D.Double mouseposition) {
-//        ArcPathPoint newPoint = arcPath.splitSegment(mouseposition);
-//        return new AddArcPathPoint(getModel(), newPoint);
+        //        ArcPathPoint newPoint = arcPath.splitSegment(mouseposition);
+        //        return new AddArcPathPoint(getModel(), newPoint);
         return null;
     }
 
@@ -326,14 +298,13 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return inView;
     }
 
-
     //TODO: DELETE
     public TransitionView getTransition() {
-//        if (getTarget() instanceof TransitionView) {
-//            return (TransitionView) getTarget();
-//        } else {
-//            return (TransitionView) getSource();
-//        }
+        //        if (getTarget() instanceof TransitionView) {
+        //            return (TransitionView) getTarget();
+        //        } else {
+        //            return (TransitionView) getSource();
+        //        }
         return null;
     }
 
@@ -353,7 +324,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         view.add(this);
     }
 
-
+    /**
+     * Perform any updates specific to the arc type
+     * E.g. NormalArc should show weights
+     */
+    protected abstract void arcSpecificUpdate();
 
     public Point2D.Double zoom(Point2D.Double point) {
         return new Point2D.Double(ZoomController.getZoomedValue(point.x, _zoomPercentage),
@@ -410,14 +385,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return null;
     }
 
-
-
     protected void updateHistory(
             HistoryItem historyItem) { // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls
 
         petriNetController.getHistoryManager().addNewEdit(historyItem);
     }
-
 
 
 }

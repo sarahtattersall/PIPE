@@ -1,14 +1,10 @@
 package pipe.models.component;
 
-import pipe.models.Observable;
-import pipe.models.interfaces.IObserver;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- * This class implements the IObserverbale pattern and acts as a wrapper
- * for {@link pipe.models.Observable}
+ * Abstract PetriNetComponent that supports Property Changes.
  */
 public abstract class AbstractPetriNetComponent implements PetriNetComponent {
 
@@ -18,7 +14,7 @@ public abstract class AbstractPetriNetComponent implements PetriNetComponent {
         changeSupport.addPropertyChangeListener(listener);
     }
 
-    public void  removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);
     }
 

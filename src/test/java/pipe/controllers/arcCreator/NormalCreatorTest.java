@@ -53,6 +53,7 @@ public class NormalCreatorTest {
         Place source = new Place("", "");
         Transition transition = new Transition("", "");
         Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        when(mockPetriNetController.getSelectedToken()).thenReturn(token);
         creator.create(source, transition);
 
 
