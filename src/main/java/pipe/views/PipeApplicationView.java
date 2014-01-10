@@ -126,8 +126,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         petriNetTabs = new ArrayList<PetriNetTab>();
 
-        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController));
-        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController));
+        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController), applicationController, this);
+        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController), applicationController, this);
         zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", applicationController);
         zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);

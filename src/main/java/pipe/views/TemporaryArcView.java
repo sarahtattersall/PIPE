@@ -10,7 +10,6 @@ import java.awt.geom.Point2D;
 
 import static java.lang.Math.max;
 
-//TODO: This ahs no model so needa  model based view comonent and another not
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     private T source;
     private Point2D end;

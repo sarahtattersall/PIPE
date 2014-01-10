@@ -45,7 +45,8 @@ public class AnnotationNote extends Note {
 
     public AnnotationNote(String text, int x, int y, int w, int h, boolean border) {
         super(text, x, y, w, h, border);
-        setDragPoints();         ZoomController zoomController = petriNetController.getZoomController();
+        setDragPoints();
+        ZoomController zoomController = petriNetController.getZoomController();
         addZoomController(zoomController);
     }
 

@@ -3,9 +3,7 @@ package pipe.controllers.arcCreator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.models.component.Connectable;
-import pipe.models.component.Place;
 import pipe.models.component.Token;
-import pipe.models.component.Transition;
 
 public class NormalCreator implements ArcActionCreator {
 
@@ -19,7 +17,7 @@ public class NormalCreator implements ArcActionCreator {
     @Override
     public <S extends Connectable, T extends Connectable> void create(S source, T target, Token token) {
         PetriNetController currentPetriNetController = controller.getActivePetriNetController();
-        currentPetriNetController.startCreatingNormalArc(source, target, token);
+        currentPetriNetController.createNormalArc(source, target, token);
     }
 
     @Override

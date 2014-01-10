@@ -41,9 +41,10 @@ public class ImmediateTransitionActionTest {
 
 
     @Test
-    public void createsTimedTransition() {
+    public void createsTimedTransitionOnClick() {
         Point point = new Point(10, 20);
         MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getClickCount()).thenReturn(1);
         when(mockEvent.getPoint()).thenReturn(point);
 
         action.doAction(mockEvent, mockController);
@@ -56,9 +57,10 @@ public class ImmediateTransitionActionTest {
     }
 
     @Test
-    public void createsUndoAction() {
+    public void createsUndoActionOnClick() {
         Point point = new Point(10, 20);
         MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getClickCount()).thenReturn(1);
         when(mockEvent.getPoint()).thenReturn(point);
 
         action.doAction(mockEvent, mockController);

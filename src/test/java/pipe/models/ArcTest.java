@@ -288,7 +288,7 @@ public class ArcTest {
     public void throwsExceptionIfNoNextPoint() {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("No next point");
-        ArcPoint point = new ArcPoint(new Point2D.Double(0,0), false);
+        ArcPoint point = new ArcPoint(new Point2D.Double(20,15), false);
         arc.getNextPoint(point);
     }
 

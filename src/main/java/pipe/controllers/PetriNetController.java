@@ -33,8 +33,6 @@ public class PetriNetController implements IController, Serializable {
     private final ArcStrategy<Place, Transition> backwardsNormalStrategy;
     private int placeNumber = 0;
     private int transitionNumber = 0;
-    private boolean currentlyCreatingArc = false;
-    private Arc arc;
     private Token selectedToken;
     private Animator animator;
 
@@ -51,15 +49,15 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void setEndPoint(double x, double y, boolean shiftDown) {
-        if (currentlyCreatingArc) {
-            arc.setTarget(new TemporaryArcTarget(x, y));
-
-            petriNet.notifyObservers();
-        }
+//        if (currentlyCreatingArc) {
+//            arc.setTarget(new TemporaryArcTarget(x, y));
+//
+//            petriNet.notifyObservers();
+//        }
     }
 
     public void addPoint(Point2D point, boolean curved) {
-        arc.addIntermediatePoint(new ArcPoint(point, curved));
+//        arc.addIntermediatePoint(new ArcPoint(point, curved));
     }
 
     /**
@@ -68,8 +66,8 @@ public class PetriNetController implements IController, Serializable {
      * @param source source model
      * @param target
      */
-    public <S extends Connectable, T extends Connectable> void startCreatingNormalArc(S source, T target,
-                                                                                      Token currentToken) {
+    public <S extends Connectable, T extends Connectable> void createNormalArc(S source, T target,
+                                                                               Token currentToken) {
         buildArc(source, target, currentToken);
     }
 
@@ -110,27 +108,6 @@ public class PetriNetController implements IController, Serializable {
         petriNet.addArc(arc);
     }
 
-    /**
-     * Starts creating an arc from the source.
-     *
-     * @param source source model
-     */
-    public void startCreatingNormalArc(Transition source, Token currentToken) {
-        currentlyCreatingArc = true;
-        this.arc = buildEmptyArc(source, currentToken);
-        addArcToCurrentPetriNet(arc);
-    }
-
-    //TODO: MOVE OUT TO TEMPORARYARCVIEW
-    private Arc buildEmptyArc(Transition source, Token token) {
-        return null;
-        //        Map<Token, String> tokens = new HashMap<Token, String>();
-        //        tokens.put(token, "1");
-        //        return new Arc<Transition, TemporaryArcTarget>(source,
-        //                new TemporaryArcTarget(source.getX(),
-        //                        source.getY()),
-        //                tokens, forwardNormalStrategy);
-    }
 
     /**
      * Start creating an inhibitor arc starting at the source
@@ -144,59 +121,6 @@ public class PetriNetController implements IController, Serializable {
             Arc<Place, Transition>  arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), inhibitorStrategy);
             addArcToCurrentPetriNet(arc);
         }
-    }
-
-    /**
-     * Create inhibitor arc with a temporary finish destination
-     *
-     * @param source
-     * @return inhibitor arc
-     */
-    private Arc buildEmptyInhibitorArc(Place source, Token token) {
-        return null;
-        //        return new Arc<Place, TemporaryArcTarget>(source,
-        //                new TemporaryArcTarget(source.getX(),
-        //                        source.getY()),
-        //                new HashMap<Token, String>(), inhibitorStrategy);
-    }
-
-    public boolean isCurrentlyCreatingArc() {
-        return currentlyCreatingArc;
-    }
-
-    public void cancelArcCreation() {
-        currentlyCreatingArc = false;
-        petriNet.remove(arc);
-    }
-
-    /**
-     * Finishes creating an arc if the target is an applicable end point
-     *
-     * @param target
-     * @return true if could create an arc, false otherwise
-     */
-    public boolean finishCreatingArc(Connectable target) {
-        if (isApplicableEndPoint(target) && currentlyCreatingArc) {
-            arc.setTarget(target);
-            historyManager.addNewEdit(new AddPetriNetObject(arc, petriNet));
-            currentlyCreatingArc = false;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if creatingArc and if the potentialEnd is not of
-     * the same class as the source.
-     *
-     * @param potentialEnd
-     * @return true if arc can end on the connectable
-     */
-    public boolean isApplicableEndPoint(Connectable potentialEnd) {
-        if (currentlyCreatingArc && potentialEnd.isEndPoint()) {
-            return potentialEnd.getClass() != arc.getSource().getClass();
-        }
-        return false;
     }
 
     /**

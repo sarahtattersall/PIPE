@@ -9,6 +9,7 @@ import pipe.gui.PetriNetTab;
 import pipe.models.component.Connectable;
 import pipe.models.component.Token;
 import pipe.models.visitor.connectable.arc.ArcSourceVisitor;
+import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
 
 import javax.swing.*;
@@ -19,12 +20,16 @@ public class ArcAction extends TypeAction {
     private final ArcSourceVisitor sourceVisitor;
     private final ArcActionCreator arcCreator;
     private TemporaryArcView<? extends Connectable> temporaryArcView = null;
+    private final PipeApplicationController controller;
+    private final PipeApplicationView applicationView;
 
     public ArcAction(final String name, final int typeID,
-                     final String tooltip, final String keystroke, ArcSourceVisitor sourceVisitor, ArcActionCreator arcCreator) {
+                     final String tooltip, final String keystroke, ArcSourceVisitor sourceVisitor, ArcActionCreator arcCreator, PipeApplicationController controller, PipeApplicationView applicationView) {
         super(name, typeID, tooltip, keystroke);
         this.sourceVisitor = sourceVisitor;
         this.arcCreator = arcCreator;
+        this.controller = controller;
+        this.applicationView = applicationView;
     }
 
     /**
@@ -36,11 +41,8 @@ public class ArcAction extends TypeAction {
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (temporaryArcView != null) {
-            MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(event.getComponent(), event,
-                    ApplicationSettings.getApplicationView().getCurrentTab());
-
-            temporaryArcView.setEnd(accurateEvent.getPoint());
-            PetriNetTab tab = ApplicationSettings.getApplicationView().getCurrentTab();
+            temporaryArcView.setEnd(event.getPoint());
+            PetriNetTab tab =  applicationView.getCurrentTab();
             tab.validate();
             tab.repaint();
         }
@@ -55,7 +57,7 @@ public class ArcAction extends TypeAction {
                                     PetriNetController petriNetController) {
         if (temporaryArcView == null && sourceVisitor.canStart(connectable)) {
             temporaryArcView = new TemporaryArcView<T>(connectable);
-            PetriNetTab tab = ApplicationSettings.getApplicationView().getCurrentTab();
+            PetriNetTab tab = applicationView.getCurrentTab();
             tab.add(temporaryArcView);
         }  else if (temporaryArcView != null && canCreateArcHere(connectable)) {
             createArc(connectable);
@@ -68,11 +70,10 @@ public class ArcAction extends TypeAction {
 
     private <T extends Connectable> void createArc(T connectable) {
 
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController netController = controller.getActivePetriNetController();
         Token token = netController.getSelectedToken();
         arcCreator.create(temporaryArcView.getSourceConnectable(), connectable, token);
-        PetriNetTab tab = ApplicationSettings.getApplicationView().getCurrentTab();
+        PetriNetTab tab = applicationView.getCurrentTab();
         tab.remove(temporaryArcView);
         temporaryArcView = null;
     }

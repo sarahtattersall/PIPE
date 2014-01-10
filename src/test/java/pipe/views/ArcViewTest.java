@@ -62,7 +62,5 @@ public class ArcViewTest {
         Point2D.Double actualEnd = path.getPoint(1);
         assertEquals(zoomedEnd.x, actualEnd.x, DOUBLE_DELTA);
         assertEquals(zoomedEnd.y, actualEnd.y, DOUBLE_DELTA);
-
-
     }
 }

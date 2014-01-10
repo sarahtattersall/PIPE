@@ -53,9 +53,9 @@ public abstract class TypeAction extends GuiAction
         // _petriNetTabView.getSelectionObject().clearSelection();
 
         PetriNetController petriNetController = petriNetTab.getPetriNetController();
-        if((typeID != Constants.ARC) && (petriNetController.isCurrentlyCreatingArc()))
+        if((typeID != Constants.ARC))// && (petriNetController.isCurrentlyCreatingArc()))
         {
-            petriNetController.cancelArcCreation();
+//            petriNetController.cancelArcCreation();
             petriNetTab.repaint();
         }
 

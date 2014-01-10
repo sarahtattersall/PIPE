@@ -57,10 +57,10 @@ public class ArcCreator implements ComponentCreator<Arc<?, ?>> {
      * Sets it source/target to those found in {@link this.connectables}
      *
      * @param element PNML XML Arc element
-     * @return
+     * @return Arc model form of the PNML element
      */
     @Override
-    public Arc create(Element element) {
+    public Arc<? extends Connectable, ? extends Connectable> create(Element element) {
         String id = element.getAttribute("id");
         String sourceId = element.getAttribute("source");
         String targetId = element.getAttribute("target");
@@ -69,7 +69,7 @@ public class ArcCreator implements ComponentCreator<Arc<?, ?>> {
 
         Map<Token, String> tokenWeights = createTokenWeights(weightInput);
 
-        Arc arc;
+        Arc<? extends Connectable, ? extends Connectable> arc;
         if (isInhibitorArc(element)) {
             Place source = places.get(sourceId);
             Transition target = transitions.get(targetId);
@@ -116,7 +116,7 @@ public class ArcCreator implements ComponentCreator<Arc<?, ?>> {
     }
 
     /**
-     * @param element
+     * @param element Arc element to test
      * @return true if element type is inhibitor
      */
     private boolean isInhibitorArc(Element element) {
@@ -131,8 +131,8 @@ public class ArcCreator implements ComponentCreator<Arc<?, ?>> {
     /**
      * Creates the 'markings' a.k.a. weights associated with an Arc.
      *
-     * @param weightInput
-     * @return
+     * @param weightInput The string of weights as dictacted by PNML e.g. Default, 1, Red, 2
+     * @return Map of token weights for the arc in string format
      */
     private Map<Token, String> createTokenWeights(String weightInput) {
         Map<Token, String> tokenWeights = new HashMap<Token, String>();

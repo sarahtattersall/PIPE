@@ -43,10 +43,11 @@ public class PlaceActionTest {
 
 
     @Test
-    public void createsPlace() {
+    public void createsPlaceOnClick() {
 
         Point point = new Point(10, 20);
         MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getClickCount()).thenReturn(1);
         when(mockEvent.getPoint()).thenReturn(point);
 
         action.doAction(mockEvent, mockController);
@@ -59,9 +60,10 @@ public class PlaceActionTest {
     }
 
     @Test
-    public void createsUndoAction() {
+    public void createsUndoOnClickAction() {
         Point point = new Point(10, 20);
         MouseEvent mockEvent = mock(MouseEvent.class);
+        when(mockEvent.getClickCount()).thenReturn(1);
         when(mockEvent.getPoint()).thenReturn(point);
 
         action.doAction(mockEvent, mockController);

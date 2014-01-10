@@ -245,89 +245,11 @@ public class PetriNetControllerTest {
     public void creatingArcAddsItToPetriNet()
     {
         PetriNet net = setupPetriNet();
-        Place source = createFakePlace();
-        Transition transition = mock(Transition.class);
+        Place source = new Place("","");
+        Transition transition = new Transition("","");
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, transition, token);
+        controller.createNormalArc(source, transition, token);
         assertEquals(1, net.getArcs().size());
-    }
-
-    @Test
-    public void addPointCreatesIntermediateStraightPoint()
-    {
-        PetriNet net = setupPetriNet();
-        Place source = createFakePlace();
-        Token token = mock(Token.class);
-        Transition transition = mock(Transition.class);
-        controller.startCreatingNormalArc(source, transition, token);
-        Arc arc = net.getArcs().iterator().next();
-
-        Point2D point = new Point2D.Double(10, 5);
-        ArcPoint arcPoint = new ArcPoint(point, false);
-        controller.addPoint(point, false);
-
-        assertEquals(1, arc.getIntermediatePoints().size());
-        assertEquals(arcPoint, arc.getIntermediatePoints().iterator().next());
-    }
-
-    @Test
-    public void addPointCreatesIntermediateCurvedPoint()
-    {
-        PetriNet net = setupPetriNet();
-        Place source = createFakePlace();
-        Token token = mock(Token.class);
-        Transition transition = mock(Transition.class);
-        controller.startCreatingNormalArc(source, transition, token);
-        Arc arc = net.getArcs().iterator().next();
-
-        Point2D point = new Point2D.Double(10, 5);
-        ArcPoint arcPoint = new ArcPoint(point, true);
-        controller.addPoint(point, true);
-
-        assertEquals(1, arc.getIntermediatePoints().size());
-        assertEquals(arcPoint, arc.getIntermediatePoints().iterator().next());
-    }
-
-    @Test
-    public void finishingArcReturnsFalseIfNotCreating() {
-        Connectable place = mock(Place.class);
-        assertFalse(controller.finishCreatingArc(place));
-    }
-
-    @Test
-    public void finishingArcReturnsFalseIfNotValidEndPoint() {
-        Place source = createFakePlace();
-        Token token = mock(Token.class);
-        Transition transition = mock(Transition.class);
-        controller.startCreatingNormalArc(source, transition, token);
-
-        Connectable place = mock(Place.class);
-        when(place.isEndPoint()).thenReturn(true);
-        assertFalse(controller.finishCreatingArc(place));
-    }
-
-    @Test
-    public void finishingArcReturnsTrueIfNotValidEndPoint() {
-        Place source = createFakePlace();
-        Token token = mock(Token.class);
-        Transition transition = mock(Transition.class);
-        controller.startCreatingNormalArc(source, transition, token);
-
-        when(transition.isEndPoint()).thenReturn(true);
-        assertTrue(controller.finishCreatingArc(transition));
-    }
-
-
-    @Test
-    public void finishingArcSetsCreatingToFalse() {
-        Place source = createFakePlace();
-        Token token = mock(Token.class);
-        Connectable transition = mock(Transition.class);
-        controller.startCreatingNormalArc(source, transition, token);
-
-        when(transition.isEndPoint()).thenReturn(true);
-        controller.finishCreatingArc(transition);
-        assertFalse(controller.isCurrentlyCreatingArc());
     }
 
     private Place createFakePlace() {
@@ -342,18 +264,6 @@ public class PetriNetControllerTest {
         createMockTab();
         assertEquals(0, net.getArcs().size());
         return net;
-    }
-
-    @Test
-    public void cancellingArcRemovesItFromPetriNet()
-    {
-        PetriNet net = setupPetriNet();
-        Place source = createFakePlace();
-        Token token = mock(Token.class);
-        Transition transition = mock(Transition.class);
-        controller.startCreatingNormalArc(source, transition , token);
-        controller.cancelArcCreation();
-        assertEquals(0, net.getArcs().size());
     }
 
     @Test

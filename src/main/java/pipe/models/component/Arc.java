@@ -166,11 +166,12 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
             try {
                 Integer.parseInt(weight);
+                return false;
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         }
-        return false;
+        return true;
     }
 
     public boolean canFire() {
@@ -211,7 +212,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
 
-    public ArcPoint getNextPoint(final ArcPoint arcPoint) {
+    public ArcPoint getNextPoint(ArcPoint arcPoint) {
         if (arcPoint.getPoint().equals(source.getCentre())) {
             if (intermediatePoints.isEmpty()) {
                 return new ArcPoint(getEndPoint(), false);
@@ -219,7 +220,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
             return intermediatePoints.get(0);
         }
         int location = intermediatePoints.indexOf(arcPoint);
-        if (location == intermediatePoints.size() - 1) {
+        if (location == intermediatePoints.size() - 1 && !intermediatePoints.isEmpty()) {
             return new ArcPoint(getEndPoint(), false);
         }
         if (location == -1 || location + 1 > intermediatePoints.size()) {

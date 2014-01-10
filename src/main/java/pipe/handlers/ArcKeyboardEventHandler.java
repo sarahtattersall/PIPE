@@ -39,7 +39,7 @@ public class ArcKeyboardEventHandler
          case KeyEvent.VK_ESCAPE:
          case KeyEvent.VK_DELETE:
             PetriNetTab aView = ((PetriNetTab) _arcViewBeingDrawn.getParent());
-             petriNetController.cancelArcCreation();
+//             petriNetController.cancelArcCreation();
              if ((ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_PLACE) ||
                     (ApplicationSettings.getApplicationModel().getMode() == Constants.FAST_TRANSITION)) {
                  ApplicationSettings.getApplicationModel().resetMode();

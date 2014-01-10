@@ -9,6 +9,7 @@ import pipe.models.PipeApplicationModel;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -63,8 +64,10 @@ public class PetriNetMouseHandler extends MouseInputAdapter
         if(mouseUtilities.isLeftMouse(event))
         {
 
-            Point point = adjustPoint(event.getPoint(), petriNetTab.getZoom());
-            action.doAction(event, petriNetController);
+//            Point point = adjustPoint(event.getPoint(), petriNetTab.getZoom());
+            MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(event.getComponent(), event,
+                    ApplicationSettings.getApplicationView().getCurrentTab());
+            action.doAction(accurateEvent, petriNetController);
         }
 
 //            int mode = applicationModel.getMode();

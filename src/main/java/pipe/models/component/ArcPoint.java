@@ -5,7 +5,7 @@ import pipe.models.visitor.PetriNetComponentVisitor;
 import java.awt.geom.Point2D;
 
 @Pnml("arcpath")
-public final class ArcPoint extends AbstractPetriNetComponent {
+public class ArcPoint extends AbstractPetriNetComponent {
 
     @Pnml("xCoord")
     private double x;
@@ -79,5 +79,41 @@ public final class ArcPoint extends AbstractPetriNetComponent {
     public void setCurved(final boolean curved) {
         this.curved = curved;
         notifyObservers();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ArcPoint arcPoint = (ArcPoint) o;
+
+        if (curved != arcPoint.curved) {
+            return false;
+        }
+        if (Double.compare(arcPoint.x, x) != 0) {
+            return false;
+        }
+        if (Double.compare(arcPoint.y, y) != 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (curved ? 1 : 0);
+        return result;
     }
 }

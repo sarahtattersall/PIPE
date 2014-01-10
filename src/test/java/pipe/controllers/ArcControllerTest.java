@@ -6,9 +6,7 @@ import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryManager;
-import pipe.models.component.Arc;
-import pipe.models.component.ArcPoint;
-import pipe.models.component.Token;
+import pipe.models.component.*;
 import utils.TokenUtils;
 
 import java.awt.geom.Point2D;
@@ -19,8 +17,8 @@ import static org.mockito.Mockito.*;
 
 public class ArcControllerTest {
     HistoryManager historyManager;
-    Arc mockArc;
-    ArcController controller;
+    Arc<Place, Transition> mockArc;
+    ArcController<Place, Transition> controller;
 
     @Before
     public void setUp() {
@@ -41,7 +39,8 @@ public class ArcControllerTest {
         controller.setWeight(defaultToken, newWeight);
         verify(historyManager).newEdit();
 
-        ArcWeight weightAction = new ArcWeight(mockArc, defaultToken, oldWeight, newWeight);
+        ArcWeight<Place, Transition> weightAction =
+                new ArcWeight<Place, Transition>(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 
@@ -154,11 +153,11 @@ public class ArcControllerTest {
         verify(mockArc).addIntermediatePoint(expected);
     }
 
-//    @Test
-//    public void addPointCreatesHistoryItem() {
-//        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
-//        controller.addPoint(point.getPoint());
-//        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, point);
-//        verify(historyManager).addNewEdit(addArcPointAction);
-//    }
+    //    @Test
+    //    public void addPointCreatesHistoryItem() {
+    //        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
+    //        controller.addPoint(point.getPoint());
+    //        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, point);
+    //        verify(historyManager).addNewEdit(addArcPointAction);
+    //    }
 }
