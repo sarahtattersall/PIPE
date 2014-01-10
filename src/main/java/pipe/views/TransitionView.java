@@ -31,6 +31,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.*;
 
@@ -42,7 +44,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     private GeneralPath _path;
-    private Shape proximityTransition;
     private boolean _enabled;
     private boolean _enabledBackwards;
     public boolean _highlighted;
@@ -55,7 +56,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
 
     public TransitionView() {
-        this( "", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false,
+        this("", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false,
                 false, 0, new Transition("", "", "1", 1), null);
     }
 
@@ -65,6 +66,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         super(id, name,  model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(), model,
                  controller);
         constructTransition();
+        setChangeListener();
 
         _enabled = false;
         _enabledBackwards = false;
@@ -73,6 +75,23 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         rotate(angleInput);
         updateBounds();
+        //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
+//        changeToolTipText();
+
+    }
+
+    private void setChangeListener() {
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("priority") || name.equals("rate")) {
+                    repaint();
+                } else if (name.equals("angle") || name.equals("timed") || name.equals("infiniteServer")) {
+                    repaint();
+                }
+            }
+        });
     }
 
     public TransitionView(TransitionController transitionController, Transition model) {
@@ -194,6 +213,12 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             g2.draw(_path);
             g2.fill(_path);
         }
+        changeToolTipText();
+
+
+    }
+
+    private void changeToolTipText() {
         try {
             Double.parseDouble(getRateExpr());
             if (this.isTimed()) {
@@ -245,10 +270,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 //
 //        return new TransitionRotation(this, angleInc);
         return null;
-    }
-
-    private void outlineTransition() {
-        proximityTransition = (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(_path);
     }
 
     public boolean isEnabled(boolean animationStatus) {
@@ -374,8 +395,6 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
         _path.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
                 model.getHeight()), false);
-
-        outlineTransition();
     }
 
     public boolean contains(int x, int y) {
