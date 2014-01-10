@@ -41,6 +41,10 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
         return component.getPriority();
     }
 
+    public int getAngle() {
+        return component.getAngle();
+    }
+
     //TODO: GET CURRENT PETRINET
     public Collection<Arc<Place, Transition>> inboundArcs() {
 //        return component.inboundArcs();
@@ -51,31 +55,29 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
      *
      * @param infiniteValue
      */
-    public void setInfiniteServer(
-                                  final boolean infiniteValue) {
+    public void setInfiniteServer(final boolean infiniteValue) {
+        component.setInfiniteServer(infiniteValue);
         TransitionInfiniteServer infiniteAction = new TransitionInfiniteServer(component, infiniteValue);
-        infiniteAction.redo();
         historyManager.addNewEdit(infiniteAction);
     }
 
     public void setTimed(final boolean timedValue) {
+        component.setTimed(timedValue);
         TransitionTiming timedAction = new TransitionTiming(component, timedValue);
-        timedAction.redo();
         historyManager.addNewEdit(timedAction);
     }
 
-    public void setPriority(
-                            final int priorityValue) {
+    public void setPriority(final int priorityValue) {
         int oldPriority = component.getPriority();
+        component.setPriority(priorityValue);
         TransitionPriority priorityAction = new TransitionPriority(component, oldPriority, priorityValue);
-        priorityAction.redo();
         historyManager.addNewEdit(priorityAction);
     }
 
     public void setAngle(final int angle) {
         int oldAngle = component.getAngle();
+        component.setAngle(angle);
         TransitionRotation angleAction = new TransitionRotation(component, oldAngle, angle);
-        angleAction.redo();
         historyManager.addNewEdit(angleAction);
     }
 }
