@@ -3,7 +3,9 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
+import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Place;
+import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PlaceView;
 
 import static org.junit.Assert.assertEquals;
@@ -40,8 +42,8 @@ public class PlaceViewBuilderTest {
         assertEquals(place.getMarkingYOffset(), view.getMarkingOffsetYObject(), DOUBLE_DELTA);
         assertEquals(place.getName(), view.getName());
         assertEquals(place.getId(), view.getId());
-        assertEquals(place.getX(), view.getX(), DOUBLE_DELTA);
-        assertEquals(place.getY(), view.getY(), DOUBLE_DELTA);
+        assertEquals(place.getX() - AbstractPetriNetViewComponent.COMPONENT_DRAW_OFFSET, view.getX(), DOUBLE_DELTA);
+        assertEquals(place.getY() - AbstractPetriNetViewComponent.COMPONENT_DRAW_OFFSET, view.getY(), DOUBLE_DELTA);
 
     }
 }

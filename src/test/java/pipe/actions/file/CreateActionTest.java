@@ -3,7 +3,6 @@ package pipe.actions.file;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -14,14 +13,13 @@ import static org.mockito.Mockito.verify;
 
 public class CreateActionTest {
     CreateAction createAction;
-    PipeApplicationController mockController;
+    PipeApplicationView mockView;
 
     @Before
     public void setUp()
     {
-        createAction = new CreateAction();
-        mockController = mock(PipeApplicationController.class);
-        ApplicationSettings.register(mockController);
+        mockView = mock(PipeApplicationView.class);
+        createAction = new CreateAction(mockView);
     }
 
     @Test

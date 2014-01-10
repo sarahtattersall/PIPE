@@ -9,13 +9,16 @@ import java.awt.event.ActionEvent;
 public class CreateAction extends FileAction {
 
 
-    public CreateAction() {
+    private final PipeApplicationView applicationView;
+
+    public CreateAction(PipeApplicationView applicationView) {
         super("New", "Create a new Petri net", "ctrl N");
+        this.applicationView = applicationView;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        controller.createEmptyPetriNet();
+        controller.createEmptyPetriNet(applicationView);
     }
 }

@@ -1,5 +1,6 @@
 package pipe.actions.file;
 
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.widgets.FileBrowser;
 import pipe.views.PipeApplicationView;
@@ -12,9 +13,13 @@ public class OpenAction extends FileAction {
 
     private String userPath;
     private File testFile;
+    private final PipeApplicationController applicationController;
+    private final PipeApplicationView applicationView;
 
-    public OpenAction() {
+    public OpenAction(PipeApplicationController applicationController, PipeApplicationView applicationView) {
         super("Open", "Open", "ctrl O");
+        this.applicationController = applicationController;
+        this.applicationView = applicationView;
     }
 
     @Override
@@ -23,9 +28,8 @@ public class OpenAction extends FileAction {
         if((filePath != null) && filePath.exists() && filePath.isFile() && filePath.canRead())
         {
             userPath = filePath.getParent();
-            PipeApplicationView view = ApplicationSettings.getApplicationView();
-            ApplicationSettings.getApplicationController().createNewTabFromFile(
-                    filePath, false);
+            applicationController.createNewTabFromFile(
+                    filePath, applicationView, false);
         }
         if((filePath != null) && (!filePath.exists()))
         {

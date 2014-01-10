@@ -16,7 +16,7 @@ import java.util.EventListener;
 
 public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements Zoomable, CopyPasteable, Cloneable, Translatable, Serializable,
         PetriNetViewComponent {
-    static final int COMPONENT_DRAW_OFFSET = 5;
+    public static final int COMPONENT_DRAW_OFFSET = 5;
     protected String _id;
     public NameLabel _nameLabel;
     boolean _selectable;

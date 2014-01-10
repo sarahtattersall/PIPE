@@ -21,6 +21,7 @@ import pipe.petrinet.reader.creator.*;
 import pipe.petrinet.writer.PetriNetWriter;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
+import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
 
 import javax.swing.text.BadLocationException;
@@ -51,19 +52,24 @@ public class PipeApplicationController {
     /**
      * Creates an empty petrinet with a default token
      */
-    public PetriNetTab createEmptyPetriNet() {
+    public PetriNetTab createEmptyPetriNet(PipeApplicationView applicationView) {
         PetriNet model = new PetriNet();
         Token defaultToken = createDefaultToken();
         model.addToken(defaultToken);
-        return createNewTab(model);
+        return createNewTab(model, applicationView);
     }
 
-    private PetriNetTab createNewTab(PetriNet net) {
+    private Token createDefaultToken() {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        return token;
+    }
+
+    private PetriNetTab createNewTab(PetriNet net, PipeApplicationView applicationView) {
         AnimationHistory animationHistory = new AnimationHistory();
         Animator animator = new Animator(net, animationHistory);
 
         PetriNetController petriNetController =
-                new PetriNetController(net, new HistoryManager(ApplicationSettings.getApplicationController()),
+                new PetriNetController(net, new HistoryManager(applicationView),
                         animator);
         AnimationHistoryView animationHistoryView;
         try {
@@ -94,7 +100,7 @@ public class PipeApplicationController {
 
         petriNetTab.setNetChanged(false); // Status is unchanged
 
-        ApplicationSettings.getApplicationView().addNewTab(name, petriNetTab);
+        applicationView.addNewTab(name, petriNetTab);
 
         petriNetTab.updatePreferredSize();
 
@@ -104,12 +110,7 @@ public class PipeApplicationController {
         return petriNetTab;
     }
 
-    private Token createDefaultToken() {
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        return token;
-    }
-
-    public PetriNetTab createNewTabFromFile(File file, boolean isTN) {
+    public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView, boolean isTN) {
 
         if (isPasteInProgress()) {
             cancelPaste();
@@ -117,18 +118,10 @@ public class PipeApplicationController {
 
 
         PetriNet net = new PetriNet();
-        PetriNetTab tab = createNewTab(net);
+        PetriNetTab tab = createNewTab(net, applicationView);
         loadPetriNetFromFile(file, net, isTN);
         return tab;
 
-    }
-
-    public void cancelPaste() {
-        copyPasteManager.cancelPaste();
-    }
-
-    public boolean isPasteInProgress() {
-        return copyPasteManager.pasteInProgress();
     }
 
     private PetriNet loadPetriNetFromFile(File file, PetriNet net, boolean isTN) {
@@ -165,6 +158,14 @@ public class PipeApplicationController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean isPasteInProgress() {
+        return copyPasteManager.pasteInProgress();
+    }
+
+    public void cancelPaste() {
+        copyPasteManager.cancelPaste();
     }
 
     public CopyPasteManager getCopyPasteManager() {
@@ -207,12 +208,4 @@ public class PipeApplicationController {
         return netControllers.get(activeTab);  //To change body of created methods use File | Settings | File Templates.
     }
 
-    public void setUndoActionEnabled(final boolean enabled) {
-        ApplicationSettings.getApplicationView().setUndoActionEnabled(enabled);
-    }
-
-    public void setRedoActionEnabled(final boolean enabled) {
-        ApplicationSettings.getApplicationView().setRedoActionEnabled(enabled);
-
-    }
 }

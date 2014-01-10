@@ -6,6 +6,7 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.PetriNetTab;
 import pipe.models.PipeApplicationModel;
+import pipe.views.PipeApplicationView;
 
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +29,7 @@ public class PipeApplicationControllerTest {
         PipeApplicationController nullController = null;
         ApplicationSettings.register(nullController);
 
-        controller = new PipeApplicationController(copyPaste, , mockModel);
+        controller = new PipeApplicationController(copyPaste, mockModel);
     }
 
     @Test
@@ -40,7 +41,8 @@ public class PipeApplicationControllerTest {
 
     @Test
     public void createsNewPetriNetControllerPerPetriNet() {
-        PetriNetTab tab = controller.createEmptyPetriNet();
+        PipeApplicationView view = mock(PipeApplicationView.class);
+        PetriNetTab tab = controller.createEmptyPetriNet(view);
         PetriNetController tabController = tab.getPetriNetController();
         assertEquals(tabController, controller.getControllerForTab(tab));
     }

@@ -14,10 +14,12 @@ import java.awt.event.ActionEvent;
  */
 public class UnfoldAction extends GuiAction
 {
+    PipeApplicationView pipeApplicationView;
 
-    public UnfoldAction(String name, String tooltip, String keystroke)
+    public UnfoldAction(String name, String tooltip, String keystroke, PipeApplicationView pipeApplicationView)
     {
         super(name, tooltip, keystroke);
+        this.pipeApplicationView = pipeApplicationView;
     }
 
     public void actionPerformed(ActionEvent e)
@@ -38,6 +40,6 @@ public class UnfoldAction extends GuiAction
         Expander expander = new Expander(ApplicationSettings.getApplicationView().getCurrentPetriNetView());
         PetriNetView unfolded = expander.unfold();
         ApplicationSettings.getApplicationController().createNewTabFromFile(
-                expander.saveAsXml(unfolded), false);
+                expander.saveAsXml(unfolded), pipeApplicationView, false);
     }
 }

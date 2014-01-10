@@ -55,8 +55,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final PipeApplicationController applicationController;
     private final PipeApplicationModel applicationModel;
 
-    private FileAction createAction = new CreateAction();
-    private FileAction openAction = new OpenAction();
+    private FileAction createAction = new CreateAction(this);
+    private final FileAction openAction;
     private FileAction closeAction = new CloseAction();
     private FileAction saveAction = new SaveAction();
     private FileAction saveAsAction = new SaveAsAction();
@@ -99,7 +99,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public SpecifyTokenAction specifyTokenClasses = new SpecifyTokenAction();
 
     public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
-    public UnfoldAction unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U");
+    public UnfoldAction unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U", this);
     public UngroupTransitionsAction ungroupTransitions = new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
     public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
 
@@ -117,6 +117,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         inhibarcAction = null;
         arcAction = null;
+        openAction = null;
     }
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
@@ -131,7 +132,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", applicationController);
         zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
-
+        openAction = new OpenAction(applicationController, this);
 
         setTitle(null);
         try {
@@ -180,7 +181,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.applicationModel.setMode(Constants.SELECT);
         selectAction.actionPerformed(null);
 
-        PetriNetTab tab = applicationController.createEmptyPetriNet();
+        PetriNetTab tab = applicationController.createEmptyPetriNet(this);
         applicationController.setActiveTab(tab);
         setTabChangeListener();
     }
@@ -347,7 +348,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     for (JarEntry net : nets) {
                         if (net.getName().toLowerCase().endsWith(".xml")) {
                             addMenuItem(exampleMenu,
-                                    new ExampleFileAction(net, (index < 10) ? ("ctrl " + index) : null));
+                                    new ExampleFileAction(net, (index < 10) ? ("ctrl " + index) : null, this));
                             index++;
                         }
                     }
@@ -392,7 +393,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     int k = 0;
                     for (File net : nets) {
                         if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu, new ExampleFileAction(net, (k < 10) ? "ctrl " + (k++) : null));
+                            addMenuItem(exampleMenu, new ExampleFileAction(net, (k < 10) ? "ctrl " + (k++) : null, this));
                         }
                     }
 
