@@ -1,6 +1,5 @@
 package pipe.controllers;
 
-import pipe.actions.SplitArcPointAction;
 import pipe.historyActions.*;
 import pipe.models.component.Arc;
 import pipe.models.component.ArcPoint;
@@ -10,7 +9,7 @@ import pipe.models.component.Token;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
-public class ArcController<S extends Connectable<T, S>, T extends Connectable<S, T>> extends AbstractPetriNetComponentController<Arc<S, T>>
+public class ArcController<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponentController<Arc<S, T>>
 {
     private final Arc<S, T> arc;
     private final HistoryManager historyManager;
@@ -60,7 +59,7 @@ public class ArcController<S extends Connectable<T, S>, T extends Connectable<S,
         return arc.hasFunctionalWeight();
     }
 
-    public Connectable<S, T> getTarget() {
+    public Connectable getTarget() {
         return arc.getTarget();
     }
 

@@ -119,11 +119,17 @@ public class PetriNet extends Observable implements IObserver {
 
     public void removePlace(Place place) {
         this.places.remove(place);
+        for (Arc arc : outboundArcs(place)) {
+            removeArc(arc);
+        }
         notifyObservers();
     }
 
     public void removeTransition(Transition transition) {
         this.transitions.remove(transition);
+        for (Arc<Transition, Place> arc : outboundArcs(transition)) {
+            removeArc(arc);
+        }
         notifyObservers();
     }
 
@@ -136,11 +142,9 @@ public class PetriNet extends Observable implements IObserver {
     /**
      * Removes the arc from the source and target inbound/outbound Collections
      */
-    private void removeArcFromSourceAndTarget(Arc arc) {
+    private <S extends  Connectable, T extends  Connectable> void removeArcFromSourceAndTarget(Arc<S,T> arc) {
         Connectable source = arc.getSource();
         Connectable target = arc.getTarget();
-        source.removeOutboundArc(arc);
-        target.removeInboundArc(arc);
     }
 
     public void remove(PetriNetComponent component) {
@@ -199,7 +203,7 @@ public class PetriNet extends Observable implements IObserver {
                 Transition transition = (Transition) target;
                 if (source instanceof Place) {
                     Place place = (Place) source;
-                    int enablingDegree = transition.isInfiniteServer() ? transition.getEnablingDegree(paser) : 0;
+                    int enablingDegree = transition.isInfiniteServer() ? getEnablingDegree(transition) : 0;
 
 
                     String expression = arc.getWeightForToken(token);
@@ -296,12 +300,12 @@ public class PetriNet extends Observable implements IObserver {
      */
     private boolean isEnabled(Transition transition, boolean backwards) {
         boolean enabledForArcs = true;
-        for (Arc<Place, Transition> arc : transition.inboundArcs()) {
+        for (Arc<Place, Transition> arc : inboundArcs(transition)) {
             enabledForArcs &= arc.canFire();
 //            enabledForArcs &= allPlaceTokensEnabled(backwards, arc);
         }
 
-        for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+        for (Arc<Transition, Place> arc : outboundArcs(transition)) {
 //            Place place = arc.getTarget();
             enabledForArcs &= arc.canFire();
         }
@@ -335,7 +339,7 @@ public class PetriNet extends Observable implements IObserver {
     public void fireTransition(Transition transition) {
         if (transition.isEnabled()) {
             //Decrement previous places
-            for (Arc<Place, Transition> arc : transition.inboundArcs()) {
+            for (Arc<Place, Transition> arc : inboundArcs(transition)) {
                 Place place = arc.getSource();
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
@@ -346,7 +350,7 @@ public class PetriNet extends Observable implements IObserver {
             }
 
             //Increment new places
-            for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+            for (Arc<Transition, Place> arc : outboundArcs(transition)) {
                 Place place = arc.getTarget();
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
@@ -357,6 +361,36 @@ public class PetriNet extends Observable implements IObserver {
             }
         }
         markEnabledTransitions();
+    }
+
+    /**
+     *
+     * @param connectable
+     * @return arcs that are outbound from connectable
+     */
+    private Collection<Arc> outboundArcs(Connectable connectable) {
+        Collection<Arc> outbound = new LinkedList<Arc>();
+        for (Arc arc : arcs) {
+            if (arc.getSource().equals(connectable)) {
+                outbound.add(arc);
+            }
+        }
+        return outbound;
+    }
+
+    /**
+     *
+     * @param connectable
+     * @return arcs that are inbound to connectable
+     */
+    private Collection<Arc> inboundArcs(Connectable connectable) {
+        Collection<Arc> outbound = new LinkedList<Arc>();
+        for (Arc arc : arcs) {
+            if (arc.getTarget().equals(connectable)) {
+                outbound.add(arc);
+            }
+        }
+        return outbound;
     }
 
     /**
@@ -384,7 +418,7 @@ public class PetriNet extends Observable implements IObserver {
     //      NET STATES SO MAYBE NOT?
     public void fireTransitionBackwards(Transition transition) {
         //Increment previous places
-        for (Arc<Place, Transition> arc : transition.inboundArcs()) {
+        for (Arc<Place, Transition> arc : inboundArcs(transition)) {
             Place place = arc.getSource();
             for (Token token : arc.getTokenWeights().keySet()) {
                 IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
@@ -395,7 +429,7 @@ public class PetriNet extends Observable implements IObserver {
         }
 
         //Decrement new places
-        for (Arc<Transition, Place> arc : transition.outboundArcs()) {
+        for (Arc<Transition, Place> arc : outboundArcs(transition)) {
             Place place = arc.getTarget();
             for (Token token : arc.getTokenWeights().keySet()) {
                 IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
@@ -405,6 +439,44 @@ public class PetriNet extends Observable implements IObserver {
             }
         }
         markEnabledTransitions();
+    }
+
+    /**
+     * A Transition is enabled if all its input places are marked with at least one token
+     * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
+     *
+     * @param evaluator used to evaluate an arcs expression in the petrinet the
+     *                  transition belongs to.
+     * @return
+     */
+    public int getEnablingDegree(Transition transition) {
+        ExprEvaluator evaluator = new ExprEvaluator(this);
+        int enablingDegree = Integer.MAX_VALUE;
+
+
+        for (Arc arc : inboundArcs(transition)) {
+            Place place = (Place) arc.getSource();
+            Map<Token, String> arcWeights = arc.getTokenWeights();
+            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
+                Token arcToken = entry.getKey();
+                String arcTokenExpression = entry.getValue();
+
+                int placeTokenCount = place.getTokenCount(arcToken);
+                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
+
+                if (requiredTokenCount == 0) {
+                    enablingDegree = 0;
+                } else {
+                    //TODO: WHY DIVIDE?
+                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
+                    if (currentDegree < enablingDegree) {
+                        enablingDegree = currentDegree;
+                    }
+
+                }
+            }
+        }
+        return enablingDegree;
     }
 
 }

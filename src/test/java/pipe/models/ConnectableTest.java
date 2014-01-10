@@ -30,45 +30,11 @@ public class ConnectableTest {
         mockArc = mock(Arc.class);
     }
 
-    @Test
-    public void addOutBoundArcCorrectlyReturns()
-    {
-        connectable.addOutbound(mockArc);
-        Collection<Arc> outBoundArcs = connectable.outboundArcs();
-        assertTrue(outBoundArcs.contains(mockArc));
-    }
-
-    @Test
-    public void addInBoundArcCorrectlyReturns()
-    {
-        connectable.addInbound(mockArc);
-        Collection<Arc> inboundArcs = connectable.inboundArcs();
-        assertTrue(inboundArcs.contains(mockArc));
-    }
-
 //    TODO: This cant be easily tested. Dont like this method anyway so it will get deleted
     @Test
     public void addInBoundOrOutboundCorrectlyChoses()
     {
 
-    }
-
-    @Test
-    public void removeFromCorrectlyRemovesItem()
-    {
-        connectable.addOutbound(mockArc);
-        connectable.removeOutboundArc(mockArc);
-        Collection<Arc> outBoundArcs = connectable.outboundArcs();
-        assertFalse(outBoundArcs.contains(mockArc));
-    }
-
-    @Test
-    public void removeToCorrectlyRemovesItem()
-    {
-        connectable.addInbound(mockArc);
-        connectable.removeInboundArc(mockArc);
-        Collection<Arc> inBoundArcs = connectable.inboundArcs();
-        assertFalse(inBoundArcs.contains(mockArc));
     }
 
     @Test

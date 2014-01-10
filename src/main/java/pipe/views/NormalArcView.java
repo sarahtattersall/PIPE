@@ -19,24 +19,20 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
-public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S, T>> extends ArcView<S,T> implements Serializable {
+public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView implements Serializable {
     private final static String type = "normal";
     private final static Polygon head = new Polygon(new int[]{0, 5, 0, -5}, new int[]{0, -10, -7, -10}, 4);
-
+    private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
+    private final java.util.List<MarkingView> _weight = new LinkedList<MarkingView>();
     // bidirectional arc?
     private boolean joined = false;
-
     // Whether or not exists an inverse arc
     private NormalArcView _inverse = null;
-
     private Boolean tagged = false;
     private ArcController _controller;
 
-    private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
-    private final java.util.List<MarkingView> _weight = new LinkedList<MarkingView>();
-
     public NormalArcView(Arc model,
-            PetriNetController controller) {
+                         PetriNetController controller) {
         super(model, controller);
         setTagged(model.isTagged());
     }
@@ -46,7 +42,7 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
      */
     @Override
     protected void arcSpecificUpdate() {
-       updateWeights();
+        updateWeights();
     }
 
     @Override
@@ -103,7 +99,6 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
         }
     }
 
-
     private void removeCurrentWeights() {
         for (NameLabel name : weightLabel) {
             removeLabelFromParentContainer(name);
@@ -131,8 +126,7 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
         }
     }
 
-
-    public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
+    @Override public NormalArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
 //        ConnectableView source = this.getSource().getLastCopy();
 //        ConnectableView target = this.getTarget().getLastCopy();
 //
@@ -185,13 +179,20 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
         return null;
     }
 
-    public NormalArcView copy() {
+    @Override public NormalArcView copy() {
         return null;
 //        return new NormalArcView(this);
     }
 
-    public String getType() {
+    @Override public String getType() {
         return type;
+    }
+
+    /**
+     * Accessor function to check whether or not the Arc is tagged
+     */
+    @Override public boolean isTagged() {
+        return tagged;
     }
 
     /**
@@ -209,18 +210,11 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
         // tagged!!!
         // Because remember that a tagged arc must have a weight of 1...
         /*
-		 * if (tagged) { //weight = 1; weightLabel.setText("TAG");
+         * if (tagged) { //weight = 1; weightLabel.setText("TAG");
 		 * setWeightLabelPosition(); weightLabel.updateSize(); } else {
 		 * weightLabel.setText((weight > 1)?Integer.toString(weight) : ""); }
 		 */
         repaint();
-    }
-
-    /**
-     * Accessor function to check whether or not the Arc is tagged
-     */
-    public boolean isTagged() {
-        return tagged;
     }
 
     void updateWeightLabel() {
@@ -231,10 +225,6 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
 
     public void setInView(boolean flag) {
         inView = flag;
-    }
-
-    void setJoined(boolean flag) {
-        joined = flag;
     }
 
     public HistoryItem clearInverse() {
@@ -289,6 +279,10 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
         return joined;
     }
 
+    void setJoined(boolean flag) {
+        joined = flag;
+    }
+
     public HistoryItem split() {
         //
         if (!this._inverse.inView) {
@@ -334,6 +328,7 @@ public class NormalArcView<S extends Connectable<T, S>, T extends Connectable<S,
         return ((this._inverse != null) && !(this._inverse.inView()));
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;

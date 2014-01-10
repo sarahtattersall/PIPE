@@ -14,6 +14,7 @@ package pipe.modules.queryeditor.gui.performancetrees.valuenodes.labels;
 
 import pipe.common.dataLayer.StateElement;
 import pipe.common.dataLayer.StateGroup;
+import pipe.models.component.AbstractPetriNetComponent;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.views.*;
 import pipe.views.viewComponents.AnnotationNote;
@@ -69,8 +70,8 @@ public class StateView extends JLayeredPane implements QueryConstants {
 	}
 
 	void insertUI(Object diffObj) {
-		if((diffObj instanceof PetriNetViewComponent) && (diffObj != null))
-			add((PetriNetViewComponent)diffObj);
+		if((diffObj instanceof AbstractPetriNetViewComponent) && (diffObj != null))
+			add((AbstractPetriNetViewComponent)diffObj);
 		repaint();
 	}
 
@@ -92,33 +93,33 @@ public class StateView extends JLayeredPane implements QueryConstants {
 		setPreferredSize(d);
 	}
 
-	void add(PetriNetViewComponent currentObj) {
-		if (currentObj instanceof PlaceView) {
-            PlaceView currentView = (PlaceView) currentObj;
-			ConditionPlaceView placeView = new ConditionPlaceView(currentView, currentView.getPetriNetController());
-			// Set the state group condition associated with the place
-			StateElement placeCondition = activeStateGroup.getCondition(placeView.getId());
-			if (placeCondition != null)
-				placeView.setCondition(placeCondition.getOperator(), placeCondition.getPlaceB());
-
-			ConditionPlaceHandler handler = new ConditionPlaceHandler(parent, placeView);
-			placeView.addMouseListener(handler);
-			super.add(placeView);
-			setLayer(placeView, DEFAULT_LAYER.intValue() + PLACE_TRANSITION_LAYER_OFFSET);
-			placeView.addedToGui(); // this will add the place labels
-			_condPlaceViews.add(placeView);
-		}
-		else {
-			super.add(currentObj);
-			if (currentObj instanceof ArcPathPoint)
-				setLayer(currentObj, DEFAULT_LAYER.intValue() + ARC_POINT_LAYER_OFFSET);
-			else if (currentObj instanceof ArcView)
-				setLayer(currentObj, DEFAULT_LAYER.intValue() + ARC_LAYER_OFFSET);	
-			else if (currentObj instanceof TransitionView)
-				setLayer(currentObj, DEFAULT_LAYER.intValue() + PLACE_TRANSITION_LAYER_OFFSET);
-			else if (currentObj instanceof AnnotationNote)
-				setLayer(currentObj, DEFAULT_LAYER.intValue() + ANNOTATION_LAYER_OFFSET);			
-		}
+	void add(AbstractPetriNetComponent currentObj) {
+//		if (currentObj instanceof PlaceView) {
+//            PlaceView currentView = (PlaceView) currentObj;
+//			ConditionPlaceView placeView = new ConditionPlaceView(currentView, currentView.getPetriNetController());
+//			// Set the state group condition associated with the place
+//			StateElement placeCondition = activeStateGroup.getCondition(placeView.getId());
+//			if (placeCondition != null)
+//				placeView.setCondition(placeCondition.getOperator(), placeCondition.getPlaceB());
+//
+//			ConditionPlaceHandler handler = new ConditionPlaceHandler(parent, placeView);
+//			placeView.addMouseListener(handler);
+//			super.add(placeView);
+//			setLayer(placeView, DEFAULT_LAYER.intValue() + PLACE_TRANSITION_LAYER_OFFSET);
+//			placeView.addedToGui(); // this will add the place labels
+//			_condPlaceViews.add(placeView);
+//		}
+//		else {
+//			super.add(currentObj);
+//			if (currentObj instanceof ArcPathPoint)
+//				setLayer(currentObj, DEFAULT_LAYER.intValue() + ARC_POINT_LAYER_OFFSET);
+//			else if (currentObj instanceof ArcView)
+//				setLayer(currentObj, DEFAULT_LAYER.intValue() + ARC_LAYER_OFFSET);
+//			else if (currentObj instanceof TransitionView)
+//				setLayer(currentObj, DEFAULT_LAYER.intValue() + PLACE_TRANSITION_LAYER_OFFSET);
+//			else if (currentObj instanceof AnnotationNote)
+//				setLayer(currentObj, DEFAULT_LAYER.intValue() + ANNOTATION_LAYER_OFFSET);
+//		}
 	}
 
 	/**

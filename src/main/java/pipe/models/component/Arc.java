@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Arc<S extends Connectable<T, S>, T extends Connectable<S, T>> extends AbstractPetriNetComponent implements IObserver {
+public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent implements IObserver {
 
     @Pnml("source")
     protected S source;
@@ -48,8 +48,8 @@ public class Arc<S extends Connectable<T, S>, T extends Connectable<S, T>> exten
         this.id = source.getId() + " TO " + target.getId();
 
 
-        source.addOutbound(this);
-        target.addInbound(this);
+//        source.addOutbound(this);
+//        target.addInbound(this);
     }
 
     public Map<Token, String> getTokenWeights() {
@@ -61,9 +61,7 @@ public class Arc<S extends Connectable<T, S>, T extends Connectable<S, T>> exten
     }
 
     public void setSource(S source) {
-        this.source.removeOutboundArc(this);
         this.source = source;
-        source.addOutbound(this);
         notifyObservers();
     }
 
@@ -72,9 +70,8 @@ public class Arc<S extends Connectable<T, S>, T extends Connectable<S, T>> exten
     }
 
     public void setTarget(T target) {
-        this.target.removeInboundArc(this);
         this.target = target;
-        target.addInbound(this);
+//        target.addInbound(this);
         notifyObservers();
     }
 

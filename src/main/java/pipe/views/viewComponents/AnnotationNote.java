@@ -10,8 +10,8 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.historyActions.AnnotationText;
 import pipe.models.component.Annotation;
+import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
-import pipe.views.PetriNetViewComponent;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -312,7 +312,7 @@ public class AnnotationNote extends Note {
         public void myPaintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setTransform(prova);
-            if (myNote.isSelected() && !PetriNetViewComponent._ignoreSelection) {
+            if (myNote.isSelected() && !AbstractPetriNetViewComponent._ignoreSelection) {
                 g2.translate(this.getLocation().x, this.getLocation().y);
                 shape = new Rectangle(0, 0, 2 * SIZE, 2 * SIZE);
                 g2.fill(shape);

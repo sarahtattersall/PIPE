@@ -54,8 +54,8 @@ public class ArcElementCreatorTest {
         Place source = new Place(SOURCE, SOURCE);
         Transition target = new Transition(TARGET, TARGET);
         Map<Token, String> tokenCounts = createTokenCounts();
-        ArcStrategy mockStrategy = mock(ArcStrategy.class);
-        Arc arc = new Arc<Place, Transition>(source, target, tokenCounts, mockStrategy);
+        ArcStrategy<Place, Transition> mockStrategy = mock(ArcStrategy.class);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(source, target, tokenCounts, mockStrategy);
         arc.setId(ID);
         arc.addIntermediatePoint(ARC_POINT);
         return arc;

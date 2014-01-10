@@ -9,10 +9,8 @@ import pipe.models.visitor.connectable.ConnectableVisitor;
 public interface ArcSourceVisitor extends ConnectableVisitor {
     /**
      *
-     * @param connectable parameter to try and connect arc to
-     * @param <S> source type
-     * @param <T> target type
-     * @return true if we can connect connectable here
+     * @param connectable parameter to try and start arc from
+     * @return true if we can start the type of arc at this connectable
      */
-    public <S extends Connectable<T, S>, T extends Connectable<S, T>> boolean canCreate(Connectable<S,T> connectable);
+    public boolean canStart(Connectable connectable);
 }

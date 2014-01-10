@@ -15,10 +15,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 /**
-* MouseHandler handles mouse press inputs on a given petri net tab.
+* PetriNetMouseHandler handles mouse press inputs on a given petri net tab.
 * It works out what action is selected (e.g. create new place) and makes this happen.
 */
-public class MouseHandler extends MouseInputAdapter
+public class PetriNetMouseHandler extends MouseInputAdapter
 {
     private PetriNetViewComponent pn;
     private final PetriNetTab petriNetTab;
@@ -27,7 +27,8 @@ public class MouseHandler extends MouseInputAdapter
     private PetriNetController petriNetController;
     private final MouseUtilities mouseUtilities;
 
-    public MouseHandler(MouseUtilities mouseUtilities, PetriNetController controller, PetriNet net, PetriNetTab petriNetTab, PetriNetView petriNetView)
+    public PetriNetMouseHandler(MouseUtilities mouseUtilities, PetriNetController controller, PetriNet net,
+                                PetriNetTab petriNetTab, PetriNetView petriNetView)
     {
         super();
         this.petriNetTab = petriNetTab;
@@ -211,11 +212,14 @@ public class MouseHandler extends MouseInputAdapter
 
     public void mouseMoved(MouseEvent event)
     {
-        if(petriNetController.isCurrentlyCreatingArc())
-        {
-            petriNetController.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(
-                    event.getY()), event.isShiftDown());
-        }
+        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
+        TypeAction action = applicationModel.getSelectedAction();
+        action.doAction(event, petriNetController);
+//        if(petriNetController.isCurrentlyCreatingArc())
+//        {
+//            petriNetController.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(
+//                    event.getY()), event.isShiftDown());
+//        }
         //TODO: THIS SHOULDNT BE IN PipeApplicationController
         //PipeApplicationController controller = ApplicationSettings.getApplicationController();
         //controller.mouseMoved(event);

@@ -8,7 +8,6 @@ import pipe.gui.ZoomController;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
-import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
 import pipe.models.component.Arc;
@@ -16,22 +15,19 @@ import pipe.models.component.ArcPoint;
 import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
 import pipe.views.viewComponents.ArcPath;
-import pipe.views.viewComponents.ArcPathPoint;
 import pipe.views.viewComponents.NameLabel;
 
 import javax.swing.*;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
-public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable<S, T>> extends PetriNetViewComponent<Arc<S,T>>
+public abstract class ArcView extends AbstractPetriNetViewComponent<Arc<Connectable, Connectable>>
         implements Cloneable, IObserver, Serializable, Observer {
 
 
-    final protected Path2D path = new Path2D.Double();
-    final protected ArcPath<S,T> arcPath;
+    final protected ArcPath arcPath;
 
     // true if arc is not hidden when a bidirectional arc is used
     boolean inView = true;
@@ -40,10 +36,20 @@ public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable
     final int zoomGrow = 10;
     private boolean _noFunctionalWeights = true;
 
-    public ArcView(Arc<S,T> model,
+    //TODO: DELETE FOR DEBUG ONLY
+    public ArcView() {
+        super("","",0,0,null,ApplicationSettings.getApplicationController().getActivePetriNetController());
+        arcPath=new ArcPath(this,ApplicationSettings.getApplicationController().getActivePetriNetController());
+        arcPath.addPoint(new ArcPoint(new Point2D.Double(100,100), false));
+        arcPath.addPoint(new ArcPoint(new Point2D.Double(200,500), false));
+//        arcPath.createPath();
+//        updateBounds();
+    }
+
+    public ArcView(Arc<Connectable, Connectable> model,
             PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
-        arcPath = new ArcPath<S,T>(this, controller);
+        arcPath = new ArcPath(this, controller);
 
         updatePath();
         updateBounds();
@@ -145,15 +151,15 @@ public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable
      * Method to clone an Arc object
      */
     @Override
-    public PetriNetViewComponent<?> clone() {
+    public AbstractPetriNetViewComponent<?> clone() {
         return super.clone();
     }
 
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        ArcHandler<S,T> arcHandler =
-                new ArcHandler<S,T>(this, tab, this.model, petriNetController);
+        ArcHandler<Connectable, Connectable> arcHandler =
+                new ArcHandler<Connectable, Connectable>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -210,13 +216,13 @@ public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable
 
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView<S> getSource() {
+    public ConnectableView<Connectable> getSource() {
         return null;
     }
 
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView<T> getTarget() {
+    public ConnectableView<Connectable> getTarget() {
         return null;
     }
 
@@ -281,7 +287,7 @@ public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable
         setBounds(bounds);
     }
 
-    public ArcPath<S,T> getArcPath() {
+    public ArcPath getArcPath() {
         return arcPath;
     }
 
@@ -339,17 +345,6 @@ public abstract class ArcView<S extends Connectable<T, S>, T extends Connectable
     public void setZoom(int percent) {
         _zoomPercentage = percent;
     }
-
-    public void undelete(PetriNetView model, PetriNetTab view) {
-        if (this.isDeleted()) {
-            model.addPetriNetObject(this);
-            view.add(this);
-            getSource().addOutbound(this);
-            getTarget().addInbound(this);
-        }
-    }
-
-
 
     public void showEditor() {
         // Build interface

@@ -4,10 +4,8 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.views.ArcView;
-import pipe.views.ConnectableView;
+import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
-import pipe.views.viewComponents.ArcPath;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -147,35 +145,35 @@ public class SelectionManager
       Point topleft = null;
 
       // Get all the objects in the current window
-      List<PetriNetViewComponent> pns = _view.getPNObjects();
-      for (PetriNetViewComponent pn : pns) {
-         if (petriNetController.isSelected(pn.getModel())){
-            Point point = pn.getLocation();
-            if (topleft == null) {
-               topleft = point;
-            } else {
-               if (point.x < topleft.x) {
-                  topleft.x = point.x;
-               }
-               if (point.y < topleft.y) {
-                  topleft.y = point.y;
-               }
-            }
-         }
-      }
-      
-      if (topleft != null) {
-         topleft.translate(transX, transY);
-         if (topleft.x < 0){
-            transX -= topleft.x;
-         }
-         if (topleft.y < 0){
-            transY -= topleft.y;
-         }
-         if (transX == 0 && transY == 0){
-            return;
-         }
-      }
+//      List<PetriNetViewComponent> pns = _view.getPNObjects();
+//      for (PetriNetViewComponent pn : pns) {
+//         if (petriNetController.isSelected(pn.getModel())){
+//            Point point = pn.getLocation();
+//            if (topleft == null) {
+//               topleft = point;
+//            } else {
+//               if (point.x < topleft.x) {
+//                  topleft.x = point.x;
+//               }
+//               if (point.y < topleft.y) {
+//                  topleft.y = point.y;
+//               }
+//            }
+//         }
+//      }
+//
+//      if (topleft != null) {
+//         topleft.translate(transX, transY);
+//         if (topleft.x < 0){
+//            transX -= topleft.x;
+//         }
+//         if (topleft.y < 0){
+//            transY -= topleft.y;
+//         }
+//         if (transX == 0 && transY == 0){
+//            return;
+//         }
+//      }
 
        petriNetController.translateSelected(new Point2D.Double(transX, transY));
 
@@ -191,15 +189,15 @@ public class SelectionManager
    public ArrayList getSelection() {
       ArrayList selection = new ArrayList();
 
-      // Get all the objects in the current window
-      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
-      for (PetriNetViewComponent pn : pns) {
-         if (petriNetController.isSelected(pn.getModel())){
-//        	 if(pn instanceof ArcView)
-//        		 System.out.println("arc found");
-        	 selection.add(pn);
-         }
-      }
+//      // Get all the objects in the current window
+//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//      for (PetriNetViewComponent pn : pns) {
+//         if (petriNetController.isSelected(pn.getModel())){
+////        	 if(pn instanceof ArcView)
+////        		 System.out.println("arc found");
+//        	 selection.add(pn);
+//         }
+//      }
       return selection;
    }
 

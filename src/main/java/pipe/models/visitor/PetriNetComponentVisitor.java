@@ -5,8 +5,8 @@ import pipe.models.component.*;
 import pipe.views.viewComponents.RateParameter;
 
 public interface PetriNetComponentVisitor {
-    public void visit(Arc arc);
-    public void visit(Place place);
+    public <S extends Connectable, T extends Connectable> void visit(Arc<S,T> arc);
+    public <T extends Connectable> void visit(Place place);
     public void visit(Transition transition);
     public void visit(Token token);
     public void visit(RateParameter parameter);

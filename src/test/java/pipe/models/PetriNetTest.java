@@ -80,28 +80,6 @@ public class PetriNetTest {
     }
 
     @Test
-    public void removesArcFromSource() throws Exception {
-        Place place = mock(Place.class);
-        Transition transition = mock(Transition.class);
-        Map<Token, String> weights = new HashMap<Token, String>();
-        Arc arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
-        net.addArc(arc);
-        net.removeArc(arc);
-        verify(place).removeOutboundArc(arc);
-    }
-
-    @Test
-    public void removesArcFromTarget() throws Exception {
-        Place place = mock(Place.class);
-        Transition transition = mock(Transition.class);
-        Map<Token, String> weights = new HashMap<Token, String>();
-        Arc arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
-        net.addArc(arc);
-        net.removeArc(arc);
-        verify(transition).removeInboundArc(arc);
-    }
-
-    @Test
     public void addingTransitionNotifiesObservers() {
         net.registerObserver(mockObserver);
         Transition transition = new Transition("", "");
@@ -171,7 +149,7 @@ public class PetriNetTest {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
         Map<Token, String> weights = new HashMap<Token, String>();
-        Arc arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy(net));
         net.addArc(arc);
 
         assertEquals(1, net.getArcs().size());
@@ -419,7 +397,7 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
         Transition transition = new Transition("t2", "t2");
-        Arc arc3 = new Arc<Place, Transition>(container.places.get(1), transition, container.arcs.get(0).getTokenWeights(), new BackwardsNormalStrategy(net));
+        Arc<Place, Transition> arc3 = new Arc<Place, Transition>(container.places.get(1), transition, container.arcs.get(0).getTokenWeights(), new BackwardsNormalStrategy(net));
         container.petriNet.addArc(arc3);
         container.petriNet.addTransition(transition);
 
@@ -478,9 +456,9 @@ public class PetriNetTest {
         arcWeight.put(token, Integer.toString(tokenWeight));
 
         PetriNet petriNet = new PetriNet();
-        Arc arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
         Place place2 = new Place("p2", "p2");
-        Arc arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, new ForwardsNormalStrategy(petriNet));
+        Arc<Transition, Place> arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, new ForwardsNormalStrategy(petriNet));
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -518,7 +496,7 @@ public class PetriNetTest {
         PetriNet petriNet = new PetriNet();
         Map<Token, String> arcWeight = new HashMap<Token, String>();
         arcWeight.put(token, Integer.toString(tokenWeight));
-        Arc arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, new ForwardsNormalStrategy(petriNet));
+        Arc<Transition, Place> arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, new ForwardsNormalStrategy(petriNet));
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -545,8 +523,8 @@ public class PetriNetTest {
 
 
         PetriNet petriNet = new PetriNet();
-        Arc arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
-        Arc arc2 = new Arc<Transition, Place>(transition, place, arcWeight, new ForwardsNormalStrategy(petriNet));
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Arc<Transition, Place> arc2 = new Arc<Transition, Place>(transition, place, arcWeight, new ForwardsNormalStrategy(petriNet));
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -579,9 +557,9 @@ public class PetriNetTest {
         arcWeight.put(token, Integer.toString(tokenWeight));
 
         PetriNet petriNet = new PetriNet();
-        Arc arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
         Place place2 = new Place("p2", "p2");
-        Arc arc2 = new Arc<Place, Transition>(place2, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
+        Arc<Place, Transition> arc2 = new Arc<Place, Transition>(place2, transition, arcWeight, new BackwardsNormalStrategy(petriNet));
 
         petriNet.addToken(token);
         petriNet.addPlace(place);

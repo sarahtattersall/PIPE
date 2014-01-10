@@ -1220,7 +1220,7 @@ public class QueryEditor extends JFrame implements QueryConstants, ActionListene
 					return;
 
 				// This is the important bit! When the mode is set, the
-				// MouseHandler
+				// PetriNetMouseHandler
 				// in QueryView is going to check for it and the relevant method
 				// invocations will take place there
 				QueryManager.setMode(this.typeID);

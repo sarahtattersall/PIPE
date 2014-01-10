@@ -7,7 +7,7 @@ import pipe.utilities.math.IncidenceMatrix;
 /**
  * Backwards strategy is for Places -> Transitions
  */
-public class BackwardsNormalStrategy implements ArcStrategy<Place<Transition>, Transition> {
+public class BackwardsNormalStrategy implements ArcStrategy<Place, Transition> {
     private final PetriNet petriNet;
 
     public BackwardsNormalStrategy(PetriNet petriNet) {
@@ -16,8 +16,8 @@ public class BackwardsNormalStrategy implements ArcStrategy<Place<Transition>, T
 
 
     @Override
-    public boolean canFire(final Arc<Place<Transition>, Transition> arc) {
-        Place<?> place = arc.getSource();
+    public boolean canFire(final Arc<Place, Transition> arc) {
+        Place place = arc.getSource();
         for (Token token : arc.getTokenWeights().keySet()) {
             int tokenCount = place.getTokenCount(token);
             IncidenceMatrix backwardsIncidenceMatrix = petriNet.getBackwardsIncidenceMatrix(token);

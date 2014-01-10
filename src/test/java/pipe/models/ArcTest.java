@@ -47,13 +47,6 @@ public class ArcTest {
     }
 
     @Test
-    public void constructorSetsConnectableInboundOutbound() {
-        arc = new Arc(mockSource, mockTarget, new HashMap<Token, String>(), mockStrategy);
-        verify(mockSource).addOutbound(arc);
-        verify(mockTarget).addInbound(arc);
-    }
-
-    @Test
     public void notifiesObserversAfterSettingSource()
     {
         arc.registerObserver(mockObserver);
@@ -137,22 +130,6 @@ public class ArcTest {
 
         Point2D.Double arcEndPoint = arc.getEndPoint();
         assertEquals(expectedEndPoint, arcEndPoint);
-    }
-
-    @Test
-    public void changingSourceChangesOutbound() {
-        Connectable newSource = mock(Connectable.class);
-        arc.setSource(newSource);
-        verify(mockSource).removeOutboundArc(arc);
-        verify(newSource).addOutbound(arc);
-    }
-
-    @Test
-    public void changingTargetChangesInbound() {
-        Connectable newTarget = mock(Connectable.class);
-        arc.setTarget(newTarget);
-        verify(mockTarget).removeInboundArc(arc);
-        verify(newTarget).addInbound(arc);
     }
 
     @Test

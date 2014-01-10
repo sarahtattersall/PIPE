@@ -325,26 +325,26 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
         //TODO: FIGURE OUT WHAT THIS DOES
         ArcView someArcView =  null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
-            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
-                    transition.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-                // assume we are only snapping the target...
-                if (someArcView.getTarget() != this) {
-                    someArcView.setTarget(this);
-                }
-                someArcView.updateArcPosition();
-                return true;
-            } else {
-                if (someArcView.getTarget() == this) {
-                    someArcView.setTarget(null);
-                    removeArcCompareObject(someArcView);
-                    updateConnected();
-                }
-                return false;
-            }
-        } else {
+//        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
+//            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
+//                    transition.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
+//                // assume we are only snapping the target...
+//                if (someArcView.getTarget() != this) {
+//                    someArcView.setTarget(this);
+//                }
+//                someArcView.updateArcPosition();
+//                return true;
+//            } else {
+//                if (someArcView.getTarget() == this) {
+//                    someArcView.setTarget(null);
+//                    removeArcCompareObject(someArcView);
+//                    updateConnected();
+//                }
+//                return false;
+//            }
+//        } else {
             return transition.contains((int) unZoomedX, (int) unZoomedY);
-        }
+//        }
     }
 
     void removeArcCompareObject(ArcView a) {
@@ -493,7 +493,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
         }
 
         private boolean sourceOrTarget() {
-            return (_arcView.getSource() == _transitionView ? SOURCE : TARGET);
+            return (_arcView.getModel().getSource() instanceof  Transition ? SOURCE : TARGET);
         }
 
     }

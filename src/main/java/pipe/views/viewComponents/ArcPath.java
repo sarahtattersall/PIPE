@@ -21,22 +21,23 @@ import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArcPath<S extends Connectable<T, S>, T extends Connectable<S, T>> implements Shape, Cloneable {
+public class ArcPath implements Shape, Cloneable {
 
     private static final Stroke proximityStroke = new BasicStroke(Constants.ARC_PATH_PROXIMITY_WIDTH);
     private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
     public final Point2D.Double midPoint = new Point2D.Double();
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
-    private final ArcView<S, T> parent;
+    private final ArcView parent;
     private final PetriNetController petriNetController;
     private GeneralPath path = new GeneralPath();
     private boolean pointLock = false;
-    private Shape shape, proximityShape;
+    private Shape shape = stroke.createStrokedShape(this);
+    private Shape proximityShape = proximityStroke.createStrokedShape(this);;
     private int _transitionAngle;
 
 
-    public ArcPath(ArcView<S, T> a, PetriNetController petriNetController) {
-        parent = a;
+    public ArcPath(ArcView parent, PetriNetController petriNetController) {
+        this.parent = parent;
         this.petriNetController = petriNetController;
         _transitionAngle = 0;
     }
@@ -246,14 +247,14 @@ public class ArcPath<S extends Connectable<T, S>, T extends Connectable<S, T>> i
         }
     }
 
-    private void setControlPoint(Place<Transition> foo) {
+    private void setControlPoint(Place foo) {
 
     }
 
     private void setEndControlPoints() {
         ConnectableVisitor endPointVisitor = new ConnectableVisitor() {
             @Override
-            public void visit(Place<?> place) {
+            public void visit(Place place) {
                 if (pathPoints.get(getEndIndex()).isCurved()) {
                     double angle = Math.toRadians(_transitionAngle);
                     ArcPathPoint myPoint = pathPoints.get(getEndIndex());
@@ -298,7 +299,7 @@ public class ArcPath<S extends Connectable<T, S>, T extends Connectable<S, T>> i
             }
         };
 
-        Connectable<T, S> source = getArc().getModel().getSource();
+        Connectable source = getArc().getModel().getSource();
         source.accept(endPointVisitor);
     }
 
@@ -564,7 +565,7 @@ public class ArcPath<S extends Connectable<T, S>, T extends Connectable<S, T>> i
         return details;
     }
 
-    public ArcView<S, T> getArc() {
+    public ArcView getArc() {
         return parent;
     }
 

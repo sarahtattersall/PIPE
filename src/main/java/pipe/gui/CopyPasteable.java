@@ -4,6 +4,7 @@
 
 package pipe.gui;
 
+import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
@@ -19,7 +20,7 @@ public interface CopyPasteable {
     * copy()
     * @return a copy of the PetriNetViewComponent
     */
-   public PetriNetViewComponent<?> copy();
+   public PetriNetViewComponent copy();
 
    /** 
     * paste()
@@ -30,7 +31,7 @@ public interface CopyPasteable {
     * @return a copy of the saved PetriNetViewComponent that can be added to a PetriNetTab
     * instance
     */
-   public PetriNetViewComponent<?> paste(double despX, double despY,
+   public AbstractPetriNetViewComponent<?> paste(double despX, double despY,
            boolean notInTheSameView, PetriNetView model);
    
    /**

@@ -30,7 +30,7 @@ public class NormalArcSourceVisitor implements ArcSourceVisitor {
      * @return the result of the last item visited
      */
     @Override
-    public <S extends Connectable<T, S>, T extends Connectable<S, T>> boolean canCreate(Connectable<S,T> connectable) {
+    public boolean canStart(Connectable connectable) {
         connectable.accept(this);
         return canCreate;
     }

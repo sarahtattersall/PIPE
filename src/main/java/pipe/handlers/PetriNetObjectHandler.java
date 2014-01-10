@@ -7,7 +7,7 @@ import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.models.PipeApplicationModel;
 import pipe.models.component.PetriNetComponent;
-import pipe.views.PetriNetViewComponent;
+import pipe.views.AbstractPetriNetViewComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent;
  *
  * @author unknown
  */
-public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriNetViewComponent>
+public class PetriNetObjectHandler<T extends PetriNetComponent, V extends AbstractPetriNetViewComponent>
         extends javax.swing.event.MouseInputAdapter {
     final Container contentPane;
     final T component;
@@ -40,10 +40,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends PetriN
     protected final PetriNetController petriNetController;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(V viewComponent, Container contentpane, T obj, PetriNetController controller) {
+    PetriNetObjectHandler(V viewComponent, Container contentpane, T component, PetriNetController controller) {
         this.viewComponent = viewComponent;
         contentPane = contentpane;
-        component = obj;
+        this.component = component;
         //TODO: PASS INTO CTR
         petriNetController = controller;
     }

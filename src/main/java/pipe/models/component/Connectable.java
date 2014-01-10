@@ -3,17 +3,12 @@ package pipe.models.component;
 import pipe.models.visitor.connectable.ConnectableVisitor;
 
 import java.awt.geom.Point2D;
-import java.util.Collection;
-import java.util.HashSet;
-/**
- *
- * @param <S> class that T connects to type
- * @param <T> current class type
- */
-public abstract class Connectable<S extends Connectable<T,S>, T extends Connectable<S,T>> extends AbstractPetriNetComponent {
-    protected final Collection<Arc<S, T>> inboundArcs = new HashSet<Arc<S, T>>();
-    protected final Collection<Arc<T, S>> outboundArcs = new HashSet<Arc<T, S>>();
 
+/**
+ * This class is used for PetriNetComponents that can be connected
+ * to and Connected from by an {@link pipe.models.component.Arc}
+ */
+public abstract class Connectable extends AbstractPetriNetComponent {
     /**
      * Connectable position x
      */
@@ -73,22 +68,6 @@ public abstract class Connectable<S extends Connectable<T,S>, T extends Connecta
         notifyObservers();
     }
 
-    public Collection<Arc<T, S>> outboundArcs() {
-        return outboundArcs;
-    }
-
-    public Collection<Arc<S, T>> inboundArcs() {
-        return inboundArcs;
-    }
-
-    public void addInbound(Arc<S, T> arc) {
-        inboundArcs.add(arc);
-    }
-
-    public void addOutbound(Arc<T, S> arc) {
-        outboundArcs.add(arc);
-    }
-
 //    public void addInboundOrOutbound(ArcView newArcView) {
 //        if (newArcView.getSource().getModel() == this) {
 //            outboundArcs.add(newArcView);
@@ -96,14 +75,6 @@ public abstract class Connectable<S extends Connectable<T,S>, T extends Connecta
 //            inboundArcs.add(newArcView);
 //        }
 //    }
-
-    public void removeOutboundArc(Arc<T,S> arc) {
-        outboundArcs.remove(arc);
-    }
-
-    public void removeInboundArc(Arc<S,T> arc) {
-        inboundArcs.remove(arc);
-    }
 
     public String getName() {
         return name;

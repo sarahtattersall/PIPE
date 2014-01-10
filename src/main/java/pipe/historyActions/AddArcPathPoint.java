@@ -5,7 +5,7 @@ import pipe.models.component.Arc;
 import pipe.models.component.ArcPoint;
 import pipe.models.component.Connectable;
 
-public class AddArcPathPoint<S extends Connectable<T, S>, T extends Connectable<S, T>> extends HistoryItem {
+public class AddArcPathPoint<S extends Connectable, T extends Connectable> extends HistoryItem {
     private final Arc<S,T> arc;
     private final ArcPoint point;
 

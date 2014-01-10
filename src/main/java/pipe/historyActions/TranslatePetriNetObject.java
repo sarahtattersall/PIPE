@@ -4,7 +4,7 @@
 
 package pipe.historyActions;
 
-import pipe.views.PetriNetViewComponent;
+import pipe.views.AbstractPetriNetViewComponent;
 
 
 /**
@@ -15,7 +15,7 @@ public class TranslatePetriNetObject
         extends HistoryItem
 {
    
-   private final PetriNetViewComponent pn;
+   private final AbstractPetriNetViewComponent pn;
    private final Integer transX;
    private final Integer transY;
    
@@ -24,7 +24,7 @@ public class TranslatePetriNetObject
     * @param _pn
     * @param _transX
     * @param _transY*/
-   public TranslatePetriNetObject(PetriNetViewComponent _pn,
+   public TranslatePetriNetObject(AbstractPetriNetViewComponent _pn,
                                   Integer _transX, Integer _transY) {
       pn = _pn;
       transX = _transX;

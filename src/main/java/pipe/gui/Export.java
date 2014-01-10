@@ -8,8 +8,8 @@ package pipe.gui;
 
 import pipe.gui.widgets.FileBrowser;
 import pipe.utilities.transformers.TNTransformer;
+import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
-import pipe.views.PetriNetViewComponent;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -177,7 +177,7 @@ public class Export
 
         // Stuff to make it export properly
         g.updatePreferredSize();
-        PetriNetViewComponent.ignoreSelection(true);
+        AbstractPetriNetViewComponent.ignoreSelection(true);
         if(gridEnabled)
         {
             Grid.disableGrid();
@@ -226,7 +226,7 @@ public class Export
         {
             Grid.enableGrid();
         }
-        PetriNetViewComponent.ignoreSelection(false);
+        AbstractPetriNetViewComponent.ignoreSelection(false);
         g.repaint();
 
     }

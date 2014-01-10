@@ -65,52 +65,52 @@ public class CopyPasteManager
 
     public void doCopy(ArrayList<PetriNetViewComponent> toCopy, PetriNetTab _sourceView) {
 
-        this._sourceView = _sourceView;
-        zoom = this._sourceView.getZoom();
-
-        int bottom = 0;
-        int right = 0;
-        int top = Integer.MAX_VALUE;
-        int left = Integer.MAX_VALUE;
-
-        ArrayList<ArcView> arcsToPaste = new ArrayList();
-        ArrayList ptaToPaste = new ArrayList();
-
-        for (PetriNetViewComponent pn : toCopy) {
-            if (pn.isCopyPasteable()) {
-                if (pn instanceof ArcView) {
-                    arcsToPaste.add((ArcView) pn.copy());
-                    if (pn instanceof NormalArcView) {
-                        if (((NormalArcView) pn).hasInvisibleInverse()) {
-                            arcsToPaste.add(((NormalArcView) pn).getInverse().copy());
-                        }
-                    }
-                } else {
-                    if (pn.getX() < left) {
-                        left = pn.getX();
-                    }
-                    if (pn.getX() + pn.getWidth() > right) {
-                        right = pn.getX() + pn.getWidth();
-                    }
-                    if (pn.getY() < top) {
-                        top = pn.getY();
-                    }
-                    if (pn.getY() + pn.getHeight() > bottom) {
-                        bottom = pn.getY() + pn.getHeight();
-                    }
-                    ptaToPaste.add(pn.copy());
-                }
-            }
-        }
-
-        if (!ptaToPaste.isEmpty()) {
-            objectsToPaste.clear();
-            pasteRectangle.setRect(left, top, right - left, bottom - top);
-            origin.setLocation(ZoomController.getUnzoomedValue(left, zoom),
-                    ZoomController.getUnzoomedValue(top, zoom));
-            objectsToPaste.add(ptaToPaste);
-            objectsToPaste.add(arcsToPaste);
-        }
+//        this._sourceView = _sourceView;
+//        zoom = this._sourceView.getZoom();
+//
+//        int bottom = 0;
+//        int right = 0;
+//        int top = Integer.MAX_VALUE;
+//        int left = Integer.MAX_VALUE;
+//
+//        ArrayList<ArcView> arcsToPaste = new ArrayList();
+//        ArrayList ptaToPaste = new ArrayList();
+//
+//        for (AbstractPetriNetViewComponent pn : toCopy) {
+//            if (pn.isCopyPasteable()) {
+//                if (pn instanceof ArcView) {
+//                    arcsToPaste.add((ArcView) pn.copy());
+//                    if (pn instanceof NormalArcView) {
+//                        if (((NormalArcView) pn).hasInvisibleInverse()) {
+//                            arcsToPaste.add(((NormalArcView) pn).getInverse().copy());
+//                        }
+//                    }
+//                } else {
+//                    if (pn.getX() < left) {
+//                        left = pn.getX();
+//                    }
+//                    if (pn.getX() + pn.getWidth() > right) {
+//                        right = pn.getX() + pn.getWidth();
+//                    }
+//                    if (pn.getY() < top) {
+//                        top = pn.getY();
+//                    }
+//                    if (pn.getY() + pn.getHeight() > bottom) {
+//                        bottom = pn.getY() + pn.getHeight();
+//                    }
+//                    ptaToPaste.add(pn.copy());
+//                }
+//            }
+//        }
+//
+//        if (!ptaToPaste.isEmpty()) {
+//            objectsToPaste.clear();
+//            pasteRectangle.setRect(left, top, right - left, bottom - top);
+//            origin.setLocation(ZoomController.getUnzoomedValue(left, zoom),
+//                    ZoomController.getUnzoomedValue(top, zoom));
+//            objectsToPaste.add(ptaToPaste);
+//            objectsToPaste.add(arcsToPaste);
+//        }
     }
 
 
@@ -136,134 +136,134 @@ public class CopyPasteManager
 
 
     private void doPaste(PetriNetTab view) {
-        ArrayList<HistoryItem> undo = new ArrayList();
-
-        pasteInProgress = false;
-        view.remove(this);
-
-        double despX = Grid.getModifiedX(
-                ZoomController.getUnzoomedValue(pasteRectangle.getX(), zoom) - origin.getX());
-        double despY = Grid.getModifiedY(
-                ZoomController.getUnzoomedValue(pasteRectangle.getY(), zoom) - origin.getY());
-
-        if (objectsToPaste.isEmpty()) {
-            return;
-        }
-
-        //TODO: DONT USE STATIC METHOD, PASS IT IN
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        PetriNetController petriNetController = controller.getActivePetriNetController();
-        HistoryManager historyManager = petriNetController.getHistoryManager();
-        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-
-        //First, we deal with Places, Transitions & Annotations
-        ArrayList<PetriNetViewComponent> ptaToPaste = objectsToPaste.get(0);
-        for (PetriNetViewComponent aPtaToPaste : ptaToPaste) {
-            PetriNetViewComponent pn = aPtaToPaste.paste(despX, despY, _sourceView != view, model);
-
-            if (pn != null) {
-                if ((pn instanceof TransitionView) && (_sourceView != view)) {
-                    RateParameter rateParameter =
-                            ((TransitionView) pn).getRateParameter();
-                    if (rateParameter != null) {
-                        ((TransitionView) pn).clearRateParameter();
-                    }
-                }
-                model.addPetriNetObject(pn);
-                view.addNewPetriNetObject(pn);
-                view.updatePreferredSize();
-                //TODO: ADD THIS BACK IN
-//                pn.select();
-//	               undo.add(new AddPetriNetObject(pn, view, model));
-            }
-        }
-
-        //Now, we deal with Arcs
-        ArrayList<ArcView> arcsToPaste = objectsToPaste.get(1);
-
-        for (ArcView anArcsToPaste : arcsToPaste) {
-            if (!(anArcsToPaste instanceof ArcView)) {
-                break;
-            }
-            ArcView arcView = (ArcView) anArcsToPaste.paste(
-                    despX, despY, _sourceView != view, model);
-
-            if (arcView != null) {
-                model.addPetriNetObject(arcView);
-                view.addNewPetriNetObject(arcView);
-                view.updatePreferredSize();
-                arcView.updateArcPosition();
-                //TODO: ADD THIS BACK IN
-//                arcView.select();
-//	               undo.add(new AddPetriNetObject(arcView, view, model));
-            }
-        }
-
-        // Now, we find inverse arcs
-        ptaToPaste = objectsToPaste.get(0);
-        for (PetriNetViewComponent pno : ptaToPaste) {
-            if ((pno instanceof ConnectableView)) {
-                ConnectableView pt =
-                        ((ConnectableView) pno).getOriginal().getLastCopy();
-
-                Iterator<ArcView> pnoConnectedFromIterator =
-                        pt.getConnectFromIterator();
-                while (pnoConnectedFromIterator.hasNext()) {
-                    ArcView arc1;
-                    try {
-                        arc1 = pnoConnectedFromIterator.next();
-                    } catch (java.util.ConcurrentModificationException cme) {
-                        System.out.println("cme:" + cme);
-                        break;
-                    }
-                    Iterator<ArcView> pnoConnectedToIterator =
-                            pt.getConnectToIterator();
-                    while (pnoConnectedToIterator.hasNext()) {
-                        ArcView arc2 = pnoConnectedToIterator.next();
-
-                        if (arc2 instanceof NormalArcView) {
-                            if (((NormalArcView) arc2).hasInverse()) {
-                                break;
-                            }
-                        }
-                        if (arc1.getSource().equals(arc2.getTarget()) &&
-                                arc1.getTarget().equals(arc2.getSource())) {
-                            if (((NormalArcView) arc1).isJoined()) {
-                                ((NormalArcView) arc1).setInverse((NormalArcView) arc2, true);
-
-                            } else if (((NormalArcView) arc2).isJoined()) {
-                                ((NormalArcView) arc2).setInverse((NormalArcView) arc1, true);
-
-                            } else {
-                                ((NormalArcView) arc1).setInverse((NormalArcView) arc2, false);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Clear copies
-        ptaToPaste = objectsToPaste.get(0);
-        for (PetriNetViewComponent pno : ptaToPaste) {
-            if (pno instanceof ConnectableView) {
-                if (((ConnectableView) pno).getOriginal() != null) {
-                    //the Place/Transition is a copy of another Object, so we have to
-                    // nullify the reference to the original Object
-                    ((ConnectableView) pno).getOriginal().resetLastCopy();
-                } else {
-                    ((ConnectableView) pno).resetLastCopy();
-                }
-            }
-        }
-
-        // Add undo edits
-        historyManager.newEdit(); // new "transaction""
-
-        Iterator<HistoryItem> undoIterator = undo.iterator();
-        while (undoIterator.hasNext()) {
-            historyManager.addEdit(undoIterator.next());
-        }
+//        ArrayList<HistoryItem> undo = new ArrayList();
+//
+//        pasteInProgress = false;
+//        view.remove(this);
+//
+//        double despX = Grid.getModifiedX(
+//                ZoomController.getUnzoomedValue(pasteRectangle.getX(), zoom) - origin.getX());
+//        double despY = Grid.getModifiedY(
+//                ZoomController.getUnzoomedValue(pasteRectangle.getY(), zoom) - origin.getY());
+//
+//        if (objectsToPaste.isEmpty()) {
+//            return;
+//        }
+//
+//        //TODO: DONT USE STATIC METHOD, PASS IT IN
+//        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+//        PetriNetController petriNetController = controller.getActivePetriNetController();
+//        HistoryManager historyManager = petriNetController.getHistoryManager();
+//        PetriNetView model = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+//
+//        //First, we deal with Places, Transitions & Annotations
+//        ArrayList<PetriNetViewComponent> ptaToPaste = objectsToPaste.get(0);
+//        for (AbstractPetriNetViewComponent aPtaToPaste : ptaToPaste) {
+//            AbstractPetriNetViewComponent pn = aPtaToPaste.paste(despX, despY, _sourceView != view, model);
+//
+//            if (pn != null) {
+//                if ((pn instanceof TransitionView) && (_sourceView != view)) {
+//                    RateParameter rateParameter =
+//                            ((TransitionView) pn).getRateParameter();
+//                    if (rateParameter != null) {
+//                        ((TransitionView) pn).clearRateParameter();
+//                    }
+//                }
+//                model.addPetriNetObject(pn);
+//                view.addNewPetriNetObject(pn);
+//                view.updatePreferredSize();
+//                //TODO: ADD THIS BACK IN
+////                pn.select();
+////	               undo.add(new AddPetriNetObject(pn, view, model));
+//            }
+//        }
+//
+//        //Now, we deal with Arcs
+//        ArrayList<ArcView> arcsToPaste = objectsToPaste.get(1);
+//
+//        for (ArcView anArcsToPaste : arcsToPaste) {
+//            if (!(anArcsToPaste instanceof ArcView)) {
+//                break;
+//            }
+//            ArcView arcView = (ArcView) anArcsToPaste.paste(
+//                    despX, despY, _sourceView != view, model);
+//
+//            if (arcView != null) {
+//                model.addPetriNetObject(arcView);
+//                view.addNewPetriNetObject(arcView);
+//                view.updatePreferredSize();
+//                arcView.updateArcPosition();
+//                //TODO: ADD THIS BACK IN
+////                arcView.select();
+////	               undo.add(new AddPetriNetObject(arcView, view, model));
+//            }
+//        }
+//
+//        // Now, we find inverse arcs
+//        ptaToPaste = objectsToPaste.get(0);
+//        for (PetriNetViewComponent pno : ptaToPaste) {
+//            if ((pno instanceof ConnectableView)) {
+//                ConnectableView pt =
+//                        ((ConnectableView) pno).getOriginal().getLastCopy();
+//
+//                Iterator<ArcView> pnoConnectedFromIterator =
+//                        pt.getConnectFromIterator();
+//                while (pnoConnectedFromIterator.hasNext()) {
+//                    ArcView arc1;
+//                    try {
+//                        arc1 = pnoConnectedFromIterator.next();
+//                    } catch (java.util.ConcurrentModificationException cme) {
+//                        System.out.println("cme:" + cme);
+//                        break;
+//                    }
+//                    Iterator<ArcView> pnoConnectedToIterator =
+//                            pt.getConnectToIterator();
+//                    while (pnoConnectedToIterator.hasNext()) {
+//                        ArcView arc2 = pnoConnectedToIterator.next();
+//
+//                        if (arc2 instanceof NormalArcView) {
+//                            if (((NormalArcView) arc2).hasInverse()) {
+//                                break;
+//                            }
+//                        }
+//                        if (arc1.getSource().equals(arc2.getTarget()) &&
+//                                arc1.getTarget().equals(arc2.getSource())) {
+//                            if (((NormalArcView) arc1).isJoined()) {
+//                                ((NormalArcView) arc1).setInverse((NormalArcView) arc2, true);
+//
+//                            } else if (((NormalArcView) arc2).isJoined()) {
+//                                ((NormalArcView) arc2).setInverse((NormalArcView) arc1, true);
+//
+//                            } else {
+//                                ((NormalArcView) arc1).setInverse((NormalArcView) arc2, false);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        // Clear copies
+//        ptaToPaste = objectsToPaste.get(0);
+//        for (PetriNetViewComponent pno : ptaToPaste) {
+//            if (pno instanceof ConnectableView) {
+//                if (((ConnectableView) pno).getOriginal() != null) {
+//                    //the Place/Transition is a copy of another Object, so we have to
+//                    // nullify the reference to the original Object
+//                    ((ConnectableView) pno).getOriginal().resetLastCopy();
+//                } else {
+//                    ((ConnectableView) pno).resetLastCopy();
+//                }
+//            }
+//        }
+//
+//        // Add undo edits
+//        historyManager.newEdit(); // new "transaction""
+//
+//        Iterator<HistoryItem> undoIterator = undo.iterator();
+//        while (undoIterator.hasNext()) {
+//            historyManager.addEdit(undoIterator.next());
+//        }
 
 //        view.zoom(); //
     }

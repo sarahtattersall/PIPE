@@ -23,7 +23,7 @@ public class ExprEvaluator {
 
         String lexpr = new String(expr.replaceAll("\\s", ""));
 
-        for (Place<?> place : petriNet.getPlaces()) {
+        for (Place place : petriNet.getPlaces()) {
             lexpr = findAndReplaceCapacity(lexpr, place);
             String name = getPlaceNameRepresentation(place);
             if (lexpr.toLowerCase().contains(name.toLowerCase())) {
@@ -53,7 +53,7 @@ public class ExprEvaluator {
         String lexpr = new String(expr.replaceAll("\\s", ""));
 
         Token token = petriNet.getToken(tokenId);
-        for (Place<?> place : petriNet.getPlaces()) {
+        for (Place place : petriNet.getPlaces()) {
             lexpr = findAndReplaceCapacity(lexpr, place);
             String name = getPlaceNameRepresentation(place);
 
@@ -98,7 +98,7 @@ public class ExprEvaluator {
      * @param place
      * @return name of place in format by #(<name>)
      */
-    private String getPlaceNameRepresentation(final Place<?> place) {
+    private String getPlaceNameRepresentation(final Place place) {
         String name = place.getName().replaceAll("\\s", "");
         name = ("#(" + name + ")");
         return name;
@@ -112,7 +112,7 @@ public class ExprEvaluator {
      * @return String with place name replaced by it's capacity. That is
      *         cap(<name>) would be replaced by cap(<capacity>) = cap(10)
      */
-    private String findAndReplaceCapacity(String expr, Place<?> place) {
+    private String findAndReplaceCapacity(String expr, Place place) {
         String capacityWithPlaceName =
                 "cap(" + place.getName().replaceAll("\\s", "") + ")";
         if (expr.toLowerCase().contains(capacityWithPlaceName.toLowerCase())) {

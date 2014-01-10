@@ -1,7 +1,7 @@
 package pipe.gui.widgets;
 
 import pipe.utilities.math.Matrix;
-import pipe.views.PetriNetViewComponent;
+import pipe.views.AbstractPetriNetViewComponent;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -238,7 +238,7 @@ public class ResultsHTMLPane
    }
    
    
-   public static String makeTable(Matrix matrix, PetriNetViewComponent[] name,
+   public static String makeTable(Matrix matrix, AbstractPetriNetViewComponent[] name,
            boolean showLines, boolean doShading, boolean columnHeaders,
            boolean rowHeaders) {
       

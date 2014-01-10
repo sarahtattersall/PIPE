@@ -26,7 +26,7 @@ public class ArcViewBuilderTest {
         Place source = new Place("source", "source");
         Transition transition = new Transition("id", "name");
 
-        ArcStrategy mockStrategy = mock(ArcStrategy.class);
+        ArcStrategy<Place, Transition> mockStrategy = mock(ArcStrategy.class);
         arc = new Arc<Place, Transition>(source, transition, new HashMap<Token, String>(), mockStrategy);
         arc.setId("id");
         mockController = mock(PetriNetController.class);

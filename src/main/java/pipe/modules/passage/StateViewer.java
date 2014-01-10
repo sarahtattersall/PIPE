@@ -57,8 +57,8 @@ public class StateViewer extends JLayeredPane implements Constants
 	
 	void insertUI(Object diffObj)
 	{
-		if (diffObj!=null  &&  diffObj instanceof PetriNetViewComponent)
-			add((PetriNetViewComponent)diffObj);
+		if (diffObj!=null  &&  diffObj instanceof AbstractPetriNetViewComponent)
+			add((AbstractPetriNetViewComponent)diffObj);
 		
 		repaint();
 	}
@@ -81,7 +81,7 @@ public class StateViewer extends JLayeredPane implements Constants
 	}
 
 	
-	void add(PetriNetViewComponent currentObj)
+	void add(AbstractPetriNetViewComponent currentObj)
 	{
 		if (currentObj instanceof PlaceView)
 		{

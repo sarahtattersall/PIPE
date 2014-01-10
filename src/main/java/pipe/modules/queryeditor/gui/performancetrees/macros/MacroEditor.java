@@ -1242,7 +1242,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 					return;
 
 				// This is the important bit! When the mode is set, the
-				// MouseHandler
+				// PetriNetMouseHandler
 				// in QueryView is going to check for it and the relevant method
 				// invocations will take place there
 				MacroManager.setMode(this.typeID);

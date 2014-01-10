@@ -17,7 +17,7 @@ public class IncidenceMatrix {
     final Map<Connection, Integer> matrixValues = new HashMap<Connection, Integer>();
 
 
-    public void put(Place<?> place, Transition transition, int value) {
+    public void put(Place place, Transition transition, int value) {
         Connection connection = new Connection(place, transition);
         matrixValues.put(connection, value);
 
@@ -31,7 +31,7 @@ public class IncidenceMatrix {
      * @param transition
      * @return place transition weight
      */
-    public int get(Place<?> place, Transition transition) {
+    public int get(Place place, Transition transition) {
         Connection connection = new Connection(place, transition);
         return matrixValues.containsKey(connection) ? matrixValues.get(connection) : 0;
     }
@@ -41,7 +41,7 @@ public class IncidenceMatrix {
      * A connection is a pair of Place and Transition and represents x and y in a matrix
      */
     private class Connection {
-        final Place<?> place;
+        final Place place;
         final Transition transition;
 
         @Override
@@ -64,7 +64,7 @@ public class IncidenceMatrix {
             return result;
         }
 
-        private Connection(Place<?> place, Transition transition) {
+        private Connection(Place place, Transition transition) {
             this.place = place;
             this.transition = transition;
         }

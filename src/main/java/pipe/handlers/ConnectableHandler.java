@@ -4,13 +4,8 @@ import pipe.actions.ShowHideInfoAction;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
-import pipe.historyActions.HistoryManager;
 import pipe.models.PipeApplicationModel;
 import pipe.models.component.Connectable;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
 import pipe.views.*;
 
 import javax.swing.*;
@@ -20,7 +15,7 @@ import java.awt.event.MouseEvent;
 /**
  * ConnectableHandler handles mouse clicks on Connectables.
  */
-public class ConnectableHandler<T extends Connectable<?,?>, V extends ConnectableView<T>>
+public class ConnectableHandler<T extends Connectable, V extends ConnectableView<T>>
         extends PetriNetObjectHandler<T, V> {
 
 

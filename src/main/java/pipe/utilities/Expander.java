@@ -111,8 +111,9 @@ public class Expander
             //TODO: WORK OUT HOW TO GET CONTROLLER
             TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput,functionalRate, priority), transitionView.getPetriNetController());
             _newTransitionViews.add(newTransitionView);
-            analyseArcs(transitionView, newTransitionView, transitionView.outboundArcs());
-            analyseArcs(transitionView, newTransitionView, transitionView.inboundArcs());
+            //TODO: REIMPLEMENT
+//            analyseArcs(transitionView, newTransitionView, transitionView.outboundArcs());
+//            analyseArcs(transitionView, newTransitionView, transitionView.inboundArcs());
         }
 
     }
@@ -259,7 +260,7 @@ public class Expander
             if(it.hasNext())
             {
                 ArcView a = (ArcView) it.next();
-                TransitionView t = (TransitionView) a.getTarget();
+//                TransitionView t = (TransitionView) a.getTarget();
 //                _newPlaceView.setPositionX(t.getPositionX());
             }
         }

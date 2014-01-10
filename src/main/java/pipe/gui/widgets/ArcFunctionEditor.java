@@ -1,7 +1,6 @@
 package pipe.gui.widgets;
 
 import parser.ExprEvaluator;
-import parser.MarkingDividedByNumberException;
 import pipe.controllers.ArcController;
 import pipe.models.PetriNet;
 import pipe.models.component.Place;
@@ -45,7 +44,7 @@ public class ArcFunctionEditor extends JPanel {
                 javax.swing.BorderFactory.createTitledBorder("Places input:"));
 
         List<String> placename = new LinkedList<String>();
-        for (Place<?> place : petriNet.getPlaces()) {
+        for (Place place : petriNet.getPlaces()) {
             placename.add(place.getName());
         }
 

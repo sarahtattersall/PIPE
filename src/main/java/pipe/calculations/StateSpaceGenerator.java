@@ -762,63 +762,64 @@ public class StateSpaceGenerator {
 	
 	
 
+    //TODO: REIMPLEMENT?
 	public static void setTokenAfterFiringTransition(int transitionId) {
 
-		PetriNetView dataLayer = ApplicationSettings.getApplicationView()
-				.getCurrentPetriNetView();
-		Collection<TransitionView> trans = dataLayer.getTransitionsArrayList();
-        //TODO: Fix this
-		TransitionView tran = null; //trans.get(transitionId);
-		Iterator to = tran.getConnectToIterator();
-		Iterator from = tran.getConnectFromIterator();
-		if (to.hasNext()) {
-			ArcView arcTo = ((ArcView) to.next());
-			PlaceView source = ((PlaceView) arcTo.getSource());
-			if (dataLayer.isPlaceFunctionalRelated(source.getName())) {
-				List<MarkingView> weight = arcTo.getWeight();
-                List<MarkingView> sourceMarking = source
-						.getCurrentMarkingView();
-				for (int i = 0; i < weight.size(); i++) {
-					int current = sourceMarking.get(i).getCurrentMarking();
-					int change=0;
-					for(MarkingView w: weight){
-						if(w.getToken().getID().equals(sourceMarking.get(i).getToken().getID())){
-							change = w.getCurrentMarking();
-						}
-					}
-					//int newMarking = current - weight.get(i).getCurrentMarking();
-					int newMarking = current - change;
-					sourceMarking.get(i).setCurrentMarking(newMarking);
-
-				}
-			}
-
-			// arcTo.updateArcWeight();
-		}
-		if (from.hasNext()) {
-			ArcView arcFrom = ((ArcView) from.next());
-			PlaceView targetPlace = ((PlaceView) arcFrom.getTarget());
-
-			if (dataLayer.isPlaceFunctionalRelated(targetPlace.getName())) {
-                List<MarkingView> weight = arcFrom.getWeight();
-                List<MarkingView> sourceMarking = targetPlace
-						.getCurrentMarkingView();
-				for (int i = 0; i < weight.size(); i++) {
-					int current = sourceMarking.get(i).getCurrentMarking();
-					int change=0;
-					for(MarkingView w: weight){
-						if(w.getToken().getID().equals(sourceMarking.get(i).getToken().getID())){
-							change = w.getCurrentMarking();
-						}
-					}
-				//	int newMarking = current + weight.get(i).getCurrentMarking();
-					int newMarking = current - change;
-					sourceMarking.get(i).setCurrentMarking(newMarking);
-				}
-			}
-
-			// arcFrom.updateArcWeight();
-		}
+//		PetriNetView dataLayer = ApplicationSettings.getApplicationView()
+//				.getCurrentPetriNetView();
+//		Collection<TransitionView> trans = dataLayer.getTransitionsArrayList();
+//        //TODO: Fix this
+//		TransitionView tran = null; //trans.get(transitionId);
+//		Iterator to = tran.getConnectToIterator();
+//		Iterator from = tran.getConnectFromIterator();
+//		if (to.hasNext()) {
+//			ArcView arcTo = ((ArcView) to.next());
+//			PlaceView source = ((PlaceView) arcTo.getSource());
+//			if (dataLayer.isPlaceFunctionalRelated(source.getName())) {
+//				List<MarkingView> weight = arcTo.getWeight();
+//                List<MarkingView> sourceMarking = source
+//						.getCurrentMarkingView();
+//				for (int i = 0; i < weight.size(); i++) {
+//					int current = sourceMarking.get(i).getCurrentMarking();
+//					int change=0;
+//					for(MarkingView w: weight){
+//						if(w.getToken().getID().equals(sourceMarking.get(i).getToken().getID())){
+//							change = w.getCurrentMarking();
+//						}
+//					}
+//					//int newMarking = current - weight.get(i).getCurrentMarking();
+//					int newMarking = current - change;
+//					sourceMarking.get(i).setCurrentMarking(newMarking);
+//
+//				}
+//			}
+//
+//			// arcTo.updateArcWeight();
+//		}
+//		if (from.hasNext()) {
+//			ArcView arcFrom = ((ArcView) from.next());
+//			PlaceView targetPlace = ((PlaceView) arcFrom.getTarget());
+//
+//			if (dataLayer.isPlaceFunctionalRelated(targetPlace.getName())) {
+//                List<MarkingView> weight = arcFrom.getWeight();
+//                List<MarkingView> sourceMarking = targetPlace
+//						.getCurrentMarkingView();
+//				for (int i = 0; i < weight.size(); i++) {
+//					int current = sourceMarking.get(i).getCurrentMarking();
+//					int change=0;
+//					for(MarkingView w: weight){
+//						if(w.getToken().getID().equals(sourceMarking.get(i).getToken().getID())){
+//							change = w.getCurrentMarking();
+//						}
+//					}
+//				//	int newMarking = current + weight.get(i).getCurrentMarking();
+//					int newMarking = current - change;
+//					sourceMarking.get(i).setCurrentMarking(newMarking);
+//				}
+//			}
+//
+//			// arcFrom.updateArcWeight();
+//		}
 	}
 
 	/**

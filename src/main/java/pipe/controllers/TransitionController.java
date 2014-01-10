@@ -1,16 +1,13 @@
 package pipe.controllers;
 
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import pipe.controllers.interfaces.IController;
 import pipe.historyActions.*;
 import pipe.models.component.Arc;
 import pipe.models.component.Place;
 import pipe.models.component.Transition;
-import pipe.views.TransitionView;
 import pipe.views.viewComponents.RateParameter;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 public class TransitionController extends AbstractPetriNetComponentController<Transition>
 {
@@ -44,8 +41,10 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
         return component.getPriority();
     }
 
+    //TODO: GET CURRENT PETRINET
     public Collection<Arc<Place, Transition>> inboundArcs() {
-        return component.inboundArcs();
+//        return component.inboundArcs();
+        return new LinkedList<Arc<Place, Transition>>();
     }
 
     /**

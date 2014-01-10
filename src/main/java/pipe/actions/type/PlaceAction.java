@@ -38,9 +38,11 @@ public class PlaceAction extends TypeAction {
 
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
+        if (event.getClickCount() > 0) {
         Place place = newPlace(event.getPoint(), petriNetController);
         PetriNet net = petriNetController.getPetriNet();
         petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(place, net));
+        }
 
     }
 

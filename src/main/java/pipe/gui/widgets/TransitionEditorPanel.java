@@ -6,7 +6,6 @@ import pipe.gui.ApplicationSettings;
 import pipe.models.component.Arc;
 import pipe.models.component.Place;
 import pipe.models.component.Transition;
-import pipe.views.ArcView;
 import pipe.views.PetriNetView;
 import pipe.views.viewComponents.RateParameter;
 
@@ -14,7 +13,6 @@ import javax.swing.*;
 import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * @author pere

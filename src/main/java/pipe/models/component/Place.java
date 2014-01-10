@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @param <T> the connectable that this Place connects to
  */
-public class Place<T extends Connectable<Place<T>, T>> extends Connectable<T, Place<T>> implements Serializable
+public class Place extends Connectable implements Serializable
 {
 
     /**

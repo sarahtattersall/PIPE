@@ -2,10 +2,9 @@ package pipe.controllers;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
-import pipe.actions.ActionEnum;
-import pipe.actions.GuiAction;
+import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.*;
-import pipe.handlers.MouseHandler;
+import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
@@ -131,7 +130,7 @@ public class PipeApplicationController {
         PetriNetTab petriNetTab = new PetriNetTab(view, controller, animationHistoryView);
         netControllers.put(petriNetTab, controller);
 
-        MouseHandler handler = new MouseHandler(new SwingMouseUtilities(), controller, net, petriNetTab, view);
+        PetriNetMouseHandler handler = new PetriNetMouseHandler(new SwingMouseUtilities(), controller, net, petriNetTab, view);
         petriNetTab.addMouseListener(handler);
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);

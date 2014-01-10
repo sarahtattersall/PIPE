@@ -1,9 +1,7 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.models.component.Connectable;
 import pipe.models.interfaces.IObserver;
@@ -19,7 +17,7 @@ import java.util.LinkedList;
  *
  * @param <T> Connectable model
  */
-public abstract class ConnectableView<T extends Connectable<?,?>> extends PetriNetViewComponent<T> implements Cloneable, IObserver, Serializable {
+public abstract class ConnectableView<T extends Connectable> extends AbstractPetriNetViewComponent<T> implements Cloneable, IObserver, Serializable {
 //    private ConnectableView _lastCopy = null;
 //    private ConnectableView _original = null;
     private int _copyNumber = 0;
@@ -94,23 +92,23 @@ public abstract class ConnectableView<T extends Connectable<?,?>> extends PetriN
         setBounds(bounds);
     }
 
-    public void addInbound(ArcView<?,?> newArcView) {
+    public void addInbound(ArcView newArcView) {
 //        model.addInbound(newArcView);
     }
 
-    public void addOutbound(ArcView<?,?> newArcView) {
+    public void addOutbound(ArcView newArcView) {
 //        model.addOutbound(newArcView);
     }
 
-    public void addInboundOrOutbound(ArcView<?,?> newArcView) {
+    public void addInboundOrOutbound(ArcView newArcView) {
 //        model.addInboundOrOutbound(newArcView);
     }
 
-    public void removeFromArc(ArcView<?,?> oldArcView) {
+    public void removeFromArc(ArcView oldArcView) {
 //        model.removeFromArcs(oldArcView);
     }
 
-    public void removeToArc(ArcView<?,?> oldArcView) {
+    public void removeToArc(ArcView oldArcView) {
 //        model.removeToArc(oldArcView);
     }
 
@@ -119,12 +117,12 @@ public abstract class ConnectableView<T extends Connectable<?,?>> extends PetriN
 //        updateArcs(model.inboundArcs());
     }
 
-    public LinkedList<ArcView<?,?>> outboundArcs() {
+    public LinkedList<ArcView> outboundArcs() {
 //        return model.outboundArcs();
         return null;
     }
 
-    public LinkedList<ArcView<?,?>> inboundArcs() {
+    public LinkedList<ArcView> inboundArcs() {
 //        return model.inboundArcs();
         return null;
     }
@@ -180,11 +178,13 @@ public abstract class ConnectableView<T extends Connectable<?,?>> extends PetriN
     }
 
     public Iterator<?> getConnectFromIterator() {
-        return model.outboundArcs().iterator();
+        return null;
+//        return model.outboundArcs().iterator();
     }
 
     public Iterator<?> getConnectToIterator() {
-        return model.inboundArcs().iterator();
+        return null;
+//        return model.inboundArcs().iterator();
     }
 
     //TODO: DELETE
@@ -247,8 +247,8 @@ public abstract class ConnectableView<T extends Connectable<?,?>> extends PetriN
     }
 
     @Override
-    public PetriNetViewComponent<?> clone() {
-        PetriNetViewComponent<?> pnCopy = super.clone();
+    public AbstractPetriNetViewComponent<?> clone() {
+        AbstractPetriNetViewComponent<?> pnCopy = super.clone();
         pnCopy.setNameLabel((NameLabel) _nameLabel.clone());
         return pnCopy;
     }

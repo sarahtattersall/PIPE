@@ -362,7 +362,7 @@ class Unfolder
             if(it.hasNext())
             {
                 ArcView a = (ArcView) it.next();
-                TransitionView t = (TransitionView) a.getTarget();
+//                TransitionView t = (TransitionView) a.getTarget();
 //                _newPlaceView.setPositionX(t.getPositionX());
             }
         }

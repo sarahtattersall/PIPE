@@ -16,7 +16,6 @@ import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.PetriNetReader;
 import pipe.petrinet.reader.creator.*;
 import pipe.utilities.Copier;
-import pipe.utilities.math.RandomNumberGenerator;
 import pipe.utilities.transformers.PNMLTransformer;
 import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationNote;
@@ -163,7 +162,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
     }
 
     //TODO: need to clone values!
-    private static <K extends PetriNetComponent, V extends PetriNetViewComponent> Map<K, V> deepCopy(Map<K, V> original) {
+    private static <K extends PetriNetComponent, V extends AbstractPetriNetViewComponent> Map<K, V> deepCopy(Map<K, V> original) {
         Map<K, V> result = new HashMap<K, V>();
         for (Map.Entry<K, V> entry : original.entrySet()) {
             result.put(entry.getKey(), entry.getValue());
@@ -505,7 +504,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
         }
     }
 
-    public void addPetriNetObject(PetriNetViewComponent pn) {
+    public void addPetriNetObject(AbstractPetriNetViewComponent pn) {
         if (pn instanceof NormalArcView) {
             addArcToArcsMap((NormalArcView) pn);
             addArc((NormalArcView) pn);
@@ -966,7 +965,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
      * Removes a component view if it is no longer in components.
      * That is if it has been deleted from the model.
      */
-    private <M extends PetriNetComponent, V extends PetriNetViewComponent>
+    private <M extends PetriNetComponent, V extends AbstractPetriNetViewComponent>
     void removeNoLongerThereComponents(Map<M, V> componentsToViews, Collection<M> components) {
         final Iterator<Map.Entry<M, V>> itr = componentsToViews.entrySet().iterator();
         while (itr.hasNext()) {
@@ -1150,7 +1149,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                 if (_arcViews != null && _arcViews.size() > 0) {
                     for (ArcView _arcView : _arcViews.values()) {
                         currentArcView = (NormalArcView) _arcView;
-                        if (currentArcView.getSource() == currentTrans) {
+                        if (currentArcView.getSource().equals(currentTrans)) {
                             outputArcsArray.add(currentArcView);
                             if (currentArcView.isTagged()) {
                                 taggedNet = true;
@@ -1163,7 +1162,7 @@ public class PetriNetView extends Observable implements Cloneable, IObserver, Se
                                     validStructure = false;
                                 }
                             }
-                        } else if (currentArcView.getTarget() == currentTrans) {
+                        } else if (currentArcView.getTarget().equals(currentTrans)) {
                             inputArcsArray.add(currentArcView);
                             if (currentArcView.isTagged()) {
                                 taggedNet = true;

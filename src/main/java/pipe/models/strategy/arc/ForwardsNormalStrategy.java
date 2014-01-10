@@ -7,7 +7,7 @@ import pipe.utilities.math.IncidenceMatrix;
 /**
  * Forwards strategy is for Transitions -> Places
  */
-public class ForwardsNormalStrategy implements ArcStrategy<Transition, Place<Transition>> {
+public class ForwardsNormalStrategy implements ArcStrategy<Transition, Place> {
 
     private final PetriNet petriNet;
 
@@ -16,8 +16,8 @@ public class ForwardsNormalStrategy implements ArcStrategy<Transition, Place<Tra
     }
 
     @Override
-    public boolean canFire(Arc<Transition, Place<Transition>> arc) {
-        Place<Transition> place = arc.getTarget();
+    public boolean canFire(Arc<Transition, Place> arc) {
+        Place place = arc.getTarget();
         if (place.getCapacity() == 0) { // No capacity restrictions
             return true;
         }

@@ -2,7 +2,6 @@ package pipe.models.component;
 
 import parser.ExprEvaluator;
 import pipe.gui.Constants;
-import pipe.models.PetriNet;
 import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.views.viewComponents.RateParameter;
@@ -13,7 +12,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 
-public class Transition extends Connectable<Place<Transition>, Transition> implements Serializable
+public class Transition extends Connectable implements Serializable
 {
 
     @Pnml("priority")
@@ -251,41 +250,5 @@ public class Transition extends Connectable<Place<Transition>, Transition> imple
         return enabled;
     }
 
-    /**
-     * A Transition is enabled if all its input places are marked with at least one token
-     * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
-     *
-     * @param evaluator used to evaluate an arcs expression in the petrinet the
-     *                  transition belongs to.
-     * @return
-     */
-    public int getEnablingDegree(ExprEvaluator evaluator) {
 
-        int enablingDegree = Integer.MAX_VALUE;
-
-
-        for (Arc arc : inboundArcs()) {
-            Place place = (Place) arc.getSource();
-            Map<Token, String> arcWeights = arc.getTokenWeights();
-            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
-                Token arcToken = entry.getKey();
-                String arcTokenExpression = entry.getValue();
-
-                int placeTokenCount = place.getTokenCount(arcToken);
-                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
-
-                if (requiredTokenCount == 0) {
-                    enablingDegree = 0;
-                } else {
-                    //TODO: WHY DIVIDE?
-                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
-                    if (currentDegree < enablingDegree) {
-                        enablingDegree = currentDegree;
-                    }
-
-                }
-            }
-        }
-        return enablingDegree;
-    }
 }

@@ -15,6 +15,7 @@ import pipe.handlers.ConnectableHandler;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
+import pipe.models.PetriNet;
 import pipe.models.component.Arc;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
@@ -388,27 +389,27 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         //TODO: WORK OUT WHAT THIS DOES AND REMOVE DUPLICATED CODE BETWEEN THIS AND PLACE
         ArcView someArcView = null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-        if (someArcView != null) {
-            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
-                    _path.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-                if (someArcView.getTarget() != this) {
-                    someArcView.setTarget(this);
-                }
-                someArcView.updateArcPosition();
-                return true;
-            } else {
-                if (someArcView.getTarget() == this) {
-                    if (!ConnectableHandler.isMouseDown()) {
-                        someArcView.setTarget(null);
-                        removeArcCompareObject(someArcView);
-                        updateConnected();
-                    }
-                }
-                return false;
-            }
-        } else {
+//        if (someArcView != null) {
+//            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
+//                    _path.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
+//                if (someArcView.getTarget() != this) {
+//                    someArcView.setTarget(this);
+//                }
+//                someArcView.updateArcPosition();
+//                return true;
+//            } else {
+//                if (someArcView.getTarget() == this) {
+//                    if (!ConnectableHandler.isMouseDown()) {
+//                        someArcView.setTarget(null);
+//                        removeArcCompareObject(someArcView);
+//                        updateConnected();
+//                    }
+//                }
+//                return false;
+//            }
+//        } else {
             return _path.contains((int) unZoomedX, (int) unZoomedY);
-        }
+//        }
     }
 
     public void removeArcCompareObject(ArcView arcView) {
@@ -582,7 +583,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         }
 
         private boolean sourceOrTarget() {
-            return (_arcView.getSource() == _transitionView ? SOURCE : TARGET);
+            return (_arcView.getModel().getSource() instanceof Transition ? SOURCE : TARGET);
         }
 
     }
@@ -604,70 +605,70 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     private ArrayList<TransitionView> groupTransitionsValidation() {
-        if (!this.isSelected()) {
-            JOptionPane.showMessageDialog(null, "You can only choose this option on selected transitions",
-                    "Invalid selection", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
-        ArrayList<PetriNetViewComponent> pns = view.getPNObjects();
+//        if (!this.isSelected()) {
+//            JOptionPane.showMessageDialog(null, "You can only choose this option on selected transitions",
+//                    "Invalid selection", JOptionPane.ERROR_MESSAGE);
+//            return null;
+//        }
+//        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
+//        ArrayList<PetriNetViewComponent> pns = view.getPNObjects();
         ArrayList<TransitionView> transitionsToHide = new ArrayList<TransitionView>();
-
-        ArrayList<PlaceView> thisOutputPlaceViews = new ArrayList<PlaceView>();
-        for (ArcView tempArcView : outboundArcs()) {
-            thisOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
-        }
-
-        ArrayList<PlaceView> thisInputPlaceViews = new ArrayList<PlaceView>();
-        for (ArcView tempArcView : inboundArcs()) {
-            thisInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
-        }
-
-        ArrayList<PlaceView> currentOutputPlaceViews;
-        ArrayList<PlaceView> currentInputPlaceViews;
-
-        for (PetriNetViewComponent pn : pns) {
-            if (pn.isSelected()) {
-                //TODO: HOW TO DESELECT?
-//                pn.deselect();
-                if (pn instanceof TransitionView) {
-                    if (this != pn) {
-                        currentOutputPlaceViews = new ArrayList<PlaceView>();
-
-                        LinkedList<ArcView> outboundArcViews = ((TransitionView) pn).outboundArcs();
-                        for (ArcView tempArcView : outboundArcViews) {
-                            currentOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
-                        }
-
-                        if (!thisOutputPlaceViews.equals(currentOutputPlaceViews)) {
-                            showWarningDialog(
-                                    "In order to be grouped, selected transitions must have the same output places");
-                            return null;
-                        }
-
-                        currentInputPlaceViews = new ArrayList<PlaceView>();
-
-                        LinkedList<ArcView> inboundArcViews = ((TransitionView) pn).inboundArcs();
-                        for (ArcView tempArcView : inboundArcViews) {
-                            currentInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
-                        }
-
-                        if (!thisInputPlaceViews.equals(currentInputPlaceViews)) {
-                            showWarningDialog(
-                                    "In order to be grouped, selected transitions must have the same input places");
-                            return null;
-                        }
-                    }
-                    transitionsToHide.add(((TransitionView) pn));
-                }
-            }
-        }
-
-        if (transitionsToHide.size() < 2) {
-            JOptionPane.showMessageDialog(null, "Please select 2 or more transitions to group", "Invalid selection",
-                    JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
+//
+//        ArrayList<PlaceView> thisOutputPlaceViews = new ArrayList<PlaceView>();
+//        for (ArcView tempArcView : outboundArcs()) {
+//            thisOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
+//        }
+//
+//        ArrayList<PlaceView> thisInputPlaceViews = new ArrayList<PlaceView>();
+//        for (ArcView tempArcView : inboundArcs()) {
+//            thisInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
+//        }
+//
+//        ArrayList<PlaceView> currentOutputPlaceViews;
+//        ArrayList<PlaceView> currentInputPlaceViews;
+//
+//        for (PetriNetViewComponent pn : pns) {
+//            if (pn.isSelected()) {
+//                //TODO: HOW TO DESELECT?
+////                pn.deselect();
+//                if (pn instanceof TransitionView) {
+//                    if (this != pn) {
+//                        currentOutputPlaceViews = new ArrayList<PlaceView>();
+//
+//                        LinkedList<ArcView> outboundArcViews = ((TransitionView) pn).outboundArcs();
+//                        for (ArcView tempArcView : outboundArcViews) {
+//                            currentOutputPlaceViews.add((PlaceView) (tempArcView.getTarget()));
+//                        }
+//
+//                        if (!thisOutputPlaceViews.equals(currentOutputPlaceViews)) {
+//                            showWarningDialog(
+//                                    "In order to be grouped, selected transitions must have the same output places");
+//                            return null;
+//                        }
+//
+//                        currentInputPlaceViews = new ArrayList<PlaceView>();
+//
+//                        LinkedList<ArcView> inboundArcViews = ((TransitionView) pn).inboundArcs();
+//                        for (ArcView tempArcView : inboundArcViews) {
+//                            currentInputPlaceViews.add((PlaceView) (tempArcView.getSource()));
+//                        }
+//
+//                        if (!thisInputPlaceViews.equals(currentInputPlaceViews)) {
+//                            showWarningDialog(
+//                                    "In order to be grouped, selected transitions must have the same input places");
+//                            return null;
+//                        }
+//                    }
+//                    transitionsToHide.add(((TransitionView) pn));
+//                }
+//            }
+//        }
+//
+//        if (transitionsToHide.size() < 2) {
+//            JOptionPane.showMessageDialog(null, "Please select 2 or more transitions to group", "Invalid selection",
+//                    JOptionPane.ERROR_MESSAGE);
+//            return null;
+//        }
         return transitionsToHide;
     }
 
@@ -838,7 +839,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
     public double getRate() {
         if (isInfiniteServer()) {
-            return model.getEnablingDegree(new ExprEvaluator(petriNetController.getPetriNet()));
+            PetriNet petriNet = petriNetController.getPetriNet();
+            return petriNet.getEnablingDegree(model);
         }
 
         if (model.getRateExpr() == null) {

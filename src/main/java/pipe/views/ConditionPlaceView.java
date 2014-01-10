@@ -92,7 +92,7 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
         return place.contains((int) unZoomedX, (int) unZoomedY);
     }
 
-    public PetriNetViewComponent clone() {
+    public AbstractPetriNetViewComponent clone() {
         return super.clone();
     }
 
@@ -142,7 +142,7 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
         return null;
     }
 
-    public PetriNetViewComponent paste(double despX, double despY, boolean notInTheSameView, PetriNetView model) {
+    public AbstractPetriNetViewComponent paste(double despX, double despY, boolean notInTheSameView, PetriNetView model) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -140,6 +140,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
     }
 
+    @Override
     public PlaceView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
         PlaceView copy =
                 new PlaceView((double) Grid.getModifiedX(x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2),
@@ -164,6 +165,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return copy;
     }
 
+    @Override
     public PlaceView copy() {
         PlaceView copy = new PlaceView((double) ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
                 (double) ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
@@ -181,6 +183,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
      *
      * @param canvas The Graphics object onto which the Place is drawn.
      */
+    @Override
     public void paintComponent(Graphics canvas) {
         super.paintComponent(canvas);
         Graphics2D canvas2D = (Graphics2D) canvas;
@@ -375,35 +378,37 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return ZoomController.getZoomedValue(model.getWidth(), _zoomPercentage);
     }
 
+    @Override
     public boolean contains(int x, int y) {
         double unZoomedX = ZoomController.getUnzoomedValue(x - getComponentDrawOffset(), _zoomPercentage);
         double unZoomedY = ZoomController.getUnzoomedValue(y - getComponentDrawOffset(), _zoomPercentage);
 
         //TODO: WORK OUT WHAT THIS DOES
         ArcView someArcView = null;//ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
-            if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
-                    place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-                // assume we are only snapping the target...
-                if (someArcView.getTarget() != this) {
-                    someArcView.setTarget(this);
-                }
-                someArcView.updateArcPosition();
-                return true;
-            } else {
-                if (someArcView.getTarget() == this) {
-                    if (!ConnectableHandler.isMouseDown()) {
-                        someArcView.setTarget(null);
-                        updateConnected();
-                    }
-                }
-                return false;
-            }
-        } else {
+//        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
+//            if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
+//                    place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
+//                // assume we are only snapping the target...
+//                if (someArcView.getTarget() != this) {
+//                    someArcView.setTarget(this);
+//                }
+//                someArcView.updateArcPosition();
+//                return true;
+//            } else {
+//                if (someArcView.getTarget() == this) {
+//                    if (!ConnectableHandler.isMouseDown()) {
+//                        someArcView.setTarget(null);
+//                        updateConnected();
+//                    }
+//                }
+//                return false;
+//            }
+//        } else {
             return place.contains((int) unZoomedX, (int) unZoomedY);
-        }
+//        }
     }
 
+    @Override
     public void toggleAttributesVisible() {
         _attributesVisible = !_attributesVisible;
         update();
@@ -413,11 +418,13 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return model.getCapacity() > 0;
     }
 
+    @Override
     public void addedToGui() {
         super.addedToGui();
         update();
     }
 
+    @Override
     public void showEditor() {
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
@@ -441,6 +448,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         guiDialog.setVisible(true);
     }
 
+    @Override
     public void update() {
         if (_attributesVisible) {
             _nameLabel.setText("\nk=" + (model.getCapacity() > 0 ? model.getCapacity() : "\u221E"));
@@ -456,6 +464,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         repaint();
     }
 
+    @Override
     public void delete() {
         super.delete();
         //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());

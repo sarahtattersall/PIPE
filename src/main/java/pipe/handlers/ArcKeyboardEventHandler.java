@@ -17,11 +17,11 @@ import java.awt.event.KeyEvent;
 public class ArcKeyboardEventHandler
         extends KeyAdapter {
    
-   private final ArcView<?,?> _arcViewBeingDrawn;
+   private final ArcView _arcViewBeingDrawn;
     private final PetriNetController petriNetController;
    
    
-   public ArcKeyboardEventHandler(ArcView<?,?> anArcView, PetriNetController controller) {
+   public ArcKeyboardEventHandler(ArcView anArcView, PetriNetController controller) {
       _arcViewBeingDrawn = anArcView;
        petriNetController = controller;
    }

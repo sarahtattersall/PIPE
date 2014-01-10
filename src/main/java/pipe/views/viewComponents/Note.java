@@ -6,7 +6,7 @@ import pipe.gui.Translatable;
 import pipe.gui.ZoomController;
 import pipe.historyActions.AnnotationBorder;
 import pipe.historyActions.HistoryItem;
-import pipe.views.PetriNetViewComponent;
+import pipe.views.AbstractPetriNetViewComponent;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
@@ -18,7 +18,7 @@ import java.awt.geom.RectangularShape;
  * This abstract class is the base class for AnnotationNote class and for
  * Parameter class
  */
-public abstract class Note extends PetriNetViewComponent implements Translatable {
+public abstract class Note extends AbstractPetriNetViewComponent implements Translatable {
 
     final JTextArea note = new JTextArea();
     boolean drawBorder = true;

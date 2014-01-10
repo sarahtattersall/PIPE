@@ -14,7 +14,7 @@ public class AnnotationAction extends TypeAction {
     }
 
     @Override
-    public <S extends Connectable<T, S>, T extends Connectable<S, T>> void doConnectableAction(Connectable<S,T> connectable, PetriNetController petriNetController) {
+    public void doConnectableAction(Connectable connectable, PetriNetController petriNetController) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

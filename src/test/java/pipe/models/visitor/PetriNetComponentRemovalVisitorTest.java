@@ -28,7 +28,7 @@ public class PetriNetComponentRemovalVisitorTest {
         Place place = new Place("","");
         Transition transition = new Transition("","");
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy strategy = mock(ArcStrategy.class);
+        ArcStrategy<Place, Transition> strategy = mock(ArcStrategy.class);
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, strategy);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
@@ -41,32 +41,12 @@ public class PetriNetComponentRemovalVisitorTest {
         verify(mockNet).removePlace(place);
     }
 
-    @Test
-    public void deletesPlaceOutboundArcs() {
-        Place place = new Place("","");
-        Arc<Place, Transition> arc = mock(Arc.class);
-        place.addOutbound(arc);
-
-        place.accept(visitor);
-        verify(mockNet).removeArc(arc);
-    }
 
     @Test
     public void testDeletesTransition() {
         Transition transition = new Transition("","");
         transition.accept(visitor);
         verify(mockNet).removeTransition(transition);
-    }
-
-
-    @Test
-    public void deletesTransitionOutboundArcs() {
-        Transition transition = new Transition("","");
-        Arc<Transition, Place> arc = mock(Arc.class);
-        transition.addOutbound(arc);
-
-        transition.accept(visitor);
-        verify(mockNet).removeArc(arc);
     }
 
     @Test

@@ -10,14 +10,14 @@ import pipe.actions.zoom.ZoomInAction;
 import pipe.actions.zoom.ZoomOutAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.controllers.arcCreator.InhibitorCreator;
+import pipe.controllers.arcCreator.NormalCreator;
 import pipe.gui.*;
 import pipe.gui.widgets.FileBrowser;
 import pipe.io.JarUtilities;
 import pipe.models.PipeApplicationModel;
 import pipe.models.component.Token;
-import pipe.models.visitor.connectable.arc.InhibitorCreatorVisitor;
 import pipe.models.visitor.connectable.arc.InhibitorSourceVisitor;
-import pipe.models.visitor.connectable.arc.NormalArcCreatorVisitor;
 import pipe.models.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.*;
@@ -28,6 +28,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Line2D;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
@@ -125,8 +126,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         petriNetTabs = new ArrayList<PetriNetTab>();
 
-        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreatorVisitor(applicationController));
-        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalArcCreatorVisitor(applicationController));
+        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController));
+        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController));
         zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", applicationController);
         zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
@@ -945,6 +946,24 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void setRedoActionEnabled(boolean flag) {
         redoAction.setEnabled(flag);
+    }
+
+    private static class Line extends JComponent {
+
+        @Override
+        public void paintComponent(Graphics g) {
+            System.out.println("PAINT LINE");
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            Line2D line = new Line2D.Double(10, 10, 100, 100);
+            g2d.draw(line);
+
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(300, 300);
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.Arc;
+import pipe.models.component.ArcType;
 import pipe.models.component.Connectable;
 import pipe.views.ArcView;
 import pipe.views.NormalArcView;
@@ -20,12 +21,12 @@ import java.awt.event.MouseWheelEvent;
 /**
  * Class used to implement methods corresponding to mouse events on arcs.
  */
-public class ArcHandler<S extends Connectable<T, S>, T extends Connectable<S, T>>
-        extends PetriNetObjectHandler<Arc<S,T>, ArcView<S,T>> {
+public class ArcHandler<S extends Connectable, T extends Connectable>
+        extends PetriNetObjectHandler<Arc<S,T>, ArcView> {
 
 
-    public ArcHandler(ArcView<S,T> view, Container contentpane, Arc<S,T> obj, PetriNetController controller) {
-        super(view, contentpane, obj, controller);
+    public ArcHandler(ArcView view, Container contentpane, Arc<S,T> component, PetriNetController controller) {
+        super(view, contentpane, component, controller);
         enablePopup = true;
     }
 
@@ -39,65 +40,66 @@ public class ArcHandler<S extends Connectable<T, S>, T extends Connectable<S, T>
         JPopupMenu popup = super.getPopup(e);
 
 
-        if (viewComponent instanceof ArcView) {
-            menuItem = new JMenuItem("Edit Weight");
-            menuItem.addActionListener(new ActionListener() {
+        menuItem = new JMenuItem("Edit Weight");
+        menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     viewComponent.showEditor();
                 }
             });
-            popup.insert(menuItem, popupIndex++);
-            MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e, ApplicationSettings.getApplicationView().getCurrentTab());
-            menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),
-                    accurateEvent.getPoint(), petriNetController));
-            menuItem.setText("Split Arc Segment");
-            popup.insert(menuItem, popupIndex++);
+        popup.insert(menuItem, popupIndex++);
+        MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e, ApplicationSettings.getApplicationView().getCurrentTab());
+        menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),
+                accurateEvent.getPoint(), petriNetController));
+        menuItem.setText("Split Arc Segment");
+        popup.insert(menuItem, popupIndex++);
 
-            popup.insert(new JPopupMenu.Separator(), popupIndex++);
-        } else if (viewComponent instanceof NormalArcView) {
-            if (((NormalArcView) viewComponent).isJoined()) {
-                NormalArcView PTArc;
-                NormalArcView TPArc;
+        popup.insert(new JPopupMenu.Separator(), popupIndex++);
 
-                if (((NormalArcView) viewComponent).getSource() instanceof PlaceView) {
-                    PTArc = (NormalArcView) viewComponent;
-                    TPArc = ((NormalArcView) viewComponent).getInverse();
-                } else {
-                    PTArc = ((NormalArcView) viewComponent).getInverse();
-                    TPArc = (NormalArcView) viewComponent;
-                }
-
-                menuItem = new JMenuItem("Edit Weight");
-                menuItem.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        viewComponent.showEditor();
-                    }
-                });
-                popup.insert(menuItem, popupIndex++);
-                popup.insert(new JPopupMenu.Separator(), popupIndex++);
-                popup.insert(new JPopupMenu.Separator(), popupIndex++);
-
-//            menuItem = new JMenuItem(new InsertPointAction(viewComponent,
-//                                                         e.getPoint()));
-//            menuItem.setText("Insert Point");
-//            popup.insert(menuItem, popupIndex++);
-
-                menuItem = new JMenuItem(
-                        new SplitArcsAction((NormalArcView) viewComponent, true));
-                menuItem.setText("Split Arcs (PT / TP)");
-                popup.insert(menuItem, popupIndex++);
-
-                popup.insert(new JPopupMenu.Separator(), popupIndex++);
-
-                menuItem = new JMenuItem(new DeleteInverseArcAction(PTArc));
-                menuItem.setText("Delete (PT Arc)");
-                popup.insert(menuItem, popupIndex++);
-
-                menuItem = new JMenuItem(new DeleteInverseArcAction(TPArc));
-                menuItem.setText("Delete (TP Arc)");
-                popup.insert(menuItem, popupIndex++);
-
-            } else {
+       if (component.getType().equals(ArcType.NORMAL)) {
+//            if (((NormalArcView) viewComponent).isJoined()) {
+//                NormalArcView PTArc;
+//                NormalArcView TPArc;
+//
+//                if (((NormalArcView) viewComponent).getSource() instanceof PlaceView) {
+//                    PTArc = (NormalArcView) viewComponent;
+//                    TPArc = ((NormalArcView) viewComponent).getInverse();
+//                } else {
+//                    PTArc = ((NormalArcView) viewComponent).getInverse();
+//                    TPArc = (NormalArcView) viewComponent;
+//                }
+//
+//                menuItem = new JMenuItem("Edit Weight");
+//                menuItem.addActionListener(new ActionListener() {
+//                    public void actionPerformed(ActionEvent e) {
+//                        viewComponent.showEditor();
+//                    }
+//                });
+//                popup.insert(menuItem, popupIndex++);
+//                popup.insert(new JPopupMenu.Separator(), popupIndex++);
+//                popup.insert(new JPopupMenu.Separator(), popupIndex++);
+//
+////            menuItem = new JMenuItem(new InsertPointAction(viewComponent,
+////                                                         e.getPoint()));
+////            menuItem.setText("Insert Point");
+////            popup.insert(menuItem, popupIndex++);
+//
+//                menuItem = new JMenuItem(
+//                        new SplitArcsAction((NormalArcView) viewComponent, true));
+//                menuItem.setText("Split Arcs (PT / TP)");
+//                popup.insert(menuItem, popupIndex++);
+//
+//                popup.insert(new JPopupMenu.Separator(), popupIndex++);
+//
+//                menuItem = new JMenuItem(new DeleteInverseArcAction(PTArc));
+//                menuItem.setText("Delete (PT Arc)");
+//                popup.insert(menuItem, popupIndex++);
+//
+//                menuItem = new JMenuItem(new DeleteInverseArcAction(TPArc));
+//                menuItem.setText("Delete (TP Arc)");
+//                popup.insert(menuItem, popupIndex++);
+//
+//            } else {
+           if (true) {
                 menuItem = new JMenuItem("Edit Weight");
                 menuItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {

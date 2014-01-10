@@ -246,8 +246,9 @@ public class PetriNetControllerTest {
     {
         PetriNet net = setupPetriNet();
         Place source = createFakePlace();
+        Transition transition = mock(Transition.class);
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
+        controller.startCreatingNormalArc(source, transition, token);
         assertEquals(1, net.getArcs().size());
     }
 
@@ -257,7 +258,8 @@ public class PetriNetControllerTest {
         PetriNet net = setupPetriNet();
         Place source = createFakePlace();
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
+        Transition transition = mock(Transition.class);
+        controller.startCreatingNormalArc(source, transition, token);
         Arc arc = net.getArcs().iterator().next();
 
         Point2D point = new Point2D.Double(10, 5);
@@ -274,7 +276,8 @@ public class PetriNetControllerTest {
         PetriNet net = setupPetriNet();
         Place source = createFakePlace();
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
+        Transition transition = mock(Transition.class);
+        controller.startCreatingNormalArc(source, transition, token);
         Arc arc = net.getArcs().iterator().next();
 
         Point2D point = new Point2D.Double(10, 5);
@@ -295,7 +298,8 @@ public class PetriNetControllerTest {
     public void finishingArcReturnsFalseIfNotValidEndPoint() {
         Place source = createFakePlace();
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
+        Transition transition = mock(Transition.class);
+        controller.startCreatingNormalArc(source, transition, token);
 
         Connectable place = mock(Place.class);
         when(place.isEndPoint()).thenReturn(true);
@@ -306,9 +310,9 @@ public class PetriNetControllerTest {
     public void finishingArcReturnsTrueIfNotValidEndPoint() {
         Place source = createFakePlace();
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
+        Transition transition = mock(Transition.class);
+        controller.startCreatingNormalArc(source, transition, token);
 
-        Connectable transition = mock(Transition.class);
         when(transition.isEndPoint()).thenReturn(true);
         assertTrue(controller.finishCreatingArc(transition));
     }
@@ -318,9 +322,9 @@ public class PetriNetControllerTest {
     public void finishingArcSetsCreatingToFalse() {
         Place source = createFakePlace();
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
-
         Connectable transition = mock(Transition.class);
+        controller.startCreatingNormalArc(source, transition, token);
+
         when(transition.isEndPoint()).thenReturn(true);
         controller.finishCreatingArc(transition);
         assertFalse(controller.isCurrentlyCreatingArc());
@@ -346,7 +350,8 @@ public class PetriNetControllerTest {
         PetriNet net = setupPetriNet();
         Place source = createFakePlace();
         Token token = mock(Token.class);
-        controller.startCreatingNormalArc(source, token);
+        Transition transition = mock(Transition.class);
+        controller.startCreatingNormalArc(source, transition , token);
         controller.cancelArcCreation();
         assertEquals(0, net.getArcs().size());
     }

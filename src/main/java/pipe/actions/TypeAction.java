@@ -5,12 +5,9 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.StatusBar;
-import pipe.models.PetriNet;
 import pipe.models.PipeApplicationModel;
 import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -19,7 +16,7 @@ public abstract class TypeAction extends GuiAction
     //TODO: Eventually a handler can tell the GUI Action to do its thing
     // for each type of type clicked on.
     public abstract void doAction(MouseEvent event, PetriNetController petriNetController);
-    public abstract <S extends Connectable<T, S>, T extends Connectable<S, T>> void doConnectableAction(Connectable<S,T> connectable, PetriNetController petriNetController);
+    public abstract <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController);
 
     private final int typeID;
 

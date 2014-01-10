@@ -12,7 +12,7 @@ public class NormalArcViewBuilder {
     private final Arc arc;
     private final PetriNetController controller;
 
-    public <S extends Connectable<T, S>, T extends Connectable<S, T>> NormalArcViewBuilder(Arc<S, T> arc, PetriNetController controller) {
+    public <S extends Connectable, T extends Connectable> NormalArcViewBuilder(Arc<S, T> arc, PetriNetController controller) {
         this.arc = arc;
         this.controller = controller;
     }

@@ -11,7 +11,7 @@ import pipe.models.component.Token;
 /**
  * @author Alex Charalambous
  */
-public class ArcWeight<S extends Connectable<T, S>, T extends Connectable<S, T>> extends HistoryItem {
+public class ArcWeight<S extends Connectable, T extends Connectable> extends HistoryItem {
 
     private final Arc<S,T> arc;
     private final Token token;

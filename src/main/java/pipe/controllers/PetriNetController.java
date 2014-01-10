@@ -28,9 +28,9 @@ public class PetriNetController implements IController, Serializable {
     private final PetriNet petriNet;
     private final Set<PetriNetComponent> selectedComponents = new
             HashSet<PetriNetComponent>();
-    private final ArcStrategy inhibitorStrategy = new InhibitorStrategy();
-    private final ArcStrategy forwardNormalStrategy;
-    private final ArcStrategy backwardsNormalStrategy;
+    private final ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
+    private final ArcStrategy<Transition, Place> forwardNormalStrategy;
+    private final ArcStrategy<Place, Transition> backwardsNormalStrategy;
     private int placeNumber = 0;
     private int transitionNumber = 0;
     private boolean currentlyCreatingArc = false;
@@ -66,26 +66,48 @@ public class PetriNetController implements IController, Serializable {
      * Starts creating an arc from the source.
      *
      * @param source source model
+     * @param target
      */
-    public void startCreatingNormalArc(Place source, Token currentToken) {
-        currentlyCreatingArc = true;
-        this.arc = buildEmptyArc(source, currentToken);
-        addArcToCurrentPetriNet(arc);
+    public <S extends Connectable, T extends Connectable> void startCreatingNormalArc(S source, T target,
+                                                                                      Token currentToken) {
+        buildArc(source, target, currentToken);
+    }
+
+    /**
+     *
+     * Creates a Normal Arc starting at source and ending at transition.
+     *
+     * Gives it an initial weighting of 1 x token
+     *
+     * @param source arc source
+     * @param target arc targets
+     * @param token  token to assign initial default weight to
+     * @param <S>    Source type
+     * @param <T>    Target type
+     */
+    //TODO: Work out how to avoid the cast?
+    private <S extends Connectable, T extends Connectable> void buildArc(S source, T target, Token token) {
+        Map<Token, String> tokens = new HashMap<Token, String>();
+        tokens.put(token, "1");
+
+        Arc<? extends Connectable, ? extends Connectable> arc = null;
+        if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
+            Place place = (Place) source;
+            Transition transition = (Transition) target;
+            arc = new Arc<Place, Transition>(place, transition, tokens, backwardsNormalStrategy);
+        }else if (source.getClass().equals(Transition.class) && target.getClass().equals(Place.class)) {
+            Place place = (Place) target;
+            Transition transition = (Transition) source;
+            arc = new Arc<Transition, Place>(transition, place, tokens, forwardNormalStrategy);
+        }
+
+        if (arc != null) {
+            addArcToCurrentPetriNet(arc);
+        }
     }
 
     private void addArcToCurrentPetriNet(Arc arc) {
         petriNet.addArc(arc);
-    }
-
-    // TODO: MOVE OUT TO TEMPORARYARCVIEW
-    private Arc buildEmptyArc(Place source, Token token) {
-        return null;
-//        Map<Token, String> tokens = new HashMap<Token, String>();
-//        tokens.put(token, "1");
-//        return new Arc<Place<?>>, TemporaryArcTarget>(source,
-//                new TemporaryArcTarget(source.getX(),
-//                        source.getY()),
-//                tokens, backwardsNormalStrategy);
     }
 
     /**
@@ -102,12 +124,12 @@ public class PetriNetController implements IController, Serializable {
     //TODO: MOVE OUT TO TEMPORARYARCVIEW
     private Arc buildEmptyArc(Transition source, Token token) {
         return null;
-//        Map<Token, String> tokens = new HashMap<Token, String>();
-//        tokens.put(token, "1");
-//        return new Arc<Transition, TemporaryArcTarget>(source,
-//                new TemporaryArcTarget(source.getX(),
-//                        source.getY()),
-//                tokens, forwardNormalStrategy);
+        //        Map<Token, String> tokens = new HashMap<Token, String>();
+        //        tokens.put(token, "1");
+        //        return new Arc<Transition, TemporaryArcTarget>(source,
+        //                new TemporaryArcTarget(source.getX(),
+        //                        source.getY()),
+        //                tokens, forwardNormalStrategy);
     }
 
     /**
@@ -115,10 +137,13 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param source
      */
-    public void startCreatingInhibitorArc(Place source, Token currentToken) {
-        currentlyCreatingArc = true;
-        this.arc = buildEmptyInhibitorArc(source, currentToken);
-        addArcToCurrentPetriNet(arc);
+    public <S extends  Connectable, T extends  Connectable> void startCreatingInhibitorArc(S source, T target, Token currentToken) {
+        if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
+            Place place = (Place) source;
+            Transition transition = (Transition) target;
+            Arc<Place, Transition>  arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), inhibitorStrategy);
+            addArcToCurrentPetriNet(arc);
+        }
     }
 
     /**
@@ -128,10 +153,11 @@ public class PetriNetController implements IController, Serializable {
      * @return inhibitor arc
      */
     private Arc buildEmptyInhibitorArc(Place source, Token token) {
-        return new Arc<Place, TemporaryArcTarget>(source,
-                new TemporaryArcTarget(source.getX(),
-                        source.getY()),
-                new HashMap<Token, String>(), inhibitorStrategy);
+        return null;
+        //        return new Arc<Place, TemporaryArcTarget>(source,
+        //                new TemporaryArcTarget(source.getX(),
+        //                        source.getY()),
+        //                new HashMap<Token, String>(), inhibitorStrategy);
     }
 
     public boolean isCurrentlyCreatingArc() {
@@ -236,28 +262,6 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     * Currently must be of type Connectable, since yhis is the only abstract
-     * class containing getters for X and Y
-     *
-     * @param connectable        object to select
-     * @param selectionRectangle
-     */
-    private void selectConnectable(Connectable connectable,
-                                   Rectangle selectionRectangle) {
-        int x = new Double(connectable.getX()).intValue();
-        int y = new Double(connectable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
-                connectable.getWidth());
-        if (selectionRectangle.intersects(rectangle)) {
-            select(connectable);
-        }
-    }
-
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
-    }
-
-    /**
      * A crude method for selecting arcs, does not take into account bezier curves
      *
      * @param arc
@@ -287,6 +291,28 @@ public class PetriNetController implements IController, Serializable {
         Point2D end = arc.getEndPoint();
         path.lineTo(end.getX(), end.getY());
         return path;
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
+    }
+
+    /**
+     * Currently must be of type Connectable, since yhis is the only abstract
+     * class containing getters for X and Y
+     *
+     * @param connectable        object to select
+     * @param selectionRectangle
+     */
+    private void selectConnectable(Connectable connectable,
+                                   Rectangle selectionRectangle) {
+        int x = new Double(connectable.getX()).intValue();
+        int y = new Double(connectable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
+                connectable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(connectable);
+        }
     }
 
     /**
@@ -363,7 +389,7 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getToken(name);
     }
 
-    public <S extends Connectable<T, S>, T extends Connectable<S, T>> ArcController<S, T> getArcController(Arc<S, T> arc) {
+    public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
         return new ArcController<S, T>(arc, historyManager);
     }
 

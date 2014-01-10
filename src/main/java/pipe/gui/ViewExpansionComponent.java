@@ -1,5 +1,6 @@
 package pipe.gui;
 
+import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
@@ -7,7 +8,7 @@ import pipe.views.PetriNetViewComponent;
  * @author unknown
  */
 public class ViewExpansionComponent 
-        extends PetriNetViewComponent {
+        extends AbstractPetriNetViewComponent {
 
    private int originalX = 0;
    private int originalY = 0;
@@ -41,7 +42,7 @@ public class ViewExpansionComponent
    }
 
    
-   public PetriNetViewComponent paste(double despX, double despY, boolean inAnotherView, PetriNetView model) {
+   public AbstractPetriNetViewComponent paste(double despX, double despY, boolean inAnotherView, PetriNetView model) {
       return null;
    }
 
