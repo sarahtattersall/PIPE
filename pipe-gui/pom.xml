@@ -8,7 +8,7 @@
         <artifactId>PIPE</artifactId>
         <version>1.0</version>
     </parent>
-    <!--<groupId>uk.ac.imperial</groupId>-->
+
     <artifactId>PIPE-gui</artifactId>
     <version>4.3.0</version>
     <packaging>jar</packaging>
@@ -48,21 +48,9 @@
         </dependency>
 
         <dependency>
-            <groupId>internal</groupId>
-            <artifactId>ic-tools</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <version>1.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>hadoop</artifactId>
-            <version>0.13.1</version>
         </dependency>
 
         <dependency>
@@ -127,30 +115,6 @@
         </dependency>
 
         <dependency>
-            <groupId>internal</groupId>
-            <artifactId>jama</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>powerswing</artifactId>
-            <version>0.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>jpowergraph-swing</artifactId>
-            <version>0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>jpowergraph-common</artifactId>
-            <version>0.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>
             <version>4.2</version>
@@ -199,6 +163,21 @@
             <artifactId>powermock-api-mockito</artifactId>
             <version>1.5.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>jpowergraph-common</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>jpowergraph-swing</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>hadoop</artifactId>
+            <version>0.13.1</version>
         </dependency>
     </dependencies>
 
