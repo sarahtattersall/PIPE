@@ -3,10 +3,7 @@ package pipe.views.changeListener;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.models.component.*;
-import pipe.views.ArcView;
-import pipe.views.InhibitorArcView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
+import pipe.views.*;
 import pipe.views.builder.InhibitorArcViewBuilder;
 import pipe.views.builder.NormalArcViewBuilder;
 import pipe.views.builder.PlaceViewBuilder;
@@ -24,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PetriNetChangeListener implements PropertyChangeListener {
+    private final PipeApplicationView applicationView;
     /**
      * PetriNetTab that this listener refers to
      */
@@ -34,7 +32,8 @@ public class PetriNetChangeListener implements PropertyChangeListener {
      */
     private Map<String, Method> eventMethods = new HashMap<String, Method>();
 
-    public PetriNetChangeListener(PetriNetTab petriNetTab, PetriNetController controller) {
+    public PetriNetChangeListener(PipeApplicationView applicationView, PetriNetTab petriNetTab, PetriNetController controller) {
+        this.applicationView = applicationView;
         this.petriNetTab = petriNetTab;
         this.controller = controller;
         registerMethods();
@@ -98,9 +97,15 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
+    /**
+     * Refreshes the token class choices, and starts listening incase a token changes
+     * @param propertyChangeEvent
+     */
     @EventAction("newToken")
     private void newToken(PropertyChangeEvent propertyChangeEvent) {
-
+        Token token = (Token) propertyChangeEvent.getNewValue();
+        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
+        applicationView.refreshTokenClassChoices();
     }
 
     @EventAction("newRate")
@@ -141,7 +146,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction("deleteToken")
     private void deleteToken(PropertyChangeEvent propertyChangeEvent) {
-
+        applicationView.refreshTokenClassChoices();
     }
 
     @EventAction("deleteRate")

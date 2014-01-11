@@ -12,9 +12,8 @@ import java.awt.event.ActionListener;
  * toolbar).
  */
 
-public class TokenDialog extends JDialog implements ActionListener{
+public class TokenDialog extends JDialog implements ActionListener {
 
-	private boolean acceptChanges = false;
     private TokenPanel dialogContent;
 
     public TokenDialog(Frame owner, String title, boolean modal, TokenPanel dialogContent){
@@ -24,18 +23,14 @@ public class TokenDialog extends JDialog implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("OK")){
-            acceptChanges = ((TokenPanel.TableModel) dialogContent.table.getModel()).isValid();
-		}
-		else if(e.getActionCommand().equals("Cancel")){
-			acceptChanges = false;
-		}
-        if(acceptChanges) {
-		    setVisible(false);
+            if (dialogContent.isDataValid()) {
+                dialogContent.setChanges();
+                setVisible(false);
+            }
+		} else if (e.getActionCommand().equals("Cancel")) {
+            setVisible(false);
         }
 	}
-	
-	public boolean shouldAcceptChanges(){
-		return acceptChanges;
-	}
+
 
 }

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.awt.Color;
 import java.util.LinkedList;
@@ -14,6 +15,8 @@ import javax.swing.JComboBox;
 import org.junit.Before;
 import org.junit.Test;
 
+import pipe.controllers.PipeApplicationController;
+import pipe.exceptions.TokenLockedException;
 import pipe.models.PetriNet;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
@@ -31,11 +34,14 @@ public class TokenActionTest
 	private PetriNetView petriNetView;
 	private TestingPipeApplicationView pipeApplicationView;
 	private LinkedList<TokenView> newTokenViews;
+    private PipeApplicationView mockView;
+    private PipeApplicationController mockController;
 
 	@Before
-	public void setUp() throws Exception
-	{
-		tokenAction = new TestingTokenAction(); 
+	public void setUp() throws TokenLockedException {
+        mockView = mock(PipeApplicationView.class);
+        mockController = mock(PipeApplicationController.class);
+		tokenAction = new TestingTokenAction(mockView, mockController);
 		tokenViews = new LinkedList<TokenView>(); 
 		newTokenViews = new LinkedList<TokenView>(); 
 		oneTokenView = new TokenView(true, "Alpha", Color.black); 
@@ -47,7 +53,7 @@ public class TokenActionTest
 		oneTokenView = petriNetView.getTokenViews().get(0);  // updated Default
 		assertEquals(2, petriNetView.getTokenViews().size());
 		pipeApplicationView = new TestingPipeApplicationView(); 
-		tokenAction.setPipeApplicationViewForTesting(pipeApplicationView); 
+//		tokenAction.setPipeApplicationViewForTesting(pipeApplicationView);
 	}
 	@Test
 	public void verifyTokenViewsUpdatedWithValidTokenViewsAndTokenClassesComboBoxRefreshedEvenIfDisabled() throws Exception
@@ -79,7 +85,7 @@ public class TokenActionTest
 				pipeApplicationView.tokenClassComboBox.getModel().getElementAt(2));
 	}
 	@Test
-	public void verifyErrorMessageGeneratedIfTokenViewsInvalid() throws Exception
+	public void verifyErrorMessageGeneratedIfTokenViewsInvalid()
 	{
 		newOneTokenView = new TokenView(true, "", Color.green); 
 		newTokenViews.add(newOneTokenView);
@@ -88,9 +94,12 @@ public class TokenActionTest
 	}
 	private class TestingTokenAction extends SpecifyTokenAction
 	{
-		private static final long serialVersionUID = 1L;
 
-		@Override
+        public TestingTokenAction(PipeApplicationView applicationView, PipeApplicationController controller) {
+            super(applicationView, controller);
+        }
+
+        @Override
 		protected void showWarningAndReEnterTokenDialog()
 		{
 		}

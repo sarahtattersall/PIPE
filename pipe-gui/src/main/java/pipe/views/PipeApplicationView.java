@@ -96,7 +96,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public AnimateAction stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6");
     public AnimateAction randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5");
     public AnimateAction multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
-    public SpecifyTokenAction specifyTokenClasses = new SpecifyTokenAction();
+    public final SpecifyTokenAction specifyTokenClasses;
 
     public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
     public UnfoldAction unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U", this);
@@ -118,6 +118,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         inhibarcAction = null;
         arcAction = null;
         openAction = null;
+        specifyTokenClasses = null;
     }
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
@@ -133,6 +134,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
         openAction = new OpenAction(applicationController, this);
+        specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
 
         setTitle(null);
         try {
@@ -835,6 +837,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         String[] tokenClassChoices = buildTokenClassChoices();
         DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
         tokenClassComboBox.setModel(model);
+        PetriNetController controller = applicationController.getActivePetriNetController();
+        controller.selectToken(getSelectedTokenName());
     }
 
     private void setActiveTokenView(TokenView tc) {

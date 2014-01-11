@@ -7,8 +7,8 @@ import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.*;
-import utils.TokenUtils;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightCreatesHistoryItem() {
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -46,7 +46,7 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightUpdatesArcWeight() {
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -59,7 +59,7 @@ public class ArcControllerTest {
     @Test
     public void setWeightsCreatesHistoryItem() {
         Map<Token, String> tokenWeights = new HashMap<Token, String>();
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -76,7 +76,7 @@ public class ArcControllerTest {
     @Test
     public void setWeightsUpdatesArc() {
         Map<Token, String> tokenWeights = new HashMap<Token, String>();
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 

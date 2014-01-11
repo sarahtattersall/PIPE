@@ -6,6 +6,7 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.MouseUtilities;
 import pipe.models.*;

@@ -8,8 +8,8 @@ import pipe.historyActions.PlaceCapacity;
 import pipe.historyActions.PlaceMarking;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
-import utils.TokenUtils;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +53,7 @@ public class PlaceControllerTest {
     @Test
     public void setTokenCountsCreatesHistoryItem() {
         Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         int oldCount = 7;
         int newCount = 5;
 
@@ -71,7 +71,7 @@ public class PlaceControllerTest {
     @Test
     public void setTokenCountModifiesPlace() {
         Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         int oldCount = 7;
         int newCount = 5;
 
@@ -85,7 +85,7 @@ public class PlaceControllerTest {
     @Test
     public void incrementsPlaceCounter() {
         int count = 1;
-        Token token = TokenUtils.createDefaultToken();
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
         when(place.getTokenCount(token)).thenReturn(count);
         placeController.addTokenToPlace(token);
         verify(place).setTokenCount(token, count + 1);
@@ -93,7 +93,7 @@ public class PlaceControllerTest {
 
     @Test
     public void incrementPlaceCounterCreatesHistoryItem() {
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         int oldCount = 7;
 
         when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
@@ -108,7 +108,7 @@ public class PlaceControllerTest {
     @Test
     public void decrementsPlaceCounter() {
         int count = 1;
-        Token token = TokenUtils.createDefaultToken();
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
         when(place.getTokenCount(token)).thenReturn(count);
         placeController.deleteTokenInPlace(token);
         verify(place).setTokenCount(token, count - 1);
@@ -116,7 +116,7 @@ public class PlaceControllerTest {
 
     @Test
     public void decrementPlaceCounterCreatesHistoryItem() {
-        Token defaultToken = TokenUtils.createDefaultToken();
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         int oldCount = 7;
 
         when(place.getTokenCount(defaultToken)).thenReturn(oldCount);

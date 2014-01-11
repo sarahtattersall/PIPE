@@ -1,9 +1,9 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.exceptions.TokenLockedException;
 import pipe.gui.Animator;
 import pipe.gui.ZoomController;
-import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
@@ -95,7 +95,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void translateSelected(Point2D.Double translation) {
-        PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, this);
+        PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, selectedComponents);
         for (PetriNetComponent component : selectedComponents) {
             component.accept(translationVisitor);
         }
@@ -225,8 +225,21 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getTokens();
     }
 
-    public void updateToken(String currentTokenName, String name, Boolean enabled, Color color) {
-        petriNet.getToken(currentTokenName);
+    public void updateToken(String currentTokenName, String name, boolean enabled, Color color) {
+        Token token = petriNet.getToken(currentTokenName);
+        if (!token.getId().equals(name)) {
+            token.setId(name);
+        }
+        if (token.isEnabled() != enabled) {
+            try {
+                token.setEnabled(enabled);
+            } catch (TokenLockedException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!token.getColor().equals(color)) {
+            token.setColor(color);
+        }
     }
 
     public HistoryManager getHistoryManager() {
@@ -266,6 +279,10 @@ public class PetriNetController implements IController, Serializable {
     //TODO: Should this be in the model???
     public void selectToken(Token token) {
         this.selectedToken = token;
+    }
+
+    public void selectToken(String tokenName) {
+        selectToken(getToken(tokenName));
     }
 
     public Token getSelectedToken() {

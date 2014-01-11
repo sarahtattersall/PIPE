@@ -23,6 +23,7 @@ import pipe.petrinet.transformer.PNMLTransformer;
 import pipe.utilities.transformers.TNTransformer;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
+import pipe.views.changeListener.TokenChangeListener;
 
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,13 +55,14 @@ public class PipeApplicationController {
      */
     public PetriNetTab createEmptyPetriNet(PipeApplicationView applicationView) {
         PetriNet model = new PetriNet();
-        Token defaultToken = createDefaultToken();
+        Token defaultToken = createDefaultToken(applicationView);
         model.addToken(defaultToken);
         return createNewTab(model, applicationView);
     }
 
-    private Token createDefaultToken() {
+    private Token createDefaultToken(PipeApplicationView applicationView) {
         Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
         return token;
     }
 
@@ -105,7 +107,7 @@ public class PipeApplicationController {
         petriNetTab.updatePreferredSize();
 
         //        net.notifyObservers();
-        net.addPropertyChangeListener(new PetriNetChangeListener(petriNetTab, petriNetController));
+        net.addPropertyChangeListener(new PetriNetChangeListener(applicationView, petriNetTab, petriNetController));
 
         return petriNetTab;
     }

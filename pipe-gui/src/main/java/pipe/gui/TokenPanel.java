@@ -1,7 +1,6 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
 import pipe.models.component.Token;
 
 import javax.swing.*;
@@ -17,14 +16,14 @@ import java.util.Random;
  */
 
 public class TokenPanel extends JPanel {
-    public JTable table; // Steve Doubleday changed from final to simplify testing
-    private final PetriNetController petriNetController;
+    private final TableModel model;
+    private JTable table;
 
-    public TokenPanel() {
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        petriNetController = controller.getActivePetriNetController();
 
-        table = new JTable(new TableModel());
+    public TokenPanel(PetriNetController petriNetController) {
+        model = new TableModel(petriNetController);
+        table = new JTable(model);
+
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);
 
@@ -34,67 +33,42 @@ public class TokenPanel extends JPanel {
 
         add(scrollPane);
     }
-    private static void displayGUI() {
-        JFrame frame = new JFrame("Tokens");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel tablePane = new TokenPanel();
-        tablePane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        tablePane.setOpaque(true);
-
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-        buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        buttonPane.add(Box.createHorizontalGlue());
-        buttonPane.add(new JButton(""));
-        buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-        buttonPane.add(new JButton());
-
-        // frame.setContentPane(tablePane);
-        /*
-		 * Container container = new Container(); container.add(tablePane,
-		 * BorderLayout.CENTER); container.add(buttonPane,
-		 * BorderLayout.PAGE_END); container.setVisible(true);
-		 *///
-        frame.add(tablePane, BorderLayout.CENTER);
-        frame.add(buttonPane, BorderLayout.PAGE_END);
-
-        frame.pack();
-        frame.setVisible(true);
+    public void setChanges() {
+        model.setChanges();
     }
 
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                displayGUI();
-            }
-        });
+    public boolean isDataValid() {
+        return model.isValid();
     }
 
+    /**
+     * TableModel for editing the Tokens
+     */
     public class TableModel extends AbstractTableModel {
 
+        /**
+         * The default number of tokens to display
+         */
+        private static final int DATA_SIZE = 100;
+        private final static int ENABLED_COL = 0;
+        private final static int NAME_COL = 1;
+        private final static int COLOR_COL = 2;
         private final String[] columnNames = {"Enabled", "Token Name",
                 "Token Colour",};
-
-        private final Object[][] data = new Object[DATA_SIZE][3];;
-        private static final int DATA_SIZE = 100;// Default is a size of 100 different
-        // tokens as defined in
-        // constructor
-        final static int ENABLED_COL = 0;
-        final static int NAME_COL = 1;
-        final static int COLOR_COL = 2;
+        private final Datum[] initialData = new Datum[DATA_SIZE];
+        private final Datum[] modifiedData = new Datum[DATA_SIZE];
+        private final PetriNetController petriNetController;
 
 
-        public TableModel() {
-            setRowColors();
+        public TableModel(PetriNetController petriNetController) {
+            this.petriNetController = petriNetController;
+            initialiseRowColours();
 
             int index = 0;
             for (Token token : petriNetController.getNetTokens()) {
-                Object[] tokenClass = {
-                        token.isEnabled(),
-                        token.getId(),
-                        token.getColor()};
-                data[index] = tokenClass;
+                initialData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());;
+                modifiedData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());;
                 index++;
             }
         }
@@ -103,94 +77,77 @@ public class TokenPanel extends JPanel {
          * Sets the first 6 rows as basic different colors. The rest of the rows are assigned
          * to a random color
          */
-        private void setRowColors() {
+        private void initialiseRowColours() {
 
             final Random randomNumberGenerator = new Random();
             for (int i = 0; i < DATA_SIZE; i++) {
-                // Set rows 0-6 as the basic different colours and the rest as
-                // a random colour
-                data[i][ENABLED_COL] = Boolean.FALSE;
-                data[i][NAME_COL] = "";
+                Color color;
                 switch (i) {
                     case 0:
-                        data[i][COLOR_COL] = Color.black;
+                        color = Color.black;
                         break;
                     case 1:
-                        data[i][COLOR_COL] = Color.RED;
+                        color = Color.RED;
                         break;
                     case 2:
-                        data[i][COLOR_COL] = Color.BLUE;
+                        color = Color.BLUE;
                         break;
                     case 3:
-                        data[i][COLOR_COL] = Color.YELLOW;
+                        color = Color.YELLOW;
                         break;
                     case 4:
-                        data[i][COLOR_COL] = Color.GREEN;
+                        color = Color.GREEN;
                         break;
                     case 5:
-                        data[i][COLOR_COL] = Color.ORANGE;
+                        color = Color.ORANGE;
                         break;
                     case 6:
-                        data[i][COLOR_COL] = Color.PINK;
+                        color = Color.PINK;
                         break;
                     default:
-                        data[i][COLOR_COL] = new Color(randomNumberGenerator.nextInt(256),
+                        color = new Color(randomNumberGenerator.nextInt(256),
                                 randomNumberGenerator.nextInt(256), randomNumberGenerator.nextInt(256));
                 }
+                modifiedData[i] = new Datum(color);
             }
         }
 
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        public int getRowCount() {
-            return data.length;
-        }
-
+        @Override
         public String getColumnName(int col) {
             return columnNames[col];
         }
 
-        public Object getValueAt(int row, int col) {
-            return data[row][col];
-        }
-
-        public Class getColumnClass(int c) {
+        @Override
+        public Class<?> getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
 
+        @Override
         public boolean isCellEditable(int row, int col) {
             return true;
         }
 
-
-        public boolean isValid() {
-            boolean enabledRowFound = false;
-            for (Object[] row : data) {
-                if ((Boolean) row[ENABLED_COL] && row[NAME_COL].equals("")) {
-                    JOptionPane.showMessageDialog(new JPanel(), "The token name cannot be empty", "Warning", JOptionPane.WARNING_MESSAGE);
-                    return false;
-                }
-
-                if ((Boolean) row[ENABLED_COL])
-                    enabledRowFound = true;
-            }
-            if (!enabledRowFound) {
-                JOptionPane.showMessageDialog(new JPanel(), "At least one token must be enabled", "Warning", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-            return true;
-        }
-
+        /**
+         * Sets modifiedData with the new value
+         * Also performs checks on the new value and displays
+         * warnings if it is likely to be invalid
+         *
+         * @param value new value of the changed cell
+         * @param row row that has changed
+         * @param col column that has changed
+         */
         @Override
         public void setValueAt(Object value, int row, int col) {
+            boolean enabled = modifiedData[row].isEnabled;
+            String name = modifiedData[row].name;
+            Color color = modifiedData[row].color;
+
             if (col == ENABLED_COL) { // The enabled column has been changed
+                enabled = (Boolean) value;
                 if ((Boolean) value) {
                     for (int i = 0; i < DATA_SIZE; i++) {
-                        if (i != row && (Boolean) data[i][ENABLED_COL]) {
-                            if (data[i][NAME_COL]
-                                    .equals(data[row][NAME_COL])) {
+                        if (i != row && modifiedData[i].isEnabled) {
+                            if (modifiedData[i].name.equals(modifiedData[row].name)) {
                                 JOptionPane
                                         .showMessageDialog(
                                                 new JPanel(),
@@ -204,12 +161,11 @@ public class TokenPanel extends JPanel {
 
                 }
             } else if (col == NAME_COL) { // The name column has been changed
-
-                if ((Boolean) data[row][ENABLED_COL]) {
+                name = (String) value;
+                if (modifiedData[row].isEnabled) {
                     for (int i = 0; i < DATA_SIZE; i++) {
-                        if (i != row && (Boolean) data[i][ENABLED_COL]) {
-                            if (data[i][NAME_COL]
-                                    .equals(value)) {
+                        if (i != row && modifiedData[i].isEnabled) {
+                            if (modifiedData[i].name.equals(value)) {
                                 JOptionPane
                                         .showMessageDialog(
                                                 new JPanel(),
@@ -221,9 +177,12 @@ public class TokenPanel extends JPanel {
                         }
                     }
                 }
+            } else {
+                color = (Color) value;
             }
+
             for (Token token : petriNetController.getNetTokens()) {
-                if (token.getId().equals(data[row][NAME_COL])) {
+                if (token.getId().equals(modifiedData[row].name)) {
                     if (token.isLocked()) {
                         JOptionPane
                                 .showMessageDialog(
@@ -237,37 +196,29 @@ public class TokenPanel extends JPanel {
                 }
             }
 
+            modifiedData[row].isEnabled = enabled;
+            modifiedData[row].name = name;
+            modifiedData[row].color = color;
 
-            String modifiedTokenName = (String) data[row][NAME_COL];
-            data[row][col] = value;
-            if (isExistingToken(row)) {
-                updateToken(modifiedTokenName, row, col);
-            } else {
-                createNewToken(row);
-            }
             fireTableCellUpdated(row, col);
         }
 
         /**
-         * Creates new token with data at row
-         *
-         * @param row
+         * Applies the changes to the actual model
          */
-        private void createNewToken(int row) {
-            Boolean enabled = (Boolean) data[row][ENABLED_COL];
-            String name = (String) data[row][NAME_COL];
-            Color color = (Color) data[row][COLOR_COL];
-            petriNetController.createNewToken(name, enabled, color);
-        }
+        public void setChanges() {
+            for (int row = 0; row < getRowCount(); row++) {
+                Datum initial = initialData[row];
+                Datum modified = modifiedData[row];
+                if (!modified.equals(initial) && modified.hasBeenSet()) {
+                    if (isExistingToken(row)) {
+                        petriNetController.updateToken(initial.name, modified.name, modified.isEnabled, modified.color);
+                    } else {
 
-        /**
-         * @param row
-         */
-        private void updateToken(String tokenName, int row, int col) {
-            Boolean enabled = (Boolean) data[row][ENABLED_COL];
-            String name = (String) data[row][NAME_COL];
-            Color color = (Color) data[row][COLOR_COL];
-            petriNetController.updateToken(tokenName, name, enabled, color);
+                        petriNetController.createNewToken(modified.name, modified.isEnabled, modified.color);
+                    }
+                }
+            }
         }
 
         /**
@@ -278,7 +229,116 @@ public class TokenPanel extends JPanel {
             Collection<Token> tokens = petriNetController.getNetTokens();
             return row < tokens.size();
         }
+
+        @Override
+        public int getRowCount() {
+            return modifiedData.length;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            if (col == ENABLED_COL) {
+                return modifiedData[row].isEnabled;
+            }
+            if (col == NAME_COL) {
+                return modifiedData[row].name;
+            } else {
+                return modifiedData[row].color;
+            }
+        }
+
+        /**
+         *
+         * Checks to see if all the tokens in the table are valid.
+         * If they are not it will print the relevant error message for the first
+         * invalid token it comes across.
+         *
+         * @return true if all the tokens in the table are valid, false if not
+         */
+        public boolean isValid() {
+            boolean enabledRowFound = false;
+            for (Datum datum : modifiedData) {
+                if (datum.isEnabled && datum.name.equals("")) {
+                    JOptionPane.showMessageDialog(new JPanel(), "The token name cannot be empty", "Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+
+                if (datum.isEnabled) {
+                    enabledRowFound = true;
+                }
+            }
+            if (!enabledRowFound) {
+                JOptionPane.showMessageDialog(new JPanel(), "At least one token must be enabled", "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            return true;
+        }
+
+
     }
 
+    /**
+     * Private class to hold the data in the table.
+     */
+    private class Datum {
+        public boolean isEnabled;
+        public String name;
+        public Color color;
+
+        public Datum(Color color) {
+            isEnabled = false;
+            this.name = "";
+            this.color = color;
+        }
+
+        public Datum(boolean isEnabled, String name, Color color) {
+            this.isEnabled = isEnabled;
+            this.name = name;
+            this.color = color;
+        }
+
+        public boolean hasBeenSet() {
+            return !this.name.equals("");
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (isEnabled ? 1 : 0);
+            result = 31 * result + (name != null ? name.hashCode() : 0);
+            result = 31 * result + (color != null ? color.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Datum datum = (Datum) o;
+
+            if (isEnabled != datum.isEnabled) {
+                return false;
+            }
+            if (color != null ? !color.equals(datum.color) : datum.color != null) {
+                return false;
+            }
+            if (name != null ? !name.equals(datum.name) : datum.name != null) {
+                return false;
+            }
+
+            return true;
+        }
+    }
 
 }

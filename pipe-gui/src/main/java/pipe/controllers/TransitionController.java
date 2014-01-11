@@ -24,10 +24,10 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
     public boolean isInfiniteServer() {
         return component.isInfiniteServer();
     }
-
-    public RateParameter getRateParameter() {
-        return component.getRateParameter();
-    }
+//
+//    public RateParameter getRateParameter() {
+//        return component.getRateParameter();
+//    }
 
     public String getName() {
         return component.getName();

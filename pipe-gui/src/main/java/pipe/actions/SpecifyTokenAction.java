@@ -1,5 +1,6 @@
 package pipe.actions;
 
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenDialog;
 import pipe.gui.TokenPanel;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
-// 
+//
 // Steve Doubleday: refactored to simplify testing
 //
 public class SpecifyTokenAction extends GuiAction
@@ -20,41 +21,24 @@ public class SpecifyTokenAction extends GuiAction
 	protected static final String PROBLEM_ENCOUNTERED_SAVING_UPDATES = "Problem encountered saving updates to tokens.  Changes will be discarded; please re-enter.\n";
 	private String errorMessage;
 	private TokenPanel dialogContent;
-	private PipeApplicationView pipeApplicationView;
+	private final PipeApplicationView pipeApplicationView;
+    private final PipeApplicationController pipeApplicationController;
 	private JDialog guiDialog;
 	private ActionEvent forcedAction;
 
-	public SpecifyTokenAction()
+	public SpecifyTokenAction(PipeApplicationView applicationView, PipeApplicationController pipeApplicationController)
     {
         super("SpecifyTokenClasses", "Specify tokens", "shift ctrl T");
-        setErrorMessage(""); 
+        this.pipeApplicationView = applicationView;
+        this.pipeApplicationController = pipeApplicationController;
+        setErrorMessage("");
     }
 
     public void actionPerformed(ActionEvent e)
     {
         buildTokenGuiClasses();
-        finishBuildingGui(); 
-        updateTokenViewsFromGui();
+        finishBuildingGui();
     }
-
-	public void updateTokenViewsFromGui()
-	{
-		TokenPanel.TableModel x = (TokenPanel.TableModel) dialogContent.table.getModel();
-		int rows = x.getRowCount();
-        // If OK was pressed
-        if(((TokenDialog) guiDialog).shouldAcceptChanges())
-        {
-            dialogContent.validate();
-            buildAndUpdateTokenViews(x, rows);
-        }
-	}
-
-	protected void buildAndUpdateTokenViews(TokenPanel.TableModel x, int rows)
-	{
-		LinkedList<TokenView> tokenViews = convertInputToTokenViews(x, rows);
-		updateTokenViews(tokenViews);
-		pipeApplicationView.refreshTokenClassChoices();
-	}
 
 	protected LinkedList<TokenView> convertInputToTokenViews(
 			TokenPanel.TableModel x, int rows)
@@ -77,7 +61,7 @@ public class SpecifyTokenAction extends GuiAction
 	}
 	protected void updateTokenViews(LinkedList<TokenView> tokenViews)
 	{
-		try 
+		try
 		{
 			pipeApplicationView.getCurrentPetriNetView().updateOrReplaceTokenViews(tokenViews);
 		}
@@ -85,14 +69,12 @@ public class SpecifyTokenAction extends GuiAction
 		{
 			setErrorMessage(PROBLEM_ENCOUNTERED_SAVING_UPDATES +
 					"Details: "+e.getMessage());
-			showWarningAndReEnterTokenDialog(); 
+			showWarningAndReEnterTokenDialog();
 		}
 	}
 	public void buildTokenGuiClasses()
 	{
-		pipeApplicationView = ApplicationSettings.getApplicationView();
-		
-		dialogContent = new TokenPanel();
+		dialogContent = new TokenPanel(pipeApplicationController.getActivePetriNetController());
 		guiDialog = new TokenDialog(pipeApplicationView, "Tokens", true, dialogContent);
 	}
 
@@ -103,7 +85,7 @@ public class SpecifyTokenAction extends GuiAction
 		dialogContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10,
 				10));
 		dialogContent.setOpaque(true);
-		
+
 		JPanel buttonPane = new JPanel();
 		buttonPane
 		.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -117,18 +99,18 @@ public class SpecifyTokenAction extends GuiAction
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener((ActionListener) guiDialog);
 		buttonPane.add(cancel);
-		
+
 		guiDialog.add(dialogContent, BorderLayout.CENTER);
 		guiDialog.add(buttonPane, BorderLayout.PAGE_END);
 		dialogContent.setVisible(true);
-		
-		if (forcedAction != null) forceContinue(); 
+
+		if (forcedAction != null) forceContinue();
 		else guiDialog.setVisible(true);
 	}
 	private void forceContinue()
 	{
 		((TokenDialog) guiDialog).actionPerformed(forcedAction);
-		forcedAction = null; 
+		forcedAction = null;
 	}
 
 	protected void showWarningAndReEnterTokenDialog()
@@ -139,7 +121,7 @@ public class SpecifyTokenAction extends GuiAction
 				getErrorMessage(),
 				"Warning",
 				JOptionPane.WARNING_MESSAGE);
-		setErrorMessage(""); 
+		setErrorMessage("");
 		actionPerformed(null);
 	}
 	protected TokenView buildTokenView(TokenPanel.TableModel x, int i)
@@ -158,10 +140,6 @@ public class SpecifyTokenAction extends GuiAction
 	{
 		return this.errorMessage;
 	}
-	protected void setPipeApplicationViewForTesting(PipeApplicationView pipeApplicationView)
-	{
-		this.pipeApplicationView = pipeApplicationView;
-	}
 
 	public TokenPanel getDialogContentForTesting()
 	{
@@ -175,6 +153,6 @@ public class SpecifyTokenAction extends GuiAction
 
 	public void forceOkForTesting()
 	{
-		forcedAction = new ActionEvent(this, 0, "OK");   
+		forcedAction = new ActionEvent(this, 0, "OK");
 	}
 }

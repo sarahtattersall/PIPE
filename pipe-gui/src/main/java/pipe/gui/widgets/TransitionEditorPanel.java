@@ -88,14 +88,14 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             singleServerRadioButton.setSelected(true);
         }
 
-        if (transitionController.getRateParameter() != null) {
-            for (int i = 1; i < rateComboBox.getItemCount(); i++) {
-                if (transitionController.getRateParameter() ==
-                        rateComboBox.getItemAt(i)) {
-                    rateComboBox.setSelectedIndex(i);
-                }
-            }
-        }
+//        if (transitionController.getRateParameter() != null) {
+//            for (int i = 1; i < rateComboBox.getItemCount(); i++) {
+//                if (transitionController.getRateParameter() ==
+//                        rateComboBox.getItemAt(i)) {
+//                    rateComboBox.setSelectedIndex(i);
+//                }
+//            }
+//        }
     }
 
     private void initComponents() {

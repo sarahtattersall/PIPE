@@ -36,7 +36,9 @@ public class Token extends AbstractPetriNetComponent {
     }
 
     public void setId(String id) {
+        String old = this.id;
         this.id = id;
+        changeSupport.firePropertyChange("id", old, id);
     }
 
     @Override
@@ -62,7 +64,9 @@ public class Token extends AbstractPetriNetComponent {
      */
     public void setEnabled(boolean enabled) throws TokenLockedException {
         if (!isLocked()) {
+            boolean old = this.enabled;
             this.enabled = enabled;
+            changeSupport.firePropertyChange("enabled", old, enabled);
         } else {
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for ")
@@ -85,7 +89,9 @@ public class Token extends AbstractPetriNetComponent {
     }
 
     public void setColor(Color color) {
+        Color old = this.color;
         this.color = color;
+        changeSupport.firePropertyChange("color", old, color);
     }
 
     public void incrementLock() {
