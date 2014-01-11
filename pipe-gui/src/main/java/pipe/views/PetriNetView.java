@@ -92,7 +92,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         ArcStrategy normalBackwardStrategy = new BackwardsNormalStrategy(_model);
         CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(),
                 new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
-                new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
+                new AnnotationCreator(),  new TokenCreator());
         PetriNetReader reader = new PetriNetReader(struct);
         _model = reader.createFromFile(_model, PNMLDoc);
         update();
@@ -107,9 +107,9 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         displayTokens(_model.getTokens());
         displayTransitions(_model.getTransitions());
         displayArcs(_model.getArcs());
-        displayRateParameters(_model.getRateParameters());
+//        displayRateParameters(_model.getRateParameters());
         displayAnnotations(_model.getAnnotations());
-        displayStateGroups(_model.getStateGroups());
+//        displayStateGroups(_model.getStateGroups());
     }
 
     /**

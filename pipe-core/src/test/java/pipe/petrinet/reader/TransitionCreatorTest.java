@@ -1,4 +1,4 @@
-package pipe.petrinet;
+package pipe.petrinet.reader;
 
 import org.junit.Assert;
 import org.junit.Before;

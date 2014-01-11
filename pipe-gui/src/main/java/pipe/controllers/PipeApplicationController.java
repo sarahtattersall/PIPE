@@ -146,7 +146,7 @@ public class PipeApplicationController {
 
             CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(),
                     new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
-                    new AnnotationCreator(), new RateParameterCreator(), new TokenCreator(), new StateGroupCreator());
+                    new AnnotationCreator(), new TokenCreator());
             PetriNetReader reader = new PetriNetReader(struct);
             reader.createFromFile(net, document);
             net.setPnmlName(file.getAbsolutePath());

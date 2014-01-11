@@ -1,4 +1,4 @@
-package pipe.petrinet;
+package pipe.petrinet.reader;
 
 import org.junit.Rule;
 import org.junit.Test;
