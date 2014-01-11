@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import pipe.exceptions.TokenLockedException;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
@@ -223,6 +224,111 @@ public class PetriNetControllerTest {
         double expected_value = x_y_value + translate_value;
         verify(place).accept(any(TranslationVisitor.class));
         verify(transition).accept(any(TranslationVisitor.class));
+    }
+
+    @Test
+    public void updateNameIfChanged() {
+        Token token = mock(Token.class);
+        String id = "id";
+        when(token.getId()).thenReturn(id);
+
+        boolean enabled = true;
+        when(token.isEnabled()).thenReturn(enabled);
+
+        Color color = new Color(255, 0,0);
+        when(token.getColor()).thenReturn(color);
+        net.addToken(token);
+
+        controller.updateToken(id, "new", enabled, color);
+        verify(token).setId("new");
+    }
+
+    @Test
+    public void doesNotUpdateNameIfNotChanged() {
+        Token token = mock(Token.class);
+        String id = "id";
+        when(token.getId()).thenReturn(id);
+
+        boolean enabled = true;
+        when(token.isEnabled()).thenReturn(enabled);
+
+        Color color = new Color(255, 0,0);
+        when(token.getColor()).thenReturn(color);
+        net.addToken(token);
+
+        controller.updateToken(id, id, enabled, color);
+        verify(token, never()).setId(anyString());
+    }
+
+
+    @Test
+    public void updateEnabledIfChanged() throws TokenLockedException {
+        Token token = mock(Token.class);
+        String id = "id";
+        when(token.getId()).thenReturn(id);
+
+        boolean enabled = true;
+        when(token.isEnabled()).thenReturn(enabled);
+
+        Color color = new Color(255, 0,0);
+        when(token.getColor()).thenReturn(color);
+        net.addToken(token);
+
+        controller.updateToken(id, id, !enabled, color);
+        verify(token).setEnabled(!enabled);
+    }
+
+    @Test
+    public void doesNotUpdateEnabledIfNotChanged() throws TokenLockedException {
+        Token token = mock(Token.class);
+        String id = "id";
+        when(token.getId()).thenReturn(id);
+
+        boolean enabled = true;
+        when(token.isEnabled()).thenReturn(enabled);
+
+        Color color = new Color(255, 0,0);
+        when(token.getColor()).thenReturn(color);
+        net.addToken(token);
+
+        controller.updateToken(id, id, enabled, color);
+        verify(token, never()).setEnabled(anyBoolean());
+    }
+
+    @Test
+    public void updateTokenColorIfChanged() {
+        Token token = mock(Token.class);
+        String id = "id";
+        when(token.getId()).thenReturn(id);
+
+        boolean enabled = true;
+        when(token.isEnabled()).thenReturn(enabled);
+
+        Color color = new Color(255, 0,0);
+        when(token.getColor()).thenReturn(color);
+        net.addToken(token);
+
+        Color newColor = new Color(0,0,0);
+        controller.updateToken(id, id, enabled, newColor);
+        verify(token).setColor(newColor);
+    }
+
+
+    @Test
+    public void doesNotUpdateTokenColorIfNotChanged()  {
+        Token token = mock(Token.class);
+        String id = "id";
+        when(token.getId()).thenReturn(id);
+
+        boolean enabled = true;
+        when(token.isEnabled()).thenReturn(enabled);
+
+        Color color = new Color(255, 0,0);
+        when(token.getColor()).thenReturn(color);
+        net.addToken(token);
+
+        controller.updateToken(id, id, enabled, color);
+        verify(token, never()).setColor(any(Color.class));
     }
 
     private PetriNet setupPetriNet() {
