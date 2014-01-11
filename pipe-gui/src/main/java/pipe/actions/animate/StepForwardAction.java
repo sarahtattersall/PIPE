@@ -2,11 +2,9 @@ package pipe.actions.animate;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.AnimationHistoryView;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
-import pipe.models.PipeApplicationModel;
-import pipe.views.PipeApplicationView;
+import pipe.gui.model.PipeApplicationModel;
 
 import java.awt.event.ActionEvent;
 
@@ -24,7 +22,7 @@ public class StepForwardAction extends AnimateAction {
         Animator animator = petriNetController.getAnimator();
         animator.stepForward();
 
-//        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
-//        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
+        //        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
+        //        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
     }
 }

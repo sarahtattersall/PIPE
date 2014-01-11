@@ -4,7 +4,7 @@ import pipe.actions.ShowHideInfoAction;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Connectable;
 import pipe.views.*;
 

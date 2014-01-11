@@ -7,7 +7,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.component.Token;
 import pipe.petrinet.reader.creator.TokenCreator;
-import pipe.utilities.transformers.PNMLTransformer;
+import pipe.petrinet.transformer.PNMLTransformer;
+import utils.FileUtils;
 
 import java.awt.*;
 
@@ -27,7 +28,8 @@ public class TokenCreatorClass {
     public void setUp()
     {
         PNMLTransformer transformer = new PNMLTransformer();
-        Document document = transformer.transformPNML("src/test/resources/xml/token/token.xml");
+        Document document = transformer.transformPNML(
+                FileUtils.fileLocation("/xml/token/token.xml"));
         Element rootElement = document.getDocumentElement();
         NodeList nodes = rootElement.getChildNodes();
         tokenElement = (Element) nodes.item(1);

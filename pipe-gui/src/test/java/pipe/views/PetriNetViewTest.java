@@ -18,7 +18,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ZoomController;
 import pipe.models.PetriNet;
 import pipe.models.component.Place;
-import pipe.utilities.transformers.PNMLTransformer;
+import pipe.petrinet.transformer.PNMLTransformer;
 import pipe.utilities.transformers.PNMLTransformerTest;
 
 import java.util.Observer;

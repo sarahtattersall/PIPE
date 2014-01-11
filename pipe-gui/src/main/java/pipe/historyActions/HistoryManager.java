@@ -7,7 +7,7 @@ import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.models.PetriNet;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import java.util.ArrayList;

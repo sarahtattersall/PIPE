@@ -55,7 +55,7 @@ class PetriNetConverter extends NetConverter {
    }
 
    /**
-    * Starts the conversion xml-xls.
+    * Starts the conversion pipe.petrinet.xml-xls.
     * It's recommended to call validatePN() before.
     *
     * @throws javax.xml.parsers.ParserConfigurationException

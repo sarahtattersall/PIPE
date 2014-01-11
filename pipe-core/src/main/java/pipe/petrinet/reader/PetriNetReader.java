@@ -4,12 +4,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import pipe.common.dataLayer.StateGroup;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 import pipe.petrinet.reader.creator.CreatorStruct;
 import pipe.petrinet.reader.creator.ElementParser;
-import pipe.views.viewComponents.RateParameter;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +27,7 @@ public class PetriNetReader {
     private Map<String, Transition> transitions = new HashMap<String, Transition>();
     private Map<String, Place> places = new HashMap<String, Place>();
 
-    private Map<String, RateParameter> rates = new HashMap<String, RateParameter>();
+//    private Map<String, RateParameter> rates = new HashMap<String, RateParameter>();
 
     private final CreatorStruct creators;
 
@@ -109,7 +107,7 @@ public class PetriNetReader {
     @ElementParser("transition")
     private void createTransitionAndAddToNet(Element element, PetriNet net)
     {
-        creators.transitionCreator.setRates(rates);
+//        creators.transitionCreator.setRates(rates);
         Transition transition = creators.transitionCreator.create(element);
         transitions.put(transition.getId(), transition);
         net.addTransition(transition);
@@ -135,9 +133,9 @@ public class PetriNetReader {
     @ElementParser("definition")
     private void createRateParameter(Element element, PetriNet net)
     {
-        RateParameter parameter = creators.rateParameterCreator.create(element);
-        rates.put(parameter.getId(), parameter);
-        net.addRate(parameter);
+//        RateParameter parameter = creators.rateParameterCreator.create(element);
+//        rates.put(parameter.getId(), parameter);
+//        net.addRate(parameter);
     }
 
     @ElementParser("token")
@@ -151,8 +149,8 @@ public class PetriNetReader {
     @ElementParser("stategroup")
     private void createStateGroup(Element element, PetriNet net)
     {
-        StateGroup group = creators.stateGroupCreator.create(element);
-        net.addStateGroup(group);
+//        StateGroup group = creators.stateGroupCreator.create(element);
+        //        net.addStateGroup(group);
     }
 
 

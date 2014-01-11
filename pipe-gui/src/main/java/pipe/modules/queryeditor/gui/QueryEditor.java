@@ -793,7 +793,7 @@ public class QueryEditor extends JFrame implements QueryConstants, ActionListene
 
 		if (filename == null)
 		{
-			name = "New Query " + this.newNameCounter++ + ".xml";
+			name = "New Query " + this.newNameCounter++ + ".pipe.petrinet.xml";
 			QueryData.queryName = name;
 		}
 		else

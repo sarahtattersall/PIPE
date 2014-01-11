@@ -9,7 +9,8 @@ import org.w3c.dom.NodeList;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.petrinet.reader.creator.PlaceCreator;
-import pipe.utilities.transformers.PNMLTransformer;
+import pipe.petrinet.transformer.PNMLTransformer;
+import utils.FileUtils;
 import utils.TokenUtils;
 
 import java.util.HashMap;
@@ -30,16 +31,16 @@ public class PlaceCreatorTest {
     private static final double DOUBLE_DELTA = 0.001;
 
     private Element getSinglePlaceElement() {
-        return getElementForFile("src/test/resources/xml/place/singlePlace.xml");
+        return getElementForFile("/xml/place/singlePlace.xml");
     }
 
     private Element getPlaceElementNoTokens() {
-        return getElementForFile("src/test/resources/xml/place/noTokenPlace.xml");
+        return getElementForFile("/xml/place/noTokenPlace.xml");
     }
 
     private Element getElementForFile(String file) {
         PNMLTransformer transformer = new PNMLTransformer();
-        Document document = transformer.transformPNML(file);
+        Document document = transformer.transformPNML(FileUtils.fileLocation(file));
         Element rootElement = document.getDocumentElement();
         NodeList nodes = rootElement.getChildNodes();
         return (Element) nodes.item(1);

@@ -28,7 +28,7 @@ import pipe.actions.file.*;
 import pipe.actions.type.*;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenPanel;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.utilities.Copier;
 import pipe.views.ArcView;
 import pipe.views.MarkingView;
@@ -160,21 +160,21 @@ public class PipeTest {
 		assertEquals("Examples",menu.getItem(12).getText());
 		subMenu = (JMenu) menu.getMenuComponent(12); 
 		assertEquals("expecting 15 examples",15,subMenu.getItemCount());
-		assertEquals("Accident & Emergency Unit (basic model).xml",subMenu.getItem(0).getText());
-		assertEquals("Accident & Emergency Unit Coloured.xml",subMenu.getItem(1).getText());
-		assertEquals("ClassicGSPN.xml",subMenu.getItem(2).getText());
-		assertEquals("Coloured Reader Writer.xml",subMenu.getItem(3).getText());
-		assertEquals("Courier Protocol.xml",subMenu.getItem(4).getText());
-		assertEquals("Dining philosophers.xml",subMenu.getItem(5).getText());
-		assertEquals("Dual Processor With Colour.xml",subMenu.getItem(6).getText());
-		assertEquals("FMS1.xml",subMenu.getItem(7).getText());
-		assertEquals("Producer & Consumer.xml",subMenu.getItem(8).getText());
-		assertEquals("Readers & Writers.xml",subMenu.getItem(9).getText());
-		assertEquals("Simple Coloured Net.xml",subMenu.getItem(10).getText());
-		assertEquals("fms.xml",subMenu.getItem(11).getText());
-		assertEquals("gspn1.xml",subMenu.getItem(12).getText());
-		assertEquals("gspn2.xml",subMenu.getItem(13).getText());
-		assertEquals("gspn3.xml",subMenu.getItem(14).getText());
+		assertEquals("Accident & Emergency Unit (basic model).pipe.petrinet.xml",subMenu.getItem(0).getText());
+		assertEquals("Accident & Emergency Unit Coloured.pipe.petrinet.xml",subMenu.getItem(1).getText());
+		assertEquals("ClassicGSPN.pipe.petrinet.xml",subMenu.getItem(2).getText());
+		assertEquals("Coloured Reader Writer.pipe.petrinet.xml",subMenu.getItem(3).getText());
+		assertEquals("Courier Protocol.pipe.petrinet.xml",subMenu.getItem(4).getText());
+		assertEquals("Dining philosophers.pipe.petrinet.xml",subMenu.getItem(5).getText());
+		assertEquals("Dual Processor With Colour.pipe.petrinet.xml",subMenu.getItem(6).getText());
+		assertEquals("FMS1.pipe.petrinet.xml",subMenu.getItem(7).getText());
+		assertEquals("Producer & Consumer.pipe.petrinet.xml",subMenu.getItem(8).getText());
+		assertEquals("Readers & Writers.pipe.petrinet.xml",subMenu.getItem(9).getText());
+		assertEquals("Simple Coloured Net.pipe.petrinet.xml",subMenu.getItem(10).getText());
+		assertEquals("fms.pipe.petrinet.xml",subMenu.getItem(11).getText());
+		assertEquals("gspn1.pipe.petrinet.xml",subMenu.getItem(12).getText());
+		assertEquals("gspn2.pipe.petrinet.xml",subMenu.getItem(13).getText());
+		assertEquals("gspn3.pipe.petrinet.xml",subMenu.getItem(14).getText());
 		assertNull("separator",menu.getItem(13));
 		assertEquals("Exit",menu.getItem(14).getText());
 		
@@ -353,7 +353,7 @@ public class PipeTest {
 	}
 	private void savePetriNet()
 	{
-		fileForTesting = new File("PipeTestFile.xml"); 
+		fileForTesting = new File("PipeTestFile.pipe.petrinet.xml");
 		applicationView.saveNet(fileForTesting, false);
 	}
 	protected void openTokenDialogDisableDefaultTokenAddNewToken() throws InterruptedException

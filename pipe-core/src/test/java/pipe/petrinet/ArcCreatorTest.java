@@ -14,10 +14,12 @@ import pipe.models.strategy.arc.BackwardsNormalStrategy;
 import pipe.models.strategy.arc.ForwardsNormalStrategy;
 import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.creator.ArcCreator;
-import pipe.utilities.transformers.PNMLTransformer;
+import pipe.petrinet.transformer.PNMLTransformer;
+import utils.FileUtils;
 import utils.TokenUtils;
 
 import java.awt.geom.Point2D;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +74,12 @@ public class ArcCreatorTest {
     }
 
     private Element createNormalArcNoWeight() {
-        return createFromFile("src/test/resources/xml/arc/arcNoWeight.xml");
+        return createFromFile("/xml/arc/arcNoWeight.xml");
     }
 
     private Element createFromFile(String path) {
         PNMLTransformer transformer = new PNMLTransformer();
-        Document document = transformer.transformPNML(path);
+        Document document = transformer.transformPNML(FileUtils.fileLocation(path));
         Element rootElement = document.getDocumentElement();
         NodeList nodes = rootElement.getChildNodes();
         return (Element) nodes.item(1);
@@ -108,7 +110,7 @@ public class ArcCreatorTest {
     }
 
     private Element createNormalArcWithWeight() {
-        return createFromFile("src/test/resources/xml/arc/normalArcWithWeight.xml");
+        return createFromFile("/xml/arc/normalArcWithWeight.xml");
     }
 
     @Test
@@ -136,7 +138,7 @@ public class ArcCreatorTest {
     }
 
     private Element createInhibitorArc() {
-        return createFromFile("src/test/resources/xml/arc/inhibitorArc.xml");
+        return createFromFile("/xml/arc/inhibitorArc.xml");
     }
 
     @Test
@@ -154,12 +156,13 @@ public class ArcCreatorTest {
     }
 
     private Element createArcWeightNoToken() {
-        return createFromFile("src/test/resources/xml/arc/arcWeightNoToken.xml");
+        return createFromFile("/xml/arc/arcWeightNoToken.xml");
     }
+
 
     @Test
     public void addsPoints() {
-        Token token = addDefaultTokenToTokens();
+        addDefaultTokenToTokens();
         creator.setTokens(tokens);
         Element arcElement = createNormalArcNoWeight();
         Arc<? extends Connectable, ? extends Connectable> arc = creator.create(arcElement);

@@ -439,7 +439,7 @@ public class TNTransformer {
                     
 
                     // TRY TO DO ALL IN MEMORT TO REDUCE READ-WRITE DELAYS
-                    outputObjectArrayList = new File(System.getProperty("java.io.tmpdir")+System.getProperty("file.separator")+"ObjectList.xml"); // Output for XSLT Transformation
+                    outputObjectArrayList = new File(System.getProperty("java.io.tmpdir")+System.getProperty("file.separator")+"ObjectList.pipe.petrinet.xml"); // Output for XSLT Transformation
                     outputObjectArrayList.deleteOnExit();
                     StreamResult result = new StreamResult(outputObjectArrayList);
                     xformer.transform(source, result);
@@ -499,11 +499,11 @@ public class TNTransformer {
 			document = documentBuilder.parse(timeNetFile);
 
 		}catch (org.xml.sax.SAXException e) {
-			System.err.println("org.xml.sax.SAXException thrown in getDom(String pnmlFileName) : PetriNet Class : models Package" + e);
+			System.err.println("org.pipe.petrinet.xml.sax.SAXException thrown in getDom(String pnmlFileName) : PetriNet Class : models Package" + e);
 			System.err.println("Workaround: delete the xmlns attribute from the PNML root node.  Probably not ideal, to be fixed when time allows.");
                 }
                 catch (ParserConfigurationException e) {
-			System.err.println("javax.xml.parsers.ParserConfigurationException thrown in getDom(String pnmlFileName) : PetriNet Class : models Package");
+			System.err.println("javax.pipe.petrinet.xml.parsers.ParserConfigurationException thrown in getDom(String pnmlFileName) : PetriNet Class : models Package");
 		}
 		catch (IOException e) {
 			System.err.println("ERROR: File may not be present or have the correct attributes");

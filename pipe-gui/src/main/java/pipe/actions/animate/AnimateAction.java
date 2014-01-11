@@ -2,7 +2,7 @@ package pipe.actions.animate;
 
 import pipe.actions.GuiAction;
 import pipe.gui.*;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PetriNetViewComponent;
 import pipe.views.PipeApplicationView;
 

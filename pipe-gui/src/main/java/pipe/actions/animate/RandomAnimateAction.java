@@ -5,7 +5,7 @@ import pipe.controllers.PipeApplicationController;
 import pipe.gui.AnimationHistoryView;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;

@@ -1,6 +1,6 @@
 package pipe.calculations;
 
-import pipe.actions.model.interfaces.IDynamicMarking;
+import pipe.interfaces.IDynamicMarking;
 
 import java.io.*;
 import java.net.MalformedURLException;

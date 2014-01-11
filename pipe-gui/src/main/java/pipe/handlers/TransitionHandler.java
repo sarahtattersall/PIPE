@@ -3,7 +3,7 @@ package pipe.handlers;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Transition;
 import pipe.views.TransitionView;
 

@@ -5,7 +5,7 @@ import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.models.PetriNet;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PipeApplicationView;
 

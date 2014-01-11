@@ -1,4 +1,4 @@
-package pipe.actions.model;
+package pipe.gui.model;
 
 import pipe.actions.*;
 import pipe.gui.ApplicationSettings;

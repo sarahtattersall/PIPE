@@ -7,8 +7,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import pipe.models.component.Annotation;
 import pipe.petrinet.reader.creator.AnnotationCreator;
-import pipe.utilities.transformers.PNMLTransformer;
-
+import pipe.petrinet.transformer.PNMLTransformer;
+import utils.FileUtils;
 
 
 import static org.junit.Assert.*;
@@ -25,7 +25,7 @@ public class AnnotationCreatorTest {
     public void setUp()
     {
         PNMLTransformer transformer = new PNMLTransformer();
-        Document document = transformer.transformPNML("src/test/resources/xml/labels/label.xml");
+        Document document = transformer.transformPNML(FileUtils.fileLocation("/xml/labels/label.xml"));
         Element rootElement = document.getDocumentElement();
         NodeList nodes = rootElement.getChildNodes();
         annotationElement = (Element) nodes.item(1);

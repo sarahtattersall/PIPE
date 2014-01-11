@@ -15,7 +15,7 @@ import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.PetriNetReader;
 import pipe.petrinet.reader.creator.*;
 import pipe.utilities.Copier;
-import pipe.utilities.transformers.PNMLTransformer;
+import pipe.petrinet.transformer.PNMLTransformer;
 import pipe.views.builder.AnnotationNodeBuilder;
 import pipe.views.builder.PlaceViewBuilder;
 import pipe.views.builder.TokenViewBuilder;
@@ -68,7 +68,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#createFromPNML(org.w3c.dom.Document)
+      * @see pipe.interfaces.IPetriNet#createFromPNML(org.w3c.dom.Document)
       */
     public void createFromPNML(Document PNMLDoc) {
         if (ApplicationSettings.getApplicationView() != null) {
@@ -720,7 +720,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#createMatrixes()
+      * @see pipe.interfaces.IPetriNet#createMatrixes()
       */
     public void createMatrixes() {
         //        for (TokenView tc : _tokenSetController.getTokenViews()) {
@@ -772,7 +772,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#places()
+      * @see pipe.interfaces.IPetriNet#places()
       */
     public PlaceView[] places() {
         PlaceView[] returnArray = new PlaceView[_placeViews.size()];
@@ -784,14 +784,14 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getPlacesArrayList()
+      * @see pipe.interfaces.IPetriNet#getPlacesArrayList()
       */
     public Collection<PlaceView> getPlacesArrayList() {
         return _placeViews.values();
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#numberOfPlaces()
+      * @see pipe.interfaces.IPetriNet#numberOfPlaces()
       */
     public int numberOfPlaces() {
         if (_placeViews == null) {
@@ -803,7 +803,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
 
     /* wjk added 03/10/2007 */
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#marking()
+      * @see pipe.interfaces.IPetriNet#marking()
       */
     public LinkedList<MarkingView>[] marking() {
         LinkedList<MarkingView>[] result = new LinkedList[_placeViews.size()];
@@ -816,7 +816,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#labels()
+      * @see pipe.interfaces.IPetriNet#labels()
       */
     public AnnotationNote[] labels() {
         AnnotationNote[] returnArray = new AnnotationNote[_labels.size()];
@@ -828,7 +828,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#markingRateParameters()
+      * @see pipe.interfaces.IPetriNet#markingRateParameters()
       */
     public RateParameter[] markingRateParameters() {
         RateParameter[] returnArray = new RateParameter[_rateParameters.size()];
@@ -837,18 +837,18 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTransitionById(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#getTransitionById(java.lang.String)
       */
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTransitionsArrayList()
+      * @see pipe.interfaces.IPetriNet#getTransitionsArrayList()
       */
     public Collection<TransitionView> getTransitionsArrayList() {
         return _transitionViews.values();
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#numberOfTransitions()
+      * @see pipe.interfaces.IPetriNet#numberOfTransitions()
       */
     public int numberOfTransitions() {
         if (_transitionViews == null) {
@@ -859,7 +859,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#arcs()
+      * @see pipe.interfaces.IPetriNet#arcs()
       */
     public ArcView[] arcs() {
         ArcView[] returnArray = new ArcView[_arcViews.size()];
@@ -871,14 +871,14 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getArcsArrayList()
+      * @see pipe.interfaces.IPetriNet#getArcsArrayList()
       */
     public Collection<ArcView> getArcsArrayList() {
         return _arcViews.values();
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#inhibitors()
+      * @see pipe.interfaces.IPetriNet#inhibitors()
       */
     public InhibitorArcView[] inhibitors() {
         InhibitorArcView[] returnArray = new InhibitorArcView[_inhibitorViews.size()];
@@ -890,7 +890,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getInhibitorsArrayList()
+      * @see pipe.interfaces.IPetriNet#getInhibitorsArrayList()
       */
     public Collection<InhibitorArcView> getInhibitorsArrayList() {
         return _inhibitorViews.values();
@@ -943,7 +943,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getCapacityMatrix()
+      * @see pipe.interfaces.IPetriNet#getCapacityMatrix()
       */
     public int[] getCapacityMatrix() {
         createCapacityVector();
@@ -963,7 +963,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getPriorityMatrix()
+      * @see pipe.interfaces.IPetriNet#getPriorityMatrix()
       */
     public int[] getPriorityMatrix() {
         createPriorityVector();
@@ -983,7 +983,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTimedMatrix()
+      * @see pipe.interfaces.IPetriNet#getTimedMatrix()
       */
     public boolean[] getTimedMatrix() {
         createTimedVector();
@@ -1003,7 +1003,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getStateGroups()
+      * @see pipe.interfaces.IPetriNet#getStateGroups()
       */
     public StateGroup[] getStateGroups() {
         StateGroup[] returnArray = new StateGroup[_stateGroups.size()];
@@ -1014,14 +1014,14 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getStateGroupsArray()
+      * @see pipe.interfaces.IPetriNet#getStateGroupsArray()
       */
     public ArrayList<StateGroup> getStateGroupsArray() {
         return this._stateGroups;
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#print()
+      * @see pipe.interfaces.IPetriNet#print()
       */
     public void print() {
         System.out.println("No of Places = " + _placeViews.size() + "\"");
@@ -1031,14 +1031,14 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#existsRateParameter(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#existsRateParameter(java.lang.String)
       */
     public boolean existsRateParameter(String name) {
         return _rateParameterHashSet.contains(name);
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#changeRateParameter(java.lang.String, java.lang.String)
+      * @see pipe.interfaces.IPetriNet#changeRateParameter(java.lang.String, java.lang.String)
       */
     public boolean changeRateParameter(String oldName, String newName) {
         if (_rateParameterHashSet.contains(newName)) {
@@ -1050,7 +1050,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#hasTimedTransitions()
+      * @see pipe.interfaces.IPetriNet#hasTimedTransitions()
       */
     public boolean hasTimedTransitions() {
         TransitionView[] transitionViews = this.getTransitionViews();
@@ -1065,7 +1065,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTransitions()
+      * @see pipe.interfaces.IPetriNet#getTransitions()
       */
     public TransitionView[] getTransitionViews() {
         TransitionView[] returnArray = new TransitionView[_transitionViews.size()];
@@ -1077,7 +1077,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#hasImmediateTransitions()
+      * @see pipe.interfaces.IPetriNet#hasImmediateTransitions()
       */
     public boolean hasImmediateTransitions() {
         TransitionView[] transitionViews = this.getTransitionViews();
@@ -1108,7 +1108,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTransitionName(int)
+      * @see pipe.interfaces.IPetriNet#getTransitionName(int)
       */
     public String getTransitionName(int i) {
         return _transitionViews.get(i).getName();
@@ -1119,7 +1119,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     // (i.e. a transition may only have one input tagged Arc and one output
     // tagged Arc and if it has one it must have the other).
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#validTagStructure()
+      * @see pipe.interfaces.IPetriNet#validTagStructure()
       */
     public boolean validTagStructure() {
         ArrayList inputArcsArray = new ArrayList();
@@ -1223,7 +1223,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#checkTransitionIDAvailability(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#checkTransitionIDAvailability(java.lang.String)
       */
     public boolean checkTransitionIDAvailability(String newName) {
         for (TransitionView _transitionView : _transitionViews.values()) {
@@ -1237,7 +1237,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#checkPlaceIDAvailability(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#checkPlaceIDAvailability(java.lang.String)
       */
     public boolean checkPlaceIDAvailability(String newName) {
         for (PlaceView _placeView : _placeViews.values()) {
@@ -1251,7 +1251,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getPlaceIndex(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#getPlaceIndex(java.lang.String)
       */
     public int getPlaceIndex(String placeName) {
         int index = -1;
@@ -1270,7 +1270,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
       * needs to be validated before animation
       */
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#hasValidatedStructure()
+      * @see pipe.interfaces.IPetriNet#hasValidatedStructure()
       */
     public boolean hasValidatedStructure() {
 
@@ -1292,14 +1292,14 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#setValidate(boolean)
+      * @see pipe.interfaces.IPetriNet#setValidate(boolean)
       */
     public void setValidate(boolean valid) {
         _model.setValidated(valid);
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTransitionByName(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#getTransitionByName(java.lang.String)
       */
     public TransitionView getTransitionByName(String transitionName) {
         TransitionView returnTransitionView = null;
@@ -1317,7 +1317,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getTransition(int)
+      * @see pipe.interfaces.IPetriNet#getTransition(int)
       */
     public TransitionView getTransition(int transitionNo) {
         TransitionView returnTransitionView = null;
@@ -1331,7 +1331,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getPlaceByName(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#getPlaceByName(java.lang.String)
       */
     public PlaceView getPlaceByName(String placeName) {
         PlaceView returnPlaceView = null;
@@ -1371,7 +1371,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     /* (non-Javadoc)
-      * @see pipe.actions.model.interfaces.IPetriNet#getPlaceById(java.lang.String)
+      * @see pipe.interfaces.IPetriNet#getPlaceById(java.lang.String)
       */
     public PlaceView getPlaceById(String placeID) {
         PlaceView returnPlaceView = null;

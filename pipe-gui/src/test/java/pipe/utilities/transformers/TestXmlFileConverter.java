@@ -17,11 +17,11 @@ public class TestXmlFileConverter
 
 	public static void main(String[] args) {
 		// copy the output from below to the string variable to be used in testing.
-		System.out.println(convertXmlFileToEscapedString(buildFile("simpleNet.xml")));
+		System.out.println(convertXmlFileToEscapedString(buildFile("simpleNet.pipe.petrinet.xml")));
 	}
 	protected static File buildFile(String name) {
 		File file = new File(System.getProperty("user.dir")+SLASH+
-				"test"+SLASH+"xml"+SLASH+name);
+				"test"+SLASH+ "xml" +SLASH+name);
 		return file;
 	}
 	public static String convertXmlFileToEscapedString(File file)  {

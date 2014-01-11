@@ -5,7 +5,7 @@ import org.junit.Test;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.PetriNetTab;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 

@@ -1,7 +1,7 @@
 package pipe.gui;
 
+import pipe.gui.model.PipeApplicationModel;
 import pipe.controllers.PipeApplicationController;
-import pipe.models.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 public class ApplicationSettings

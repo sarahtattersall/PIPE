@@ -1,6 +1,6 @@
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.CopyPasteManager;
-import pipe.models.PipeApplicationModel;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;

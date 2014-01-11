@@ -1,4 +1,4 @@
-package pipe.actions.model.interfaces;
+package pipe.interfaces;
 
 import pipe.io.NewStateRecord;
 

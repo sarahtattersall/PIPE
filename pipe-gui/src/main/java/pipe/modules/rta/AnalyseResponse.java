@@ -19,7 +19,7 @@ import pipe.io.ImmediateAbortException;
 import pipe.io.NewReachabilityGraphFileHeader;
 import pipe.io.NewStateRecord;
 import pipe.io.NewTransitionRecord;
-import pipe.actions.model.interfaces.IDynamicMarking;
+import pipe.interfaces.IDynamicMarking;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
 
