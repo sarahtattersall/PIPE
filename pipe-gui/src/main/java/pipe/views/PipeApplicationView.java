@@ -346,7 +346,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 if (nets.size() > 0) {
                     int index = 0;
                     for (JarEntry net : nets) {
-                        if (net.getName().toLowerCase().endsWith(".pipe.petrinet.xml")) {
+                        if (net.getName().toLowerCase().endsWith(".xml")) {
                             addMenuItem(exampleMenu,
                                     new ExampleFileAction(net, (index < 10) ? ("ctrl " + index) : null, this));
                             index++;
@@ -385,14 +385,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
                 // Oliver Haggarty - fixed code here so that if folder contains
                 // non
-                // .pipe.petrinet.xml file the Example x counter is not incremented when that
+                // .xml file the Example x counter is not incremented when that
                 // file
                 // is ignored
 
                 if (nets.length > 0) {
                     int k = 0;
                     for (File net : nets) {
-                        if (net.getName().toLowerCase().endsWith(".pipe.petrinet.xml")) {
+                        if (net.getName().toLowerCase().endsWith(".xml")) {
                             addMenuItem(exampleMenu, new ExampleFileAction(net, (k < 10) ? "ctrl " + (k++) : null, this));
                         }
                     }

@@ -1,4 +1,4 @@
-<?pipe.petrinet.xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -109,7 +109,7 @@
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:format>image/svg+pipe.petrinet.xml</dc:format>
+        <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
       </cc:Work>
@@ -137,7 +137,7 @@
          y="-10.044172"
          x="-13.523438"
          style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-         pipe.petrinet.xml:space="preserve"><tspan
+         xml:space="preserve"><tspan
            y="-10.044172"
            x="-13.523438"
            id="tspan18302"
@@ -150,7 +150,7 @@
          y="-4.8125"
          x="-3.7255859"
          style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-         pipe.petrinet.xml:space="preserve"><tspan
+         xml:space="preserve"><tspan
            y="-4.8125"
            x="-3.7255859"
            id="tspan18306"
@@ -161,7 +161,7 @@
          y="-4.8125"
          x="11.96582"
          style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-         pipe.petrinet.xml:space="preserve"><tspan
+         xml:space="preserve"><tspan
            y="-4.8125"
            x="11.96582"
            id="tspan18310"
@@ -172,7 +172,7 @@
          y="-10"
          x="-31.102539"
          style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-         pipe.petrinet.xml:space="preserve"><tspan
+         xml:space="preserve"><tspan
            style="font-size:14px"
            y="-10"
            x="-31.102539"
@@ -182,7 +182,7 @@
          transform="translate(-1.9814453,0.2799599)"
          id="g9857">
         <text
-           pipe.petrinet.xml:space="preserve"
+           xml:space="preserve"
            style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
            x="-19.907227"
            y="-10.331282"

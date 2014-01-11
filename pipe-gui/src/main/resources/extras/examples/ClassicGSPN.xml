@@ -1,4 +1,4 @@
-<?pipe.petrinet.xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <pnml>
 <net id="Net-One" type="P/T net">
 <token id="Default" enabled="true" red="0" green="0" blue="0"/>

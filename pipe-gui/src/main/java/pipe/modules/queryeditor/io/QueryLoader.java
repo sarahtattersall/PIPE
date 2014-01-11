@@ -496,7 +496,7 @@ public class QueryLoader implements QueryConstants
 	}
 
 	/**
-	 * Extracts state labels from the pipe.petrinet.xml document and stores them in QueryData
+	 * Extracts state labels from the xml document and stores them in QueryData
 	 * 
 	 * @param inputElement
 	 */
@@ -527,7 +527,7 @@ public class QueryLoader implements QueryConstants
 	}
 
 	/**
-	 * Extracts action labels from the pipe.petrinet.xml document and stores them in QueryData
+	 * Extracts action labels from the xml document and stores them in QueryData
 	 * 
 	 * @param inputElement
 	 */
@@ -582,7 +582,7 @@ public class QueryLoader implements QueryConstants
 	}
 
 	/**
-	 * Extracts macro information from the pipe.petrinet.xml document and stores it in
+	 * Extracts macro information from the xml document and stores it in
 	 * QueryData
 	 * 
 	 * @param inputElement

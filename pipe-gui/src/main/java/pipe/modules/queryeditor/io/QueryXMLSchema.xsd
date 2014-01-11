@@ -1,4 +1,4 @@
-<?pipe.petrinet.xml version="1.0"?>
+<?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
 <!-- definition of attributes -->

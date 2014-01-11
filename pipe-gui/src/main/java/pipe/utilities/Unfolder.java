@@ -403,7 +403,7 @@ class Unfolder
         File file = null;
         try
         {
-            file = File.createTempFile("unfoldedNet", ".pipe.petrinet.xml");
+            file = File.createTempFile("unfoldedNet", ".xml");
             file.deleteOnExit();
             PNMLWriter writer = new PNMLWriter(dataLayer);
             writer.saveTo(file,false);

@@ -71,7 +71,7 @@ public class MacroWriter
 			if (!macroSaveLocation.exists())
 				macroSaveLocation.mkdir();
 
-			String macroPath = MacroManager.macroSaveLocation + MacroWriter.macro.getName() + ".pipe.petrinet.xml";
+			String macroPath = MacroManager.macroSaveLocation + MacroWriter.macro.getName() + ".xml";
 			macroFile = new File(macroPath);
 		}
 		else

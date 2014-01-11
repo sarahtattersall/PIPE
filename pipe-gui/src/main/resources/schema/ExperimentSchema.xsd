@@ -1,5 +1,5 @@
-<?pipe.petrinet.xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://pipe.petrinet.xml.netbeans.org/schema/ExperimentSchema" targetNamespace="http://pipe.petrinet.xml.netbeans.org/schema/ExperimentSchema" elementFormDefault="qualified">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xml.netbeans.org/schema/ExperimentSchema" targetNamespace="http://xml.netbeans.org/schema/ExperimentSchema" elementFormDefault="qualified">
 	<xsd:element name="Experiment" type="tns:ExperimentType"/>
 	<xsd:complexType name="ExperimentType">
 		<xsd:sequence>
@@ -95,7 +95,7 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	<!-- Deleted 02/08/07 : We don't need it, the Guard is a string -->
-	<!-- We have  to put the Test separated because pipe.petrinet.xml does not allow to use "<" on its strings -->
+	<!-- We have  to put the Test separated because xml does not allow to use "<" on its strings -->
 	<!--	<xsd:complexType name="GuardType">
 		<xsd:attribute name="VariableName" type="xsd:IDREF" use="required"/>
 		<xsd:attribute name="Test" type="TestType" use="required"/>

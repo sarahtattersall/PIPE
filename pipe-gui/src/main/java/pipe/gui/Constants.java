@@ -13,7 +13,7 @@ public interface Constants {
    public static final String CLASS_FILE_EXTENSION = ".class";
    public static final String CLASS_FILE_DESC = "Java Class File";   
 //	File DEFAULT_DIRECTORY = new File("Petri-Nets");
-//	String DEFAULT_FILENAME = "PetriNetViewComponent.pipe.petrinet.xml";
+//	String DEFAULT_FILENAME = "PetriNetViewComponent.xml";
    
 //PetriNetViewComponent Object Type Definitions
    public static final int ANIMATE      = 98;

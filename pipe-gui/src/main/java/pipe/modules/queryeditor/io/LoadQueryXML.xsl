@@ -1,6 +1,6 @@
-<?pipe.petrinet.xml version="1.0"?>
+<?xml version="1.0"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:output method="pipe.petrinet.xml" encoding="iso-8859-1" omit-pipe.petrinet.xml-declaration="no" indent="yes" version="1.0"/>
+<xsl:output method="xml" encoding="iso-8859-1" omit-xml-declaration="no" indent="yes" version="1.0"/>
 <xsl:strip-space elements="*"/>
 
 	<xsl:template match="ptml">	

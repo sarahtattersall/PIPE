@@ -31,7 +31,7 @@ public class FileBrowserWithCheckBox
       //panel.add(acceptB); 
       //panel.add(Box.createHorizontalStrut(40));
       
-      //panel.add(new JCheckBox("Generate xsl from pipe.petrinet.xml[Provisional]",true));
+      //panel.add(new JCheckBox("Generate xsl from xml[Provisional]",true));
       panel.add(checkBox); 
       
       

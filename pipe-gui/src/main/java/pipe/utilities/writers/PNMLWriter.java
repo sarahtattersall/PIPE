@@ -600,7 +600,7 @@ public class PNMLWriter
 
             // temporary file
             File tempFile = File.createTempFile("petrinet[" + className + "][" +
-                                                        System.nanoTime() + "]", ".pipe.petrinet.xml", dir);
+                                                        System.nanoTime() + "]", ".xml", dir);
 
             PNMLWriter saveModel = new PNMLWriter(data);
 

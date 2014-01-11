@@ -1,4 +1,4 @@
-<?pipe.petrinet.xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <pnml>
 <net id="Net-One" type="P/T net">
 <labels x="93" y="145" width="48" height="20" border="false">

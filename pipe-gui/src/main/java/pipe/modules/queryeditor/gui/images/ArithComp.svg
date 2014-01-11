@@ -1,4 +1,4 @@
-<?pipe.petrinet.xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -109,7 +109,7 @@
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:format>image/svg+pipe.petrinet.xml</dc:format>
+        <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
       </cc:Work>
@@ -137,7 +137,7 @@
          y="-6.6669922"
          x="-38.813477"
          style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Arial"
-         pipe.petrinet.xml:space="preserve"><tspan
+         xml:space="preserve"><tspan
            style="font-size:13px"
            y="-6.6669922"
            x="-38.813477"

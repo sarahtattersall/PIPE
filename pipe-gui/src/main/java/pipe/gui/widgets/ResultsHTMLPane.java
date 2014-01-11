@@ -69,7 +69,7 @@ public class ResultsHTMLPane
       // at this point.
       if ( path == null ){
          try {
-            defaultPath = File.createTempFile(  "PIPE", ".pipe.petrinet.xml" ).getParentFile();
+            defaultPath = File.createTempFile(  "PIPE", ".xml" ).getParentFile();
             defaultPath.deleteOnExit();
             System.out.println("defaultpath: " + defaultPath);
          } catch (IOException e) {

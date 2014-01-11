@@ -60,7 +60,7 @@ public class MacroTransformer {
 				System.out.println("xsltSource is null");
 			
 			Transformer transformer = TransformerFactory.newInstance().newTransformer(xsltSource);	
-			outputObjectArrayList = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "MacroDocument.pipe.petrinet.xml");
+			outputObjectArrayList = new File(System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + "MacroDocument.xml");
 			outputObjectArrayList.deleteOnExit();
 			StreamSource source = new StreamSource(filename);
 			StreamResult result = new StreamResult(outputObjectArrayList);
@@ -98,12 +98,12 @@ public class MacroTransformer {
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			document = documentBuilder.parse(ptmlFileName);
 		} catch (ParserConfigurationException e) {
-			System.err.println("javax.pipe.petrinet.xml.parsers.ParserConfigurationException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
+			System.err.println("javax.xml.parsers.ParserConfigurationException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
 		} catch (IOException e) {
 			System.err.println("ERROR: File may not be present or have the correct attributes");
 			System.err.println("java.io.IOException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
 		} catch (SAXException e) {
-			System.err.println("org.pipe.petrinet.xml.sax.SAXException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
+			System.err.println("org.xml.sax.SAXException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
 		}
 
 		return document;
@@ -128,12 +128,12 @@ public class MacroTransformer {
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			document = documentBuilder.parse(ptmlFile);
 		} catch (ParserConfigurationException e) {
-			System.err.println("javax.pipe.petrinet.xml.parsers.ParserConfigurationException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
+			System.err.println("javax.xml.parsers.ParserConfigurationException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer");
 		} catch (IOException e) {
 			System.err.println("ERROR: File may not be present or have the correct attributes");
 			System.err.println("java.io.IOException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer" + e);
 		} catch (SAXException e) {
-			System.err.println("org.pipe.petrinet.xml.sax.SAXException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer" + e);
+			System.err.println("org.xml.sax.SAXException thrown in getDom(String ptmlFileName) : modules.queryeditor.io.MacroTransformer" + e);
 			System.err.println("Workaround: delete the xmlns attribute from the PNML root node.  Probably not ideal, to be fixed when time allows.");
 		}
 

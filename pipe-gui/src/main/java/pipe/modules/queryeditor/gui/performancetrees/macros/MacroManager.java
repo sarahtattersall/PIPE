@@ -396,7 +396,7 @@ public class MacroManager {
                                 QueryManager.getData().deleteMacro(selectedMacroName);
 
                                 // remove XML storing macro
-                                String fileName = MacroManager.macroSaveLocation + System.getProperty("file.separator") + selectedMacroName + ".pipe.petrinet.xml";
+                                String fileName = MacroManager.macroSaveLocation + System.getProperty("file.separator") + selectedMacroName + ".xml";
                                 File inFile = new File(fileName);
                                 if(inFile.exists())
                                     inFile.delete();

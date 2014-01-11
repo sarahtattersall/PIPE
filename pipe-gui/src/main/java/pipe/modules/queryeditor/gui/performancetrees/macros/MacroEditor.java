@@ -137,7 +137,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 	{
 		// prepare macro display stuff
 		String fileName = MacroManager.macroSaveLocation + System.getProperty("file.separator") +
-							macroToEditName + ".pipe.petrinet.xml";
+							macroToEditName + ".xml";
 		File inFile = new File(fileName);
 		if (inFile.exists())
 		{
@@ -920,7 +920,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 																	// of macro
 																	String oldMacroPath = MacroManager.macroSaveLocation +
 																							MacroEditor.this.initialMacroName +
-																							".pipe.petrinet.xml";
+																							".xml";
 																	File oldMacroFile = new File(oldMacroPath);
 																	if (oldMacroFile.exists())
 																		oldMacroFile.delete();
@@ -1184,7 +1184,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 							String filename = new FileBrowser(	"XML Document",
 																"xml",
 																MacroEditor.this.activeMacro.getName() +
-																".pipe.petrinet.xml").saveFile();
+																".xml").saveFile();
 							try
 							{
 								MacroWriter.saveMacro(MacroEditor.this.activeMacro, filename);
