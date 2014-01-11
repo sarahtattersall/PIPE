@@ -12,7 +12,8 @@
     <name>PIPE Parent Project</name>
 
     <modules>
-        <module>pipe-model</module>
+        <module>pipe-gui</module>
+        <module>pipe-core</module>
     </modules>
 
     <build>
