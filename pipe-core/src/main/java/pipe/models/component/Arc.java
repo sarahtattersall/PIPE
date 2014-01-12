@@ -256,4 +256,8 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
         return true;
     }
+
+    public ArcStrategy<S, T> getStrategy() {
+        return strategy;
+    }
 }

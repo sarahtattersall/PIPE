@@ -2,9 +2,11 @@ package pipe.handlers;
 
 import pipe.actions.DeletePetriNetObjectAction;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
+import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.PetriNetComponent;
 import pipe.views.AbstractPetriNetViewComponent;
@@ -92,7 +94,9 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
         if (applicationModel.getMode() == Constants.SELECT) {
             if (!petriNetController.isSelected(component)) {
                 if (!e.isShiftDown()) {
-                    ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
+                    PipeApplicationController controller = ApplicationSettings.getApplicationController();
+                    SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
+                    selectionManager.clearSelection();
                 }
                 petriNetController.select(component);
                 justSelected = true;
@@ -122,7 +126,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 if (e.isShiftDown()) {
                     petriNetController.deselect(component);
                 } else {
-                    ((PetriNetTab) contentPane).getSelectionObject().clearSelection();
+                    PipeApplicationController controller = ApplicationSettings.getApplicationController();
+                    SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
+
+                    selectionManager.clearSelection();
                     petriNetController.select(component);
                 }
             }
@@ -153,8 +160,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
             totalX += transX;
             totalY += transY;
 
-            ((PetriNetTab) contentPane).getSelectionObject().translateSelection(
-                    transX, transY);
+            PipeApplicationController controller = ApplicationSettings.getApplicationController();
+            SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
+
+            selectionManager.translateSelection(transX, transY);
         }
     }
 

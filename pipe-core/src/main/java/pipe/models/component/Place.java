@@ -49,6 +49,13 @@ public class Place extends Connectable implements Serializable
         super(id, name);
     }
 
+    public Place(Place place) {
+        super(place);
+        this.capacity = place.capacity;
+        this.markingXOffset = place.markingXOffset;
+        this.markingYOffset = place.markingYOffset;
+    }
+
     @Override
     public int getHeight() {
         return DIAMETER;
@@ -230,4 +237,48 @@ public class Place extends Connectable implements Serializable
         visitor.visit(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Place place = (Place) o;
+
+        if (!super.equals(place)){
+            return false;
+        }
+
+        if (Double.compare(place.capacity, capacity) != 0) {
+            return false;
+        }
+        if (Double.compare(place.markingXOffset, markingXOffset) != 0) {
+            return false;
+        }
+        if (Double.compare(place.markingYOffset, markingYOffset) != 0) {
+            return false;
+        }
+        if (!tokenCounts.equals(place.tokenCounts)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(markingXOffset);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(markingYOffset);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(capacity);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + tokenCounts.hashCode();
+        return result;
+    }
 }

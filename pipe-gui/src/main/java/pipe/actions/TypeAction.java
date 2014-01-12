@@ -1,10 +1,8 @@
 package pipe.actions;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
-import pipe.gui.StatusBar;
+import pipe.controllers.PipeApplicationController;
+import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Connectable;
 
@@ -44,15 +42,17 @@ public abstract class TypeAction extends GuiAction
         statusBar.changeText(typeID);
 
         PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
+        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+        SelectionManager selectionManager = controller.getSelectionManager(petriNetTab);
         if(petriNetTab == null)
         {
             return;
         }
 
-        petriNetTab.getSelectionObject().disableSelection();
+        //TODO: DO I NEED THIS?
+        selectionManager.disableSelection();
         // _petriNetTabView.getSelectionObject().clearSelection();
 
-        PetriNetController petriNetController = petriNetTab.getPetriNetController();
         if((typeID != Constants.ARC))// && (petriNetController.isCurrentlyCreatingArc()))
         {
 //            petriNetController.cancelArcCreation();
@@ -64,7 +64,7 @@ public abstract class TypeAction extends GuiAction
             // disable drawing to eliminate possiblity of connecting arc to
             // old coord of moved component
             statusBar.changeText(typeID);
-            petriNetTab.getSelectionObject().enableSelection();
+            selectionManager.enableSelection();
             petriNetTab.setCursorType("arrow");
         }
         else if(typeID == Constants.DRAG)

@@ -1,6 +1,7 @@
 package pipe.actions.animate;
 
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
@@ -22,26 +23,26 @@ public class ToggleAnimateAction extends AnimateAction {
 
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
         PetriNetTab currentTab = pipeApplicationView.getCurrentTab();
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
+        PipeApplicationController applicationController = ApplicationSettings.getApplicationController();
         try
         {
             boolean isTabAnimated = currentTab.isInAnimationMode();
             pipeApplicationView.setAnimationMode(!isTabAnimated);
-            PetriNetController controller = currentTab.getPetriNetController();
+            PetriNetController petriNetController = applicationController.getActivePetriNetController();
             if(!isTabAnimated)
             {
                 pipeApplicationView.restoreMode();
                 AbstractPetriNetViewComponent.ignoreSelection(false);
-                PetriNet petriNet = controller.getPetriNet();
+                PetriNet petriNet = petriNetController.getPetriNet();
                 petriNet.markEnabledTransitions();
             }
             else
             {
                 AbstractPetriNetViewComponent.ignoreSelection(true);
-                Animator animator = controller.getAnimator();
+                Animator animator = petriNetController.getAnimator();
                 animator.clear();
                 // Do we keep the selection??
-                currentTab.getSelectionObject().clearSelection();
+//                currentTab.getSelectionObject().clearSelection();
             }
         }
         catch(Exception e)

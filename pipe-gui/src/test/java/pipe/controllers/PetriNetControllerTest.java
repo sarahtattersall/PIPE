@@ -5,9 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pipe.exceptions.TokenLockedException;
-import pipe.gui.Animator;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
+import pipe.gui.*;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
@@ -38,7 +36,10 @@ public class PetriNetControllerTest {
         net = new PetriNet();
         mockHistoryManager = mock(HistoryManager.class);
         mockAnimator = mock(Animator.class);
-        controller = new PetriNetController(net, mockHistoryManager, mockAnimator);
+        CopyPasteManager copyPasteManager = mock(CopyPasteManager.class);
+        ZoomController zoomController = mock(ZoomController.class);
+
+        controller = new PetriNetController(net, mockHistoryManager, mockAnimator, copyPasteManager, zoomController);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.
@@ -235,7 +236,7 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0,0);
+        Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
@@ -252,14 +253,13 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0,0);
+        Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
         controller.updateToken(id, id, enabled, color);
         verify(token, never()).setId(anyString());
     }
-
 
     @Test
     public void updateEnabledIfChanged() throws TokenLockedException {
@@ -270,7 +270,7 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0,0);
+        Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
@@ -287,7 +287,7 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0,0);
+        Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
@@ -304,18 +304,17 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0,0);
+        Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
-        Color newColor = new Color(0,0,0);
+        Color newColor = new Color(0, 0, 0);
         controller.updateToken(id, id, enabled, newColor);
         verify(token).setColor(newColor);
     }
 
-
     @Test
-    public void doesNotUpdateTokenColorIfNotChanged()  {
+    public void doesNotUpdateTokenColorIfNotChanged() {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -323,7 +322,7 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0,0);
+        Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 

@@ -37,6 +37,15 @@ public class Transition extends Connectable implements Serializable {
         this.priority = priority;
     }
 
+    public Transition(Transition transition) {
+        super(transition);
+        this.infiniteServer = transition.infiniteServer;
+        this.angle = transition.angle;
+        this.timed = transition.timed;
+        this.rateExpr = transition.rateExpr;
+        this.priority = transition.priority;
+    }
+
     @Override
     public int getHeight() {
         return TRANSITION_HEIGHT;
@@ -235,4 +244,59 @@ public class Transition extends Connectable implements Serializable {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        Transition that = (Transition) o;
+
+        if (!super.equals(that)) {
+            return false;
+        }
+
+        if (angle != that.angle) {
+            return false;
+        }
+        if (enabled != that.enabled) {
+            return false;
+        }
+        if (infiniteServer != that.infiniteServer) {
+            return false;
+        }
+        if (orientation != that.orientation) {
+            return false;
+        }
+        if (priority != that.priority) {
+            return false;
+        }
+        if (timed != that.timed) {
+            return false;
+        }
+        if (!rateExpr.equals(that.rateExpr)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + priority;
+        result = 31 * result + rateExpr.hashCode();
+        result = 31 * result + orientation;
+        result = 31 * result + (timed ? 1 : 0);
+        result = 31 * result + (infiniteServer ? 1 : 0);
+        result = 31 * result + angle;
+        result = 31 * result + (enabled ? 1 : 0);
+        return result;
+    }
 }

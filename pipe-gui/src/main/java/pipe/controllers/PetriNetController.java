@@ -1,8 +1,10 @@
 package pipe.controllers;
 
+import org.apache.tools.ant.taskdefs.Copy;
 import pipe.controllers.interfaces.IController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.Animator;
+import pipe.gui.CopyPasteManager;
 import pipe.gui.ZoomController;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
@@ -19,27 +21,32 @@ import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PetriNetController implements IController, Serializable {
 
-    private final ZoomController zoomController = new ZoomController(100);
+    private final ZoomController zoomController;
     private final HistoryManager historyManager;
     private final PetriNet petriNet;
-    private final Set<PetriNetComponent> selectedComponents = new
-            HashSet<PetriNetComponent>();
+    private final Set<PetriNetComponent> selectedComponents = new HashSet<PetriNetComponent>();
     private final ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
     private final ArcStrategy<Transition, Place> forwardNormalStrategy;
     private final ArcStrategy<Place, Transition> backwardsNormalStrategy;
+    // TODO PASS IN
+    private final CopyPasteManager copyPasteManager;
     private int placeNumber = 0;
     private int transitionNumber = 0;
     private Token selectedToken;
     private Animator animator;
 
 
-    public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator) {
+    public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator, CopyPasteManager copyPasteManager, ZoomController zoomController) {
         petriNet = model;
+        this.zoomController = zoomController;
         this.animator = animator;
+        this.copyPasteManager = copyPasteManager;
         if (model.getTokens().size() > 0) {
             selectedToken = model.getTokens().iterator().next();
         }
@@ -49,15 +56,15 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void setEndPoint(double x, double y, boolean shiftDown) {
-//        if (currentlyCreatingArc) {
-//            arc.setTarget(new TemporaryArcTarget(x, y));
-//
-//            petriNet.notifyObservers();
-//        }
+        //        if (currentlyCreatingArc) {
+        //            arc.setTarget(new TemporaryArcTarget(x, y));
+        //
+        //            petriNet.notifyObservers();
+        //        }
     }
 
     public void addPoint(Point2D point, boolean curved) {
-//        arc.addIntermediatePoint(new ArcPoint(point, curved));
+        //        arc.addIntermediatePoint(new ArcPoint(point, curved));
     }
 
     /**
@@ -123,6 +130,26 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
+     * Currently must be of type Connectable, since yhis is the only abstract
+     * class containing getters for X and Y
+     *
+     * @param connectable        object to select
+     * @param selectionRectangle
+     */
+    private void selectConnectable(Connectable connectable, Rectangle selectionRectangle) {
+        int x = new Double(connectable.getX()).intValue();
+        int y = new Double(connectable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(), connectable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(connectable);
+        }
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
+    }
+
+    /**
      * A crude method for selecting arcs, does not take into account bezier curves
      *
      * @param arc
@@ -152,28 +179,6 @@ public class PetriNetController implements IController, Serializable {
         Point2D end = arc.getEndPoint();
         path.lineTo(end.getX(), end.getY());
         return path;
-    }
-
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
-    }
-
-    /**
-     * Currently must be of type Connectable, since yhis is the only abstract
-     * class containing getters for X and Y
-     *
-     * @param connectable        object to select
-     * @param selectionRectangle
-     */
-    private void selectConnectable(Connectable connectable,
-                                   Rectangle selectionRectangle) {
-        int x = new Double(connectable.getX()).intValue();
-        int y = new Double(connectable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(),
-                connectable.getWidth());
-        if (selectionRectangle.intersects(rectangle)) {
-            select(connectable);
-        }
     }
 
     /**
@@ -250,6 +255,27 @@ public class PetriNetController implements IController, Serializable {
         return petriNet;
     }
 
+    public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
+        return new ArcController<S, T>(arc, historyManager);
+    }
+
+    public PlaceController getPlaceController(Place place) {
+        return new PlaceController(place, historyManager);
+    }
+
+    public TransitionController getTransitionController(final Transition transition) {
+        return new TransitionController(transition, historyManager);
+    }
+
+    public void selectToken(String tokenName) {
+        selectToken(getToken(tokenName));
+    }
+
+    //TODO: Should this be in the model???
+    public void selectToken(Token token) {
+        this.selectedToken = token;
+    }
+
     public Token getToken(String tokenName) {
         return getTokenForName(tokenName);
     }
@@ -263,26 +289,8 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getToken(name);
     }
 
-    public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
-        return new ArcController<S, T>(arc, historyManager);
-    }
-
-    public PlaceController getPlaceController(Place place) {
-        return new PlaceController(place, historyManager);
-    }
-
-    public TransitionController getTransitionController(
-            final Transition transition) {
-        return new TransitionController(transition, historyManager);
-    }
-
-    //TODO: Should this be in the model???
-    public void selectToken(Token token) {
-        this.selectedToken = token;
-    }
-
-    public void selectToken(String tokenName) {
-        selectToken(getToken(tokenName));
+    public void copySelection() {
+        copyPasteManager.copy(selectedComponents);
     }
 
     public Token getSelectedToken() {
@@ -307,5 +315,9 @@ public class PetriNetController implements IController, Serializable {
 
     public ArcStrategy<Place, Transition> getInhibitorStrategy() {
         return inhibitorStrategy;
+    }
+
+    public void paste() {
+        copyPasteManager.showPasteRectangle();
     }
 }

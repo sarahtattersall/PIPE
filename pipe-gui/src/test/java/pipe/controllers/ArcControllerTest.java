@@ -156,7 +156,7 @@ public class ArcControllerTest {
     //    @Test
     //    public void addPointCreatesHistoryItem() {
     //        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
-    //        controller.addPoint(point.getPoint());
+    //        applicationController.addPoint(point.getPoint());
     //        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, point);
     //        verify(historyManager).addNewEdit(addArcPointAction);
     //    }

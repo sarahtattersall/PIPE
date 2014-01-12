@@ -3,12 +3,12 @@ package pipe.controllers;
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import pipe.gui.*;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
-import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
@@ -18,8 +18,8 @@ import pipe.models.strategy.arc.ForwardsNormalStrategy;
 import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.petrinet.reader.PetriNetReader;
 import pipe.petrinet.reader.creator.*;
-import pipe.petrinet.writer.PetriNetWriter;
 import pipe.petrinet.transformer.PNMLTransformer;
+import pipe.petrinet.writer.PetriNetWriter;
 import pipe.utilities.transformers.TNTransformer;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
@@ -38,15 +38,13 @@ import java.util.Map;
 public class PipeApplicationController {
 
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
-    private final CopyPasteManager copyPasteManager;
+    private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<PetriNetTab, SelectionManager>();
     //TODO: Circular dependency between these two classes
     private final PipeApplicationModel applicationModel;
     private PetriNetTab activeTab;
 
-    public PipeApplicationController(CopyPasteManager copyPasteManager,
-                                     PipeApplicationModel applicationModel) {
+    public PipeApplicationController(PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
-        this.copyPasteManager = copyPasteManager;
         ApplicationSettings.register(this);
     }
 
@@ -60,19 +58,12 @@ public class PipeApplicationController {
         return createNewTab(model, applicationView);
     }
 
-    private Token createDefaultToken(PipeApplicationView applicationView) {
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
-        return token;
-    }
-
     private PetriNetTab createNewTab(PetriNet net, PipeApplicationView applicationView) {
         AnimationHistory animationHistory = new AnimationHistory();
         Animator animator = new Animator(net, animationHistory);
 
-        PetriNetController petriNetController =
-                new PetriNetController(net, new HistoryManager(applicationView),
-                        animator);
+        ZoomController zoomController = new ZoomController(100);
+
         AnimationHistoryView animationHistoryView;
         try {
             animationHistoryView = new AnimationHistoryView(animationHistory, "Animation History");
@@ -80,11 +71,22 @@ public class PipeApplicationController {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             throw new RuntimeException();
         }
-
         animationHistory.addObserver(animationHistoryView);
 
 
-        PetriNetTab petriNetTab = new PetriNetTab(petriNetController, animationHistoryView);
+        PetriNetTab petriNetTab = new PetriNetTab(zoomController, animationHistoryView);
+
+        CopyPasteManager copyPasteManager = new CopyPasteManager(petriNetTab, net);
+
+        PetriNetController petriNetController =
+                new PetriNetController(net, new HistoryManager(applicationView), animator, copyPasteManager,
+                        zoomController);
+
+
+        SelectionManager selectionManager = new SelectionManager(petriNetTab, petriNetController);
+        selectionManagers.put(petriNetTab, selectionManager);
+
+
         netControllers.put(petriNetTab, petriNetController);
 
         PetriNetMouseHandler handler =
@@ -112,6 +114,12 @@ public class PipeApplicationController {
         return petriNetTab;
     }
 
+    private Token createDefaultToken(PipeApplicationView applicationView) {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
+        return token;
+    }
+
     public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView, boolean isTN) {
 
         if (isPasteInProgress()) {
@@ -124,6 +132,18 @@ public class PipeApplicationController {
         loadPetriNetFromFile(file, net, isTN);
         return tab;
 
+    }
+
+    //TODO: DELETE
+    public void cancelPaste() {
+
+        //        copyPasteManager.cancelPaste();
+    }
+
+    //TODO: DELETE
+    public boolean isPasteInProgress() {
+        return false;
+        //        return copyPasteManager.pasteInProgress();
     }
 
     private PetriNet loadPetriNetFromFile(File file, PetriNet net, boolean isTN) {
@@ -162,28 +182,20 @@ public class PipeApplicationController {
         }
     }
 
-    public boolean isPasteInProgress() {
-        return copyPasteManager.pasteInProgress();
-    }
-
-    public void cancelPaste() {
-        copyPasteManager.cancelPaste();
-    }
-
+    //TODO: DELETE
     public CopyPasteManager getCopyPasteManager() {
-        return copyPasteManager;
+        return null;
     }
 
+    //TODO: DELETE
     public boolean isPasteEnabled() {
-        return copyPasteManager.pasteEnabled();
+        return false;
+        //        return copyPasteManager.pasteEnabled();
     }
 
+    //TODO: DELETE
     public void copy(ArrayList selection, PetriNetTab appView) {
-        copyPasteManager.doCopy(selection, appView);
-    }
-
-    public void showPasteRectangle(PetriNetTab appView) {
-        copyPasteManager.showPasteRectangle(appView);
+        //        copyPasteManager.doCopy(selection, appView);
     }
 
     public PetriNetController getControllerForTab(PetriNetTab tab) {
@@ -210,4 +222,7 @@ public class PipeApplicationController {
         return netControllers.get(activeTab);  //To change body of created methods use File | Settings | File Templates.
     }
 
+    public SelectionManager getSelectionManager(PetriNetTab petriNetTab) {
+        return selectionManagers.get(petriNetTab);
+    }
 }

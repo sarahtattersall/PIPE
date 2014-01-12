@@ -50,6 +50,65 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         this.name = name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Connectable that = (Connectable) o;
+
+        if (Double.compare(that.nameXOffset, nameXOffset) != 0) {
+            return false;
+        }
+        if (Double.compare(that.nameYOffset, nameYOffset) != 0) {
+            return false;
+        }
+        if (Double.compare(that.x, x) != 0) {
+            return false;
+        }
+        if (Double.compare(that.y, y) != 0) {
+            return false;
+        }
+        if (!id.equals(that.id)) {
+            return false;
+        }
+        if (!name.equals(that.name)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + id.hashCode();
+        result = 31 * result + name.hashCode();
+        temp = Double.doubleToLongBits(nameXOffset);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(nameYOffset);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    protected Connectable(Connectable connectable) {
+        this.id = connectable.id + "_copied";
+        this.name = connectable.name + "_copied";
+        this.x = connectable.x;
+        this.y = connectable.y;
+        this.nameXOffset = connectable.nameXOffset;
+        this.nameYOffset = connectable.nameYOffset;
+    }
+
     public double getNameXOffset() {
         return nameXOffset;
     }

@@ -68,9 +68,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction exitAction = new ExitAction(this);
     public GuiAction undoAction = new UndoAction();
     public GuiAction redoAction = new RedoAction();
-    public GuiAction copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C");
+    public final GuiAction copyAction;
     public GuiAction cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X");
-    public GuiAction pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V");
+    public final GuiAction pasteAction;
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
     public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
     public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
@@ -119,6 +119,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         arcAction = null;
         openAction = null;
         specifyTokenClasses = null;
+        copyAction = null;
+        pasteAction = null;
     }
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
@@ -135,6 +137,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
         openAction = new OpenAction(applicationController, this);
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
+        copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C", applicationController);
+        pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V", applicationController);
 
         setTitle(null);
         try {

@@ -16,10 +16,8 @@ public class Pipe
 
 	private Pipe(String version)
     {
-
-        CopyPasteManager copyPaste = new CopyPasteManager();
         applicationModel = new PipeApplicationModel(version);
-        applicationController = new PipeApplicationController(copyPaste, applicationModel);
+        applicationController = new PipeApplicationController(applicationModel);
         applicationView = new PipeApplicationView(applicationController, applicationModel);
     }
     public static void main(String args[])

@@ -4,15 +4,12 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.views.AbstractPetriNetViewComponent;
-import pipe.views.PetriNetViewComponent;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -30,7 +27,7 @@ public class SelectionManager
    private boolean isSelecting;
    private static final Color selectionColor = new Color(0, 0, 255, 24);
    private static final Color selectionColorOutline = new Color(0, 0, 100);
-   private final PetriNetTab _view;
+   private final PetriNetTab petriNetTab;
    private boolean enabled = true;
    private final PetriNetController petriNetController;
 
@@ -43,7 +40,7 @@ public class SelectionManager
       addMouseListener(this);
       addMouseMotionListener(this);
       addMouseWheelListener(this);
-      this._view = _view;
+      this.petriNetTab = _view;
        this.petriNetController = controller;
    }
    
@@ -54,14 +51,14 @@ public class SelectionManager
 
    public void updateBounds() {
       if (enabled) {
-         setBounds(0,0, _view.getWidth(), _view.getHeight());
+         setBounds(0, 0, petriNetTab.getWidth(), petriNetTab.getHeight());
       }
    }
 
    
    public void enableSelection() {
       if (!enabled) {
-         _view.add(this);
+         petriNetTab.add(this);
          enabled = true;
          updateBounds();
       }
@@ -70,7 +67,7 @@ public class SelectionManager
    
    public void disableSelection() {
        if (enabled) {
-         _view.remove(this);
+         petriNetTab.remove(this);
          enabled = false;
       }
    }
@@ -82,7 +79,7 @@ public class SelectionManager
       }
       
       // Get all the objects in the current window
-//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//      ArrayList <PetriNetViewComponent> pns = petriNetTab.getPNObjects();
 //      for (PetriNetViewComponent pn : pns) {
 //         pn.select(selectionRectangle);
 //      }
@@ -117,7 +114,7 @@ public class SelectionManager
    
    public void deleteSelection() {
       // Get all the objects in the current window
-//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//      ArrayList <PetriNetViewComponent> pns = petriNetTab.getPNObjects();
 //       for(PetriNetViewComponent pn : pns)
 //       {
 //           if(pn.isSelected())
@@ -125,7 +122,7 @@ public class SelectionManager
 //               pn.delete();
 //           }
 //       }
-//      _view.updatePreferredSize();
+//      petriNetTab.updatePreferredSize();
 //       petriNetController.deleteSelection();
    }
 
@@ -145,7 +142,7 @@ public class SelectionManager
       Point topleft = null;
 
       // Get all the objects in the current window
-//      List<PetriNetViewComponent> pns = _view.getPNObjects();
+//      List<PetriNetViewComponent> pns = petriNetTab.getPNObjects();
 //      for (PetriNetViewComponent pn : pns) {
 //         if (petriNetController.isSelected(pn.getModel())){
 //            Point point = pn.getLocation();
@@ -182,7 +179,7 @@ public class SelectionManager
 //            pn.translate(transX, transY);
 //         }
 //      }
-      _view.updatePreferredSize();
+      petriNetTab.updatePreferredSize();
    }
 
    
@@ -190,7 +187,7 @@ public class SelectionManager
       ArrayList selection = new ArrayList();
 
 //      // Get all the objects in the current window
-//      ArrayList <PetriNetViewComponent> pns = _view.getPNObjects();
+//      ArrayList <PetriNetViewComponent> pns = petriNetTab.getPNObjects();
 //      for (PetriNetViewComponent pn : pns) {
 //         if (petriNetController.isSelected(pn.getModel())){
 ////        	 if(pn instanceof ArcView)
@@ -208,7 +205,7 @@ public class SelectionManager
    public void mousePressed(MouseEvent e) {
       if (e.getButton() == MouseEvent.BUTTON1 && !(e.isControlDown())) {
          isSelecting = true;
-         _view.setLayer(this, Constants.SELECTION_LAYER_OFFSET);
+         petriNetTab.setLayer(this, Constants.SELECTION_LAYER_OFFSET);
          startPoint = e.getPoint();
          selectionRectangle.setRect(startPoint.getX(), startPoint.getY(), 0, 0);
          // Select anything that intersects with the rectangle.
@@ -228,7 +225,7 @@ public class SelectionManager
          // Select anything that intersects with the rectangle.
          processSelection(e);
          isSelecting = false;
-         _view.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
+         petriNetTab.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
          selectionRectangle.setRect(-1, -1, 0, 0);
          repaint();
       }
@@ -250,7 +247,7 @@ public class SelectionManager
          processSelection(e);
          repaint();
       } else {   
-         _view.drag(startPoint, e.getPoint());
+         petriNetTab.drag(startPoint, e.getPoint());
       }
    }
 
@@ -258,9 +255,9 @@ public class SelectionManager
    public void mouseWheelMoved(MouseWheelEvent e) {
       if (e.isControlDown()) {
          if (e.getWheelRotation()> 0) {
-            _view.zoomIn();
+            petriNetTab.zoomIn();
          } else {
-            _view.zoomOut();
+            petriNetTab.zoomOut();
          }
       }
    }   
