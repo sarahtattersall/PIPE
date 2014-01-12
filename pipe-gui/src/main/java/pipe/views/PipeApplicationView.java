@@ -69,7 +69,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction undoAction = new UndoAction();
     public GuiAction redoAction = new RedoAction();
     public final GuiAction copyAction;
-    public GuiAction cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X");
+    public final GuiAction cutAction;
     public final GuiAction pasteAction;
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
     public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
@@ -121,6 +121,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         specifyTokenClasses = null;
         copyAction = null;
         pasteAction = null;
+        cutAction = null;
     }
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
@@ -139,6 +140,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
         copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C", applicationController);
         pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V", applicationController);
+        cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X", applicationController);
 
         setTitle(null);
         try {

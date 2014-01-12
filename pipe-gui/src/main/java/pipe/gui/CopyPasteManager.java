@@ -3,6 +3,10 @@
  */
 package pipe.gui;
 
+import pipe.controllers.PetriNetController;
+import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.DeletePetriNetObject;
+import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 import pipe.models.visitor.PasteVisitor;
@@ -195,7 +199,7 @@ public class CopyPasteManager extends javax.swing.JComponent
         petriNetTab.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
         repaint();
         //now, we have the position of the pasted objects so we can show them.
-        doPaste(petriNetTab);
+        paste(petriNetTab);
     }
 
     /**
@@ -206,7 +210,7 @@ public class CopyPasteManager extends javax.swing.JComponent
      *
      * @param petriNetTab
      */
-    private void doPaste(PetriNetTab petriNetTab) {
+    private void paste(PetriNetTab petriNetTab) {
         pasteInProgress = false;
         petriNetTab.remove(this);
 
@@ -218,13 +222,30 @@ public class CopyPasteManager extends javax.swing.JComponent
             return;
         }
 
-        PetriNetComponentVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, despX, despY);
+        PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, despX, despY);
 
         for (Connectable component : getConnectablesToPaste()) {
             component.accept(pasteVisitor);
         }
         for (PetriNetComponent component : getNonConnectablesToPaste()) {
             component.accept(pasteVisitor);
+        }
+
+        createPasteHistoryItem(pasteVisitor.getCreatedComponents());
+    }
+
+    /**
+     * Creates a history item for the new components added to the petrinet
+     * @param createdComponents
+     */
+    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
+        PetriNetController controller = ApplicationSettings.getApplicationController().getActivePetriNetController();
+        HistoryManager historyManager = controller.getHistoryManager();
+        historyManager.newEdit();
+
+        for (PetriNetComponent component : createdComponents) {
+            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
+            historyManager.addEdit(addAction);
         }
     }
 

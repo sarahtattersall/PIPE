@@ -3,10 +3,7 @@ package pipe.models.visitor;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class PasteVisitor implements PetriNetComponentVisitor {
 
@@ -14,6 +11,12 @@ public class PasteVisitor implements PetriNetComponentVisitor {
     private final PetriNet petriNet;
     private final Collection<PetriNetComponent> components = new HashSet<PetriNetComponent>();
     private final Map<String, Connectable> createdConnectables = new HashMap<String, Connectable>();
+
+    public Collection<PetriNetComponent> getCreatedComponents() {
+        return createdComponents;
+    }
+
+    private final Collection<PetriNetComponent> createdComponents = new LinkedList<PetriNetComponent>();
     private final double xOffset;
     private final double yOffset;
 
@@ -46,6 +49,7 @@ public class PasteVisitor implements PetriNetComponentVisitor {
 
         Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getStrategy());
         petriNet.addArc(newArc);
+        createdComponents.add(newArc);
 
     }
 
@@ -55,6 +59,7 @@ public class PasteVisitor implements PetriNetComponentVisitor {
         setOffset(newPlace);
         petriNet.addPlace(newPlace);
         createdConnectables.put(newPlace.getId(), newPlace);
+        createdComponents.add(newPlace);
     }
 
     @Override
@@ -63,6 +68,7 @@ public class PasteVisitor implements PetriNetComponentVisitor {
         setOffset(newTransition);
         petriNet.addTransition(newTransition);
         createdConnectables.put(newTransition.getId(), newTransition);
+        createdComponents.add(newTransition);
     }
 
     @Override
