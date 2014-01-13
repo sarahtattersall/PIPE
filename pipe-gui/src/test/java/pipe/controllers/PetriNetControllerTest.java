@@ -49,8 +49,8 @@ public class PetriNetControllerTest {
 
     @Test
     public void returnsUniqueNumberForPetriNet() {
-        assertEquals(0, controller.getUniquePlaceNumber());
-        assertEquals(1, controller.getUniquePlaceNumber());
+        assertEquals(0, controller.getUniquePlaceName());
+        assertEquals(1, controller.getUniquePlaceName());
     }
 
     @Test

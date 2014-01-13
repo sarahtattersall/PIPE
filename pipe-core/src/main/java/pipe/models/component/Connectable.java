@@ -100,9 +100,13 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         return result;
     }
 
+    /**
+     * Copy constructor, makes identical copy
+     * @param connectable component to copy
+     */
     protected Connectable(Connectable connectable) {
-        this.id = connectable.id + "_copied";
-        this.name = connectable.name + "_copied";
+        this.id = connectable.id;
+        this.name = connectable.name;
         this.x = connectable.x;
         this.y = connectable.y;
         this.nameXOffset = connectable.nameXOffset;

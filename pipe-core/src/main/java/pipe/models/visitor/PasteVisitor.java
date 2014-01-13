@@ -48,14 +48,19 @@ public class PasteVisitor implements PetriNetComponentVisitor {
         }
 
         Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getStrategy());
+        setId(newArc);
         petriNet.addArc(newArc);
         createdComponents.add(newArc);
 
     }
 
+
+
     @Override
     public void visit(Place place) {
         Place newPlace = new Place(place);
+        setId(newPlace);
+        setName(newPlace);
         setOffset(newPlace);
         petriNet.addPlace(newPlace);
         createdConnectables.put(newPlace.getId(), newPlace);
@@ -65,6 +70,8 @@ public class PasteVisitor implements PetriNetComponentVisitor {
     @Override
     public void visit(Transition transition) {
         Transition newTransition = new Transition(transition);
+        setId(newTransition);
+        setName(newTransition);
         setOffset(newTransition);
         petriNet.addTransition(newTransition);
         createdConnectables.put(newTransition.getId(), newTransition);
@@ -84,6 +91,16 @@ public class PasteVisitor implements PetriNetComponentVisitor {
     private void setOffset(Connectable connectable) {
         connectable.setX(connectable.getX() + xOffset);
         connectable.setY(connectable.getY() + yOffset);
+    }
+
+    private void setId(PetriNetComponent component) {
+        String id = component.getId() + "_copied";
+        component.setId(id);
+    }
+
+    private void setName(Connectable component) {
+        String name = component.getName() + "_copied";
+        component.setName(name);
     }
 
 }

@@ -7,9 +7,6 @@ import pipe.historyActions.AddPetriNetObject;
 import pipe.models.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.Place;
-import pipe.views.PipeApplicationView;
-import pipe.views.PlaceView;
-import pipe.views.builder.PlaceViewBuilder;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -53,9 +50,7 @@ public class PlaceAction extends TypeAction {
     }
 
     private String getNewPetriNetName(PetriNetController petriNetController) {
-        int number = petriNetController.getUniquePlaceNumber();
-        String id = "P" + number;
-        return id;
+        return petriNetController.getUniquePlaceName();
     }
 
 }

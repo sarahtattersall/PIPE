@@ -7,11 +7,6 @@ import pipe.historyActions.AddPetriNetObject;
 import pipe.models.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.Transition;
-import pipe.views.PipeApplicationView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
-import pipe.views.builder.PlaceViewBuilder;
-import pipe.views.builder.TransitionViewBuilder;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -56,9 +51,7 @@ public abstract class TransitionAction extends TypeAction {
     }
 
     private String getNetTransitionName(PetriNetController petriNetController) {
-        int number = petriNetController.getUniqueTransitionNumber();
-        String id = "T" + number;
-        return id;
+        return petriNetController.getUniqueTransitionName();
     }
 
     protected abstract boolean isTimed();

@@ -1,6 +1,5 @@
 package pipe.controllers;
 
-import org.apache.tools.ant.taskdefs.Copy;
 import pipe.controllers.interfaces.IController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.Animator;
@@ -16,6 +15,9 @@ import pipe.models.strategy.arc.ForwardsNormalStrategy;
 import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.models.visitor.PetriNetComponentVisitor;
 import pipe.models.visitor.TranslationVisitor;
+import pipe.naming.PetriNetComponentNamer;
+import pipe.naming.PlaceNamer;
+import pipe.naming.TransitionNamer;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -34,10 +36,9 @@ public class PetriNetController implements IController, Serializable {
     private final ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
     private final ArcStrategy<Transition, Place> forwardNormalStrategy;
     private final ArcStrategy<Place, Transition> backwardsNormalStrategy;
-    // TODO PASS IN
     private final CopyPasteManager copyPasteManager;
-    private int placeNumber = 0;
-    private int transitionNumber = 0;
+    private final PetriNetComponentNamer placeNamer;
+    private final PetriNetComponentNamer transitionNamer;
     private Token selectedToken;
     private Animator animator;
 
@@ -53,6 +54,9 @@ public class PetriNetController implements IController, Serializable {
         this.historyManager = historyManager;
         forwardNormalStrategy = new ForwardsNormalStrategy(petriNet);
         backwardsNormalStrategy = new BackwardsNormalStrategy(petriNet);
+
+        placeNamer = new PlaceNamer(model);
+        transitionNamer = new TransitionNamer(model);
     }
 
     public void setEndPoint(double x, double y, boolean shiftDown) {
@@ -68,25 +72,17 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     * Creates unique petri net numbers for each tab
-     *
-     * @return A unique number for the petrinet in the current tab
+     * @return A unique name for a place in the current petri net
      */
-    public int getUniquePlaceNumber() {
-        int returnValue = placeNumber;
-        placeNumber++;
-        return returnValue;
+    public String getUniquePlaceName() {
+        return placeNamer.getName();
     }
 
     /**
-     * Creates unique petri net numbers for each tab
-     *
-     * @return A unique number for the petrinet in the current tab
+     * @return A unique name for a transition in the current petri net
      */
-    public int getUniqueTransitionNumber() {
-        int returnValue = transitionNumber;
-        transitionNumber++;
-        return returnValue;
+    public String getUniqueTransitionName() {
+        return transitionNamer.getName();
     }
 
     public boolean isSelected(PetriNetComponent component) {
