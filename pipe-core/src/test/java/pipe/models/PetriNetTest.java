@@ -376,6 +376,21 @@ public class PetriNetTest {
     }
 
     @Test
+    public void onlyEnablesHigherPriorityTransition() {
+        PetriNet net = new PetriNet();
+        Transition t1 = new Transition("1", "1");
+        t1.setPriority(10);
+        Transition t2 = new Transition("1", "1");
+        t2.setPriority(1);
+        net.addTransition(t1);
+        net.addTransition(t2);
+        net.markEnabledTransitions();
+
+        assertTrue(t1.isEnabled());
+        assertFalse(t2.isEnabled());
+    }
+
+    @Test
     public void correctlyDoesNotMarkNotEnabledTransitions() {
         PetriNetContainer container = createSimplePetriNet(2);
         System.out.println("PRE RUN ARCS SIZE " + container.petriNet.getArcs().size());
