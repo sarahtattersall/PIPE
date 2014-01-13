@@ -374,6 +374,7 @@ public class PetriNet {
      * A Transition is enabled if all its input places are marked with at least one token
      * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
      *
+     * The enabling degree is the number of times that a transition is enabled
      * @param transition
      * @return the transitions enabling degree
      */
@@ -395,7 +396,6 @@ public class PetriNet {
                 if (requiredTokenCount == 0) {
                     enablingDegree = 0;
                 } else {
-                    //TODO: WHY DIVIDE?
                     int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
                     if (currentDegree < enablingDegree) {
                         enablingDegree = currentDegree;
