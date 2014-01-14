@@ -3,6 +3,7 @@ package pipe.models.visitor;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.*;
+import pipe.visitor.TranslationVisitor;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;

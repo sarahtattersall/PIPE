@@ -1,6 +1,6 @@
 package pipe.models.component;
 
-import pipe.models.visitor.connectable.ConnectableVisitor;
+import pipe.visitor.connectable.ConnectableVisitor;
 
 import java.awt.geom.Point2D;
 

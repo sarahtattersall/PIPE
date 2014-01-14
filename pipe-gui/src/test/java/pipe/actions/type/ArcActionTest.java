@@ -5,23 +5,16 @@ import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
-import pipe.models.component.Connectable;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
-import pipe.models.visitor.connectable.arc.ArcCreatorVisitor;
-import pipe.models.visitor.connectable.arc.ArcSourceVisitor;
+import pipe.visitor.connectable.arc.ArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
-
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 
 import static org.mockito.Mockito.*;
 

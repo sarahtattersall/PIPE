@@ -1,6 +1,6 @@
-package pipe.models.visitor.connectable.arc;
+package pipe.visitor.connectable.arc;
 
-import pipe.models.visitor.connectable.ConnectableVisitor;
+import pipe.visitor.connectable.ConnectableVisitor;
 
 /**
  * tiny type, an arc creator

@@ -17,8 +17,8 @@ import pipe.gui.widgets.FileBrowser;
 import pipe.io.JarUtilities;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Token;
-import pipe.models.visitor.connectable.arc.InhibitorSourceVisitor;
-import pipe.models.visitor.connectable.arc.NormalArcSourceVisitor;
+import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
+import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;

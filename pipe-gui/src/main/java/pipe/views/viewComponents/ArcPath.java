@@ -11,7 +11,7 @@ import pipe.gui.ZoomController;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.*;
-import pipe.models.visitor.connectable.ConnectableVisitor;
+import pipe.visitor.connectable.ConnectableVisitor;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
 

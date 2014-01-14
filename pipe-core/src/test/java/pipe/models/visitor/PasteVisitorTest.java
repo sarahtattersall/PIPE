@@ -8,6 +8,7 @@ import pipe.models.PetriNet;
 import pipe.models.component.*;
 import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.visitor.PasteVisitor;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;

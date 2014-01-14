@@ -1,11 +1,8 @@
-package pipe.models.visitor.connectable.arc;
+package pipe.visitor.connectable.arc;
 
 import pipe.models.component.*;
 
-/**
- * A class to determine if an inhibitor arc can be built from the source
- */
-public class InhibitorSourceVisitor implements ArcSourceVisitor {
+public class NormalArcSourceVisitor implements ArcSourceVisitor {
 
     boolean canCreate = false;
 
@@ -16,7 +13,7 @@ public class InhibitorSourceVisitor implements ArcSourceVisitor {
 
     @Override
     public void visit(final Transition transition) {
-        canCreate = false;
+        canCreate = true;
     }
 
     @Override
@@ -30,7 +27,6 @@ public class InhibitorSourceVisitor implements ArcSourceVisitor {
     }
 
     /**
-     *
      * @return the result of the last item visited
      */
     @Override
@@ -38,4 +34,5 @@ public class InhibitorSourceVisitor implements ArcSourceVisitor {
         connectable.accept(this);
         return canCreate;
     }
+
 }

@@ -1,11 +1,9 @@
 package pipe.models.component;
 
-import pipe.models.visitor.connectable.ConnectableVisitor;
-import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.visitor.connectable.ConnectableVisitor;
+import pipe.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

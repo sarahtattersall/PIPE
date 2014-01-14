@@ -2,9 +2,9 @@ package pipe.models;
 
 import parser.ExprEvaluator;
 import pipe.models.component.*;
-import pipe.models.visitor.PetriNetComponentAddVisitor;
-import pipe.models.visitor.PetriNetComponentRemovalVisitor;
-import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.visitor.PetriNetComponentAddVisitor;
+import pipe.visitor.PetriNetComponentRemovalVisitor;
+import pipe.visitor.PetriNetComponentVisitor;
 import pipe.math.IncidenceMatrix;
 
 import java.beans.PropertyChangeListener;

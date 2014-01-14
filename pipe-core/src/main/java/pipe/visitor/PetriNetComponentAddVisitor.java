@@ -1,4 +1,4 @@
-package pipe.models.visitor;
+package pipe.visitor;
 
 import pipe.models.PetriNet;
 import pipe.models.component.*;
@@ -10,9 +10,10 @@ public class PetriNetComponentAddVisitor implements PetriNetComponentVisitor {
         this.petriNet = petriNet;
     }
 
+
     @Override
-    public void visit(Arc<? extends Connectable, ? extends Connectable> arc) {
-       petriNet.addArc(arc);
+    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
+        petriNet.addArc(arc);
     }
 
     @Override

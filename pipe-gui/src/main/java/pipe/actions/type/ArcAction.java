@@ -6,7 +6,7 @@ import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
 import pipe.models.component.Connectable;
-import pipe.models.visitor.connectable.arc.ArcSourceVisitor;
+import pipe.visitor.connectable.arc.ArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
 

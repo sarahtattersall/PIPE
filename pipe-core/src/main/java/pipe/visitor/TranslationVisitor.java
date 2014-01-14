@@ -1,4 +1,4 @@
-package pipe.models.visitor;
+package pipe.visitor;
 
 import pipe.models.component.*;
 
@@ -19,7 +19,7 @@ public class TranslationVisitor implements PetriNetComponentVisitor {
     }
 
     @Override
-    public void visit(final Arc<? extends Connectable, ? extends Connectable> arc) {
+    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
         if (selected.contains(arc.getSource()) && selected.contains(arc.getTarget())) {
             List<ArcPoint> points = arc.getIntermediatePoints();
             for (ArcPoint arcPoint : points) {

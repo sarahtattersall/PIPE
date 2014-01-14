@@ -10,8 +10,8 @@ import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
-import pipe.models.visitor.PetriNetComponentVisitor;
-import pipe.models.visitor.TranslationVisitor;
+import pipe.visitor.PetriNetComponentVisitor;
+import pipe.visitor.TranslationVisitor;
 import pipe.views.PipeApplicationView;
 
 import java.awt.*;

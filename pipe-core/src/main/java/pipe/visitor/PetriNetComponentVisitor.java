@@ -1,4 +1,4 @@
-package pipe.models.visitor;
+package pipe.visitor;
 
 import pipe.models.component.*;
 

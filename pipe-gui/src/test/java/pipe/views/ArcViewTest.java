@@ -5,23 +5,17 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.ZoomController;
-import pipe.historyActions.HistoryItem;
 import pipe.models.component.Arc;
 import pipe.models.component.Place;
 import pipe.models.component.Transition;
-import pipe.models.visitor.connectable.ConnectableVisitor;
 import pipe.views.viewComponents.ArcPath;
-import pipe.views.viewComponents.NameLabel;
 
 public class ArcViewTest {
 

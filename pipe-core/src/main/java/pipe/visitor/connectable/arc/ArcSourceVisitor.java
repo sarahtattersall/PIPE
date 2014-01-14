@@ -1,7 +1,7 @@
-package pipe.models.visitor.connectable.arc;
+package pipe.visitor.connectable.arc;
 
 import pipe.models.component.Connectable;
-import pipe.models.visitor.connectable.ConnectableVisitor;
+import pipe.visitor.connectable.ConnectableVisitor;
 
 /**
  * A tinytype interface to determine if the connectable is allowed to be an arc source

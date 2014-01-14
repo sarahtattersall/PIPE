@@ -5,6 +5,7 @@ import org.junit.Test;
 import pipe.models.*;
 import pipe.models.component.*;
 import pipe.models.strategy.arc.ArcStrategy;
+import pipe.visitor.PetriNetComponentRemovalVisitor;
 
 import java.awt.*;
 import java.util.HashMap;

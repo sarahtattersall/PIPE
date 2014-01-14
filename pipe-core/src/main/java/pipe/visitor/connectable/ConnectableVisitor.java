@@ -1,4 +1,4 @@
-package pipe.models.visitor.connectable;
+package pipe.visitor.connectable;
 
 import pipe.models.component.ConditionalPlace;
 import pipe.models.component.Place;

@@ -1,4 +1,4 @@
-package pipe.models.visitor;
+package pipe.visitor;
 
 import pipe.models.PetriNet;
 import pipe.models.component.*;
@@ -11,8 +11,9 @@ public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor
     }
 
     @Override
-    public void visit(Arc<? extends Connectable, ? extends Connectable> arc) {
+    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
         net.removeArc(arc);
+
     }
 
     @Override

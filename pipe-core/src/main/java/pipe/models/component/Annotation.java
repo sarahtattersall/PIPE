@@ -1,6 +1,6 @@
 package pipe.models.component;
 
-import pipe.models.visitor.PetriNetComponentVisitor;
+import pipe.visitor.PetriNetComponentVisitor;
 
 public class Annotation extends AbstractPetriNetComponent {
     public Annotation(double x, double y, String text,
