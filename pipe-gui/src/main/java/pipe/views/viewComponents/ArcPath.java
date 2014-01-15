@@ -309,11 +309,6 @@ public class ArcPath implements Shape, Cloneable {
             }
 
             @Override
-            public void visit(TemporaryArcTarget arcTarget) {
-
-            }
-
-            @Override
             public void visit(ConditionalPlace conditionalPlace) {
 
             }

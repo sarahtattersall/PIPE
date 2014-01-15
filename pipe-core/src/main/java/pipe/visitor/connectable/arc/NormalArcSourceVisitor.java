@@ -17,11 +17,6 @@ public class NormalArcSourceVisitor implements ArcSourceVisitor {
     }
 
     @Override
-    public void visit(final TemporaryArcTarget arcTarget) {
-        canCreate = false;
-    }
-
-    @Override
     public void visit(final ConditionalPlace conditionalPlace) {
         canCreate = false;
     }
