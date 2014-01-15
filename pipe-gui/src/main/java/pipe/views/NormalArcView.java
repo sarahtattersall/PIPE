@@ -4,7 +4,9 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
+import pipe.handlers.ArcHandler;
 import pipe.historyActions.*;
 import pipe.models.component.Arc;
 import pipe.models.component.Connectable;
@@ -32,11 +34,20 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     private NormalArcView<S, T> _inverse = null;
     private Boolean tagged = false;
 
+    /**
+     * This is a reference to the petri net tab that this arc is placed on.
+     * It is needed to add ArcPoints to the petri net based on the models intermediate
+     * points
+     */
+    private PetriNetTab tab = null;
+
+
     public NormalArcView(Arc<S, T> model,
                          PetriNetController controller) {
         super(model, controller);
         setTagged(model.isTagged());
         addConnectableListener();
+
     }
 
     private void addConnectableListener() {
@@ -90,9 +101,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         createWeightLabels();
         setWeightLabelPosition();
 
-        Container parent = getParent();
-        if (parent != null) {
-            addWeightLabelsToContainer(parent);
+        if (tab != null) {
+            addWeightLabelsToContainer(tab);
         }
     }
 
@@ -123,7 +133,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     private void createWeightLabels() {
-        final Map<Token, String> weights = model.getTokenWeights();
+        Map<Token, String> weights = model.getTokenWeights();
         for (Map.Entry<Token, String> entry : weights.entrySet()) {
             Token token = entry.getKey();
             String weight = entry.getValue();
@@ -140,6 +150,13 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         for (NameLabel label : weightLabel) {
             container.add(label);
         }
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        super.addToPetriNetTab(tab);
+        this.tab = tab;
+        updateWeights();
     }
 
     @Override public NormalArcView<S,T> paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
