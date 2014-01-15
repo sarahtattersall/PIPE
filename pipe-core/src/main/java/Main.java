@@ -1,8 +1,5 @@
 import pipe.models.PetriNet;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
+import pipe.models.component.*;
 import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.strategy.arc.BackwardsNormalStrategy;
 import pipe.models.strategy.arc.ForwardsNormalStrategy;
@@ -22,45 +19,51 @@ import java.util.Map;
 
 public class Main {
     private static final String PETRINET = "/Users/st809/Documents/jaxb.xml";
+    private static final String PROTOCOL = "/Users/st809/Documents/Imperial/PIPE/pipe-gui/src/main/resources/extras/examples/Courier Protocol.xml";
 
     public static void main(String[] args) throws JAXBException, FileNotFoundException {
-        PetriNet net = new PetriNet();
-        Token token = new Token("Default", true, 0, new Color(255,0,0));
-        net.addToken(token);
-        Transition transition = new Transition("T0", "T0");
-        Place place = new Place("P0", "P0");
-        net.addPlace(place);
-        net.addTransition(transition);
-
-        Map<Token, String> weights = new HashMap<Token, String>();
-        weights.put(token, "5");
-        InhibitorStrategy inhibitorStrategy = new InhibitorStrategy();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, inhibitorStrategy);
-        net.addArc(arc);
-
-
-        JAXBContext context = JAXBContext.newInstance(PetriNet.class);
         Map<String, Place> places = new HashMap<String, Place>();
         Map<String, Transition> transitions = new HashMap<String, Transition>();
         Map<String, Token> tokens = new HashMap<String, Token>();
 
         ArcStrategy<Transition, Place> normalForwardStrategy = new ForwardsNormalStrategy();
         ArcStrategy<Place, Transition> backwardsStrategy = new BackwardsNormalStrategy();
+        InhibitorStrategy inhibitorStrategy = new InhibitorStrategy();
+        JAXBContext context = JAXBContext.newInstance(PetriNetHolder.class);
 
-
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-
-        m.setAdapter(new ArcAdapter(places, transitions, tokens, inhibitorStrategy,  normalForwardStrategy, backwardsStrategy));
-        m.setAdapter(new PlaceAdapter(places));
-        m.setAdapter(new TransitionAdapter(transitions));
-        m.setAdapter(new TokenAdapter(tokens));
-        m.setAdapter(new TokenSetIntegerAdapter(tokens));
-
-        // Write to System.out
-        m.marshal(net, System.out);
-        m.marshal(net, new File(PETRINET));
+//        PetriNet net = new PetriNet();
+//        Token token = new Token("Default", true, 0, new Color(255,0,0));
+//        net.addToken(token);
+//        Transition transition = new Transition("T0", "T0");
+//        Place place = new Place("P0", "P0");
+//        place.setTokenCount(token, 2);
+//        net.addPlace(place);
+//        net.addTransition(transition);
+//
+//        Map<Token, String> weights = new HashMap<Token, String>();
+//        weights.put(token, "5");
+//        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, inhibitorStrategy);
+//        net.addArc(arc);
+//
+//
+//
+//
+//
+//        Marshaller m = context.createMarshaller();
+//        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//
+//
+//        m.setAdapter(new ArcAdapter(places, transitions, tokens, inhibitorStrategy,  normalForwardStrategy, backwardsStrategy));
+//        m.setAdapter(new PlaceAdapter(places, tokens));
+//        m.setAdapter(new TransitionAdapter(transitions));
+//        m.setAdapter(new TokenAdapter(tokens));
+//        m.setAdapter(new TokenSetIntegerAdapter(tokens));
+//
+//        // Write to System.out
+//        PetriNetHolder holder = new PetriNetHolder();
+//        holder.addNet(net);
+//        m.marshal(holder, System.out);
+//        m.marshal(holder, new File(PETRINET));
 
         // get variables from our xml file, created before
         System.out.println();
@@ -68,16 +71,16 @@ public class Main {
         Unmarshaller um = context.createUnmarshaller();
         um.setAdapter(new ArcAdapter(places, transitions, tokens, inhibitorStrategy,  normalForwardStrategy, backwardsStrategy));
         um.setAdapter(new ArcAdapter(places, transitions, tokens, inhibitorStrategy,  normalForwardStrategy, backwardsStrategy));
-        um.setAdapter(new PlaceAdapter(places));
+        um.setAdapter(new PlaceAdapter(places, tokens));
         um.setAdapter(new TransitionAdapter(transitions));
         um.setAdapter(new TokenAdapter(tokens));
-        um.setAdapter(new TokenSetIntegerAdapter(tokens));
-        PetriNet bookstore2 = (PetriNet) um.unmarshal(new FileReader(PETRINET));
-        for (Place p : bookstore2.getPlaces()) {
+        PetriNetHolder holder = (PetriNetHolder) um.unmarshal(new FileReader(PROTOCOL));
+        PetriNet petriNet = holder.getNet(0);
+        for (Place p : petriNet.getPlaces()) {
             System.out.println(p);
         }
-        for (Arc arc1 : bookstore2.getArcs()) {
-            System.out.println(arc);
+        for (Arc arc1 : petriNet.getArcs()) {
+            System.out.println(arc1);
         }
     }
 }

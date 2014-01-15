@@ -41,7 +41,7 @@ class ExtFileManager {
       addSearchPath(path);
       if (name.endsWith(".class")) {
          name = name.substring(0, name.length() - 6);
-         System.err.println("Class Name = " + name);
+         System.err.println("Class NameDetails = " + name);
          try {
             myClass = cLoader.loadClass(name);
          } catch (Exception e) {

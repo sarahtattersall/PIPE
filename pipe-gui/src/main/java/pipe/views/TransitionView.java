@@ -31,9 +31,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class TransitionView extends ConnectableView<Transition> implements Serializable {
+public class
+        TransitionView extends ConnectableView<Transition> implements Serializable {
     public boolean _highlighted;
-    private GeneralPath _path;
+    private GeneralPath shape;
     private boolean _enabled;
     private boolean _enabledBackwards;
     private double _delay;
@@ -61,7 +62,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         _highlighted = false;
         _delayForShowingWarnings = 10000;
 
-        rotate(angleInput);
+        rotate(model.getAngle());
         updateBounds();
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
         //        changeToolTipText();
@@ -69,32 +70,15 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
     }
 
     private void constructTransition() {
-        _path = new GeneralPath();
+        shape = new GeneralPath();
         //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
-        _path.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
+        shape.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
                 model.getHeight()), false);
     }
 
-    //TODO: RE-IMPLEMENT
-    //TODO: DELETE
-    public HistoryItem rotate(int angleInc) {
-        //        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
-        //        _angle = (_angle + angleInc) % 360;
-        //        _path.transform(
-        //                AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
-        //        outlineTransition();
-        ////
-        //        Iterator arcIterator = _arcAngleList.iterator();
-        //        while (arcIterator.hasNext()) {
-        //            ((ArcAngleCompare) arcIterator.next()).calcAngle();
-        //        }
-        //        Collections.sort(_arcAngleList);
-        //
-        //        updateEndPoints();
-        //        repaint();
-        //
-        //        return new TransitionRotation(this, angleInc);
-        return null;
+    public void rotate(int angleInc) {
+                shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
+                        model.getHeight() / 2));
     }
 
     private void setChangeListener() {
@@ -207,8 +191,8 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
 
         copy._attributesVisible = this._attributesVisible;
         copy.model.setPriority(this.model.getPriority());
-        copy._path.transform(AffineTransform
-                .getRotateInstance(Math.toRadians(this.model.getAngle()), this.model.getHeight() / 2,
+        copy.shape.transform(
+                AffineTransform.getRotateInstance(Math.toRadians(this.model.getAngle()), this.model.getHeight() / 2,
                         this.model.getHeight() / 2));
         copy._rateParameter = null;
 
@@ -232,7 +216,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             if (model.isInfiniteServer()) {
                 for (int i = 2; i >= 1; i--) {
                     g2.translate(2 * i, -2 * i);
-                    g2.fill(_path);
+                    g2.fill(shape);
                     Paint pen = g2.getPaint();
                     if (highlightView()) {
                         g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
@@ -241,12 +225,12 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
                     } else {
                         g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
                     }
-                    g2.draw(_path);
+                    g2.draw(shape);
                     g2.setPaint(pen);
                     g2.translate(-2 * i, 2 * i);
                 }
             }
-            g2.fill(_path);
+            g2.fill(shape);
         }
 
         if (highlightView()) {
@@ -257,21 +241,21 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
 
-        g2.draw(_path);
+        g2.draw(shape);
         if (!model.isTimed()) {
             if (model.isInfiniteServer()) {
                 for (int i = 2; i >= 1; i--) {
                     g2.translate(2 * i, -2 * i);
                     Paint pen = g2.getPaint();
                     g2.setPaint(Constants.ELEMENT_FILL_COLOUR);
-                    g2.fill(_path);
+                    g2.fill(shape);
                     g2.setPaint(pen);
-                    g2.draw(_path);
+                    g2.draw(shape);
                     g2.translate(-2 * i, 2 * i);
                 }
             }
-            g2.draw(_path);
-            g2.fill(_path);
+            g2.draw(shape);
+            g2.fill(shape);
         }
         changeToolTipText();
 
@@ -510,7 +494,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         ArcView someArcView = null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
         //        if (someArcView != null) {
         //            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
-        //                    _path.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
+        //                    shape.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
         //                if (someArcView.getTarget() != this) {
         //                    someArcView.setTarget(this);
         //                }
@@ -527,7 +511,7 @@ public class TransitionView extends ConnectableView<Transition> implements Seria
         //                return false;
         //            }
         //        } else {
-        return _path.contains((int) unZoomedX, (int) unZoomedY);
+        return shape.contains((int) unZoomedX, (int) unZoomedY);
         //        }
     }
 

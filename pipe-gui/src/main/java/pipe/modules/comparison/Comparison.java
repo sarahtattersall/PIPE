@@ -297,7 +297,7 @@ public class Comparison implements IModule {
                     s += "<br>Id = \"" + aSource.getId() + "\"";
                 }
                 if (compareName) {
-                    s += "<br>Name = \"" + aSource.getName() + "\"";
+                    s += "<br>NameDetails = \"" + aSource.getName() + "\"";
                 }
                 if (compareMarking) {
                     s += "<br>Marking = \"" + aSource.getCurrentMarkingView().get(0).getCurrentMarking() + "\"";
@@ -319,7 +319,7 @@ public class Comparison implements IModule {
                     s += "<br>Id = \"" + aComparison.getId() + "\"";
                 }
                 if (compareName) {
-                    s += "<br>Name = \"" + aComparison.getName() + "\"";
+                    s += "<br>NameDetails = \"" + aComparison.getName() + "\"";
                 }
                 if (compareMarking) {
                     s += "<br>Marking = \"" + aComparison.getCurrentMarkingView().get(0).getCurrentMarking() + "\"";
@@ -427,7 +427,7 @@ public class Comparison implements IModule {
                     s += "<br>Id= \"" + aSource.getId() + "\"";
                 }
                 if (compareName) {
-                    s += "<br>Name= \"" + aSource.getName() + "\"";
+                    s += "<br>NameDetails= \"" + aSource.getName() + "\"";
                 }
                 if (compareRate) {
                     s += "<br>Rate/Weight= \"" + aSource.getRateExpr() + "\""; //Nou-pere
@@ -449,7 +449,7 @@ public class Comparison implements IModule {
                     s += "<br>Id = \"" + aComparison.getId() + "\"";
                 }
                 if (compareName) {
-                    s += "<br>Name = \"" + aComparison.getName() + "\"";
+                    s += "<br>NameDetails = \"" + aComparison.getName() + "\"";
                 }
                 if (compareRate) {
                     s += "<br>Rate/Weight = \"" + aComparison.getRateExpr() + "\"";//Nou-pere
@@ -571,7 +571,7 @@ public class Comparison implements IModule {
                             aSource.getTarget().getId() + "\"";
                 }
                 if (compareName) {
-                    s += "<br>Name= \"" + aSource.getSource().getName() + "\"->\"" +
+                    s += "<br>NameDetails= \"" + aSource.getSource().getName() + "\"->\"" +
                             aSource.getTarget().getName() + "\"";
                 }
                 if (compareWeighting) {
@@ -593,7 +593,7 @@ public class Comparison implements IModule {
                             aComparison.getTarget().getId() + "\"";
                 }
                 if (compareName) {
-                    s += "<br>Name= \"" + aComparison.getSource().getName() +
+                    s += "<br>NameDetails= \"" + aComparison.getSource().getName() +
                             "\"->\"" + aComparison.getTarget().getName() + "\"";
                 }
                 if (compareWeighting) {

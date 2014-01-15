@@ -54,7 +54,7 @@ public class TokenPanel extends JPanel {
         private final static int ENABLED_COL = 0;
         private final static int NAME_COL = 1;
         private final static int COLOR_COL = 2;
-        private final String[] columnNames = {"Enabled", "Token Name",
+        private final String[] columnNames = {"Enabled", "Token NameDetails",
                 "Token Colour",};
         private final Datum[] initialData = new Datum[DATA_SIZE];
         private final Datum[] modifiedData = new Datum[DATA_SIZE];

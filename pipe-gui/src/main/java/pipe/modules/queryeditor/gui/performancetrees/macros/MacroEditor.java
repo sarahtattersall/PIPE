@@ -258,7 +258,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 		JPanel macroDetailsPanel = new JPanel();
 		macroDetailsPanel.setBorder(new EtchedBorder());
 		macroDetailsPanel.setLayout(new SpringLayout());
-		JLabel macroNameLabel = new JLabel("Macro Name: ");
+		JLabel macroNameLabel = new JLabel("Macro NameDetails: ");
 		this.macroNameTextField = new JTextField(30);
 		this.macroNameTextField.setText(this.activeMacro.getName());
 		macroDetailsPanel.add(macroNameLabel);

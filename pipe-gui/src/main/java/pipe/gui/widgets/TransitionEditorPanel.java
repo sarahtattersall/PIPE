@@ -121,7 +121,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
                 .createTitledBorder("Transition Editor"));
         transitionEditorPanel.setLayout(new java.awt.GridBagLayout());
 
-        nameLabel.setText("Name:");
+        nameLabel.setText("NameDetails:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

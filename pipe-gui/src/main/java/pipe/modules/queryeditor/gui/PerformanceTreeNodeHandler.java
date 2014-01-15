@@ -234,7 +234,7 @@ public class PerformanceTreeNodeHandler extends PerformanceTreeObjectHandler imp
 				JMenuItem menuItem = new JMenuItem(new EditPerformanceTreeNodeAction(	this.contentPane,
 																						(PerformanceTreeNode) this.myObject,
 																						"Argument"));
-				menuItem.setText("Set Argument Name");
+				menuItem.setText("Set Argument NameDetails");
 				popup.add(menuItem);
 			}
 				break;

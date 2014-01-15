@@ -29,6 +29,30 @@ public class PetriNetReaderTest {
         reader = new PetriNetIOImpl();
     }
 
+
+    @Test
+    public void createsDefaultTokenIfDoesNotExist() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation("/xml/noTokenPlace.xml"));
+        assertTrue("Petri net has no tokens registered to it", petriNet.getTokens().size() > 0);
+        Token token = petriNet.getTokens().iterator().next();
+        assertEquals("Default", token.getId());
+        assertEquals(true, token.isEnabled());
+        assertEquals(new Color(0,0,0), token.getColor());
+    }
+
+
+    @Test
+    public void createsDefaultTokenIfDoesNotAndPlaceMatchesThisToken() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation("/xml/noTokenPlace.xml"));
+        assertTrue("Petri net has no tokens registered to it", petriNet.getTokens().size() > 0);
+        assertTrue("Petri net has no places registered to it", petriNet.getPlaces().size() > 0);
+        Token token = petriNet.getTokens().iterator().next();
+        Place place = petriNet.getPlaces().iterator().next();
+        Map<Token, Integer> tokens = place.getTokenCounts();
+        Token actual = tokens.keySet().iterator().next();
+        assertEquals(token, actual);
+    }
+
     @Test
     public void createsPlace() {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(getSinglePlacePath()));
@@ -67,6 +91,7 @@ public class PetriNetReaderTest {
     public void createsMarkingIfNoTokensSet() {
 
         PetriNet petriNet = reader.read(FileUtils.fileLocation(getNoPlaceTokenPath()));
+        assertTrue("Place was not created", petriNet.getPlaces().size() > 0);
         Place place = petriNet.getPlaces().iterator().next();
         Map<Token, Integer> counts = place.getTokenCounts();
         assertTrue(counts.isEmpty());

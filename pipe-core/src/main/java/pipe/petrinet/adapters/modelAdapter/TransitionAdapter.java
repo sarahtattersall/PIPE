@@ -1,9 +1,12 @@
 package pipe.petrinet.adapters.modelAdapter;
 
+import pipe.models.component.Connectable;
 import pipe.models.component.Transition;
+import pipe.petrinet.adapters.model.AdaptedConnectable;
 import pipe.petrinet.adapters.model.AdaptedTransition;
 import pipe.petrinet.adapters.model.PositionGraphics;
 import pipe.petrinet.adapters.model.Point;
+import pipe.petrinet.adapters.utils.ConnectableUtils;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;
@@ -27,11 +30,12 @@ public class TransitionAdapter extends XmlAdapter<AdaptedTransition, Transition>
 
     @Override
     public Transition unmarshal(AdaptedTransition adaptedTransition) throws Exception {
-        Transition transition = new Transition(adaptedTransition.getId(), adaptedTransition.getName());
+        AdaptedConnectable.NameDetails nameDetails = adaptedTransition.getName();
+        Transition transition = new Transition(adaptedTransition.getId(), nameDetails.getName());
+        ConnectableUtils.setConntactableNameOffset(transition, adaptedTransition);
+        ConnectableUtils.setConnectablePosition(transition, adaptedTransition);
         transition.setAngle(adaptedTransition.getAngle());
         transition.setPriority(adaptedTransition.getPriority());
-        transition.setX(adaptedTransition.getGraphics().point.getX());
-        transition.setY(adaptedTransition.getGraphics().point.getY());
         transition.setRateExpr(adaptedTransition.getRate());
         transition.setTimed(adaptedTransition.getTimed());
         transition.setInfiniteServer(adaptedTransition.getInfiniteServer());
@@ -42,15 +46,10 @@ public class TransitionAdapter extends XmlAdapter<AdaptedTransition, Transition>
     @Override
     public AdaptedTransition marshal(Transition transition) throws Exception {
         AdaptedTransition adaptedTransition = new AdaptedTransition();
-        adaptedTransition.setName(transition.getName());
+        ConnectableUtils.setAdaptedName(transition, adaptedTransition);
+
         adaptedTransition.setId(transition.getId());
-
-        PositionGraphics graphics = new PositionGraphics();
-        graphics.point = new Point();
-        graphics.point.setX(transition.getX());
-        graphics.point.setY(transition.getY());
-
-        adaptedTransition.setGraphics(graphics);
+        ConnectableUtils.setPosition(transition, adaptedTransition);
         adaptedTransition.setPriority(transition.getPriority());
         adaptedTransition.setAngle(transition.getAngle());
         adaptedTransition.setRate(transition.getRateExpr());

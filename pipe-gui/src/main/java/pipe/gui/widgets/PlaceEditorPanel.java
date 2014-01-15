@@ -193,7 +193,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                 .setBorder(BorderFactory.createTitledBorder("Place Editor"));
 
         JLabel nameLabel = new JLabel();
-        nameLabel.setText("Name:");
+        nameLabel.setText("NameDetails:");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -325,10 +325,10 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     }
 
     private boolean setCapacity() {
-        Double newCapacity;
+        Integer newCapacity;
 
         try {
-            newCapacity = (Double) capacitySpinner.getValue();
+            newCapacity = (Integer) capacitySpinner.getValue();
         } catch (Exception e) {
             JSpinner.NumberEditor numberEditor =
                     ((JSpinner.NumberEditor) capacitySpinner.getEditor());

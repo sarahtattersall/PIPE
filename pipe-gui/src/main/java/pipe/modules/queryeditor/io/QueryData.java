@@ -553,7 +553,7 @@ public class QueryData extends Observable implements QueryConstants, Cloneable
 	 * Return the PerformanceTreeNode called nodeType from the query
 	 * 
 	 * @param nodeType -
-	 *            Name of PerformanceTreeNode object to return
+	 *            NameDetails of PerformanceTreeNode object to return
 	 * @return The first PerformanceTreeNode object found with an ID equal to
 	 *         nodeID
      * @param nodeID

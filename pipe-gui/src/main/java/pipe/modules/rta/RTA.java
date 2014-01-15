@@ -380,7 +380,7 @@ public class RTA implements IModule
 
 
     /**
-     * @return Name of module
+     * @return NameDetails of module
      */
     public String getName()
     {

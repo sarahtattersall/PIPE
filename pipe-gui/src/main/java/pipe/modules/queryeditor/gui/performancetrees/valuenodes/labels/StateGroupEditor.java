@@ -75,7 +75,7 @@ class StateGroupEditor extends JDialog
 		JPanel stateNamePanel = new JPanel();
 		stateNamePanel.setBorder((new TitledBorder(new EtchedBorder(), "State Group Information")));
 		stateNamePanel.setLayout(new SpringLayout());
-		JLabel stateNameLabel = new JLabel("State Group Name: ");
+		JLabel stateNameLabel = new JLabel("State Group NameDetails: ");
 		this.stateNameTextField = new JTextField(30);
 		this.stateNameTextField.setText(this.activeStateGroup.getName());
 		stateNamePanel.add(stateNameLabel);

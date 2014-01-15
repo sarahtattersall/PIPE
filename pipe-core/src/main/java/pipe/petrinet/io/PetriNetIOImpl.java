@@ -15,6 +15,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -54,6 +55,13 @@ public class PetriNetIOImpl implements PetriNetIO {
             PetriNet petriNet =  holder.getNet(0);
             normalForwardStrategy.setPetriNet(petriNet);
             backwardsStrategy.setPetriNet(petriNet);
+
+            if (petriNet.getTokens().size() == 0) {
+                Token token = createDefaultToken();
+                petriNet.addToken(token);
+            }
+
+
             return petriNet;
 
         } catch (JAXBException e) {
@@ -63,6 +71,10 @@ public class PetriNetIOImpl implements PetriNetIO {
         }
         //TODO: THROW EXCEPTIONS?
         return null;
+    }
+
+    private Token createDefaultToken() {
+        return new Token("Default", true, 0, new Color(0,0,0));
     }
 
     private Unmarshaller initialiseUnmarshaller(ArcStrategy<Place, Transition> inhibitorStrategy,
@@ -76,7 +88,7 @@ public class PetriNetIOImpl implements PetriNetIO {
         Map<String, Token> tokens = new HashMap<String, Token>();
 
         um.setAdapter(new ArcAdapter(places, transitions, tokens, inhibitorStrategy, normalForwardStrategy, backwardsStrategy));
-        um.setAdapter(new PlaceAdapter(places));
+        um.setAdapter(new PlaceAdapter(places, tokens));
         um.setAdapter(new TransitionAdapter(transitions));
         um.setAdapter(new TokenAdapter(tokens));
         um.setAdapter(new TokenSetIntegerAdapter(tokens));

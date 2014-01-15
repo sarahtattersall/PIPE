@@ -24,7 +24,7 @@ public class AdaptedArc {
 
     @XmlElement
     @XmlJavaTypeAdapter(StringAttributeValueAdaptor.class)
-    private String type;
+    private String type = "normal";
 
     private Inscription inscription = new Inscription();
 
