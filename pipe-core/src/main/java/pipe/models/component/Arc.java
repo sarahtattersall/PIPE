@@ -167,6 +167,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     public void addIntermediatePoint(ArcPoint point) {
+
         intermediatePoints.add(point);
         changeSupport.firePropertyChange("newIntermediatePoint", null, point);
     }

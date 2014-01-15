@@ -24,13 +24,15 @@ public class NormalCreator implements ArcActionCreator {
 
     @Override
     public <S extends Connectable, T extends Connectable> void create(S source, T target) {
-        createArc(source, target);
+        Arc<? extends Connectable, ? extends Connectable> arc = createArc(source, target);
+        addArcToPetriNet(arc);
     }
 
     @Override
     public <S extends Connectable, T extends Connectable> void create(S source, T target, List<ArcPoint> arcPoints) {
         Arc<? extends Connectable, ? extends Connectable> arc = createArc(source, target);
         arc.addIntermediatePoints(arcPoints);
+        addArcToPetriNet(arc);
     }
 
     @Override
@@ -60,10 +62,13 @@ public class NormalCreator implements ArcActionCreator {
             arc = new Arc<Transition, Place>(transition, place, tokens, petriNetController.getForwardStrategy());
         }
 
+        return arc;
+    }
+
+    private void addArcToPetriNet(Arc<? extends Connectable, ? extends Connectable> arc) {
+        PetriNetController netController = controller.getActivePetriNetController();
         PetriNet petriNet = netController.getPetriNet();
         petriNet.addArc(arc);
-
-        return arc;
     }
 
 }

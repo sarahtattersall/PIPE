@@ -20,9 +20,7 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 /**
  * This class contains the common methods for different arc types.
@@ -36,6 +34,10 @@ import java.util.Observer;
 public abstract class ArcView<S extends Connectable, T extends Connectable>
         extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
 
+
+    public PetriNetTab getTab() {
+        return tab;
+    }
 
     final protected ArcPath arcPath;
 
@@ -279,14 +281,18 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         }
     }
 
+    /**
+     * Loops through points in revese order adding them to the path
+     * Since addPointAt inserts to the left of the index to get
+     * between and the start we need to always insert left of the
+     * end.
+     */
     private void addIntermediatePoints() {
-        List<ArcPoint> points = model.getIntermediatePoints();
-        int index = 1;
+        List<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
         for (ArcPoint arcPoint : points) {
             if (!arcPath.contains(arcPoint)) {
-                arcPath.addPointAt(arcPoint, index);
+                arcPath.insertIntermediatePoint(arcPoint);
             }
-            index++;
         }
     }
 

@@ -328,6 +328,7 @@ public class ArcPath implements Shape, Cloneable {
     public void addPointAt(ArcPoint arcPoint, int index) {
         if (!points.contains(arcPoint)) {
             pathPoints.add(index, createPoint(arcPoint));
+            points.add(arcPoint);
         }
     }
 
@@ -627,11 +628,7 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
-        if (parent.getParent() instanceof PetriNetTab) {
-            addPointsToGui((PetriNetTab) parent.getParent());
-        } else {
-            addPointsToGui((JLayeredPane) parent.getParent());
-        }
+        addPointsToGui(parent.getTab());
     }
 
     public void addPointsToGui(JLayeredPane editWindow) {
@@ -673,6 +670,9 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public void addPointsToGui(PetriNetTab petriNetTab) {
+        if (petriNetTab == null) {
+            return; //Parent has not yet been added
+        }
         ArcPathPointHandler pointHandler;
 
         pathPoints.get(0).setDraggable(false);
@@ -755,7 +755,14 @@ public class ArcPath implements Shape, Cloneable {
         return null;
     }
 
-    private int findPoint(final Point2D.Double mouseposition) {
+    //TODO: MOVE THE LOGIC OUT OF THE VIEW
+    public void insertIntermediatePoint(ArcPoint point) {
+        int previousPoint = findPoint(point.getPoint());
+        insertPoint(previousPoint + 1, createPoint(point));
+
+    }
+
+    private int findPoint(Point2D mouseposition) {
         // An array to store all the distances from the midpoints
         double[] distances = new double[pathPoints.size() - 1];
 
