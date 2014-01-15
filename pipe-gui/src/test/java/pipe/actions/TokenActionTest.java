@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import pipe.controllers.PipeApplicationController;
 import pipe.exceptions.TokenLockedException;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.PetriNet;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
@@ -34,14 +35,12 @@ public class TokenActionTest
 	private PetriNetView petriNetView;
 	private TestingPipeApplicationView pipeApplicationView;
 	private LinkedList<TokenView> newTokenViews;
-    private PipeApplicationView mockView;
     private PipeApplicationController mockController;
 
 	@Before
 	public void setUp() throws TokenLockedException {
-        mockView = mock(PipeApplicationView.class);
         mockController = mock(PipeApplicationController.class);
-		tokenAction = new TestingTokenAction(mockView, mockController);
+		tokenAction = new TestingTokenAction(pipeApplicationView, mockController);
 		tokenViews = new LinkedList<TokenView>(); 
 		newTokenViews = new LinkedList<TokenView>(); 
 		oneTokenView = new TokenView(true, "Alpha", Color.black); 
@@ -52,7 +51,8 @@ public class TokenActionTest
 		assertTrue(petriNetView.updateOrReplaceTokenViews(tokenViews)); 
 		oneTokenView = petriNetView.getTokenViews().get(0);  // updated Default
 		assertEquals(2, petriNetView.getTokenViews().size());
-		pipeApplicationView = new TestingPipeApplicationView(); 
+        PipeApplicationModel mockModel = mock(PipeApplicationModel.class);
+		pipeApplicationView = new TestingPipeApplicationView(mockController, mockModel);
 //		tokenAction.setPipeApplicationViewForTesting(pipeApplicationView);
 	}
 	@Test
@@ -106,12 +106,13 @@ public class TokenActionTest
 	}
 	private class TestingPipeApplicationView extends PipeApplicationView
 	{
-		private static final long serialVersionUID = 1L;
-		public TestingPipeApplicationView()
-		{
-			super(); 
-		}
-		public void buildComboBoxForTesting()
+
+        public TestingPipeApplicationView(PipeApplicationController applicationController,
+                                          PipeApplicationModel applicationModel) {
+            super(applicationController, applicationModel);
+        }
+
+        public void buildComboBoxForTesting()
 		{
 	        String[] tokenClassChoices = buildTokenClassChoices();
 	        DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);

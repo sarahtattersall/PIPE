@@ -157,28 +157,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private FileAction saveAsAction = new SaveAsAction();
 
-    /**
-     * Constructor for unit testing only
-     *
-     * @author stevedoubleday (Oct 2013)
-     */
-    public PipeApplicationView() {
-        statusBar = null;
-        moduleAndAnimationHistoryFrame = null;
-        petriNetTabs = null;
-        applicationController = null;
-        applicationModel = null;
-
-        inhibarcAction = null;
-        arcAction = null;
-        openAction = null;
-        specifyTokenClasses = null;
-        copyAction = null;
-        pasteAction = null;
-        unfoldAction = null;
-        cutAction = null;
-    }
-
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
         ApplicationSettings.register(this);
         this.applicationController = applicationController;
