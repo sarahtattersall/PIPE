@@ -54,6 +54,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     private boolean _noFunctionalWeights = true;
 
+    private ArcPoint sourcePoint;
+
+    private ArcPoint endPoint;
+
     public ArcView(Arc<S, T> model, PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
         arcPath = new ArcPath(this, controller);
@@ -90,18 +94,24 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Listens to the source/target changing position
      */
     private void addSourceTargetConnectableListener() {
-        PropertyChangeListener listener = new PropertyChangeListener() {
+        model.getSource().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
                 if (name.equals("x") || name.equals("y")) {
-                    updatePath();
-                    updateBounds();
+                    sourcePoint.setPoint(model.getStartPoint());
                 }
             }
-        };
-        model.getSource().addPropertyChangeListener(listener);
-        model.getTarget().addPropertyChangeListener(listener);
+        });
+        model.getTarget().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("x") || name.equals("y")) {
+                    endPoint.setPoint(model.getEndPoint());
+                }
+            }
+        });
     }
 
     /**
@@ -281,13 +291,15 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     }
 
     private void addPathEndLocation() {
-        Point2D.Double endPoint = model.getEndPoint();
-        arcPath.addPoint(new ArcPoint(zoom(endPoint), false));
+        Point2D.Double targetPoint = model.getEndPoint();
+        endPoint = new ArcPoint(zoom(targetPoint), false);
+        arcPath.addPoint(endPoint);
     }
 
     private void addPathSourceLocation() {
         Point2D.Double startPoint = model.getStartPoint();
-        arcPath.addPoint(new ArcPoint(zoom(startPoint), false));
+        sourcePoint = new ArcPoint(zoom(startPoint), false);
+        arcPath.addPoint(sourcePoint);
     }
 
     /**

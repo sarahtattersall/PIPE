@@ -10,6 +10,7 @@ import pipe.models.component.Transition;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 
@@ -126,7 +127,9 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
         g2.setStroke(new BasicStroke(0.01f * _zoomPercentage));
         g2.draw(arcPath);
 
-        g2.translate(arcPath.getPoint(arcPath.getEndIndex()).getX(), arcPath.getPoint(arcPath.getEndIndex()).getY());
+
+        Point2D endPoint = model.getEndPoint();
+        g2.translate(endPoint.getX(), endPoint.getY());
 
         g2.rotate(arcPath.getEndAngle() + Math.PI);
         g2.setColor(java.awt.Color.WHITE);

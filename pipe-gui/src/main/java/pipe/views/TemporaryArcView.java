@@ -1,18 +1,23 @@
 package pipe.views;
 
 import pipe.gui.Constants;
+import pipe.models.component.ArcPoint;
 import pipe.models.component.Connectable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Math.max;
 
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     private T source;
     private Point2D end;
+    private List<ArcPoint> intermediatePoints = new ArrayList<ArcPoint>();
 
     public TemporaryArcView(T source) {
         super();
@@ -31,6 +36,10 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         setBounds(0,0, x, y);
     }
 
+    public void addIntermediatePoint(ArcPoint point) {
+        intermediatePoints.add(point);
+    }
+
     public T getSourceConnectable() {
         return source;
     }
@@ -41,7 +50,17 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         Graphics2D g2 = (Graphics2D) g;
 
         g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
-        Line2D line = new Line2D.Double(source.getCentre(), end);
-        g2.draw(line);
+        GeneralPath path = new GeneralPath();
+        path.moveTo(source.getCentre().getX(), source.getCentre().getY());
+
+        for(ArcPoint arcPoint : intermediatePoints) {
+            path.lineTo(arcPoint.getX(), arcPoint.getY());
+        }
+        path.lineTo(end.getX(), end.getY());
+        g2.draw(path);
+    }
+
+    public List<ArcPoint> getIntermediatePoints() {
+        return intermediatePoints;
     }
 }
