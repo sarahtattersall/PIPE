@@ -40,14 +40,6 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         JPopupMenu popup = super.getPopup(e);
 
 
-        menuItem = new JMenuItem("Edit Weight");
-        menuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                viewComponent.showEditor();
-            }
-        });
-        popup.insert(menuItem, popupIndex++);
         MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e,
                 ApplicationSettings.getApplicationView().getCurrentTab());
         menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),

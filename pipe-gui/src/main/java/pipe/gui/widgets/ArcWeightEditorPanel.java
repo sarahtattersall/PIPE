@@ -1,15 +1,12 @@
 package pipe.gui.widgets;
 
-import net.sourceforge.jeval.EvaluationException;
 import parser.ExprEvaluator;
-import parser.MarkingDividedByNumberException;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
-import pipe.views.TokenView;
 
 import javax.swing.*;
 import javax.swing.event.CaretListener;
@@ -19,21 +16,21 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * @author Alex Charalambous
- * @author yufeiwang (minor changes)
+ * This class deals with editing the weight of an arc
  */
 public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
     private final PetriNetController petriNetController;
-    private final ArcController<?,?> arcController;
+
+    private final ArcController<?, ?> arcController;
+
     private JRootPane _rootPane;
 
     private javax.swing.JButton okButton = new javax.swing.JButton();
-    private LinkedList<JTextField> inputtedWeights =
-            new LinkedList<JTextField>();
-    private LinkedList<String> inputtedTokenClassNames =
-            new LinkedList<String>();
 
+    private LinkedList<JTextField> inputtedWeights = new LinkedList<JTextField>();
+
+    private LinkedList<String> inputtedTokenClassNames = new LinkedList<String>();
 
     /**
      * Creates new form Arc Weight Editor
@@ -41,9 +38,8 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
      * @param rootPane
      * @param arcController
      */
-    public ArcWeightEditorPanel(JRootPane rootPane,
-                                PetriNetController petriNetController,
-                                ArcController<?,?> arcController) {
+    public ArcWeightEditorPanel(JRootPane rootPane, PetriNetController petriNetController,
+                                ArcController<?, ?> arcController) {
         _rootPane = rootPane;
         this.petriNetController = petriNetController;
         this.arcController = arcController;
@@ -53,9 +49,6 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     }
 
     private void initComponents() {
-        LinkedList<TokenView> tokenViews =
-                ApplicationSettings.getApplicationView()
-                        .getCurrentPetriNetView().getTokenViews();
         java.awt.GridBagConstraints gridBagConstraints;
 
         JPanel arcEditorPanel = new JPanel();
@@ -64,8 +57,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.GridBagLayout());
 
-        arcEditorPanel.setBorder(javax.swing.BorderFactory
-                .createTitledBorder("Arc Weight Editor"));
+        arcEditorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arc Weight Editor"));
         arcEditorPanel.setLayout(new java.awt.GridBagLayout());
         Dimension d = new Dimension();
         d.setSize(300, 340);
@@ -86,8 +78,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 tokenClassWeight.setEditable(true);
                 tokenClassWeight.setName(token.getId());
 
-                tokenClassWeight
-                        .setText(arcController.getWeightForToken(token));
+                tokenClassWeight.setText(arcController.getWeightForToken(token));
                 inputtedWeights.add(tokenClassWeight);
 
                 tokenClassName.setText(token.getId() + ": ");
@@ -101,31 +92,26 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
                 tokenClassWeight.setPreferredSize(d);
 
-                tokenClassWeight
-                        .addFocusListener(new java.awt.event.FocusAdapter() {
-                            public void focusGained(
-                                    java.awt.event.FocusEvent evt) {
-                                nameTextFieldFocusGained(evt);
-                            }
+                tokenClassWeight.addFocusListener(new java.awt.event.FocusAdapter() {
+                    public void focusGained(java.awt.event.FocusEvent evt) {
+                        nameTextFieldFocusGained(evt);
+                    }
 
-                            public void focusLost(
-                                    java.awt.event.FocusEvent evt) {
-                                nameTextFieldFocusLost(evt);
-                            }
-                        });
+                    public void focusLost(java.awt.event.FocusEvent evt) {
+                        nameTextFieldFocusLost(evt);
+                    }
+                });
                 tokenClassWeight.setEnabled(true);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = x + 3;
                 gridBagConstraints.gridy = y;
                 gridBagConstraints.gridwidth = 3;
-                gridBagConstraints.fill =
-                        java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
                 arcEditorPanel.add(tokenClassWeight, gridBagConstraints);
 
-                final JButton fweditor =
-                        new JButton("Weight expression editor");
+                final JButton fweditor = new JButton("Weight expression editor");
                 fweditor.setEnabled(true);
                 gridBagConstraints.gridx = x + 3;
                 gridBagConstraints.gridy = y + 1;
@@ -136,8 +122,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 fweditor.addActionListener(new java.awt.event.ActionListener() {
 
                     @Override
-                    public void actionPerformed(
-                            java.awt.event.ActionEvent evt) {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
                         createEditorWindow(token);
                     }
                 });
@@ -145,11 +130,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 y += 2;
             }
         }
-        for (final TokenView tc : tokenViews) {
-            if (tc.isEnabled()) {
 
-            }
-        }
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         add(arcEditorPanel, gridBagConstraints);
@@ -197,41 +178,14 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         add(buttonPanel, gridBagConstraints);
     }
 
-    public void createEditorWindow(Token token) {
-        EscapableDialog guiDialog =
-                new EscapableDialog(ApplicationSettings.getApplicationView(),
-                        "PIPE2", true);
-        ArcFunctionEditor feditor = new ArcFunctionEditor(this, guiDialog,
-                petriNetController.getPetriNet(), arcController, token);
-        guiDialog.add(feditor);
-        guiDialog.setSize(270, 230);
-        guiDialog.setLocationRelativeTo(
-                ApplicationSettings.getApplicationView());
-        guiDialog.setVisible(true);
-        guiDialog.dispose();
+    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
+        // Provisional!
+        exit();
     }
 
-    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
-        // focusLost(nameTextField);
+    private void exit() {
+        _rootPane.getParent().setVisible(false);
     }
-
-    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
-        // focusGained(nameTextField);
-    }
-
-    private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
-        }
-    }
-
-    CaretListener caretListener = new javax.swing.event.CaretListener() {
-        public void caretUpdate(javax.swing.event.CaretEvent evt) {
-            JTextField textField = (JTextField) evt.getSource();
-            textField.setBackground(new Color(255, 255, 255));
-            // textField.removeChangeListener(this);
-        }
-    };
 
     private void okButtonHandler(java.awt.event.ActionEvent evt) {
         ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
@@ -240,11 +194,9 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             try {
                 if (expr == null || expr.equals("")) {
                     System.err.println("Error in functional rates expression.");
-                    String message =
-                            " Expression is invalid. Please check your function.";
+                    String message = " Expression is invalid. Please check your function.";
                     String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title,
-                            JOptionPane.YES_NO_OPTION);
+                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
                     return;
                 }
 
@@ -253,39 +205,31 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
                 if (parser.parseAndEvalExpr(expr, tokenClassName) != -1) {
                     arcController.setWeight(token, expr);
-                }
-                else {
+                } else {
                     if (parser.parseAndEvalExpr(expr, tokenClassName) == -2) {
-                        JOptionPane.showMessageDialog(null,
-                                "Please make sure division and floating numbers are " +
-                                        "surrounded by ceil() or floor()");
+                        JOptionPane.showMessageDialog(null, "Please make sure division and floating numbers are "
+                                + "surrounded by ceil() or floor()");
                         return;
-                    }
-                    else {
-                        System.err.println(
-                                "Error in functional rates expression.");
-                        String message =
-                                " Expression is invalid. Please check your function.";
+                    } else {
+                        System.err.println("Error in functional rates expression.");
+                        String message = " Expression is invalid. Please check your function.";
                         String title = "Error";
-                        JOptionPane.showMessageDialog(null, message, title,
-                                JOptionPane.YES_NO_OPTION);
+                        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
                         return;
                     }
                 }
             }
-//            catch (MarkingDividedByNumberException e) {
-//                JOptionPane.showMessageDialog(null,
-//                        "Marking-dependent arc weight divided by number not supported.\r\n" +
-//                                "Since this may cause non-integer arc weight.");
-//                return;
-//            }
+            //            catch (MarkingDividedByNumberException e) {
+            //                JOptionPane.showMessageDialog(null,
+            //                        "Marking-dependent arc weight divided by number not supported.\r\n" +
+            //                                "Since this may cause non-integer arc weight.");
+            //                return;
+            //            }
             catch (Exception e) {
                 System.err.println("Error in functional rates expression.");
-                String message =
-                        " Expression is invalid. Please check your function.";
+                String message = " Expression is invalid. Please check your function.";
                 String title = "Error";
-                JOptionPane.showMessageDialog(null, message, title,
-                        JOptionPane.YES_NO_OPTION);
+                JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
                 return;
             }
         }
@@ -296,12 +240,10 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             if (target instanceof Transition) {
                 Transition transition = (Transition) target;
                 if (transition.isInfiniteServer()) {
-                    String message =
-                            "This arc points to an infinite server transition. \r\n" +
-                                    "Thus this arc could not have functional weights at the moment";
+                    String message = "This arc points to an infinite server transition. \r\n"
+                            + "Thus this arc could not have functional weights at the moment";
                     String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title,
-                            JOptionPane.YES_NO_OPTION);
+                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
                     return;
                 }
             }
@@ -315,8 +257,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             String weight = inputtedWeights.get(i).getText();
             newWeights.put(token, weight);
             try {
-                int evaluatedWeight =
-                        parser.parseAndEvalExpr(weight, tokenClassName);
+                int evaluatedWeight = parser.parseAndEvalExpr(weight, tokenClassName);
                 if (evaluatedWeight == -1) {
                     JOptionPane.showMessageDialog(null,
                             "Error in weight expression. Please make sure\r\n it is an integer");
@@ -324,30 +265,27 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 }
                 if (evaluatedWeight == -2) {
                     JOptionPane.showMessageDialog(null,
-                            "Please make sure division and floating numbers are " +
-                                    "surrounded by ceil() or floor()");
+                            "Please make sure division and floating numbers are " + "surrounded by ceil() or floor()");
                     return;
                 }
                 if (evaluatedWeight < 0) {
-                    JOptionPane.showMessageDialog(null,
-                            "Weighting cannot be less than 0. Please re-enter");
+                    JOptionPane.showMessageDialog(null, "Weighting cannot be less than 0. Please re-enter");
                     return;
                 }
 
             }
-//            catch (EvaluationException e) {
-//                JOptionPane.showMessageDialog(null,
-//                        "Error in Arc weight expression");
-//                return;
-//            } catch (MarkingDividedByNumberException eee) {
-//                JOptionPane.showMessageDialog(null,
-//                        "Marking-dependent arc weight divided by number not supported.\r\n" +
-//                                "Since this may cause non-integer arc weight.");
-//                return;
-//            }
+            //            catch (EvaluationException e) {
+            //                JOptionPane.showMessageDialog(null,
+            //                        "Error in Arc weight expression");
+            //                return;
+            //            } catch (MarkingDividedByNumberException eee) {
+            //                JOptionPane.showMessageDialog(null,
+            //                        "Marking-dependent arc weight divided by number not supported.\r\n" +
+            //                                "Since this may cause non-integer arc weight.");
+            //                return;
+            //            }
             catch (Exception ee) {
-                JOptionPane.showMessageDialog(null,
-                        "Error in Arc weight expression");
+                JOptionPane.showMessageDialog(null, "Error in Arc weight expression");
                 return;
             }
 
@@ -362,13 +300,29 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         exit();
     }
 
-    private void exit() {
-        _rootPane.getParent().setVisible(false);
+    private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
+        }
     }
 
-    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
-        // Provisional!
-        exit();
+    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+        // focusGained(nameTextField);
+    }
+
+    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
+        // focusLost(nameTextField);
+    }
+
+    public void createEditorWindow(Token token) {
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        ArcFunctionEditor feditor =
+                new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
+        guiDialog.add(feditor);
+        guiDialog.setSize(270, 230);
+        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
+        guiDialog.setVisible(true);
+        guiDialog.dispose();
     }
 
     public void setWeight(String func, String id) {

@@ -47,13 +47,12 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("x") || name.equals("y")) {
+                if (name.equals("weight")) {
                     updateWeights();
                 }
             }
         };
-        model.getSource().addPropertyChangeListener(listener);
-        model.getTarget().addPropertyChangeListener(listener);
+        model.addPropertyChangeListener(listener);
     }
 
     /**
