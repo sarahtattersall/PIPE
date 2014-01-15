@@ -48,12 +48,6 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void returnsUniqueNumberForPetriNet() {
-        assertEquals(0, controller.getUniquePlaceName());
-        assertEquals(1, controller.getUniquePlaceName());
-    }
-
-    @Test
     public void containsSelected() {
         PetriNetComponent dummyComponent = new DummyPetriNetComponent();
         controller.select(dummyComponent);

@@ -52,8 +52,8 @@ public class PetriNetController implements IController, Serializable {
             selectedToken = model.getTokens().iterator().next();
         }
         this.historyManager = historyManager;
-        forwardNormalStrategy = new ForwardsNormalStrategy(petriNet);
-        backwardsNormalStrategy = new BackwardsNormalStrategy(petriNet);
+        forwardNormalStrategy = new ForwardsNormalStrategy();
+        backwardsNormalStrategy = new BackwardsNormalStrategy();
 
         placeNamer = new PlaceNamer(model);
         transitionNamer = new TransitionNamer(model);
@@ -287,6 +287,14 @@ public class PetriNetController implements IController, Serializable {
 
     public void copySelection() {
         copyPasteManager.copy(selectedComponents);
+    }
+
+    public boolean isCopyInProgress() {
+        return copyPasteManager.pasteEnabled();
+    }
+
+    public void cancelPaste() {
+        copyPasteManager.cancelPaste();
     }
 
     public Token getSelectedToken() {

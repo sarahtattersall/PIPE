@@ -1,22 +1,43 @@
-<?xml version="1.0" encoding="ISO-8859-1"?><pnml>
-    <net id="Net-One" type="P/T net">
-        <arc id="Arc0" source="P0" target="T0">
-        	<name>
-        		<value>arc0</value>
-        		<graphics>
-        			<offset x="25" y="-19"/>
-        		</graphics>
-        	</name>
-        	<inscription>
-        		<graphics>
-        			<offset x="10" y="20"/>
-        		</graphics>
-        	</inscription>
-        	<tagged>false</tagged>
-            <arcpath id="000" x="294" y="259" curvePoint="false"/>
-            <arcpath id="001" x="395" y="243" curvePoint="true"/>
-            <arcpath id="002" x="417" y="297" curvePoint="false"/>
-        	<type value="normal"/>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<pnml>
+    <net>
+        <token blue="0" green="0" red="255" enabled="true" id="Default"/>
+        <place id="P0">
+            <graphics>
+                <position y="0.0" x="0.0"/>
+            </graphics>
+            <name>
+                <value>P0</value>
+            </name>
+            <capacity>
+                <value>0</value>
+            </capacity>
+        </place>
+        <transition id="T0">
+            <graphics>
+                <position y="0.0" x="0.0"/>
+            </graphics>
+            <name>
+                <value>T0</value>
+            </name>
+            <infiniteServer>
+                <value>false</value>
+            </infiniteServer>
+            <timed>
+                <value>false</value>
+            </timed>
+            <priority>
+                <value>1</value>
+            </priority>
+            <orientation>
+                <value>0</value>
+            </orientation>
+            <rate>
+                <value>1</value>
+            </rate>
+        </transition>
+        <arc target="T0" source="P0" id="P0 TO T0">
+            <type value="normal"/>
         </arc>
     </net>
 </pnml>

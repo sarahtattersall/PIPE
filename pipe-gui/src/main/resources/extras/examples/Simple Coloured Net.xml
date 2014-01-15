@@ -16,7 +16,7 @@
 <initialMarking>
 <value>Default,1,red,1</value>
 <graphics>
-<offset x="0.0" y="0.0"/>
+<offset x="100.0" y="0.0"/>
 </graphics>
 </initialMarking>
 <capacity>

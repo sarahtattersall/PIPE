@@ -114,7 +114,7 @@ public class PasteVisitorTest {
         pasteComponents.add(transition);
 
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy(petriNet);
+        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy();
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, arcStrategy);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents);
@@ -136,7 +136,7 @@ public class PasteVisitorTest {
 
         Transition transition = new Transition("id", "name");
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy(petriNet);
+        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy();
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, arcStrategy);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents);
@@ -158,7 +158,7 @@ public class PasteVisitorTest {
         pasteComponents.add(transition);
 
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy(petriNet);
+        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy();
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, arcStrategy);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents);

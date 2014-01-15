@@ -1,30 +1,59 @@
 package pipe.models;
 
 import parser.ExprEvaluator;
+import pipe.math.IncidenceMatrix;
 import pipe.models.component.*;
+import pipe.petrinet.adapters.modelAdapter.ArcAdapter;
+import pipe.petrinet.adapters.modelAdapter.PlaceAdapter;
+import pipe.petrinet.adapters.modelAdapter.TokenAdapter;
+import pipe.petrinet.adapters.modelAdapter.TransitionAdapter;
 import pipe.visitor.PetriNetComponentAddVisitor;
 import pipe.visitor.PetriNetComponentRemovalVisitor;
 import pipe.visitor.PetriNetComponentVisitor;
-import pipe.math.IncidenceMatrix;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 
+@XmlType(propOrder={"tokens", "places", "transitions", "arcs"})
 public class PetriNet {
 
 
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
-    public String _pnmlName = "";
+
+    @XmlTransient
+    public String pnmlName = "";
+
     protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-    private boolean _validated = false;
+
+    @XmlTransient
+    private boolean validated = false;
+
+    @XmlElement(name = "transition")
+    @XmlJavaTypeAdapter(TransitionAdapter.class)
     private Set<Transition> transitions = new HashSet<Transition>();
+
+    @XmlElement(name = "place")
+    @XmlJavaTypeAdapter(PlaceAdapter.class)
     private Set<Place> places = new HashSet<Place>();
+
+    @XmlElement(name="token")
+    @XmlJavaTypeAdapter(TokenAdapter.class)
     private Set<Token> tokens = new HashSet<Token>();
+
+    @XmlElement(name="arc")
+    @XmlJavaTypeAdapter(ArcAdapter.class)
     private Set<Arc<? extends Connectable, ? extends Connectable>> arcs =
             new HashSet<Arc<? extends Connectable, ? extends Connectable>>();
+
     private Set<Annotation> annotations = new HashSet<Annotation>();
+
     //    private Set<RateParameter> rates = new HashSet<RateParameter>();
     //    private Set<StateGroup> stateGroups = new HashSet<StateGroup>();
     private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
@@ -37,24 +66,26 @@ public class PetriNet {
         changeSupport.removePropertyChangeListener(listener);
     }
 
+    @XmlTransient
     public String getPnmlName() {
-        return _pnmlName;
+        return pnmlName;
     }
 
     public void setPnmlName(String pnmlName) {
-        _pnmlName = pnmlName;
+        this.pnmlName = pnmlName;
     }
 
+    @XmlTransient
     public boolean isValidated() {
-        return _validated;
+        return validated;
     }
 
     public void setValidated(boolean validated) {
-        _validated = validated;
+        this.validated = validated;
     }
 
     public void resetPNML() {
-        _pnmlName = null;
+        pnmlName = null;
     }
 
     public void addPlace(Place place) {
@@ -263,8 +294,8 @@ public class PetriNet {
 
         {
             Transition enabledTransition = enabledTransitionIter.next();
-            if ((!enabledTransition.isTimed() && enabledTransition.getPriority() < maxPriority) ||
-                    (hasTimed && hasImmediate && enabledTransition.isTimed())) {
+            if ((!enabledTransition.isTimed() && enabledTransition.getPriority() < maxPriority) || (hasTimed
+                    && hasImmediate && enabledTransition.isTimed())) {
                 enabledTransitionIter.remove();
             }
         }
@@ -373,8 +404,9 @@ public class PetriNet {
     /**
      * A Transition is enabled if all its input places are marked with at least one token
      * This method calculates the minimium number of tokens needed in order for a transition to be enabeld
-     *
+     * <p/>
      * The enabling degree is the number of times that a transition is enabled
+     *
      * @param transition
      * @return the transitions enabling degree
      */
@@ -485,5 +517,4 @@ public class PetriNet {
         }
         markEnabledTransitions();
     }
-
 }

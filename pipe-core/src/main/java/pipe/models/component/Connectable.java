@@ -2,6 +2,8 @@ package pipe.models.component;
 
 import pipe.visitor.connectable.ConnectableVisitor;
 
+import javax.xml.bind.annotation.XmlElement;
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 /**
@@ -20,6 +22,9 @@ public abstract class Connectable extends AbstractPetriNetComponent {
      */
     @Pnml("positionY")
     protected double y = 0;
+
+    @XmlElement
+    protected Point2D point = new Point(0,0);
 
     /**
      * Connectable id

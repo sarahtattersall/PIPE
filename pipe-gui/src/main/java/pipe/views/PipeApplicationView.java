@@ -190,7 +190,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         selectAction.actionPerformed(null);
 
         PetriNetTab tab = applicationController.createEmptyPetriNet(this);
-        applicationController.setActiveTab(tab);
         setTabChangeListener();
     }
 
@@ -593,9 +592,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private void setTabChangeListener() {
         frameForPetriNetTabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                CopyPasteManager copyPasteManager = applicationController.getCopyPasteManager();
-                if (copyPasteManager.pasteInProgress()) {
-                    copyPasteManager.cancelPaste();
+                PetriNetController controller = applicationController.getActivePetriNetController();
+                if (controller.isCopyInProgress()) {
+                    controller.cancelPaste();
                 }
 
                 PetriNetTab petriNetTab = getCurrentTab();

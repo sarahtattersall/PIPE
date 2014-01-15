@@ -15,8 +15,8 @@ public class PlaceCapacity
         extends HistoryItem
 {
 
-    private final double newCapacity;
-    private final double oldCapacity;
+    private final int newCapacity;
+    private final int oldCapacity;
     private final Place place;
 
     @Override
@@ -55,7 +55,7 @@ public class PlaceCapacity
         return result;
     }
 
-    public PlaceCapacity(Place place, double oldCapacity, double newCapacity) {
+    public PlaceCapacity(Place place, int oldCapacity, int newCapacity) {
 
         this.place = place;
         this.oldCapacity = oldCapacity;

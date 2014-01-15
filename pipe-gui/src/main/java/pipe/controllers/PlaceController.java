@@ -44,8 +44,8 @@ public class PlaceController
 
     }
 
-    public void setCapacity(Double capacity) {
-        double oldCapacity = place.getCapacity();
+    public void setCapacity(int capacity) {
+        int oldCapacity = place.getCapacity();
         PlaceCapacity capacityAction =
                 new PlaceCapacity(place, oldCapacity, capacity);
         capacityAction.redo();

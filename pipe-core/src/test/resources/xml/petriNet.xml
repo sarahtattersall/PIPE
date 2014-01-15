@@ -98,7 +98,7 @@
             <text>Hello World</text>
         </labels>
         <definition name="rate0" type="rate" expression="5.0">
-            <graphics >
+            <graphics>
                 <position x="400" y="219"/>
             </graphics>
         </definition>

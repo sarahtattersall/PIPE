@@ -37,7 +37,7 @@ public class PlaceViewBuilderTest {
     {
         place.setX(200);
         PlaceView view = builder.build();
-        assertEquals(place.getCapacity(), view.getCapacity(), DOUBLE_DELTA);
+        assertEquals(place.getCapacity(), view.getCapacity());
         assertEquals(place.getMarkingXOffset(), view.getMarkingOffsetXObject(), DOUBLE_DELTA);
         assertEquals(place.getMarkingYOffset(), view.getMarkingOffsetYObject(), DOUBLE_DELTA);
         assertEquals(place.getName(), view.getName());

@@ -63,39 +63,8 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         PNMLTransformer transform = new PNMLTransformer();
         File temp = new File(pnmlFileName);
         _model.setPnmlName(temp.getName());
-        createFromPNML(transform.transformPNML(pnmlFileName));
+//        createFromPNML(transform.transformPNML(pnmlFileName));
         petriNetController = null;
-    }
-
-    /* (non-Javadoc)
-      * @see pipe.interfaces.IPetriNet#createFromPNML(org.w3c.dom.Document)
-      */
-    public void createFromPNML(Document PNMLDoc) {
-        if (ApplicationSettings.getApplicationView() != null) {
-            // Notifies used to indicate new instances.
-            ApplicationSettings.getApplicationModel().setMode(Constants.CREATING);
-        }
-
-        newDisplayMethod(PNMLDoc);
-
-        if (ApplicationSettings.getApplicationView() != null) {
-            ApplicationSettings.getApplicationView().restoreMode();
-        }
-    }
-
-    private void newDisplayMethod(Document PNMLDoc) {
-
-
-        _model = new PetriNet();
-        ArcStrategy inhibitorStrategy = new InhibitorStrategy();
-        ArcStrategy normalForwardStrategy = new ForwardsNormalStrategy(_model);
-        ArcStrategy normalBackwardStrategy = new BackwardsNormalStrategy(_model);
-        CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(),
-                new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
-                new AnnotationCreator(), new TokenCreator());
-        PetriNetReader reader = new PetriNetReader(struct);
-        _model = reader.createFromFile(_model, PNMLDoc);
-        update();
     }
 
     /**

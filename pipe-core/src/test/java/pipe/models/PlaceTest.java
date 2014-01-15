@@ -183,7 +183,8 @@ public class PlaceTest {
 
     @Test
     public void capacityZeroMeansNoRestriction() {
-        place.setCapacity(0);
+        int capacity = 0;
+        place.setCapacity(capacity);
 
         Token token = new Token("red", false, 0, new Color(255, 0, 0));
         place.incrementTokenCount(token);
@@ -204,7 +205,8 @@ public class PlaceTest {
 
     @Test
     public void changingNumberOfTokensDoesNotTriggerExceedCapacityError() {
-        place.setCapacity(1);
+        int capacity = 1;
+        place.setCapacity(capacity);
 
         Token token = new Token("red", false, 0, new Color(255, 0, 0));
         place.incrementTokenCount(token);
@@ -215,7 +217,8 @@ public class PlaceTest {
 
     @Test
     public void correctlyCountsNumberOfTokensStored() {
-        place.setCapacity(20);
+        int capacity = 20;
+        place.setCapacity(capacity);
 
         int redTokenCount = 3;
         Token redToken = new Token("red", false, 0, new Color(255, 0, 0));

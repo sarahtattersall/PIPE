@@ -25,7 +25,7 @@ public class PlaceElementCreatorTest {
 
     private static final String ID = "id";
     private static final String NAME = "name";
-    private static final double CAPACITY = 10.4;
+    private static final int CAPACITY = 10;
     private static final double MARKING_X = 2.0;
     private static final double MARKING_Y = 1.0;
     private static final double NAME_X = 5.0;

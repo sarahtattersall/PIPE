@@ -116,7 +116,7 @@ public class ExprEvaluator {
         String capacityWithPlaceName =
                 "cap(" + place.getName().replaceAll("\\s", "") + ")";
         if (expr.toLowerCase().contains(capacityWithPlaceName.toLowerCase())) {
-            double capacity = place.getCapacity();
+            int capacity = place.getCapacity();
             expr = expr.toLowerCase()
                     .replace(capacityWithPlaceName.toLowerCase(),
                             Double.toString(capacity));

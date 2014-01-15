@@ -29,7 +29,7 @@ public class Place extends Connectable implements Serializable
      * Place capacity
      */
     @Pnml("capacity")
-    double capacity = 0;
+    int capacity = 0;
 
     /**
      * Place diameter
@@ -135,11 +135,11 @@ public class Place extends Connectable implements Serializable
         this.markingYOffset = markingYOffset;
     }
 
-    public double getCapacity() {
+    public int getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(double capacity) {
+    public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
 

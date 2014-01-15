@@ -29,8 +29,8 @@ public class PlaceControllerTest {
 
     @Test
     public void setCapacityCreatesNewHistoryItem() {
-        double oldCapacity = 5;
-        double newCapacity = 10;
+        int oldCapacity = 5;
+        int newCapacity = 10;
         when(place.getCapacity()).thenReturn(oldCapacity);
 
         placeController.setCapacity(newCapacity);
@@ -42,8 +42,8 @@ public class PlaceControllerTest {
 
     @Test
     public void setCapacityModifiesPlaceCapacity() {
-        double oldCapacity = 5;
-        double newCapacity = 10;
+        int oldCapacity = 5;
+        int newCapacity = 10;
         when(place.getCapacity()).thenReturn(oldCapacity);
 
         placeController.setCapacity(newCapacity);

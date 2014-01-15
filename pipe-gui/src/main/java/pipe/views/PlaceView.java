@@ -201,7 +201,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
      * Paints the Place component taking into account the n q12[umber of tokens from
      * the storeCurrentMarking
      *
-     * @param canvas The Graphics object onto which the Place is drawn.
+     * @param canvas The PositionGraphics object onto which the Place is drawn.
      */
     @Override
     public void paintComponent(Graphics canvas) {
@@ -326,7 +326,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     public int getCapacity() {
-        return (int) model.getCapacity();
+        return model.getCapacity();
     }
 
     @Override

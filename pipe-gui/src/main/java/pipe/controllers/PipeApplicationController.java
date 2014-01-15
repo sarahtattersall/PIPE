@@ -1,7 +1,6 @@
 package pipe.controllers;
 
 import org.apache.commons.io.FilenameUtils;
-import org.w3c.dom.Document;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
@@ -9,26 +8,19 @@ import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.models.strategy.arc.ForwardsNormalStrategy;
-import pipe.models.strategy.arc.InhibitorStrategy;
-import pipe.petrinet.reader.PetriNetReader;
-import pipe.petrinet.reader.creator.*;
-import pipe.petrinet.transformer.PNMLTransformer;
-import pipe.petrinet.writer.PetriNetWriter;
-import pipe.utilities.transformers.TNTransformer;
+import pipe.models.component.*;
+import pipe.petrinet.io.PetriNetIOImpl;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
 import pipe.views.changeListener.TokenChangeListener;
 
 import javax.swing.text.BadLocationException;
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -38,9 +30,12 @@ import java.util.Map;
 public class PipeApplicationController {
 
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
+
     private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<PetriNetTab, SelectionManager>();
+
     //TODO: Circular dependency between these two classes
     private final PipeApplicationModel applicationModel;
+
     private PetriNetTab activeTab;
 
     public PipeApplicationController(PipeApplicationModel applicationModel) {
@@ -56,6 +51,12 @@ public class PipeApplicationController {
         Token defaultToken = createDefaultToken(applicationView);
         model.addToken(defaultToken);
         return createNewTab(model, applicationView);
+    }
+
+    private Token createDefaultToken(PipeApplicationView applicationView) {
+        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
+        return token;
     }
 
     private PetriNetTab createNewTab(PetriNet net, PipeApplicationView applicationView) {
@@ -104,20 +105,47 @@ public class PipeApplicationController {
 
         petriNetTab.setNetChanged(false); // Status is unchanged
 
-        applicationView.addNewTab(name, petriNetTab);
 
         petriNetTab.updatePreferredSize();
 
-        //        net.notifyObservers();
-        net.addPropertyChangeListener(new PetriNetChangeListener(applicationView, petriNetTab, petriNetController));
+        PetriNetChangeListener changeListener = new PetriNetChangeListener(applicationView, petriNetTab, petriNetController);
+        net.addPropertyChangeListener(changeListener);
+
+        setActiveTab(petriNetTab);
+        initialiseNet(net, changeListener);
+        applicationView.addNewTab(name, petriNetTab);
 
         return petriNetTab;
     }
 
-    private Token createDefaultToken(PipeApplicationView applicationView) {
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
-        return token;
+    /**
+     * This is a little hacky, I'm not sure how to make this better when it's so late
+     * If a better implementation is clear please re-write
+     *
+     * This method invokes the change listener which will create the view objects on the
+     * petri net tab
+     * @param propertyChangeListener
+     */
+    private void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {
+        for (Token token : net.getTokens()) {
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newToken", null, token);
+            propertyChangeListener.propertyChange(changeEvent);
+        }
+
+        for (Place place : net.getPlaces()) {
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newPlace", null, place);
+            propertyChangeListener.propertyChange(changeEvent);
+        }
+
+        for (Transition transition : net.getTransitions()) {
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newTransition", null, transition);
+            propertyChangeListener.propertyChange(changeEvent);
+        }
+
+        for (Arc<? extends Connectable, ? extends Connectable> arc : net.getArcs()) {
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newArc", null, arc);
+            propertyChangeListener.propertyChange(changeEvent);
+        }
     }
 
     public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView, boolean isTN) {
@@ -127,17 +155,14 @@ public class PipeApplicationController {
         }
 
 
-        PetriNet net = new PetriNet();
-        PetriNetTab tab = createNewTab(net, applicationView);
-        loadPetriNetFromFile(file, net, isTN);
-        return tab;
-
-    }
-
-    //TODO: DELETE
-    public void cancelPaste() {
-
-        //        copyPasteManager.cancelPaste();
+        try {
+            pipe.petrinet.io.PetriNetReader petriNetIO = new PetriNetIOImpl();
+            PetriNet net = petriNetIO.read(file.getAbsolutePath());
+            return createNewTab(net, applicationView);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //TODO: DELETE
@@ -146,40 +171,10 @@ public class PipeApplicationController {
         //        return copyPasteManager.pasteInProgress();
     }
 
-    private PetriNet loadPetriNetFromFile(File file, PetriNet net, boolean isTN) {
+    //TODO: DELETE
+    public void cancelPaste() {
 
-        try {
-            // BK 10/02/07: Changed loading of PNML to accomodate new
-            // PNMLTransformer class
-            Document document;
-            if (isTN) {
-                TNTransformer transformer = new TNTransformer();
-                document = transformer.transformTN(file.getPath());
-            } else {
-                // ProgressBar pb = new ProgressBar("test");
-                PNMLTransformer transformer = new PNMLTransformer();
-                document = transformer.transformPNML(file.getPath());
-                //petriNetTab.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-            }
-            ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
-            ArcStrategy<Transition, Place> normalForwardStrategy = new ForwardsNormalStrategy(net);
-            ArcStrategy<Place, Transition> normalBackwardStrategy = new BackwardsNormalStrategy(net);
-
-
-            CreatorStruct struct = new CreatorStruct(new PlaceCreator(), new TransitionCreator(),
-                    new ArcCreator(inhibitorStrategy, normalForwardStrategy, normalBackwardStrategy),
-                    new AnnotationCreator(), new TokenCreator());
-            PetriNetReader reader = new PetriNetReader(struct);
-            reader.createFromFile(net, document);
-            net.setPnmlName(file.getAbsolutePath());
-            return net;
-
-        } catch (Exception e) {
-            //                JOptionPane.showMessageDialog(this, "Error loading file:\n" + file.getName() + "\n" + e.toString(),
-            //                        "File load error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return null;
-        }
+        //        copyPasteManager.cancelPaste();
     }
 
     //TODO: DELETE
@@ -214,8 +209,13 @@ public class PipeApplicationController {
 
 
         //TODO: WORK OUT WHAT TO DO WITH SAVE FUNCTIONAL
-        PetriNetWriter writer = new PetriNetWriter();
-        writer.writeToFile(petriNet, outFile.getAbsolutePath());
+        try {
+            pipe.petrinet.io.PetriNetWriter writer = new PetriNetIOImpl();
+            writer.writeTo(outFile.getAbsolutePath(), petriNet);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to write!");
+        }
     }
 
     public PetriNetController getActivePetriNetController() {

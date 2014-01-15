@@ -26,12 +26,11 @@ public class ExprEvaluatorTest {
     @Test
     public void evaluatesCorrectCapacityWhenExpressionIsTrue() throws EvaluationException {
         Place place = new Place("P0", "P0");
-        int capacity = 2;
-        place.setCapacity(capacity);
+        place.setCapacity(2);
 
         net.addPlace(place);
 
-        double result = exprEvaluator.parseAndEvalExprForTransition("cap(P0) <=" + capacity);
+        double result = exprEvaluator.parseAndEvalExprForTransition("cap(P0) <= 2");
 
         assertTrue("cap(P0) <= is false", isTrue(result));
     }
@@ -39,11 +38,10 @@ public class ExprEvaluatorTest {
     @Test
     public void evaluatesCorrectCapacityWhenExpressionIsFalse() throws EvaluationException {
         Place place = new Place("P0", "P0");
-        int capacity = 2;
-        place.setCapacity(capacity);
+        place.setCapacity(2);
 
         net.addPlace(place);
-        double result = exprEvaluator.parseAndEvalExprForTransition("cap(P0) != " + capacity);
+        double result = exprEvaluator.parseAndEvalExprForTransition("cap(P0) != 2");
 
         assertTrue("cap(P0) != 2 is true", isFalse(result));
     }
