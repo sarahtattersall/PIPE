@@ -756,7 +756,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Animator animator = petriNetController.getAnimator();
         if (animateMode) {
-            enableActions(false, applicationController.isPasteEnabled());// disables all non-animation buttons
+            enableActions(false, petriNetController.isPasteEnabled());// disables all non-animation buttons
             applicationModel.setEditionAllowed(false);
             statusBar.changeText(statusBar.textforAnimation);
             createAnimationViewPane();
@@ -766,7 +766,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             statusBar.changeText(statusBar.textforDrawing);
             animator.restoreModel();
             removeAnimationViewPlane();
-            enableActions(true, applicationController.isPasteEnabled()); // renables all non-animation buttons
+            enableActions(true, petriNetController.isPasteEnabled()); // renables all non-animation buttons
         }
     }
 

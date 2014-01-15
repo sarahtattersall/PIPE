@@ -324,4 +324,8 @@ public class PetriNetController implements IController, Serializable {
     public void paste() {
         copyPasteManager.showPasteRectangle();
     }
+
+    public boolean isPasteEnabled() {
+        return copyPasteManager.pasteEnabled();
+    }
 }
