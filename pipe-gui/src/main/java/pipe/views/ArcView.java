@@ -43,17 +43,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected PetriNetTab tab = null;
 
-
-    //TODO: DELETE FOR DEBUG ONLY
-    public ArcView() {
-        super("", "", 0, 0, null, ApplicationSettings.getApplicationController().getActivePetriNetController());
-        arcPath = new ArcPath(this, ApplicationSettings.getApplicationController().getActivePetriNetController());
-        arcPath.addPoint(new ArcPoint(new Point2D.Double(100, 100), false));
-        arcPath.addPoint(new ArcPoint(new Point2D.Double(200, 500), false));
-        //        arcPath.createPath();
-        //        updateBounds();
-    }
-
     public ArcView(Arc<S, T> model,
                    PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
