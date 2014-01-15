@@ -64,4 +64,11 @@ public class TranslationVisitor implements PetriNetComponentVisitor {
     public void visit(final Annotation annotation) {
 
     }
+
+    @Override
+    public void visit(ArcPoint arcPoint) {
+        double x = arcPoint.getX() + translation.getX();
+        double y = arcPoint.getY() + translation.getY();
+        arcPoint.setPoint(new Point2D.Double(x,y));
+    }
 }

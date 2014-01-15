@@ -88,6 +88,11 @@ public class PasteVisitor implements PetriNetComponentVisitor {
 
     }
 
+    @Override
+    public void visit(ArcPoint arcPoint) {
+
+    }
+
     private void setOffset(Connectable connectable) {
         connectable.setX(connectable.getX() + xOffset);
         connectable.setY(connectable.getY() + yOffset);

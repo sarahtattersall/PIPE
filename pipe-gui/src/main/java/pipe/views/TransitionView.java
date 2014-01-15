@@ -815,8 +815,8 @@ public class
         private void calcAngle() {
             int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
             Point2D.Double p1 = new Point2D.Double(model.getX() + centreOffsetLeft(), model.getY() + centreOffsetTop());
-            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).x,
-                    _arcView.getArcPath().getPoint(index).y);
+            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).getX(),
+                    _arcView.getArcPath().getPoint(index).getY());
 
             if (p1.y <= p2.y) {
                 angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y));

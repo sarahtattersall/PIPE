@@ -45,4 +45,9 @@ public class PetriNetComponentAddVisitor implements PetriNetComponentVisitor {
     public void visit(Annotation annotation) {
         petriNet.addAnnotaiton(annotation);
     }
+
+    @Override
+    public void visit(ArcPoint arcPoint) {
+
+    }
 }

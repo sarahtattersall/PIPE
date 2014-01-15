@@ -8,4 +8,5 @@ public interface PetriNetComponentVisitor {
     public void visit(Transition transition);
     public void visit(Token token);
     public void visit(Annotation annotation);
+    public void visit(ArcPoint arcPoint);
 }

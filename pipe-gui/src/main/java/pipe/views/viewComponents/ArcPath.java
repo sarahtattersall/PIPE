@@ -3,6 +3,7 @@
  */
 package pipe.views.viewComponents;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
@@ -18,15 +19,26 @@ import pipe.views.ArcView;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ArcPath implements Shape, Cloneable {
 
     private static final Stroke proximityStroke = new BasicStroke(Constants.ARC_PATH_PROXIMITY_WIDTH);
     private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
     public final Point2D.Double midPoint = new Point2D.Double();
+
+    /**
+     * Use  this to only add enw arcpoints
+     */
+    private final Set<ArcPoint> points = new HashSet<ArcPoint>();
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
+
+
     private final ArcView<? extends Connectable, ? extends Connectable> parent;
     private final PetriNetController petriNetController;
     private GeneralPath path = new GeneralPath();
@@ -46,7 +58,7 @@ public class ArcPath implements Shape, Cloneable {
      * Moves the path to the first point specified on the arc
      */
     private void setStartingPoint(ArcPathPoint point) {
-        path.moveTo(point.getPoint().x, point.getPoint().y);
+        path.moveTo(point.getPoint().getX(), point.getPoint().getY());
     }
 
     /**
@@ -55,12 +67,12 @@ public class ArcPath implements Shape, Cloneable {
      * @param point point to create line to
      */
     private void createStraightPoint(ArcPathPoint point) {
-        path.lineTo(point.getPoint().x, point.getPoint().y);
+        path.lineTo(point.getPoint().getX(), point.getPoint().getY());
     }
 
     private void createCurvedPoint(ArcPathPoint point) {
         path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x,
-                point.getControl().y, point.getPoint().x, point.getPoint().y);
+                point.getControl().y, point.getPoint().getX(), point.getPoint().getY());
     }
 
     /**
@@ -71,10 +83,10 @@ public class ArcPath implements Shape, Cloneable {
     private void setMidPoint(double length) {
         ArcPathPoint currentPoint = pathPoints.get(0);
         if (getEndIndex() < 2) {
-            midPoint.x = (pathPoints.get(0).getPoint().x +
-                    pathPoints.get(1).getPoint().x) * 0.5;
-            midPoint.y = (pathPoints.get(0).getPoint().y +
-                    pathPoints.get(1).getPoint().y) * 0.5;
+            midPoint.x = (pathPoints.get(0).getPoint().getX() +
+                    pathPoints.get(1).getPoint().getX()) * 0.5;
+            midPoint.y = (pathPoints.get(0).getPoint().getY() +
+                    pathPoints.get(1).getPoint().getY()) * 0.5;
         } else {
             double acc = 0;
             double percent = 0;
@@ -92,10 +104,10 @@ public class ArcPath implements Shape, Cloneable {
                 acc += inc;
             }
 
-            midPoint.x = previousPoint.getPoint().x +
-                    (float) ((currentPoint.getPoint().x - previousPoint.getPoint().x) * percent);
-            midPoint.y = previousPoint.getPoint().y +
-                    (float) ((currentPoint.getPoint().y - previousPoint.getPoint().y) * percent);
+            midPoint.x = previousPoint.getPoint().getX() +
+                    (float) ((currentPoint.getPoint().getX() - previousPoint.getPoint().getX()) * percent);
+            midPoint.y = previousPoint.getPoint().getY() +
+                    (float) ((currentPoint.getPoint().getY() - previousPoint.getPoint().getY()) * percent);
         }
     }
 
@@ -131,22 +143,22 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /* returns a control point for curve CD with incoming vector AB*/
-    private Point2D.Double getControlPoint(Point2D.Double A, Point2D.Double B, Point2D.Double C, Point2D.Double D) {
+    private Point2D.Double getControlPoint(Point2D A, Point2D B, Point2D C, Point2D D) {
         Point2D.Double p = new Point2D.Double(0, 0);
 
         double modAB = getLength(A, B);
         double modCD = getLength(C, D);
 
-        double ABx = (B.x - A.x) / modAB;
-        double ABy = (B.y - A.y) / modAB;
+        double ABx = (B.getX() - A.getX()) / modAB;
+        double ABy = (B.getY() - A.getY()) / modAB;
 
         if (modAB < 7) {
             // hack, stops division by zero, modAB can only be this low if the
             // points are virtually superimposed anyway
             p = (Point2D.Double) C.clone();
         } else {
-            p.x = C.x + (ABx * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
-            p.y = C.y + (ABy * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
+            p.x = C.getX() + (ABx * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
+            p.y = C.getY() + (ABy * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
         }
         return p;
     }
@@ -156,9 +168,9 @@ public class ArcPath implements Shape, Cloneable {
      * @param B
      * @return modulus of vector A -> B
      */
-    private double getLength(Point2D.Double A, Point2D.Double B) {
-        double ABx = A.x - B.x;
-        double ABy = A.y - B.y;
+    private double getLength(Point2D A, Point2D B) {
+        double ABx = A.getX() - B.getX();
+        double ABy = A.getY() - B.getY();
 
         return Math.sqrt(ABx * ABx + ABy * ABy);
     }
@@ -194,8 +206,8 @@ public class ArcPath implements Shape, Cloneable {
                 int y[] = new int[lengthOfCurve + 2];
 
                 for (k1 = 0; k1 <= (curveEndIndex - curveStartIndex); k1++) {
-                    x[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().x;
-                    y[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().y;
+                    x[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getX();
+                    y[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getY();
                 }
                 x[k1] = x[k1 - 1];
                 y[k1] = y[k1 - 1];
@@ -261,8 +273,8 @@ public class ArcPath implements Shape, Cloneable {
                     ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
                     float distance =
                             (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
-                    myPoint.setControl2((float) (myPoint.getPoint().x + Math.cos(angle) * distance),
-                            (float) (myPoint.getPoint().y + Math.sin(angle) * distance));
+                    myPoint.setControl2((float) (myPoint.getPoint().getX() + Math.cos(angle) * distance),
+                            (float) (myPoint.getPoint().getY() + Math.sin(angle) * distance));
 
                     myPoint = pathPoints.get(1);
                     myPoint.setControl(
@@ -279,8 +291,8 @@ public class ArcPath implements Shape, Cloneable {
                     ArcPathPoint myLastPoint = pathPoints.get(0);
                     float distance =
                             (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
-                    myPoint.setControl1((float) (myLastPoint.getPoint().x + Math.cos(angle) * distance),
-                            (float) (myLastPoint.getPoint().y + Math.sin(angle) * distance));
+                    myPoint.setControl1((float) (myLastPoint.getPoint().getX() + Math.cos(angle) * distance),
+                            (float) (myLastPoint.getPoint().getY() + Math.sin(angle) * distance));
 
                     myPoint = pathPoints.get(getEndIndex());
                     myPoint.setControl(getControlPoint(myPoint.getPoint(), myPoint.getControl1(), myPoint.getPoint(),
@@ -304,7 +316,37 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public void addPoint(ArcPoint arcPoint) {
-        pathPoints.add(new ArcPathPoint(arcPoint, this, petriNetController));
+        points.add(arcPoint);
+        pathPoints.add(createPoint(arcPoint));
+    }
+
+    /**
+     * Wont readd arcPoint if its already in the path
+     * @param arcPoint
+     * @param index
+     */
+    public void addPointAt(ArcPoint arcPoint, int index) {
+        if (!points.contains(arcPoint)) {
+            pathPoints.add(index, createPoint(arcPoint));
+        }
+    }
+
+    private ArcPathPoint createPoint(ArcPoint point) {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                createPath();
+                parent.updateBounds();
+                parent.repaint();
+            }
+        };
+        point.addPropertyChangeListener(listener);
+        return new ArcPathPoint(point, this, petriNetController);
+
+    }
+
+    public boolean contains(ArcPoint point) {
+        return points.contains(point);
     }
 
     public void addPoint() {
@@ -349,7 +391,7 @@ public class ArcPath implements Shape, Cloneable {
         return pathPoints.size();
     }
 
-    public Point2D.Double getPoint(int index) {
+    public Point2D getPoint(int index) {
         return pathPoints.get(index).getPoint();
     }
 
@@ -380,16 +422,16 @@ public class ArcPath implements Shape, Cloneable {
     }
 
 
-//    public void hidePoints() {
-//        if (!pointLock) {
-//            for (ArcPathPoint pathPoint : pathPoints) {
-//                currentPoint = pathPoint;
-//                if (!currentPoint.isSelected()) {
-//                    currentPoint.setVisible(false);
-//                }
-//            }
-//        }
-//    }
+    public void hidePoints() {
+        if (!pointLock) {
+            for (ArcPathPoint pathPoint : pathPoints) {
+                ArcPathPoint currentPoint = pathPoint;
+                if (!currentPoint.isSelected()) {
+                    currentPoint.setVisible(false);
+                }
+            }
+        }
+    }
 
     /* modified to use control points, ensures a curve hits a place tangetially */
     public double getEndAngle() {
@@ -742,7 +784,6 @@ public class ArcPath implements Shape, Cloneable {
             pathPoint.kill();
         }
         pathPoints.clear();
-
     }
 
 }

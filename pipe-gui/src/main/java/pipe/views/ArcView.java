@@ -16,7 +16,6 @@ import pipe.models.component.Connectable;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 
-import javax.swing.*;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -25,17 +24,24 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * This class contains the common methods for different arc types.
+ * <p/>
+ * At present when arc points are modified the whole arc is redrawn. At some point
+ * in the future it would be good if they're more dynamic than this.
+ *
+ * @param <S> Model source type
+ * @param <T> Model target type
+ */
 public abstract class ArcView<S extends Connectable, T extends Connectable>
-        extends AbstractPetriNetViewComponent<Arc<S, T>>
-        implements Cloneable, Serializable, Observer {
+        extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
 
 
     final protected ArcPath arcPath;
+
     // bounds of arc need to be grown in order to avoid clipping problems
     final int zoomGrow = 10;
-    // true if arc is not hidden when a bidirectional arc is used
-    boolean inView = true;
-    private boolean _noFunctionalWeights = true;
+
     /**
      * This is a reference to the petri net tab that this arc is placed on.
      * It is needed to add ArcPoints to the petri net based on the models intermediate
@@ -43,17 +49,47 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected PetriNetTab tab = null;
 
-    public ArcView(Arc<S, T> model,
-                   PetriNetController controller) {
+    // true if arc is not hidden when a bidirectional arc is used
+    boolean inView = true;
+
+    private boolean _noFunctionalWeights = true;
+
+    public ArcView(Arc<S, T> model, PetriNetController controller) {
         super(model.getId(), model.getId(), 0, 0, model, controller);
         arcPath = new ArcPath(this, controller);
 
+
+        addPathSourceLocation();
+        addPathEndLocation();
         updatePath();
         updateBounds();
         addConnectableListener();
     }
 
     private void addConnectableListener() {
+        addArcChangeListener();
+        addSourceTargetConnectableListener();
+
+    }
+
+    private void addArcChangeListener() {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("newIntermediatePoint") || name.equals("deleteIntermediatePoint")) {
+                    updatePath();
+                    updateBounds();
+                }
+            }
+        };
+        model.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Listens to the source/target changing position
+     */
+    private void addSourceTargetConnectableListener() {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -75,19 +111,15 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     @Override
     public boolean contains(int x, int y) {
-        Point2D.Double point = new Point2D.Double(
-                x + arcPath.getBounds().getX() - getComponentDrawOffset() -
-                        zoomGrow,
-                y + arcPath.getBounds().getY() - getComponentDrawOffset() -
-                        zoomGrow);
-        if (!ApplicationSettings.getApplicationView().getCurrentTab()
-                .isInAnimationMode()) {
+        Point2D.Double point = new Point2D.Double(x + arcPath.getBounds().getX() - getComponentDrawOffset() -
+                zoomGrow, y + arcPath.getBounds().getY() - getComponentDrawOffset() -
+                zoomGrow);
+        if (!ApplicationSettings.getApplicationView().getCurrentTab().isInAnimationMode()) {
             if (arcPath.proximityContains(point) || isSelected()) {
                 // show also if Arc itself selected
                 arcPath.showPoints();
             } else {
-                //TODO: HIDEPOINTS
-                //                arcPath.hidePoints();
+                arcPath.hidePoints();
             }
         }
 
@@ -110,11 +142,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         _deleted = false;
         _markedAsDeleted = false;
 
-        if (getParent() instanceof PetriNetTab) {
-            arcPath.addPointsToGui((PetriNetTab) getParent());
-        } else {
-            arcPath.addPointsToGui((JLayeredPane) getParent());
-        }
+        arcPath.addPointsToGui(tab);
         updateArcPosition();
         //addWeightLabelsToContainer(getParent());
     }
@@ -175,8 +203,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         this.tab = tab;
-        ArcHandler<S, T> arcHandler =
-                new ArcHandler<S, T>(this, tab, this.model, petriNetController);
+        ArcHandler<S, T> arcHandler = new ArcHandler<S, T>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -187,8 +214,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     public void update(Observable observable, Object obj) {
         if ((observable instanceof PipeObservable) && (obj == null)) {
             // if multiple cases are added, consider creating specific subclasses of Observable
-            Object originalObject =
-                    ((PipeObservable) observable).getObservable();
+            Object originalObject = ((PipeObservable) observable).getObservable();
             //            if (originalObject instanceof MarkingView) {
             //                MarkingView viewToDelete = (MarkingView) originalObject;
             //                _weight.remove(viewToDelete);
@@ -236,22 +262,21 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Repopulates the path with the models points
      */
     private void updatePath() {
-        arcPath.clear();
-        addPathSourceLocation();
         addIntermediatePoints();
-        addPathEndLocation();
         arcPath.createPath();
-
-        //TODO: REIMPLEMENT
-        //        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        //        PetriNetTab tab = view.getCurrentTab();
-        //        arcPath.addPointsToGui(tab);
+        if (tab != null) {
+            arcPath.addPointsToGui(tab);
+        }
     }
 
     private void addIntermediatePoints() {
         List<ArcPoint> points = model.getIntermediatePoints();
+        int index = 1;
         for (ArcPoint arcPoint : points) {
-            arcPath.addPoint(arcPoint);
+            if (!arcPath.contains(arcPoint)) {
+                arcPath.addPointAt(arcPoint, index);
+            }
+            index++;
         }
     }
 
@@ -268,10 +293,9 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Updates the bounding box of the arc component based on the arcs bounds
      */
-    protected void updateBounds() {
+    public void updateBounds() {
         bounds = arcPath.getBounds();
-        bounds.grow(getComponentDrawOffset() + zoomGrow,
-                getComponentDrawOffset() + zoomGrow);
+        bounds.grow(getComponentDrawOffset() + zoomGrow, getComponentDrawOffset() + zoomGrow);
         setBounds(bounds);
     }
 
@@ -338,13 +362,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     public void showEditor() {
         // Build interface
-        EscapableDialog guiDialog =
-                new EscapableDialog(ApplicationSettings.getApplicationView(),
-                        "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
-        ArcWeightEditorPanel arcWeightEditor =
-                new ArcWeightEditorPanel(guiDialog.getRootPane(),
-                        petriNetController, petriNetController.getArcController(this.model));
+        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
+                petriNetController.getArcController(this.model));
 
         guiDialog.add(arcWeightEditor);
 

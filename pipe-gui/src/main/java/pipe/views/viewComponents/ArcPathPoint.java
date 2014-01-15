@@ -21,24 +21,25 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 
+/**
+ * This class represents each point on the arc path.
+ */
 public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
     public static final boolean STRAIGHT = false;
     public static final boolean CURVED = true;
     private static int SIZE = 3;
     private static final int SIZE_OFFSET = 1;
 
-    private ArcPath myArcPath;
+    private ArcPath arcPath;
     private final ArcPoint model;
-
-    private final Point2D.Double point = new Point2D.Double();
-    private final Point2D.Double realPoint = new Point2D.Double();
+//
+//    private final Point2D.Double point = new Point2D.Double();
+//    private final Point2D.Double realPoint = new Point2D.Double();
 
     private final Point2D.Double control1 = new Point2D.Double();
     private final Point2D.Double control = new Point2D.Double();
@@ -54,7 +55,7 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
     public ArcPathPoint(ArcPath a) {
         setup();
         model = null;
-        myArcPath = a;
+        arcPath = a;
         setPointLocation(0, 0);
         ZoomController zoomController = petriNetController.getZoomController();
         addZoomController(zoomController);
@@ -62,14 +63,25 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
     }
 
 
-    public ArcPathPoint(ArcPoint point, ArcPath a, PetriNetController petriNetController) {
+    public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController) {
         super("", "", 0, 0, point, petriNetController);
         setup();
         model = point;
         setPointLocation(model.getPoint());
-        myArcPath = a;
+        this.arcPath = arcPath;
         ZoomController zoomController = petriNetController.getZoomController();
         addZoomController(zoomController);
+
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                if (propertyChangeEvent.getPropertyName().equals("updateLocation")) {
+                    Point2D point = (Point2D) propertyChangeEvent.getNewValue();
+                    setPointLocation(point.getX(), point.getY());
+                }
+            }
+        });
+
     }
 
     @Override
@@ -77,33 +89,19 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         return model;
     }
 
-//
-//    /**
-//     * @param point
-//     * @param _pointType
-//     * @param a
-//     * @author Nadeem
-//     */
-//    public ArcPathPoint(Point2D.Double point, boolean _pointType, ArcPath a) {
-//        this(point.x, point.y, _pointType, a);
-//    }
-
-
-    public Point2D.Double getPoint() {
-        return point;
+    public Point2D getPoint() {
+        return model.getPoint();
     }
 
 
     public void setPointLocation(Point2D point) {
         setPointLocation(point.getX(), point.getY());
     }
-
-    //
     public void setPointLocation(double x, double y) {
-        double realX = ZoomController.getUnzoomedValue(x, _zoomPercentage);
-        double realY = ZoomController.getUnzoomedValue(y, _zoomPercentage);
-        realPoint.setLocation(realX, realY);
-        point.setLocation(x, y);
+//        double realX = ZoomController.getUnzoomedValue(x, _zoomPercentage);
+//        double realY = ZoomController.getUnzoomedValue(y, _zoomPercentage);
+//        realPoint.setLocation(realX, realY);
+//        model.getPoint().setLocation(x, y);
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }
 
@@ -114,44 +112,44 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
 
     public void updatePointLocation() {
-        setPointLocation(point.x, point.y);
+//        setPointLocation(point.x, point.y);
     }
 
 
     public void setPointType(boolean type) {
 //        if (pointType != type) {
 //            pointType = type;
-//            myArcPath.createPath();
-//            myArcPath.getArc().updateArcPosition();
+//            arcPath.createPath();
+//            arcPath.getArc().updateArcPosition();
 //        }
     }
 
 
     public HistoryItem togglePointType() {
 //        pointType = !pointType;
-//        myArcPath.createPath();
-//        myArcPath.getArc().updateArcPosition();
+//        arcPath.createPath();
+//        arcPath.getArc().updateArcPosition();
 //        return new ArcPathPointType(this);
         return null;
     }
 
 
     public void setVisibilityLock(boolean lock) {
-        myArcPath.setPointVisibilityLock(lock);
+        arcPath.setPointVisibilityLock(lock);
     }
 
 
     public double getAngle(Point2D.Double p2) {
         double angle;
 
-        if (point.y <= p2.y) {
-            angle = Math.atan((point.x - p2.x) / (p2.y - point.y));
+        if (model.getPoint().getY() <= p2.y) {
+            angle = Math.atan((model.getPoint().getX() - p2.x) / (p2.y - model.getPoint().getY()));
         } else {
-            angle = Math.atan((point.x - p2.x) / (p2.y - point.y)) + Math.PI;
+            angle = Math.atan((model.getPoint().getX() - p2.x) / (p2.y - model.getPoint().getY())) + Math.PI;
         }
 
         // Needed to eliminate an exception on Windows
-        if (point.equals(p2)) {
+        if (model.getPoint().equals(p2)) {
             angle = 0;
         }
         return angle;
@@ -160,6 +158,7 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
     @Override
     public void paintComponent(Graphics g) {
+
         super.paintComponent(g);
         if (!_ignoreSelection) {
             Graphics2D g2 = (Graphics2D) g;
@@ -190,8 +189,8 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
 
     public int getIndex() {
-        for (int i = 0; i < myArcPath.getNumPoints(); i++) {
-            if (myArcPath.getPathPoint(i) == this) {
+        for (int i = 0; i < arcPath.getNumPoints(); i++) {
+            if (arcPath.getPathPoint(i) == this) {
                 return i;
             }
         }
@@ -214,22 +213,22 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 //        int i = getIndex(); // Get the index of this point
 //
 //        int DELTA = 10;
-//        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, myArcPath);
-//        myArcPath.insertPoint(i + 1, newPoint);
-//        myArcPath.getArc().updateArcPosition();
-//        return new AddArcPathPoint(myArcPath.getArc(), newPoint);
+//        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, arcPath);
+//        arcPath.insertPoint(i + 1, newPoint);
+//        arcPath.getArc().updateArcPosition();
+//        return new AddArcPathPoint(arcPath.getArc(), newPoint);
         return null;
     }
 
 
     public Point2D.Double getMidPoint(ArcPathPoint target) {
-        return new Point2D.Double((target.point.x + point.x) / 2, (target.point.y + point.y) / 2);
+        return new Point2D.Double((target.model.getPoint().getX() + model.getPoint().getX()) / 2, (target.model.getPoint().getY() + model.getPoint().getY()) / 2);
     }
 
 
     public boolean isDeleteable() {
         int i = getIndex();
-        return (i > 0 && i != myArcPath.getNumPoints() - 1);
+        return (i > 0 && i != arcPath.getNumPoints() - 1);
     }
 
 
@@ -240,14 +239,14 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
                 return;
             }
             kill();
-            myArcPath.updateArc();
+            arcPath.updateArc();
         }
     }
 
 
     public void kill() {        // delete without the safety check :)
         super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
-//        myArcPath.deletePoint(this);
+//        arcPath.deletePoint(this);
         super.delete();
     }
 
@@ -287,7 +286,7 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
 
     public ArcPath getArcPath() {
-        return myArcPath;
+        return arcPath;
     }
 
 
@@ -326,8 +325,8 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
     @Override
     public void translate(int x, int y) {
-        this.setPointLocation(point.x + x, point.y + y);
-        myArcPath.updateArc();
+//        this.setPointLocation(point.x + x, point.y + y);
+//        arcPath.updateArc();
     }
 
 
@@ -343,19 +342,19 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
     @Override
     public void zoomUpdate(int zoom) {
-        this._zoomPercentage = zoom;
-        // change ArcPathPoint's size a little bit when it's zoomed in or zoomed out
-        if (zoom > 213) {
-            SIZE = 5;
-        } else if (zoom > 126) {
-            SIZE = 4;
-        } else {
-            SIZE = 3;
-        }
-        double x = ZoomController.getZoomedValue(realPoint.x, zoom);
-        double y = ZoomController.getZoomedValue(realPoint.y, zoom);
-        point.setLocation(x, y);
-        setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
+//        this._zoomPercentage = zoom;
+//        // change ArcPathPoint's size a little bit when it's zoomed in or zoomed out
+//        if (zoom > 213) {
+//            SIZE = 5;
+//        } else if (zoom > 126) {
+//            SIZE = 4;
+//        } else {
+//            SIZE = 3;
+//        }
+//        double x = ZoomController.getZoomedValue(realPoint.x, zoom);
+//        double y = ZoomController.getZoomedValue(realPoint.y, zoom);
+//        point.setLocation(x, y);
+//        setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }
 
 

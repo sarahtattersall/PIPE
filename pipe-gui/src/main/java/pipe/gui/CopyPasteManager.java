@@ -83,6 +83,11 @@ public class CopyPasteManager extends javax.swing.JComponent
 
             }
 
+            @Override
+            public void visit(ArcPoint arcPoint) {
+
+            }
+
             private <T extends Connectable> void adjustLocation(T connectable) {
                 if (connectable.getX() < location.left) {
                     location.left = connectable.getX();
@@ -272,6 +277,11 @@ public class CopyPasteManager extends javax.swing.JComponent
             @Override
             public void visit(Annotation annotation) {
             }
+
+            @Override
+            public void visit(ArcPoint arcPoint) {
+
+            }
         };
 
         for (PetriNetComponent component : pasteComponents) {
@@ -304,6 +314,11 @@ public class CopyPasteManager extends javax.swing.JComponent
             @Override
             public void visit(Annotation annotation) {
                 components.add(annotation);
+            }
+
+            @Override
+            public void visit(ArcPoint arcPoint) {
+
             }
         };
 

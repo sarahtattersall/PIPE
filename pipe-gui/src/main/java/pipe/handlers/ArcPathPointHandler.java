@@ -19,14 +19,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 
-public class ArcPathPointHandler
-        extends PetriNetObjectHandler<ArcPoint, ArcPathPoint> {
+public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPathPoint> {
 
 
-    private final ArcController<?,?> arcController;
+    private final ArcController<?, ?> arcController;
 
-    public ArcPathPointHandler(Container contentpane, ArcPathPoint arcPathPoint, PetriNetController controller, ArcController<?,?> arcController) {
-        //TODO: FIX THIS WITH TYPING
+    public ArcPathPointHandler(Container contentpane, ArcPathPoint arcPathPoint, PetriNetController controller,
+                               ArcController<?, ?> arcController) {
         super(arcPathPoint, contentpane, arcPathPoint.getModel(), controller);
         this.arcController = arcController;
         enablePopup = true;
@@ -46,8 +45,7 @@ public class ArcPathPointHandler
         popup.insert(new JPopupMenu.Separator(), 0);
 
         if (viewComponent.getIndex() > 0) {
-            JMenuItem menuItem =
-                    new JMenuItem(new ToggleArcPointAction(component, arcController));
+            JMenuItem menuItem = new JMenuItem(new ToggleArcPointAction(component, arcController));
             if (!viewComponent.isCurved()) {
                 menuItem.setText("Change to Curved");
             } else {
@@ -65,6 +63,7 @@ public class ArcPathPointHandler
     @Override
     public void mousePressed(MouseEvent e) {
         ((ArcPathPoint) e.getComponent()).setVisibilityLock(true);
+        petriNetController.select(component);
         super.mousePressed(e);
     }
 
@@ -76,6 +75,9 @@ public class ArcPathPointHandler
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        //        int transX = e.getX() - dragInit.x;//Grid.getModifiedX(e.getX() - dragInit.x);
+        //        int transY = e.getY() - dragInit.y;//Grid.getModifiedY(e.getY() - dragInit.y);
+        //        petriNetController.translateSelected(new Point2D.Double(transX, transY));
         super.mouseDragged(e);
     }
 
@@ -88,9 +90,7 @@ public class ArcPathPointHandler
         }
 
         if (e.isShiftDown()) {
-            //TODO: PASS THIS IN!
-            ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager().addNewEdit(
-                    viewComponent.togglePointType());
+            petriNetController.getHistoryManager().addNewEdit(viewComponent.togglePointType());
         }
     }
 

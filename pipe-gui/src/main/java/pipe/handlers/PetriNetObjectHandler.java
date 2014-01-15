@@ -9,6 +9,7 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.PetriNetComponent;
+import pipe.utilities.gui.GuiUtils;
 import pipe.views.AbstractPetriNetViewComponent;
 
 import javax.swing.*;
@@ -26,7 +27,7 @@ import java.awt.event.MouseEvent;
  */
 public class PetriNetObjectHandler<T extends PetriNetComponent, V extends AbstractPetriNetViewComponent<T>>
         extends javax.swing.event.MouseInputAdapter {
-    final Container contentPane;
+    final protected Container contentPane;
     final T component;
     final V viewComponent;
 
@@ -101,7 +102,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 petriNetController.select(component);
                 justSelected = true;
             }
-            dragInit = e.getPoint();
+
+
+            MouseEvent accurateEvent = GuiUtils.getAccurateMouseEvent(contentPane, e);
+            dragInit = accurateEvent.getPoint();
         }
     }
 
@@ -154,11 +158,13 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 }
             }
 
+            MouseEvent accurateEvent = GuiUtils.getAccurateMouseEvent(contentPane, e);
+
+
             // Calculate translation in mouse
-            int transX = e.getX() - dragInit.x;//Grid.getModifiedX(e.getX() - dragInit.x);
-            int transY = e.getY() - dragInit.y;//Grid.getModifiedY(e.getY() - dragInit.y);
-            totalX += transX;
-            totalY += transY;
+            int transX = accurateEvent.getX() - dragInit.x;
+            int transY = accurateEvent.getY() - dragInit.y;
+            dragInit = accurateEvent.getPoint();
 
             PipeApplicationController controller = ApplicationSettings.getApplicationController();
             SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);

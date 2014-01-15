@@ -47,4 +47,9 @@ public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor
     public void visit(Annotation annotation) {
         net.removeAnnotaiton(annotation);
     }
+
+    @Override
+    public void visit(ArcPoint arcPoint) {
+
+    }
 }
