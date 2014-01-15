@@ -9,6 +9,7 @@ import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
+import pipe.models.component.ArcPoint;
 import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
@@ -92,7 +93,7 @@ public class ArcActionTest {
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         action.doConnectableAction(place, mockController);
-        verify(mockCreatorVisitor).create(transition, place);
+        verify(mockCreatorVisitor).create(eq(transition), eq(place), anyListOf(ArcPoint.class));
     }
 
 
