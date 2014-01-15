@@ -4,18 +4,12 @@ import pipe.models.strategy.arc.ArcStrategy;
 import pipe.models.strategy.arc.BackwardsNormalStrategy;
 import pipe.models.strategy.arc.ForwardsNormalStrategy;
 import pipe.models.strategy.arc.InhibitorStrategy;
-import pipe.petrinet.adapters.modelAdapter.*;
-import pipe.petrinet.io.PetriNetIOImpl;
-import pipe.petrinet.io.PetriNetReader;
+import pipe.io.PetriNetIOImpl;
+import pipe.io.PetriNetReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.awt.*;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 

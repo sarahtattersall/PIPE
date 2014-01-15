@@ -1,19 +1,11 @@
 package pipe.views;
 
-import org.w3c.dom.Document;
 import pipe.common.dataLayer.StateGroup;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.models.strategy.arc.ForwardsNormalStrategy;
-import pipe.models.strategy.arc.InhibitorStrategy;
-import pipe.petrinet.reader.PetriNetReader;
-import pipe.petrinet.reader.creator.*;
 import pipe.petrinet.transformer.PNMLTransformer;
 import pipe.utilities.Copier;
 import pipe.views.builder.AnnotationNodeBuilder;

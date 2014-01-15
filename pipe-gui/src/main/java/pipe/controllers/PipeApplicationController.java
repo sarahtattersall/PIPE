@@ -9,7 +9,7 @@ import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
-import pipe.petrinet.io.PetriNetIOImpl;
+import pipe.io.PetriNetIOImpl;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
 import pipe.views.changeListener.TokenChangeListener;
@@ -156,7 +156,7 @@ public class PipeApplicationController {
 
 
         try {
-            pipe.petrinet.io.PetriNetReader petriNetIO = new PetriNetIOImpl();
+            pipe.io.PetriNetReader petriNetIO = new PetriNetIOImpl();
             PetriNet net = petriNetIO.read(file.getAbsolutePath());
             return createNewTab(net, applicationView);
         } catch (JAXBException e) {
@@ -210,7 +210,7 @@ public class PipeApplicationController {
 
         //TODO: WORK OUT WHAT TO DO WITH SAVE FUNCTIONAL
         try {
-            pipe.petrinet.io.PetriNetWriter writer = new PetriNetIOImpl();
+            pipe.io.PetriNetWriter writer = new PetriNetIOImpl();
             writer.writeTo(outFile.getAbsolutePath(), petriNet);
         } catch (JAXBException e) {
             e.printStackTrace();
