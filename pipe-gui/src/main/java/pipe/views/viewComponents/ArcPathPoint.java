@@ -366,4 +366,31 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ArcPathPoint pathPoint = (ArcPathPoint) o;
+
+        if (!model.equals(pathPoint.model)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + model.hashCode();
+        return result;
+    }
 }

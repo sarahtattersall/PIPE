@@ -83,8 +83,15 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("newIntermediatePoint") || name.equals("deleteIntermediatePoint")) {
+                if (name.equals("newIntermediatePoint")) {
                     updatePath();
+                    arcSpecificUpdate();
+                    updateBounds();
+                }  else if (name.equals("deleteIntermediatePoint")) {
+                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
+                    arcPath.deletePoint(point);
+                    updatePath();
+                    arcSpecificUpdate();
                     updateBounds();
                 }
             }
@@ -102,6 +109,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
                 String name = propertyChangeEvent.getPropertyName();
                 if (name.equals("x") || name.equals("y")) {
                     sourcePoint.setPoint(model.getStartPoint());
+                    arcSpecificUpdate();
                 }
             }
         });
@@ -111,6 +119,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
                 String name = propertyChangeEvent.getPropertyName();
                 if (name.equals("x") || name.equals("y")) {
                     endPoint.setPoint(model.getEndPoint());
+                    arcSpecificUpdate();
                 }
             }
         });
@@ -367,7 +376,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Perform any updates specific to the arc type
      * E.g. NormalArc should show weights
      */
-    protected abstract void arcSpecificUpdate();
+    public abstract void arcSpecificUpdate();
 
     public Point2D.Double zoom(Point2D.Double point) {
         return new Point2D.Double(ZoomController.getZoomedValue(point.x, _zoomPercentage),

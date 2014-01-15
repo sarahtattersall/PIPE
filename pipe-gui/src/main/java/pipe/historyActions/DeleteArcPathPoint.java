@@ -4,45 +4,32 @@
 
 package pipe.historyActions;
 
-import pipe.views.ArcView;
-import pipe.views.viewComponents.ArcPath;
-import pipe.views.viewComponents.ArcPathPoint;
+import pipe.models.component.Arc;
+import pipe.models.component.ArcPoint;
+import pipe.models.component.Connectable;
 
 /**
- *
  * @author Pere Bonet
  */
-public class DeleteArcPathPoint
-        extends HistoryItem
-{
-   
-   private final ArcPath arcPath;
-   private final ArcPathPoint point;
-   private final Integer index;
+public class DeleteArcPathPoint<S extends Connectable, T extends Connectable> extends HistoryItem {
 
-   /** Creates a new instance of placeWeightEdit
-    * @param _arc
-    * @param _point
-    * @param _index*/
-   public DeleteArcPathPoint(ArcView _arc, ArcPathPoint _point, Integer _index) {
-      arcPath = _arc.getArcPath();
-      point = _point;
-      index = _index;
-   }
 
-   
-   /** */
-   @Override
-   public void undo() {
-      arcPath.insertPoint(index, point);
-      arcPath.updateArc();      
-   }
+    private final Arc<S, T> arc;
 
-   
-   /** */
-   @Override
-   public void redo() {
-      point.delete();
-   }
-   
+    private final ArcPoint point;
+
+    public DeleteArcPathPoint(Arc<S, T> arc, ArcPoint component) {
+        this.arc = arc;
+        this.point = component;
+    }
+
+    @Override
+    public void undo() {
+        arc.addIntermediatePoint(point);
+    }
+
+    @Override
+    public void redo() {
+        arc.removeIntermediatePoint(point);
+    }
 }

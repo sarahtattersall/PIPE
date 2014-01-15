@@ -88,4 +88,10 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         historyItem.redo();
         historyManager.addNewEdit(historyItem);
     }
+
+    public void deletePoint(ArcPoint component) {
+        HistoryItem historyItem = new DeleteArcPathPoint<S,T>(arc, component);
+        historyItem.redo();
+        historyManager.addNewEdit(historyItem);
+    }
 }

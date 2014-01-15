@@ -5,11 +5,14 @@
  */
 package pipe.handlers;
 
+import pipe.actions.DeletePetriNetObjectAction;
 import pipe.actions.SplitArcPointAction;
 import pipe.actions.ToggleArcPointAction;
+import pipe.actions.edit.DeleteArcPathPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
+import pipe.historyActions.DeleteArcPathPoint;
 import pipe.models.component.ArcPoint;
 import pipe.views.viewComponents.ArcPathPoint;
 
@@ -36,7 +39,11 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
      */
     @Override
     public JPopupMenu getPopup(MouseEvent e) {
-        JPopupMenu popup = super.getPopup(e);
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem menuItem =
+                new JMenuItem(new DeleteArcPathPointAction(component, arcController));
+        menuItem.setText("Delete");
+        popup.add(menuItem);
 
         if (!(viewComponent.isDeleteable())) {
             popup.getComponent(0).setEnabled(false);
@@ -45,7 +52,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
         popup.insert(new JPopupMenu.Separator(), 0);
 
         if (viewComponent.getIndex() > 0) {
-            JMenuItem menuItem = new JMenuItem(new ToggleArcPointAction(component, arcController));
+            menuItem = new JMenuItem(new ToggleArcPointAction(component, arcController));
             if (!viewComponent.isCurved()) {
                 menuItem.setText("Change to Curved");
             } else {
@@ -54,7 +61,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
             popup.insert(menuItem, 0);
         }
 
-        JMenuItem menuItem = new JMenuItem(new SplitArcPointAction(component, arcController));
+        menuItem = new JMenuItem(new SplitArcPointAction(component, arcController));
         menuItem.setText("Split Point");
         popup.add(menuItem, 1);
         return popup;

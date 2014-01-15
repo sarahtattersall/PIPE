@@ -178,7 +178,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
     public void removeIntermediatePoint(ArcPoint point) {
         intermediatePoints.remove(point);
-        changeSupport.firePropertyChange("deleteIntermediatePoint", null, point);
+        changeSupport.firePropertyChange("deleteIntermediatePoint", point, null);
     }
 
     public ArcPoint getNextPoint(ArcPoint arcPoint) {

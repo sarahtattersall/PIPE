@@ -3,7 +3,6 @@
  */
 package pipe.views.viewComponents;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
@@ -12,9 +11,9 @@ import pipe.gui.ZoomController;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.*;
-import pipe.visitor.connectable.ConnectableVisitor;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
+import pipe.visitor.connectable.ConnectableVisitor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,22 +28,32 @@ import java.util.Set;
 public class ArcPath implements Shape, Cloneable {
 
     private static final Stroke proximityStroke = new BasicStroke(Constants.ARC_PATH_PROXIMITY_WIDTH);
+
     private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
+
     public final Point2D.Double midPoint = new Point2D.Double();
 
     /**
      * Use  this to only add enw arcpoints
      */
     private final Set<ArcPoint> points = new HashSet<ArcPoint>();
+
     private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
 
-
     private final ArcView<? extends Connectable, ? extends Connectable> parent;
+
     private final PetriNetController petriNetController;
+
     private GeneralPath path = new GeneralPath();
+
     private boolean pointLock = false;
+
     private Shape shape = stroke.createStrokedShape(this);
-    private Shape proximityShape = proximityStroke.createStrokedShape(this);;
+
+    private Shape proximityShape = proximityStroke.createStrokedShape(this);
+
+    ;
+
     private int _transitionAngle;
 
 
@@ -71,8 +80,8 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     private void createCurvedPoint(ArcPathPoint point) {
-        path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x,
-                point.getControl().y, point.getPoint().getX(), point.getPoint().getY());
+        path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x, point.getControl().y,
+                point.getPoint().getX(), point.getPoint().getY());
     }
 
     /**
@@ -83,10 +92,8 @@ public class ArcPath implements Shape, Cloneable {
     private void setMidPoint(double length) {
         ArcPathPoint currentPoint = pathPoints.get(0);
         if (getEndIndex() < 2) {
-            midPoint.x = (pathPoints.get(0).getPoint().getX() +
-                    pathPoints.get(1).getPoint().getX()) * 0.5;
-            midPoint.y = (pathPoints.get(0).getPoint().getY() +
-                    pathPoints.get(1).getPoint().getY()) * 0.5;
+            midPoint.x = (pathPoints.get(0).getPoint().getX() + pathPoints.get(1).getPoint().getX()) * 0.5;
+            midPoint.y = (pathPoints.get(0).getPoint().getY() + pathPoints.get(1).getPoint().getY()) * 0.5;
         } else {
             double acc = 0;
             double percent = 0;
@@ -104,10 +111,10 @@ public class ArcPath implements Shape, Cloneable {
                 acc += inc;
             }
 
-            midPoint.x = previousPoint.getPoint().getX() +
-                    (float) ((currentPoint.getPoint().getX() - previousPoint.getPoint().getX()) * percent);
-            midPoint.y = previousPoint.getPoint().getY() +
-                    (float) ((currentPoint.getPoint().getY() - previousPoint.getPoint().getY()) * percent);
+            midPoint.x = previousPoint.getPoint().getX() + (float) (
+                    (currentPoint.getPoint().getX() - previousPoint.getPoint().getX()) * percent);
+            midPoint.y = previousPoint.getPoint().getY() + (float) (
+                    (currentPoint.getPoint().getY() - previousPoint.getPoint().getY()) * percent);
         }
     }
 
@@ -237,22 +244,24 @@ public class ArcPath implements Shape, Cloneable {
             ArcPathPoint currentPoint = pathPoints.get(c);
 
             if (!currentPoint.isCurved()) {
-                currentPoint.setControl1(getControlPoint(previousPoint.getPoint(), currentPoint.getPoint(),
-                        previousPoint.getPoint(), currentPoint.getPoint()));
-                currentPoint.setControl(getControlPoint(currentPoint.getPoint(), previousPoint.getPoint(),
-                        currentPoint.getPoint(), previousPoint.getPoint()));
+                currentPoint.setControl1(
+                        getControlPoint(previousPoint.getPoint(), currentPoint.getPoint(), previousPoint.getPoint(),
+                                currentPoint.getPoint()));
+                currentPoint.setControl(
+                        getControlPoint(currentPoint.getPoint(), previousPoint.getPoint(), currentPoint.getPoint(),
+                                previousPoint.getPoint()));
             } else {
                 if (c > 1 && !previousPoint.isCurved()) {
                     myPreviousButOnePoint = pathPoints.get(c - 2);
-                    currentPoint.setControl1(
-                            getControlPoint(myPreviousButOnePoint.getPoint(), previousPoint.getPoint(),
-                                    previousPoint.getPoint(), currentPoint.getPoint()));
+                    currentPoint.setControl1(getControlPoint(myPreviousButOnePoint.getPoint(), previousPoint.getPoint(),
+                            previousPoint.getPoint(), currentPoint.getPoint()));
                 }
                 if (c < getEndIndex()) {
                     ArcPathPoint nextPoint = pathPoints.get(c + 1);
                     if (!nextPoint.isCurved()) {
-                        currentPoint.setControl(getControlPoint(nextPoint.getPoint(), currentPoint.getPoint(),
-                                currentPoint.getPoint(), previousPoint.getPoint()));
+                        currentPoint.setControl(
+                                getControlPoint(nextPoint.getPoint(), currentPoint.getPoint(), currentPoint.getPoint(),
+                                        previousPoint.getPoint()));
                     }
                 }
             }
@@ -271,15 +280,14 @@ public class ArcPath implements Shape, Cloneable {
                     double angle = Math.toRadians(_transitionAngle);
                     ArcPathPoint myPoint = pathPoints.get(getEndIndex());
                     ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
-                    float distance =
-                            (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
+                    float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
+                            / Constants.ARC_CONTROL_POINT_CONSTANT;
                     myPoint.setControl2((float) (myPoint.getPoint().getX() + Math.cos(angle) * distance),
                             (float) (myPoint.getPoint().getY() + Math.sin(angle) * distance));
 
                     myPoint = pathPoints.get(1);
-                    myPoint.setControl(
-                            getControlPoint(pathPoints.get(0).getPoint(), myPoint.getControl(), pathPoints.get(0).getPoint(),
-                                    myPoint.getControl()));
+                    myPoint.setControl(getControlPoint(pathPoints.get(0).getPoint(), myPoint.getControl(),
+                            pathPoints.get(0).getPoint(), myPoint.getControl()));
                 }
             }
 
@@ -289,8 +297,8 @@ public class ArcPath implements Shape, Cloneable {
                     double angle = Math.toRadians(_transitionAngle);
                     ArcPathPoint myPoint = pathPoints.get(1);
                     ArcPathPoint myLastPoint = pathPoints.get(0);
-                    float distance =
-                            (float) getLength(myPoint.getPoint(), myLastPoint.getPoint()) / Constants.ARC_CONTROL_POINT_CONSTANT;
+                    float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
+                            / Constants.ARC_CONTROL_POINT_CONSTANT;
                     myPoint.setControl1((float) (myLastPoint.getPoint().getX() + Math.cos(angle) * distance),
                             (float) (myLastPoint.getPoint().getY() + Math.sin(angle) * distance));
 
@@ -322,6 +330,7 @@ public class ArcPath implements Shape, Cloneable {
 
     /**
      * Wont readd arcPoint if its already in the path
+     *
      * @param arcPoint
      * @param index
      */
@@ -336,7 +345,9 @@ public class ArcPath implements Shape, Cloneable {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
                 createPath();
+                parent.arcSpecificUpdate();
                 parent.updateBounds();
                 parent.repaint();
             }
@@ -354,8 +365,12 @@ public class ArcPath implements Shape, Cloneable {
         pathPoints.add(new ArcPathPoint(this));
     }
 
-    public void deletePoint(ArcPathPoint a) {
-        pathPoints.remove(a);
+    public void deletePoint(ArcPoint point) {
+        ArcPathPoint delete = new ArcPathPoint(point, this, petriNetController);
+        int index = pathPoints.indexOf(delete);
+        pathPoints.get(index).delete();
+        pathPoints.remove(delete);
+        points.remove(point);
     }
 
     public void updateArc() {
@@ -421,7 +436,6 @@ public class ArcPath implements Shape, Cloneable {
     public void setPointVisibilityLock(boolean lock) {
         pointLock = lock;
     }
-
 
     public void hidePoints() {
         if (!pointLock) {
@@ -651,7 +665,8 @@ public class ArcPath implements Shape, Cloneable {
             if (editWindow.getIndexOf(pathPoint) < 0) {
                 editWindow.add(pathPoint);
                 //TODO: SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER
-                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, petriNetController, petriNetController.getArcController(parent.getModel()));
+                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, petriNetController,
+                        petriNetController.getArcController(parent.getModel()));
 
                 if (pathPoint.getMouseListeners().length == 0) {
                     pathPoint.addMouseListener(pointHandler);
@@ -691,7 +706,8 @@ public class ArcPath implements Shape, Cloneable {
                 petriNetTab.add(point);
 
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
-                ArcController<? extends  Connectable, ? extends Connectable> arcController = petriNetController.getArcController(parent.getModel());
+                ArcController<? extends Connectable, ? extends Connectable> arcController =
+                        petriNetController.getArcController(parent.getModel());
                 pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
 
                 if (point.getMouseListeners().length == 0) {
@@ -723,35 +739,35 @@ public class ArcPath implements Shape, Cloneable {
      */
     //TODO: REIMPLEMENT
     public ArcPathPoint splitSegment(Point2D.Double mouseposition) {
-//        int wantedpoint = findPoint(mouseposition);
-//
-//        // wantedpoint is now the index of the first point in the pair of arc
-//        // points marking the segment to be split. So we have all we need to
-//        // split the arc.
-//        ArcPathPoint first = pathPoints.get(wantedpoint);
-//        ArcPathPoint second = pathPoints.get(wantedpoint + 1);
-//        ArcPathPoint newpoint = new ArcPathPoint(second.getMidPoint(first), first.isCurved(), this);
-//        insertPoint(wantedpoint + 1, newpoint);
-//        createPath();
-//        parent.updateArcPosition();
-//
-//        return newpoint;
+        //        int wantedpoint = findPoint(mouseposition);
+        //
+        //        // wantedpoint is now the index of the first point in the pair of arc
+        //        // points marking the segment to be split. So we have all we need to
+        //        // split the arc.
+        //        ArcPathPoint first = pathPoints.get(wantedpoint);
+        //        ArcPathPoint second = pathPoints.get(wantedpoint + 1);
+        //        ArcPathPoint newpoint = new ArcPathPoint(second.getMidPoint(first), first.isCurved(), this);
+        //        insertPoint(wantedpoint + 1, newpoint);
+        //        createPath();
+        //        parent.updateArcPosition();
+        //
+        //        return newpoint;
         return null;
     }
 
     //TODO: REIMPLEMENT
     public HistoryItem insertPointAt(Point2D.Double mouseposition, boolean flag) {
-//        int wantedpoint = findPoint(mouseposition);
-//
-//        // wantedpoint is now the index of the first point in the pair of arc
-//        // points marking the segment to be split. So we have all we need to
-//        // insert the new point at the given position.
-//        ArcPathPoint newPoint = new ArcPathPoint(mouseposition, flag, this);
-//        insertPoint(wantedpoint + 1, newPoint);
-//        createPath();
-//        parent.updateArcPosition();
-//
-//        return new AddArcPathPoint(this.getArc(), newPoint);
+        //        int wantedpoint = findPoint(mouseposition);
+        //
+        //        // wantedpoint is now the index of the first point in the pair of arc
+        //        // points marking the segment to be split. So we have all we need to
+        //        // insert the new point at the given position.
+        //        ArcPathPoint newPoint = new ArcPathPoint(mouseposition, flag, this);
+        //        insertPoint(wantedpoint + 1, newPoint);
+        //        createPath();
+        //        parent.updateArcPosition();
+        //
+        //        return new AddArcPathPoint(this.getArc(), newPoint);
         return null;
     }
 
