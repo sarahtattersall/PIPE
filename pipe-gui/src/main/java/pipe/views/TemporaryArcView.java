@@ -7,7 +7,6 @@ import pipe.models.component.Connectable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +15,16 @@ import static java.lang.Math.max;
 
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     private T source;
+
     private Point2D end;
+
     private List<ArcPoint> intermediatePoints = new ArrayList<ArcPoint>();
+
+    /**
+     * Maximum intermediate point for setting rectangle bounds
+     */
+    private double maxX;
+    private double maxY;
 
     public TemporaryArcView(T source) {
         super();
@@ -25,19 +32,28 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         Point2D centre = source.getCentre();
         end = new Point2D.Double(centre.getX(), centre.getY());
         //TODO: REPLACE WITH BETTER LOGIC
-        setBounds(0,0, 500,500);
+        setBounds(0, 0, 500, 500);
     }
 
     public void setEnd(Point2D end) {
         this.end = end;
-
-        int x = (int) max(source.getCentre().getX(), end.getX());
-        int y = (int) max(source.getCentre().getY(), end.getY());
-        setBounds(0,0, x, y);
+        updateMax(end);
+        int x = (int) maxX;
+        int y = (int) maxY;
+        setBounds(0, 0, x, y);
     }
 
     public void addIntermediatePoint(ArcPoint point) {
         intermediatePoints.add(point);
+        updateMax(point.getPoint());
+    }
+
+    /**
+     * Updates max points based on point
+     */
+    private void updateMax(Point2D point) {
+        maxX = max(maxX, point.getX());
+        maxY = max(maxY, point.getY());
     }
 
     public T getSourceConnectable() {
@@ -53,7 +69,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         GeneralPath path = new GeneralPath();
         path.moveTo(source.getCentre().getX(), source.getCentre().getY());
 
-        for(ArcPoint arcPoint : intermediatePoints) {
+        for (ArcPoint arcPoint : intermediatePoints) {
             path.lineTo(arcPoint.getX(), arcPoint.getY());
         }
         path.lineTo(end.getX(), end.getY());
