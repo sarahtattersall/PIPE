@@ -259,9 +259,10 @@ public class Place extends Connectable implements Serializable
         if (Double.compare(place.markingYOffset, markingYOffset) != 0) {
             return false;
         }
-        if (!tokenCounts.equals(place.tokenCounts)) {
-            return false;
-        }
+        //TODO:
+//        if (!tokenCounts.equals(place.tokenCounts)) {
+//            return false;
+//        }
 
         return true;
     }

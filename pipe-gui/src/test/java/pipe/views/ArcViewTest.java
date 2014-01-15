@@ -53,14 +53,14 @@ public class ArcViewTest {
         ArcPath path = arcView.getArcPath();
         assertEquals(2, path.getNumPoints());
         Point2D.Double zoomedStart =  ZoomController.getZoomedValue(start, zoom);
-        Point2D.Double actualStart = path.getPoint(0);
-        assertEquals(zoomedStart.x, actualStart.x, DOUBLE_DELTA);
-        assertEquals(zoomedStart.y, actualStart.y, DOUBLE_DELTA);
+        Point2D actualStart = path.getPoint(0);
+        assertEquals(zoomedStart.x, actualStart.getX(), DOUBLE_DELTA);
+        assertEquals(zoomedStart.y, actualStart.getY(), DOUBLE_DELTA);
 
 
         Point2D.Double zoomedEnd =  ZoomController.getZoomedValue(end, zoom);
-        Point2D.Double actualEnd = path.getPoint(1);
-        assertEquals(zoomedEnd.x, actualEnd.x, DOUBLE_DELTA);
-        assertEquals(zoomedEnd.y, actualEnd.y, DOUBLE_DELTA);
+        Point2D actualEnd = path.getPoint(1);
+        assertEquals(zoomedEnd.x, actualEnd.getX(), DOUBLE_DELTA);
+        assertEquals(zoomedEnd.y, actualEnd.getY(), DOUBLE_DELTA);
     }
 }

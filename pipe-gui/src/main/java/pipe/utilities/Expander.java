@@ -1,323 +1,281 @@
 package pipe.utilities;
 
-import org.w3c.dom.DOMException;
-import pipe.exceptions.TokenLockedException;
 import pipe.models.PetriNet;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
-import pipe.utilities.writers.PNMLWriter;
-import pipe.views.*;
+import pipe.models.component.*;
+import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.strategy.arc.ForwardsNormalStrategy;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @author yufeiwang (minor change)
+ * This class unfolds a coloured petri net into an uncoloured net
+ * The algorithm for doing this can be found in the Stochastic Petri Net
+ * book by Bause and Kritzinger
  */
-public class Expander
-{
-    private final PetriNetView _petriNetView;
-    private TokenView _defaultTokenView;
+public class Expander {
+    /**
+     * Petri net to unfold
+     */
+    private final PetriNet petriNet;
 
-    private ArrayList<PlaceView> _newPlaceViews;
-    private ArrayList<ArcView> _newArcViews;
-    private ArrayList<TransitionView> _newTransitionViews;
+    /**
+     * Single token to unfold the net into
+     */
+    private final Token unfoldToken;
 
-    public Expander(PetriNetView netView)
-    {
-        _petriNetView = netView;
-        _newPlaceViews = new ArrayList<PlaceView>();
-        _newArcViews = new ArrayList<ArcView>();
-        _newTransitionViews = new ArrayList<TransitionView>();
-        boolean foundDefaultClass = false;
-        // Set default token
-        for(TokenView tc : netView.getTokenViews())
-        {
-            if(tc.getID().equals("Default"))
-            {
-                foundDefaultClass = true;
-                _defaultTokenView = tc;
-                break;
-            }
-        }
-        // If there is no token with name Default
-        // then select class which has a token colour of black
-        if(!foundDefaultClass)
-        {
-            for(TokenView tc : netView.getTokenViews())
-            {
-                if(tc.getColor().getBlue() == 0
-                        && tc.getColor().getGreen() == 0
-                        && tc.getColor().getRed() == 0)
-                {
-                    foundDefaultClass = true;
-                    _defaultTokenView = tc;
-                    break;
-                }
-            }
+    /**
+     * Places for new net mapped id -> place
+     */
+    private Map<String, Place> newPlaces = new HashMap<String, Place>();
 
-        }
+    /**
+     * Transitions for new net mapped id -> transition
+     */
+    private Map<String, Transition> newTransitions = new HashMap<String, Transition>();
 
-        // If no such class exists then set default class
-        // to the first enabled token.
-        if(!foundDefaultClass)
-        {
-            for(TokenView tc : netView.getTokenViews())
-            {
-                if(tc.isEnabled())
-                {
-                    _defaultTokenView = tc;
-                    foundDefaultClass = true;
-                    break;
-                }
-            }
-        }
+    /**
+     * Arcs for new net mapped arc -> transition
+     */
+    private Map<String, Arc<? extends Connectable, ? extends Connectable>> newArcs =
+            new HashMap<String, Arc<? extends Connectable, ? extends Connectable>>();
+
+
+    public Expander(PetriNet petriNet) {
+        this.petriNet = petriNet;
+        unfoldToken = getCopiedToken();
     }
 
-    public PetriNetView unfold()
-    {
+    /**
+     * @return Copied token which will be added to the new petri net
+     */
+    private Token getCopiedToken() {
+        return new Token(getToken());
+    }
+
+    /**
+     * Finds the token that we will unfold the net down to
+     *
+     * @return First tries to find default token
+     * Failing this tries to find black toke
+     * Otherwise just returns first token it comes acorss
+     */
+    private Token getToken() {
+        if (petriNet.getTokens().contains("Default")) {
+            Token defaultToken = getDefaultToken();
+            return defaultToken;
+        }
+
+        Token blackToken = getBlackToken();
+        if (blackToken != null) {
+            return blackToken;
+        }
+        return getFirstToken();
+    }
+
+    /**
+     * @return default token in petri net
+     */
+    private Token getDefaultToken() {
+        return petriNet.getToken("Default");
+    }
+
+    /**
+     * @return first token in petri net
+     */
+    private Token getFirstToken() {
+        return petriNet.getTokens().iterator().next();
+
+    }
+
+    /**
+     * @return Black token in petri net
+     */
+    private Token getBlackToken() {
+        for (Token token : petriNet.getTokens()) {
+            if (token.getColor().equals(Color.BLACK)) {
+                return token;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return new unfolded petri net
+     */
+    public PetriNet unfold() {
         unfoldTransitions();
-        // saveAsXml(newPetriNet);
         return createPetriNetView();
     }
 
-    // Will iterate through each transition, analyse its input and output arcs
-    // and create new places and connecting arcs as necessary.
-    private void unfoldTransitions()
-    {
-        // Get current transitions. These should remain as is (remember they are
-        // ungrouped
-        // and hence number of transitions in folded model = no. of transitions
-        // in unfolded model)
-        TransitionView[] transitionViews = _petriNetView.getTransitionViews();
-        _newPlaceViews = new ArrayList<PlaceView>();
-        _newArcViews = new ArrayList<ArcView>();
-        _newTransitionViews = new ArrayList<TransitionView>();
-        for(TransitionView transitionView : transitionViews)
-        {
+    private PetriNet createPetriNetView() {
+        PetriNet petriNet = new PetriNet();
+        petriNet.addToken(unfoldToken);
 
-            // Create a copy of existing transition and add it to the list
-            String transIdInput = transitionView.getId();
-            //String functionalRate = transitionView.getRateExpr();
-            String functionalRate = transitionView.getRate()+"";
-           // double rateInput = transitionView.getRate();
-            boolean timedTransition = transitionView.isTimed();
-            boolean infServer = transitionView.isInfiniteServer();
-            int angleInput = transitionView.getAngle();
-            int priority = transitionView.getPriority();
+        for (Place place : newPlaces.values()) {
+            petriNet.addPlace(place);
+        }
 
-            //TODO: WORK OUT HOW TO GET CONTROLLER
-            TransitionView newTransitionView = new TransitionView(transIdInput, transIdInput, 0, 0, timedTransition, infServer, angleInput, new Transition(transIdInput, transIdInput,functionalRate, priority), transitionView.getPetriNetController());
-            _newTransitionViews.add(newTransitionView);
-            //TODO: REIMPLEMENT
-//            analyseArcs(transitionView, newTransitionView, transitionView.outboundArcs());
-//            analyseArcs(transitionView, newTransitionView, transitionView.inboundArcs());
+        for (Transition transition : newTransitions.values()) {
+            petriNet.addTransition(transition);
+        }
+
+        for (Arc<? extends Connectable, ? extends Connectable> arc : newArcs.values()) {
+            petriNet.addArc(arc);
+        }
+        return petriNet;
+    }
+
+    /**
+     * Iterate through each transition, analyse its input and output arcs
+     * and create new places/arcs as necessary
+     */
+    private void unfoldTransitions() {
+        for (Transition transition : petriNet.getTransitions()) {
+            Transition newTransition = new Transition(transition);
+            newTransitions.put(newTransition.getId(), newTransition);
+            analyseOutboundArcs(newTransition, petriNet.outboundArcs(transition));
+            analyseInboundArcs(newTransition, petriNet.inboundArcs(transition));
         }
 
     }
 
-    //TODO: REIMPLEMENT
-    // Steve Doubleday:  added PlaceViews and ArcViews as observers for new MarkingViews
-    public void analyseArcs(TransitionView transitionView, TransitionView newTransitionView, LinkedList<ArcView> arcViews)
-    {
-//        for(ArcView arcView : arcViews)
-//        {
-//            PlaceView oldPlaceView = (PlaceView) arcView.getTheOtherEndFor(transitionView);
-//            String newPlaceName = oldPlaceView.getId();
-//            int newMarking = 0;
-//            int newArcWeight = 0;
-//            List<MarkingView> markings = arcView.getWeight();
-//            for(MarkingView markingView : markings)
-//            {
-//                if(markingView.getCurrentMarking() > 0)
-//                {
-//                    newPlaceName += "_" + markingView.getToken().getID();
-//                    for(MarkingView placeMarkingView : oldPlaceView.getCurrentMarkingView())
-//                    {
-//                        if(markingView.getToken().getID().equals(placeMarkingView.getToken().getID()))
-//                        {
-//                            newMarking = placeMarkingView.getCurrentMarking();
-//                            newArcWeight = markingView.getCurrentMarking();
-//                        }
-//                    }
-//                }
-//            }
-//            PlaceView newPlaceView = null;
-//            for(PlaceView placeView : _newPlaceViews)
-//            {
-//                if(placeView.getId().equals(newPlaceName))
-//                {
-//                    newPlaceView = placeView;
-//                }
-//            }
-//            if(newPlaceView == null)
-//            {
-//                LinkedList<MarkingView> markingViewInput = new LinkedList<MarkingView>();
-//                MarkingView placeMarkingView = new MarkingView(_defaultTokenView, newMarking+"");
-//                markingViewInput.add(placeMarkingView);
-//
-//                Place place = new Place(oldPlaceView.getId(), oldPlaceView.getName());
-//                //TODO: WORK OUT HOW TO GET CONTROLLER
-//                newPlaceView = new PlaceView(newPlaceName, newPlaceName, markingViewInput, place, null);
-//                placeMarkingView.addObserver(newPlaceView);
-//                _newPlaceViews.add(newPlaceView);
-//            }
-//            LinkedList<MarkingView> weight = new LinkedList<MarkingView>();
-//            Map<Token, String> weightModel = new HashMap<Token, String>();
-//            MarkingView arcMarkingView = new MarkingView(_defaultTokenView, newArcWeight+"");
-//            weight.add(arcMarkingView);
-//            weightModel.put(_defaultTokenView.getModel(), newArcWeight+"");
-//
-//            ArcView newArcView;
-//            if(transitionView.outboundArcs() == arcViews)
-//                newArcView = new NormalArcView( arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView.getX(), newPlaceView.getY(), newTransitionView, newPlaceView, weight, arcView.getId(), false, new NormalArc(newTransitionView.getModel(), newPlaceView.getModel(), weightModel), arcView.getPetriNetController());
-//            else
-//                newArcView = new NormalArcView(newPlaceView.getX(), newPlaceView.getY(), arcView.getStartPositionX(), arcView.getStartPositionY(), newPlaceView, newTransitionView, weight, arcView.getId(), false, new NormalArc(newPlaceView.getModel(), newTransitionView.getModel(), weightModel), arcView.getPetriNetController());
-//            newPlaceView.addInboundOrOutbound(newArcView);
-//            newTransitionView.addInboundOrOutbound(newArcView);
-//            arcMarkingView.addObserver(newArcView);
-//            _newArcViews.add(newArcView);
-//        }
+    /**
+     * Analyses all outbound arcs of the previous transition
+     * Creates new outbound places with arcs for the transition
+     *
+     * @param newTransition transition for new petri net
+     * @param arcs          outbound arcs of the old transition
+     */
+    public void analyseOutboundArcs(Transition newTransition, Iterable<Arc<Transition, Place>> arcs) {
+        for (Arc<Transition, Place> arc : arcs) {
+            Place place = arc.getTarget();
+            Data data = getPlaceData(arc, place);
+            Place newPlace =
+                    getNewPlace(place, newTransition.getX(), newTransition.getY(), data.placeTokenCount, data.name);
+            createArc(newTransition, newPlace, data.arcWeight);
+        }
+
     }
 
-    private PetriNetView createPetriNetView()
-    {
-        //TODO: PASS IN CONTROLLER? WHAT DOES THE EXPANDER DO?
-        PetriNetView petriNetView = new PetriNetView(null, new PetriNet());
-        LinkedList<TokenView> tokenViews = new LinkedList<TokenView>();
-        tokenViews.add(_defaultTokenView);
-        try
-		{
-			petriNetView.updateOrReplaceTokenViews(tokenViews);
-		}
-		catch (TokenLockedException e)
-		{
-			e.printStackTrace(); // should not throw at initial creation
-		}
-        petriNetView.setActiveTokenView(_defaultTokenView);
-        for(TransitionView t : _newTransitionViews)
-        {
-            petriNetView.addPetriNetObject(t);
-        }
-        for(PlaceView p : _newPlaceViews)
-        {
-            petriNetView.addPetriNetObject(p);
-        }
-        for(ArcView a : _newArcViews)
-        {
-            petriNetView.addPetriNetObject(a);
+    private Place getNewPlace(Place original, Double newX, Double newY, int tokenCount, String id) {
+        if (newPlaces.containsKey(id)) {
+            return newPlaces.get(id);
         }
 
-        return petriNetView;
+        Place place = new Place(original);
+        for (Token token : place.getTokenCounts().keySet()) {
+            place.setTokenCount(token, 0);
+        }
+        place.setName(id);
+        place.setId(id);
+        place.setX(newX);
+        place.setY(newY);
+        place.setTokenCount(unfoldToken, tokenCount);
+        newPlaces.put(place.getId(), place);
+        return place;
+
     }
 
-    // Not used. Could be implemented in a better way
-    void organizeNetGraphically()
-    {
-        int thresholdXDistanceApart = 100;
-        int thresholdYDistanceApart = 30;
-        double currentX;
-        double currentY;
-        int size = _newTransitionViews.size();
-        // otherwise there are no transitons to seperate from each other
-        if(size > 1)
-        {
-            boolean madeAMove = true;
-            while(madeAMove)
-            {
-                madeAMove = false;
-                /*
-                     * for(int i = 0; i < size-1; i++){ double prevX =
-                     * newTransitions.get(i).getPositionX(); double prevY =
-                     * newTransitions.get(i).getPositionY(); for(int j = i+1;
-                     * j<size; j++){ currentX =
-                     * newTransitions.get(j).getPositionX(); currentY =
-                     * newTransitions.get(j).getPositionY(); if((currentX - prevX) >
-                     * -thresholdXDistanceApart && Math.abs(currentY - prevY) <
-                     * thresholdYDistanceApart){
-                     * newTransitions.get(j).setPositionX(-thresholdXDistanceApart +
-                     * prevX); System.out.println("shifting" +
-                     * newTransitions.get(i).getId() + ": " +
-                     * -thresholdXDistanceApart + prevX); } else if((currentX -
-                     * prevX) < thresholdXDistanceApart && Math.abs(currentY -
-                     * prevY) < thresholdYDistanceApart){
-                     * newTransitions.get(j).setPositionX(thresholdXDistanceApart +
-                     * prevX); System.out.println("shifting" +
-                     * newTransitions.get(i).getId() + ": " +
-                     * thresholdXDistanceApart + prevX); madeAMove = true; break; }
-                     *
-                     * } }
-                     */
+    private void createArc(Transition source, Place target, int arcWeight) {
+        ForwardsNormalStrategy strategy = new ForwardsNormalStrategy();
+        strategy.setPetriNet(petriNet);
+        Arc<Transition, Place> newArc =
+                new Arc<Transition, Place>(source, target, getNewArcWeight(arcWeight), strategy);
+        newArcs.put(newArc.getId(), newArc);
+    }
+
+    /**
+     * @param arcWeight new weight for unfolded token
+     * @return single entry mapping the unfolded token set in the constructor to the arc weight specified
+     */
+    private Map<Token, String> getNewArcWeight(int arcWeight) {
+        Map<Token, String> arcWeights = new HashMap<Token, String>();
+        arcWeights.put(unfoldToken, Integer.toString(arcWeight));
+        return arcWeights;
+    }
+
+    /**
+     * @param arc   original arc
+     * @param place original place
+     * @return Data needed to create a new place in the unfolded net
+     */
+    private Data getPlaceData(Arc<? extends Connectable, ? extends Connectable> arc, Place place) {
+
+        StringBuilder newNameBuilder = new StringBuilder(place.getName());
+        int placeTokenCount = 0;
+        int arcWeight = 0;
+        for (Map.Entry<Token, String> entry : arc.getTokenWeights().entrySet()) {
+            Token token = entry.getKey();
+            String weight = entry.getValue();
+            //TODO: THIS IS ASUMING IT ISNT FUNCTIONAL :/
+            arcWeight = Integer.valueOf(weight);
+            if (arcWeight > 0) {
+                newNameBuilder.append("_").append(token.getId());
+                placeTokenCount = place.getTokenCount(token);
             }
-        }
 
-        // Now align all x position of places with respective transitions
-        for(PlaceView _newPlaceView : _newPlaceViews)
-        {
-            Iterator<?> it = _newPlaceView.getConnectFromIterator();
-            if(it.hasNext())
-            {
-                ArcView a = (ArcView) it.next();
-//                TransitionView t = (TransitionView) a.getTarget();
-//                _newPlaceView.setPositionX(t.getPositionX());
-            }
         }
-
-        // Now separate all places from each other
-        size = _newPlaceViews.size();
-        // otherwise there are no transitons to seperate from each other
-        if(size > 1)
-        {
-            for(int i = 0; i < size - 1; i++)
-            {
-                double prevX = _newPlaceViews.get(i).getX();
-                double prevY = _newPlaceViews.get(i).getY();
-                for(int j = i + 1; j < size; j++)
-                {
-                    currentX = _newPlaceViews.get(j).getX();
-                    currentY = _newPlaceViews.get(j).getY();
-                    /*
-                          * if((currentX - prevX) < -thresholdXDistanceApart){
-                          * newPlaces.get(j).setPositionX(-thresholdXDistanceApart +
-                          * prevX && Math.abs(currentY - prevY) <
-                          * thresholdYDistanceApart); } else
-                          */
-                    if((currentX - prevX) < thresholdXDistanceApart
-                            && Math.abs(currentY - prevY) < thresholdYDistanceApart)
-                    {
-//                        _newPlaceViews.get(j).setPositionX(
-//                                thresholdXDistanceApart + prevX);
-                    }
-                }
-            }
-        }
-
+        return new Data(placeTokenCount, arcWeight, newNameBuilder.toString());
     }
 
-    public File saveAsXml(PetriNetView dataLayer)
-    {
-        File file = null;
-        try
-        {
-            file = File.createTempFile("unfoldedNet", ".xml");
-            file.deleteOnExit();
-            PNMLWriter writer = new PNMLWriter(dataLayer);
-            writer.saveTo(file, false);
+    /**
+     * Analyses all inbound arcs of the previous transition
+     * Creates new inbound places with arcs for the transition
+     *
+     * @param newTransition transition for new petri net
+     * @param arcs          inbound arcs of the old transition
+     */
+    public void analyseInboundArcs(Transition newTransition, Iterable<Arc<Place, Transition>> arcs) {
+        for (Arc<Place, Transition> arc : arcs) {
+            Place place = arc.getSource();
+            Data data = getPlaceData(arc, place);
+            Place newPlace =
+                    getNewPlace(place, newTransition.getX(), newTransition.getY(), data.placeTokenCount, data.name);
+            createArc(newPlace, newTransition, data.arcWeight);
         }
-        catch(NullPointerException e)
-        {
-            e.printStackTrace();
+    }
+
+    /**
+     * Creates an arc from source to transition
+     * Adds it to internal storage
+     *
+     * @param source    unfolded arc source
+     * @param target    unfolded arc target
+     * @param arcWeight unfolded arc weight
+     */
+    private void createArc(Place source, Transition target, int arcWeight) {
+        BackwardsNormalStrategy strategy = new BackwardsNormalStrategy();
+        strategy.setPetriNet(petriNet);
+        Arc<Place, Transition> newArc =
+                new Arc<Place, Transition>(source, target, getNewArcWeight(arcWeight), strategy);
+        newArcs.put(newArc.getId(), newArc);
+    }
+
+    /**
+     * A class used to return multiple items from a method
+     */
+    private static class Data {
+        /**
+         * New place token count
+         */
+        public final int placeTokenCount;
+
+        /**
+         * New arc weight
+         */
+        public final int arcWeight;
+
+        /**
+         * New place name
+         */
+        public final String name;
+
+        public Data(int placeTokenCount, int arcWeight, String name) {
+            this.placeTokenCount = placeTokenCount;
+            this.arcWeight = arcWeight;
+            this.name = name;
         }
-        catch(DOMException e)
-        {
-            e.printStackTrace();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-        return file;
     }
 }

@@ -173,7 +173,7 @@ public class PetriNet {
      * @param place
      * @return arcs that are outbound from place
      */
-    private Collection<Arc<Place, Transition>> outboundArcs(Place place) {
+    public Collection<Arc<Place, Transition>> outboundArcs(Place place) {
         Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
         for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
             if (arc.getSource().equals(place)) {
@@ -195,7 +195,7 @@ public class PetriNet {
      * @param transition
      * @return arcs that are outbound from transition
      */
-    private Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
+    public Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
         Collection<Arc<Transition, Place>> outbound = new LinkedList<Arc<Transition, Place>>();
         for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
             if (arc.getSource().equals(transition)) {
@@ -329,7 +329,7 @@ public class PetriNet {
      * @param transition
      * @return arcs that are inbound to transition
      */
-    private Collection<Arc<Place, Transition>> inboundArcs(Transition transition) {
+    public Collection<Arc<Place, Transition>> inboundArcs(Transition transition) {
         Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
         for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
             if (arc.getTarget().equals(transition)) {

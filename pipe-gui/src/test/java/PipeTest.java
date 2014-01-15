@@ -356,22 +356,7 @@ public class PipeTest {
 		fileForTesting = new File("PipeTestFile.xml");
 		applicationView.saveNet(fileForTesting, false);
 	}
-	protected void openTokenDialogDisableDefaultTokenAddNewToken() throws InterruptedException
-	{ // To get access to the table in TokenPanel, SpecifyTokenAction.actionPerformed refactored to three methods:
-	  // buildTokenGuiClasses(), finishBuildingGui(), updateTokenViewsFromGui(); invoked separately.  
-		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
-		tokenAction.forceOkForTesting();
-		tokenAction.buildTokenGuiClasses();
-		TokenPanel dialogContent = tokenAction.getDialogContentForTesting(); 
-		assertEquals(true, dialogContent.table.getModel().getValueAt(0, 0)); 
-		dialogContent.table.getModel().setValueAt(false, 0, 0); // disable Default tokenview
-		dialogContent.table.getModel().setValueAt(true, 2, 0); // disable Default tokenview
-		dialogContent.table.getModel().setValueAt("Greenie", 2, 1); // disable Default tokenview
-		dialogContent.table.getModel().setValueAt(Color.green, 2, 2); // disable Default tokenview
-		assertEquals(false, dialogContent.table.getModel().getValueAt(0, 0)); 
-		tokenAction.finishBuildingGui();
-		tokenAction.updateTokenViewsFromGui(); 
-	}
+
 	private Action selectMenuItem(JMenu menu, int selection)
 	{
 		Action action = getActionForMenuItem(menu, selection); 

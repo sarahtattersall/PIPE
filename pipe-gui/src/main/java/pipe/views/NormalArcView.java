@@ -59,7 +59,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
      * Updates the weights associated with the arc
      */
     @Override
-    protected void arcSpecificUpdate() {
+    public void arcSpecificUpdate() {
         updateWeights();
     }
 

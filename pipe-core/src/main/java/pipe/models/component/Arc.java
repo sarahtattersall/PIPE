@@ -253,9 +253,10 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         if (!target.equals(arc.target)) {
             return false;
         }
-        if (!tokenWeights.equals(arc.tokenWeights)) {
-            return false;
-        }
+        //TODO:
+//        if (!tokenWeights.equals(arc.tokenWeights)) {
+//            return false;
+//        }
 
         return true;
     }

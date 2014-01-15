@@ -12,11 +12,9 @@ import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
 import pipe.modules.interfaces.IModule;
 import pipe.utilities.Expander;
-import pipe.utilities.writers.PNMLWriter;
 import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
-import pipe.views.TransitionView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,49 +33,49 @@ public class Matrices
 
     public void start()
     {
-        // Check if this net is a CGSPN. If it is, then this
-        // module won't work with it and we must convert it.
-        PetriNetView pnmlData = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-        
-        if(pnmlData.getEnabledTokenClassNumber() > 1){
-			Expander expander = new Expander(pnmlData);
-			pnmlData = expander.unfold();
-			JOptionPane.showMessageDialog(null, "This is CGSPN. The analysis will only apply to default color (black)",
-					"Information", JOptionPane.INFORMATION_MESSAGE);
-		}
-        
-//        if(pnmlData.getTokenViews().size() > 1)
-//        {
-//            Expander expander = new Expander(pnmlData);
-//            pnmlData = expander.unfold();
-//        }
-        // Build interface
-        EscapableDialog guiDialog =
-                new EscapableDialog(ApplicationSettings.getApplicationView(), MODULE_NAME, true);
-
-        // 1 Set layout
-        Container contentPane = guiDialog.getContentPane();
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-
-        // 2 Add file browser
-        sourceFilePanel = new PetriNetChooserPanel("Source net", pnmlData);
-        contentPane.add(sourceFilePanel);
-
-        // 3 Add results pane
-        results = new ResultsHTMLPane(pnmlData.getPNMLName());
-        contentPane.add(results);
-
-        // 4 Add button
-        contentPane.add(new ButtonBar("Calculate", calculateButtonClick,
-                                      guiDialog.getRootPane()));
-
-        // 5 Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // 6 Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setVisible(true);
+//        // Check if this net is a CGSPN. If it is, then this
+//        // module won't work with it and we must convert it.
+//        PetriNetView pnmlData = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+//
+//        if(pnmlData.getEnabledTokenClassNumber() > 1){
+//			Expander expander = new Expander(pnmlData);
+//			pnmlData = expander.unfoldOld();
+//			JOptionPane.showMessageDialog(null, "This is CGSPN. The analysis will only apply to default color (black)",
+//					"Information", JOptionPane.INFORMATION_MESSAGE);
+//		}
+//
+////        if(pnmlData.getTokenViews().size() > 1)
+////        {
+////            Expander expander = new Expander(pnmlData);
+////            pnmlData = expander.unfoldOld();
+////        }
+//        // Build interface
+//        EscapableDialog guiDialog =
+//                new EscapableDialog(ApplicationSettings.getApplicationView(), MODULE_NAME, true);
+//
+//        // 1 Set layout
+//        Container contentPane = guiDialog.getContentPane();
+//        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+//
+//        // 2 Add file browser
+//        sourceFilePanel = new PetriNetChooserPanel("Source net", pnmlData);
+//        contentPane.add(sourceFilePanel);
+//
+//        // 3 Add results pane
+//        results = new ResultsHTMLPane(pnmlData.getPNMLName());
+//        contentPane.add(results);
+//
+//        // 4 Add button
+//        contentPane.add(new ButtonBar("Calculate", calculateButtonClick,
+//                                      guiDialog.getRootPane()));
+//
+//        // 5 Make window fit contents' preferred size
+//        guiDialog.pack();
+//
+//        // 6 Move window to the middle of the screen
+//        guiDialog.setLocationRelativeTo(null);
+//
+//        guiDialog.setVisible(true);
     }
 
     public String getName()

@@ -11,6 +11,7 @@ import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
+import pipe.models.PetriNet;
 import pipe.modules.interfaces.IModule;
 import pipe.utilities.Expander;
 import pipe.utilities.writers.PNMLWriter;
@@ -49,10 +50,10 @@ public class Comparison implements IModule {
     private JCheckBox compareInhibitorWeighting;
 
     public void start() {
-        PetriNetView pnmlData = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+        PetriNet pnmlData = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
         // Check if this net is a CGSPN. If it is, then this
         // module won't work with it and we must convert it.
-        if (pnmlData.getTokenViews().size() > 1) {
+        if (pnmlData.getTokens().size() > 1) {
             Expander expander = new Expander(pnmlData);
             pnmlData = expander.unfold();
         }
@@ -63,65 +64,65 @@ public class Comparison implements IModule {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
         // 2 Add file browser
-        sourceFilePanel = new PetriNetChooserPanel("Source net", pnmlData);
-        comparisonFilePanel = new PetriNetChooserPanel("Comparison net", null);
-        contentPane.add(sourceFilePanel);
-        contentPane.add(comparisonFilePanel);
-
-        // 2.5 Add check boxes
-        JPanel placePanel = new JPanel();
-        placePanel.setLayout(new BoxLayout(placePanel, BoxLayout.LINE_AXIS));
-        placePanel.setBorder(new TitledBorder(new EtchedBorder(), "Places"));
-        placePanel.add(comparePlaceID = new JCheckBox("ID", true));
-        placePanel.add(comparePlaceName = new JCheckBox("Name", true));
-        placePanel.add(comparePlaceMarking = new JCheckBox("Marking", true));
-        placePanel.add(comparePlaceCapacity = new JCheckBox("Capacity", true));
-
-        JPanel transPanel = new JPanel();
-        transPanel.setLayout(new BoxLayout(transPanel, BoxLayout.LINE_AXIS));
-        transPanel.setBorder(new TitledBorder(new EtchedBorder(), "Transitions"));
-        transPanel.add(compareTransitionID = new JCheckBox("ID", true));
-        transPanel.add(compareTransitionName = new JCheckBox("Name", true));
-        transPanel.add(compareTransitionRate = new JCheckBox("Rate/Weight", true));
-        transPanel.add(compareTransitionPriority = new JCheckBox("Priority", true));
-
-        JPanel arcPanel = new JPanel();
-        arcPanel.setLayout(new BoxLayout(arcPanel, BoxLayout.LINE_AXIS));
-        arcPanel.setBorder(new TitledBorder(new EtchedBorder(), "Arcs"));
-        arcPanel.add(compareArcID = new JCheckBox("ID", true));
-        arcPanel.add(compareArcName = new JCheckBox("Name", true));
-        arcPanel.add(compareArcWeighting = new JCheckBox("Weighting", true));
-
-        JPanel inhibitorPanel = new JPanel();
-        inhibitorPanel.setLayout(new BoxLayout(inhibitorPanel, BoxLayout.LINE_AXIS));
-        inhibitorPanel.setBorder(new TitledBorder(new EtchedBorder(), "Inhibitor Arcs"));
-        inhibitorPanel.add(compareInhibitorID = new JCheckBox("ID", true));
-        inhibitorPanel.add(compareInhibitorName = new JCheckBox("Name", true));
-        inhibitorPanel.add(compareInhibitorWeighting = new JCheckBox("Weighting", true));
-
-        JPanel options = new JPanel();
-        options.setBorder(new TitledBorder(new EtchedBorder(), "Comparison options"));
-        options.setLayout(new BoxLayout(options, BoxLayout.LINE_AXIS));
-        options.add(placePanel);
-        options.add(transPanel);
-        options.add(arcPanel);
-        options.add(inhibitorPanel);
-        contentPane.add(options);
-
-        // 3 Add results pane
-        results = new ResultsHTMLPane(pnmlData.getPNMLName());
-        contentPane.add(results);
-
-        // 4 Add button
-        contentPane.add(new ButtonBar("Compare", compareButtonClick, guiDialog.getRootPane()));
-
-        // 5 Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // 6 Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setVisible(true);
+//        sourceFilePanel = new PetriNetChooserPanel("Source net", pnmlData);
+//        comparisonFilePanel = new PetriNetChooserPanel("Comparison net", null);
+//        contentPane.add(sourceFilePanel);
+//        contentPane.add(comparisonFilePanel);
+//
+//        // 2.5 Add check boxes
+//        JPanel placePanel = new JPanel();
+//        placePanel.setLayout(new BoxLayout(placePanel, BoxLayout.LINE_AXIS));
+//        placePanel.setBorder(new TitledBorder(new EtchedBorder(), "Places"));
+//        placePanel.add(comparePlaceID = new JCheckBox("ID", true));
+//        placePanel.add(comparePlaceName = new JCheckBox("Name", true));
+//        placePanel.add(comparePlaceMarking = new JCheckBox("Marking", true));
+//        placePanel.add(comparePlaceCapacity = new JCheckBox("Capacity", true));
+//
+//        JPanel transPanel = new JPanel();
+//        transPanel.setLayout(new BoxLayout(transPanel, BoxLayout.LINE_AXIS));
+//        transPanel.setBorder(new TitledBorder(new EtchedBorder(), "Transitions"));
+//        transPanel.add(compareTransitionID = new JCheckBox("ID", true));
+//        transPanel.add(compareTransitionName = new JCheckBox("Name", true));
+//        transPanel.add(compareTransitionRate = new JCheckBox("Rate/Weight", true));
+//        transPanel.add(compareTransitionPriority = new JCheckBox("Priority", true));
+//
+//        JPanel arcPanel = new JPanel();
+//        arcPanel.setLayout(new BoxLayout(arcPanel, BoxLayout.LINE_AXIS));
+//        arcPanel.setBorder(new TitledBorder(new EtchedBorder(), "Arcs"));
+//        arcPanel.add(compareArcID = new JCheckBox("ID", true));
+//        arcPanel.add(compareArcName = new JCheckBox("Name", true));
+//        arcPanel.add(compareArcWeighting = new JCheckBox("Weighting", true));
+//
+//        JPanel inhibitorPanel = new JPanel();
+//        inhibitorPanel.setLayout(new BoxLayout(inhibitorPanel, BoxLayout.LINE_AXIS));
+//        inhibitorPanel.setBorder(new TitledBorder(new EtchedBorder(), "Inhibitor Arcs"));
+//        inhibitorPanel.add(compareInhibitorID = new JCheckBox("ID", true));
+//        inhibitorPanel.add(compareInhibitorName = new JCheckBox("Name", true));
+//        inhibitorPanel.add(compareInhibitorWeighting = new JCheckBox("Weighting", true));
+//
+//        JPanel options = new JPanel();
+//        options.setBorder(new TitledBorder(new EtchedBorder(), "Comparison options"));
+//        options.setLayout(new BoxLayout(options, BoxLayout.LINE_AXIS));
+//        options.add(placePanel);
+//        options.add(transPanel);
+//        options.add(arcPanel);
+//        options.add(inhibitorPanel);
+//        contentPane.add(options);
+//
+//        // 3 Add results pane
+//        results = new ResultsHTMLPane(pnmlData.getPnmlName());
+//        contentPane.add(results);
+//
+//        // 4 Add button
+//        contentPane.add(new ButtonBar("Compare", compareButtonClick, guiDialog.getRootPane()));
+//
+//        // 5 Make window fit contents' preferred size
+//        guiDialog.pack();
+//
+//        // 6 Move window to the middle of the screen
+//        guiDialog.setLocationRelativeTo(null);
+//
+//        guiDialog.setVisible(true);
     }
 
     public String getName() {

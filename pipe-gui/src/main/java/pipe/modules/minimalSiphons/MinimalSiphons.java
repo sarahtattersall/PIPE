@@ -65,42 +65,42 @@ public class MinimalSiphons
     {
         // Check if this net is a CGSPN. If it is, then this
         // module won't work with it and we must convert it.
-        PetriNetView pnmlData = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-        if(pnmlData.getTokenViews().size() > 1)
-        {
-            Expander expander = new Expander(pnmlData);
-            pnmlData = expander.unfold();
-        }
-        // Keep a reference to the p-n for other methods in this class
-        this._pnmlData = pnmlData;
-
-        // Build interface
-        EscapableDialog guiDialog =
-                new EscapableDialog(ApplicationSettings.getApplicationView(), MODULE_NAME, true);
-
-        // 1 Set layout
-        Container contentPane = guiDialog.getContentPane();
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-
-        // 2 Add file browser
-        sourceFilePanel = new PetriNetChooserPanel("Source net", pnmlData);
-        contentPane.add(sourceFilePanel);
-
-        // 3 Add results pane
-        results = new ResultsHTMLPane(pnmlData.getPNMLName());
-        contentPane.add(results);
-
-        // 4 Add button
-        contentPane.add(new ButtonBar("Generate", analyseButtonClick,
-                                      guiDialog.getRootPane()));
-
-        // 5 Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // 6 Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setVisible(true);
+//        PetriNetView pnmlData = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
+//        if(pnmlData.getTokenViews().size() > 1)
+//        {
+//            Expander expander = new Expander(pnmlData);
+//            pnmlData = expander.unfoldOld();
+//        }
+//        // Keep a reference to the p-n for other methods in this class
+//        this._pnmlData = pnmlData;
+//
+//        // Build interface
+//        EscapableDialog guiDialog =
+//                new EscapableDialog(ApplicationSettings.getApplicationView(), MODULE_NAME, true);
+//
+//        // 1 Set layout
+//        Container contentPane = guiDialog.getContentPane();
+//        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+//
+//        // 2 Add file browser
+//        sourceFilePanel = new PetriNetChooserPanel("Source net", pnmlData);
+//        contentPane.add(sourceFilePanel);
+//
+//        // 3 Add results pane
+//        results = new ResultsHTMLPane(pnmlData.getPNMLName());
+//        contentPane.add(results);
+//
+//        // 4 Add button
+//        contentPane.add(new ButtonBar("Generate", analyseButtonClick,
+//                                      guiDialog.getRootPane()));
+//
+//        // 5 Make window fit contents' preferred size
+//        guiDialog.pack();
+//
+//        // 6 Move window to the middle of the screen
+//        guiDialog.setLocationRelativeTo(null);
+//
+//        guiDialog.setVisible(true);
     }
 
 

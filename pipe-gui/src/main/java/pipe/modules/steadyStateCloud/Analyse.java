@@ -139,10 +139,10 @@ public class Analyse implements Runnable
 		  // module won't work with it and we must convert it.
 		  
 		  if(pnmlData.getTokenViews().size() > 1){
-			  updateUI("Coloured Petri Net detected. Converting...");
-			  Expander expander = new Expander(pnmlData);
-			  pnmlData = expander.unfold();
-			  updateUI("Conversion successful.");
+//			  updateUI("Coloured Petri Net detected. Converting...");
+//			  Expander expander = new Expander(pnmlData);
+//			  pnmlData = expander.unfoldOld();
+//			  updateUI("Conversion successful.");
 		  }
 		  
 		  return pnmlData;

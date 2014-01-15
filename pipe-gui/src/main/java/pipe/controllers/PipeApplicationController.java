@@ -59,7 +59,7 @@ public class PipeApplicationController {
         return token;
     }
 
-    private PetriNetTab createNewTab(PetriNet net, PipeApplicationView applicationView) {
+    public PetriNetTab createNewTab(PetriNet net, PipeApplicationView applicationView) {
         AnimationHistory animationHistory = new AnimationHistory();
         Animator animator = new Animator(net, animationHistory);
 

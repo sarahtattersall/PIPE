@@ -24,6 +24,12 @@ public class Token extends AbstractPetriNetComponent {
         this("", false, 0, Color.BLACK);
     }
 
+    public Token(Token token) {
+        this.id = token.getId();
+        this.color = token.getColor();
+        this.enabled = token.isEnabled();
+    }
+
     public Token(String id, boolean enabled, int currentMarking, Color color) {
         this.id = id;
         this.enabled = enabled;
