@@ -1,4 +1,4 @@
-package pipe.utilities;
+package pipe.petrinet.unfold;
 
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
@@ -9,6 +9,7 @@ import pipe.models.component.Place;
 import pipe.models.component.Token;
 import pipe.models.component.Transition;
 import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.petrinet.unfold.Expander;
 
 import java.awt.*;
 import java.util.HashMap;

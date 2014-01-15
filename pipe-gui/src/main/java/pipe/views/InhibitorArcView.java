@@ -32,7 +32,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
     }
 
     @Override
-    protected void arcSpecificUpdate() {
+    public void arcSpecificUpdate() {
 
     }
 

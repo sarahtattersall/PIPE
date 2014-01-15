@@ -225,6 +225,15 @@ public class PetriNet {
         annotations.remove(annotation);
     }
 
+    public boolean containsDefaultToken() {
+        for (Token token : tokens) {
+            if (token.getId().equals("Default")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Token getToken(String tokenId) {
         //TODO: Find an O(1) name to do this, perhaps Map?
         for (Token token : tokens) {

@@ -28,8 +28,8 @@ class GetIndexAction
    
    public void actionPerformed(ActionEvent arg0) {
       System.out.println("Index is: " + selected.getIndex());
-      System.out.println("At position: " + selected.getPoint().x + ", " +
-                         selected.getPoint().y);
+      System.out.println("At position: " + selected.getPoint().getX() + ", " +
+                         selected.getPoint().getY());
       System.out.println("Mousepos: " + mp.x + ", " + mp.y);
    }
    

@@ -4,7 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.models.PetriNet;
-import pipe.utilities.Expander;
+import pipe.petrinet.unfold.Expander;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
 

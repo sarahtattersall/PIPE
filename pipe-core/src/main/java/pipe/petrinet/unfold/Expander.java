@@ -1,4 +1,4 @@
-package pipe.utilities;
+package pipe.petrinet.unfold;
 
 import pipe.models.PetriNet;
 import pipe.models.component.*;
@@ -62,9 +62,8 @@ public class Expander {
      * Otherwise just returns first token it comes acorss
      */
     private Token getToken() {
-        if (petriNet.getTokens().contains("Default")) {
-            Token defaultToken = getDefaultToken();
-            return defaultToken;
+        if (petriNet.containsDefaultToken()) {
+            return  getDefaultToken();
         }
 
         Token blackToken = getBlackToken();

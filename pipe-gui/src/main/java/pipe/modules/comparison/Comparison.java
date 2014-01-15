@@ -13,7 +13,7 @@ import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
 import pipe.models.PetriNet;
 import pipe.modules.interfaces.IModule;
-import pipe.utilities.Expander;
+import pipe.petrinet.unfold.Expander;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.*;
 
