@@ -36,6 +36,13 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     // true if arc is not hidden when a bidirectional arc is used
     boolean inView = true;
     private boolean _noFunctionalWeights = true;
+    /**
+     * This is a reference to the petri net tab that this arc is placed on.
+     * It is needed to add ArcPoints to the petri net based on the models intermediate
+     * points
+     */
+    protected PetriNetTab tab = null;
+
 
     //TODO: DELETE FOR DEBUG ONLY
     public ArcView() {
@@ -178,6 +185,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
+        this.tab = tab;
         ArcHandler<S, T> arcHandler =
                 new ArcHandler<S, T>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);

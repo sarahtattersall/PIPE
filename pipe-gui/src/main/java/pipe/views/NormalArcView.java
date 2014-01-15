@@ -34,14 +34,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     private NormalArcView<S, T> _inverse = null;
     private Boolean tagged = false;
 
-    /**
-     * This is a reference to the petri net tab that this arc is placed on.
-     * It is needed to add ArcPoints to the petri net based on the models intermediate
-     * points
-     */
-    private PetriNetTab tab = null;
-
-
     public NormalArcView(Arc<S, T> model,
                          PetriNetController controller) {
         super(model, controller);
@@ -155,7 +147,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         super.addToPetriNetTab(tab);
-        this.tab = tab;
         updateWeights();
     }
 
