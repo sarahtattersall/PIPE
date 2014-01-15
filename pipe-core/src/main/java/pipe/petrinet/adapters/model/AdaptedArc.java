@@ -1,6 +1,8 @@
 package pipe.petrinet.adapters.model;
 
+import pipe.models.component.ArcPoint;
 import pipe.models.component.Token;
+import pipe.petrinet.adapters.modelAdapter.ArcPointAdapter;
 import pipe.petrinet.adapters.valueAdapter.StringAttributeValueAdaptor;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,7 +10,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -21,6 +25,10 @@ public class AdaptedArc {
 
     @XmlAttribute
     private String target;
+
+    @XmlElement(name="arcpath")
+    @XmlJavaTypeAdapter(ArcPointAdapter.class)
+    private List<ArcPoint> arcPoints = new ArrayList<ArcPoint>();
 
     @XmlElement
     @XmlJavaTypeAdapter(StringAttributeValueAdaptor.class)
@@ -66,6 +74,14 @@ public class AdaptedArc {
 
     public void setInscription(Inscription inscription) {
         this.inscription = inscription;
+    }
+
+    public List<ArcPoint> getArcPoints() {
+        return arcPoints;
+    }
+
+    public void setArcPoints(List<ArcPoint> arcPoints) {
+        this.arcPoints = arcPoints;
     }
 
 

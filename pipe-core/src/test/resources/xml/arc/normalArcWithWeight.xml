@@ -51,6 +51,8 @@
             </inscription>
             <tagged>false</tagged>
             <arcpath x="40" y="60" curvePoint="false"/>
+            <arcpath x="87" y="36" curvePoint="true"/>
+            <arcpath x="20" y="60" curvePoint="false"/>
             <type value="normal"/>
         </arc>
     </net>

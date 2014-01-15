@@ -1,6 +1,5 @@
 package pipe.petrinet.io;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.PetriNet;
@@ -9,6 +8,7 @@ import utils.FileUtils;
 
 import javax.xml.bind.JAXBException;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
@@ -51,6 +51,28 @@ public class PetriNetReaderTest {
         Map<Token, Integer> tokens = place.getTokenCounts();
         Token actual = tokens.keySet().iterator().next();
         assertEquals(token, actual);
+    }
+
+    @Test
+    public void losesSourceAndTargetArcPath() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
+        assertTrue("Petri net has no arcs registered to it" , petriNet.getArcs().size() > 0);
+        Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
+        assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1, arc.getIntermediatePoints().size());
+    }
+
+
+    @Test
+    public void keepsIntermediatePoints() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
+        assertTrue("Petri net has no arcs registered to it" , petriNet.getArcs().size() > 0);
+        Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
+        assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1, arc.getIntermediatePoints().size());
+
+        ArcPoint expected = new ArcPoint(new Point2D.Double(87, 36), true);
+        ArcPoint actual = arc.getIntermediatePoints().iterator().next();
+        assertEquals("Intermediate arc points did not match up", expected, actual);
+
     }
 
     @Test
@@ -147,11 +169,11 @@ public class PetriNetReaderTest {
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
 
         Map<Token, String> weights = arc.getTokenWeights();
-        Assert.assertEquals(1, weights.size());
+        assertEquals(1, weights.size());
 
         assertTrue(weights.containsKey(DEFAULT_TOKEN));
         String weight = weights.get(DEFAULT_TOKEN);
-        Assert.assertEquals("4", weight);
+        assertEquals("4", weight);
     }
 
     @Test
@@ -159,7 +181,7 @@ public class PetriNetReaderTest {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
         Map<Token, String> weights = arc.getTokenWeights();
-        Assert.assertEquals(1, weights.size());
+        assertEquals(1, weights.size());
         assertTrue(weights.containsKey(DEFAULT_TOKEN));
     }
 
@@ -169,7 +191,7 @@ public class PetriNetReaderTest {
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
 
         assertNotNull(arc);
-        Assert.assertEquals(ArcType.INHIBITOR, arc.getType());
+        assertEquals(ArcType.INHIBITOR, arc.getType());
     }
 
     @Test
@@ -178,7 +200,7 @@ public class PetriNetReaderTest {
         Token token = petriNet.getTokens().iterator().next();
         assertEquals("red", token.getId());
         assertTrue(token.isEnabled());
-        Assert.assertEquals(new Color(255,0,0), token.getColor());
+        assertEquals(new Color(255,0,0), token.getColor());
     }
 
     private  String getTokenFile() {

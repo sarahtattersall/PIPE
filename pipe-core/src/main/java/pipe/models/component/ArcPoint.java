@@ -2,6 +2,9 @@ package pipe.models.component;
 
 import pipe.visitor.PetriNetComponentVisitor;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import java.awt.geom.Point2D;
 
 @Pnml("arcpath")
@@ -17,6 +20,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
      * If curved is true it implies this point is a bezier curve
      */
     @Pnml("arcPointType")
+    @XmlAttribute(name="curvePoint")
     private boolean curved;
 
     public ArcPoint(Point2D point, boolean curved) {

@@ -75,21 +75,57 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         //TODO:
         arc.setTagged(false);
 
-        //TODO: ARCPOINTS
-//        List<ArcPoint> points = getArcPaths(element);
-//        arc.addIntermediatePoints(points);
+        setRealArcPoints(arc, adaptedArc);
         return arc;
     }
 
     @Override
     public AdaptedArc marshal(Arc<? extends Connectable, ? extends Connectable> arc) throws Exception {
         AdaptedArc adapted = new AdaptedArc();
+        setArcPoints(arc, adapted);
         adapted.setId(arc.getId());
         adapted.setSource(arc.getSource().getId());
         adapted.setTarget(arc.getTarget().getId());
         adapted.getInscription().setTokenCounts(weightToString(arc.getTokenWeights()));
         adapted.setType(arc.getType().name().toLowerCase());
         return adapted;
+    }
+
+    /**
+     * Sets the arc points in adapted based on the arc.
+     * Needs to save the source and end locations to be PNML complient in this
+     * @param arc
+     * @param adapted
+     */
+    private void setArcPoints(Arc<? extends Connectable, ? extends Connectable> arc, AdaptedArc adapted) {
+
+        List<ArcPoint> arcPoints = adapted.getArcPoints();
+        ArcPoint source = new ArcPoint(arc.getStartPoint(), false);
+        arcPoints.add(source);
+        arcPoints.addAll(arc.getIntermediatePoints());
+        ArcPoint target = new ArcPoint(arc.getEndPoint(), false);
+        arcPoints.add(target);
+    }
+
+
+    /**
+     * Sets the arc points in the arc based on the adapted.
+     * Loses the source and end locations to just provide intermediate pints
+     * @param arc
+     * @param adapted
+     */
+    private void setRealArcPoints(Arc<? extends Connectable, ? extends Connectable> arc, AdaptedArc adapted) {
+
+
+        List<ArcPoint> arcPoints = adapted.getArcPoints();
+        if (arcPoints.isEmpty()) {
+            return;
+        }
+
+        for (int i = 1; i < arcPoints.size() - 1; i++) {
+           arc.addIntermediatePoint(arcPoints.get(i));
+        }
+
     }
 
     private String weightToString(Map<Token, String> weights) {
