@@ -119,26 +119,6 @@ public class TokenView extends Observable implements Serializable {
         return previousIncidenceMatrix;
     }
 
-    public void incrementLock() {
-        _model.incrementLock();
-    }
-
-    public void decrementLock() {
-        _model.decrementLock();
-    }
-
-    public boolean isLocked() {
-        return _model.isLocked();
-    }
-
-    public int getLockCount() {
-        return _model.getLockCount();
-    }
-
-    public void setLockCount(int newLockCount) {
-        _model.setLockCount(newLockCount);
-    }
-
     public boolean hasSameId(TokenView otherTokenView) {
         return otherTokenView.getID().equals(getID());
     }
@@ -254,8 +234,6 @@ public class TokenView extends Observable implements Serializable {
         builder.append(_model.getId());
         builder.append(", Color=");
         builder.append(_model.getColor());
-        builder.append(", Lock count=");
-        builder.append(_model.getLockCount());
         return builder.toString();
     }
 

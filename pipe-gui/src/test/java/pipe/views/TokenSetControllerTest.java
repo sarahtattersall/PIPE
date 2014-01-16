@@ -172,27 +172,7 @@ public class TokenSetControllerTest implements Observer
 		assertEquals("in all token views",twoTokenView, set.getAllTokenViews().get(1)); 
 		assertFalse(twoTokenView.isEnabled()); 
 	}
-	@Test
-	public void verifyThrowsIfAttemptToDisableLockedToken() throws Exception
-	{
-		oneTokenView = new TokenView(true, "red", Color.red);
-		set.updateOrAddTokenView(oneTokenView); 
-		assertEquals(1, set.getAllTokenViews().size()); 
-		assertEquals(oneTokenView, set.getActiveTokenView()); 
-		twoTokenView = new TokenView(true, "blue", Color.blue);
-		twoTokenView.incrementLock();
-		set.updateOrAddTokenView(twoTokenView); 
-		try 
-		{
-			set.updateOrAddTokenView(new TokenView(false, "blue", Color.blue)); 
-			fail("should throw");
-		}
-		catch (TokenLockedException e)
-		{
-		}
-		assertEquals(2, set.getTokenViews().size()); 
-		assertTrue("still enabled",twoTokenView.isEnabled()); 
-	}
+
 	@Test
 	public void verifyIdCanChangeWhileTokenViewIsGoingEnabled() throws Exception
 	{

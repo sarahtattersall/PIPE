@@ -34,7 +34,7 @@ public class TokenViewTest implements Observer
 	@Test
 	public void verifyPrintsSummaryInfo() throws Exception
 	{
-		assertEquals("TokenView: Enabled=true, Id=Default, Color=java.awt.Color[r=0,g=0,b=0], Lock count=0", tokenView.toString()); 
+		assertEquals("TokenView: Enabled=true, Id=Default, Color=java.awt.Color[r=0,g=0,b=0]", tokenView.toString());
 	}
 	@Test
 	public void verifyIdIsNormalizedToTrimmedNotNullLowerCase() throws Exception
@@ -56,52 +56,7 @@ public class TokenViewTest implements Observer
 		tokenView = new TokenView(false,  "", Color.black); 
 		assertFalse(tokenView.isValid()); 
 	}
-	@Test
-	public void verifyCanOnlyBeDisabledIfNotLocked() throws Exception
-	{
-		tokenView.setEnabled(false); 
-		assertTrue(!tokenView.isEnabled());
-		tokenView.setEnabled(true); 
-		assertTrue(tokenView.isEnabled());
-		tokenView.incrementLock(); 
-		assertTrue(tokenView.isLocked());
-		try 
-		{
-			tokenView.setEnabled(false); 
-			fail("should throw");
-		}
-		catch (TokenLockedException e)
-		{
-			assertEquals("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for 1 Places.  It may not be disabled unless markings are removed from those Places.\n"+
-             "Details: TokenView: Enabled=true, Id=Default, Color=java.awt.Color[r=0,g=0,b=0], Lock count=1", e.getMessage()); 
-		}
-	}
-//	@Test
-//	public void verifyTokenViewCanBeReplacedWithNewInstancePreservingInternalState() throws Exception
-//	{
-//		tokenView.addObserver(this);
-//		Token model = tokenView.getModel();
-//		//TODO previousIncidenceMatrix is populated by getIncidenceMatrix(); reconcile this
-//
-//		assertNull(tokenView.getIncidenceMatrix());
-//		tokenView.createIncidenceMatrix(new ArrayList<ArcView>(), new ArrayList<TransitionView>(), new ArrayList<PlaceView>());
-//		Matrix matrix = tokenView.getIncidenceMatrix();
-//		assertEquals("previousIncidenceMatrix is populated by getIncidenceMatrix()",
-//				matrix, tokenView.getPreviousIncidenceMatrix());
-//		assertNotNull(matrix);
-//		newTokenView = new TokenView(true, "Fred", Color.blue);
-//		newTokenView.updateModelFromPrevious(tokenView);
-//		assertEquals(model,newTokenView.getModel());
-//		assertEquals(matrix,newTokenView.getPreviousIncidenceMatrix());
-//		assertEquals(matrix,newTokenView.getIncidenceMatrix());
-//		assertEquals(true,newTokenView.isEnabled());
-//		assertEquals("Fred",newTokenView.getID());
-//		assertEquals(Color.blue,newTokenView.getColor());
-//		while (!called)
-//		{
-//			Thread.sleep(10);
-//		}
-//	}
+
 	@Test
 	public void verifyTokenViewTellsObserversToDeleteSelfIfUpdatedTokenViewIsDisabled() throws Exception
 	{

@@ -76,63 +76,6 @@ public class PipeTest {
 	{
     	applicationView = ApplicationSettings.getApplicationView();  
 	}
-    @Test
-    public void verifyActionsAddedToGui() throws Exception
-    {
-//    	PipeApplicationModel model = ApplicationSettings.getApplicationModel();
-//    	checkAction("New", model.createAction, CreateAction.class);
-//    	checkAction("Open", model.openAction, OpenAction.class);
-//    	checkAction("Close", model.closeAction, CloseAction.class);
-//    	checkAction("Save", model.saveAction, SaveAction.class);
-//    	checkAction("Save as", model.saveAsAction, SaveAsAction.class);
-//    	checkAction("Import", model.importAction, ImportAction.class);
-//    	checkAction("PNG", model.exportPNGAction, ExportPNGAction.class);
-//    	checkAction("PostScript", model.exportPSAction, ExportPSAction.class);
-//    	checkAction("eDSPN", model.exportTNAction, ExportTNAction.class);
-//    	checkAction("Print", model.printAction, PrintAction.class);
-//    	checkAction("Undo", model.undoAction, UndoAction.class);
-//    	checkAction("Redo", model.redoAction, RedoAction.class);
-//    	checkAction("Cut", model.cutAction, CutAction.class);
-//    	checkAction("Copy", model.copyAction, CopyAction.class);
-//    	checkAction("Paste", model.pasteAction, PasteAction.class);
-//    	checkAction("Delete", model.deleteAction, DeleteAction.class);
-//    	checkAction("Select", model.selectAction, SelectAction.class);
-//    	checkAction("Place", model.placeAction, PlaceAction.class);
-//    	checkAction("Immediate transition", model.transAction, ImmediateTransitionAction.class);
-//    	checkAction("Timed transition", model.timedtransAction, TimedTransitionAction.class);
-//    	checkAction("Arc", model.arcAction, ArcAction.class);
-//    	checkAction("Inhibitor Arc", model.inhibarcAction, ArcAction.class);
-//    	checkAction("Annotation", model.annotationAction, AnnotationAction.class);
-//    	checkAction("Add token", model.tokenAction, AddTokenAction.class);
-//    	checkAction("Delete token", model.deleteTokenAction, DeleteTokenAction.class);
-//    	checkAction("SpecifyTokenClasses", model.specifyTokenClasses, SpecifyTokenAction.class);
-//    	checkAction("groupTransitions", model.groupTransitions, GroupTransitionsAction.class);
-//    	checkAction("ungroupTransitions", model.ungroupTransitions, UngroupTransitionsAction.class);
-//    	checkAction("unfoldAction", model.unfoldAction, UnfoldAction.class);
-//    	checkAction("Rate Parameter", model.rateAction, RateAction.class);
-//    	checkAction("Zoom out", model.zoomOutAction, ZoomAction.class);
-//    	checkAction("Zoom in", model.zoomInAction, ZoomAction.class);
-//    	checkAction("Cycle grid", model.toggleGrid, GridAction.class);
-//    	checkAction("Drag", model.dragAction, DragAction.class);
-//    	checkAction("Animation mode", model.startAction, ToggleAnimateAction.class);
-//    	checkAction("Back", model.stepbackwardAction, StepBackwardAction.class);
-//    	checkAction("Forward", model.stepforwardAction, StepForwardAction.class);
-//    	checkAction("Random", model.randomAction, RandomAnimateAction.class);
-//    	checkAction("Animate", model.randomAnimateAction, MultiRandomAnimateAction.class);
-//    	checkAction("chooseTokenClass", model.chooseTokenClassAction, ChooseTokenClassAction.class);
-//    	checkAction("Exit", model.exitAction, ExitAction.class);
-//    	for (int i = 0; i < model.getZoomActions().size(); i++)
-//		{
-//    		checkAction(model.getZoomExamples()[i], model.getZoomActions().get(i), ZoomAction.class);
-//		}
-    	
-    }
-	private void checkAction(String name, GuiAction action, Class<? extends GuiAction> class1)
-	{
-		assertEquals(name, name, action.getValue("Name"));
-		assertTrue(name, action instanceof GuiAction); 
-		assertTrue(name, action.getClass().equals(class1));
-	}
 	@Test
 	public void verifyMenusAddedToGui() throws Exception
 	{
@@ -319,42 +262,6 @@ public class PipeTest {
 		animateButton.getAction().actionPerformed(null); 
 		assertTrue(applicationView.getCurrentTab().isInAnimationMode());
 		selectMenuItem(menu, 2); 
-	}
-
-	protected void showTokenDialogAndJustClickOk()
-	{
-		tokenAction = (SpecifyTokenAction) getActionForMenuItem(menu, 11);
-		tokenAction.forceOkForTesting();
-		tokenAction.actionPerformed(null);
-	}
-	protected void deleteFirstTokenFromPlaceView()
-	{
-		markingViews = placeView.getCurrentMarkingView();
-		markingView = markingViews.get(0);
-		assertEquals(1, markingViews.get(0).getCurrentMarking() ); 
-		assertEquals(1, markingViews.get(1).getCurrentMarking() ); 
-//		TestingPlaceHandler handler = new TestingPlaceHandler(null, placeView.getModel());
-        List<MarkingView> oldMarkingViews = Copier.mediumCopy(placeView.getCurrentMarkingView());
-		//handler.deleteTokenForTesting(oldMarkingViews, applicationView.getCurrentHistoryManager());
-		newMarkingViews = placeView.getCurrentMarkingView();
-		assertEquals(markingViews.get(0), newMarkingViews.get(0));
-		assertEquals(markingViews.get(1), newMarkingViews.get(1));
-		assertEquals(0, markingViews.get(0).getCurrentMarking() ); 
-		assertEquals(1, markingViews.get(1).getCurrentMarking() );
-		assertEquals(0, defaultTokenView.getCurrentMarking());
-		assertFalse(defaultTokenView.isLocked());
-		assertTrue(redTokenView.isLocked());
-	}
-	private void reloadPetriNet()
-	{
-        OpenAction action = (OpenAction) getActionForMenuItem(menu,OPEN);
-		action.setFileForTesting(fileForTesting);
-		action.actionPerformed(null);
-	}
-	private void savePetriNet()
-	{
-		fileForTesting = new File("PipeTestFile.xml");
-		applicationView.saveNet(fileForTesting, false);
 	}
 
 	private Action selectMenuItem(JMenu menu, int selection)

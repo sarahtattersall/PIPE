@@ -367,25 +367,6 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         }
     }
 
-    public void lockTokenClass(String id) {
-        lockToken(id, true);
-    }
-
-    private void lockToken(String id, boolean lock) {
-        TokenView tc = _tokenSetController.getTokenView(id);
-        if (tc != null) {
-            if (lock) {
-                tc.incrementLock();
-            } else {
-                tc.decrementLock();
-            }
-        }
-    }
-
-    public void unlockTokenClass(String id) {
-        lockToken(id, false);
-    }
-
     public int positionInTheList(String tokenClassID, List<MarkingView> markingViews) {
         int size = markingViews.size();
         for (int i = 0; i < size; i++) {
