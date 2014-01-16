@@ -1,12 +1,14 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
+import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -17,6 +19,7 @@ import java.util.Random;
 
 public class TokenPanel extends JPanel {
     private final TableModel model;
+
     private JTable table;
 
 
@@ -51,24 +54,32 @@ public class TokenPanel extends JPanel {
          * The default number of tokens to display
          */
         private static final int DATA_SIZE = 100;
+
         private final static int ENABLED_COL = 0;
+
         private final static int NAME_COL = 1;
+
         private final static int COLOR_COL = 2;
-        private final String[] columnNames = {"Enabled", "Token NameDetails",
-                "Token Colour",};
-        private final Datum[] initialData = new Datum[DATA_SIZE];
+
+        private final String[] columnNames = {"Enabled", "Token Name Details", "Token Colour",};
+
+        private final Datum[] initialData;
+
         private final Datum[] modifiedData = new Datum[DATA_SIZE];
+
         private final PetriNetController petriNetController;
 
 
         public TableModel(PetriNetController petriNetController) {
             this.petriNetController = petriNetController;
             initialiseRowColours();
-
+            initialData = new Datum[petriNetController.getNetTokens().size()];
             int index = 0;
             for (Token token : petriNetController.getNetTokens()) {
-                initialData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());;
-                modifiedData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());;
+                initialData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());
+                ;
+                modifiedData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());
+                ;
                 index++;
             }
         }
@@ -105,8 +116,8 @@ public class TokenPanel extends JPanel {
                         color = Color.PINK;
                         break;
                     default:
-                        color = new Color(randomNumberGenerator.nextInt(256),
-                                randomNumberGenerator.nextInt(256), randomNumberGenerator.nextInt(256));
+                        color = new Color(randomNumberGenerator.nextInt(256), randomNumberGenerator.nextInt(256),
+                                randomNumberGenerator.nextInt(256));
                 }
                 modifiedData[i] = new Datum(color);
             }
@@ -133,8 +144,8 @@ public class TokenPanel extends JPanel {
          * warnings if it is likely to be invalid
          *
          * @param value new value of the changed cell
-         * @param row row that has changed
-         * @param col column that has changed
+         * @param row   row that has changed
+         * @param col   column that has changed
          */
         @Override
         public void setValueAt(Object value, int row, int col) {
@@ -148,12 +159,8 @@ public class TokenPanel extends JPanel {
                     for (int i = 0; i < DATA_SIZE; i++) {
                         if (i != row && modifiedData[i].isEnabled) {
                             if (modifiedData[i].name.equals(modifiedData[row].name)) {
-                                JOptionPane
-                                        .showMessageDialog(
-                                                new JPanel(),
-                                                "Another token exists with that name",
-                                                "Warning",
-                                                JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(new JPanel(), "Another token exists with that name",
+                                        "Warning", JOptionPane.WARNING_MESSAGE);
                                 return;
                             }
                         }
@@ -166,12 +173,8 @@ public class TokenPanel extends JPanel {
                     for (int i = 0; i < DATA_SIZE; i++) {
                         if (i != row && modifiedData[i].isEnabled) {
                             if (modifiedData[i].name.equals(value)) {
-                                JOptionPane
-                                        .showMessageDialog(
-                                                new JPanel(),
-                                                "Another token exists with that name",
-                                                "Warning",
-                                                JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(new JPanel(), "Another token exists with that name",
+                                        "Warning", JOptionPane.WARNING_MESSAGE);
                                 return;
                             }
                         }
@@ -181,17 +184,21 @@ public class TokenPanel extends JPanel {
                 color = (Color) value;
             }
 
-            for (Token token : petriNetController.getNetTokens()) {
-                if (token.getId().equals(modifiedData[row].name)) {
-                    if (token.isLocked()) {
-                        JOptionPane
-                                .showMessageDialog(
-                                        new JPanel(),
-                                        "Places exist that use this token. "
-                                                + "Such markings must be removed before this class can be edited",
-                                        "Warning",
+
+            //TODO: DO THIS IN A BETTER WAY
+            if (row < initialData.length) {
+                Datum initial = initialData[row];
+                String originalTokenName = initial.name;
+                for (Place place : petriNetController.getPetriNet().getPlaces()) {
+                    for (Map.Entry<Token, Integer> entry : place.getTokenCounts().entrySet()) {
+                        if (entry.getKey().getId().equals(originalTokenName)) {
+                            if (entry.getValue() > 0) {
+                                JOptionPane.showMessageDialog(new JPanel(), "Places exist that use this token. "
+                                        + "Such markings must be removed before this class can be edited", "Warning",
                                         JOptionPane.WARNING_MESSAGE);
-                        return;
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -208,15 +215,14 @@ public class TokenPanel extends JPanel {
          */
         public void setChanges() {
             for (int row = 0; row < getRowCount(); row++) {
-                Datum initial = initialData[row];
                 Datum modified = modifiedData[row];
-                if (!modified.equals(initial) && modified.hasBeenSet()) {
-                    if (isExistingToken(row)) {
+                if (isExistingToken(row)) {
+                    Datum initial = initialData[row];
+                    if (!modified.equals(initial) && modified.hasBeenSet()) {
                         petriNetController.updateToken(initial.name, modified.name, modified.isEnabled, modified.color);
-                    } else {
-
-                        petriNetController.createNewToken(modified.name, modified.isEnabled, modified.color);
                     }
+                } else if (modified.hasBeenSet()) {
+                    petriNetController.createNewToken(modified.name, modified.isEnabled, modified.color);
                 }
             }
         }
@@ -253,7 +259,6 @@ public class TokenPanel extends JPanel {
         }
 
         /**
-         *
          * Checks to see if all the tokens in the table are valid.
          * If they are not it will print the relevant error message for the first
          * invalid token it comes across.
@@ -289,7 +294,9 @@ public class TokenPanel extends JPanel {
      */
     private class Datum {
         public boolean isEnabled;
+
         public String name;
+
         public Color color;
 
         public Datum(Color color) {

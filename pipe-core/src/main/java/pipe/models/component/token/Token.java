@@ -14,9 +14,6 @@ public class Token extends AbstractPetriNetComponent {
 
     private int currentMarking;
 
-    private int lockCount = 0; // So that users cannot change this class while
-    // places are marked with it
-
     private Color color;
 
     public Token() {
@@ -36,6 +33,20 @@ public class Token extends AbstractPetriNetComponent {
         this.enabled = token.isEnabled();
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * @param enabled
+     * @throws TokenLockedException if the Token is locked
+     */
+    public void setEnabled(boolean enabled) throws TokenLockedException {
+        boolean old = this.enabled;
+        this.enabled = enabled;
+        changeSupport.firePropertyChange("enabled", old, enabled);
+    }
+
     public Color getColor() {
         return color;
     }
@@ -46,56 +57,12 @@ public class Token extends AbstractPetriNetComponent {
         changeSupport.firePropertyChange("color", old, color);
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * @param enabled
-     * @throws TokenLockedException if the Token is locked
-     */
-    public void setEnabled(boolean enabled) throws TokenLockedException {
-        if (!isLocked()) {
-            boolean old = this.enabled;
-            this.enabled = enabled;
-            changeSupport.firePropertyChange("enabled", old, enabled);
-        } else {
-            StringBuilder messageBuilder = new StringBuilder();
-            messageBuilder.append("TokenSetController.updateOrAddTokenView: Enabled TokenView is in use for ").append(
-                    getLockCount()).append(
-                    " Places.  It may not be disabled unless tokens are removed from those Places.\n").append(
-                    "Details: ").append(this.toString());
-
-            throw new TokenLockedException(messageBuilder.toString());
-        }
-    }
-
-    public int getLockCount() {
-        return lockCount;
-    }
-
-    public void setLockCount(int newLockCount) {
-        lockCount = newLockCount;
-    }
-
-    public boolean isLocked() {
-        return lockCount > 0;
-    }
-
     public int getCurrentMarking() {
         return currentMarking;
     }
 
     public void setCurrentMarking(int currentMarking) {
         this.currentMarking = currentMarking;
-    }
-
-    public void incrementLock() {
-        lockCount++;
-    }
-
-    public void decrementLock() {
-        lockCount--;
     }
 
     @Override
