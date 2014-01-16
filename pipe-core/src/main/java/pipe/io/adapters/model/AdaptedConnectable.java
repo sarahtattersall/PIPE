@@ -15,7 +15,7 @@ public class AdaptedConnectable {
     @XmlAttribute
     private String id;
 
-    @XmlElement(name="name")
+    @XmlElement(name = "name")
     private NameDetails name = new NameDetails();
 
     public String getId() {
@@ -47,6 +47,9 @@ public class AdaptedConnectable {
         @XmlElement(name = "value")
         String name;
 
+        @XmlElement
+        OffsetGraphics graphics = new OffsetGraphics();
+
         public OffsetGraphics getGraphics() {
             return graphics;
         }
@@ -62,7 +65,5 @@ public class AdaptedConnectable {
         public void setName(String name) {
             this.name = name;
         }
-
-        OffsetGraphics graphics = new OffsetGraphics();
     }
 }
