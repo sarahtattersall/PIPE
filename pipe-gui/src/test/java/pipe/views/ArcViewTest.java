@@ -25,13 +25,16 @@ public class ArcViewTest {
     private Point2D.Double end = new Point2D.Double(100, 500);
     private static final double DOUBLE_DELTA = 0.0001;
     private Place source;
+    private Transition transition;
 
     @Before
     public void setUp() throws Exception {
         PetriNetController mockController = mock(PetriNetController.class);
         mockArc = mock(Arc.class);
         source = new Place("","");
+        transition =  new Transition("", "");
         when(mockArc.getSource()).thenReturn(source);
+        when(mockArc.getTarget()).thenReturn(transition);
         when(mockArc.getStartPoint()).thenReturn(start);
         when(mockArc.getEndPoint()).thenReturn(end);
         arcView = new NormalArcView<Place, Transition>(mockArc, mockController);

@@ -31,27 +31,15 @@ public class SpecifyTokenAction extends GuiAction
         super("SpecifyTokenClasses", "Specify tokens", "shift ctrl T");
         this.pipeApplicationView = applicationView;
         this.pipeApplicationController = pipeApplicationController;
-        setErrorMessage("");
     }
 
+    @Override
     public void actionPerformed(ActionEvent e)
     {
         buildTokenGuiClasses();
         finishBuildingGui();
     }
 
-	protected LinkedList<TokenView> convertInputToTokenViews(
-			TokenPanel.TableModel x, int rows)
-	{
-		LinkedList<TokenView> tokenViews = new LinkedList<TokenView>();
-		for(int i = 0; i < rows; i++)
-		{
-		    // Update token classes using data entered from the user
-		    TokenView tc = buildTokenView(x, i);
-		    filterValidTokenViews(tokenViews, tc);
-		}
-		return tokenViews;
-	}
 
 	protected void filterValidTokenViews(LinkedList<TokenView> tokenViews,
 			TokenView tc)
@@ -124,14 +112,7 @@ public class SpecifyTokenAction extends GuiAction
 		setErrorMessage("");
 		actionPerformed(null);
 	}
-	protected TokenView buildTokenView(TokenPanel.TableModel x, int i)
-	{
-		TokenView tc = new TokenView(
-		        (Boolean) x.getValueAt(i, 0), (String) x
-		                .getValueAt(i, 1), (Color) x.getValueAt(i,
-		                                                        2));
-		return tc;
-	}
+
 	protected void setErrorMessage(String errorMessage)
 	{
 		this.errorMessage = errorMessage;
@@ -139,20 +120,5 @@ public class SpecifyTokenAction extends GuiAction
 	protected String getErrorMessage()
 	{
 		return this.errorMessage;
-	}
-
-	public TokenPanel getDialogContentForTesting()
-	{
-		return dialogContent;
-	}
-
-	public TokenDialog getGuiDialogForTesting()
-	{
-		return (TokenDialog) guiDialog;
-	}
-
-	public void forceOkForTesting()
-	{
-		forcedAction = new ActionEvent(this, 0, "OK");
 	}
 }
