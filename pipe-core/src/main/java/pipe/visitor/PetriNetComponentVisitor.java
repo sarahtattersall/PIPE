@@ -1,12 +1,12 @@
 package pipe.visitor;
 
-import pipe.models.component.*;
-
+/**
+ * Degenerate visitor interface for visiting {@link pipe.models.component.PetriNetComponent}
+ * Used to implement the acyclic visitor pattern
+ * This pattern is used to break dependency cycles and allows
+ * for visitors to only implement those classes that they're actually
+ * interested in.
+ */
 public interface PetriNetComponentVisitor {
-    public <T extends Connectable, S extends Connectable>  void visit(Arc<S, T> arc);
-    public void visit(Place place);
-    public void visit(Transition transition);
-    public void visit(Token token);
-    public void visit(Annotation annotation);
-    public void visit(ArcPoint arcPoint);
+
 }

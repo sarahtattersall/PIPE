@@ -2,6 +2,7 @@ package pipe.models.component;
 
 import pipe.exceptions.TokenLockedException;
 import pipe.visitor.PetriNetComponentVisitor;
+import pipe.visitor.TokenVisitor;
 
 import java.awt.*;
 
@@ -132,7 +133,9 @@ public class Token extends AbstractPetriNetComponent {
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof TokenVisitor) {
+            ((TokenVisitor) visitor).visit(this);
+        }
     }
 
     @Override

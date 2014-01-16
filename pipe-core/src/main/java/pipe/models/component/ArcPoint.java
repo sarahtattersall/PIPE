@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import pipe.visitor.ArcPointVisitor;
 import pipe.visitor.PetriNetComponentVisitor;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,7 +60,9 @@ public class ArcPoint extends AbstractPetriNetComponent {
 
     @Override
     public void accept(final PetriNetComponentVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof ArcPointVisitor) {
+            ((ArcPointVisitor) visitor).visit(this);
+        }
     }
 
     @Override

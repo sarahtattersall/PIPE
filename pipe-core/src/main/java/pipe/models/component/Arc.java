@@ -1,6 +1,7 @@
 package pipe.models.component;
 
 import pipe.models.strategy.arc.ArcStrategy;
+import pipe.visitor.ArcVisitor;
 import pipe.visitor.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
@@ -94,7 +95,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof ArcVisitor) {
+            ((ArcVisitor)visitor).visit(this);
+        }
     }
 
     @Override

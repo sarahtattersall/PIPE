@@ -3,7 +3,8 @@ package pipe.visitor;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 
-public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor {
+public class PetriNetComponentRemovalVisitor
+        implements PlaceVisitor, TransitionVisitor, ArcVisitor, TokenVisitor, AnnotationVisitor {
     private final PetriNet net;
 
     public PetriNetComponentRemovalVisitor(PetriNet net) {
@@ -33,23 +34,9 @@ public class PetriNetComponentRemovalVisitor implements PetriNetComponentVisitor
         net.removeToken(token);
     }
 
-    //    @Override
-    //    public void visit(RateParameter parameter) {
-    //        net.removeRateParameter(parameter);
-    //    }
-    //
-    //    @Override
-    //    public void visit(StateGroup group) {
-    //        net.removeStateGroup(group);
-    //    }
-
     @Override
     public void visit(Annotation annotation) {
         net.removeAnnotaiton(annotation);
     }
 
-    @Override
-    public void visit(ArcPoint arcPoint) {
-
-    }
 }

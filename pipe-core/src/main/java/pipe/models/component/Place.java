@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import pipe.visitor.PlaceVisitor;
 import pipe.visitor.connectable.ConnectableVisitor;
 import pipe.visitor.PetriNetComponentVisitor;
 
@@ -116,7 +117,9 @@ public class Place extends Connectable implements Serializable
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof PlaceVisitor) {
+            ((PlaceVisitor) visitor).visit(this);
+        }
     }
 
     public double getMarkingXOffset() {

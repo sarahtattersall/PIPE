@@ -5,7 +5,7 @@ import pipe.models.component.*;
 
 import java.util.*;
 
-public class PasteVisitor implements PetriNetComponentVisitor {
+public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor {
 
 
     private final PetriNet petriNet;
@@ -78,20 +78,6 @@ public class PasteVisitor implements PetriNetComponentVisitor {
         createdComponents.add(newTransition);
     }
 
-    @Override
-    public void visit(Token token) {
-
-    }
-
-    @Override
-    public void visit(Annotation annotation) {
-
-    }
-
-    @Override
-    public void visit(ArcPoint arcPoint) {
-
-    }
 
     private void setOffset(Connectable connectable) {
         connectable.setX(connectable.getX() + xOffset);

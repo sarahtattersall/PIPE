@@ -42,6 +42,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>uk.ac.imperial</groupId>
+            <artifactId>pipe-core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>maven</groupId>
             <artifactId>maven-abbot-plugin</artifactId>
             <version>1.1</version>

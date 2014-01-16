@@ -16,11 +16,6 @@ public class NormalArcSourceVisitor implements ArcSourceVisitor {
         canCreate = true;
     }
 
-    @Override
-    public void visit(final ConditionalPlace conditionalPlace) {
-        canCreate = false;
-    }
-
     /**
      * @return the result of the last item visited
      */

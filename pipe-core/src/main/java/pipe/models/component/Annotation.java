@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import pipe.visitor.AnnotationVisitor;
 import pipe.visitor.PetriNetComponentVisitor;
 
 public class Annotation extends AbstractPetriNetComponent {
@@ -57,7 +58,9 @@ public class Annotation extends AbstractPetriNetComponent {
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof AnnotationVisitor) {
+            ((AnnotationVisitor) visitor).visit(this);
+        }
     }
 
     //TODO: WORK OUT WHAT THESE SHOULD DO

@@ -1,6 +1,7 @@
 package pipe.models.component;
 
 import pipe.visitor.PetriNetComponentVisitor;
+import pipe.visitor.TransitionVisitor;
 import pipe.visitor.connectable.ConnectableVisitor;
 
 import java.awt.geom.AffineTransform;
@@ -226,7 +227,9 @@ public class Transition extends Connectable implements Serializable {
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof TransitionVisitor) {
+            ((TransitionVisitor) visitor).visit(this);
+        }
     }
 
     public void enable() {

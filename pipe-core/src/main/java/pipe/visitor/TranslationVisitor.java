@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Translates PetriNetComponents by a given amount
  */
-public class TranslationVisitor implements PetriNetComponentVisitor {
+public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVisitor, TransitionVisitor {
     private final Point2D translation;
     private final Collection<PetriNetComponent> selected;
 
@@ -42,26 +42,6 @@ public class TranslationVisitor implements PetriNetComponentVisitor {
     public void visit(final Transition transition) {
         transition.setX(transition.getX() + translation.getX());
         transition.setY(transition.getY() + translation.getY());
-
-    }
-
-    @Override
-    public void visit(final Token token) {
-
-    }
-
-    //    @Override
-    //    public void visit(final RateParameter parameter) {
-    //
-    //    }
-    //
-    //    @Override
-    //    public void visit(final StateGroup group) {
-    //
-    //    }
-
-    @Override
-    public void visit(final Annotation annotation) {
 
     }
 

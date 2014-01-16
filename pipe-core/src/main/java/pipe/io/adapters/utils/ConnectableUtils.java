@@ -43,7 +43,7 @@ public class ConnectableUtils {
         OffsetGraphics offsetGraphics = nameDetails.getGraphics();
         if (offsetGraphics.point != null) {
             connectable.setNameXOffset(offsetGraphics.point.getX());
-            connectable.setNameYOffset(offsetGraphics.point.getX());
+            connectable.setNameYOffset(offsetGraphics.point.getY());
         }
     }
 

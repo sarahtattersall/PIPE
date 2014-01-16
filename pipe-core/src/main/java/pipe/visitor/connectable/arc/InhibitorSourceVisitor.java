@@ -19,11 +19,6 @@ public class InhibitorSourceVisitor implements ArcSourceVisitor {
         canCreate = false;
     }
 
-    @Override
-    public void visit(final ConditionalPlace conditionalPlace) {
-        canCreate = false;
-    }
-
     /**
      *
      * @return the result of the last item visited

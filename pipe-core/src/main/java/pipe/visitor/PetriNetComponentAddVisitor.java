@@ -3,7 +3,7 @@ package pipe.visitor;
 import pipe.models.PetriNet;
 import pipe.models.component.*;
 
-public class PetriNetComponentAddVisitor implements PetriNetComponentVisitor {
+public class PetriNetComponentAddVisitor implements PlaceVisitor, ArcVisitor, TransitionVisitor, TokenVisitor, AnnotationVisitor {
     private PetriNet petriNet;
 
     public PetriNetComponentAddVisitor(PetriNet petriNet) {
@@ -30,24 +30,9 @@ public class PetriNetComponentAddVisitor implements PetriNetComponentVisitor {
     public void visit(Token token) {
         petriNet.addToken(token);
     }
-//
-    //    @Override
-    //    public void visit(RateParameter parameter) {
-    //        petriNet.addRate(parameter);
-    //    }
-    //
-    //    @Override
-    //    public void visit(StateGroup group) {
-    //        petriNet.addStateGroup(group);
-    //    }
 
     @Override
     public void visit(Annotation annotation) {
         petriNet.addAnnotaiton(annotation);
-    }
-
-    @Override
-    public void visit(ArcPoint arcPoint) {
-
     }
 }

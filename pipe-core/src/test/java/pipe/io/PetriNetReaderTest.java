@@ -87,8 +87,8 @@ public class PetriNetReaderTest {
 
         assertEquals(0, place.getMarkingXOffset(), DOUBLE_DELTA);
         assertEquals(0, place.getMarkingYOffset(), DOUBLE_DELTA);
-        assertEquals(-5, place.getNameXOffset(), DOUBLE_DELTA);
-        assertEquals(35, place.getNameYOffset(), DOUBLE_DELTA);
+        assertEquals(5, place.getNameXOffset(), DOUBLE_DELTA);
+        assertEquals(26, place.getNameYOffset(), DOUBLE_DELTA);
         assertEquals(0, place.getCapacity(), DOUBLE_DELTA);
         assertEquals(1, place.getTokenCounts().size());
     }

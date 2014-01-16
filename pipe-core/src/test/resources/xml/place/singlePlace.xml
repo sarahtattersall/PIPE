@@ -9,7 +9,7 @@
             <name>
                 <value>P0</value>
                 <graphics>
-                    <offset x="0.0" y="0.0"/>
+                    <offset x="5" y="26"/>
                 </graphics>
             </name>
             <initialMarking>
