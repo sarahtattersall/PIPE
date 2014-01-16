@@ -7,17 +7,19 @@ import pipe.gui.CopyPasteManager;
 import pipe.gui.ZoomController;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.PetriNet;
-import pipe.models.component.*;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.models.strategy.arc.ForwardsNormalStrategy;
-import pipe.models.strategy.arc.InhibitorStrategy;
-import pipe.visitor.PetriNetComponentVisitor;
-import pipe.visitor.TranslationVisitor;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.naming.PetriNetComponentNamer;
 import pipe.naming.PlaceNamer;
 import pipe.naming.TransitionNamer;
+import pipe.visitor.TranslationVisitor;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -30,20 +32,26 @@ import java.util.Set;
 public class PetriNetController implements IController, Serializable {
 
     private final ZoomController zoomController;
+
     private final HistoryManager historyManager;
+
     private final PetriNet petriNet;
+
     private final Set<PetriNetComponent> selectedComponents = new HashSet<PetriNetComponent>();
-    private final ArcStrategy<Place, Transition> inhibitorStrategy = new InhibitorStrategy();
-    private final ArcStrategy<Transition, Place> forwardNormalStrategy;
-    private final ArcStrategy<Place, Transition> backwardsNormalStrategy;
+
     private final CopyPasteManager copyPasteManager;
+
     private final PetriNetComponentNamer placeNamer;
+
     private final PetriNetComponentNamer transitionNamer;
+
     private Token selectedToken;
+
     private Animator animator;
 
 
-    public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator, CopyPasteManager copyPasteManager, ZoomController zoomController) {
+    public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator,
+                              CopyPasteManager copyPasteManager, ZoomController zoomController) {
         petriNet = model;
         this.zoomController = zoomController;
         this.animator = animator;
@@ -52,9 +60,6 @@ public class PetriNetController implements IController, Serializable {
             selectedToken = model.getTokens().iterator().next();
         }
         this.historyManager = historyManager;
-        forwardNormalStrategy = new ForwardsNormalStrategy();
-        backwardsNormalStrategy = new BackwardsNormalStrategy();
-
         placeNamer = new PlaceNamer(model);
         transitionNamer = new TransitionNamer(model);
     }
@@ -126,26 +131,6 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     * Currently must be of type Connectable, since yhis is the only abstract
-     * class containing getters for X and Y
-     *
-     * @param connectable        object to select
-     * @param selectionRectangle
-     */
-    private void selectConnectable(Connectable connectable, Rectangle selectionRectangle) {
-        int x = new Double(connectable.getX()).intValue();
-        int y = new Double(connectable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(), connectable.getWidth());
-        if (selectionRectangle.intersects(rectangle)) {
-            select(connectable);
-        }
-    }
-
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
-    }
-
-    /**
      * A crude method for selecting arcs, does not take into account bezier curves
      *
      * @param arc
@@ -175,6 +160,26 @@ public class PetriNetController implements IController, Serializable {
         Point2D end = arc.getEndPoint();
         path.lineTo(end.getX(), end.getY());
         return path;
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
+    }
+
+    /**
+     * Currently must be of type Connectable, since yhis is the only abstract
+     * class containing getters for X and Y
+     *
+     * @param connectable        object to select
+     * @param selectionRectangle
+     */
+    private void selectConnectable(Connectable connectable, Rectangle selectionRectangle) {
+        int x = new Double(connectable.getX()).intValue();
+        int y = new Double(connectable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(), connectable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(connectable);
+        }
     }
 
     /**
@@ -267,11 +272,6 @@ public class PetriNetController implements IController, Serializable {
         selectToken(getToken(tokenName));
     }
 
-    //TODO: Should this be in the model???
-    public void selectToken(Token token) {
-        this.selectedToken = token;
-    }
-
     public Token getToken(String tokenName) {
         return getTokenForName(tokenName);
     }
@@ -283,6 +283,11 @@ public class PetriNetController implements IController, Serializable {
      */
     private Token getTokenForName(String name) {
         return petriNet.getToken(name);
+    }
+
+    //TODO: Should this be in the model???
+    public void selectToken(Token token) {
+        this.selectedToken = token;
     }
 
     public void copySelection() {
@@ -307,18 +312,6 @@ public class PetriNetController implements IController, Serializable {
 
     public ZoomController getZoomController() {
         return zoomController;
-    }
-
-    public ArcStrategy<Place, Transition> getBackwardsStrategy() {
-        return backwardsNormalStrategy;
-    }
-
-    public ArcStrategy<Transition, Place> getForwardStrategy() {
-        return forwardNormalStrategy;
-    }
-
-    public ArcStrategy<Place, Transition> getInhibitorStrategy() {
-        return inhibitorStrategy;
     }
 
     public void paste() {

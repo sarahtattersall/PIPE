@@ -18,7 +18,7 @@ import org.junit.Test;
 import pipe.controllers.PipeApplicationController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.PetriNetView;
 import pipe.views.PipeApplicationView;
 import pipe.views.TokenView;

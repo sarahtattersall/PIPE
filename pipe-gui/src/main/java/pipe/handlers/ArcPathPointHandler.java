@@ -5,15 +5,13 @@
  */
 package pipe.handlers;
 
-import pipe.actions.DeletePetriNetObjectAction;
 import pipe.actions.SplitArcPointAction;
 import pipe.actions.ToggleArcPointAction;
 import pipe.actions.edit.DeleteArcPathPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.historyActions.DeleteArcPathPoint;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 import pipe.views.viewComponents.ArcPathPoint;
 
 import javax.swing.*;

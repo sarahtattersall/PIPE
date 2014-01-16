@@ -8,8 +8,8 @@ import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 import pipe.utilities.Copier;
 import pipe.views.builder.TokenViewBuilder;
 

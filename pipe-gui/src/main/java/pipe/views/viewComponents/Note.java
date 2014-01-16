@@ -6,7 +6,7 @@ import pipe.gui.Translatable;
 import pipe.gui.ZoomController;
 import pipe.historyActions.AnnotationBorder;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.Annotation;
+import pipe.models.component.annotation.Annotation;
 import pipe.views.AbstractPetriNetViewComponent;
 
 import javax.swing.*;

@@ -1,12 +1,9 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Arc;
+import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
-import pipe.views.MarkingView;
 import pipe.views.NormalArcView;
-
-import java.util.LinkedList;
 
 public class NormalArcViewBuilder {
     private final Arc<? extends Connectable, ? extends Connectable> arc;

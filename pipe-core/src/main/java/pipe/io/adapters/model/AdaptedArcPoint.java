@@ -39,7 +39,7 @@ public class AdaptedArcPoint {
         this.curved = curved;
     }
 
-    @XmlAttribute(name="curvePoint")
+    @XmlAttribute(name = "curvePoint")
     private boolean curved;
 
     public String getId() {

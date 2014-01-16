@@ -1,7 +1,7 @@
 package pipe.io.adapters.modelAdapter;
 
 import com.google.common.base.Joiner;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;

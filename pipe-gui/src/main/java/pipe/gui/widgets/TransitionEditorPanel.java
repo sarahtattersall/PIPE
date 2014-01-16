@@ -1,14 +1,13 @@
 package pipe.gui.widgets;
 
 import net.sourceforge.jeval.EvaluationException;
-import parser.ExprEvaluator;
+import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
-import pipe.views.PetriNetView;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;

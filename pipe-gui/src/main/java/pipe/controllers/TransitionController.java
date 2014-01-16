@@ -1,10 +1,9 @@
 package pipe.controllers;
 
 import pipe.historyActions.*;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
-import pipe.views.viewComponents.RateParameter;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 
 import java.util.Collection;
 import java.util.LinkedList;

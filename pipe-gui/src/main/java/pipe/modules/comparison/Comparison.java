@@ -7,19 +7,16 @@
 package pipe.modules.comparison;
 
 import pipe.gui.ApplicationSettings;
-import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.modules.interfaces.IModule;
 import pipe.petrinet.unfold.Expander;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.*;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

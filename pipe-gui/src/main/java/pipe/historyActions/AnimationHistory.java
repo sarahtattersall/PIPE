@@ -1,6 +1,6 @@
 package pipe.historyActions;
 
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 import java.util.*;
 

@@ -16,7 +16,7 @@ import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.gui.widgets.FileBrowser;
 import pipe.io.JarUtilities;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 

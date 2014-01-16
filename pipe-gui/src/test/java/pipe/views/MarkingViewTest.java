@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pipe.models.PipeObservable;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 public class MarkingViewTest implements Observer
 {

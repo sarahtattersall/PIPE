@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import pipe.historyActions.AnimationHistory;
-import pipe.models.PetriNet;
-import pipe.models.component.Transition;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.transition.Transition;
 
 import static org.mockito.Mockito.*;
 

@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,8 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pipe.exceptions.TokenLockedException;
-import pipe.models.component.Token;
-import pipe.utilities.math.Matrix;
 
 public class TokenViewTest implements Observer
 {

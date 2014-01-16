@@ -3,12 +3,10 @@ package pipe.handlers;
 import pipe.actions.SplitArcAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.historyActions.HistoryManager;
-import pipe.models.component.Arc;
-import pipe.models.component.ArcType;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
 import pipe.models.component.Connectable;
 import pipe.views.ArcView;
-import pipe.views.NormalArcView;
 
 import javax.swing.*;
 import java.awt.*;

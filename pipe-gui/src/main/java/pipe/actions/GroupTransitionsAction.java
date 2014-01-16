@@ -1,15 +1,6 @@
 package pipe.actions;
 
-import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.models.component.Token;
-import pipe.views.*;
-
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * @author Alex Charalambous, June 2010: Groups any transitions that have

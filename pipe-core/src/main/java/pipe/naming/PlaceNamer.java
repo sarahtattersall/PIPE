@@ -1,7 +1,7 @@
 package pipe.naming;
 
-import pipe.models.PetriNet;
-import pipe.models.component.Place;
+import pipe.models.component.place.Place;
+import pipe.models.petrinet.PetriNet;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -9,11 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A class that attempts to produce names for {@link pipe.models.component.Place}
+ * A class that attempts to produce names for {@link pipe.models.component.place.Place}
  * that are distinct from others.
  */
 public class PlaceNamer implements PetriNetComponentNamer {
     private final PetriNet petriNet;
+
     private Set<String> placeNames = new HashSet<String>();
 
     public PlaceNamer(PetriNet petriNet) {
@@ -22,6 +23,7 @@ public class PlaceNamer implements PetriNetComponentNamer {
         observeChanges(petriNet);
         initialisePlaceNames();
     }
+
     private void initialisePlaceNames() {
         for (Place place : petriNet.getPlaces()) {
             placeNames.add(place.getId());

@@ -1,11 +1,14 @@
 package pipe.io.adapters.modelAdapter;
 
 import com.google.common.base.Joiner;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.io.adapters.model.*;
+import pipe.io.adapters.model.AdaptedConnectable;
+import pipe.io.adapters.model.AdaptedPlace;
+import pipe.io.adapters.model.OffsetGraphics;
+import pipe.io.adapters.model.Point;
 import pipe.io.adapters.utils.ConnectableUtils;
 import pipe.io.adapters.utils.TokenUtils;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;
@@ -36,7 +39,7 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
         Place place = new Place(adaptedPlace.getId(), nameDetails.getName());
         place.setCapacity(adaptedPlace.getCapacity());
         ConnectableUtils.setConnectablePosition(place, adaptedPlace);
-        ConnectableUtils.setConntactableNameOffset(place,adaptedPlace);
+        ConnectableUtils.setConntactableNameOffset(place, adaptedPlace);
         place.setTokenCounts(stringToWeights(adaptedPlace.getInitialMarking().getTokenCounts()));
         places.put(place.getId(), place);
         return place;
@@ -51,7 +54,6 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
 
         adapted.setCapacity(place.getCapacity());
         adapted.getInitialMarking().setTokenCounts(weightToString(place.getTokenCounts()));
-
 
 
         OffsetGraphics offsetGraphics = new OffsetGraphics();
@@ -70,7 +72,7 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
 
     public Map<Token, Integer> stringToWeights(String value) {
         Map<Token, Integer> tokenWeights = new HashMap<Token, Integer>();
-        if(value.isEmpty()) {
+        if (value.isEmpty()) {
             return tokenWeights;
         }
 

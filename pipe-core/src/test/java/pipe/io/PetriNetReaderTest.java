@@ -2,8 +2,14 @@ package pipe.io;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.PetriNet;
-import pipe.models.component.*;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.Connectable;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 import utils.FileUtils;
 
 import javax.xml.bind.JAXBException;
@@ -13,7 +19,8 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class PetriNetReaderTest {
     /**
@@ -22,6 +29,7 @@ public class PetriNetReaderTest {
     private static final double DOUBLE_DELTA = 0.001;
 
     PetriNetReader reader;
+
     private static final Token DEFAULT_TOKEN = new Token("Default", true, 0, new Color(0, 0, 0));
 
     @Before
@@ -37,7 +45,7 @@ public class PetriNetReaderTest {
         Token token = petriNet.getTokens().iterator().next();
         assertEquals("Default", token.getId());
         assertEquals(true, token.isEnabled());
-        assertEquals(new Color(0,0,0), token.getColor());
+        assertEquals(new Color(0, 0, 0), token.getColor());
     }
 
 
@@ -56,18 +64,20 @@ public class PetriNetReaderTest {
     @Test
     public void losesSourceAndTargetArcPath() {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
-        assertTrue("Petri net has no arcs registered to it" , petriNet.getArcs().size() > 0);
+        assertTrue("Petri net has no arcs registered to it", petriNet.getArcs().size() > 0);
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
-        assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1, arc.getIntermediatePoints().size());
+        assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1,
+                arc.getIntermediatePoints().size());
     }
 
 
     @Test
     public void keepsIntermediatePoints() {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
-        assertTrue("Petri net has no arcs registered to it" , petriNet.getArcs().size() > 0);
+        assertTrue("Petri net has no arcs registered to it", petriNet.getArcs().size() > 0);
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
-        assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1, arc.getIntermediatePoints().size());
+        assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1,
+                arc.getIntermediatePoints().size());
 
         ArcPoint expected = new ArcPoint(new Point2D.Double(87, 36), true);
         ArcPoint actual = arc.getIntermediatePoints().iterator().next();
@@ -155,7 +165,7 @@ public class PetriNetReaderTest {
         assertNotNull(arc);
         assertEquals(ArcType.NORMAL, arc.getType());
 
-        Place expectedSource =   new Place("P0", "P0");
+        Place expectedSource = new Place("P0", "P0");
         Transition expectedTarget = new Transition("T0", "T0");
 
         assertEquals(expectedSource, arc.getSource());
@@ -200,10 +210,10 @@ public class PetriNetReaderTest {
         Token token = petriNet.getTokens().iterator().next();
         assertEquals("red", token.getId());
         assertTrue(token.isEnabled());
-        assertEquals(new Color(255,0,0), token.getColor());
+        assertEquals(new Color(255, 0, 0), token.getColor());
     }
 
-    private  String getTokenFile() {
+    private String getTokenFile() {
         return "/xml/token/token.xml";
     }
 

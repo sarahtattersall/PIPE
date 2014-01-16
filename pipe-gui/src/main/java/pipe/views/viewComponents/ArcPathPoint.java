@@ -11,7 +11,7 @@ import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;

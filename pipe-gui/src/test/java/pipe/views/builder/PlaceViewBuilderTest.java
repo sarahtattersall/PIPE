@@ -3,8 +3,7 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
-import pipe.models.component.AbstractPetriNetComponent;
-import pipe.models.component.Place;
+import pipe.models.component.place.Place;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PlaceView;
 

@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 import java.util.Observable;
 import java.util.Observer;

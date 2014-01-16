@@ -2,13 +2,14 @@ package pipe.naming;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.PetriNet;
-import pipe.models.component.Place;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.place.Place;
 
 import static org.junit.Assert.assertEquals;
 
 public class PlaceNamerTest {
     PetriNet petriNet;
+
     PlaceNamer placeNamer;
 
     @Before

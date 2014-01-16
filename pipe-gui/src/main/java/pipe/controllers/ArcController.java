@@ -1,10 +1,10 @@
 package pipe.controllers;
 
 import pipe.historyActions.*;
-import pipe.models.component.Arc;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 import java.awt.geom.Point2D;
 import java.util.Map;

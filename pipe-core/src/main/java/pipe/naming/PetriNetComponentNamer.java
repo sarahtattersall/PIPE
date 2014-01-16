@@ -2,7 +2,7 @@ package pipe.naming;
 
 /**
  * Namer is used to find unique names for {@link pipe.models.component.PetriNetComponent}'s within a
- * {@link pipe.models.PetriNet}
+ * {@link pipe.models.petrinet.PetriNet}
  */
 public interface PetriNetComponentNamer {
     /**

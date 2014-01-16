@@ -2,10 +2,9 @@ package pipe.models;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.Arc;
 import pipe.models.component.Connectable;
-import pipe.visitor.PetriNetComponentVisitor;
-import pipe.visitor.connectable.ConnectableVisitor;
+import pipe.models.component.arc.Arc;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -18,7 +17,9 @@ import static org.mockito.Mockito.verify;
 
 public class ConnectableTest {
     private static final double DOUBLE_DELTA = 0.001;
+
     private Connectable connectable;
+
     //TODO: This should really be a dummy, but it's hard to construct.
     private Arc mockArc;
 
@@ -93,11 +94,6 @@ public class ConnectableTest {
         @Override
         public boolean isEndPoint() {
             return true;
-        }
-
-        @Override
-        public void accept(final ConnectableVisitor visitor) {
-            //To change body of implemented methods use File | Settings | File Templates.
         }
 
         @Override

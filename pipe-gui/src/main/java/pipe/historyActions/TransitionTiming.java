@@ -3,7 +3,7 @@
  */
 package pipe.historyActions;
 
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 /**
  * HistoryItem in charge of whether a {@link Transition} is timed or not

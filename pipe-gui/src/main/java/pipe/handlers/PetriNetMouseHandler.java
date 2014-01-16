@@ -4,9 +4,8 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.handlers.mouse.MouseUtilities;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
 
 import javax.swing.*;

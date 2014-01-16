@@ -11,9 +11,13 @@ import pipe.gui.ZoomController;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.*;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.place.Place;
+import pipe.models.component.place.PlaceVisitor;
+import pipe.models.component.transition.Transition;
+import pipe.models.component.transition.TransitionVisitor;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
-import pipe.visitor.connectable.ConnectableVisitor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -272,6 +276,8 @@ public class ArcPath implements Shape, Cloneable {
 
     }
 
+    private static interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {}
+
     private void setEndControlPoints() {
         ConnectableVisitor endPointVisitor = new ConnectableVisitor() {
             @Override
@@ -306,11 +312,6 @@ public class ArcPath implements Shape, Cloneable {
                     myPoint.setControl(getControlPoint(myPoint.getPoint(), myPoint.getControl1(), myPoint.getPoint(),
                             myPoint.getControl1()));
                 }
-            }
-
-            @Override
-            public void visit(ConditionalPlace conditionalPlace) {
-
             }
         };
 

@@ -1,7 +1,7 @@
 package pipe.actions.edit;
 
 import pipe.controllers.ArcController;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

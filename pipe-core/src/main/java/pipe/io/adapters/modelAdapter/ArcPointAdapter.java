@@ -1,7 +1,7 @@
 package pipe.io.adapters.modelAdapter;
 
-import pipe.models.component.ArcPoint;
 import pipe.io.adapters.model.AdaptedArcPoint;
+import pipe.models.component.arc.ArcPoint;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.awt.geom.Point2D;

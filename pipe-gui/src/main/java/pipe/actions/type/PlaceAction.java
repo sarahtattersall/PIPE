@@ -4,9 +4,9 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Grid;
 import pipe.historyActions.AddPetriNetObject;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
-import pipe.models.component.Place;
+import pipe.models.component.place.Place;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

@@ -1,14 +1,10 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Arc;
-import pipe.models.component.Connectable;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 import pipe.views.InhibitorArcView;
-import pipe.views.MarkingView;
-
-import java.util.LinkedList;
 
 public class InhibitorArcViewBuilder {
     private final Arc<Place, Transition> arc;

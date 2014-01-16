@@ -5,13 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ZoomController;
-import pipe.models.PetriNet;
-import pipe.models.component.Place;
-import pipe.petrinet.transformer.PNMLTransformer;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.place.Place;
 
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
 import java.util.Observer;
 
 import static org.junit.Assert.assertEquals;

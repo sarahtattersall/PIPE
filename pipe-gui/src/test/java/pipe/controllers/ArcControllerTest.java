@@ -6,7 +6,11 @@ import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.ArcWeight;
 import pipe.historyActions.HistoryManager;
-import pipe.models.component.*;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

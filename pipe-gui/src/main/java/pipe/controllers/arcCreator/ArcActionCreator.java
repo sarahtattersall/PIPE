@@ -1,10 +1,8 @@
 package pipe.controllers.arcCreator;
 
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
-import pipe.models.component.Token;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface ArcActionCreator {

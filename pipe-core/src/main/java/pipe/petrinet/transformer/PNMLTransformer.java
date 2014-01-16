@@ -58,8 +58,7 @@ public class PNMLTransformer {
      * @returns Document from which PetriNet can be built
      */
     // Steve Doubleday:  added to simplify testing; pass in a test Net as a String rather than doing file I/O
-    public Document transformPNMLStreamSource(StreamSource source)
-            throws TransformerFactoryConfigurationError {
+    public Document transformPNMLStreamSource(StreamSource source) throws TransformerFactoryConfigurationError {
         File outputObjectArrayListFile = null;
         Document document = null;
 
@@ -83,8 +82,8 @@ public class PNMLTransformer {
             // Get DOM for transformed document
             document = getDOM(outputObjectArrayListFile);
         } catch (TransformerException e) {
-            System.out.println("TransformerException thrown in " +
-                    "loadPNML(String filename) : PetriNet Class : models Package");
+            System.out.println(
+                    "TransformerException thrown in " + "loadPNML(String filename) : PetriNet Class : models Package");
             e.printStackTrace(System.err);
         }
 

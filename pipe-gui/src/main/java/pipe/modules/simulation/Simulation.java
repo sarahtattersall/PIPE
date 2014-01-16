@@ -14,12 +14,11 @@ import pipe.gui.widgets.ButtonBar;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 import pipe.modules.interfaces.IModule;
 import pipe.utilities.writers.PNMLWriter;
 import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
-import pipe.views.TransitionView;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;

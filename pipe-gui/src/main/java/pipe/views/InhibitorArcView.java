@@ -3,10 +3,9 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
-import pipe.models.component.Arc;
-import pipe.models.component.Connectable;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

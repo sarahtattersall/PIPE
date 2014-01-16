@@ -4,11 +4,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.models.component.*;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.models.strategy.arc.ForwardsNormalStrategy;
-import pipe.models.strategy.arc.InhibitorStrategy;
-import pipe.math.IncidenceMatrix;
+import pipe.models.component.Connectable;
+import pipe.models.component.annotation.Annotation;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.IncidenceMatrix;
+import pipe.models.petrinet.PetriNet;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -22,7 +26,9 @@ import static org.mockito.Mockito.*;
 public class PetriNetTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
     PetriNet net;
+
     PropertyChangeListener mockListener;
 
     @Before
@@ -99,10 +105,10 @@ public class PetriNetTest {
 
     @Test
     public void addingRateParameterNotifiesObservers() {
-//        net.addPropertyChangeListener(mockListener);
-//        RateParameter rateParameter = new RateParameter("", 0., 0, 0);
-//        net.addRate(rateParameter);
-//        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
+        //        net.addPropertyChangeListener(mockListener);
+        //        RateParameter rateParameter = new RateParameter("", 0., 0, 0);
+        //        net.addRate(rateParameter);
+        //        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
@@ -117,10 +123,10 @@ public class PetriNetTest {
     @Test
     public void addingStateGroupNotifiesObservers() {
 
-//        net.addPropertyChangeListener(mockListener);
-//        StateGroup group = new StateGroup();
-//        net.addStateGroup(group);
-//        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
+        //        net.addPropertyChangeListener(mockListener);
+        //        StateGroup group = new StateGroup();
+        //        net.addStateGroup(group);
+        //        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
@@ -138,8 +144,7 @@ public class PetriNetTest {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
         Map<Token, String> weights = new HashMap<Token, String>();
-        Arc<Place, Transition> arc =
-                new Arc<Place, Transition>(place, transition, weights, new BackwardsNormalStrategy());
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         net.addArc(arc);
 
         assertEquals(1, net.getArcs().size());
@@ -215,17 +220,10 @@ public class PetriNetTest {
         arcWeight.put(token, Integer.toString(tokenWeight));
 
         PetriNet petriNet = new PetriNet();
-        BackwardsNormalStrategy backwardsNormalStrategy = new BackwardsNormalStrategy();
-        backwardsNormalStrategy.setPetriNet(petriNet);
 
-        ForwardsNormalStrategy forwardsNormalStrategy = new ForwardsNormalStrategy();
-        forwardsNormalStrategy.setPetriNet(petriNet);
-
-        Arc<Place, Transition> arc =
-                new Arc<Place, Transition>(place, transition, arcWeight, backwardsNormalStrategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, arcWeight, ArcType.NORMAL);
         Place place2 = new Place("p2", "p2");
-        Arc<Transition, Place> arc2 =
-                new Arc<Transition, Place>(transition, place2, arcWeight, forwardsNormalStrategy);
+        Arc<Transition, Place> arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, ArcType.NORMAL);
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -323,13 +321,9 @@ public class PetriNetTest {
         arcWeight.put(token, Integer.toString(tokenWeight));
 
         PetriNet petriNet = new PetriNet();
-        BackwardsNormalStrategy backwardsNormalStrategy = new BackwardsNormalStrategy();
-        backwardsNormalStrategy.setPetriNet(net);
-        Arc<Place, Transition> arc =
-                new Arc<Place, Transition>(place, transition, arcWeight, backwardsNormalStrategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, arcWeight, ArcType.NORMAL);
         Place place2 = new Place("p2", "p2");
-        Arc<Place, Transition> arc2 =
-                new Arc<Place, Transition>(place2, transition, arcWeight, backwardsNormalStrategy);
+        Arc<Place, Transition> arc2 = new Arc<Place, Transition>(place2, transition, arcWeight, ArcType.NORMAL);
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -433,14 +427,8 @@ public class PetriNetTest {
 
 
         PetriNet petriNet = new PetriNet();
-        BackwardsNormalStrategy backwardsNormalStrategy = new BackwardsNormalStrategy();
-        backwardsNormalStrategy.setPetriNet(petriNet);
-        ForwardsNormalStrategy forwardsNormalStrategy = new ForwardsNormalStrategy();
-        forwardsNormalStrategy.setPetriNet(petriNet);
-        Arc<Place, Transition> arc =
-                new Arc<Place, Transition>(place, transition, arcWeight, backwardsNormalStrategy);
-        Arc<Transition, Place> arc2 =
-                new Arc<Transition, Place>(transition, place, arcWeight, forwardsNormalStrategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, arcWeight, ArcType.NORMAL);
+        Arc<Transition, Place> arc2 = new Arc<Transition, Place>(transition, place, arcWeight, ArcType.NORMAL);
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -477,16 +465,13 @@ public class PetriNetTest {
         Transition transition = new Transition("t1", "t1");
 
 
-        Arc arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), new InhibitorStrategy());
+        Arc arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(), ArcType.INHIBITOR);
         Place place2 = new Place("p2", "p2");
         PetriNet petriNet = new PetriNet();
         Map<Token, String> arcWeight = new HashMap<Token, String>();
         arcWeight.put(token, Integer.toString(tokenWeight));
 
-        ForwardsNormalStrategy forwardsNormalStrategy = new ForwardsNormalStrategy();
-        forwardsNormalStrategy.setPetriNet(petriNet);
-        Arc<Transition, Place> arc2 =
-                new Arc<Transition, Place>(transition, place2, arcWeight, forwardsNormalStrategy);
+        Arc<Transition, Place> arc2 = new Arc<Transition, Place>(transition, place2, arcWeight, ArcType.NORMAL);
 
         petriNet.addToken(token);
         petriNet.addPlace(place);
@@ -555,12 +540,9 @@ public class PetriNetTest {
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
         Transition transition = new Transition("t2", "t2");
 
-
-        BackwardsNormalStrategy backwardsNormalStrategy = new BackwardsNormalStrategy();
-        backwardsNormalStrategy.setPetriNet(container.petriNet);
         Arc<Place, Transition> arc3 =
                 new Arc<Place, Transition>(container.places.get(1), transition, container.arcs.get(0).getTokenWeights(),
-                        backwardsNormalStrategy);
+                        ArcType.NORMAL);
         container.petriNet.addArc(arc3);
         container.petriNet.addTransition(transition);
 
@@ -604,9 +586,14 @@ public class PetriNetTest {
 
     private class PetriNetContainer {
         public final List<Token> tokens = new ArrayList<Token>();
+
         public final List<Place> places = new ArrayList<Place>();
+
         public final List<Transition> transitions = new ArrayList<Transition>();
-        public final List<Arc<? extends Connectable, ? extends Connectable>> arcs = new ArrayList<Arc<? extends Connectable, ? extends Connectable>>();
+
+        public final List<Arc<? extends Connectable, ? extends Connectable>> arcs =
+                new ArrayList<Arc<? extends Connectable, ? extends Connectable>>();
+
         public final PetriNet petriNet;
 
         private PetriNetContainer(PetriNet petriNet) {

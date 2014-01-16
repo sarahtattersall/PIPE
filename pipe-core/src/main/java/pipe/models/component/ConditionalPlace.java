@@ -1,18 +1,15 @@
 package pipe.models.component;
 
-import pipe.visitor.PetriNetComponentVisitor;
-import pipe.visitor.connectable.ConnectableVisitor;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 //TODO: FIGURE UT WHAT THIS DOES AND FIX GENERICS
-public class ConditionalPlace extends Connectable implements Serializable
-{
+public class ConditionalPlace extends Connectable implements Serializable {
     private static int DIAMETER = 30;
 
-    public ConditionalPlace(String id, String name)
-    {
+    public ConditionalPlace(String id, String name) {
         super(id, name);
     }
 
@@ -28,7 +25,7 @@ public class ConditionalPlace extends Connectable implements Serializable
 
     @Override
     public Point2D.Double getCentre() {
-        return new Point2D.Double(getX() - getWidth()/2, getX() - getWidth()/2);
+        return new Point2D.Double(getX() - getWidth() / 2, getX() - getWidth() / 2);
     }
 
     @Override
@@ -39,11 +36,6 @@ public class ConditionalPlace extends Connectable implements Serializable
     @Override
     public boolean isEndPoint() {
         return true;
-    }
-
-    @Override
-    public void accept(final ConnectableVisitor visitor) {
-        visitor.visit(this);
     }
 
     @Override
@@ -58,6 +50,6 @@ public class ConditionalPlace extends Connectable implements Serializable
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
-//        visitor.visit(this);
+        //        visitor.visit(this);
     }
 }

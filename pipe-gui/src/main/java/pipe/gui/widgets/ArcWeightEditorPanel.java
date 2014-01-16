@@ -1,15 +1,14 @@
 package pipe.gui.widgets;
 
-import parser.ExprEvaluator;
+import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 
 import javax.swing.*;
-import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;

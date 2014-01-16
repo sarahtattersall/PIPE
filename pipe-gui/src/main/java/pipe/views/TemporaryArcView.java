@@ -1,7 +1,7 @@
 package pipe.views;
 
 import pipe.gui.Constants;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
 
 import javax.swing.*;

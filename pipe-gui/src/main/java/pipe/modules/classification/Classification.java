@@ -13,7 +13,7 @@ import pipe.exceptions.EmptyNetException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.widgets.PetriNetChooserPanel;
 import pipe.gui.widgets.ResultsHTMLPane;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.modules.interfaces.IModule;
 import pipe.petrinet.unfold.Expander;
 import pipe.utilities.writers.PNMLWriter;

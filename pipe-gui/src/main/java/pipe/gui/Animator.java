@@ -1,18 +1,14 @@
 package pipe.gui;
 
 import pipe.historyActions.AnimationHistory;
-import pipe.models.PetriNet;
-import pipe.models.component.Transition;
-import pipe.views.ArcView;
-import pipe.views.PetriNetView;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.transition.Transition;
 import pipe.views.PipeApplicationView;
-import pipe.views.TransitionView;
 
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 
 
 /**

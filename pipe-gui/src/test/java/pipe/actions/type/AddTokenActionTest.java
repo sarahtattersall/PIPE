@@ -6,8 +6,8 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 import pipe.views.PipeApplicationView;
 
 import static org.mockito.Mockito.*;

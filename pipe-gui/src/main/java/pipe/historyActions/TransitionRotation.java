@@ -3,8 +3,7 @@
  */
 package pipe.historyActions;
 
-import pipe.models.PetriNet;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 /**
  * In charge of setting {@link Transition} angle

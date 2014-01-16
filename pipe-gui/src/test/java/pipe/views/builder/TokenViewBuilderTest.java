@@ -2,7 +2,7 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 import pipe.views.TokenView;
 
 import java.awt.*;

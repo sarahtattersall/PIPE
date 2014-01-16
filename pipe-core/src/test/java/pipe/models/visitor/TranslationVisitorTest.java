@@ -2,7 +2,11 @@ package pipe.models.visitor;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.*;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 import pipe.visitor.TranslationVisitor;
 
 import java.awt.geom.Point2D;
@@ -15,7 +19,9 @@ import static org.mockito.Mockito.*;
 
 public class TranslationVisitorTest {
     private TranslationVisitor translationVisitor;
+
     private Point2D translateAmount;
+
     private Collection<PetriNetComponent> selected;
 
     @Before
@@ -35,7 +41,7 @@ public class TranslationVisitorTest {
 
         List<ArcPoint> points = new LinkedList<ArcPoint>();
         ArcPoint arcPoint = mock(ArcPoint.class);
-        Point2D point = new Point2D.Double(10,5);
+        Point2D point = new Point2D.Double(10, 5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
         when(arc.getIntermediatePoints()).thenReturn(points);
@@ -45,7 +51,8 @@ public class TranslationVisitorTest {
 
 
         translationVisitor.visit(arc);
-        Point2D.Double expected = new Point2D.Double(point.getX() + translateAmount.getX(), point.getY() + translateAmount.getY());
+        Point2D.Double expected =
+                new Point2D.Double(point.getX() + translateAmount.getX(), point.getY() + translateAmount.getY());
         verify(arcPoint).setPoint(expected);
     }
 
@@ -59,7 +66,7 @@ public class TranslationVisitorTest {
 
         List<ArcPoint> points = new LinkedList<ArcPoint>();
         ArcPoint arcPoint = mock(ArcPoint.class);
-        Point2D point = new Point2D.Double(10,5);
+        Point2D point = new Point2D.Double(10, 5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
         when(arc.getIntermediatePoints()).thenReturn(points);
@@ -67,7 +74,8 @@ public class TranslationVisitorTest {
         selected.add(place);
 
         translationVisitor.visit(arc);
-        Point2D.Double expected = new Point2D.Double(point.getX() + translateAmount.getX(), point.getY() + translateAmount.getY());
+        Point2D.Double expected =
+                new Point2D.Double(point.getX() + translateAmount.getX(), point.getY() + translateAmount.getY());
         verify(arcPoint, never()).setPoint(expected);
     }
 
@@ -82,7 +90,7 @@ public class TranslationVisitorTest {
 
         List<ArcPoint> points = new LinkedList<ArcPoint>();
         ArcPoint arcPoint = mock(ArcPoint.class);
-        Point2D point = new Point2D.Double(10,5);
+        Point2D point = new Point2D.Double(10, 5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
         when(arc.getIntermediatePoints()).thenReturn(points);
@@ -90,7 +98,8 @@ public class TranslationVisitorTest {
         selected.add(transition);
 
         translationVisitor.visit(arc);
-        Point2D.Double expected = new Point2D.Double(point.getX() + translateAmount.getX(), point.getY() + translateAmount.getY());
+        Point2D.Double expected =
+                new Point2D.Double(point.getX() + translateAmount.getX(), point.getY() + translateAmount.getY());
         verify(arcPoint, never()).setPoint(expected);
     }
 

@@ -11,14 +11,18 @@ public class AdaptedTransition extends AdaptedConnectable {
 
     @XmlJavaTypeAdapter(BooleanValueAdapter.class)
     private Boolean infiniteServer = false;
+
     @XmlJavaTypeAdapter(BooleanValueAdapter.class)
     private Boolean timed = false;
+
     @XmlElement(name = "priority")
     @XmlJavaTypeAdapter(IntValueAdapter.class)
     private Integer priority = 0;
+
     @XmlElement(name = "orientation")
     @XmlJavaTypeAdapter(IntValueAdapter.class)
     private Integer angle = 0;
+
     @XmlElement(name = "rate")
     @XmlJavaTypeAdapter(StringValueAdapter.class)
     private String rate = "";

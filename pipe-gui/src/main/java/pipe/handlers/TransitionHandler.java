@@ -4,7 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryItem;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 import pipe.views.TransitionView;
 
 import javax.swing.*;

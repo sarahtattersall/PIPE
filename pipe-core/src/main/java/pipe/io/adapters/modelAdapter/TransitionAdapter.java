@@ -1,15 +1,15 @@
 package pipe.io.adapters.modelAdapter;
 
-import pipe.models.component.Transition;
 import pipe.io.adapters.model.AdaptedConnectable;
 import pipe.io.adapters.model.AdaptedTransition;
 import pipe.io.adapters.utils.ConnectableUtils;
+import pipe.models.component.transition.Transition;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TransitionAdapter extends XmlAdapter<AdaptedTransition, Transition>{
+public class TransitionAdapter extends XmlAdapter<AdaptedTransition, Transition> {
     private final Map<String, Transition> transitions;
 
     /**

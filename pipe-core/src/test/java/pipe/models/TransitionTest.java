@@ -1,7 +1,7 @@
 package pipe.models;
 
 import org.junit.Test;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 import java.awt.geom.Point2D;
 
@@ -26,7 +26,7 @@ public class TransitionTest {
         transition.setY(y1);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + transition.getHeight()/2, y1);
+        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2, y1);
         assertEquals(expected, point);
     }
 
@@ -47,8 +47,8 @@ public class TransitionTest {
         transition.setY(y1);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + transition.getHeight()/2 + transition.getWidth()/2,
-                y1 + transition.getHeight()/2);
+        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2 + transition.getWidth() / 2,
+                y1 + transition.getHeight() / 2);
         assertEquals(expected, point);
     }
 
@@ -68,8 +68,8 @@ public class TransitionTest {
         transition.setY(y1);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + transition.getHeight()/2 - transition.getWidth()/2,
-                y1 + transition.getHeight()/2);
+        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2 - transition.getWidth() / 2,
+                y1 + transition.getHeight() / 2);
         assertEquals(expected, point);
     }
 
@@ -88,8 +88,7 @@ public class TransitionTest {
         transition.setY(y1);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + transition.getHeight()/2,
-                y1 + transition.getHeight());
+        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2, y1 + transition.getHeight());
         assertEquals(expected, point);
     }
 
@@ -108,14 +107,13 @@ public class TransitionTest {
         transition.setY(y1);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected  = new Point2D.Double(x1 + transition.getHeight()/2,
+        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2,
                 y1 + transition.getHeight() - transition.getWidth());
         assertEquals(expected, point);
     }
 
 
-    private double getAngleBetweenObjects(double x1, double y1, double x2, double y2)
-    {
+    private double getAngleBetweenObjects(double x1, double y1, double x2, double y2) {
         double deltax = x1 - x2;
         double deltay = y1 - y2;
         return Math.atan2(deltax, deltay);

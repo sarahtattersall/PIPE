@@ -6,9 +6,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * Used for elements which need a value field in their element
  * E.g.
  * <name>
- *     <value>
- *         value goes here
- *     </value>
+ * <value>
+ * value goes here
+ * </value>
  * </name>
  */
 public class StringValueAdapter extends XmlAdapter<StringValueAdapter.AdaptedString, String> {
@@ -25,6 +25,6 @@ public class StringValueAdapter extends XmlAdapter<StringValueAdapter.AdaptedStr
     }
 
     public static class AdaptedString {
-         public String value;
+        public String value;
     }
 }

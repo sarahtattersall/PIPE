@@ -3,11 +3,11 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Arc;
-import pipe.models.component.Token;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
-import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 import pipe.views.ArcView;
 
 import java.util.HashMap;
@@ -17,17 +17,17 @@ import static org.mockito.Mockito.mock;
 
 public class ArcViewBuilderTest {
     Arc arc;
+
     NormalArcViewBuilder builder;
+
     private PetriNetController mockController;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         Place source = new Place("source", "source");
         Transition transition = new Transition("id", "name");
 
-        ArcStrategy<Place, Transition> mockStrategy = mock(ArcStrategy.class);
-        arc = new Arc<Place, Transition>(source, transition, new HashMap<Token, String>(), mockStrategy);
+        arc = new Arc<Place, Transition>(source, transition, new HashMap<Token, String>(), ArcType.NORMAL);
         arc.setId("id");
         mockController = mock(PetriNetController.class);
         builder = new NormalArcViewBuilder(arc, mockController);

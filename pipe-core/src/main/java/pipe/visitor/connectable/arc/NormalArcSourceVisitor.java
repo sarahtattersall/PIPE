@@ -1,6 +1,8 @@
 package pipe.visitor.connectable.arc;
 
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 
 public class NormalArcSourceVisitor implements ArcSourceVisitor {
 

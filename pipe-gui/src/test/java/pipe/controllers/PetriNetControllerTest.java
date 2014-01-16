@@ -8,9 +8,13 @@ import pipe.exceptions.TokenLockedException;
 import pipe.gui.*;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.component.*;
-import pipe.visitor.PetriNetComponentVisitor;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 import pipe.visitor.TranslationVisitor;
 import pipe.views.PipeApplicationView;
 

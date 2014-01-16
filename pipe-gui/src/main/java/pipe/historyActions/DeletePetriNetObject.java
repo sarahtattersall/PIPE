@@ -3,7 +3,7 @@
  */
 package pipe.historyActions;
 
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.component.PetriNetComponent;
 
 

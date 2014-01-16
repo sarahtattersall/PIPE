@@ -1,8 +1,6 @@
 package pipe.views;
 
-import net.sourceforge.jeval.EvaluationException;
-import parser.ExprEvaluator;
-import parser.MarkingDividedByNumberException;
+import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.MarkingController;
 import pipe.models.Marking;
 import pipe.models.PipeObservable;

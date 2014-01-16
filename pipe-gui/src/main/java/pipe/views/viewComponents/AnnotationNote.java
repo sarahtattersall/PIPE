@@ -9,7 +9,7 @@ import pipe.gui.widgets.AnnotationPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.historyActions.AnnotationText;
-import pipe.models.component.Annotation;
+import pipe.models.component.annotation.Annotation;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
 

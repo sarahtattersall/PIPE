@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.ZoomController;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 import pipe.views.viewComponents.ArcPath;
 
 public class ArcViewTest {

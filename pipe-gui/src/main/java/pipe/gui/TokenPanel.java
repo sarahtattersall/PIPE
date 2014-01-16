@@ -1,7 +1,7 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

@@ -1,6 +1,15 @@
 package pipe.visitor;
 
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.ArcPointVisitor;
+import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.place.Place;
+import pipe.models.component.place.PlaceVisitor;
+import pipe.models.component.transition.Transition;
+import pipe.models.component.transition.TransitionVisitor;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
@@ -11,6 +20,7 @@ import java.util.List;
  */
 public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVisitor, TransitionVisitor {
     private final Point2D translation;
+
     private final Collection<PetriNetComponent> selected;
 
     public TranslationVisitor(Point2D translation, final Collection<PetriNetComponent> selected) {
@@ -49,6 +59,6 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
     public void visit(ArcPoint arcPoint) {
         double x = arcPoint.getX() + translation.getX();
         double y = arcPoint.getY() + translation.getY();
-        arcPoint.setPoint(new Point2D.Double(x,y));
+        arcPoint.setPoint(new Point2D.Double(x, y));
     }
 }

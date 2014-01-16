@@ -1,15 +1,11 @@
 package pipe.io;
 
-import pipe.models.PetriNet;
-import pipe.models.component.PetriNetHolder;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.models.strategy.arc.ForwardsNormalStrategy;
-import pipe.models.strategy.arc.InhibitorStrategy;
 import pipe.io.adapters.modelAdapter.*;
+import pipe.models.PetriNetHolder;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -46,15 +42,10 @@ public class PetriNetIOImpl implements PetriNetIO {
     @Override
     public PetriNet read(String path) {
 
-        InhibitorStrategy inhibitorStrategy = new InhibitorStrategy();
-        ForwardsNormalStrategy normalForwardStrategy = new ForwardsNormalStrategy();
-        BackwardsNormalStrategy backwardsStrategy = new BackwardsNormalStrategy();
         try {
-            Unmarshaller um = initialiseUnmarshaller(inhibitorStrategy, normalForwardStrategy, backwardsStrategy);
+            Unmarshaller um = initialiseUnmarshaller();
             PetriNetHolder holder = (PetriNetHolder) um.unmarshal(new FileReader(path));
-            PetriNet petriNet =  holder.getNet(0);
-            normalForwardStrategy.setPetriNet(petriNet);
-            backwardsStrategy.setPetriNet(petriNet);
+            PetriNet petriNet = holder.getNet(0);
 
             if (petriNet.getTokens().size() == 0) {
                 Token token = createDefaultToken();
@@ -73,13 +64,7 @@ public class PetriNetIOImpl implements PetriNetIO {
         return null;
     }
 
-    private Token createDefaultToken() {
-        return new Token("Default", true, 0, new Color(0,0,0));
-    }
-
-    private Unmarshaller initialiseUnmarshaller(ArcStrategy<Place, Transition> inhibitorStrategy,
-                                                ArcStrategy<Transition, Place> normalForwardStrategy,
-                                                ArcStrategy<Place, Transition> backwardsStrategy) throws JAXBException {
+    private Unmarshaller initialiseUnmarshaller() throws JAXBException {
 
         Unmarshaller um = context.createUnmarshaller();
 
@@ -87,12 +72,16 @@ public class PetriNetIOImpl implements PetriNetIO {
         Map<String, Transition> transitions = new HashMap<String, Transition>();
         Map<String, Token> tokens = new HashMap<String, Token>();
 
-        um.setAdapter(new ArcAdapter(places, transitions, tokens, inhibitorStrategy, normalForwardStrategy, backwardsStrategy));
+        um.setAdapter(new ArcAdapter(places, transitions, tokens));
         um.setAdapter(new PlaceAdapter(places, tokens));
         um.setAdapter(new TransitionAdapter(transitions));
         um.setAdapter(new TokenAdapter(tokens));
         um.setAdapter(new TokenSetIntegerAdapter(tokens));
         return um;
+    }
+
+    private Token createDefaultToken() {
+        return new Token("Default", true, 0, new Color(0, 0, 0));
     }
 
 }

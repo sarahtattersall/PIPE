@@ -1,8 +1,8 @@
 package pipe.historyActions;
 
 
-import pipe.models.component.Arc;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
 
 public class AddArcPathPoint<S extends Connectable, T extends Connectable> extends HistoryItem {

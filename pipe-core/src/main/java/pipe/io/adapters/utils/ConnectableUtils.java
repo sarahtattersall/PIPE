@@ -1,7 +1,10 @@
 package pipe.io.adapters.utils;
 
+import pipe.io.adapters.model.AdaptedConnectable;
+import pipe.io.adapters.model.OffsetGraphics;
+import pipe.io.adapters.model.Point;
+import pipe.io.adapters.model.PositionGraphics;
 import pipe.models.component.Connectable;
-import pipe.io.adapters.model.*;
 
 public class ConnectableUtils {
 
@@ -35,6 +38,7 @@ public class ConnectableUtils {
 
     /**
      * Sets the connectables name offset based on the adapted connectable
+     *
      * @param connectable
      * @param adaptedConnectable
      */
@@ -49,6 +53,7 @@ public class ConnectableUtils {
 
     /**
      * Sets the connectables position based on the adapted connectable
+     *
      * @param connectable
      * @param adaptedConnectable
      */

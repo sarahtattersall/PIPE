@@ -4,8 +4,8 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.models.component.Connectable;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 
 import java.awt.event.MouseEvent;
 

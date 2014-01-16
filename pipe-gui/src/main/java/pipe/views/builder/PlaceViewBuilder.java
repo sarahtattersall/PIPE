@@ -1,8 +1,7 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
-import pipe.models.component.Place;
+import pipe.models.component.place.Place;
 import pipe.views.MarkingView;
 import pipe.views.PlaceView;
 

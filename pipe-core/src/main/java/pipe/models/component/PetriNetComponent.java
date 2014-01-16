@@ -1,6 +1,6 @@
 package pipe.models.component;
 
-import pipe.visitor.PetriNetComponentVisitor;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 
 
 public interface PetriNetComponent {

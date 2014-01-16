@@ -8,7 +8,7 @@ import pipe.historyActions.GroupTransitionRotation;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.UngroupTransition;
 import pipe.models.component.Connectable;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 import javax.swing.*;
 import java.awt.*;
@@ -361,7 +361,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
       * (non-Javadoc)
       *
       * @see
-      * pipe.models.component.Connectable#updateEndPoint(pipe.models.component.Arc)
+      * pipe.models.component.Connectable#updateEndPoint(pipe.models.component.arc.Arc)
       */
     public void updateEndPoint(ArcView arcView) {
         boolean match = false;

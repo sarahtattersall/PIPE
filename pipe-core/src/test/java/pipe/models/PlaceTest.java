@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 import utils.TokenUtils;
 
 import java.awt.*;
@@ -25,6 +25,7 @@ public class PlaceTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
     Place place;
 
     @Before

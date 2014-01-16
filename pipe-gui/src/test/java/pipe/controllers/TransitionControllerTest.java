@@ -3,7 +3,7 @@ package pipe.controllers;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.historyActions.*;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

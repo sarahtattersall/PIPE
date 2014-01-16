@@ -1,6 +1,5 @@
 package pipe.actions.type;
 
-import matchers.component.HasId;
 import matchers.component.HasMultiple;
 import matchers.component.HasTimed;
 import matchers.component.HasXY;
@@ -11,8 +10,8 @@ import pipe.gui.Constants;
 import pipe.gui.Grid;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.PetriNet;
-import pipe.models.component.Transition;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.transition.Transition;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

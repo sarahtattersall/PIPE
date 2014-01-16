@@ -2,8 +2,9 @@ package pipe.math;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
+import pipe.models.petrinet.IncidenceMatrix;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -13,7 +14,7 @@ public class IncidenceMatrixTest {
     private IncidenceMatrix incidenceMatrix;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         incidenceMatrix = new IncidenceMatrix();
     }
 

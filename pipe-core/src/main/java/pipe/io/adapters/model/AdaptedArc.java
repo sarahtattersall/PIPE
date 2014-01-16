@@ -1,8 +1,8 @@
 package pipe.io.adapters.model;
 
-import pipe.models.component.ArcPoint;
 import pipe.io.adapters.modelAdapter.ArcPointAdapter;
 import pipe.io.adapters.valueAdapter.StringAttributeValueAdaptor;
+import pipe.models.component.arc.ArcPoint;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +23,7 @@ public class AdaptedArc {
     @XmlAttribute
     private String target;
 
-    @XmlElement(name="arcpath")
+    @XmlElement(name = "arcpath")
     @XmlJavaTypeAdapter(ArcPointAdapter.class)
     private List<ArcPoint> arcPoints = new ArrayList<ArcPoint>();
 

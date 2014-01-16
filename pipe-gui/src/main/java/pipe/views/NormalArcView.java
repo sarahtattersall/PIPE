@@ -1,16 +1,14 @@
 package pipe.views;
 
-import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
-import pipe.handlers.ArcHandler;
 import pipe.historyActions.*;
-import pipe.models.component.Arc;
+import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;

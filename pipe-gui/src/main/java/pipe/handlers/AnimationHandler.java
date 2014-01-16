@@ -4,7 +4,6 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
-import pipe.models.PetriNet;
 import pipe.views.GroupTransitionView;
 import pipe.views.TransitionView;
 

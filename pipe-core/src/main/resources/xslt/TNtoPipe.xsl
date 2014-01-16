@@ -22,7 +22,7 @@
         </xsl:element>
     </xsl:template>
     <xsl:template match="net">
-	    <xsl:apply-templates select="token"/>
+        <xsl:apply-templates select="token"/>
         <xsl:apply-templates select="place"/>
         <xsl:apply-templates select="immediateTransition"/>
         <xsl:apply-templates select="exponentialTransition"/>
@@ -30,14 +30,14 @@
         <xsl:apply-templates select="arc"/>
     </xsl:template>
 
-	<xsl:template match="token">
+    <xsl:template match="token">
         <xsl:element name="token">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
             </xsl:attribute>
-			<xsl:attribute name="enabled">
+            <xsl:attribute name="enabled">
                 <xsl:value-of select="@enabled"/>
-            </xsl:attribute>	
+            </xsl:attribute>
             <xsl:attribute name="red">
                 <xsl:value-of select="@red"/>
             </xsl:attribute>
@@ -46,10 +46,10 @@
             </xsl:attribute>
             <xsl:attribute name="blue">
                 <xsl:value-of select="@blue"/>
-            </xsl:attribute>			
-        </xsl:element>	
+            </xsl:attribute>
+        </xsl:element>
     </xsl:template>
-	
+
     <xsl:template match="place">
         <xsl:element name="place">
             <xsl:attribute name="initialMarking">
@@ -67,30 +67,44 @@
                 <xsl:value-of select="0"/>
             </xsl:attribute>
             <xsl:call-template name="place-transition"/>
-        </xsl:element>	
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="immediateTransition">
         <xsl:element name="transition">
-            <xsl:attribute name="rate"><xsl:value-of select="@weight"/></xsl:attribute>
-            <xsl:attribute name="priority"><xsl:value-of select="floor(@priority)"/></xsl:attribute>
-            <xsl:attribute name="timed"><xsl:value-of select="false()"/></xsl:attribute>
-            <xsl:attribute name="angle"><xsl:value-of select="graphics/@orientation"/></xsl:attribute>
+            <xsl:attribute name="rate">
+                <xsl:value-of select="@weight"/>
+            </xsl:attribute>
+            <xsl:attribute name="priority">
+                <xsl:value-of select="floor(@priority)"/>
+            </xsl:attribute>
+            <xsl:attribute name="timed">
+                <xsl:value-of select="false()"/>
+            </xsl:attribute>
+            <xsl:attribute name="angle">
+                <xsl:value-of select="graphics/@orientation"/>
+            </xsl:attribute>
             <xsl:call-template name="place-transition"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="exponentialTransition">
         <xsl:element name="transition">
-            <xsl:attribute name="rate"><xsl:value-of select="1.0 div @delay"/></xsl:attribute>
-            <xsl:attribute name="timed"><xsl:value-of select="true()"/></xsl:attribute>
+            <xsl:attribute name="rate">
+                <xsl:value-of select="1.0 div @delay"/>
+            </xsl:attribute>
+            <xsl:attribute name="timed">
+                <xsl:value-of select="true()"/>
+            </xsl:attribute>
             <xsl:if test="@serverType='InfiniteServer'">
                 <xsl:attribute name="infiniteServer">true</xsl:attribute>
             </xsl:if>
             <xsl:if test="@serverType='ExclusiveServer'">
                 <xsl:attribute name="infiniteServer">false</xsl:attribute>
             </xsl:if>
-            <xsl:attribute name="angle"><xsl:value-of select="graphics/@orientation"/></xsl:attribute>
+            <xsl:attribute name="angle">
+                <xsl:value-of select="graphics/@orientation"/>
+            </xsl:attribute>
             <xsl:call-template name="place-transition"/>
         </xsl:element>
     </xsl:template>
@@ -154,19 +168,19 @@
         <xsl:attribute name="nameOffsetY">
             10.0
             <!--<xsl:value-of select="label/graphics/@y"/>-->
-        </xsl:attribute>				
+        </xsl:attribute>
         <xsl:call-template name="place-transition-arc"/>
-    </xsl:template>	
+    </xsl:template>
 
     <xsl:template name="place-transition-arc">
         <xsl:attribute name="id">
-                    <xsl:value-of select="@id"/>
-            </xsl:attribute>	
-            <xsl:attribute name="positionX">
-                    <xsl:value-of select="graphics/@x"/>
-            </xsl:attribute>
-            <xsl:attribute name="positionY">
-                    <xsl:value-of select="graphics/@y"/>
+            <xsl:value-of select="@id"/>
+        </xsl:attribute>
+        <xsl:attribute name="positionX">
+            <xsl:value-of select="graphics/@x"/>
+        </xsl:attribute>
+        <xsl:attribute name="positionY">
+            <xsl:value-of select="graphics/@y"/>
         </xsl:attribute>
     </xsl:template>
 

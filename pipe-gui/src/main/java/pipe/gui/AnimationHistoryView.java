@@ -1,7 +1,7 @@
 package pipe.gui;
 
 import pipe.historyActions.AnimationHistory;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 import javax.swing.*;
 import javax.swing.text.*;

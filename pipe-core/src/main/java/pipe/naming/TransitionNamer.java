@@ -1,7 +1,7 @@
 package pipe.naming;
 
-import pipe.models.PetriNet;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 public class TransitionNamer implements PetriNetComponentNamer {
     private final PetriNet petriNet;
+
     private Collection<String> transitionNames = new HashSet<String>();
 
     public TransitionNamer(PetriNet petriNet) {

@@ -1,7 +1,7 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 import pipe.views.TransitionView;
 
 public class TransitionViewBuilder {

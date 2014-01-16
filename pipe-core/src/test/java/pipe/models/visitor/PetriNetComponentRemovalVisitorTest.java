@@ -2,10 +2,14 @@ package pipe.models.visitor;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.*;
-import pipe.models.component.*;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.visitor.PetriNetComponentRemovalVisitor;
+import pipe.models.component.annotation.Annotation;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.petrinet.PetriNetComponentRemovalVisitor;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -16,6 +20,7 @@ import static org.mockito.Mockito.verify;
 
 public class PetriNetComponentRemovalVisitorTest {
     PetriNet mockNet;
+
     PetriNetComponentRemovalVisitor visitor;
 
     @Before
@@ -26,32 +31,30 @@ public class PetriNetComponentRemovalVisitorTest {
 
     @Test
     public void testDeletesArc() {
-        Place place = new Place("","");
-        Transition transition = new Transition("","");
+        Place place = new Place("", "");
+        Transition transition = new Transition("", "");
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> strategy = mock(ArcStrategy.class);
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, strategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
     }
 
     @Test
     public void testDeletesPlace() {
-        Place place = new Place("","");
+        Place place = new Place("", "");
         place.accept(visitor);
         verify(mockNet).removePlace(place);
     }
 
-
     @Test
     public void testDeletesTransition() {
-        Transition transition = new Transition("","");
+        Transition transition = new Transition("", "");
         transition.accept(visitor);
         verify(mockNet).removeTransition(transition);
     }
 
     @Test
-    public void testDeletesAnnotation()  {
+    public void testDeletesAnnotation() {
         Annotation annotation = new Annotation(0, 0, "", 0, 0, false);
         annotation.accept(visitor);
         verify(mockNet).removeAnnotaiton(annotation);
@@ -59,14 +62,13 @@ public class PetriNetComponentRemovalVisitorTest {
     }
 
 
-
     //TODO: CHange RateParameter to model then test this
-//    @Test
-//    public void testDeletesRateParameter() throws Exception {
-//        RateParameter parameter = new RateParameter("", 0, 0, 0);
-//        parameter.accept
-//
-//    }
+    //    @Test
+    //    public void testDeletesRateParameter() throws Exception {
+    //        RateParameter parameter = new RateParameter("", 0, 0, 0);
+    //        parameter.accept
+    //
+    //    }
 
     @Test
     public void testDeletesToken() {
@@ -75,9 +77,9 @@ public class PetriNetComponentRemovalVisitorTest {
         verify(mockNet).removeToken(token);
     }
 
-//    TODO: MAKE STATEGROUP HAVE VISITOR PATTERN
-//    @Test
-//    public void testRemoveStateGroup() throws Exception {
-//
-//    }
+    //    TODO: MAKE STATEGROUP HAVE VISITOR PATTERN
+    //    @Test
+    //    public void testRemoveStateGroup() throws Exception {
+    //
+    //    }
 }

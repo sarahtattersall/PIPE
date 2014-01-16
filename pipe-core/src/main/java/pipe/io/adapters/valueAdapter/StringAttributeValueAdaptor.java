@@ -10,7 +10,8 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * If there was a way to dynamically choose if it was an attribute/element
  * this would be better
  */
-public class StringAttributeValueAdaptor extends XmlAdapter<StringAttributeValueAdaptor.AdaptedAttributeString, String> {
+public class StringAttributeValueAdaptor
+        extends XmlAdapter<StringAttributeValueAdaptor.AdaptedAttributeString, String> {
     @Override
     public String unmarshal(AdaptedAttributeString adaptedString) throws Exception {
         return adaptedString.value;

@@ -1,7 +1,7 @@
 package pipe.views;
 
 import net.sourceforge.jeval.EvaluationException;
-import parser.ExprEvaluator;
+import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
@@ -12,9 +12,9 @@ import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.LabelHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;

@@ -3,8 +3,8 @@ package pipe.controllers;
 import pipe.historyActions.HistoryManager;
 import pipe.historyActions.PlaceCapacity;
 import pipe.historyActions.PlaceMarking;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 
 import java.util.HashMap;
 import java.util.Map;

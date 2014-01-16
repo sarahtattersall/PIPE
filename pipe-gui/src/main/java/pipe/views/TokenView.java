@@ -3,6 +3,10 @@ package pipe.views;
 import pipe.controllers.TokenController;
 import pipe.exceptions.TokenLockedException;
 import pipe.models.component.*;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 import pipe.utilities.math.Matrix;
 
 import java.awt.*;

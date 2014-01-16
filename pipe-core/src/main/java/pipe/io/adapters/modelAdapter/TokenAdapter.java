@@ -1,14 +1,14 @@
 package pipe.io.adapters.modelAdapter;
 
-import pipe.models.component.Token;
 import pipe.io.adapters.model.AdaptedToken;
+import pipe.models.component.token.Token;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TokenAdapter extends XmlAdapter<AdaptedToken, Token>{
+public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
     private final Map<String, Token> tokens;
 
     /**
@@ -27,7 +27,7 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token>{
     @Override
     public Token unmarshal(AdaptedToken adaptedToken) throws Exception {
         Color color = new Color(adaptedToken.getRed(), adaptedToken.getGreen(), adaptedToken.getBlue());
-        Token token =  new Token(adaptedToken.getId(), adaptedToken.isEnabled(), 0, color);
+        Token token = new Token(adaptedToken.getId(), adaptedToken.isEnabled(), 0, color);
         tokens.put(token.getId(), token);
         return token;
     }

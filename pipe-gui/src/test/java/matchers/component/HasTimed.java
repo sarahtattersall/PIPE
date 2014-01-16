@@ -1,6 +1,6 @@
 package matchers.component;
 
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 
 public class HasTimed implements Has<Transition> {
     boolean timed;

@@ -1,7 +1,7 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Place;
+import pipe.models.component.place.Place;
 import pipe.views.PlaceView;
 
 import javax.swing.*;

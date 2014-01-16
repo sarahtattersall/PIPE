@@ -5,12 +5,7 @@ package pipe.actions;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.ZoomController;
-import pipe.historyActions.HistoryManager;
-import pipe.models.component.Arc;
-import pipe.views.PipeApplicationView;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

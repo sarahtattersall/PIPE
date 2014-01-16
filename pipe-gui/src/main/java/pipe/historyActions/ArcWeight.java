@@ -4,9 +4,9 @@
 
 package pipe.historyActions;
 
-import pipe.models.component.Arc;
+import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 /**
  * @author Alex Charalambous

@@ -5,15 +5,12 @@ import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
-import pipe.models.PetriNet;
-import pipe.models.component.Arc;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
-import pipe.models.component.Transition;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.views.ArcView;
-import pipe.views.NormalArcView;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
 
 import java.awt.*;
@@ -25,10 +22,15 @@ import static org.mockito.Mockito.*;
 public class NormalCreatorTest {
 
     PipeApplicationView mockView;
+
     PipeApplicationController mockController;
+
     PetriNetController mockPetriNetController;
+
     PetriNet mockNet;
+
     PetriNetTab mockTab;
+
     NormalCreator creator;
 
     @Before
@@ -37,8 +39,6 @@ public class NormalCreatorTest {
         mockController = mock(PipeApplicationController.class);
 
         mockPetriNetController = mock(PetriNetController.class);
-        ArcStrategy<Place, Transition> mockStrategy = mock(BackwardsNormalStrategy.class);
-        when(mockPetriNetController.getBackwardsStrategy()).thenReturn(mockStrategy);
         mockNet = mock(PetriNet.class);
         mockTab = mock(PetriNetTab.class);
 
@@ -60,8 +60,7 @@ public class NormalCreatorTest {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
 
-        Arc<Place, Transition> expected =
-                new Arc<Place, Transition>(source, transition, tokens, mockPetriNetController.getBackwardsStrategy());
+        Arc<Place, Transition> expected = new Arc<Place, Transition>(source, transition, tokens, ArcType.NORMAL);
         verify(mockNet).addArc(expected);
     }
 

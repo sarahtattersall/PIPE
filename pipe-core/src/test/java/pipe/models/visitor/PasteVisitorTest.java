@@ -4,10 +4,14 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import pipe.models.PetriNet;
-import pipe.models.component.*;
-import pipe.models.strategy.arc.ArcStrategy;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.visitor.PasteVisitor;
 
 import java.awt.geom.Point2D;
@@ -22,7 +26,9 @@ import static org.mockito.Mockito.verify;
 
 public class PasteVisitorTest {
     PasteVisitor visitor;
+
     PetriNet petriNet;
+
     Collection<PetriNetComponent> pasteComponents;
 
     @Before
@@ -83,6 +89,10 @@ public class PasteVisitorTest {
         verify(petriNet).addTransition(argThat(matchesThisTransitionWithCopiedNameAndId(transition)));
     }
 
+    private Matcher<Transition> matchesThisTransitionWithCopiedNameAndId(Transition transition) {
+        return new CopiedTransition(transition);
+    }
+
     @Test
     public void pastingTransitionWithOffset() {
         Transition transition = new Transition("id", "name");
@@ -102,10 +112,6 @@ public class PasteVisitorTest {
         return new CopiedTransition(transition, offset);
     }
 
-    private Matcher<Transition> matchesThisTransitionWithCopiedNameAndId(Transition transition) {
-        return new CopiedTransition(transition);
-    }
-
     @Test
     public void pastingArcTransitionAndPlaceInSelected() {
         Place place = new Place("id", "name");
@@ -114,8 +120,7 @@ public class PasteVisitorTest {
         pasteComponents.add(transition);
 
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, arcStrategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents);
 
@@ -136,8 +141,7 @@ public class PasteVisitorTest {
 
         Transition transition = new Transition("id", "name");
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, arcStrategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents);
 
@@ -158,8 +162,7 @@ public class PasteVisitorTest {
         pasteComponents.add(transition);
 
         Map<Token, String> weights = new HashMap<Token, String>();
-        ArcStrategy<Place, Transition> arcStrategy = new BackwardsNormalStrategy();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, arcStrategy);
+        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents);
 
@@ -183,6 +186,7 @@ public class PasteVisitorTest {
          * Place that should be copied
          */
         private final Place place;
+
         private final Point2D offset;
 
         private CopiedPlace(Place place) {
@@ -217,6 +221,7 @@ public class PasteVisitorTest {
     private static class CopiedTransition extends ArgumentMatcher<Transition> {
 
         private final Point2D offset;
+
         private Transition transition;
 
         private CopiedTransition(Transition transition) {
@@ -238,7 +243,7 @@ public class PasteVisitorTest {
                     transition.getName() + "_copied") && otherTransition.getX() == (transition.getX() + offset.getX())
                     &&
                     otherTransition.getY() == (transition.getY() + offset.getY()) &&
-                    otherTransition.getNameXOffset() == transition.getNameXOffset()  &&
+                    otherTransition.getNameXOffset() == transition.getNameXOffset() &&
                     otherTransition.getNameYOffset() == transition.getNameYOffset() &&
                     otherTransition.getRateExpr().equals(transition.getRateExpr()) &&
                     otherTransition.isInfiniteServer() == transition.isInfiniteServer() &&
@@ -251,7 +256,9 @@ public class PasteVisitorTest {
     private static class CopiedArc extends ArgumentMatcher<Arc<? extends Connectable, ? extends Connectable>> {
 
         private final Arc<? extends Connectable, ? extends Connectable> arc;
+
         private final boolean sourceCopied;
+
         private final boolean targetCopied;
 
         public CopiedArc(Arc<? extends Connectable, ? extends Connectable> arc, boolean sourceCopied,

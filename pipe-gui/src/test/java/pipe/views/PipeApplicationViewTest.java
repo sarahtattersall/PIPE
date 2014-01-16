@@ -5,12 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.awt.Color;
 import java.util.LinkedList;
 
-import javax.swing.JToolBar;
-
 import org.junit.Before;
-import org.junit.Test;
 
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 
 public class PipeApplicationViewTest
 {

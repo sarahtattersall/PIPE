@@ -1,10 +1,10 @@
 package pipe.gui.widgets;
 
-import parser.ExprEvaluator;
+import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.ArcController;
-import pipe.models.PetriNet;
-import pipe.models.component.Place;
-import pipe.models.component.Token;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 
 import javax.swing.*;
 import java.awt.*;

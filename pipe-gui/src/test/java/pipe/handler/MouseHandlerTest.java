@@ -1,16 +1,13 @@
 package pipe.handler;
 
 import org.junit.Before;
-import org.junit.Test;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.MouseUtilities;
-import pipe.models.*;
-import pipe.views.PetriNetView;
+import pipe.models.petrinet.PetriNet;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

@@ -1,10 +1,8 @@
 package pipe.controllers;
 
-import org.apache.poi.hssf.record.formula.functions.T;
 import pipe.historyActions.HistoryManager;
 import pipe.historyActions.PetriNetObjectName;
 import pipe.models.component.PetriNetComponent;
-import pipe.models.component.Token;
 
 public abstract class AbstractPetriNetComponentController<T extends PetriNetComponent> {
     protected final T component;

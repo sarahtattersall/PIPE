@@ -3,7 +3,7 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Transition;
+import pipe.models.component.transition.Transition;
 import pipe.views.TransitionView;
 
 import java.awt.*;

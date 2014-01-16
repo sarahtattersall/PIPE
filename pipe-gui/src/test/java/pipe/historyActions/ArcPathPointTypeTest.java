@@ -2,7 +2,7 @@ package pipe.historyActions;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 
 import static org.mockito.Mockito.*;
 

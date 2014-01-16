@@ -1,7 +1,14 @@
 package pipe.visitor;
 
-import pipe.models.PetriNet;
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.place.Place;
+import pipe.models.component.place.PlaceVisitor;
+import pipe.models.component.transition.Transition;
+import pipe.models.component.transition.TransitionVisitor;
+import pipe.models.petrinet.PetriNet;
 
 import java.util.*;
 
@@ -9,7 +16,9 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
 
 
     private final PetriNet petriNet;
+
     private final Collection<PetriNetComponent> components = new HashSet<PetriNetComponent>();
+
     private final Map<String, Connectable> createdConnectables = new HashMap<String, Connectable>();
 
     public Collection<PetriNetComponent> getCreatedComponents() {
@@ -17,7 +26,9 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
     }
 
     private final Collection<PetriNetComponent> createdComponents = new LinkedList<PetriNetComponent>();
+
     private final double xOffset;
+
     private final double yOffset;
 
     public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components) {
@@ -47,13 +58,12 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
             target = (T) createdConnectables.get(target.getId() + "_copied");
         }
 
-        Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getStrategy());
+        Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getType());
         setId(newArc);
         petriNet.addArc(newArc);
         createdComponents.add(newArc);
 
     }
-
 
 
     @Override

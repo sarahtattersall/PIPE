@@ -2,8 +2,14 @@ package pipe.controllers.arcCreator;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.models.PetriNet;
+import pipe.models.component.arc.ArcType;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.component.*;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 import pipe.views.PipeApplicationView;
 
 import java.util.HashMap;
@@ -55,11 +61,11 @@ public class NormalCreator implements ArcActionCreator {
         if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
             Place place = (Place) source;
             Transition transition = (Transition) target;
-            arc = new Arc<Place, Transition>(place, transition, tokens, petriNetController.getBackwardsStrategy());
+            arc = new Arc<Place, Transition>(place, transition, tokens, ArcType.NORMAL);
         } else if (source.getClass().equals(Transition.class) && target.getClass().equals(Place.class)) {
             Place place = (Place) target;
             Transition transition = (Transition) source;
-            arc = new Arc<Transition, Place>(transition, place, tokens, petriNetController.getForwardStrategy());
+            arc = new Arc<Transition, Place>(transition, place, tokens, ArcType.NORMAL);
         }
 
         return arc;

@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.awt.geom.Point2D;
 
-public class PointAdapter extends XmlAdapter<PointAdapter.AdaptedPoint, Point2D>{
+public class PointAdapter extends XmlAdapter<PointAdapter.AdaptedPoint, Point2D> {
 
     @Override
     public Point2D unmarshal(AdaptedPoint adaptedPoint) throws Exception {
@@ -22,6 +22,7 @@ public class PointAdapter extends XmlAdapter<PointAdapter.AdaptedPoint, Point2D>
     public static class AdaptedPoint {
         @XmlAttribute
         public double x;
+
         @XmlAttribute
         public double y;
     }

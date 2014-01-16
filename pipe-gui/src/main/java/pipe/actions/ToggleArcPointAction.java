@@ -9,7 +9,7 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.ArcPoint;
+import pipe.models.component.arc.ArcPoint;
 
 import java.awt.event.ActionEvent;
 

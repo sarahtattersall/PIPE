@@ -1,21 +1,17 @@
 package pipe.gui.widgets;
 
-import parser.ExprEvaluator;
+import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.TransitionController;
-import pipe.models.PetriNet;
-import pipe.models.component.Place;
-import pipe.models.component.Transition;
-import pipe.views.PetriNetView;
-import pipe.views.PlaceView;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Vector;
 
 /**
  * @author yufei wang

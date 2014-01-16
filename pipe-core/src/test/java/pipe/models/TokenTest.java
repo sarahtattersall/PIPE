@@ -5,15 +5,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pipe.exceptions.TokenLockedException;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 import java.awt.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class TokenTest {
 
@@ -77,7 +74,7 @@ public class TokenTest {
     @Test
     public void tokenEquality() {
         String tokenName = "Default";
-        Color sameColor = new Color(0,0,0);
+        Color sameColor = new Color(0, 0, 0);
         Token token1 = new Token(tokenName, false, 0, sameColor);
         Token token2 = new Token(tokenName, true, 1, sameColor);
 
@@ -87,7 +84,7 @@ public class TokenTest {
     @Test
     public void tokenNameInequality() {
         String tokenName = "Default";
-        Color sameColor = new Color(0,0,0);
+        Color sameColor = new Color(0, 0, 0);
         Token token1 = new Token(tokenName, false, 0, sameColor);
         Token token2 = new Token(tokenName + "different", true, 1, sameColor);
 
@@ -98,14 +95,13 @@ public class TokenTest {
     @Test
     public void tokenColorInequality() {
         String tokenName = "Default";
-        Color color1 = new Color(0,0,0);
+        Color color1 = new Color(0, 0, 0);
         Token token1 = new Token(tokenName, false, 0, color1);
         Color color2 = new Color(255, 255, 1);
         Token token2 = new Token(tokenName, true, 1, color2);
 
         assertThat(token1, is(not(equalTo((token2)))));
     }
-
 
 
 }

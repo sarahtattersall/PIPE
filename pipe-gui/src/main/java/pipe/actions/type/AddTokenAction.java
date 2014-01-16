@@ -1,7 +1,7 @@
 package pipe.actions.type;
 
 import pipe.controllers.PlaceController;
-import pipe.models.component.Token;
+import pipe.models.component.token.Token;
 
 public class AddTokenAction extends TokenAction {
 

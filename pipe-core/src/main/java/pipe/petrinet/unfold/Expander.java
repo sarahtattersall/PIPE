@@ -1,9 +1,12 @@
 package pipe.petrinet.unfold;
 
-import pipe.models.PetriNet;
-import pipe.models.component.*;
-import pipe.models.strategy.arc.BackwardsNormalStrategy;
-import pipe.models.strategy.arc.ForwardsNormalStrategy;
+import pipe.models.component.Connectable;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -63,7 +66,7 @@ public class Expander {
      */
     private Token getToken() {
         if (petriNet.containsDefaultToken()) {
-            return  getDefaultToken();
+            return getDefaultToken();
         }
 
         Token blackToken = getBlackToken();
@@ -71,21 +74,6 @@ public class Expander {
             return blackToken;
         }
         return getFirstToken();
-    }
-
-    /**
-     * @return default token in petri net
-     */
-    private Token getDefaultToken() {
-        return petriNet.getToken("Default");
-    }
-
-    /**
-     * @return first token in petri net
-     */
-    private Token getFirstToken() {
-        return petriNet.getTokens().iterator().next();
-
     }
 
     /**
@@ -101,29 +89,26 @@ public class Expander {
     }
 
     /**
+     * @return first token in petri net
+     */
+    private Token getFirstToken() {
+        return petriNet.getTokens().iterator().next();
+
+    }
+
+    /**
+     * @return default token in petri net
+     */
+    private Token getDefaultToken() {
+        return petriNet.getToken("Default");
+    }
+
+    /**
      * @return new unfolded petri net
      */
     public PetriNet unfold() {
         unfoldTransitions();
         return createPetriNetView();
-    }
-
-    private PetriNet createPetriNetView() {
-        PetriNet petriNet = new PetriNet();
-        petriNet.addToken(unfoldToken);
-
-        for (Place place : newPlaces.values()) {
-            petriNet.addPlace(place);
-        }
-
-        for (Transition transition : newTransitions.values()) {
-            petriNet.addTransition(transition);
-        }
-
-        for (Arc<? extends Connectable, ? extends Connectable> arc : newArcs.values()) {
-            petriNet.addArc(arc);
-        }
-        return petriNet;
     }
 
     /**
@@ -141,6 +126,36 @@ public class Expander {
     }
 
     /**
+     * Analyses all inbound arcs of the previous transition
+     * Creates new inbound places with arcs for the transition
+     *
+     * @param newTransition transition for new petri net
+     * @param arcs          inbound arcs of the old transition
+     */
+    public void analyseInboundArcs(Transition newTransition, Iterable<Arc<Place, Transition>> arcs) {
+        for (Arc<Place, Transition> arc : arcs) {
+            Place place = arc.getSource();
+            Data data = getPlaceData(arc, place);
+            Place newPlace =
+                    getNewPlace(place, newTransition.getX(), newTransition.getY(), data.placeTokenCount, data.name);
+            createArc(newPlace, newTransition, data.arcWeight, arc.getType());
+        }
+    }
+
+    /**
+     * Creates an arc from source to transition
+     * Adds it to internal storage
+     *
+     * @param source    unfolded arc source
+     * @param target    unfolded arc target
+     * @param arcWeight unfolded arc weight
+     */
+    private void createArc(Place source, Transition target, int arcWeight, ArcType type) {
+        Arc<Place, Transition> newArc = new Arc<Place, Transition>(source, target, getNewArcWeight(arcWeight), type);
+        newArcs.put(newArc.getId(), newArc);
+    }
+
+    /**
      * Analyses all outbound arcs of the previous transition
      * Creates new outbound places with arcs for the transition
      *
@@ -153,46 +168,9 @@ public class Expander {
             Data data = getPlaceData(arc, place);
             Place newPlace =
                     getNewPlace(place, newTransition.getX(), newTransition.getY(), data.placeTokenCount, data.name);
-            createArc(newTransition, newPlace, data.arcWeight);
+            createArc(newTransition, newPlace, data.arcWeight, arc.getType());
         }
 
-    }
-
-    private Place getNewPlace(Place original, Double newX, Double newY, int tokenCount, String id) {
-        if (newPlaces.containsKey(id)) {
-            return newPlaces.get(id);
-        }
-
-        Place place = new Place(original);
-        for (Token token : place.getTokenCounts().keySet()) {
-            place.setTokenCount(token, 0);
-        }
-        place.setName(id);
-        place.setId(id);
-        place.setX(newX);
-        place.setY(newY);
-        place.setTokenCount(unfoldToken, tokenCount);
-        newPlaces.put(place.getId(), place);
-        return place;
-
-    }
-
-    private void createArc(Transition source, Place target, int arcWeight) {
-        ForwardsNormalStrategy strategy = new ForwardsNormalStrategy();
-        strategy.setPetriNet(petriNet);
-        Arc<Transition, Place> newArc =
-                new Arc<Transition, Place>(source, target, getNewArcWeight(arcWeight), strategy);
-        newArcs.put(newArc.getId(), newArc);
-    }
-
-    /**
-     * @param arcWeight new weight for unfolded token
-     * @return single entry mapping the unfolded token set in the constructor to the arc weight specified
-     */
-    private Map<Token, String> getNewArcWeight(int arcWeight) {
-        Map<Token, String> arcWeights = new HashMap<Token, String>();
-        arcWeights.put(unfoldToken, Integer.toString(arcWeight));
-        return arcWeights;
     }
 
     /**
@@ -219,37 +197,56 @@ public class Expander {
         return new Data(placeTokenCount, arcWeight, newNameBuilder.toString());
     }
 
-    /**
-     * Analyses all inbound arcs of the previous transition
-     * Creates new inbound places with arcs for the transition
-     *
-     * @param newTransition transition for new petri net
-     * @param arcs          inbound arcs of the old transition
-     */
-    public void analyseInboundArcs(Transition newTransition, Iterable<Arc<Place, Transition>> arcs) {
-        for (Arc<Place, Transition> arc : arcs) {
-            Place place = arc.getSource();
-            Data data = getPlaceData(arc, place);
-            Place newPlace =
-                    getNewPlace(place, newTransition.getX(), newTransition.getY(), data.placeTokenCount, data.name);
-            createArc(newPlace, newTransition, data.arcWeight);
-        }
+    private void createArc(Transition source, Place target, int arcWeight, ArcType type) {
+        Arc<Transition, Place> newArc = new Arc<Transition, Place>(source, target, getNewArcWeight(arcWeight), type);
+        newArcs.put(newArc.getId(), newArc);
     }
 
     /**
-     * Creates an arc from source to transition
-     * Adds it to internal storage
-     *
-     * @param source    unfolded arc source
-     * @param target    unfolded arc target
-     * @param arcWeight unfolded arc weight
+     * @param arcWeight new weight for unfolded token
+     * @return single entry mapping the unfolded token set in the constructor to the arc weight specified
      */
-    private void createArc(Place source, Transition target, int arcWeight) {
-        BackwardsNormalStrategy strategy = new BackwardsNormalStrategy();
-        strategy.setPetriNet(petriNet);
-        Arc<Place, Transition> newArc =
-                new Arc<Place, Transition>(source, target, getNewArcWeight(arcWeight), strategy);
-        newArcs.put(newArc.getId(), newArc);
+    private Map<Token, String> getNewArcWeight(int arcWeight) {
+        Map<Token, String> arcWeights = new HashMap<Token, String>();
+        arcWeights.put(unfoldToken, Integer.toString(arcWeight));
+        return arcWeights;
+    }
+
+    private Place getNewPlace(Place original, Double newX, Double newY, int tokenCount, String id) {
+        if (newPlaces.containsKey(id)) {
+            return newPlaces.get(id);
+        }
+
+        Place place = new Place(original);
+        for (Token token : place.getTokenCounts().keySet()) {
+            place.setTokenCount(token, 0);
+        }
+        place.setName(id);
+        place.setId(id);
+        place.setX(newX);
+        place.setY(newY);
+        place.setTokenCount(unfoldToken, tokenCount);
+        newPlaces.put(place.getId(), place);
+        return place;
+
+    }
+
+    private PetriNet createPetriNetView() {
+        PetriNet petriNet = new PetriNet();
+        petriNet.addToken(unfoldToken);
+
+        for (Place place : newPlaces.values()) {
+            petriNet.addPlace(place);
+        }
+
+        for (Transition transition : newTransitions.values()) {
+            petriNet.addTransition(transition);
+        }
+
+        for (Arc<? extends Connectable, ? extends Connectable> arc : newArcs.values()) {
+            petriNet.addArc(arc);
+        }
+        return petriNet;
     }
 
     /**

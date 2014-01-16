@@ -4,28 +4,32 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.models.component.*;
-import pipe.models.strategy.arc.ArcStrategy;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.ArcType;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 import utils.TokenUtils;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ArcTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
     Place mockSource;
+
     Transition mockTarget;
+
     Arc<Place, Transition> arc;
-    ArcStrategy<Place, Transition> mockStrategy;
 
     @Before
     public void setUp() {
@@ -33,10 +37,8 @@ public class ArcTest {
         when(mockSource.getId()).thenReturn("source");
         mockTarget = mock(Transition.class);
         when(mockTarget.getId()).thenReturn("target");
-        mockStrategy = mock(ArcStrategy.class);
-        arc = new Arc<Place, Transition>(mockSource, mockTarget, new HashMap<Token, String>(), mockStrategy);
+        arc = new Arc<Place, Transition>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
     }
-
 
     @Test
     public void gettingStartReturnsCenter() {

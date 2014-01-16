@@ -1,6 +1,6 @@
 package pipe.io;
 
-import pipe.models.PetriNet;
+import pipe.models.petrinet.PetriNet;
 
 public interface PetriNetWriter {
 
