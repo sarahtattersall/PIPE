@@ -1,10 +1,11 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.*;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
-import pipe.handlers.LabelHandler;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
@@ -27,29 +28,34 @@ import java.util.List;
 public class PlaceView extends ConnectableView<Place> implements Serializable, Observer {
 
     private final Ellipse2D.Double place;
+
     private final Shape proximityPlace;
+
     //transferred
     private List<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
+
     //transferred
     private List<MarkingView> _currentMarkingView = new LinkedList<MarkingView>();
+
     //transferred
     private Integer totalMarking = 0;
+
     //transferred
     private TokenView _activeTokenView;
+
     private List<MarkingView> initBackUp;
+
     private List<MarkingView> currentBackUp;
 
     public PlaceView(double positionXInput, double positionYInput) {
         //MODEL
         super(new Place("", ""));
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
-        proximityPlace =
-                (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
+        proximityPlace = (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
     }
 
 
-    public PlaceView(String idInput, String nameInput,
-                     LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
+    public PlaceView(String idInput, String nameInput, LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
         //MODEL
         super(idInput, model, controller);
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
@@ -57,26 +63,22 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         totalMarking = getTotalMarking();
         setId(model.getId());
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
-        proximityPlace =
-                (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
+        proximityPlace = (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
         updateDisplayTokens();
         setChangeListener();
     }
 
-    /**
-     * Used to quickly calculate the total marking of this place and sums up the
-     * marking of each token class.
-     *
-     * @return
-     */
-    public int getTotalMarking() {
-
-        int size = _currentMarkingView.size();
-        int totalMarking = 0;
-        for (MarkingView a_currentMarkingView : _currentMarkingView) {
-            totalMarking += a_currentMarkingView.getCurrentMarking();
-        }
-        return totalMarking;
+    private void setChangeListener() {
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("tokens")) {
+                    updateDisplayTokens();
+                }
+                repaint();
+            }
+        });
     }
 
     private void updateDisplayTokens() {
@@ -103,17 +105,20 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         _currentMarkingView.clear();
     }
 
-    private void setChangeListener() {
-        model.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("tokens")) {
-                    updateDisplayTokens();
-                }
-                repaint();
-            }
-        });
+    /**
+     * Used to quickly calculate the total marking of this place and sums up the
+     * marking of each token class.
+     *
+     * @return
+     */
+    public int getTotalMarking() {
+
+        int size = _currentMarkingView.size();
+        int totalMarking = 0;
+        for (MarkingView a_currentMarkingView : _currentMarkingView) {
+            totalMarking += a_currentMarkingView.getCurrentMarking();
+        }
+        return totalMarking;
     }
 
     public TokenView getActiveTokenView() {
@@ -229,19 +234,18 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
     }
 
-    private boolean isTagged() {
-        return false;
+    public int getCapacity() {
+        return model.getCapacity();
+    }
+
+    boolean hasCapacity() {
+        return model.getCapacity() > 0;
     }
 
     @Override
     public void delete() {
         super.delete();
         //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
-    }
-
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
     }
 
     @Override
@@ -255,9 +259,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
         // 2 Add Place editor
-        contentPane.add(
-                new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
-                        ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
+        contentPane.add(new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()), ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
 
         guiDialog.setResizable(false);
 
@@ -270,16 +272,17 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     }
 
     @Override
+    public void addedToGui() {
+        super.addedToGui();
+    }
+
+    @Override
     public void toggleAttributesVisible() {
         _attributesVisible = !_attributesVisible;
     }
 
-    boolean hasCapacity() {
-        return model.getCapacity() > 0;
-    }
-
-    public int getCapacity() {
-        return model.getCapacity();
+    private boolean isTagged() {
+        return false;
     }
 
     @Override
@@ -292,8 +295,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);
     }
-
-
 
     public HistoryItem setCurrentMarking(List<MarkingView> currentMarkingViewInput) {
         return null;

@@ -296,7 +296,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 		Dimension macroEditorPanelPrefSize = new Dimension(MacroEditor.prefFrameWidth, macroEditorPanelHeight);
 		this.macroEditorPanel.setMinimumSize(macroEditorPanelMinSize);
 		this.macroEditorPanel.setPreferredSize(macroEditorPanelPrefSize);
-		Grid.enableGrid();
+//		Grid.enableGrid();
 		// add macroView as an observer, so that it updates itself automatically
 		this.activeMacro.addObserver(this.macroView);
 
@@ -1297,7 +1297,7 @@ public class MacroEditor extends JDialog implements QueryConstants
 
 		public void actionPerformed(final ActionEvent e)
 		{
-			Grid.increment();
+//			Grid.increment();
 			repaint();
 		}
 	}

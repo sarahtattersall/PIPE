@@ -181,8 +181,8 @@ public class PetriNetMouseHandler extends MouseInputAdapter
 
     private void addPoint(final MouseEvent e)
     {
-        int x = Grid.getModifiedX(e.getX());
-        int y = Grid.getModifiedY(e.getY());
+        int x = e.getX();
+        int y = e.getY();
         boolean shiftDown = e.isShiftDown();
         petriNetController.setEndPoint(x, y, shiftDown);
     }
@@ -201,14 +201,14 @@ public class PetriNetMouseHandler extends MouseInputAdapter
         action.doAction(event, petriNetController);
 //        if(petriNetController.isCurrentlyCreatingArc())
 //        {
-//            petriNetController.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(
+//            petriNetController.setEndPoint(Grid.getModifiedValue(event.getX()), Grid.getModifiedY(
 //                    event.getY()), event.isShiftDown());
 //        }
         //TODO: THIS SHOULDNT BE IN PipeApplicationController
         //PipeApplicationController controller = ApplicationSettings.getApplicationController();
         //controller.mouseMoved(event);
         //if(_createArcView != null)
-        //    _createArcView.setEndPoint(Grid.getModifiedX(event.getX()), Grid.getModifiedY(event.getY()), event.isShiftDown());
+        //    _createArcView.setEndPoint(Grid.getModifiedValue(event.getX()), Grid.getModifiedY(event.getY()), event.isShiftDown());
     }
 
 

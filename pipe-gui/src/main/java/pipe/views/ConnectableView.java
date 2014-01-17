@@ -44,6 +44,12 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
 //        updateLabelLocation();
     }
 
+
+    @Override
+    public String getName() {
+        return model.getName();
+    }
+
     /**
      * Updates label position according to the Connectable location
      */

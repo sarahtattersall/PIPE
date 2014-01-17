@@ -145,8 +145,8 @@ public class AnnotationNote extends Note {
     }
 
     public AnnotationNote paste(double x, double y, boolean toAnotherView, PetriNetView model) {
-        return new AnnotationNote(this.note.getText(), Grid.getModifiedX(x + this.getX()),
-                Grid.getModifiedY(y + this.getY()), this.note.getWidth(), this.note.getHeight(),
+        return new AnnotationNote(this.note.getText(), (int) (x + this.getX()),
+                (int) (y + this.getY()), this.note.getWidth(), this.note.getHeight(),
                 this.isShowingBorder());
     }
 
@@ -221,7 +221,7 @@ public class AnnotationNote extends Note {
         }
 
         public void mouseDragged(MouseEvent e) {
-            myPoint.drag(Grid.getModifiedX(e.getX() - start.x), Grid.getModifiedY(e.getY() - start.y));
+            myPoint.drag(e.getX() - start.x, e.getY() - start.y);
             myPoint.myNote.updateBounds();
             myPoint.repaint();
         }

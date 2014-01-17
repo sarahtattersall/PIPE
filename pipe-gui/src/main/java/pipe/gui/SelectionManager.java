@@ -94,7 +94,7 @@ public class SelectionManager
      * unzoomed selection rectangle would be
      */
     private Rectangle calculateUnzoomedSelection() {
-        ZoomController zoomController = petriNetController.getZoomController();
+        ZoomController zoomController = petriNetTab.getZoomController();
         int x = zoomController.getUnzoomedValue((int) selectionRectangle.getX());
         int y = zoomController.getUnzoomedValue((int) selectionRectangle.getY());
         int height = zoomController.getUnzoomedValue((int) selectionRectangle.getHeight());

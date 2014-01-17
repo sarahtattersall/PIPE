@@ -154,7 +154,6 @@ public class QueryManager implements IModule, QueryConstants
             drawingCanvas.setMinimumSize(drawingCanvasMinSize);
             drawingCanvas.setPreferredSize(drawingCanvasPrefSize);
             queryEditor.setTab();
-            Grid.enableGrid();
 
             // Put everything together
             Container contentPane = queryEditor.getContentPane();

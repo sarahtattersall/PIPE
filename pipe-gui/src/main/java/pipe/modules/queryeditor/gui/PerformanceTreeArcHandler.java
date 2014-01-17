@@ -67,8 +67,8 @@ public class PerformanceTreeArcHandler extends PerformanceTreeObjectHandler {
 			PerformanceTreeArc currentObject = (PerformanceTreeArc)myObject;
 			Point oldLocation = currentObject.getLocation();
 			// Calculate translation in mouse
-			int transX = Grid.getModifiedX(e.getX() - dragInit.x);
-			int transY = Grid.getModifiedY(e.getY() - dragInit.y);
+			int transX = e.getX() - dragInit.x;
+			int transY = e.getY() - dragInit.y;
 			if (MacroManager.getEditor() == null) 
 				((QueryView)contentPane).getSelectionObject().translateSelection(transX, transY);
 			else 

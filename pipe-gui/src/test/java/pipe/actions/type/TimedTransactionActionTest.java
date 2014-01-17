@@ -52,7 +52,7 @@ public class TimedTransactionActionTest {
 
         verify(mockNet).addTransition(argThat(
                 new HasMultiple<Transition>(
-                        new HasXY(Grid.getModifiedX(point.getX()), Grid.getModifiedY(point.getY())),
+                        new HasXY(point.getX(), point.getY()),
                         new HasTimed(true)))
         );
     }

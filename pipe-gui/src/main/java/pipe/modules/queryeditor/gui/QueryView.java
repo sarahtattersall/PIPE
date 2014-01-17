@@ -1,9 +1,9 @@
 /**
  * QueryView
- * 
+ *
  * - represents a tab on which Performance Tree queries are drawn 
  * - Implements drawing features for individual components of a query tree
- * 
+ *
  * @author Tamas Suto
  * @date 15/04/07
  */
@@ -31,481 +31,412 @@ import java.awt.print.PrinterException;
 import java.util.Observable;
 import java.util.Observer;
 
-public class QueryView extends JLayeredPane implements Observer, QueryConstants, Printable
-{
+public class QueryView extends JLayeredPane implements Observer, QueryConstants, Printable {
 
-	public boolean									queryChanged	= false;
+    private final PerformanceTreeSelectionObject selection;
 
-	public PerformanceTreeArc						arcBeingModified;
+    private final PerformanceTreeZoomController zoomControl;
 
-	private boolean											shiftDown		= false;
-	private final PerformanceTreeSelectionObject	selection;
-	private final PerformanceTreeZoomController		zoomControl;
+    private final Grid grid = new Grid();
 
-	public QueryView() {
-		setLayout(null);
-		setOpaque(true);
-		setDoubleBuffered(true);
-		setAutoscrolls(true);
-		setBackground(QueryConstants.ELEMENT_FILL_COLOUR);
-		this.zoomControl = new PerformanceTreeZoomController(100, this);
-		MouseHandler handler = new MouseHandler();
-		addMouseListener(handler);
-		addMouseMotionListener(handler);
-		this.selection = new PerformanceTreeSelectionObject(this);
-	}
+    public boolean queryChanged = false;
 
-	/**
-	 * Draws an initial ResultNode onto the canvas
-	 */
-	public void drawResultNode()
-	{
-		int canvasWidth = this.getWidth();
-		int canvasHeight = this.getHeight();
-		double xLoc = canvasWidth / 2 - QueryConstants.NODE_WIDTH / 2;
-		double yLoc = canvasHeight * 0.05;
+    public PerformanceTreeArc arcBeingModified;
 
-		QueryManager.setMode(QueryConstants.RESULT_NODE);
+    private boolean shiftDown = false;
 
-		PerformanceTreeObject ptObject = new ResultNode(Grid.getModifiedX(xLoc), Grid.getModifiedX(yLoc));
-		ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject); // add
-		// to
-		// data
-		// structure
-		addNewPerformanceTreeObject(ptObject); // draw on canvas
+    public QueryView() {
+        setLayout(null);
+        setOpaque(true);
+        setDoubleBuffered(true);
+        setAutoscrolls(true);
+        setBackground(QueryConstants.ELEMENT_FILL_COLOUR);
+        this.zoomControl = new PerformanceTreeZoomController(100, this);
+        MouseHandler handler = new MouseHandler();
+        addMouseListener(handler);
+        addMouseMotionListener(handler);
+        this.selection = new PerformanceTreeSelectionObject(this);
+    }
 
-		// display info about the node in the InfoBox
-		String msg = QueryManager.addColouring("The node on the canvas is the topmost node in a "
-												+ "Performance Tree query and represents the overall result of the query.<br><br>"
-												+ "The required argument can be any operation node.");
-		QueryManager.writeToInfoBox(msg);
+    /**
+     * Draws an initial ResultNode onto the canvas
+     */
+    public void drawResultNode() {
+        int canvasWidth = this.getWidth();
+        int canvasHeight = this.getHeight();
+        double xLoc = canvasWidth / 2 - QueryConstants.NODE_WIDTH / 2;
+        double yLoc = canvasHeight * 0.05;
 
-		QueryManager.setMode(QueryConstants.SELECT);
-	}
+        QueryManager.setMode(QueryConstants.RESULT_NODE);
 
-	public PerformanceTreeArc getArcBeingModified()
-	{
-		return this.arcBeingModified;
-	}
+        PerformanceTreeObject ptObject = new ResultNode(grid.getModifiedValue(xLoc), grid.getModifiedValue(yLoc));
+        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject); // add
+        // to
+        // data
+        // structure
+        addNewPerformanceTreeObject(ptObject); // draw on canvas
 
-	public void setArcBeingModified(final PerformanceTreeArc arc)
-	{
-		this.arcBeingModified = arc;
-	}
+        // display info about the node in the InfoBox
+        String msg = QueryManager.addColouring("The node on the canvas is the topmost node in a " + "Performance Tree query and represents the overall result of the query.<br><br>" + "The required argument can be any operation node.");
+        QueryManager.writeToInfoBox(msg);
 
-	/**
-	 * This method is responsible for drawing the objects on the canvas
-	 * 
-	 * @param newObject
-	 */
-	public void addNewPerformanceTreeObject(final PerformanceTreeObject newObject)
-	{
-		if (newObject != null)
-		{
-			int l = newObject.getMouseListeners().length;
-			if (l == 0)
-			{
-				if (newObject instanceof PerformanceTreeNode)
-				{
-					PerformanceTreeNodeHandler nodeHandler = new PerformanceTreeNodeHandler(this,
-																							(PerformanceTreeNode) newObject);
-					newObject.addMouseListener(nodeHandler);
-					newObject.addMouseMotionListener(nodeHandler);
-					add(newObject);
-					if (newObject instanceof OperationNode)
-					{
-						// need to add arcs to the canvas as well
-						((OperationNode) newObject).addArcsToContainer(this);
-					}
-				}
-				else if (newObject instanceof PerformanceTreeArc)
-				{
-					PerformanceTreeArcHandler arcHandler = new PerformanceTreeArcHandler(	this,
-																							(PerformanceTreeArc) newObject);
-					newObject.addMouseListener(arcHandler);
-					newObject.addMouseMotionListener(arcHandler);
-					add(newObject);
-					// make labels appear evenly distributed
-					((PerformanceTreeArc) newObject).updateLabelPosition();
-				}
-			}
-		}
-		validate();
-		repaint();
-	}
+        QueryManager.setMode(QueryConstants.SELECT);
+    }
 
-	public void add(final PerformanceTreeObject c)
-	{
-		super.add(c);
-		c.addedToGui();
+    /**
+     * This method is responsible for drawing the objects on the canvas
+     *
+     * @param newObject
+     */
+    public void addNewPerformanceTreeObject(final PerformanceTreeObject newObject) {
+        if (newObject != null) {
+            int l = newObject.getMouseListeners().length;
+            if (l == 0) {
+                if (newObject instanceof PerformanceTreeNode) {
+                    PerformanceTreeNodeHandler nodeHandler = new PerformanceTreeNodeHandler(this, (PerformanceTreeNode) newObject);
+                    newObject.addMouseListener(nodeHandler);
+                    newObject.addMouseMotionListener(nodeHandler);
+                    add(newObject);
+                    if (newObject instanceof OperationNode) {
+                        // need to add arcs to the canvas as well
+                        ((OperationNode) newObject).addArcsToContainer(this);
+                    }
+                } else if (newObject instanceof PerformanceTreeArc) {
+                    PerformanceTreeArcHandler arcHandler = new PerformanceTreeArcHandler(this, (PerformanceTreeArc) newObject);
+                    newObject.addMouseListener(arcHandler);
+                    newObject.addMouseMotionListener(arcHandler);
+                    add(newObject);
+                    // make labels appear evenly distributed
+                    ((PerformanceTreeArc) newObject).updateLabelPosition();
+                }
+            }
+        }
+        validate();
+        repaint();
+    }
 
-		if (c instanceof PerformanceTreeNode)
-			setLayer(c, JLayeredPane.DEFAULT_LAYER.intValue() + QueryConstants.NODE_LAYER_OFFSET);
-		else if (c instanceof PerformanceTreeArc)
-			setLayer(c, JLayeredPane.DEFAULT_LAYER.intValue() + QueryConstants.ARC_LAYER_OFFSET);
-		else if (c instanceof PerformanceTreeArcPathPoint)
-			setLayer(c, JLayeredPane.DEFAULT_LAYER.intValue() + QueryConstants.ARC_POINT_LAYER_OFFSET);
-	}
+    @Override
+    public void validate() {
+        Component[] children = getComponents();
+        for (Component c : children) {
 
-	@Override
-	public void validate()
-	{
-		Component[] children = getComponents();
-		for (Component c : children)
-		{
+            if (c instanceof PerformanceTreeArc) {
+                ((PerformanceTreeArc) c).getArcPath().createPath();
+            } else if (c instanceof PerformanceTreeNode) {
+                if (c instanceof OperationNode) {
+                    c.repaint();
+                } else if (c instanceof ValueNode) {
+                    c.repaint();
+                } else {
+                    c.repaint();
+                }
+            }
+        }
+        super.validate();
+    }
 
-			if (c instanceof PerformanceTreeArc)
-			{
-				((PerformanceTreeArc) c).getArcPath().createPath();
-			}
-			else if (c instanceof PerformanceTreeNode)
-			{
-				if (c instanceof OperationNode)
-				{
-					c.repaint();
-				}
-				else if (c instanceof ValueNode)
-				{
-					c.repaint();
-				}
-				else
-				{
-					c.repaint();
-				}
-			}
-		}
-		super.validate();
-	}
+    public void add(final PerformanceTreeObject c) {
+        super.add(c);
+        c.addedToGui();
 
-	public void update(final Observable o, final Object diffObj)
-	{
-		if (diffObj instanceof PerformanceTreeObject && diffObj != null)
-		{
-			if (QueryManager.getMode() == QueryConstants.LOADING)
-			{
-				addNewPerformanceTreeObject((PerformanceTreeObject) diffObj);
-			}
-			QueryManager.checkTextEditable();
-			QueryManager.checkTextEditing();
+        if (c instanceof PerformanceTreeNode)
+            setLayer(c, JLayeredPane.DEFAULT_LAYER.intValue() + QueryConstants.NODE_LAYER_OFFSET);
+        else if (c instanceof PerformanceTreeArc)
+            setLayer(c, JLayeredPane.DEFAULT_LAYER.intValue() + QueryConstants.ARC_LAYER_OFFSET);
+        else if (c instanceof PerformanceTreeArcPathPoint)
+            setLayer(c, JLayeredPane.DEFAULT_LAYER.intValue() + QueryConstants.ARC_POINT_LAYER_OFFSET);
+    }
 
-			repaint();
-		}
-	}
+    public PerformanceTreeArc getArcBeingModified() {
+        return this.arcBeingModified;
+    }
 
-	public int print(final Graphics g, final PageFormat pageFormat, final int pageIndex) throws PrinterException
-	{
-		if (pageIndex > 0)
-			return Printable.NO_SUCH_PAGE;
-		Graphics2D g2D = (Graphics2D) g;
-		// Move origin to page printing area corner
-		g2D.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
-		g2D.scale(0.5, 0.5);
-		print(g2D); // Draw the query
-		return Printable.PAGE_EXISTS;
-	}
+    public void setArcBeingModified(final PerformanceTreeArc arc) {
+        this.arcBeingModified = arc;
+    }
 
-	/**
-	 * This method is called whenever the frame is moved, resized etc. It
-	 * iterates over the existing query objects and repaints them.
-	 */
-	@Override
-	public void paintComponent(final Graphics g)
-	{
-		Graphics2D g2 = (Graphics2D) g;
-		super.paintComponent(g2);
-		if (Grid.isEnabled())
-		{
-			Grid.updateSize(this);
-			Grid.drawGrid(g);
-		}
-		this.selection.updateBounds();
-	}
+    public void update(final Observable o, final Object diffObj) {
+        if (diffObj instanceof PerformanceTreeObject && diffObj != null) {
+            if (QueryManager.getMode() == QueryConstants.LOADING) {
+                addNewPerformanceTreeObject((PerformanceTreeObject) diffObj);
+            }
+            QueryManager.checkTextEditable();
+            QueryManager.checkTextEditing();
 
-	public void updatePreferredSize()
-	{
-		// iterate over net objects
-		// setPreferredSize() accordingly
-		Component[] components = getComponents();
-		Dimension d = new Dimension(0, 0);
-        for(Component component : components)
-        {
-            if(component instanceof PerformanceTreeSelectionObject)
+            repaint();
+        }
+    }
+
+    public int print(final Graphics g, final PageFormat pageFormat, final int pageIndex) throws PrinterException {
+        if (pageIndex > 0) return Printable.NO_SUCH_PAGE;
+        Graphics2D g2D = (Graphics2D) g;
+        // Move origin to page printing area corner
+        g2D.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+        g2D.scale(0.5, 0.5);
+        print(g2D); // Draw the query
+        return Printable.PAGE_EXISTS;
+    }
+
+    /**
+     * This method is called whenever the frame is moved, resized etc. It
+     * iterates over the existing query objects and repaints them.
+     */
+    @Override
+    public void paintComponent(final Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        super.paintComponent(g2);
+        if (grid.isEnabled()) {
+            grid.updateSize(this);
+            grid.drawGrid(g);
+        }
+        this.selection.updateBounds();
+    }
+
+    public void updatePreferredSize() {
+        // iterate over net objects
+        // setPreferredSize() accordingly
+        Component[] components = getComponents();
+        Dimension d = new Dimension(0, 0);
+        for (Component component : components) {
+            if (component instanceof PerformanceTreeSelectionObject)
                 continue; // PerformanceTreeSelectionObject not included
             Rectangle r = component.getBounds();
             int x = r.x + r.width + 100;
             int y = r.y + r.height + 100;
-            if(x > d.width)
-                d.width = x;
-            if(y > d.height)
-                d.height = y;
+            if (x > d.width) d.width = x;
+            if (y > d.height) d.height = y;
         }
-		setPreferredSize(d);
-		getParent().validate();
-	}
+        setPreferredSize(d);
+        getParent().validate();
+    }
 
-	public void zoom()
-	{
-		Component[] children = getComponents();
-        for(Component aChildren : children)
-        {
+    public void zoom() {
+        Component[] children = getComponents();
+        for (Component aChildren : children) {
             //	if (children[i] instanceof Zoomable)
             //		((Zoomable) children[i]).zoomUpdate();
         }
-		validate();
-	}
+        validate();
+    }
 
-	public PerformanceTreeSelectionObject getSelectionObject()
-	{
-		return this.selection;
-	}
+    public PerformanceTreeSelectionObject getSelectionObject() {
+        return this.selection;
+    }
 
-	public void setCursorType(final String type)
-	{
-		if (type.equals("arrow"))
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		else if (type.equals("crosshair"))
-			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		else if (type.equals("move"))
-			setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-	}
+    public void setCursorType(final String type) {
+        if (type.equals("arrow")) setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        else if (type.equals("crosshair")) setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        else if (type.equals("move")) setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    }
 
-	public void setShiftDown(final boolean down)
-	{
-		this.shiftDown = down;
-		if (this.arcBeingModified != null)
-		{
-			this.arcBeingModified.getArcPath().setFinalPointType(this.shiftDown);
-			this.arcBeingModified.getArcPath().createPath();
-		}
-	}
+    public void setShiftDown(final boolean down) {
+        this.shiftDown = down;
+        if (this.arcBeingModified != null) {
+            this.arcBeingModified.getArcPath().setFinalPointType(this.shiftDown);
+            this.arcBeingModified.getArcPath().createPath();
+        }
+    }
 
-	public PerformanceTreeZoomController getZoomController()
-	{
-		return this.zoomControl;
-	}
+    public PerformanceTreeZoomController getZoomController() {
+        return this.zoomControl;
+    }
 
-	class MouseHandler extends MouseInputAdapter
-	{
+    class MouseHandler extends MouseInputAdapter {
 
-		private Point	dragStart;
-		String			msg;
+        String msg;
 
-		@Override
-		public void mousePressed(final MouseEvent e)
-		{
-			PerformanceTreeObject ptObject;
-			if (e.getButton() == MouseEvent.BUTTON1)
-			{
-				Point start = e.getPoint();
-				double startX = start.x - QueryConstants.NODE_WIDTH / 2;
-				double startY = start.y - QueryConstants.NODE_HEIGHT / 2;
+        private Point dragStart;
 
-				switch (QueryManager.getMode())
-				{
-					case RESULT_NODE :
-						if (QueryManager.getData().resultNodeAlreadyCreated())
-						{
-							this.msg = QueryManager.addColouring("Only a single Result node is allowed in a query.");
-							QueryManager.writeToInfoBox(this.msg);
-						}
-						else
-						{
-							ptObject = new ResultNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-							// assign node an ID and add it to the array of
-							// nodes in the query
-							ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-							addNewPerformanceTreeObject(ptObject);
-							// display info about the node in the InfoBox
-							this.msg = QueryManager.addColouring("The Result node is the topmost node in a Performance "
-																	+ "Tree query and represents the overall result of the query.<br><br>"
-																	+ "The required argument can be any operation node.");
-							QueryManager.writeToInfoBox(this.msg);
-						}
-						break;
-					case SEQUENTIAL_NODE :
-						if (QueryManager.getData().sequentialNodeAlreadyCreated())
-						{
-							String msg = QueryManager.addColouring("Only a single SequentialNode is allowed in a query.");
-							QueryManager.writeToInfoBox(msg);
-						}
-						else
-						{
-							ptObject = new SequentialNode(	Grid.getModifiedX(startX),
-															Grid.getModifiedY(startY));
-							ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-							addNewPerformanceTreeObject(ptObject);
-						}
-						break;
-					case PASSAGETIMEDENSITY_NODE :
-						ptObject = new PassageTimeDensityNode(	Grid.getModifiedX(startX),
-																Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case DISTRIBUTION_NODE :
-						ptObject = new DistributionNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case CONVOLUTION_NODE :
-						ptObject = new ConvolutionNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case PROBININTERVAL_NODE :
-						ptObject = new ProbInIntervalNode(	Grid.getModifiedX(startX),
-															Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case PROBINSTATES_NODE :
-						ptObject = new ProbInStatesNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case MOMENT_NODE :
-						ptObject = new MomentNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case PERCENTILE_NODE :
-						ptObject = new PercentileNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case FIRINGRATE_NODE :
-						ptObject = new FiringRateNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case STEADYSTATEPROB_NODE :
-						ptObject = new SteadyStateProbNode(	Grid.getModifiedX(startX),
-															Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case STEADYSTATESTATES_NODE :
-						ptObject = new SteadyStateStatesNode(	Grid.getModifiedX(startX),
-																Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case STATESATTIME_NODE :
-						ptObject = new StatesAtTimeNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case ININTERVAL_NODE :
-						ptObject = new InIntervalNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case SUBSET_NODE :
-						ptObject = new SubsetNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case DISCON_NODE :
-						ptObject = new DisconNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case NEGATION_NODE :
-						ptObject = new NegationNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case ARITHCOMP_NODE :
-						ptObject = new ArithCompNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case ARITHOP_NODE :
-						ptObject = new ArithOpNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case RANGE_NODE :
-						ptObject = new RangeNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case STATES_NODE :
-						ptObject = new StatesNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case ACTIONS_NODE :
-						ptObject = new ActionsNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case NUM_NODE :
-						ptObject = new NumNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case BOOL_NODE :
-						ptObject = new BoolNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case STATEFUNCTION_NODE :
-						ptObject = new StateFunctionNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case MACRO_NODE :
-						ptObject = new MacroNode(Grid.getModifiedX(startX), Grid.getModifiedY(startY));
-						ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
-						addNewPerformanceTreeObject(ptObject);
-						break;
-					case DRAG :
-						this.dragStart = new Point(start);
-				}
-			}
-		}
+        @Override
+        public void mousePressed(final MouseEvent e) {
+            PerformanceTreeObject ptObject;
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                Point start = e.getPoint();
+                double startX = start.x - QueryConstants.NODE_WIDTH / 2;
+                double startY = start.y - QueryConstants.NODE_HEIGHT / 2;
 
-		@Override
-		public void mouseMoved(final MouseEvent e)
-		{
-			if (QueryView.this.arcBeingModified != null)
-			{
-				QueryView.this.arcBeingModified.setEndPoint(Grid.getModifiedX(e.getX()),
-															Grid.getModifiedY(e.getY()),
-															QueryView.this.shiftDown);
-			}
-		}
+                switch (QueryManager.getMode()) {
+                    case RESULT_NODE:
+                        if (QueryManager.getData().resultNodeAlreadyCreated()) {
+                            this.msg = QueryManager.addColouring("Only a single Result node is allowed in a query.");
+                            QueryManager.writeToInfoBox(this.msg);
+                        } else {
+                            ptObject = new ResultNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                            // assign node an ID and add it to the array of
+                            // nodes in the query
+                            ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                            addNewPerformanceTreeObject(ptObject);
+                            // display info about the node in the InfoBox
+                            this.msg = QueryManager.addColouring("The Result node is the topmost node in a Performance " + "Tree query and represents the overall result of the query.<br><br>" + "The required argument can be any operation node.");
+                            QueryManager.writeToInfoBox(this.msg);
+                        }
+                        break;
+                    case SEQUENTIAL_NODE:
+                        if (QueryManager.getData().sequentialNodeAlreadyCreated()) {
+                            String msg = QueryManager.addColouring("Only a single SequentialNode is allowed in a query.");
+                            QueryManager.writeToInfoBox(msg);
+                        } else {
+                            ptObject = new SequentialNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                            ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                            addNewPerformanceTreeObject(ptObject);
+                        }
+                        break;
+                    case PASSAGETIMEDENSITY_NODE:
+                        ptObject = new PassageTimeDensityNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case DISTRIBUTION_NODE:
+                        ptObject = new DistributionNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case CONVOLUTION_NODE:
+                        ptObject = new ConvolutionNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case PROBININTERVAL_NODE:
+                        ptObject = new ProbInIntervalNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case PROBINSTATES_NODE:
+                        ptObject = new ProbInStatesNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case MOMENT_NODE:
+                        ptObject = new MomentNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case PERCENTILE_NODE:
+                        ptObject = new PercentileNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case FIRINGRATE_NODE:
+                        ptObject = new FiringRateNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case STEADYSTATEPROB_NODE:
+                        ptObject = new SteadyStateProbNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case STEADYSTATESTATES_NODE:
+                        ptObject = new SteadyStateStatesNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case STATESATTIME_NODE:
+                        ptObject = new StatesAtTimeNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case ININTERVAL_NODE:
+                        ptObject = new InIntervalNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case SUBSET_NODE:
+                        ptObject = new SubsetNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case DISCON_NODE:
+                        ptObject = new DisconNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case NEGATION_NODE:
+                        ptObject = new NegationNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case ARITHCOMP_NODE:
+                        ptObject = new ArithCompNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case ARITHOP_NODE:
+                        ptObject = new ArithOpNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case RANGE_NODE:
+                        ptObject = new RangeNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case STATES_NODE:
+                        ptObject = new StatesNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case ACTIONS_NODE:
+                        ptObject = new ActionsNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case NUM_NODE:
+                        ptObject = new NumNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case BOOL_NODE:
+                        ptObject = new BoolNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case STATEFUNCTION_NODE:
+                        ptObject = new StateFunctionNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case MACRO_NODE:
+                        ptObject = new MacroNode(grid.getModifiedValue(startX), grid.getModifiedValue(startY));
+                        ptObject = QueryManager.getData().addPerformanceTreeObject(ptObject);
+                        addNewPerformanceTreeObject(ptObject);
+                        break;
+                    case DRAG:
+                        this.dragStart = new Point(start);
+                }
+            }
+        }
 
-		@Override
-		public void mouseDragged(final MouseEvent e)
-		{
-			if (QueryManager.getMode() == QueryConstants.DRAG)
-			{
+        @Override
+        public void mouseDragged(final MouseEvent e) {
+            if (QueryManager.getMode() == QueryConstants.DRAG) {
 
-				// Drag only works when the frame is smaller than the actual
-				// viewport,
-				// so that scrollbars appear at the sides, or when the image is
-				// zoomed.
-				// Otherwise, it doesn't make sense to drag.
+                // Drag only works when the frame is smaller than the actual
+                // viewport,
+                // so that scrollbars appear at the sides, or when the image is
+                // zoomed.
+                // Otherwise, it doesn't make sense to drag.
 
-				JViewport viewer = (JViewport) getParent();
-				Point offScreen = viewer.getViewPosition();
-				if (this.dragStart.x > e.getX())
-				{
-					offScreen.translate(viewer.getWidth(), 0);
-				}
-				if (this.dragStart.y > e.getY())
-				{
-					offScreen.translate(0, viewer.getHeight());
-				}
-				offScreen.translate(this.dragStart.x - e.getX(), this.dragStart.y - e.getY());
-				Rectangle r = new Rectangle(offScreen.x, offScreen.y, 1, 1);
-				scrollRectToVisible(r);
-				super.mouseDragged(e);
-			}
-		}
-	}
+                JViewport viewer = (JViewport) getParent();
+                Point offScreen = viewer.getViewPosition();
+                if (this.dragStart.x > e.getX()) {
+                    offScreen.translate(viewer.getWidth(), 0);
+                }
+                if (this.dragStart.y > e.getY()) {
+                    offScreen.translate(0, viewer.getHeight());
+                }
+                offScreen.translate(this.dragStart.x - e.getX(), this.dragStart.y - e.getY());
+                Rectangle r = new Rectangle(offScreen.x, offScreen.y, 1, 1);
+                scrollRectToVisible(r);
+                super.mouseDragged(e);
+            }
+        }
 
-
+        @Override
+        public void mouseMoved(final MouseEvent e) {
+            if (QueryView.this.arcBeingModified != null) {
+                QueryView.this.arcBeingModified.setEndPoint(grid.getModifiedValue(e.getX()), grid.getModifiedValue(e.getY()), QueryView.this.shiftDown);
+            }
+        }
+    }
 }

@@ -38,7 +38,6 @@ public class PerformanceTreeExporter {
 
 
 	public static void exportQueryView(QueryView g,int format) {
-		boolean gridEnabled = Grid.isEnabled();
 		String filename = null;
 
 		if(g.getComponentCount() == 0) 
@@ -65,9 +64,6 @@ public class PerformanceTreeExporter {
 		// Stuff to make it export properly
 		g.updatePreferredSize();
 		PerformanceTreeObject.ignoreSelection(true);
-		
-		if(gridEnabled)
-			Grid.disableGrid();
 
 		try {
 			switch(format) {
@@ -92,9 +88,6 @@ public class PerformanceTreeExporter {
 					"Error",JOptionPane.ERROR_MESSAGE
 			);
 		}
-
-		if(gridEnabled)
-			Grid.enableGrid();
 		
 		PerformanceTreeObject.ignoreSelection(false);
 		g.repaint();
@@ -102,7 +95,6 @@ public class PerformanceTreeExporter {
     }
 	
 	public static void exportMacroView(MacroView g,int format) {
-		boolean gridEnabled = Grid.isEnabled();
 		String filename = null;
 
 		if(g.getComponentCount() == 0) 
@@ -129,9 +121,7 @@ public class PerformanceTreeExporter {
 		// Stuff to make it export properly
 		g.updatePreferredSize();
 		PerformanceTreeObject.ignoreSelection(true);
-		
-		if(gridEnabled)
-			Grid.disableGrid();
+
 
 		try {
 			switch(format) {
@@ -157,9 +147,6 @@ public class PerformanceTreeExporter {
 			);
 		}
 
-		if(gridEnabled)
-			Grid.enableGrid();
-		
 		PerformanceTreeObject.ignoreSelection(false);
 		g.repaint();
 

@@ -80,7 +80,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //        int transX = e.getX() - dragInit.x;//Grid.getModifiedX(e.getX() - dragInit.x);
+        //        int transX = e.getX() - dragInit.x;//Grid.getModifiedValue(e.getX() - dragInit.x);
         //        int transY = e.getY() - dragInit.y;//Grid.getModifiedY(e.getY() - dragInit.y);
         //        petriNetController.translateSelected(new Point2D.Double(transX, transY));
         super.mouseDragged(e);

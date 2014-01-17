@@ -6,28 +6,27 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
-import pipe.gui.Grid;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.place.Place;
+import pipe.models.petrinet.PetriNet;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PlaceActionTest {
 
     private PetriNetController mockController;
-    private HistoryManager mockHistory;
-    private PetriNet mockNet;
-    private PlaceAction action;
 
+    private HistoryManager mockHistory;
+
+    private PetriNet mockNet;
+
+    private PlaceAction action;
 
     @Before
     public void setUp() {
@@ -40,7 +39,6 @@ public class PlaceActionTest {
         when(mockController.getHistoryManager()).thenReturn(mockHistory);
     }
 
-
     @Test
     public void createsPlaceOnClick() {
 
@@ -51,11 +49,7 @@ public class PlaceActionTest {
 
         action.doAction(mockEvent, mockController);
 
-        verify(mockNet).addPlace(argThat(
-                new HasMultiple<Place>(
-                        new HasXY(Grid.getModifiedX(point.getX()), Grid.getModifiedY(point.getY()))
-                )
-        ));
+        verify(mockNet).addPlace(argThat(new HasMultiple<Place>(new HasXY(point.getX(), point.getY()))));
     }
 
     @Test

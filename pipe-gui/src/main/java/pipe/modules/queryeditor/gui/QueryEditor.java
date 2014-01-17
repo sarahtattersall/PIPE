@@ -1083,7 +1083,8 @@ public class QueryEditor extends JFrame implements QueryConstants, ActionListene
 
 		public void actionPerformed(final ActionEvent e)
 		{
-			Grid.increment();
+            //TODO:
+//			Grid.increment();
 			repaint();
 		}
 	}

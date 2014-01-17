@@ -112,7 +112,7 @@ public class RateParameter extends Parameter {
 
 
     public Parameter paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
-        return new RateParameter(name, value, this.getX() + Grid.getModifiedX(x), this.getY() + Grid.getModifiedY(y));
+        return new RateParameter(name, value, (int) (this.getX() + x), (int) (this.getY() + y));
     }
 
 

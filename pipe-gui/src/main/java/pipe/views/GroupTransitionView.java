@@ -90,8 +90,8 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
     public GroupTransitionView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
         GroupTransitionView copy = new GroupTransitionView(_foldedInto,
-                Grid.getModifiedX(x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2),
-                Grid.getModifiedY(y + this.getY() + Constants.PLACE_TRANSITION_HEIGHT / 2));
+                x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2,
+               y + this.getY() + Constants.PLACE_TRANSITION_HEIGHT / 2);
 
 
         this.newCopy(copy);

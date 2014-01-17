@@ -106,7 +106,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
 
-    public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G");
+    public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G", this);
 
     public GuiAction zoomOutAction;
 
@@ -188,8 +188,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
-
-        Grid.enableGrid();
 
         ModuleManager moduleManager = new ModuleManager();
         JTree moduleTree = moduleManager.getModuleTree();

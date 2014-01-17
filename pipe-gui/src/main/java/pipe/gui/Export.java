@@ -143,7 +143,6 @@ public class Export
 
     public static void exportGuiView(PetriNetTab g, int format, PetriNetView model)
     {
-        boolean gridEnabled = Grid.isEnabled();
         String filename = null;
 
         if(g.getComponentCount() == 0)
@@ -178,10 +177,13 @@ public class Export
         // Stuff to make it export properly
         g.updatePreferredSize();
         AbstractPetriNetViewComponent.ignoreSelection(true);
-        if(gridEnabled)
-        {
-            Grid.disableGrid();
-        }
+
+        //TODO: Grid enabling?
+//        boolean gridEnabled = Grid.isEnabled();
+//        if(gridEnabled)
+//        {
+//            Grid.disableGrid();
+//        }
 
         try
         {
@@ -222,10 +224,11 @@ public class Export
                                          );
         }
 
-        if(gridEnabled)
-        {
-            Grid.enableGrid();
-        }
+        //TODO: WHY DID WE DO THIS?
+//        if(gridEnabled)
+//        {
+//            Grid.enableGrid();
+//        }
         AbstractPetriNetViewComponent.ignoreSelection(false);
         g.repaint();
 

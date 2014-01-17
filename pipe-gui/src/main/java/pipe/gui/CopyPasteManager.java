@@ -254,11 +254,8 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
 
         ZoomController zoomController = petriNetTab.getZoomController();
-
-        double despX = Grid.getModifiedX(
-                zoomController.getUnzoomedValue(pasteRectangle.getX()) - rectangleOrigin.getX());
-        double despY = Grid.getModifiedY(
-                zoomController.getUnzoomedValue(pasteRectangle.getY()) - rectangleOrigin.getY());
+        double despX = zoomController.getUnzoomedValue(pasteRectangle.getX()) - rectangleOrigin.getX();
+        double despY = zoomController.getUnzoomedValue(pasteRectangle.getY()) - rectangleOrigin.getY();
 
         MultipleNamer multipleNamer = new UniqueNamer(petriNet);
         PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);

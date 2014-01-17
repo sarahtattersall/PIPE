@@ -40,8 +40,8 @@ public class PlaceAction extends TypeAction {
     private Place newPlace(Point point, PetriNetController petriNetController) {
         String id = getNewPetriNetName(petriNetController);
         Place place = new Place(id, id);
-        place.setX(Grid.getModifiedX(point.x));
-        place.setY(Grid.getModifiedY(point.y));
+        place.setX(point.x);
+        place.setY(point.y);
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addPlace(place);

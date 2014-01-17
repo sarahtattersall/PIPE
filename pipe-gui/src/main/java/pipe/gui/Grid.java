@@ -7,19 +7,19 @@ import java.awt.*;
 import java.awt.geom.GeneralPath;
 
 /**
- * @author Peter Kyme
+ * This class represents a grid that will draw itself on an object
  */
 public class Grid {
    
-   private static float gridSpacing = Constants.PLACE_TRANSITION_HEIGHT/2;
-   private static final Color gridColor = new Color(240,240,255);
-   private static GeneralPath gridDisplay;
-   private static boolean enabled;
-   private static int gridHeight, gridWidth;   
-   private static int gridCount = 1;
+   private float gridSpacing = Constants.PLACE_TRANSITION_HEIGHT/2;
+   private final Color gridColor = new Color(240,240,255);
+   private GeneralPath gridDisplay;
+   private boolean enabled = true;
+   private int gridHeight, gridWidth;
+   private int gridCount = 1;
    
    
-   private static void createGrid() {
+   private void createGrid() {
       gridDisplay = new GeneralPath();
       
       for (float i = gridSpacing; i <= gridWidth; i += gridSpacing) {
@@ -33,14 +33,12 @@ public class Grid {
    }
    
    
-   public static void enableGrid() {
-      if (!enabled) {
-         enabled = true;
-      }
+   public void enableGrid() {
+      enabled = true;
    }
    
    
-   public static void increment() {
+   public void increment() {
       gridCount++;
       gridCount %= 4;
       
@@ -53,24 +51,24 @@ public class Grid {
    }
    
    
-   private static void setGridSpacing(double spacing) {
+   private void setGridSpacing(double spacing) {
       gridSpacing = (float)(spacing * Constants.PLACE_TRANSITION_HEIGHT);
    }
    
    
-   public static void disableGrid() {
+   public void disableGrid() {
       if (enabled) {
          enabled = false;
       }
    }
    
    
-   public static boolean isEnabled() {
+   public boolean isEnabled() {
       return enabled;
    }
    
    
-   public static void updateSize(Container parent) {
+   public void updateSize(Container parent) {
       if (enabled) {
          gridHeight = parent.getHeight();
          gridWidth = parent.getWidth();
@@ -79,7 +77,7 @@ public class Grid {
    }
    
    
-   public static void drawGrid(Graphics g) {
+   public void drawGrid(Graphics g) {
       Graphics2D g2d = (Graphics2D) g;
 
       g2d.setPaint(gridColor);
@@ -87,30 +85,11 @@ public class Grid {
    }
    
    
-   public static int getModifiedX(double x) {
+   public int getModifiedValue(double value) {
       if (!enabled) {
-         return (int)x;
+         return (int)value;
       }
-      return (int)(Math.round(x / gridSpacing) * gridSpacing);
+      return (int)(Math.round(value / gridSpacing) * gridSpacing);
       
    }
-   
-   
-   public static int getModifiedY(double y) {
-      if (!enabled) {
-         return (int)y;
-      }
-      return (int)(Math.round(y / gridSpacing) * gridSpacing);
-   }
-   
-
-   // method never used?
-   public static float getGridSpacing() {
-      if (enabled) {
-         return gridSpacing;
-      } else {
-         return 1; // Pretend we're using a pixel-fine grid
-      }
-   }
-   
 }

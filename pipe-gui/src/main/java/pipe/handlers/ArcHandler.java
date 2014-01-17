@@ -93,7 +93,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         //            ArcView currentObject = (ArcView) component;
         //            Point oldLocation = currentObject.getLocation();
         //            // Calculate translation in mouse
-        //            int transX = Grid.getModifiedX(e.getX() - dragInit.x);
+        //            int transX = Grid.getModifiedValue(e.getX() - dragInit.x);
         //            int transY = Grid.getModifiedY(e.getY() - dragInit.y);
         //            ((PetriNetTab)contentPane).getSelectionObject().translateSelection(
         //                     transX, transY);

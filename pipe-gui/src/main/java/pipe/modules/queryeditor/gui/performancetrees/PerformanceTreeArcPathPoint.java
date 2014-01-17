@@ -66,7 +66,7 @@ public class PerformanceTreeArcPathPoint extends PerformanceTreeObject implement
 		return point;
 	}
 
-	public void setPointLocation(float x, float y) {
+	public void setPointLocation(double x, double y) {
 		double realX, realY;
 		if (MacroManager.getEditor() == null) {
 			if (QueryManager.getEditor()!=null){

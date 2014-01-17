@@ -42,6 +42,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     private boolean metaDown = false;
 
+    /**
+     * Grid displayed on petri net tab
+     */
+    private final Grid grid = new Grid();
+
     public PetriNetTab(ZoomController controller, AnimationHistoryView animationHistoryView) {
         zoomController = controller;
         addZoomListener(zoomController);
@@ -114,9 +119,9 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         double scale = zoomController.getScaleFactor();
         g2.scale(scale, scale);
         super.paintComponent(g);
-        if (Grid.isEnabled()) {
-            Grid.updateSize(this);
-            Grid.drawGrid(g);
+        if (grid.isEnabled()) {
+            grid.updateSize(this);
+            grid.drawGrid(g);
         }
     }
 
@@ -222,6 +227,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
         validate();
         repaint();
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
 }
 
