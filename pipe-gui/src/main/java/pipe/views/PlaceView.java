@@ -151,42 +151,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return -1;
     }
 
-    @Override
-    public PlaceView copy() {
-        PlaceView copy = new PlaceView((double) ZoomController.getUnzoomedValue(this.getX(), _zoomPercentage),
-                (double) ZoomController.getUnzoomedValue(this.getY(), _zoomPercentage));
-        copy._nameLabel.setName(this.getName());
-        copy._attributesVisible = this._attributesVisible;
-        copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
-        copy.totalMarking = this.totalMarking;
-        copy.setOriginal(this);
-        return copy;
-    }
-
-    @Override
-    public PlaceView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
-        PlaceView copy =
-                new PlaceView((double) Grid.getModifiedX(x + this.getX() + Constants.PLACE_TRANSITION_HEIGHT / 2),
-                        (double) Grid.getModifiedY(y + this.getY() + Constants.PLACE_TRANSITION_HEIGHT / 2));
-
-        String newName = this._nameLabel.getName() + "(" + this.getCopyNumber() + ")";
-        boolean properName = false;
-
-        while (!properName) {
-            if (model.checkPlaceIDAvailability(newName)) {
-                copy._nameLabel.setName(newName);
-                properName = true;
-            } else {
-                newName = newName + "'";
-            }
-        }
-        this.newCopy(copy);
-        copy._attributesVisible = this._attributesVisible;
-        copy._initialMarkingView = Copier.mediumCopy(this._initialMarkingView);
-        copy.totalMarking = this.totalMarking;
-        return copy;
-    }
-
     private void updateNameLabel() {
         if (_attributesVisible) {
             _nameLabel.setText("\nk=" + (model.getCapacity() > 0 ? model.getCapacity() : "\u221E"));

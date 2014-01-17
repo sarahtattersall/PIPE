@@ -299,19 +299,6 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         super.removeFromContainer();
     }
 
-
-    @Override
-    public AbstractPetriNetViewComponent<?> paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
-        return null;
-    }
-
-
-    @Override
-    public PetriNetViewComponent copy() {
-        return null;
-    }
-
-
     @Override
     public int getLayerOffset() {
         return Constants.ARC_POINT_LAYER_OFFSET;

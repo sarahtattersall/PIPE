@@ -156,64 +156,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         updateWeights();
     }
 
-    @Override public NormalArcView<S,T> paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
-//        ConnectableView source = this.getSource().getLastCopy();
-//        ConnectableView target = this.getTarget().getLastCopy();
-//
-//        if (source == null && target == null) {
-//            // don't paste an arc with neither source nor target
-//            return null;
-//        }
-//
-//        if (source == null) {
-//            if (toAnotherView) {
-//                // if the source belongs to another Petri Net, the arc can't be
-//                // pasted
-//                return null;
-//            } else {
-//                source = this.getSource();
-//            }
-//        }
-//
-//        if (target == null) {
-//            if (toAnotherView) {
-//                // if the target belongs to another Petri Net, the arc can't be
-//                // pasted
-//                return null;
-//            } else {
-//                target = this.getTarget();
-//            }
-//        }
-//
-//        NormalArcView copy =
-//                new NormalArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, getWeight(),
-//                        source.getId() + " to " +
-//                                target.getId(), false,
-//                        new Arc(source.getModel(), target.getModel(), this.model.getTokenWeights()), petriNetController);
-//
-//        copy.arcPath.delete();
-//        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
-//            copy.arcPath.addIntermediatePoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
-//                    this.arcPath.isCurved(i));
-//            //TODO: REIMPLEMENT
-////            copy.arcPath.selectPoint(i);
-//        }
-//
-//        source.addOutbound(copy);
-//        target.addInbound(copy);
-//
-//        copy.inView = this.inView;
-//        copy.joined = this.joined;
-//
-//        return copy;
-        return null;
-    }
-
-    @Override public NormalArcView<S,T> copy() {
-        return null;
-//        return new NormalArcView(this);
-    }
-
     @Override public String getType() {
         return type;
     }
