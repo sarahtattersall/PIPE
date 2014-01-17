@@ -216,6 +216,7 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
      * @return true if model selected
      */
     public boolean isSelected() {
-        return petriNetController.isSelected(model);
+        return false;
+//        return petriNetController.isSelected(model);
     }
 }

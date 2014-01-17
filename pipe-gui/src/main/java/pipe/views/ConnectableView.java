@@ -36,12 +36,12 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
                     T model, PetriNetController controller) {
         super(id, name, nameOffsetX, nameOffsetY, model, controller);
         setLocation((int) model.getX(), (int) model.getY());
-        ZoomController zoomController = controller.getZoomController();
-        addZoomController(zoomController);
+//        ZoomController zoomController = controller.getZoomController();
+//        addZoomController(zoomController);
 
         addChangeListener();
         updateLabelLocation();
-        updateBounds();
+//        updateBounds();
     }
 
     private void addChangeListener() {
@@ -151,6 +151,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     protected void updateBounds() {
+        System.out.println("UPDATE BOUNDS");
         double scaleFactor = ZoomController.getScaleFactor(_zoomPercentage);
         double x = model.getX() * scaleFactor;
         double y = model.getY() * scaleFactor;
@@ -210,6 +211,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         _deleted = false;
         _markedAsDeleted = false;
         addLabelToContainer();
+        updateBounds();
 //        update();
     }
 

@@ -68,13 +68,13 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
      * Updates view by displaying relevant information
      */
     public void update() {
-        removeAllDeletedModels();
-        displayPlaces(_model.getPlaces());
-        displayTokens(_model.getTokens());
-        displayTransitions(_model.getTransitions());
-        displayArcs(_model.getArcs());
-        //        displayRateParameters(_model.getRateParameters());
-        displayAnnotations(_model.getAnnotations());
+//        removeAllDeletedModels();
+//        displayPlaces(_model.getPlaces());
+//        displayTokens(_model.getTokens());
+//        displayTransitions(_model.getTransitions());
+//        displayArcs(_model.getArcs());
+//                displayRateParameters(_model.getRateParameters());
+//        displayAnnotations(_model.getAnnotations());
         //        displayStateGroups(_model.getStateGroups());
     }
 
@@ -176,6 +176,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     }
 
     private void displayPlaces(Collection<Place> places) {
+        System.out.println("DISPLAY PLACES");
         for (Place place : places) {
             PlaceView view;
             if (_placeViews.containsKey(place)) {

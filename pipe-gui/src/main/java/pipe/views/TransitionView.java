@@ -63,7 +63,6 @@ public class
         _delayForShowingWarnings = 10000;
 
         rotate(model.getAngle());
-        updateBounds();
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
         //        changeToolTipText();
 

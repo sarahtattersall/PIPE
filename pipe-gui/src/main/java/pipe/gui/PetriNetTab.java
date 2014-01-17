@@ -70,15 +70,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      * @param component
      */
     public void addNewPetriNetObject(AbstractPetriNetViewComponent<?> component) {
-        if (component != null) {
-            if (component.getMouseListeners().length == 0) {
-                component.addToPetriNetTab(this);
-                add(component);
-                component.zoomUpdate(getZoom());
-            }
+        if (component.getMouseListeners().length == 0) {
+            add(component);
+            component.addToPetriNetTab(this);
+            component.zoomUpdate(getZoom());
         }
-        //        validate();
-        //        repaint();
     }
 
     public void add(AbstractPetriNetViewComponent<?> component) {
@@ -92,6 +88,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         return zoomController.getPercent();
     }
 
+    @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex)
             throws PrinterException {
         if (pageIndex > 0) {
@@ -104,19 +101,15 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         return Printable.PAGE_EXISTS;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        double scale = ZoomController.getScaleFactor(zoomController.getPercent());
+        g2.scale(scale, scale);
         super.paintComponent(g);
         if (Grid.isEnabled()) {
             Grid.updateSize(this);
             Grid.drawGrid(g);
-        }
-
-//        selection.updateBounds();
-
-        if (_zoomCalled) {
-            ((JViewport) getParent()).setViewPosition(viewPosition);
-            _pipeApplicationView.validate();
-            _zoomCalled = false;
         }
     }
 

@@ -15,7 +15,9 @@ import pipe.controllers.arcCreator.NormalCreator;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.gui.widgets.FileBrowser;
+import pipe.historyActions.AnimationHistory;
 import pipe.io.JarUtilities;
+import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
@@ -25,15 +27,19 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -57,7 +63,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final JTabbedPane frameForPetriNetTabs = new JTabbedPane();
 
-    private final ArrayList<PetriNetTab> petriNetTabs;
+    private final List<PetriNetTab> petriNetTabs = new ArrayList<PetriNetTab>();
 
     private final PipeApplicationController applicationController;
 
@@ -126,8 +132,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public AnimateAction randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5");
 
-    ;
-
     public AnimateAction multipleRandomAction =
             new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
 
@@ -147,8 +151,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private JScrollPane scroller;
 
-    private AnimationHistoryView currentAnimationView;
-
     private FileAction createAction = new CreateAction(this);
 
     private FileAction closeAction = new CloseAction();
@@ -161,8 +163,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         ApplicationSettings.register(this);
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
-
-        petriNetTabs = new ArrayList<PetriNetTab>();
 
         inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H",
                 new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this), applicationController,
@@ -207,7 +207,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
 
-        Grid.enableGrid();
+        //TODO: RENEABLE?
+//        Grid.enableGrid();
 
         ModuleManager moduleManager = new ModuleManager();
         JTree moduleTree = moduleManager.getModuleTree();
@@ -226,11 +227,112 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.applicationModel.setMode(Constants.SELECT);
         selectAction.actionPerformed(null);
 
+
+//        debug();
+
         PetriNetTab tab = applicationController.createEmptyPetriNet(this);
+
         setTabChangeListener();
     }
+    static class Circle extends JPanel {
+        private static final int DIMENSION = 100;
 
-    public void setTitle(String title) {
+        private final int x;
+
+        private final int y;
+
+        private Color color = Color.RED;
+
+        public Circle(int x, int y) {
+            // setBounds(x, y, DIMENSION, DIMENSION);
+            this.x = x;
+            this.y = y;
+            addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    color = Color.BLUE;
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+            });
+        }
+
+        @Override
+
+        public void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setPaint(color);
+            g2.fillOval(0, 0, DIMENSION, DIMENSION);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(DIMENSION, DIMENSION);
+        }
+    }
+
+    private void debug() {
+        final ZoomController zoomController = new ZoomController(100);
+        AnimationHistoryView view = null;
+        try {
+            view = new AnimationHistoryView(new AnimationHistory(), "history");
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+
+        final PetriNetTab panel = new PetriNetTab(zoomController, view);
+        panel.setNetChanged(false);
+        //                    panel.setPreferredSize(new Dimension(400, 400));
+        panel.updatePreferredSize();
+
+
+        Circle circle = new Circle(100, 100);
+        panel.add(circle);
+        circle.setBounds(100, 100, 100, 100);
+
+        Place place = new Place("P0", "P0");
+        place.setX(200);
+        place.setY(200);
+        PlaceView placeView = new PlaceView("", "", new LinkedList<MarkingView>(), place, null);
+
+        panel.addNewPetriNetObject(placeView);
+        //                    placeView.setBounds(0,0,50,50);
+
+        Button zoomIn = new Button("Zoom In");
+        zoomIn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                zoomController.zoomIn();
+                panel.repaint();
+            }
+        });
+        panel.add(zoomIn);
+        zoomIn.setBounds(100, 0, 100, 100);
+
+        Button zoomOut = new Button("Zoom Out");
+        zoomOut.setBounds(0, 0, 100, 100);
+        zoomOut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                zoomController.zoomOut();
+                panel.repaint();
+            }
+        });
+        panel.add(zoomOut);
+
+
+        JScrollPane scrollPane = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JTabbedPane tabbed = new JTabbedPane();
+        tabbed.addTab("Panel", null, scrollPane, null);
+//        this.add(tabbed);
+        addNewTab("", panel);
+    }
+
+    @Override
+    public final void setTitle(String title) {
         String name = applicationModel.getName();
         super.setTitle((title == null) ? name : name + ": " + title);
     }
@@ -239,6 +341,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     // linked model and view
     private void setTabChangeListener() {
         frameForPetriNetTabs.addChangeListener(new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent e) {
                 PetriNetController controller = applicationController.getActivePetriNetController();
                 if (controller.isCopyInProgress()) {
@@ -712,6 +815,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                         JarUtilities.getJarEntries(jarFile, ApplicationSettings.getExamplesDirectoryPath());
 
                 Arrays.sort(nets.toArray(), new Comparator() {
+                    @Override
                     public int compare(Object one, Object two) {
                         return ((JarEntry) one).getName().compareTo(((JarEntry) two).getName());
                     }
@@ -752,6 +856,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 File[] nets = examplesDir.listFiles();
 
                 Arrays.sort(nets, new Comparator() {
+                    @Override
                     public int compare(Object one, Object two) {
                         return ((File) one).getName().compareTo(((File) two).getName());
                     }
@@ -790,6 +895,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     /**
      * Displays contributors
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         JOptionPane.showMessageDialog(this, "PIPE: Platform Independent Petri Net Ediror\n\n" + "Authors:\n" +
@@ -805,7 +911,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     //TODO: Find out if this actually ever gets called
+    @Override
     public void update(Observable o, Object obj) {
+        System.out.println("UPDATE APPLICATION VIEW");
         PetriNetTab currentTab = getCurrentTab();
         if ((applicationModel.getMode() != Constants.CREATING) && (!currentTab.isInAnimationMode())) {
             currentTab.setNetChanged(true);
@@ -995,7 +1103,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         @Override
         public void paintComponent(Graphics g) {
-            System.out.println("PAINT LINE");
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             Line2D line = new Line2D.Double(10, 10, 100, 100);

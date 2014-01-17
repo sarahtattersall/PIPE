@@ -31,18 +31,19 @@ public class ZoomInAction extends GuiAction {
         boolean zoomed = zoomer.zoomIn();
 
         if (zoomed) {
-            JViewport currentView = ((JScrollPane) pipeApplicationView.getFrameForPetriNetTabs().getSelectedComponent()).getViewport();
-
-            double midpointX = ZoomController.getUnzoomedValue(currentView
-                    .getViewPosition().x
-                    + (currentView.getWidth() * 0.5), zoomer.getPercent());
-            double midpointY = ZoomController.getUnzoomedValue(currentView
-                    .getViewPosition().y
-                    + (currentView.getHeight() * 0.5), zoomer.getPercent());
-
-            pipeApplicationView.updateZoomCombo();
-            petriNetTab.zoomTo(new java.awt.Point((int) midpointX,
-                    (int) midpointY));
+            petriNetTab.repaint();
+//            JViewport currentView = ((JScrollPane) pipeApplicationView.getFrameForPetriNetTabs().getSelectedComponent()).getViewport();
+//                      petriNetTab.repaint();
+//            double midpointX = ZoomController.getUnzoomedValue(currentView
+//                    .getViewPosition().x
+//                    + (currentView.getWidth() * 0.5), zoomer.getPercent());
+//            double midpointY = ZoomController.getUnzoomedValue(currentView
+//                    .getViewPosition().y
+//                    + (currentView.getHeight() * 0.5), zoomer.getPercent());
+//
+//            pipeApplicationView.updateZoomCombo();
+//            petriNetTab.zoomTo(new java.awt.Point((int) midpointX,
+//                    (int) midpointY));
         }
     }
 }

@@ -23,25 +23,14 @@ public class ZoomOutAction extends GuiAction {
     @Override
     public void actionPerformed(final ActionEvent actionEvent) {
         PipeApplicationView _pipeApplicationView = ApplicationSettings.getApplicationView();
-        PetriNetTab appView = _pipeApplicationView.getCurrentTab();
+        PetriNetTab petriNetTab = _pipeApplicationView.getCurrentTab();
         PetriNetController currentPetriNetController = applicationController.getActivePetriNetController();
         ZoomController zoomer = currentPetriNetController.getZoomController();
 
         boolean zoomed = zoomer.zoomOut();
 
         if (zoomed) {
-            JViewport currentView = ((JScrollPane) _pipeApplicationView.getFrameForPetriNetTabs().getSelectedComponent()).getViewport();
-
-            double midpointX = ZoomController.getUnzoomedValue(currentView
-                    .getViewPosition().x
-                    + (currentView.getWidth() * 0.5), zoomer.getPercent());
-            double midpointY = ZoomController.getUnzoomedValue(currentView
-                    .getViewPosition().y
-                    + (currentView.getHeight() * 0.5), zoomer.getPercent());
-
-            _pipeApplicationView.updateZoomCombo();
-            appView.zoomTo(new java.awt.Point((int) midpointX,
-                    (int) midpointY));
+            petriNetTab.repaint();
         }
     }
 }
