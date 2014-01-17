@@ -43,5 +43,24 @@ public class AddPetriNetObject
    public String toString(){
       return super.toString() + " \"" + component + "\"";
    }
-   
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AddPetriNetObject that = (AddPetriNetObject) o;
+
+        if (component != null ? !component.equals(that.component) : that.component != null) return false;
+        if (petriNet != null ? !petriNet.equals(that.petriNet) : that.petriNet != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = component != null ? component.hashCode() : 0;
+        result = 31 * result + (petriNet != null ? petriNet.hashCode() : 0);
+        return result;
+    }
 }

@@ -2,6 +2,9 @@ package pipe.controllers.arcCreator;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.HistoryItem;
+import pipe.historyActions.HistoryManager;
 import pipe.models.component.arc.ArcType;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.*;
@@ -41,6 +44,7 @@ public class InhibitorCreator implements ArcActionCreator {
                     ArcType.INHIBITOR);
             PetriNet petriNet = petriNetController.getPetriNet();
             petriNet.addArc(arc);
+            addToHistory(arc);
             return arc;
         }
         return null;
@@ -57,5 +61,14 @@ public class InhibitorCreator implements ArcActionCreator {
     @Override
     public <S extends Connectable, T extends Connectable> boolean canCreate(S source, T target) {
         return source.getClass().equals(Place.class) && target.getClass().equals(Transition.class);
+    }
+
+
+    private void addToHistory(Arc<? extends  Connectable, ? extends Connectable> arc) {
+        PetriNetController netController = controller.getActivePetriNetController();
+        PetriNet petriNet = netController.getPetriNet();
+        HistoryItem item = new AddPetriNetObject(arc, petriNet);
+        HistoryManager manager = netController.getHistoryManager();
+        manager.addNewEdit(item);
     }
 }

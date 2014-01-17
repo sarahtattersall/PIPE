@@ -2,6 +2,9 @@ package pipe.controllers.arcCreator;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.HistoryItem;
+import pipe.historyActions.HistoryManager;
 import pipe.models.component.arc.ArcType;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.*;
@@ -52,8 +55,6 @@ public class NormalCreator implements ArcActionCreator {
         PetriNetController netController = controller.getActivePetriNetController();
         Token token = netController.getSelectedToken();
 
-        PetriNetController petriNetController = controller.getActivePetriNetController();
-
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
 
@@ -75,6 +76,16 @@ public class NormalCreator implements ArcActionCreator {
         PetriNetController netController = controller.getActivePetriNetController();
         PetriNet petriNet = netController.getPetriNet();
         petriNet.addArc(arc);
+        addToHistory(arc);
+
+    }
+
+    private void addToHistory(Arc<? extends  Connectable, ? extends Connectable> arc) {
+        PetriNetController netController = controller.getActivePetriNetController();
+        PetriNet petriNet = netController.getPetriNet();
+        HistoryItem item = new AddPetriNetObject(arc, petriNet);
+        HistoryManager manager = netController.getHistoryManager();
+        manager.addNewEdit(item);
     }
 
 }
