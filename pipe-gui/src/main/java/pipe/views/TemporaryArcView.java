@@ -13,11 +13,23 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
+/**
+ * Building tool for creating an arc, allows the user to go from source to
+ * target before adding to petri net
+ * @param <T> source class
+ */
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     private T source;
 
+    /**
+     * Current end location of the mouse
+     */
     private Point2D end;
 
+    /**
+     * Intermediate points build up by clicking on the canvas
+     * Press shift for curved points
+     */
     private List<ArcPoint> intermediatePoints = new ArrayList<ArcPoint>();
 
     /**
@@ -31,13 +43,20 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         this.source = source;
         Point2D centre = source.getCentre();
         end = new Point2D.Double(centre.getX(), centre.getY());
-        //TODO: REPLACE WITH BETTER LOGIC
-        setBounds(0, 0, 500, 500);
+        updateMax(end);
+        setBounds(0, 0, (int) centre.getX(), (int) centre.getY());
     }
 
     public void setEnd(Point2D end) {
         this.end = end;
         updateMax(end);
+        updateBounds();
+    }
+
+    /**
+     * Updates bounds to maxX and maxY
+     */
+    private void updateBounds() {
         int x = (int) maxX;
         int y = (int) maxY;
         setBounds(0, 0, x, y);
@@ -46,6 +65,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
     public void addIntermediatePoint(ArcPoint point) {
         intermediatePoints.add(point);
         updateMax(point.getPoint());
+        updateBounds();
     }
 
     /**
