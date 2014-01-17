@@ -4,7 +4,6 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
@@ -14,7 +13,6 @@ import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.viewComponents.ArcPath;
-import pipe.views.viewComponents.NameLabel;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -58,7 +56,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     private ArcPoint endPoint;
 
     public ArcView(Arc<S, T> model, PetriNetController controller) {
-        super(model.getId(), model.getId(), 0, 0, model, controller);
+        super(model.getId(), model, controller);
         arcPath = new ArcPath(this, controller);
 
 
@@ -67,57 +65,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         updatePath();
         updateBounds();
         addConnectableListener();
-    }
-
-    /**
-     * Updates the bounding box of the arc component based on the arcs bounds
-     */
-    public void updateBounds() {
-        bounds = arcPath.getBounds();
-        bounds.grow(getComponentDrawOffset() + zoomGrow, getComponentDrawOffset() + zoomGrow);
-        setBounds(bounds);
-    }
-
-    private void addPathSourceLocation() {
-        Point2D.Double startPoint = model.getStartPoint();
-        sourcePoint = new ArcPoint(zoom(startPoint), false);
-        arcPath.addPoint(sourcePoint);
-    }
-
-    public Point2D.Double zoom(Point2D.Double point) {
-        return new Point2D.Double(ZoomController.getZoomedValue(point.x, _zoomPercentage), ZoomController.getZoomedValue(point.y, _zoomPercentage));
-    }
-
-    private void addPathEndLocation() {
-        Point2D.Double targetPoint = model.getEndPoint();
-        endPoint = new ArcPoint(zoom(targetPoint), false);
-        arcPath.addPoint(endPoint);
-    }
-
-    /**
-     * Repopulates the path with the models points
-     */
-    private void updatePath() {
-        addIntermediatePoints();
-        arcPath.createPath();
-        if (tab != null) {
-            arcPath.addPointsToGui(tab);
-        }
-    }
-
-    /**
-     * Loops through points in revese order adding them to the path
-     * Since addPointAt inserts to the left of the index to get
-     * between and the start we need to always insert left of the
-     * end.
-     */
-    private void addIntermediatePoints() {
-        List<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
-        for (ArcPoint arcPoint : points) {
-            if (!arcPath.contains(arcPoint)) {
-                arcPath.insertIntermediatePoint(arcPoint);
-            }
-        }
     }
 
     private void addConnectableListener() {
@@ -172,12 +119,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         };
         model.addPropertyChangeListener(listener);
     }
-
-    /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
-     */
-    public abstract void arcSpecificUpdate();
 
     public PetriNetTab getTab() {
         return tab;
@@ -275,11 +216,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     }
 
     @Override
-    public void zoomUpdate(int percent) {
-        _zoomPercentage = percent;
-    }
-
-    @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         this.tab = tab;
         ArcHandler<S, T> arcHandler = new ArcHandler<S, T>(this, tab, this.model, petriNetController);
@@ -333,6 +269,53 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return 1;
     }
 
+    /**
+     * Repopulates the path with the models points
+     */
+    private void updatePath() {
+        addIntermediatePoints();
+        arcPath.createPath();
+        if (tab != null) {
+            arcPath.addPointsToGui(tab);
+        }
+    }
+
+    /**
+     * Loops through points in revese order adding them to the path
+     * Since addPointAt inserts to the left of the index to get
+     * between and the start we need to always insert left of the
+     * end.
+     */
+    private void addIntermediatePoints() {
+        List<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
+        for (ArcPoint arcPoint : points) {
+            if (!arcPath.contains(arcPoint)) {
+                arcPath.insertIntermediatePoint(arcPoint);
+            }
+        }
+    }
+
+    private void addPathEndLocation() {
+        Point2D.Double targetPoint = model.getEndPoint();
+        endPoint = new ArcPoint(targetPoint, false);
+        arcPath.addPoint(endPoint);
+    }
+
+    private void addPathSourceLocation() {
+        Point2D.Double startPoint = model.getStartPoint();
+        sourcePoint = new ArcPoint(startPoint, false);
+        arcPath.addPoint(sourcePoint);
+    }
+
+    /**
+     * Updates the bounding box of the arc component based on the arcs bounds
+     */
+    public void updateBounds() {
+        bounds = arcPath.getBounds();
+        bounds.grow(getComponentDrawOffset() + zoomGrow, getComponentDrawOffset() + zoomGrow);
+        setBounds(bounds);
+    }
+
     public ArcPath getArcPath() {
         return arcPath;
     }
@@ -379,9 +362,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         view.add(this);
     }
 
-    public void setZoom(int percent) {
-        _zoomPercentage = percent;
-    }
+    /**
+     * Perform any updates specific to the arc type
+     * E.g. NormalArc should show weights
+     */
+    public abstract void arcSpecificUpdate();
 
     public void showEditor() {
         // Build interface

@@ -29,22 +29,4 @@ public class PetriNetViewTest {
         assertEquals("Default created", 1, petriNetView.getTokenViews().size());
         assertEquals("Default", petriNetView.getTokenViews().get(0).getID());
     }
-
-    @Test
-    public void displaysPlaceOnTab() {
-        Place place = new Place("id", "name");
-        PetriNet net = new PetriNet();
-        net.addPlace(place);
-
-        PetriNetController controller = mock(PetriNetController.class);
-        ZoomController zoomController = mock(ZoomController.class);
-        when(controller.getZoomController()).thenReturn(zoomController);
-
-        PetriNetView view = new PetriNetView(controller, net);
-        Observer mockObserver = mock(Observer.class);
-        view.addObserver(mockObserver);
-
-        view.update();
-        verify(mockObserver).update(eq(view), argThat(new HasModel<Place, PlaceView>(place)));
-    }
 }

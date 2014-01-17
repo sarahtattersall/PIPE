@@ -41,8 +41,5 @@ public class PlaceViewBuilderTest {
         assertEquals(place.getMarkingYOffset(), view.getMarkingOffsetYObject(), DOUBLE_DELTA);
         assertEquals(place.getName(), view.getName());
         assertEquals(place.getId(), view.getId());
-        assertEquals(place.getX() - AbstractPetriNetViewComponent.COMPONENT_DRAW_OFFSET, view.getX(), DOUBLE_DELTA);
-        assertEquals(place.getY() - AbstractPetriNetViewComponent.COMPONENT_DRAW_OFFSET, view.getY(), DOUBLE_DELTA);
-
     }
 }

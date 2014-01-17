@@ -46,9 +46,6 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
     private void setup() {
         _copyPasteable = false; //we can't copy & paste indivial arc points!
-        _zoomPercentage = 100;
-        ZoomController controller = petriNetController.getZoomController();
-        this.addZoomController(controller);
     }
 
 
@@ -57,21 +54,15 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         model = null;
         arcPath = a;
         setPointLocation(0, 0);
-        ZoomController zoomController = petriNetController.getZoomController();
-        addZoomController(zoomController);
-
     }
 
 
     public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController) {
-        super("", "", 0, 0, point, petriNetController);
+        super("", point, petriNetController);
         setup();
         model = point;
         setPointLocation(model.getPoint());
         this.arcPath = arcPath;
-        ZoomController zoomController = petriNetController.getZoomController();
-        addZoomController(zoomController);
-
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -98,10 +89,6 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         setPointLocation(point.getX(), point.getY());
     }
     public void setPointLocation(double x, double y) {
-//        double realX = ZoomController.getUnzoomedValue(x, _zoomPercentage);
-//        double realY = ZoomController.getUnzoomedValue(y, _zoomPercentage);
-//        realPoint.setLocation(realX, realY);
-//        model.getPoint().setLocation(x, y);
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }
 
@@ -325,26 +312,6 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
     public String getName() {
         return this.getArcPath().getArc().getName() + " - Point " + this.getIndex();
     }
-
-
-    @Override
-    public void zoomUpdate(int zoom) {
-//        this._zoomPercentage = zoom;
-//        // change ArcPathPoint's size a little bit when it's zoomed in or zoomed out
-//        if (zoom > 213) {
-//            SIZE = 5;
-//        } else if (zoom > 126) {
-//            SIZE = 4;
-//        } else {
-//            SIZE = 3;
-//        }
-//        double x = ZoomController.getZoomedValue(realPoint.x, zoom);
-//        double y = ZoomController.getZoomedValue(realPoint.y, zoom);
-//        point.setLocation(x, y);
-//        setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
-    }
-
-
 
     //TODO: WORK OUT HOW TO SELECT THESE?
     @Override

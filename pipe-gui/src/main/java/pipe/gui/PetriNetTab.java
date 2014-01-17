@@ -73,7 +73,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         if (component.getMouseListeners().length == 0) {
             add(component);
             component.addToPetriNetTab(this);
-            component.zoomUpdate(getZoom());
         }
     }
 

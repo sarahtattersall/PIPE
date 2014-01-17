@@ -26,7 +26,7 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
     public ConditionPlaceView(PlaceView inputPlaceView, PetriNetController controller) {
         //MODEL
         super(inputPlaceView.getId(),
-                inputPlaceView.getName(), 0, 0, new ConditionalPlace(inputPlaceView.getId(), inputPlaceView.getName()),
+                new ConditionalPlace(inputPlaceView.getId(), inputPlaceView.getName()),
                 controller);
         currentMarking = new Integer(inputPlaceView.getCurrentMarkingView().get(0).getCurrentMarking());
         updateBounds();
@@ -37,13 +37,11 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
 
         Graphics2D g2 = (Graphics2D) g;
         AffineTransform saveXform = g2.getTransform();
-        AffineTransform scaledXform = zoomControl.getTransform();
         Insets insets = getInsets();
         int x = insets.left;
         int y = insets.top;
 
         g2.translate(COMPONENT_DRAW_OFFSET, COMPONENT_DRAW_OFFSET);
-        g2.transform(scaledXform);
 
         g2.setStroke(new BasicStroke(1.0f));
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -71,23 +69,10 @@ public class ConditionPlaceView extends ConnectableView implements Cloneable, Co
         }
     }
 
-    public int boundsWidth() {
-        return WIDTH + 1;
-    }
-
-    public int boundsHeight() {
-        return HEIGHT + 1;
-    }
-
-    public int getDiameter() {
-        int zoomBy = zoomControl.getPercent();
-        return (int) (DIAMETER * zoomBy * 0.01);
-    }
 
     public boolean contains(int x, int y) {
-        int zoomPercentage = zoomControl.getPercent();
-        double unZoomedX = (x - COMPONENT_DRAW_OFFSET) / (zoomPercentage / 100.0);
-        double unZoomedY = (y - COMPONENT_DRAW_OFFSET) / (zoomPercentage / 100.0);
+        double unZoomedX = (x - COMPONENT_DRAW_OFFSET);
+        double unZoomedY = (y - COMPONENT_DRAW_OFFSET);
 
         return place.contains((int) unZoomedX, (int) unZoomedY);
     }

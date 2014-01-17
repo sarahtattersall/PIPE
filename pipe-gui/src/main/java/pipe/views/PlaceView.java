@@ -51,8 +51,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
     public PlaceView(String idInput, String nameInput,
                      LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
         //MODEL
-        super(idInput, nameInput, model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset(),
-                model, controller);
+        super(idInput, model, controller);
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         totalMarking = getTotalMarking();
@@ -149,16 +148,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         }
         // marking with such an ID does not exist
         return -1;
-    }
-
-    private void updateNameLabel() {
-        if (_attributesVisible) {
-            _nameLabel.setText("\nk=" + (model.getCapacity() > 0 ? model.getCapacity() : "\u221E"));
-        } else {
-            _nameLabel.setText("");
-        }
-        _nameLabel.zoomUpdate(_zoomPercentage);
-        _nameLabel.setName(model.getName());
     }
 
     /**
@@ -295,10 +284,8 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        LabelHandler labelHandler = new LabelHandler(_nameLabel, this);
-        _nameLabel.addMouseListener(labelHandler);
-        _nameLabel.addMouseMotionListener(labelHandler);
-        _nameLabel.addMouseWheelListener(labelHandler);
+        addLabelToContainer(tab);
+
 
         PlaceHandler placeHandler = new PlaceHandler(this, tab, this.model, petriNetController);
         this.addMouseListener(placeHandler);
@@ -306,85 +293,14 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         this.addMouseMotionListener(placeHandler);
     }
 
+
+
     public HistoryItem setCurrentMarking(List<MarkingView> currentMarkingViewInput) {
-        //        if (_initialMarkingView.size() == 0) {
-        //            _initialMarkingView = Copier.mediumCopy(_currentMarkingView);
-        //        }
-        //
-        //
-        //        int totalMarking = 0;
-        //        for (MarkingView inputtedMarkingView : currentMarkingViewInput) {
-        //            totalMarking += inputtedMarkingView.getCurrentMarking();
-        //        }
-        //        // If total marking exceeds capacity then leave the marking as is
-        //        if (model.getCapacity() != 0 && totalMarking > model.getCapacity()) {
-        //            return new PlaceMarking(this, _currentMarkingView, _currentMarkingView);
-        //        }
-        //
-        //        List<MarkingView> oldMarkingView = Copier.mediumCopy(_currentMarkingView);
-        //
-        //        // if a marking for a specific class that existed before does not exist
-        //        // in
-        //        // the new input then this place must release the lock for that token
-        //        // class
-        //        // to allow it to be edited. Also if a previously positive marking is
-        //        // now
-        //        // 0 then the same should happen.
-        //        for (MarkingView m : _currentMarkingView) {
-        //            int newMarkingPos = getMarkingListPos(m.getToken().getID(), currentMarkingViewInput);
-        //            if ((newMarkingPos == -1) || (currentMarkingViewInput.get(newMarkingPos).getCurrentMarking() == 0 &&
-        //                    m.getCurrentMarking() != 0)) {
-        //                ApplicationSettings.getApplicationView().getCurrentPetriNetView()
-        //                        .unlockTokenClass(m.getToken().getID());
-        //            }
-        //        }
-        //        // if a marking for a specific class that didnt exist before is in
-        //        // the new input then this place must acquire the lock for that token
-        //        // class
-        //        // to avoid it from being edited. Also if a now positive marking was
-        //        // previously
-        //        // 0 then the same should happen.
-        //        for (MarkingView m : currentMarkingViewInput) {
-        //            int oldMarkingPos = getMarkingListPos(m.getToken().getID(), _currentMarkingView);
-        //            if ((oldMarkingPos == -1 && m.getCurrentMarking() > 0) ||
-        //                    (_currentMarkingView.get(oldMarkingPos).getCurrentMarking() == 0 && m.getCurrentMarking() != 0)) {
-        //                ApplicationSettings.getApplicationView().getCurrentPetriNetView().lockTokenClass(m.getToken().getID());
-        //            }
-        //            // Now update the current marking if such a marking exists, otherwise create a new one
-        //            if (oldMarkingPos == -1) {
-        //                m.addObserver(this);
-        //                _currentMarkingView.add(m);
-        //            } else {
-        //                _currentMarkingView.get(oldMarkingPos).setCurrentMarking(m.getCurrentMarking());
-        //            }
-        //        }
-        //        LinkedList<TokenView> tokenViews =
-        //                ApplicationSettings.getApplicationView().getCurrentPetriNetView().getTokenViews();
-        //        for (TokenView tc : tokenViews) {
-        //            if (tc.isEnabled()) {
-        //                if (getMarkingListPos(tc.getID(), _currentMarkingView) == -1) {
-        //                    MarkingView m = new MarkingView(tc, 0);
-        //                    m.addObserver(this);
-        //                    _currentMarkingView.add(m);
-        //                }
-        //            }
-        //        }
-        //        repaint();
-        //        List<MarkingView> newMarkingView = Copier.mediumCopy(_currentMarkingView);
-        //        return new PlaceMarking(this, oldMarkingView, newMarkingView);
         return null;
     }
 
     public HistoryItem setCapacity(int newCapacity) {
-
-        throw new RuntimeException("NEED TO EXECUTE THIS IN CONTROLLER");
-        //        int oldCapacity = (int)_model.getCapacity();
-        //
-        //        if (capacity != newCapacity) {
-        //            capacity = newCapacity;
-        //            update();
-        //        }
-        //        return new PlaceCapacity(this, oldCapacity, newCapacity);
+        return null;
     }
 
     public List<MarkingView> getInitialMarkingView() {
@@ -407,14 +323,8 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return model.getMarkingYOffset();
     }
 
-    private int getDiameter() {
-        return ZoomController.getZoomedValue(model.getWidth(), _zoomPercentage);
-    }
-
     @Override
     public boolean contains(int x, int y) {
-        double unZoomedX = ZoomController.getUnzoomedValue(x - getComponentDrawOffset(), _zoomPercentage);
-        double unZoomedY = ZoomController.getUnzoomedValue(y - getComponentDrawOffset(), _zoomPercentage);
 
         //TODO: WORK OUT WHAT THIS DOES
         ArcView someArcView = null;//ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
@@ -437,7 +347,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         //                return false;
         //            }
         //        } else {
-        return place.contains((int) unZoomedX, (int) unZoomedY);
+        return place.contains(x, y);
         //        }
     }
 

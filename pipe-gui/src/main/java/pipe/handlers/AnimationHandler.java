@@ -51,7 +51,6 @@ public class AnimationHandler
 	        			t.hideFromCanvas();
 	        			t.hideAssociatedArcs();
 	        		}
-	        		groupTransitionView.getNameLabel().setVisible(true);
 	        		groupTransitionView.setVisible(true);
 	        		groupTransitionView.showAssociatedArcs();
 	            }
@@ -69,8 +68,7 @@ public class AnimationHandler
     		}
     		groupTransitionView.hideAssociatedArcs();
     		groupTransitionView.setVisible(false);
-    		groupTransitionView.getNameLabel().setVisible(false);
-    		
+
     		_lastGroupTransitionView.add(groupTransitionView);
       		/*PetriNet model = Pipe.getCurrentPetriNetView();
       		model.removePetriNetObject(groupTransition);

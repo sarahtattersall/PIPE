@@ -84,16 +84,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         }
     }
 
-    @Override
-    public void zoomUpdate(int percent) {
-        super.zoomUpdate(percent);
-        for (NameLabel label : weightLabel) {
-            label.zoomUpdate(percent);
-            label.updateSize();
-        }
-
-    }
-
     private void updateWeights() {
         removeCurrentWeights();
         createWeightLabels();
@@ -136,7 +126,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             Token token = entry.getKey();
             String weight = entry.getValue();
 
-            NameLabel label = new NameLabel(_zoomPercentage);
+            NameLabel label = new NameLabel();
             label.setText(weight);
             label.setColor(token.getColor());
             label.updateSize();
@@ -256,31 +246,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     public HistoryItem split() {
-        //
-        if (!this._inverse.inView) {
-            ApplicationSettings.getApplicationView().getCurrentTab().add(_inverse);
-            _inverse.getSource().addOutbound(_inverse);
-            _inverse.getTarget().addInbound(_inverse);
-        }
-        if (!this.inView) {
-            ApplicationSettings.getApplicationView().getCurrentTab().add(this);
-            this.getSource().addOutbound(this);
-            this.getTarget().addInbound(this);
-        }
-
-        //
-        _inverse.inView = true;
-        this.inView = true;
-        this.joined = false;
-        _inverse.joined = false;
-
-        this.updateWeightLabel();
-        _inverse.updateWeightLabel();
-
-        this.updateArcPosition();
-        _inverse.updateArcPosition();
-
-        return new SplitInverseArc(this);
+       return null;
     }
 
     public HistoryItem join() {
@@ -321,11 +287,10 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         if (joined) {
             g2.translate(arcPath.getPoint(0).getX(), arcPath.getPoint(0).getY());
             g2.rotate(arcPath.getStartAngle() + Math.PI);
-            g2.transform(ZoomController.getTransform(_zoomPercentage));
             g2.setTransform(reset);
         }
 
-        g2.setStroke(new BasicStroke(0.01f * _zoomPercentage));
+        g2.setStroke(new BasicStroke(1f));
         g2.draw(arcPath);
 
         g2.translate(arcPath.getPoint(arcPath.getEndIndex()).getX(), arcPath.getPoint(arcPath.getEndIndex()).getY());
@@ -333,7 +298,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         g2.rotate(arcPath.getEndAngle() + Math.PI);
         g2.setColor(java.awt.Color.WHITE);
 
-        g2.transform(ZoomController.getTransform(_zoomPercentage));
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);

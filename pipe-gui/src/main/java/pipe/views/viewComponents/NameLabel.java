@@ -15,11 +15,11 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
     private double _positionX;
     private double _positionY;
 
-    public NameLabel(int zoom) {
-        this("", zoom, 0, 0);
+    public NameLabel() {
+        this("", 0, 0);
     }
 
-    public NameLabel(String name, int zoomPercentage, double nameOffsetX, double nameOffsetY) {
+    public NameLabel(String name, double nameOffsetX, double nameOffsetY) {
         super(name);
         _name = name;
         _positionX = nameOffsetX;
@@ -27,7 +27,7 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
         _text = "";
         Font font = new Font("Dialog", Font.BOLD, 10);
         setFont(getFont()
-                .deriveFont(ZoomController.getZoomedValue((float) Constants.LABEL_DEFAULT_FONT_SIZE, zoomPercentage)));
+                .deriveFont(Constants.LABEL_DEFAULT_FONT_SIZE));
         setFont(font);
         setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         setEditable(false);
@@ -54,11 +54,13 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
         updatePosition();
     }
 
-    void updatePosition() {
-        setLocation((int) (_positionX - getPreferredSize().width), (int) (_positionY - Constants.NAMELABEL_OFFSET));
+    public void updatePosition() {
+        Dimension dimension = getPreferredSize();
+        setBounds((int) (_positionX - getPreferredSize().width), (int) (_positionY - Constants.NAMELABEL_OFFSET), (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight());
     }
 
 
+    @Override
     public void translate(int x, int y) {
         setPosition(_positionX + x, _positionY + y);
     }
@@ -72,6 +74,7 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
     }
 
 
+    @Override
     public void setName(String nameInput) {
         _name = nameInput;
         setText(_text);
@@ -79,6 +82,7 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
     }
 
 
+    @Override
     public void setText(String s) {
         _text = s;
         if (_name != null) {
@@ -89,23 +93,14 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
         updateSize();
     }
 
-
-    public String getName() {
-        return _name;
-    }
-
-
-    public String getText() {
-        return _text;
-    }
-
-
+    @Override
     public void zoomUpdate(int value) {
         setFont(getFont().deriveFont(ZoomController.getZoomedValue((float) Constants.LABEL_DEFAULT_FONT_SIZE, value)));
         updateSize();
     }
 
 
+    @Override
     public Object clone() {
         try {
             return super.clone();

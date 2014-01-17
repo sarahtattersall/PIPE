@@ -123,7 +123,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
 
-        g2.setStroke(new BasicStroke(0.01f * _zoomPercentage));
+        g2.setStroke(new BasicStroke(1f));
         g2.draw(arcPath);
 
 
@@ -134,7 +134,6 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
         g2.setColor(java.awt.Color.WHITE);
 
         AffineTransform reset = g2.getTransform();
-        g2.transform(ZoomController.getTransform(_zoomPercentage));
 
         g2.setStroke(new BasicStroke(0.8f));
         g2.fillOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);

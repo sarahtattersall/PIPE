@@ -59,7 +59,6 @@ public class UngroupTransitionsAction extends GuiAction
                 petriNetController.getHistoryManager().addNewEdit(edit);
                 groupTransitionView.deleteAssociatedArcs();
                 groupTransitionView.setVisible(false);
-                groupTransitionView.getNameLabel().setVisible(false);
             }
 
         }

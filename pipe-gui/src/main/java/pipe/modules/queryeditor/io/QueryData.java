@@ -639,7 +639,7 @@ public class QueryData extends Observable implements QueryConstants, Cloneable
         PlaceView[] placesArray = ApplicationSettings.getApplicationView().getCurrentPetriNetView().places();
         for(PlaceView aPlacesArray : placesArray)
         {
-            String placeName = aPlacesArray.getNameLabel().getText();
+            String placeName ="";//' aPlacesArray.getNameLabel().getText();
             if(!this.placeNames.contains(placeName))
             {
                 // only update if something new's available
@@ -1156,7 +1156,7 @@ public class QueryData extends Observable implements QueryConstants, Cloneable
 				{
 					placeCount += p.getCurrentMarkingView().get(0).getCurrentMarking();
 
-					String placeLabel = p.getNameLabel().getName();
+					String placeLabel = "";//p.getNameLabel().getName();
 					System.out.println(placeLabel);
 					if (!this.placeNames.contains(placeLabel))
 						this.placeNames.add(placeLabel);
@@ -1179,7 +1179,7 @@ public class QueryData extends Observable implements QueryConstants, Cloneable
 				TransitionView[] transitionViews = netViewData.getTransitionViews();
 				for (TransitionView t : transitionViews)
 				{
-					String actionName = t.getNameLabel().getText();
+					String actionName = "";//t.getNameLabel().getText();
 					if (!this.actionLabels.contains(actionName))
 						this.actionLabels.add(actionName);
 					else

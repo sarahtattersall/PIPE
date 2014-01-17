@@ -56,12 +56,9 @@ public class ArcPath implements Shape, Cloneable {
 
     private Shape proximityShape = proximityStroke.createStrokedShape(this);
 
-    ;
-
     private int _transitionAngle;
 
-
-    public ArcPath(ArcView parent, PetriNetController petriNetController) {
+    public ArcPath(ArcView<? extends Connectable, ? extends Connectable> parent, PetriNetController petriNetController) {
         this.parent = parent;
         this.petriNetController = petriNetController;
         _transitionAngle = 0;
@@ -606,13 +603,12 @@ public class ArcPath implements Shape, Cloneable {
         int length = getEndIndex() + 1;
         String[][] details = new String[length][3];
 
-        int zoom = this.getArc().getZoomPercentage();
         int x, y;
         for (int c = 0; c < length; c++) {
             x = pathPoints.get(c).getX();
-            details[c][0] = String.valueOf(ZoomController.getUnzoomedValue(x, zoom));
+            details[c][0] = String.valueOf(x);
             y = pathPoints.get(c).getY();
-            details[c][1] = String.valueOf(ZoomController.getUnzoomedValue(y, zoom));
+            details[c][1] = String.valueOf(y);
             details[c][2] = String.valueOf(pathPoints.get(c).isCurved());
         }
         return details;
