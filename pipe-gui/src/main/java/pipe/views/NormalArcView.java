@@ -62,10 +62,19 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     @Override
-    protected void arcSpecificDelete() {
+    public void delete() {
+        super.delete();
         for (NameLabel label : weightLabel) {
             removeLabelFromParentContainer(label);
         }
+    }
+
+    private void removeLabelFromParentContainer(NameLabel label) {
+        tab.remove(label);
+    }
+
+    @Override
+    protected void arcSpecificDelete() {
     }
 
     @Override

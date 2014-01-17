@@ -25,6 +25,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class listens for changes in {@link pipe.models.petrinet.PetriNet}
+ * and creates/deletes the relevant views as appropriate
+ */
 public class PetriNetChangeListener implements PropertyChangeListener {
     private final PipeApplicationView applicationView;
     /**

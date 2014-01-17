@@ -10,9 +10,9 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.Connectable;
 import pipe.views.viewComponents.ArcPath;
 import pipe.views.viewComponents.NameLabel;
 
@@ -20,7 +20,10 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * This class contains the common methods for different arc types.
@@ -31,14 +34,10 @@ import java.util.*;
  * @param <S> Model source type
  * @param <T> Model target type
  */
-public abstract class ArcView<S extends Connectable, T extends Connectable>
-        extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
-
-
-    public PetriNetTab getTab() {
-        return tab;
-    }
-
+public abstract class ArcView<S extends Connectable, T extends Connectable> extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
+    /**
+     * Actual visible path
+     */
     final protected ArcPath arcPath;
 
     // bounds of arc need to be grown in order to avoid clipping problems
@@ -53,8 +52,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     // true if arc is not hidden when a bidirectional arc is used
     boolean inView = true;
-
-    private boolean _noFunctionalWeights = true;
 
     private ArcPoint sourcePoint;
 
@@ -72,31 +69,61 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         addConnectableListener();
     }
 
+    /**
+     * Updates the bounding box of the arc component based on the arcs bounds
+     */
+    public void updateBounds() {
+        bounds = arcPath.getBounds();
+        bounds.grow(getComponentDrawOffset() + zoomGrow, getComponentDrawOffset() + zoomGrow);
+        setBounds(bounds);
+    }
+
+    private void addPathSourceLocation() {
+        Point2D.Double startPoint = model.getStartPoint();
+        sourcePoint = new ArcPoint(zoom(startPoint), false);
+        arcPath.addPoint(sourcePoint);
+    }
+
+    public Point2D.Double zoom(Point2D.Double point) {
+        return new Point2D.Double(ZoomController.getZoomedValue(point.x, _zoomPercentage), ZoomController.getZoomedValue(point.y, _zoomPercentage));
+    }
+
+    private void addPathEndLocation() {
+        Point2D.Double targetPoint = model.getEndPoint();
+        endPoint = new ArcPoint(zoom(targetPoint), false);
+        arcPath.addPoint(endPoint);
+    }
+
+    /**
+     * Repopulates the path with the models points
+     */
+    private void updatePath() {
+        addIntermediatePoints();
+        arcPath.createPath();
+        if (tab != null) {
+            arcPath.addPointsToGui(tab);
+        }
+    }
+
+    /**
+     * Loops through points in revese order adding them to the path
+     * Since addPointAt inserts to the left of the index to get
+     * between and the start we need to always insert left of the
+     * end.
+     */
+    private void addIntermediatePoints() {
+        List<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
+        for (ArcPoint arcPoint : points) {
+            if (!arcPath.contains(arcPoint)) {
+                arcPath.insertIntermediatePoint(arcPoint);
+            }
+        }
+    }
+
     private void addConnectableListener() {
         addArcChangeListener();
         addSourceTargetConnectableListener();
 
-    }
-
-    private void addArcChangeListener() {
-        PropertyChangeListener listener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("newIntermediatePoint")) {
-                    updatePath();
-                    arcSpecificUpdate();
-                    updateBounds();
-                }  else if (name.equals("deleteIntermediatePoint")) {
-                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
-                    arcPath.deletePoint(point);
-                    updatePath();
-                    arcSpecificUpdate();
-                    updateBounds();
-                }
-            }
-        };
-        model.addPropertyChangeListener(listener);
     }
 
     /**
@@ -123,6 +150,37 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
                 }
             }
         });
+    }
+
+    private void addArcChangeListener() {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("newIntermediatePoint")) {
+                    updatePath();
+                    arcSpecificUpdate();
+                    updateBounds();
+                } else if (name.equals("deleteIntermediatePoint")) {
+                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
+                    arcPath.deletePoint(point);
+                    updatePath();
+                    arcSpecificUpdate();
+                    updateBounds();
+                }
+            }
+        };
+        model.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Perform any updates specific to the arc type
+     * E.g. NormalArc should show weights
+     */
+    public abstract void arcSpecificUpdate();
+
+    public PetriNetTab getTab() {
+        return tab;
     }
 
     /**
@@ -168,20 +226,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         //addWeightLabelsToContainer(getParent());
     }
 
-    //TODO: DELETE
-    public void updateArcPosition() {
-        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
-        //        addPathSourceLocation(points.first.x, points.first.y);
-        //        setTargetLocation(points.second.x, points.second.y);
-        //        if (_source != null) {
-        //            _source.updateEndPoint(this);
-        //        }
-        //        if (_target != null) {
-        //            _target.updateEndPoint(this);
-        //        }
-        //        arcPath.createPath();
-    }
-
     @Override
     public void delete() {
         if (!_deleted) {
@@ -192,6 +236,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             _deleted = true;
         }
     }
+
+    /**
+     * Perform any arc specific deletion acitons
+     */
+    protected abstract void arcSpecificDelete();
 
     @Override
     public int getLayerOffset() {
@@ -206,10 +255,19 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return super.clone();
     }
 
-    /**
-     * Perform any arc specific deletion acitons
-     */
-    protected abstract void arcSpecificDelete();
+    //TODO: DELETE
+    public void updateArcPosition() {
+        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
+        //        addPathSourceLocation(points.first.x, points.first.y);
+        //        setTargetLocation(points.second.x, points.second.y);
+        //        if (_source != null) {
+        //            _source.updateEndPoint(this);
+        //        }
+        //        if (_target != null) {
+        //            _target.updateEndPoint(this);
+        //        }
+        //        arcPath.createPath();
+    }
 
     @Override
     public void translate(int x, int y) {
@@ -251,10 +309,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return null;
     }
 
-    protected void removeLabelFromParentContainer(NameLabel label) {
-        getParent().remove(label);
-    }
-
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
     public ConnectableView<Connectable> getSource() {
         return null;
@@ -277,53 +331,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     public int getSimpleWeight() {
         return 1;
-    }
-
-    /**
-     * Repopulates the path with the models points
-     */
-    private void updatePath() {
-        addIntermediatePoints();
-        arcPath.createPath();
-        if (tab != null) {
-            arcPath.addPointsToGui(tab);
-        }
-    }
-
-    /**
-     * Loops through points in revese order adding them to the path
-     * Since addPointAt inserts to the left of the index to get
-     * between and the start we need to always insert left of the
-     * end.
-     */
-    private void addIntermediatePoints() {
-        List<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
-        for (ArcPoint arcPoint : points) {
-            if (!arcPath.contains(arcPoint)) {
-                arcPath.insertIntermediatePoint(arcPoint);
-            }
-        }
-    }
-
-    private void addPathEndLocation() {
-        Point2D.Double targetPoint = model.getEndPoint();
-        endPoint = new ArcPoint(zoom(targetPoint), false);
-        arcPath.addPoint(endPoint);
-    }
-
-    private void addPathSourceLocation() {
-        Point2D.Double startPoint = model.getStartPoint();
-        sourcePoint = new ArcPoint(zoom(startPoint), false);
-        arcPath.addPoint(sourcePoint);
-    }
-
-    /**
-     * Updates the bounding box of the arc component based on the arcs bounds
-     */
-    public void updateBounds() {
-        bounds = arcPath.getBounds();
-        bounds.grow(getComponentDrawOffset() + zoomGrow, getComponentDrawOffset() + zoomGrow);
-        setBounds(bounds);
     }
 
     public ArcPath getArcPath() {
@@ -372,17 +379,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         view.add(this);
     }
 
-    /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
-     */
-    public abstract void arcSpecificUpdate();
-
-    public Point2D.Double zoom(Point2D.Double point) {
-        return new Point2D.Double(ZoomController.getZoomedValue(point.x, _zoomPercentage),
-                ZoomController.getZoomedValue(point.y, _zoomPercentage));
-    }
-
     public void setZoom(int percent) {
         _zoomPercentage = percent;
     }
@@ -391,8 +387,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
-        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
-                petriNetController.getArcController(this.model));
+        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController, petriNetController.getArcController(this.model));
 
         guiDialog.add(arcWeightEditor);
 
@@ -421,17 +416,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return null;
     }
 
-    public boolean isWeightFunctional() {
-        return !_noFunctionalWeights;
-    }
-
     //TODO DELETE:
     public List<MarkingView> getWeight() {
         return null;
     }
 
-    protected void updateHistory(
-            HistoryItem historyItem) { // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls
+    protected void updateHistory(HistoryItem historyItem) { // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls
 
         petriNetController.getHistoryManager().addNewEdit(historyItem);
     }
