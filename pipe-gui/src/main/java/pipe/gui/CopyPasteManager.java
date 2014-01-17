@@ -13,6 +13,8 @@ import pipe.models.component.annotation.AnnotationVisitor;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcVisitor;
 import pipe.models.component.transition.TransitionVisitor;
+import pipe.naming.MultipleNamer;
+import pipe.naming.UniqueNamer;
 import pipe.visitor.PasteVisitor;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
@@ -245,16 +247,17 @@ public class CopyPasteManager extends javax.swing.JComponent
         pasteInProgress = false;
         petriNetTab.remove(this);
 
+        if (pasteComponents.isEmpty()) {
+            return;
+        }
+
         double despX = Grid.getModifiedX(
                 ZoomController.getUnzoomedValue(pasteRectangle.getX(), zoom) - rectangleOrigin.getX());
         double despY = Grid.getModifiedY(
                 ZoomController.getUnzoomedValue(pasteRectangle.getY(), zoom) - rectangleOrigin.getY());
 
-        if (pasteComponents.isEmpty()) {
-            return;
-        }
-
-        PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, despX, despY);
+        MultipleNamer multipleNamer = new UniqueNamer(petriNet);
+        PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);
 
         for (Connectable component : getConnectablesToPaste()) {
             component.accept(pasteVisitor);

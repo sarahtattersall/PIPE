@@ -13,14 +13,17 @@ import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
+import pipe.naming.MultipleNamer;
 import pipe.visitor.PasteVisitor;
 
 import java.awt.geom.Point2D;
 import java.util.*;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PasteVisitorTest {
     PasteVisitor visitor;
@@ -28,11 +31,17 @@ public class PasteVisitorTest {
     PetriNet petriNet;
 
     Collection<PetriNetComponent> pasteComponents;
+    MultipleNamer mockNamer;
+    private final static String PLACE_NAME = "MOCK_PLACE_COPIED";
+    private final static String TRANSITION_NAME = "MOCK_TRANSITION_COPIED";
 
     @Before
     public void setUp() {
         pasteComponents = new LinkedList<PetriNetComponent>();
         petriNet = mock(PetriNet.class);
+        mockNamer = mock(MultipleNamer.class);
+        when(mockNamer.getPlaceName()).thenReturn(PLACE_NAME);
+        when(mockNamer.getTransitionName()).thenReturn(TRANSITION_NAME);
     }
 
     @Test
@@ -40,7 +49,7 @@ public class PasteVisitorTest {
         Place place = new Place("id", "name");
         place.setCapacity(10);
         pasteComponents.add(place);
-        visitor = new PasteVisitor(petriNet, pasteComponents);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
         doPaste();
 
@@ -54,7 +63,7 @@ public class PasteVisitorTest {
     }
 
     private Matcher<Place> matchesThisPlaceWithCopiedNameAndId(Place place) {
-        return new CopiedPlace(place);
+        return new CopiedPlace(place, PLACE_NAME);
     }
 
     @Test
@@ -63,7 +72,7 @@ public class PasteVisitorTest {
         place.setCapacity(10);
         pasteComponents.add(place);
         Point2D offset = new Point2D.Double(40, 20);
-        visitor = new PasteVisitor(petriNet, pasteComponents, offset.getX(), offset.getY());
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer, offset.getX(), offset.getY());
 
         doPaste();
 
@@ -71,7 +80,7 @@ public class PasteVisitorTest {
     }
 
     private Matcher<Place> matchesThisPlaceWithCopiedNameAndIdAndOffset(Place place, Point2D offset) {
-        return new CopiedPlace(place, offset);
+        return new CopiedPlace(place, offset, mockNamer.getPlaceName());
     }
 
     @Test
@@ -80,7 +89,7 @@ public class PasteVisitorTest {
         transition.setAngle(45);
         transition.setPriority(10);
         pasteComponents.add(transition);
-        visitor = new PasteVisitor(petriNet, pasteComponents);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
         doPaste();
 
@@ -88,7 +97,7 @@ public class PasteVisitorTest {
     }
 
     private Matcher<Transition> matchesThisTransitionWithCopiedNameAndId(Transition transition) {
-        return new CopiedTransition(transition);
+        return new CopiedTransition(transition, TRANSITION_NAME);
     }
 
     @Test
@@ -98,7 +107,7 @@ public class PasteVisitorTest {
         transition.setPriority(10);
         pasteComponents.add(transition);
         Point2D offset = new Point2D.Double(40, 20);
-        visitor = new PasteVisitor(petriNet, pasteComponents, offset.getX(), offset.getY());
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer, offset.getX(), offset.getY());
 
         doPaste();
 
@@ -107,7 +116,7 @@ public class PasteVisitorTest {
 
     private Matcher<Transition> matchesThisTransitionWithCopiedNameAndIdAndOffset(Transition transition,
                                                                                   Point2D offset) {
-        return new CopiedTransition(transition, offset);
+        return new CopiedTransition(transition, offset, TRANSITION_NAME);
     }
 
     @Test
@@ -120,7 +129,7 @@ public class PasteVisitorTest {
         Map<Token, String> weights = new HashMap<Token, String>();
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
-        visitor = new PasteVisitor(petriNet, pasteComponents);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
         doPaste();
 
@@ -141,7 +150,7 @@ public class PasteVisitorTest {
         Map<Token, String> weights = new HashMap<Token, String>();
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
-        visitor = new PasteVisitor(petriNet, pasteComponents);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
         doPaste();
 
@@ -161,7 +170,7 @@ public class PasteVisitorTest {
             arc.addIntermediatePoint(arcPoint);
 
             pasteComponents.add(arc);
-            visitor = new PasteVisitor(petriNet, pasteComponents);
+            visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
             doPaste();
 
@@ -210,7 +219,7 @@ public class PasteVisitorTest {
         Map<Token, String> weights = new HashMap<Token, String>();
         Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
-        visitor = new PasteVisitor(petriNet, pasteComponents);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
         doPaste();
 
@@ -224,7 +233,7 @@ public class PasteVisitorTest {
 
     /**
      * Makes sure that the argument in matches is identical to the specified place
-     * except name and id have "_copied" appended to them
+     * except name and id match id
      */
     private static class CopiedPlace extends ArgumentMatcher<Place> {
 
@@ -233,23 +242,24 @@ public class PasteVisitorTest {
          */
         private final Place place;
 
+        private final String id;
+
         private final Point2D offset;
 
-        private CopiedPlace(Place place) {
-            this.place = place;
-            this.offset = new Point2D.Double(0, 0);
+        private CopiedPlace(Place place, String id) {
+            this(place,  new Point2D.Double(0, 0), id);
         }
 
-        public CopiedPlace(Place place, Point2D offset) {
+        public CopiedPlace(Place place, Point2D offset, String id) {
             this.place = place;
             this.offset = offset;
+            this.id = id;
         }
 
         @Override
         public boolean matches(Object argument) {
             Place otherPlace = (Place) argument;
-            return (otherPlace.getId().equals(place.getId() + "_copied") && otherPlace.getName().equals(
-                    place.getName() + "_copied") && otherPlace.getX() == (place.getX() + offset.getX()) &&
+            return (otherPlace.getId().equals(id) && otherPlace.getName().equals(id) && otherPlace.getX() == (place.getX() + offset.getX()) &&
                     otherPlace.getY() == (place.getY() + offset.getY()) &&
                     otherPlace.getNameXOffset() == place.getNameXOffset() &&
                     otherPlace.getNameYOffset() == place.getNameYOffset() &&
@@ -270,23 +280,24 @@ public class PasteVisitorTest {
 
         private Transition transition;
 
-        private CopiedTransition(Transition transition) {
-            this.transition = transition;
-            this.offset = new Point2D.Double(0, 0);
+        private final String id;
+
+        private CopiedTransition(Transition transition, String id) {
+            this(transition, new Point2D.Double(0, 0), id);
         }
 
 
-        public CopiedTransition(Transition transition, Point2D offset) {
+        public CopiedTransition(Transition transition, Point2D offset, String id) {
             this.transition = transition;
             this.offset = offset;
+            this.id = id;
         }
 
 
         @Override
         public boolean matches(Object argument) {
             Transition otherTransition = (Transition) argument;
-            return (otherTransition.getId().equals(transition.getId() + "_copied") && otherTransition.getName().equals(
-                    transition.getName() + "_copied") && otherTransition.getX() == (transition.getX() + offset.getX())
+            return (otherTransition.getId().equals(id) && otherTransition.getName().equals(id) && otherTransition.getX() == (transition.getX() + offset.getX())
                     &&
                     otherTransition.getY() == (transition.getY() + offset.getY()) &&
                     otherTransition.getNameXOffset() == transition.getNameXOffset() &&

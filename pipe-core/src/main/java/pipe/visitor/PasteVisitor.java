@@ -10,17 +10,23 @@ import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
 import pipe.models.petrinet.PetriNet;
+import pipe.naming.MultipleNamer;
+import pipe.naming.PetriNetComponentNamer;
 
 import java.util.*;
 
 public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor {
 
+    private final MultipleNamer multipleNamer;
 
     private final PetriNet petriNet;
 
     private final Collection<PetriNetComponent> components = new HashSet<PetriNetComponent>();
 
-    private final Map<String, Connectable> createdConnectables = new HashMap<String, Connectable>();
+    /**
+     * Maps original to copied connectable
+     */
+    private final Map<Connectable, Connectable> createdConnectables = new HashMap<Connectable, Connectable>();
 
     public Collection<PetriNetComponent> getCreatedComponents() {
         return createdComponents;
@@ -32,15 +38,13 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
 
     private final double yOffset;
 
-    public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components) {
-        this.petriNet = petriNet;
-        this.components.addAll(components);
-        xOffset = 0;
-        yOffset = 0;
+    public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components, MultipleNamer multipleNamer) {
+        this(petriNet, components, multipleNamer, 0, 0);
     }
 
-    public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components, double xOffset, double yOffset) {
+    public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components, MultipleNamer multipleNamer, double xOffset, double yOffset) {
         this.petriNet = petriNet;
+        this.multipleNamer = multipleNamer;
         this.components.addAll(components);
         this.xOffset = xOffset;
         this.yOffset = yOffset;
@@ -52,11 +56,11 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
         T target = arc.getTarget();
 
         if (components.contains(source)) {
-            source = (S) createdConnectables.get(source.getId() + "_copied");
+            source = (S) createdConnectables.get(source);
         }
 
         if (components.contains(target)) {
-            target = (T) createdConnectables.get(target.getId() + "_copied");
+            target = (T) createdConnectables.get(target);
         }
 
         Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getType());
@@ -88,7 +92,7 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
         setName(newPlace);
         setOffset(newPlace);
         petriNet.addPlace(newPlace);
-        createdConnectables.put(newPlace.getId(), newPlace);
+        createdConnectables.put(place, newPlace);
         createdComponents.add(newPlace);
     }
 
@@ -99,7 +103,7 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
         setName(newTransition);
         setOffset(newTransition);
         petriNet.addTransition(newTransition);
-        createdConnectables.put(newTransition.getId(), newTransition);
+        createdConnectables.put(transition, newTransition);
         createdComponents.add(newTransition);
     }
 
@@ -109,14 +113,24 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
         connectable.setY(connectable.getY() + yOffset);
     }
 
-    private void setId(PetriNetComponent component) {
-        String id = component.getId() + "_copied";
-        component.setId(id);
+    private void setId(Place place) {
+        place.setId(multipleNamer.getPlaceName());
     }
 
-    private void setName(Connectable component) {
-        String name = component.getName() + "_copied";
-        component.setName(name);
+
+    private void setId(Transition transition) {
+        transition.setId(multipleNamer.getTransitionName());
     }
 
+    private void setId(Arc<? extends Connectable, ? extends Connectable> transition) {
+    }
+
+    private void setName(Place place) {
+        place.setName(multipleNamer.getPlaceName());
+    }
+
+
+    private void setName(Transition transition) {
+        transition.setName(multipleNamer.getTransitionName());
+    }
 }
