@@ -63,11 +63,17 @@ public class PipeApplicationController {
         return token;
     }
 
-    public PetriNetTab createNewTab(PetriNet net, PipeApplicationView applicationView) {
+    public PetriNetTab createNewTab(PetriNet net, final PipeApplicationView applicationView) {
         AnimationHistory animationHistory = new AnimationHistory();
         Animator animator = new Animator(net, animationHistory);
 
         ZoomController zoomController = new ZoomController(100);
+        zoomController.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                applicationView.updateZoomCombo();
+            }
+        });
 
         AnimationHistoryView animationHistoryView;
         try {
