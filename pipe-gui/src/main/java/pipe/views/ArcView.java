@@ -13,6 +13,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.viewComponents.ArcPath;
+import pipe.views.viewComponents.NameLabel;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -243,6 +244,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         //        _weight = weightInput;
         //        return new ArcWeight(this, oldWeight, _weight);
         return null;
+    }
+
+    protected void removeLabelFromParentContainer(NameLabel label) {
+        tab.remove(label);
     }
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
