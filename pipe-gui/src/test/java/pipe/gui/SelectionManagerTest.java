@@ -18,11 +18,14 @@ public class SelectionManagerTest {
     SelectionManager manager;
     PetriNetTab tab;
     PetriNetController mockController;
+    ZoomController zoomController;
 
     @Before
     public void setUp() {
         mockController = mock(PetriNetController.class);
+        zoomController = new ZoomController(100);
         tab = mock(PetriNetTab.class);
+        when(tab.getZoomController()).thenReturn(zoomController);
         manager = new SelectionManager(tab, mockController);
     }
 
@@ -40,9 +43,7 @@ public class SelectionManagerTest {
 
     @Test
     public void selectsUsingUnZoomedLocationOnMousePress() {
-        int zoom = 120;
-        manager.setZoom(zoom);
-
+        zoomController.setZoom(120);
         MouseEvent e = mock(MouseEvent.class);
         when(e.getButton()).thenReturn(MouseEvent.BUTTON1);
         when(e.isControlDown()).thenReturn(false);
@@ -51,8 +52,8 @@ public class SelectionManagerTest {
         when(e.getPoint()).thenReturn(clickPoint);
         manager.mousePressed(e);
 
-        int x = ZoomController.getUnzoomedValue((int) clickPoint.getX(), zoom);
-        int y = ZoomController.getUnzoomedValue((int) clickPoint.getY(), zoom);
+        int x = zoomController.getUnzoomedValue((int) clickPoint.getX());
+        int y = zoomController.getUnzoomedValue((int) clickPoint.getY());
         Rectangle unzoomedRect = new Rectangle(x, y, 0, 0);
         verify(mockController).select(unzoomedRect);
     }
@@ -60,8 +61,7 @@ public class SelectionManagerTest {
 
     @Test
     public void selectsUsingUnZoomedLocationOnMouseDrag() {
-        int zoom = 120;
-        manager.setZoom(zoom);
+        zoomController.setZoom(120);
 
         MouseEvent clickEvent = mock(MouseEvent.class);
         when(clickEvent.getButton()).thenReturn(MouseEvent.BUTTON1);
@@ -80,10 +80,10 @@ public class SelectionManagerTest {
 
         manager.mouseDragged(dragEvent);
 
-        double x = ZoomController.getUnzoomedValue(clickPoint.getX(), zoom);
-        double y = ZoomController.getUnzoomedValue(clickPoint.getY(), zoom);
-        double w = ZoomController.getUnzoomedValue(dragPoint.getX() - clickPoint.getX(), zoom);
-        double h = ZoomController.getUnzoomedValue(dragPoint.getY() - clickPoint.getY(), zoom);
+        double x = zoomController.getUnzoomedValue(clickPoint.getX());
+        double y = zoomController.getUnzoomedValue(clickPoint.getY());
+        double w = zoomController.getUnzoomedValue(dragPoint.getX() - clickPoint.getX());
+        double h = zoomController.getUnzoomedValue(dragPoint.getY() - clickPoint.getY());
         Rectangle unzoomedRect = new Rectangle((int) x, (int) y, (int) w, (int) h);
         verify(mockController).select(unzoomedRect);
     }

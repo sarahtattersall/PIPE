@@ -95,7 +95,7 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
 
     @Override
     public void zoomUpdate(int value) {
-        setFont(getFont().deriveFont(ZoomController.getZoomedValue((float) Constants.LABEL_DEFAULT_FONT_SIZE, value)));
+        setFont(getFont().deriveFont((float) Constants.LABEL_DEFAULT_FONT_SIZE));
         updateSize();
     }
 

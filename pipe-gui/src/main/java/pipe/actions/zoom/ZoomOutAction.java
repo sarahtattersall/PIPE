@@ -22,15 +22,10 @@ public class ZoomOutAction extends GuiAction {
 
     @Override
     public void actionPerformed(final ActionEvent actionEvent) {
-        PipeApplicationView _pipeApplicationView = ApplicationSettings.getApplicationView();
-        PetriNetTab petriNetTab = _pipeApplicationView.getCurrentTab();
         PetriNetController currentPetriNetController = applicationController.getActivePetriNetController();
         ZoomController zoomer = currentPetriNetController.getZoomController();
-
-        boolean zoomed = zoomer.zoomOut();
-
-        if (zoomed) {
-            petriNetTab.repaint();
+        if (zoomer.canZoomOut()) {
+            zoomer.zoomOut();
         }
     }
 }

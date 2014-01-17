@@ -1,17 +1,16 @@
 package pipe.gui;
 
-import pipe.controllers.PetriNetController;
 import pipe.handlers.AnimationHandler;
 import pipe.views.AbstractPetriNetViewComponent;
-import pipe.views.PetriNetView;
 import pipe.views.PetriNetViewComponent;
-import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,32 +19,34 @@ import java.util.Observer;
 
 public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
-    //public ArcView _createArcView;
     private final AnimationHandler animationHandler = new AnimationHandler();
-//    private final SelectionManager selection;
-    //    private final HistoryManager _historyManager;
-    private final PipeApplicationView _pipeApplicationView;
+
     /**
      * Map of components in the tab with id -> component
      */
     private final Map<String, PetriNetViewComponent> petriNetComponents = new HashMap<String, PetriNetViewComponent>();
-    private final Point viewPosition = new Point(0, 0);
+
+    public ZoomController getZoomController() {
+        return zoomController;
+    }
+
     private final ZoomController zoomController;
+
     private final AnimationHistoryView animationHistoryView;
+
     public File _appFile;
+
     public boolean netChanged = false;
-    public boolean _wasNewPertiNetComponentCreated = false;
+
     private boolean animationmode = false;
+
     private boolean metaDown = false;
-    private boolean _zoomCalled = true;
 
-
-    public PetriNetTab(ZoomController controller,
-                       AnimationHistoryView animationHistoryView) {
+    public PetriNetTab(ZoomController controller, AnimationHistoryView animationHistoryView) {
         zoomController = controller;
+        addZoomListener(zoomController);
         this.animationHistoryView = animationHistoryView;
 
-        _pipeApplicationView = ApplicationSettings.getApplicationView();
         setLayout(null);
         setOpaque(true);
         setDoubleBuffered(true);
@@ -53,7 +54,15 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         setBackground(Constants.ELEMENT_FILL_COLOUR);
 
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        //        _historyManager = new HistoryManager(this, _petriNetView);
+    }
+
+    private void addZoomListener(ZoomController zoomController) {
+        zoomController.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                repaint();
+            }
+        });
     }
 
     @Override
@@ -88,8 +97,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     @Override
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex)
-            throws PrinterException {
+    public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
         if (pageIndex > 0) {
             return Printable.NO_SUCH_PAGE;
         }
@@ -103,7 +111,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        double scale = ZoomController.getScaleFactor(zoomController.getPercent());
+        double scale = zoomController.getScaleFactor();
         g2.scale(scale, scale);
         super.paintComponent(g);
         if (Grid.isEnabled()) {
@@ -171,46 +179,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         scrollRectToVisible(r);
     }
 
-    public void zoomIn() {
-        int zoom = zoomController.getPercent();
-        if (zoomController.zoomIn()) {
-            zoomTo(midpoint(zoom));
-        }
-    }
-
-    private Point midpoint(int zoom) {
-        JViewport viewport = (JViewport) getParent();
-        double midpointX = ZoomController.getUnzoomedValue(
-                viewport.getViewPosition().x + (viewport.getWidth() * 0.5), zoom);
-        double midpointY = ZoomController.getUnzoomedValue(
-                viewport.getViewPosition().y + (viewport.getHeight() * 0.5), zoom);
-        return (new java.awt.Point((int) midpointX, (int) midpointY));
-    }
-
-    public void zoomTo(Point point) {
-
-        int zoom = zoomController.getPercent();
-        JViewport viewport = (JViewport) getParent();
-        double newZoomedX = ZoomController.getZoomedValue(point.x, zoom);
-        double newZoomedY = ZoomController.getZoomedValue(point.y, zoom);
-
-        int newViewX = (int) (newZoomedX - (viewport.getWidth() * 0.5));
-        if (newViewX < 0) {
-            newViewX = 0;
-        }
-
-        int newViewY = (int) (newZoomedY - (viewport.getHeight() * 0.5));
-        if (newViewY < 0) {
-            newViewY = 0;
-        }
-
-        viewPosition.setLocation(newViewX, newViewY);
-        viewport.setViewPosition(viewPosition);
-        zoom();
-
-        updatePreferredSize();
-    }
-
     public void updatePreferredSize() {
         Component[] components = getComponents();
         Dimension d = new Dimension(0, 0);
@@ -235,23 +203,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
-    private void zoom() {
-        Component[] children = getComponents();
-
-        for (Component child : children) {
-            if (child instanceof Zoomable) {
-                ((Zoomable) child).zoomUpdate(zoomController.getPercent());
-            }
-        }
-        _zoomCalled = true;
-//        selection.setZoom(zoomController.getPercent());
-    }
-
     public void zoomOut() {
-        int zoom = zoomController.getPercent();
-        if (zoomController.zoomOut()) {
-            zoomTo(midpoint(zoom));
-        }
+//        int zoom = zoomController.getPercent();
+//        if (zoomController.zoomOut()) {
+//            zoomTo(midpoint(zoom));
+//        }
     }
 
     public AnimationHistoryView getAnimationView() {

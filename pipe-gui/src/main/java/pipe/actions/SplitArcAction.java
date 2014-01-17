@@ -35,7 +35,7 @@ public class SplitArcAction
     public void actionPerformed(ActionEvent arg0) {
         ZoomController zoomController = petriNetController.getZoomController();
         int percent = zoomController.getPercent();
-        Point2D.Double unzoomedPoint = ZoomController.getUnzoomedValue(point, percent);
+        Point2D.Double unzoomedPoint = zoomController.getUnzoomedValue(point);
         arcController.addPoint(unzoomedPoint);
     }
 

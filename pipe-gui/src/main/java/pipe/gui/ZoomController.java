@@ -8,7 +8,9 @@ import java.io.Serializable;
 
 public class ZoomController implements Serializable {
 
-    private final AffineTransform transform = new AffineTransform();
+    //    private final AffineTransform transform = new AffineTransform();
+
+    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     private int percent;
 
@@ -16,60 +18,74 @@ public class ZoomController implements Serializable {
         percent = pct;
     }
 
-    public static int getZoomedValue(int x, int zoom) {
-        return (int) (x * zoom * 0.01);
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
     }
 
-    public static float getZoomedValue(float value, int zoom) {
-        return (float) (value * zoom * 0.01);
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
     }
 
-    public static AffineTransform getTransform(int zoom) {
-        return AffineTransform.getScaleInstance(zoom * 0.01, zoom * 0.01);
+    public int getZoomedValue(int x) {
+        return (int) (x * percent * 0.01);
     }
 
-    public static double getScaleFactor(int zoom) {
-        return zoom * 0.01;
+    public float getZoomedValue(float value) {
+        return (float) (value * percent * 0.01);
     }
 
-    public static int getUnzoomedValue(int value, int zoom) {
-        return (int) (value / (zoom * 0.01));
+    public AffineTransform getTransform() {
+        return AffineTransform.getScaleInstance(percent * 0.01, percent * 0.01);
     }
 
-    public static Point2D.Double getZoomedValue(Point2D.Double point, int zoom) {
-        return new Point2D.Double(getZoomedValue(point.getX(), zoom), getZoomedValue(point.getY(), zoom));
+    public double getScaleFactor() {
+        return percent * 0.01;
     }
 
-    public static double getZoomedValue(double value, int zoom) {
-        return (value * zoom * 0.01);
+    public int getUnzoomedValue(int value) {
+        return (int) (value / (percent * 0.01));
     }
 
-    public static Point2D.Double getUnzoomedValue(final Point2D.Double point, final int zoom) {
-        return new Point2D.Double(getUnzoomedValue(point.getX(), zoom), getUnzoomedValue(point.getY(), zoom));
+    public Point2D.Double getZoomedValue(Point2D.Double point) {
+        return new Point2D.Double(getZoomedValue(point.getX()), getZoomedValue(point.getY()));
     }
 
-    public static double getUnzoomedValue(double value, int zoom) {
-        return (value / (zoom * 0.01));
+    public double getZoomedValue(double value) {
+        return (value * percent * 0.01);
     }
 
-    public boolean zoomOut() {
-        percent -= Constants.ZOOM_DELTA;
-        if (percent < Constants.ZOOM_MIN) {
-            percent += Constants.ZOOM_DELTA;
-            return false;
-        } else {
-            return true;
-        }
+    public Point2D.Double getUnzoomedValue(final Point2D.Double point) {
+        return new Point2D.Double(getUnzoomedValue(point.getX()), getUnzoomedValue(point.getY()));
     }
 
-    public boolean zoomIn() {
-        percent += Constants.ZOOM_DELTA;
-        if (percent > Constants.ZOOM_MAX) {
+    public double getUnzoomedValue(double value) {
+        return (value / (percent * 0.01));
+    }
+
+    public void zoomOut() {
+        if (canZoomOut()) {
+            int old = percent;
             percent -= Constants.ZOOM_DELTA;
-            return false;
-        } else {
-            return true;
+            changeSupport.firePropertyChange("zoomOut", old, percent);
         }
+    }
+
+    public boolean canZoomOut() {
+        int newPercent = percent - Constants.ZOOM_DELTA;
+        return newPercent >= Constants.ZOOM_MIN;
+    }
+
+    public void zoomIn() {
+        if (canZoomIn()) {
+            int old = percent;
+            percent += Constants.ZOOM_DELTA;
+            changeSupport.firePropertyChange("zoomIn", old, percent);
+        }
+    }
+
+    public boolean canZoomIn() {
+        int newPercent = percent + Constants.ZOOM_DELTA;
+        return newPercent <= Constants.ZOOM_MAX;
     }
 
     public int getPercent() {
@@ -86,7 +102,7 @@ public class ZoomController implements Serializable {
         setPercent(newPercent);
     }
 
-    public AffineTransform getTransform() {
-        return transform;
-    }
+    //    public AffineTransform getTransform() {
+    //        return transform;
+    //    }
 }

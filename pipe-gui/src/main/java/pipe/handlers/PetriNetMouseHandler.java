@@ -35,22 +35,6 @@ public class PetriNetMouseHandler extends MouseInputAdapter
         this.mouseUtilities = mouseUtilities;
     }
 
-
-    private Point adjustPoint(Point p, int zoom)
-    {
-        int offset = (int) (ZoomController.getScaleFactor(zoom) * Constants.PLACE_TRANSITION_HEIGHT / 2);
-
-        int x = ZoomController.getUnzoomedValue(p.x - offset, zoom);
-        int y = ZoomController.getUnzoomedValue(p.y - offset, zoom);
-
-        p.setLocation(x, y);
-        return p;
-    }
-
-
-
-
-
     public void mousePressed(MouseEvent event)
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
@@ -241,10 +225,10 @@ public class PetriNetMouseHandler extends MouseInputAdapter
         }
         else
         {
-            if(e.getWheelRotation() > 0)
-                petriNetTab.zoomIn();
-            else
-                petriNetTab.zoomOut();
+//            if(e.getWheelRotation() > 0)
+//                petriNetTab.zoomIn();
+//            else
+//                petriNetTab.zoomOut();
         }
     }
 

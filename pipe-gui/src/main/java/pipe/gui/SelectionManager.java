@@ -94,10 +94,11 @@ public class SelectionManager
      * unzoomed selection rectangle would be
      */
     private Rectangle calculateUnzoomedSelection() {
-        int x = ZoomController.getUnzoomedValue((int) selectionRectangle.getX(), zoom);
-        int y = ZoomController.getUnzoomedValue((int) selectionRectangle.getY(), zoom);
-        int height = ZoomController.getUnzoomedValue((int) selectionRectangle.getHeight(), zoom);
-        int width = ZoomController.getUnzoomedValue((int) selectionRectangle.getWidth(), zoom);
+        ZoomController zoomController = petriNetController.getZoomController();
+        int x = zoomController.getUnzoomedValue((int) selectionRectangle.getX());
+        int y = zoomController.getUnzoomedValue((int) selectionRectangle.getY());
+        int height = zoomController.getUnzoomedValue((int) selectionRectangle.getHeight());
+        int width = zoomController.getUnzoomedValue((int) selectionRectangle.getWidth());
         return new Rectangle(x, y, width, height);
     }
 
@@ -255,9 +256,9 @@ public class SelectionManager
    public void mouseWheelMoved(MouseWheelEvent e) {
       if (e.isControlDown()) {
          if (e.getWheelRotation()> 0) {
-            petriNetTab.zoomIn();
+//            petriNetTab.zoomIn();
          } else {
-            petriNetTab.zoomOut();
+//            petriNetTab.zoomOut();
          }
       }
    }   

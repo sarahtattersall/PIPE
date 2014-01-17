@@ -113,8 +113,9 @@ public class CopyPasteManager extends javax.swing.JComponent
 
         pasteRectangle.setRect(location.left, location.top, location.right - location.left,
                 location.bottom - location.top);
-        rectangleOrigin.setLocation(ZoomController.getUnzoomedValue(location.left, zoom),
-                ZoomController.getUnzoomedValue(location.top, zoom));
+        ZoomController zoomController = petriNetTab.getZoomController();
+        rectangleOrigin.setLocation(zoomController.getUnzoomedValue(location.left),
+                zoomController.getUnzoomedValue(location.top));
     }
 
     public void showPasteRectangle() {
@@ -134,11 +135,12 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
-        int realWidth = ZoomController.getUnzoomedValue(pasteRectangle.width, zoom);
-        int realHeight = ZoomController.getUnzoomedValue(pasteRectangle.height, zoom);
+        ZoomController zoomController = petriNetTab.getZoomController();
+        int realWidth = zoomController.getUnzoomedValue(pasteRectangle.width);
+        int realHeight = zoomController.getUnzoomedValue(pasteRectangle.height);
 
-        pasteRectangle.setSize((int) (realWidth * ZoomController.getScaleFactor(newZoom)),
-                (int) (realHeight * ZoomController.getScaleFactor(newZoom)));
+        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
+                (int) (realHeight * zoomController.getScaleFactor()));
     }
 
     private void updateBounds() {
@@ -251,10 +253,12 @@ public class CopyPasteManager extends javax.swing.JComponent
             return;
         }
 
+        ZoomController zoomController = petriNetTab.getZoomController();
+
         double despX = Grid.getModifiedX(
-                ZoomController.getUnzoomedValue(pasteRectangle.getX(), zoom) - rectangleOrigin.getX());
+                zoomController.getUnzoomedValue(pasteRectangle.getX()) - rectangleOrigin.getX());
         double despY = Grid.getModifiedY(
-                ZoomController.getUnzoomedValue(pasteRectangle.getY(), zoom) - rectangleOrigin.getY());
+                zoomController.getUnzoomedValue(pasteRectangle.getY()) - rectangleOrigin.getY());
 
         MultipleNamer multipleNamer = new UniqueNamer(petriNet);
         PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);
