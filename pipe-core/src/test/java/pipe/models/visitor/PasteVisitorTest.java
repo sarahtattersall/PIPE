@@ -7,6 +7,7 @@ import org.mockito.ArgumentMatcher;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -15,10 +16,7 @@ import pipe.models.petrinet.PetriNet;
 import pipe.visitor.PasteVisitor;
 
 import java.awt.geom.Point2D;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -148,6 +146,54 @@ public class PasteVisitorTest {
         doPaste();
 
         verify(petriNet).addArc(argThat(hasCopiedIdAndNameAndSourceCopied(arc)));
+    }
+
+    @Test
+    public void pastingArcKeepsIntermediatePoints() {
+
+            Place place = new Place("id", "name");
+            pasteComponents.add(place);
+
+            Transition transition = new Transition("id", "name");
+            Map<Token, String> weights = new HashMap<Token, String>();
+            Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+            ArcPoint arcPoint = new ArcPoint(new Point2D.Double(200, 100), true);
+            arc.addIntermediatePoint(arcPoint);
+
+            pasteComponents.add(arc);
+            visitor = new PasteVisitor(petriNet, pasteComponents);
+
+            doPaste();
+
+            verify(petriNet).addArc(argThat(hasCopiedIntermediatePoints(arc)));
+    }
+
+    /**
+     * Ensures arcpoints are the equal but not the same object
+     * @param arc
+     * @return
+     */
+    private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIntermediatePoints(final Arc<Place, Transition> arc) {
+        return new ArgumentMatcher<Arc<? extends Connectable, ? extends Connectable>>() {
+            @Override
+            public boolean matches(Object argument) {
+
+                Arc<? extends Connectable, ? extends Connectable> otherArc = (Arc<? extends Connectable, ? extends Connectable>) argument;
+                List<ArcPoint> arcPoints = arc.getIntermediatePoints();
+                List<ArcPoint> otherPoints = otherArc.getIntermediatePoints();
+                if (arcPoints.size() != otherPoints.size()) {
+                    return false;
+                }
+                for (int index = 0; index < arcPoints.size(); index++) {
+                    ArcPoint arcPoint = arcPoints.get(index);
+                    ArcPoint otherArcPoint = otherPoints.get(index);
+                    if (arcPoint == otherArcPoint || !arcPoint.equals(otherArcPoint)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
     }
 
     private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndSourceCopied(

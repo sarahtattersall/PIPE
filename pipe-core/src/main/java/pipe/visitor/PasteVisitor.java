@@ -3,6 +3,7 @@ package pipe.visitor;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.ArcVisitor;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
@@ -60,9 +61,23 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
 
         Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getType());
         setId(newArc);
+        copyIntermediatePoints(arc, newArc);
         petriNet.addArc(newArc);
         createdComponents.add(newArc);
 
+    }
+
+    /**
+     * Copies the original arc intermediate points into the new arc.
+     *
+     * @param arc original arc
+     * @param newArc newly created arc
+     */
+    private  void copyIntermediatePoints(Arc<? extends Connectable, ? extends Connectable> arc, Arc<? extends Connectable, ? extends Connectable> newArc) {
+        for (ArcPoint arcPoint : arc.getIntermediatePoints()) {
+            ArcPoint newArcPoint = new ArcPoint(arcPoint);
+            newArc.addIntermediatePoint(newArcPoint);
+        }
     }
 
 

@@ -21,6 +21,16 @@ public class ArcPoint extends AbstractPetriNetComponent {
         this.curved = curved;
     }
 
+    /**
+     * Copy constructor
+     * @param arcPoint to copy
+     */
+    public ArcPoint(ArcPoint arcPoint) {
+        this.x = arcPoint.x;
+        this.y = arcPoint.y;
+        this.curved = arcPoint.curved;
+    }
+
     public Point2D getPoint() {
         return new Point2D.Double(x, y);
     }
