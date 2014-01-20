@@ -238,18 +238,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         }
     }
 
-    public HistoryItem setWeight(List<MarkingView> weightInput) {
-        //        List<MarkingView> oldWeight = Copier.mediumCopy(_weight);
-        //        checkIfFunctionalWeightExists();
-        //        _weight = weightInput;
-        //        return new ArcWeight(this, oldWeight, _weight);
-        return null;
-    }
-
-    protected void removeLabelFromParentContainer(NameLabel label) {
-        tab.remove(label);
-    }
-
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
     public ConnectableView<Connectable> getSource() {
         return null;

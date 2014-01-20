@@ -110,17 +110,6 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     }
 
-    @Override
-    public TransitionView copy() {
-        TransitionView copy = new TransitionView();
-        copy.model.setRateExpr(getRate());
-        copy._attributesVisible = this._attributesVisible;
-        copy.model.setPriority(model.getPriority());
-        copy.setOriginal(this);
-        copy._rateParameter = this._rateParameter;
-        return copy;
-    }
-
     public double getRate() {
         if (isInfiniteServer()) {
             PetriNet petriNet = petriNetController.getPetriNet();
@@ -152,23 +141,6 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     public boolean isInfiniteServer() {
         return model.isInfiniteServer();
-    }
-
-    @Override
-    public TransitionView paste(double x, double y, boolean fromAnotherView, PetriNetView model) {
-        TransitionView copy = new TransitionView();
-
-        this.newCopy(copy);
-
-        copy.model.setRateExpr(this.model.getRateExpr());
-
-        copy._attributesVisible = this._attributesVisible;
-        copy.model.setPriority(this.model.getPriority());
-        copy.shape.transform(AffineTransform.getRotateInstance(Math.toRadians(this.model.getAngle()), this.model.getHeight() / 2, this.model.getHeight() / 2));
-        copy._rateParameter = null;
-
-
-        return copy;
     }
 
     @Override
