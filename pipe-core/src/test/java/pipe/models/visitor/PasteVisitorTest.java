@@ -138,7 +138,7 @@ public class PasteVisitorTest {
 
     private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndBothComponentsAreCopied(
             Arc<? extends Connectable, ? extends Connectable> arc) {
-        return new CopiedArc(arc, true, true);
+        return new CopiedArc(arc, PLACE_NAME, TRANSITION_NAME);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class PasteVisitorTest {
 
     private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndSourceCopied(
             Arc<? extends Connectable, ? extends Connectable> arc) {
-        return new CopiedArc(arc, true, false);
+        return new CopiedArc(arc, PLACE_NAME, arc.getTarget().getName());
     }
 
     @Test
@@ -228,7 +228,7 @@ public class PasteVisitorTest {
 
     private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndTargetCopied(
             Arc<? extends Connectable, ? extends Connectable> arc) {
-        return new CopiedArc(arc, false, true);
+        return new CopiedArc(arc, arc.getSource().getName(), TRANSITION_NAME);
     }
 
     /**
@@ -314,29 +314,26 @@ public class PasteVisitorTest {
 
         private final Arc<? extends Connectable, ? extends Connectable> arc;
 
-        private final boolean sourceCopied;
+        private final String sourceName;
 
-        private final boolean targetCopied;
+        private final String targetName;
 
-        public CopiedArc(Arc<? extends Connectable, ? extends Connectable> arc, boolean sourceCopied,
-                         boolean targetCopied) {
+        public CopiedArc(Arc<? extends Connectable, ? extends Connectable> arc, String sourceName,
+                         String targetName) {
 
             this.arc = arc;
-            this.sourceCopied = sourceCopied;
-            this.targetCopied = targetCopied;
+            this.sourceName = sourceName;
+            this.targetName = targetName;
         }
 
         @Override
         public boolean matches(Object argument) {
             Arc<? extends Connectable, ? extends Connectable> otherArc =
                     (Arc<? extends Connectable, ? extends Connectable>) argument;
-            String sourceName = sourceCopied ? arc.getSource().getName() + "_copied" : arc.getSource().getName();
-            String targetName = targetCopied ? arc.getTarget().getName() + "_copied" : arc.getTarget().getName();
+
 
             return (otherArc.getSource().getName().equals(sourceName) && otherArc.getTarget().getName().equals(
                     targetName));
-
-
         }
     }
 
