@@ -32,7 +32,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     /**
      * Intermediate path intermediatePoints
      */
-    private List<ArcPoint> intermediatePoints = new LinkedList<ArcPoint>();
+    private final List<ArcPoint> intermediatePoints = new LinkedList<ArcPoint>();
 
     public Arc(S source, T target, Map<Token, String> tokenWeights, ArcType type) {
         this.source = source;

@@ -14,7 +14,7 @@ import pipe.models.component.transition.TransitionVisitor;
 
 public class PetriNetComponentAddVisitor
         implements PlaceVisitor, ArcVisitor, TransitionVisitor, TokenVisitor, AnnotationVisitor {
-    private PetriNet petriNet;
+    private final PetriNet petriNet;
 
     public PetriNetComponentAddVisitor(PetriNet petriNet) {
         this.petriNet = petriNet;

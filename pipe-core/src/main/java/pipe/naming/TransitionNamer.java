@@ -11,7 +11,7 @@ import java.util.HashSet;
 public class TransitionNamer implements PetriNetComponentNamer {
     private final PetriNet petriNet;
 
-    private Collection<String> transitionNames = new HashSet<String>();
+    private final  Collection<String> transitionNames = new HashSet<String>();
 
     public TransitionNamer(PetriNet petriNet) {
 

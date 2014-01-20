@@ -32,42 +32,42 @@ public class PetriNet {
     @XmlTransient
     public String pnmlName = "";
 
-    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+    protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     @XmlTransient
     private boolean validated = false;
 
     @XmlElement(name = "transition")
     @XmlJavaTypeAdapter(TransitionAdapter.class)
-    private Set<Transition> transitions = new HashSet<Transition>();
+    private final Set<Transition> transitions = new HashSet<Transition>();
 
     @XmlElement(name = "place")
     @XmlJavaTypeAdapter(PlaceAdapter.class)
-    private Set<Place> places = new HashSet<Place>();
+    private final Set<Place> places = new HashSet<Place>();
 
     @XmlElement(name = "token")
     @XmlJavaTypeAdapter(TokenAdapter.class)
-    private Set<Token> tokens = new HashSet<Token>();
+    private final Set<Token> tokens = new HashSet<Token>();
 
     @XmlElement(name = "arc")
     @XmlJavaTypeAdapter(ArcAdapter.class)
-    private Set<Arc<? extends Connectable, ? extends Connectable>> arcs =
+    private final Set<Arc<? extends Connectable, ? extends Connectable>> arcs =
             new HashSet<Arc<? extends Connectable, ? extends Connectable>>();
 
-    private Set<Annotation> annotations = new HashSet<Annotation>();
+    private final Set<Annotation> annotations = new HashSet<Annotation>();
 
     /**
      * Houses the backwards strategies for arcs place -> transition
      * There can be two kinds, normal and inhibitor
      */
-    private Map<ArcType, ArcStrategy<Place, Transition>> backwardsStrategies =
+    private final Map<ArcType, ArcStrategy<Place, Transition>> backwardsStrategies =
             new HashMap<ArcType, ArcStrategy<Place, Transition>>();
 
-    private Map<ArcType, ArcStrategy<Transition, Place>> forwardStrategies =
+    private final Map<ArcType, ArcStrategy<Transition, Place>> forwardStrategies =
             new HashMap<ArcType, ArcStrategy<Transition, Place>>();
 
 
-    private PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
+    private final PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
 
     public PetriNet() {
         backwardsStrategies.put(ArcType.NORMAL, new BackwardsNormalStrategy());

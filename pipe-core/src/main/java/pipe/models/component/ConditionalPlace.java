@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 //TODO: FIGURE UT WHAT THIS DOES AND FIX GENERICS
 public class ConditionalPlace extends Connectable implements Serializable {
-    private static int DIAMETER = 30;
+    private static final int DIAMETER = 30;
 
     public ConditionalPlace(String id, String name) {
         super(id, name);

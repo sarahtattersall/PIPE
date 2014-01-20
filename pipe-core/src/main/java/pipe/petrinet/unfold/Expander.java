@@ -31,17 +31,17 @@ public class Expander {
     /**
      * Places for new net mapped id -> place
      */
-    private Map<String, Place> newPlaces = new HashMap<String, Place>();
+    private final Map<String, Place> newPlaces = new HashMap<String, Place>();
 
     /**
      * Transitions for new net mapped id -> transition
      */
-    private Map<String, Transition> newTransitions = new HashMap<String, Transition>();
+    private final Map<String, Transition> newTransitions = new HashMap<String, Transition>();
 
     /**
      * Arcs for new net mapped arc -> transition
      */
-    private Map<String, Arc<? extends Connectable, ? extends Connectable>> newArcs =
+    private final Map<String, Arc<? extends Connectable, ? extends Connectable>> newArcs =
             new HashMap<String, Arc<? extends Connectable, ? extends Connectable>>();
 
 

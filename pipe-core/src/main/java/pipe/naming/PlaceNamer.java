@@ -15,7 +15,7 @@ import java.util.Set;
 public class PlaceNamer implements PetriNetComponentNamer {
     private final PetriNet petriNet;
 
-    private Set<String> placeNames = new HashSet<String>();
+    private final Set<String> placeNames = new HashSet<String>();
 
     public PlaceNamer(PetriNet petriNet) {
 

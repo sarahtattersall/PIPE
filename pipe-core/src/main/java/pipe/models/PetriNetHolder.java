@@ -14,7 +14,7 @@ import java.util.List;
 @XmlRootElement(name = "pnml")
 public class PetriNetHolder {
     @XmlElement(name = "net")
-    List<PetriNet> nets = new ArrayList<PetriNet>();
+    private final List<PetriNet> nets = new ArrayList<PetriNet>();
 
     public void addNet(PetriNet net) {
         nets.add(net);

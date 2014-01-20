@@ -8,7 +8,7 @@ import java.beans.PropertyChangeSupport;
  */
 public abstract class AbstractPetriNetComponent implements PetriNetComponent {
 
-    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+    protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
