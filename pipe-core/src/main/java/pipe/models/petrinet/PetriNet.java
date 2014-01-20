@@ -291,7 +291,7 @@ public class PetriNet {
         boolean hasTimed = false;
         boolean hasImmediate = false;
         int maxPriority = 0;
-        final Set<Transition> enabledTransitions = new HashSet<Transition>();
+        Set<Transition> enabledTransitions = new HashSet<Transition>();
 
         for (Transition transition : getTransitions()) {
             if (isEnabled(transition, backwards)) {

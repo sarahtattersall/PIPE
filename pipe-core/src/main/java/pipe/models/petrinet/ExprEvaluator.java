@@ -83,7 +83,7 @@ public class ExprEvaluator {
      * @param numOfToken
      * @return expression with place name replaced with its number of tokens
      */
-    private String findAndReplaceTokens(String lexpr, final String name, final int numOfToken) {
+    private String findAndReplaceTokens(String lexpr, String name, int numOfToken) {
         do {
             lexpr = lexpr.toLowerCase().replace(name.toLowerCase(), Integer.toString(numOfToken));
         } while (lexpr.toLowerCase().contains(name.toLowerCase()));
@@ -94,7 +94,7 @@ public class ExprEvaluator {
      * @param place
      * @return name of place in format by #(<name>)
      */
-    private String getPlaceNameRepresentation(final Place place) {
+    private String getPlaceNameRepresentation(Place place) {
         String name = place.getName().replaceAll("\\s", "");
         name = ("#(" + name + ")");
         return name;

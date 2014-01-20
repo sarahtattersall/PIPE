@@ -35,7 +35,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
         return new Point2D.Double(x, y);
     }
 
-    public void setPoint(final Point2D point) {
+    public void setPoint(Point2D point) {
         Point2D old = new Point2D.Double(this.x, this.y);
         this.x = point.getX();
         this.y = point.getY();
@@ -61,7 +61,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
     }
 
     @Override
-    public void accept(final PetriNetComponentVisitor visitor) {
+    public void accept(PetriNetComponentVisitor visitor) {
         if (visitor instanceof ArcPointVisitor) {
             ((ArcPointVisitor) visitor).visit(this);
         }
@@ -73,12 +73,12 @@ public class ArcPoint extends AbstractPetriNetComponent {
     }
 
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
 
     }
 
     @Override
-    public void setName(final String name) {
+    public void setName(String name) {
 
     }
 
@@ -86,7 +86,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
         return curved;
     }
 
-    public void setCurved(final boolean curved) {
+    public void setCurved(boolean curved) {
         boolean old = this.curved;
         this.curved = curved;
         changeSupport.firePropertyChange("updateCurved", old, curved);

@@ -23,7 +23,7 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
 
     private final Collection<PetriNetComponent> selected;
 
-    public TranslationVisitor(Point2D translation, final Collection<PetriNetComponent> selected) {
+    public TranslationVisitor(Point2D translation, Collection<PetriNetComponent> selected) {
         this.translation = translation;
         this.selected = selected;
     }
@@ -42,14 +42,14 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
     }
 
     @Override
-    public void visit(final Place place) {
+    public void visit(Place place) {
         place.setX(place.getX() + translation.getX());
         place.setY(place.getY() + translation.getY());
 
     }
 
     @Override
-    public void visit(final Transition transition) {
+    public void visit(Transition transition) {
         transition.setX(transition.getX() + translation.getX());
         transition.setY(transition.getY() + translation.getY());
 

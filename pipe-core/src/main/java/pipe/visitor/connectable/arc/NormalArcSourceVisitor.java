@@ -9,12 +9,12 @@ public class NormalArcSourceVisitor implements ArcSourceVisitor {
     boolean canCreate = false;
 
     @Override
-    public void visit(final Place place) {
+    public void visit(Place place) {
         canCreate = true;
     }
 
     @Override
-    public void visit(final Transition transition) {
+    public void visit(Transition transition) {
         canCreate = true;
     }
 

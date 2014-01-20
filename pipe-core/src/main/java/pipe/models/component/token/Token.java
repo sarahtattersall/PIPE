@@ -82,10 +82,12 @@ public class Token extends AbstractPetriNetComponent {
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         String old = this.id;
         this.id = id;

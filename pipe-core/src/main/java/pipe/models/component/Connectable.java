@@ -146,16 +146,19 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         String old = this.name;
         this.name = name;
         changeSupport.firePropertyChange("name", old, name);
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         String old = this.id;
         this.id = id;

@@ -13,7 +13,7 @@ class BackwardsNormalStrategy implements ArcStrategy<Place, Transition> {
 
 
     @Override
-    public boolean canFire(PetriNet petriNet, final Arc<Place, Transition> arc) {
+    public boolean canFire(PetriNet petriNet, Arc<Place, Transition> arc) {
         Place place = arc.getSource();
         for (Token token : arc.getTokenWeights().keySet()) {
             int tokenCount = place.getTokenCount(token);
