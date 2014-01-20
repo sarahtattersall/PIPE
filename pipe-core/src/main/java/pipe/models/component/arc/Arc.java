@@ -13,19 +13,19 @@ import java.util.Map;
 
 public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
 
-    protected S source;
+    private S source;
 
-    protected T target;
+    private T target;
 
-    protected String id;
+    private String id;
 
-    protected boolean tagged = false;
+    private boolean tagged;
 
     /**
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
      */
-    protected Map<Token, String> tokenWeights = new HashMap<Token, String>();
+    private Map<Token, String> tokenWeights = new HashMap<Token, String>();
 
     private final ArcType type;
 
@@ -45,6 +45,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
         //        source.addOutbound(this);
         //        target.addInbound(this);
+        tagged = false;
     }
 
     public Map<Token, String> getTokenWeights() {
