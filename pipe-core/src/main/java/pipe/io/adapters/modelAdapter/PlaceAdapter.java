@@ -76,8 +76,7 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
             return tokenWeights;
         }
 
-        String weightInput = value;
-        String[] commaSeperatedMarkings = weightInput.split(",");
+        String[] commaSeperatedMarkings = value.split(",");
         if (commaSeperatedMarkings.length == 1) {
             Token token = TokenUtils.getOrCreateDefaultToken(tokens);
             Integer weight = Integer.valueOf(commaSeperatedMarkings[0]);

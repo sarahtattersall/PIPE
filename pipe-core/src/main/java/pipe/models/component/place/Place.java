@@ -262,8 +262,7 @@ public class Place extends Connectable implements Serializable {
         double adjacent = Math.cos(angle);
         double attachY = centreY - radius * adjacent;
 
-        Point2D.Double coord = new Point2D.Double(attachX, attachY);
-        return coord;
+        return new Point2D.Double(attachX, attachY);
     }
 
     @Override
