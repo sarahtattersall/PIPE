@@ -13,7 +13,6 @@ import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.viewComponents.ArcPath;
-import pipe.views.viewComponents.NameLabel;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -219,6 +218,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         this.tab = tab;
+        updatePath();
         ArcHandler<S, T> arcHandler = new ArcHandler<S, T>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
@@ -271,6 +271,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         if (tab != null) {
             arcPath.addPointsToGui(tab);
         }
+        repaint();
     }
 
     /**

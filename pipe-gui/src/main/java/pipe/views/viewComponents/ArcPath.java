@@ -680,7 +680,6 @@ public class ArcPath implements Shape, Cloneable {
         if (petriNetTab == null) {
             return; //Parent has not yet been added
         }
-        ArcPathPointHandler pointHandler;
 
         pathPoints.get(0).setDraggable(false);
         pathPoints.get(pathPoints.size() - 1).setDraggable(false);
@@ -700,7 +699,7 @@ public class ArcPath implements Shape, Cloneable {
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
                 ArcController<? extends Connectable, ? extends Connectable> arcController =
                         petriNetController.getArcController(parent.getModel());
-                pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
+                ArcPathPointHandler pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
 
                 if (point.getMouseListeners().length == 0) {
                     point.addMouseListener(pointHandler);

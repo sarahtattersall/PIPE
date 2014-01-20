@@ -134,7 +134,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                     SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
 
                     selectionManager.clearSelection();
-                    petriNetController.select(component);
+                    petriNetController.deselect(component);
                 }
             }
         }
