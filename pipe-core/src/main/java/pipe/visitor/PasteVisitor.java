@@ -11,7 +11,6 @@ import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
 import pipe.models.petrinet.PetriNet;
 import pipe.naming.MultipleNamer;
-import pipe.naming.PetriNetComponentNamer;
 
 import java.util.*;
 
