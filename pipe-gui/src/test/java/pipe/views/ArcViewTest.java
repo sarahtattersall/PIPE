@@ -47,23 +47,4 @@ public class ArcViewTest {
         assertEquals(start, path.getPoint(0));
         assertEquals(end, path.getPoint(1));
     }
-
-
-    @Test
-    public void zoomUpdatesPoints() {
-        int zoom = 110;
-        arcView.zoomUpdate(zoom);
-        ArcPath path = arcView.getArcPath();
-        assertEquals(2, path.getNumPoints());
-        Point2D.Double zoomedStart =  ZoomController.getZoomedValue(start, zoom);
-        Point2D actualStart = path.getPoint(0);
-        assertEquals(zoomedStart.x, actualStart.getX(), DOUBLE_DELTA);
-        assertEquals(zoomedStart.y, actualStart.getY(), DOUBLE_DELTA);
-
-
-        Point2D.Double zoomedEnd =  ZoomController.getZoomedValue(end, zoom);
-        Point2D actualEnd = path.getPoint(1);
-        assertEquals(zoomedEnd.x, actualEnd.getX(), DOUBLE_DELTA);
-        assertEquals(zoomedEnd.y, actualEnd.getY(), DOUBLE_DELTA);
-    }
 }
