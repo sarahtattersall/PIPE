@@ -47,6 +47,17 @@ public class PetriNetTest {
     }
 
     @Test
+    public void addingDuplicatePlaceDoesNotNotifyObservers() {
+        Place place = new Place("P0", "P0");
+        net.addPlace(place);
+
+        net.addPropertyChangeListener(mockListener);
+        net.addPlace(place);
+        verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
+
+    }
+
+    @Test
     public void removingPlaceNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
         Place place = new Place("", "");
@@ -59,16 +70,26 @@ public class PetriNetTest {
     @Test
     public void addingArcNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Arc mockArc = mock(Arc.class);
+        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
         net.addArc(mockArc);
 
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
+    public void addingDuplicateArcDoesNotNotifyObservers() {
+        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
+        net.addArc(mockArc);
+        net.addPropertyChangeListener(mockListener);
+        net.addArc(mockArc);
+
+        verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
+    }
+
+    @Test
     public void removingArcNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Arc mockArc = mock(Arc.class);
+        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
         Connectable connectable = mock(Connectable.class);
         when(mockArc.getTarget()).thenReturn(connectable);
         when(mockArc.getSource()).thenReturn(connectable);
@@ -85,6 +106,17 @@ public class PetriNetTest {
         net.addTransition(transition);
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
+
+    @Test
+    public void addingDuplicateTransitionDoesNotNotifyObservers() {
+        Transition transition = new Transition("", "");
+        net.addTransition(transition);
+        net.addPropertyChangeListener(mockListener);
+        net.addTransition(transition);
+        verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
+
+    }
+
 
     @Test
     public void removingTransitionNotifiesObservers() {
@@ -104,6 +136,15 @@ public class PetriNetTest {
     }
 
     @Test
+    public void addingDuplicateAnnotationDoesNotNotifyObservers() {
+        Annotation annotation = new Annotation(10, 10, "", 10, 10, false);
+        net.addAnnotaiton(annotation);
+        net.addPropertyChangeListener(mockListener);
+        net.addAnnotaiton(annotation);
+        verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
+    }
+
+    @Test
     public void addingRateParameterNotifiesObservers() {
         //        net.addPropertyChangeListener(mockListener);
         //        RateParameter rateParameter = new RateParameter("", 0., 0, 0);
@@ -118,6 +159,16 @@ public class PetriNetTest {
         Token token = new Token();
         net.addToken(token);
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
+    }
+
+    @Test
+    public void addingDuplicateTokenDoesNotNotifyObservers() {
+        Token token = new Token();
+        net.addToken(token);
+
+        net.addPropertyChangeListener(mockListener);
+        net.addToken(token);
+        verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test

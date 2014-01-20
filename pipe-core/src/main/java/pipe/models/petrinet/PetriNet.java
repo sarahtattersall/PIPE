@@ -26,16 +26,10 @@ import java.util.*;
 public class PetriNet {
 
 
-    //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
-    private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
-
-    @XmlTransient
-    public String pnmlName = "";
-
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
-    @XmlTransient
-    private boolean validated = false;
+    //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
+    private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
 
     @XmlElement(name = "transition")
     @XmlJavaTypeAdapter(TransitionAdapter.class)
@@ -66,8 +60,13 @@ public class PetriNet {
     private final Map<ArcType, ArcStrategy<Transition, Place>> forwardStrategies =
             new HashMap<ArcType, ArcStrategy<Transition, Place>>();
 
-
     private final PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
+
+    @XmlTransient
+    public String pnmlName = "";
+
+    @XmlTransient
+    private boolean validated = false;
 
     public PetriNet() {
         backwardsStrategies.put(ArcType.NORMAL, new BackwardsNormalStrategy());
@@ -106,23 +105,31 @@ public class PetriNet {
     }
 
     public void addPlace(Place place) {
-        places.add(place);
-        changeSupport.firePropertyChange("newPlace", null, place);
+        if (!places.contains(place)) {
+            places.add(place);
+            changeSupport.firePropertyChange("newPlace", null, place);
+        }
     }
 
     public void addTransition(Transition transition) {
-        transitions.add(transition);
-        changeSupport.firePropertyChange("newTransition", null, transition);
+        if (!transitions.contains(transition)) {
+            transitions.add(transition);
+            changeSupport.firePropertyChange("newTransition", null, transition);
+        }
     }
 
     public void addArc(Arc<? extends Connectable, ? extends Connectable> arc) {
-        arcs.add(arc);
-        changeSupport.firePropertyChange("newArc", null, arc);
+        if (!arcs.contains(arc)) {
+            arcs.add(arc);
+            changeSupport.firePropertyChange("newArc", null, arc);
+        }
     }
 
     public void addToken(Token token) {
-        tokens.add(token);
-        changeSupport.firePropertyChange("newToken", null, token);
+        if (!tokens.contains(token)) {
+            tokens.add(token);
+            changeSupport.firePropertyChange("newToken", null, token);
+        }
     }
 
     public Collection<Place> getPlaces() {
@@ -139,8 +146,10 @@ public class PetriNet {
     //    }
 
     public void addAnnotaiton(Annotation annotation) {
-        annotations.add(annotation);
-        changeSupport.firePropertyChange("addAnnotation", null, annotation);
+        if (!annotations.contains(annotation)) {
+            annotations.add(annotation);
+            changeSupport.firePropertyChange("addAnnotation", null, annotation);
+        }
     }
 
     public Collection<Annotation> getAnnotations() {
@@ -172,20 +181,6 @@ public class PetriNet {
         changeSupport.firePropertyChange("deletePlace", place, null);
     }
 
-    public void removeArc(Arc arc) {
-        this.arcs.remove(arc);
-        removeArcFromSourceAndTarget(arc);
-        changeSupport.firePropertyChange("deleteArc", arc, null);
-    }
-
-    /**
-     * Removes the arc from the source and target inbound/outbound Collections
-     */
-    private <S extends Connectable, T extends Connectable> void removeArcFromSourceAndTarget(Arc<S, T> arc) {
-        Connectable source = arc.getSource();
-        Connectable target = arc.getTarget();
-    }
-
     /**
      * @param place
      * @return arcs that are outbound from place
@@ -198,6 +193,20 @@ public class PetriNet {
             }
         }
         return outbound;
+    }
+
+    public void removeArc(Arc<? extends Connectable, ? extends Connectable> arc) {
+        this.arcs.remove(arc);
+        removeArcFromSourceAndTarget(arc);
+        changeSupport.firePropertyChange("deleteArc", arc, null);
+    }
+
+    /**
+     * Removes the arc from the source and target inbound/outbound Collections
+     */
+    private <S extends Connectable, T extends Connectable> void removeArcFromSourceAndTarget(Arc<S, T> arc) {
+        Connectable source = arc.getSource();
+        Connectable target = arc.getTarget();
     }
 
     public void removeTransition(Transition transition) {
@@ -329,10 +338,6 @@ public class PetriNet {
         return enabledTransitions;
     }
 
-    public Collection<Transition> getTransitions() {
-        return transitions;
-    }
-
     /**
      * @param transition
      * @return true if transition is enabled
@@ -363,6 +368,10 @@ public class PetriNet {
             }
         }
         return outbound;
+    }
+
+    public Collection<Transition> getTransitions() {
+        return transitions;
     }
 
     /**
@@ -397,6 +406,51 @@ public class PetriNet {
             }
         }
         markEnabledTransitions();
+    }
+
+    /**
+     * Calculates enabled transitions and enables them.
+     */
+    public void markEnabledTransitions() {
+        Set<Transition> enabledTransitions = getEnabledTransitions(false);
+        for (Transition transition : transitions) {
+            if (enabledTransitions.contains(transition)) {
+                transition.enable();
+            } else {
+                transition.disable();
+            }
+        }
+    }
+
+    /**
+     * Calculates weights of connections from transitions to places for given token
+     *
+     * @param token
+     * @return
+     * @throws Exception
+     */
+    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+
+        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+
+            if (target instanceof Place) {
+                Place place = (Place) target;
+                if (source instanceof Transition) {
+                    Transition transition = (Transition) source;
+
+                    String expression = arc.getWeightForToken(token);
+
+                    ExprEvaluator paser = new ExprEvaluator(this);
+
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    forwardsIncidenceMatrix.put(place, transition, weight);
+                }
+            }
+        }
+        return forwardsIncidenceMatrix;
     }
 
     /**
@@ -463,51 +517,6 @@ public class PetriNet {
             }
         }
         return enablingDegree;
-    }
-
-    /**
-     * Calculates weights of connections from transitions to places for given token
-     *
-     * @param token
-     * @return
-     * @throws Exception
-     */
-    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
-
-        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            Connectable target = arc.getTarget();
-            Connectable source = arc.getSource();
-
-            if (target instanceof Place) {
-                Place place = (Place) target;
-                if (source instanceof Transition) {
-                    Transition transition = (Transition) source;
-
-                    String expression = arc.getWeightForToken(token);
-
-                    ExprEvaluator paser = new ExprEvaluator(this);
-
-                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    forwardsIncidenceMatrix.put(place, transition, weight);
-                }
-            }
-        }
-        return forwardsIncidenceMatrix;
-    }
-
-    /**
-     * Calculates enabled transitions and enables them.
-     */
-    public void markEnabledTransitions() {
-        Set<Transition> enabledTransitions = getEnabledTransitions(false);
-        for (Transition transition : transitions) {
-            if (enabledTransitions.contains(transition)) {
-                transition.enable();
-            } else {
-                transition.disable();
-            }
-        }
     }
 
     /**
