@@ -12,7 +12,7 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
     private final Map<String, Token> tokens;
 
     /**
-     * Empty contructor needed for marshelling. Since the method to marshell does not actually
+     * Empty constructor needed for marshalling. Since the method to marshall does not actually
      * use these fields it's ok to initialise them as empty/null.
      */
     public TokenAdapter() {
@@ -25,7 +25,7 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
     }
 
     @Override
-    public Token unmarshal(AdaptedToken adaptedToken) throws Exception {
+    public Token unmarshal(AdaptedToken adaptedToken) {
         Color color = new Color(adaptedToken.getRed(), adaptedToken.getGreen(), adaptedToken.getBlue());
         Token token = new Token(adaptedToken.getId(), adaptedToken.isEnabled(), 0, color);
         tokens.put(token.getId(), token);
@@ -33,7 +33,7 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
     }
 
     @Override
-    public AdaptedToken marshal(Token token) throws Exception {
+    public AdaptedToken marshal(Token token) {
         AdaptedToken adapted = new AdaptedToken();
         adapted.setId(token.getId());
         adapted.setEnabled(token.isEnabled());
