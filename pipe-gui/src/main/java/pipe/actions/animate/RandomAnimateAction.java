@@ -2,10 +2,7 @@ package pipe.actions.animate;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.AnimationHistoryView;
 import pipe.gui.Animator;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
@@ -15,7 +12,8 @@ public class RandomAnimateAction extends AnimateAction {
 
     private final PipeApplicationController applicationController;
 
-    public RandomAnimateAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView, PipeApplicationController applicationController) {
+    public RandomAnimateAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
+                               PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
         this.applicationView = applicationView;
         this.applicationController = applicationController;

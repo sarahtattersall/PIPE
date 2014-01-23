@@ -4,7 +4,6 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
 import pipe.gui.PetriNetTab;
-import pipe.models.petrinet.PetriNet;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PipeApplicationView;
 

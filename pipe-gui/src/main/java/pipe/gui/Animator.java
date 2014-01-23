@@ -3,12 +3,11 @@ package pipe.gui;
 import pipe.historyActions.AnimationHistory;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -22,8 +21,9 @@ import java.util.Map;
 public class Animator {
 
     private final Timer timer = new Timer(0, new TimedTransitionActionListener());
-    private int numberSequences = 0;
+
     private final PetriNet petriNet;
+
     private final AnimationHistory animationHistory;
 
     /**
@@ -32,27 +32,18 @@ public class Animator {
      */
     private final Map<String, Map<Token, Integer>> placeTokens = new HashMap<String, Map<Token, Integer>>();
 
+    private int numberSequences = 0;
+
     public Animator(PetriNet petriNet, AnimationHistory animationHistory) {
         this.petriNet = petriNet;
         this.animationHistory = animationHistory;
     }
 
     /**
-     * Restores all places to their original token counts.
-     */
-    private void restoreModel() {
-        for (Place place : petriNet.getPlaces()) {
-            Map<Token, Integer> originalTokens = placeTokens.get(place.getId());
-            place.setTokenCounts(originalTokens);
-        }
-    }
-
-
-    /**
      * Saves the current petri net token counts for restoring later.
      * When exit animation mode we expect the petri net to return to
      * it's original state, hence this method must be called before animating.
-     *
+     * <p/>
      * Also marks the enabled transitions in the petri net.
      */
     public void startAnimation() {
@@ -77,11 +68,9 @@ public class Animator {
             setNumberSequences(0);
         } else {
             try {
-                String s = JOptionPane.showInputDialog(
-                        "Enter number of firings to perform", "1");
+                String s = JOptionPane.showInputDialog("Enter number of firings to perform", "1");
                 this.numberSequences = Integer.parseInt(s);
-                s = JOptionPane.showInputDialog(
-                        "Enter time delay between firing /ms", "50");
+                s = JOptionPane.showInputDialog("Enter time delay between firing /ms", "50");
                 timer.setDelay(Integer.parseInt(s));
                 timer.start();
             } catch (NumberFormatException e) {
@@ -90,38 +79,20 @@ public class Animator {
         }
     }
 
+    public synchronized int getNumberSequences() {
+        return numberSequences;
+    }
+
+    public synchronized void setNumberSequences(int numberSequences) {
+        this.numberSequences = numberSequences;
+    }
+
     /**
      * Randomly fires one of the enabled transitions.
      */
     public void doRandomFiring() {
         Transition transition = petriNet.getRandomTransition();
         fireTransition(transition);
-    }
-
-
-    /**
-     * Steps back through previously fired transitions
-     */
-    public void stepBack() {
-        if (animationHistory.isStepBackAllowed()) {
-            Transition transition = animationHistory.getCurrentTransition();
-            animationHistory.stepBackwards();
-            petriNet.fireTransitionBackwards(transition);
-
-        }
-    }
-
-
-    /**
-     * Steps forward through previously fired transitions
-     */
-    public void stepForward() {
-        if (isStepForwardAllowed()) {
-            int nextPosition = animationHistory.getCurrentPosition() + 1;
-            Transition transition = animationHistory.getTransition(nextPosition);
-            petriNet.fireTransition(transition);
-            animationHistory.stepForward();
-        }
     }
 
     /**
@@ -145,13 +116,28 @@ public class Animator {
         petriNet.fireTransition(transition);
     }
 
-    public synchronized int getNumberSequences() {
-        return numberSequences;
+    /**
+     * Steps back through previously fired transitions
+     */
+    public void stepBack() {
+        if (animationHistory.isStepBackAllowed()) {
+            Transition transition = animationHistory.getCurrentTransition();
+            animationHistory.stepBackwards();
+            petriNet.fireTransitionBackwards(transition);
+
+        }
     }
 
-
-    public synchronized void setNumberSequences(int numberSequences) {
-        this.numberSequences = numberSequences;
+    /**
+     * Steps forward through previously fired transitions
+     */
+    public void stepForward() {
+        if (isStepForwardAllowed()) {
+            int nextPosition = animationHistory.getCurrentPosition() + 1;
+            Transition transition = animationHistory.getTransition(nextPosition);
+            petriNet.fireTransition(transition);
+            animationHistory.stepForward();
+        }
     }
 
     public boolean isStepForwardAllowed() {
@@ -162,7 +148,6 @@ public class Animator {
         return animationHistory.isStepBackAllowed();
     }
 
-
     /**
      * Finishes the animation
      * Resets the petri net state to before animation
@@ -171,6 +156,16 @@ public class Animator {
         restoreModel();
         animationHistory.clear();
         placeTokens.clear();
+    }
+
+    /**
+     * Restores all places to their original token counts.
+     */
+    private void restoreModel() {
+        for (Place place : petriNet.getPlaces()) {
+            Map<Token, Integer> originalTokens = placeTokens.get(place.getId());
+            place.setTokenCounts(originalTokens);
+        }
     }
 
     private class TimedTransitionActionListener implements ActionListener {

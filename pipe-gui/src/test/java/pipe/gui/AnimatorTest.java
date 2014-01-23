@@ -6,8 +6,8 @@ import org.mockito.InOrder;
 import pipe.historyActions.AnimationHistory;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,7 +19,9 @@ import static org.mockito.Mockito.*;
 public class AnimatorTest {
 
     private Animator animator;
+
     private AnimationHistory mockHistory;
+
     private PetriNet mockPetriNet;
 
     @Before
@@ -52,7 +54,6 @@ public class AnimatorTest {
         verify(mockHistory).stepForward();
     }
 
-
     @Test
     public void ifCannotStepForwardDoesNotAnimateTransition() {
         when(mockHistory.isStepForwardAllowed()).thenReturn(false);
@@ -65,7 +66,6 @@ public class AnimatorTest {
         verify(mockHistory, never()).stepForward();
     }
 
-
     @Test
     public void ifStepBackwardAnimatesTransition() {
         when(mockHistory.isStepBackAllowed()).thenReturn(true);
@@ -76,7 +76,6 @@ public class AnimatorTest {
         verify(mockPetriNet).fireTransitionBackwards(transition);
         verify(mockHistory).stepBackwards();
     }
-
 
     @Test
     public void ifCannotStepBackwardDoesNotAnimateTransition() {
@@ -98,7 +97,6 @@ public class AnimatorTest {
         inOrder.verify(mockHistory, times(1)).clearStepsForward();
         inOrder.verify(mockHistory, times(1)).addHistoryItem(transition);
     }
-
 
     @Test
     public void doRandomFiringFiresPetriNet() {
