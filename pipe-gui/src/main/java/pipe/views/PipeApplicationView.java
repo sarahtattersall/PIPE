@@ -608,7 +608,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         petriNetTab.changeAnimationMode(animateMode);
 
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
-        Animator animator = petriNetController.getAnimator();
         if (animateMode) {
             enableActions(false, petriNetController.isPasteEnabled());// disables all non-animation buttons
             applicationModel.setEditionAllowed(false);
@@ -618,7 +617,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         } else {
             applicationModel.setEditionAllowed(true);
             statusBar.changeText(statusBar.textforDrawing);
-            animator.restoreModel();
             removeAnimationViewPlane();
             enableActions(true, petriNetController.isPasteEnabled()); // renables all non-animation buttons
         }
@@ -881,7 +879,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             frameForPetriNetTabs.setTitleAt(frameForPetriNetTabs.getSelectedIndex(), name);
             setTitle(outFile.getName());
             //TODO: WHY CLEAR THIS?
-            //            currentTab.getHistoryManager().clear();
+            //            currentTab.getHistoryManager().finish();
             undoAction.setEnabled(false);
             redoAction.setEnabled(false);
         } catch (Exception e) {

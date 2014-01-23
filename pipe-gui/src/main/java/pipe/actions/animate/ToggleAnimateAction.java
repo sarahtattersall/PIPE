@@ -28,8 +28,10 @@ public class ToggleAnimateAction extends AnimateAction {
             boolean isTabAnimated = currentTab.isInAnimationMode();
             pipeApplicationView.setAnimationMode(!isTabAnimated);
             PetriNetController petriNetController = applicationController.getActivePetriNetController();
+            Animator animator = petriNetController.getAnimator();
             if(!isTabAnimated)
             {
+                animator.startAnimation();
                 pipeApplicationView.restoreMode();
                 AbstractPetriNetViewComponent.ignoreSelection(false);
                 PetriNet petriNet = petriNetController.getPetriNet();
@@ -38,8 +40,7 @@ public class ToggleAnimateAction extends AnimateAction {
             else
             {
                 AbstractPetriNetViewComponent.ignoreSelection(true);
-                Animator animator = petriNetController.getAnimator();
-                animator.clear();
+                animator.finish();
                 // Do we keep the selection??
 //                currentTab.getSelectionObject().clearSelection();
             }

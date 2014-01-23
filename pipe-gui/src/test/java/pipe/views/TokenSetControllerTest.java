@@ -25,7 +25,7 @@ public class TokenSetControllerTest implements Observer
 	private TokenView oneTokenView;
 	private TokenView twoTokenView;
 	private Object activeTokenView;
-	//TODO refactor to make tests more clear, ensure some cases haven't been overlooked
+	//TODO refactor to make tests more finish, ensure some cases haven't been overlooked
 	@Before
 	public void setUp() throws Exception
 	{

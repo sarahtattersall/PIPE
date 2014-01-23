@@ -16,5 +16,6 @@ public abstract class AnimateAction extends GuiAction
             super(name, tooltip, keystroke);
         }
 
+        @Override
         public abstract void actionPerformed(ActionEvent event);
     }

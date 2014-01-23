@@ -4,8 +4,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import pipe.historyActions.AnimationHistory;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -99,5 +106,24 @@ public class AnimatorTest {
         when(mockPetriNet.getRandomTransition()).thenReturn(transition);
         animator.doRandomFiring();
         verify(mockPetriNet).fireTransition(transition);
+    }
+
+    @Test
+    public void restoresOriginalTokensWhenFinished() {
+        Place mockPlace = mock(Place.class);
+        Collection<Place> places = new LinkedList<Place>();
+        places.add(mockPlace);
+
+        Token token = mock(Token.class);
+        Map<Token, Integer> tokens = new HashMap<Token, Integer>();
+        tokens.put(token, 5);
+
+        when(mockPlace.getTokenCounts()).thenReturn(tokens);
+        when(mockPetriNet.getPlaces()).thenReturn(places);
+
+        animator.startAnimation();
+        animator.finish();
+
+        verify(mockPlace).setTokenCounts(tokens);
     }
 }

@@ -1,6 +1,8 @@
 package pipe.gui;
 
 import pipe.historyActions.AnimationHistory;
+import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
 import pipe.views.PipeApplicationView;
@@ -9,6 +11,8 @@ import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -17,11 +21,16 @@ import java.awt.event.ActionListener;
  */
 public class Animator {
 
-    private final Timer timer = new Timer(0, new TimedTransitionActionListener());;
+    private final Timer timer = new Timer(0, new TimedTransitionActionListener());
     private int numberSequences = 0;
     private final PetriNet petriNet;
     private final AnimationHistory animationHistory;
 
+    /**
+     * Map of place id -> token count
+     * used to restore tokens at end of animation
+     */
+    private final Map<String, Map<Token, Integer>> placeTokens = new HashMap<String, Map<Token, Integer>>();
 
     public Animator(PetriNet petriNet, AnimationHistory animationHistory) {
         this.petriNet = petriNet;
@@ -29,15 +38,27 @@ public class Animator {
     }
 
     /**
-     * Restores model at end of animation and sets all transitions to false and
-     * unhighlighted
+     * Restores all places to their original token counts.
      */
-    public void restoreModel() {
-//        PetriNetView petriNetView = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
-//        petriNetView.restorePreviousMarking();
-//        disableTransitions(petriNetView.getModel());
+    private void restoreModel() {
+        for (Place place : petriNet.getPlaces()) {
+            Map<Token, Integer> originalTokens = placeTokens.get(place.getId());
+            place.setTokenCounts(originalTokens);
+        }
     }
 
+
+    /**
+     * Saves the current petri net token counts for restoring later.
+     * When exit animation mode we expect the petri net to return to
+     * it's original state, hence this method must be called before animating.
+     */
+    public void startAnimation() {
+         for (Place place : petriNet.getPlaces()) {
+             Map<Token, Integer> savedTokenCounts = new HashMap<Token, Integer>(place.getTokenCounts());
+             placeTokens.put(place.getId(), savedTokenCounts);
+         }
+    }
 
     public void startRandomFiring() {
         animationHistory.clearStepsForward();
@@ -132,8 +153,14 @@ public class Animator {
     }
 
 
-    public void clear() {
+    /**
+     * Finishes the animation
+     * Resets the petri net state to before animation
+     */
+    public void finish() {
+        restoreModel();
         animationHistory.clear();
+        placeTokens.clear();
     }
 
     private class TimedTransitionActionListener implements ActionListener {
