@@ -3,26 +3,32 @@ package pipe.actions.animate;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 
+/**
+ * Steps back in the animation sequence, i.e. undoes the last transition fired when clicked
+ */
 public class StepBackwardAction extends AnimateAction {
-    public StepBackwardAction(final String name, final String tooltip, final String keystroke) {
+    private final PipeApplicationView applicationView;
+
+    private final PipeApplicationController applicationController;
+
+    public StepBackwardAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
+                              PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
+        this.applicationView = applicationView;
+        this.applicationController = applicationController;
     }
 
     @Override
-    public void actionPerformed(final ActionEvent event) {
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        PetriNetController petriNetController = controller.getActivePetriNetController();
+    public void actionPerformed(ActionEvent event) {
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Animator animator = petriNetController.getAnimator();
         animator.stepBack();
 
-        //        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
-        //        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
+        applicationView.setStepForward(animator.isStepForwardAllowed());
+        applicationView.setStepBackward(animator.isStepBackAllowed());
     }
 }

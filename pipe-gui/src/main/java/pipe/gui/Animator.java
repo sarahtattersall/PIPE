@@ -52,12 +52,22 @@ public class Animator {
      * Saves the current petri net token counts for restoring later.
      * When exit animation mode we expect the petri net to return to
      * it's original state, hence this method must be called before animating.
+     *
+     * Also marks the enabled transitions in the petri net.
      */
     public void startAnimation() {
-         for (Place place : petriNet.getPlaces()) {
-             Map<Token, Integer> savedTokenCounts = new HashMap<Token, Integer>(place.getTokenCounts());
-             placeTokens.put(place.getId(), savedTokenCounts);
-         }
+        saveCurrentTokenState();
+        petriNet.markEnabledTransitions();
+    }
+
+    /**
+     * Saves the current tokens in places
+     */
+    private void saveCurrentTokenState() {
+        for (Place place : petriNet.getPlaces()) {
+            Map<Token, Integer> savedTokenCounts = new HashMap<Token, Integer>(place.getTokenCounts());
+            placeTokens.put(place.getId(), savedTokenCounts);
+        }
     }
 
     public void startRandomFiring() {

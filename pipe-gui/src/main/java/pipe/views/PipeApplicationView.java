@@ -114,13 +114,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public GuiAction zoomAction;
 
-    public AnimateAction startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A");
+    public final AnimateAction startAction;
 
-    public AnimateAction stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4");
+    public final AnimateAction stepbackwardAction;
 
-    public AnimateAction stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6");
+    public final AnimateAction stepforwardAction;
 
-    public AnimateAction randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5");
+    public final AnimateAction randomAction;
 
     public AnimateAction multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
 
@@ -162,6 +162,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V", applicationController);
         cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X", applicationController);
         unfoldAction = new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U", this, applicationController);
+        startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this, applicationController);
+        stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", this, applicationController);
+        randomAction = new RandomAnimateAction("Random", "Randomly fire a transition", "5", this, applicationController);
+        stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", this, applicationController);
+
         setTitle(null);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -962,6 +967,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     //TODO: DELETE!
     public PetriNetView getCurrentPetriNetView() {
         return null;
+    }
+
+    public void setStepForward(boolean stepForwardAllowed) {
+        stepforwardAction.setEnabled(stepForwardAllowed);
+    }
+
+    public void setStepBackward(boolean stepBackwardAllowed) {
+        stepbackwardAction.setEnabled(stepBackwardAllowed);
     }
 
     private static class Line extends JComponent {

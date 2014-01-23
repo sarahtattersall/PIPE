@@ -131,12 +131,12 @@ public class Transition extends Connectable implements Serializable {
 
     public void enable() {
         enabled = true;
-        //        notifyObservers();
+        changeSupport.firePropertyChange("enabled", false, true);
     }
 
     public void disable() {
         enabled = false;
-        //        notifyObservers();
+        changeSupport.firePropertyChange("disabled", true, false);
     }
 
     public boolean isEnabled() {

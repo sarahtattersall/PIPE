@@ -377,9 +377,9 @@ public class PetriNet {
     /**
      * Removes tokens from places into the transition
      * Adds tokens to the places out of the transition according to the arc weight
-     * Disables fired transition
+     * Recalculates enabled transitions
      *
-     * @param transition
+     * @param transition transition to fire
      */
     public void fireTransition(Transition transition) {
         if (transition.isEnabled()) {

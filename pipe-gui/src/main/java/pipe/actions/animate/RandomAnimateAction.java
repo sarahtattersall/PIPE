@@ -11,20 +11,24 @@ import pipe.views.PipeApplicationView;
 import java.awt.event.ActionEvent;
 
 public class RandomAnimateAction extends AnimateAction {
-    public RandomAnimateAction(final String name, final String tooltip, final String keystroke) {
+    private final PipeApplicationView applicationView;
+
+    private final PipeApplicationController applicationController;
+
+    public RandomAnimateAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView, PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
+        this.applicationView = applicationView;
+        this.applicationController = applicationController;
     }
 
     @Override
-    public void actionPerformed(final ActionEvent event) {
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        PetriNetController petriNetController = controller.getActivePetriNetController();
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
+    public void actionPerformed(ActionEvent event) {
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
 
         Animator animator = petriNetController.getAnimator();
         animator.doRandomFiring();
-//        applicationModel.stepforwardAction.setEnabled(animator.isStepForwardAllowed());
-//        applicationModel.stepbackwardAction.setEnabled(animator.isStepBackAllowed());
-//        pipeApplicationView.getAnimator().updateArcAndTran();
+
+        applicationView.setStepForward(animator.isStepForwardAllowed());
+        applicationView.setStepBackward(animator.isStepBackAllowed());
     }
 }

@@ -82,6 +82,8 @@ public final class TransitionView extends ConnectableView<Transition> implements
                     repaint();
                 } else if (name.equals("angle") || name.equals("timed") || name.equals("infiniteServer")) {
                     repaint();
+                } else if (name.equals("enabled") || name.equals("disabled")) {
+                    repaint();
                 }
             }
         });
