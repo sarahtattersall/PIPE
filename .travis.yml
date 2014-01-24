@@ -1,0 +1,14 @@
+language: java
+
+# blacklist
+# branches:
+#   except:
+#     - legacy
+#     - experimental
+
+# whitelist
+branches:
+  only:
+    - develop
+    - clean_up
+    - travis
