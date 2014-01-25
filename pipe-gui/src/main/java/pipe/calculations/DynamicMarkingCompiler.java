@@ -48,8 +48,6 @@ public class DynamicMarkingCompiler {
         sb.append(File.separator);
         String templateFolder = sb.toString();
         templateFile = templateFolder + "template.java";
-//        templateFile = (new File(templateFile).getAbsolutePath());
-        System.out.println(templateFile);
     }
 
     /**
@@ -95,7 +93,6 @@ public class DynamicMarkingCompiler {
         JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, optionList, null, jfiles);
         boolean success = task.call();
         if (!success) {
-            System.out.println("UNSUCCESSFUL!!!!!!!!!!###############");
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
                 System.out.println(diagnostic.getCode());
                 System.out.println(diagnostic.getKind());
@@ -105,6 +102,7 @@ public class DynamicMarkingCompiler {
                 System.out.println(diagnostic.getSource());
                 System.out.println(diagnostic.getMessage(null));
             }
+            return null;
         }
 
         try {
