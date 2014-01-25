@@ -34,7 +34,7 @@ Once finished you should see the file ```target/PIPE-4.3.0.jar```.
 ### Execution ###
 In order to run PIPE tool execute the following from within the PIPE root directory:
 
-    $ mvn exec:java
+    $ mvn exec:exec
     
 ### Note: local libs ###
 There are some internal libraries, which need to be found for maven. For the mean time they are located in the project under ``src/local-libs`` and this directory is treated as a local library. When installing expect the following warning:
