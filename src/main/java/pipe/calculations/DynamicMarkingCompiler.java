@@ -48,8 +48,6 @@ public class DynamicMarkingCompiler {
         sb.append(File.separator);
         String templateFolder = sb.toString();
         templateFile = templateFolder + "template.java";
-//        templateFile = (new File(templateFile).getAbsolutePath());
-        System.out.println(templateFile);
     }
 
     /**
@@ -81,13 +79,6 @@ public class DynamicMarkingCompiler {
         jfiles.add(new CharSequenceJavaFileObject(fullName, src));
 
         List<String> optionList = new ArrayList<String>();
-        // set compiler's classpath to be same as the runtime's
-
-
-        URL url1 = ClassLoader.getSystemResource("pipe/models");
-        System.out.println("********** URL1 " + url1);
-
-        optionList.addAll(Arrays.asList("-classpath", "src/main/java", "-d", url1.getPath()));
 
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
@@ -96,7 +87,6 @@ public class DynamicMarkingCompiler {
         JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, optionList, null, jfiles);
         boolean success = task.call();
         if (!success) {
-            System.out.println("UNSUCCESSFUL!!!!!!!!!!###############");
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
                 System.out.println(diagnostic.getCode());
                 System.out.println(diagnostic.getKind());
@@ -106,6 +96,7 @@ public class DynamicMarkingCompiler {
                 System.out.println(diagnostic.getSource());
                 System.out.println(diagnostic.getMessage(null));
             }
+            return null;
         }
 
         try {
