@@ -9,8 +9,8 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>PIPE-gui</artifactId>
-    <version>4.3.0</version>
+    <artifactId>PIPE-gui</artifactId>    
+    <version>4.3.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -18,13 +18,26 @@
     </properties>
 
     <build>
+        <finalName>pipe</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <mainClass>Pipe</mainClass>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-cp</argument>
+                        <classpath/>
+                        <argument>Pipe</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>
