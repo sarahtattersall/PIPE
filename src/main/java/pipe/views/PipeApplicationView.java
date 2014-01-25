@@ -81,7 +81,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             System.err.println("Error loading L&F: " + exc);
         }
 
-        this.setIconImage(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + "icon.png")).getImage());
+        String imagePath = ApplicationSettings.getImagePath() + "icon.png";
+        URL resource = getClass().getClassLoader().getResource(imagePath);
+
+
+        this.setIconImage(new ImageIcon(resource).getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 80 / 100, screenSize.height * 80 / 100);
