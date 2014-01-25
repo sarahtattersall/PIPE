@@ -17,6 +17,7 @@
     </modules>
 
     <build>
+<<<<<<< HEAD
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -29,5 +30,18 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+=======
+        <finalName>pipe</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>Pipe</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+>>>>>>> Add Template for RTA dynamic class loading
     </build>
 </project>

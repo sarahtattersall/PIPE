@@ -188,16 +188,9 @@ public class AnalyseResponse implements Runnable
 
         DynamicMarkingCompiler d = new DynamicMarkingCompiler();
         IDynamicMarking marking = null;
-        //Rewrite the sourcecode for DynamicMarkingImpl with the user inputed expressions
-        //for defining start and target expressions
-        d.setLogicalExpression(startExp, targetExp);
-
-        //This section will recompile the DynamicMarkingClass to get the changes made
-        //to the isTargetState/isStartState methods.
-        d.compileDynamicMarking();
         try
         {
-            marking = d.getDynamicMarking();
+            marking = d.getDynamicMarking(startExp, targetExp);
         }
         catch(Exception e)
         {
