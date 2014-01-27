@@ -19,12 +19,6 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
         extends PetriNetObjectHandler<T, V> {
 
 
-    private static boolean mouseDown = false;
-
-    public static boolean isMouseDown() {
-        return mouseDown;
-    }
-
     // constructor passing in all required objects
     ConnectableHandler(V view, Container contentpane,
                        T obj, PetriNetController controller) {
@@ -35,7 +29,6 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-        mouseDown = true;
 
         if (e.isPopupTrigger()) {
             JPopupMenu menu = getPopup(e);
@@ -48,6 +41,11 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
         }
     }
 
+    /**
+     * getPopup adds menu items which connectables all share
+     * @param e event
+     * @return new JPopupMenu with hide and show attributes and supers attributes
+     */
     @Override
     protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popupMenu = super.getPopup(e);

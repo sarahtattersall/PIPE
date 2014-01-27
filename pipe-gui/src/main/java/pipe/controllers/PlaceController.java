@@ -15,14 +15,14 @@ public class PlaceController
     private final Place place;
     private final HistoryManager historyManager;
 
-    public PlaceController(final Place place,
-                           final HistoryManager historyManager) {
+    public PlaceController(Place place,
+                           HistoryManager historyManager) {
         super(place, historyManager);
         this.place = place;
         this.historyManager = historyManager;
     }
 
-    public int getTokenCount(final Token token) {
+    public int getTokenCount(Token token) {
         return place.getTokenCount(token);
     }
 

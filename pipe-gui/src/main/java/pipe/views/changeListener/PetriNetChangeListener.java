@@ -3,16 +3,15 @@ package pipe.views.changeListener;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.models.component.*;
+import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.views.*;
-import pipe.views.builder.InhibitorArcViewBuilder;
-import pipe.views.builder.NormalArcViewBuilder;
-import pipe.views.builder.PlaceViewBuilder;
-import pipe.views.builder.TransitionViewBuilder;
+import pipe.views.builder.*;
+import pipe.views.viewComponents.AnnotationView;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -124,6 +123,11 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction("newAnnotation")
     private void newAnnotation(PropertyChangeEvent propertyChangeEvent) {
+        Annotation annotation = (Annotation) propertyChangeEvent.getNewValue();
+        AnnotationViewBuilder builder = new AnnotationViewBuilder(annotation, controller);
+
+        AnnotationView view = builder.build();
+        petriNetTab.addNewPetriNetObject(view);
 
     }
 

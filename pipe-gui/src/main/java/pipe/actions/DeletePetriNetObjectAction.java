@@ -23,9 +23,12 @@ public class DeletePetriNetObjectAction extends AbstractAction {
         this.component = component;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+
+    /**
+     * Deletes component from the petri net
+     * @param e action event
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();

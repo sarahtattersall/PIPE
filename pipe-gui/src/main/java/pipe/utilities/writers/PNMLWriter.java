@@ -3,7 +3,7 @@ package pipe.utilities.writers;
 import org.w3c.dom.*;
 import pipe.common.dataLayer.StateGroup;
 import pipe.views.*;
-import pipe.views.viewComponents.AnnotationNote;
+import pipe.views.viewComponents.AnnotationView;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -73,8 +73,8 @@ public class PNMLWriter
                     NET.appendChild(createTokenClassElement(tokenclass, pnDOM));
             }
 
-            AnnotationNote[] labels = _netViewModel.labels();
-            for(AnnotationNote label : labels)
+            AnnotationView[] labels = _netViewModel.labels();
+            for(AnnotationView label : labels)
             {
             	if(!label.isDeleted())
             		NET.appendChild(createAnnotationNoteElement(label, pnDOM));
@@ -261,7 +261,7 @@ public class PNMLWriter
      * @param document   Any DOM to enable creation of Elements and Attributes
      * @return label Element for a PNML Petri-Net DOM
      */
-    private Element createAnnotationNoteElement(AnnotationNote inputLabel, Document document)
+    private Element createAnnotationNoteElement(AnnotationView inputLabel, Document document)
     {
         Element labelElement = null;
 

@@ -4,21 +4,25 @@
  */
 package pipe.views.viewComponents;
 
-import pipe.gui.*;
+import pipe.controllers.PetriNetController;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.AnnotationPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.historyActions.AnnotationText;
 import pipe.models.component.annotation.Annotation;
 import pipe.views.AbstractPetriNetViewComponent;
-import pipe.views.PetriNetView;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 
-public class AnnotationNote extends Note {
+public class AnnotationView extends Note {
     private static final long serialVersionUID = 1L;
 
     private final ResizePoint[] dragPoints = new ResizePoint[8];
@@ -26,13 +30,6 @@ public class AnnotationNote extends Note {
     private boolean fillNote = true;
 
     private AffineTransform prova = new AffineTransform();
-
-    private Annotation model;
-
-    public AnnotationNote(int x, int y) {
-        super(x, y);
-        setDragPoints();
-    }
 
     private void setDragPoints() {
         dragPoints[0] = new ResizePoint(this, ResizePoint.TOP | ResizePoint.LEFT);
@@ -52,21 +49,32 @@ public class AnnotationNote extends Note {
         }
     }
 
-
-    public AnnotationNote(String id, String text, int x, int y) {
-        super(id, text, x, y);
+    public AnnotationView(Annotation annotation, PetriNetController controller) {
+        super(annotation, controller);
+        registerChangeListener(annotation);
         setDragPoints();
+        updateBounds();
     }
 
-    public AnnotationNote(String text, int x, int y, int w, int h, boolean border) {
-        super(text, x, y, w, h, border);
-        setDragPoints();
+    private void registerChangeListener(Annotation annotation) {
+        annotation.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("text")) {
+                    String text = (String) propertyChangeEvent.getNewValue();
+                    setText(text);
+                }
+            }
+        });
     }
 
+    @Override
     public Annotation getModel() {
         return model;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -101,39 +109,42 @@ public class AnnotationNote extends Note {
 
     }
 
-    public void setModel(Annotation model) {
-        this.model = model;
+    public void changeBackground() {
+        fillNote = !fillNote;
+        note.setOpaque(fillNote);
     }
 
+    @Override
     public void updateBounds() {
         super.updateBounds();
-        if (dragPoints != null) {
-            // TOP-LEFT
-            dragPoints[0].setLocation(noteRect.getMinX(), noteRect.getMinY());
-            // TOP-MIDDLE
-            dragPoints[1].setLocation(noteRect.getCenterX(), noteRect.getMinY());
-            // TOP-RIGHT
-            dragPoints[2].setLocation(noteRect.getMaxX(), noteRect.getMinY());
-            // MIDDLE-RIGHT
-            dragPoints[3].setLocation(noteRect.getMaxX(),
-                   noteRect.getCenterY());
-            // BOTTOM-RIGHT
-            dragPoints[4].setLocation(noteRect.getMaxX(), noteRect.getMaxY());
-            // BOTTOM-MIDDLE
-            dragPoints[5].setLocation(noteRect.getCenterX(), noteRect.getMaxY());
-            // BOTTOM-LEFT
-            dragPoints[6].setLocation(noteRect.getMinX(), noteRect.getMaxY());
-            // MIDDLE-LEFT
-            dragPoints[7].setLocation(noteRect.getMinX(), noteRect.getCenterY());
-        }
+        // TOP-LEFT
+        dragPoints[0].setLocation(noteRect.getMinX(), noteRect.getMinY());
+        // TOP-MIDDLE
+        dragPoints[1].setLocation(noteRect.getCenterX(), noteRect.getMinY());
+        // TOP-RIGHT
+        dragPoints[2].setLocation(noteRect.getMaxX(), noteRect.getMinY());
+        // MIDDLE-RIGHT
+        dragPoints[3].setLocation(noteRect.getMaxX(), noteRect.getCenterY());
+        // BOTTOM-RIGHT
+        dragPoints[4].setLocation(noteRect.getMaxX(), noteRect.getMaxY());
+        // BOTTOM-MIDDLE
+        dragPoints[5].setLocation(noteRect.getCenterX(), noteRect.getMaxY());
+        // BOTTOM-LEFT
+        dragPoints[6].setLocation(noteRect.getMinX(), noteRect.getMaxY());
+        // MIDDLE-LEFT
+        dragPoints[7].setLocation(noteRect.getMinX(), noteRect.getCenterY());
     }
 
-    public AnnotationNote copy() {
-        return new AnnotationNote(this.note.getText(), this.getX(),
-                this.getY(), this.note.getWidth(),
-                this.note.getHeight(), this.isShowingBorder());
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(this, tab, this.model, petriNetController);
+        addMouseListener(noteHandler);
+        addMouseMotionListener(noteHandler);
+        note.addMouseListener(noteHandler);
+        note.addMouseMotionListener(noteHandler);
     }
 
+    @Override
     public boolean contains(int x, int y) {
         boolean pointContains = false;
 
@@ -144,19 +155,50 @@ public class AnnotationNote extends Note {
         return super.contains(x, y) || pointContains;
     }
 
-    public AnnotationNote paste(double x, double y, boolean toAnotherView, PetriNetView model) {
-        return new AnnotationNote(this.note.getText(), (int) (x + this.getX()),
-                (int) (y + this.getY()), this.note.getWidth(), this.note.getHeight(),
-                this.isShowingBorder());
+    private class ResizePointHandler extends javax.swing.event.MouseInputAdapter {
+
+        private final ResizePoint myPoint;
+
+        private Point start;
+
+
+        public ResizePointHandler(ResizePoint point) {
+            myPoint = point;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            myPoint.myNote.setDraggable(false);
+            myPoint.isPressed = true;
+            myPoint.repaint();
+            start = e.getPoint();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            myPoint.myNote.setDraggable(true);
+            myPoint.isPressed = false;
+            myPoint.myNote.updateBounds();
+            myPoint.repaint();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            myPoint.drag(e.getX() - start.x, e.getY() - start.y);
+            myPoint.myNote.updateBounds();
+            myPoint.repaint();
+        }
+
     }
 
+    @Override
     public void enableEditMode() {
         String oldText = note.getText();
 
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
-        guiDialog.add(new AnnotationPanel(this));
+        guiDialog.add(new AnnotationPanel(model));
 
         // Make window fit contents' preferred size
         guiDialog.pack();
@@ -175,61 +217,6 @@ public class AnnotationNote extends Note {
             petriNetController.getHistoryManager().addNewEdit(new AnnotationText(this, oldText, newText));
             updateBounds();
         }
-    }
-
-    public boolean isFilled() {
-        return fillNote;
-    }
-
-    public void changeBackground() {
-        fillNote = !fillNote;
-        note.setOpaque(fillNote);
-    }
-
-    @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
-        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(this, tab, this.model, petriNetController);
-        addMouseListener(noteHandler);
-        addMouseMotionListener(noteHandler);
-        getNote().addMouseListener(noteHandler);
-        getNote().addMouseMotionListener(noteHandler);
-    }
-
-    private class ResizePointHandler extends javax.swing.event.MouseInputAdapter {
-
-        private final ResizePoint myPoint;
-
-        private Point start;
-
-
-        public ResizePointHandler(ResizePoint point) {
-            myPoint = point;
-        }
-
-        public void mousePressed(MouseEvent e) {
-            myPoint.myNote.setDraggable(false);
-            myPoint.isPressed = true;
-            myPoint.repaint();
-            start = e.getPoint();
-        }
-
-        public void mouseReleased(MouseEvent e) {
-            myPoint.myNote.setDraggable(true);
-            myPoint.isPressed = false;
-            myPoint.myNote.updateBounds();
-            myPoint.repaint();
-        }
-
-        public void mouseDragged(MouseEvent e) {
-            myPoint.drag(e.getX() - start.x, e.getY() - start.y);
-            myPoint.myNote.updateBounds();
-            myPoint.repaint();
-        }
-
-    }
-
-    public int getLayerOffset() {
-        return Constants.NOTE_LAYER_OFFSET;
     }
 
     public class ResizePoint extends javax.swing.JComponent {
@@ -263,10 +250,6 @@ public class AnnotationNote extends Note {
             setBounds(-SIZE - 1, -SIZE - 1, 2 * SIZE + Constants.ANNOTATION_SIZE_OFFSET + 1,
                     2 * SIZE + Constants.ANNOTATION_SIZE_OFFSET + 1);
             typeMask = type;
-        }
-
-        public Note getMyNote() {
-            return myNote;
         }
 
         public void setLocation(double x, double y) {
@@ -311,4 +294,12 @@ public class AnnotationNote extends Note {
             }
         }
     }
+
+
+    @Override
+    public int getLayerOffset() {
+        return Constants.NOTE_LAYER_OFFSET;
+    }
+
+
 }

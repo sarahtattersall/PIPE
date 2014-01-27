@@ -7,30 +7,33 @@ package pipe.actions;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
-import pipe.views.viewComponents.AnnotationNote;
+import pipe.models.component.annotation.Annotation;
+import pipe.views.viewComponents.AnnotationView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 
-public class EditAnnotationBorderAction
-        extends AbstractAction {
+public class EditAnnotationBorderAction extends AbstractAction {
 
-   private final AnnotationNote selected;
-   
+    private final Annotation annotation;
 
-   public EditAnnotationBorderAction(AnnotationNote component) {
-      selected = component;
-   }
 
-      
-   /** Action for editing the text in an AnnotationNote */
-   public void actionPerformed(ActionEvent e) {
+    public EditAnnotationBorderAction(Annotation annotation) {
+        this.annotation = annotation;
+    }
 
-       PipeApplicationController controller = ApplicationSettings.getApplicationController();
-       PetriNetController petriNetController = controller.getActivePetriNetController();
-       petriNetController.getHistoryManager().addNewEdit(
-               selected.showBorder(!selected.isShowingBorder()));
-   }
+    /**
+     * Action for editing the text in an AnnotationNote
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+//        PipeApplicationController controller = ApplicationSettings.getApplicationController();
+//        PetriNetController petriNetController = controller.getActivePetriNetController();
+          annotation.toggleBorder();
+        //TODO: UNDO ACTION!
+//        petriNetController.getHistoryManager().addNewEdit(annotation.showBorder(!annotation.isShowingBorder()));
+    }
 
 }

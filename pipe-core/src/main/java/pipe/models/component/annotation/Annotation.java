@@ -4,7 +4,44 @@ import pipe.models.component.AbstractPetriNetComponent;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
 public class Annotation extends AbstractPetriNetComponent {
-    public Annotation(double x, double y, String text, double width, double height, boolean border) {
+
+    /**
+     * True if display border for annotation box
+     */
+    private boolean border;
+
+    /**
+     * Top left x position
+     */
+    private int x;
+
+    /**
+     * Top left y position
+     */
+    private int y;
+
+    public void setText(String text) {
+        String old = this.text;
+        this.text = text;
+        changeSupport.firePropertyChange("text", old, text);
+    }
+
+    /**
+     * Text to be displayed
+     */
+    private String text;
+
+    /**
+     * Annotation box width
+     */
+    private int width;
+
+    /**
+     * Annotation box height
+     */
+    private int height;
+
+    public Annotation(int x, int y, String text, int width, int height, boolean border) {
         this.border = border;
         this.x = x;
         this.y = y;
@@ -13,27 +50,15 @@ public class Annotation extends AbstractPetriNetComponent {
         this.height = height;
     }
 
-    private boolean border;
-
-    private double x;
-
-    private double y;
-
-    private String text;
-
-    private double width;
-
-    private double height;
-
     public boolean hasBoarder() {
         return border;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
@@ -41,11 +66,11 @@ public class Annotation extends AbstractPetriNetComponent {
         return text;
     }
 
-    public double getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public double getHeight() {
+    public int getHeight() {
         return height;
     }
 
@@ -80,5 +105,13 @@ public class Annotation extends AbstractPetriNetComponent {
     @Override
     public void setName(String name) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Toggles the border on/off
+     */
+    public void toggleBorder() {
+        border = !border;
+        changeSupport.firePropertyChange("toggleBorder", !border, border);
     }
 }

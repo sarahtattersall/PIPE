@@ -4,7 +4,7 @@
 
 package pipe.historyActions;
 
-import pipe.views.viewComponents.AnnotationNote;
+import pipe.views.viewComponents.AnnotationView;
 
 /**
  *
@@ -14,18 +14,18 @@ public final class AnnotationText
         extends HistoryItem
 {
    
-   private final AnnotationNote annotationNote;
+   private final AnnotationView annotationView;
    private final String oldText;
    private final String newText;
    
    
    /** Creates a new instance of placeRateEdit
-    * @param _annotationNote
+    * @param _annotationView
     * @param _oldText
     * @param _newText*/
-   public AnnotationText(AnnotationNote _annotationNote,
+   public AnnotationText(AnnotationView _annotationView,
                          String _oldText, String _newText) {
-      annotationNote = _annotationNote;
+      annotationView = _annotationView;
       oldText = _oldText;
       newText = _newText;
    }
@@ -33,18 +33,18 @@ public final class AnnotationText
    
    /** */
    public void undo() {
-      annotationNote.setText(oldText);
+      annotationView.setText(oldText);
    }
 
    
    /** */
    public void redo() {
-      annotationNote.setText(newText);
+      annotationView.setText(newText);
    }
 
    
    public String toString(){
-      return super.toString() + " " + annotationNote.getClass().getSimpleName() +
+      return super.toString() + " " + annotationView.getClass().getSimpleName() +
               "oldText: " + oldText + "newText: " + newText;
    }
       

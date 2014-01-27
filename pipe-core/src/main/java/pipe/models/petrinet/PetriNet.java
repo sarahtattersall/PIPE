@@ -148,7 +148,7 @@ public class PetriNet {
     public void addAnnotaiton(Annotation annotation) {
         if (!annotations.contains(annotation)) {
             annotations.add(annotation);
-            changeSupport.firePropertyChange("addAnnotation", null, annotation);
+            changeSupport.firePropertyChange("newAnnotation", null, annotation);
         }
     }
 

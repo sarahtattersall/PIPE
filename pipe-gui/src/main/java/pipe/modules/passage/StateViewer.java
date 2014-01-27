@@ -4,7 +4,7 @@ import pipe.common.dataLayer.StateElement;
 import pipe.common.dataLayer.StateGroup;
 import pipe.gui.Constants;
 import pipe.views.*;
-import pipe.views.viewComponents.AnnotationNote;
+import pipe.views.viewComponents.AnnotationView;
 import pipe.views.viewComponents.ArcPathPoint;
 
 import javax.swing.*;
@@ -108,7 +108,7 @@ public class StateViewer extends JLayeredPane implements Constants
 		}
 
 		// We ignore the Annotation nodes - these nodes will need further development
-		else if (currentObj instanceof AnnotationNote);
+		else if (currentObj instanceof AnnotationView);
 			
 		else
 		{
@@ -127,7 +127,7 @@ public class StateViewer extends JLayeredPane implements Constants
 			else if (currentObj instanceof TransitionView)
 				setLayer(currentObj, DEFAULT_LAYER.intValue() + PLACE_TRANSITION_LAYER_OFFSET);
 				
-			else if (currentObj instanceof AnnotationNote)
+			else if (currentObj instanceof AnnotationView)
 				setLayer(currentObj, DEFAULT_LAYER.intValue() + ANNOTATION_LAYER_OFFSET);	
 		}
 	}

@@ -13,11 +13,11 @@ import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.petrinet.transformer.PNMLTransformer;
 import pipe.utilities.Copier;
-import pipe.views.builder.AnnotationNodeBuilder;
+import pipe.views.builder.AnnotationViewBuilder;
 import pipe.views.builder.PlaceViewBuilder;
 import pipe.views.builder.TokenViewBuilder;
 import pipe.views.builder.TransitionViewBuilder;
-import pipe.views.viewComponents.AnnotationNote;
+import pipe.views.viewComponents.AnnotationView;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     private Map<Transition, TransitionView> _transitionViews = new HashMap<Transition, TransitionView>();
     private Map<Arc, ArcView> _arcViews = new HashMap<Arc, ArcView>();
     private Map<Arc, InhibitorArcView> _inhibitorViews = new HashMap<Arc, InhibitorArcView>();
-    private Map<Annotation, AnnotationNote> _labels = new HashMap<Annotation, AnnotationNote>();
+    private Map<Annotation, AnnotationView> _labels = new HashMap<Annotation, AnnotationView>();
     private Set<RateParameter> _rateParameters = new HashSet<RateParameter>();
     private Vector<Vector<String>> functionRelatedPlaces;
     private List<MarkingView>[] _initialMarkingVector;
@@ -137,14 +137,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         }
     }
 
-    private void displayAnnotations(Collection<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            AnnotationNodeBuilder builder = new AnnotationNodeBuilder(annotation);
-            addAnnotation(builder.build());
-        }
-    }
-
-    private void addAnnotation(AnnotationNote labelInput) {
+    private void addAnnotation(AnnotationView labelInput) {
         boolean unique = true;
         //        _labels.add(labelInput);
         setChanged();
@@ -394,7 +387,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
             addPlace((PlaceView) pn);
         } else if (pn instanceof TransitionView) {
             addTransition((TransitionView) pn);
-        } else if (pn instanceof AnnotationNote) {
+        } else if (pn instanceof AnnotationView) {
             //            _labels.add((AnnotationNote) pn);
         } else if (pn instanceof RateParameter) {
             _rateParameters.add((RateParameter) pn);
@@ -766,8 +759,8 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
     /* (non-Javadoc)
       * @see pipe.interfaces.IPetriNet#labels()
       */
-    public AnnotationNote[] labels() {
-        AnnotationNote[] returnArray = new AnnotationNote[_labels.size()];
+    public AnnotationView[] labels() {
+        AnnotationView[] returnArray = new AnnotationView[_labels.size()];
 
         for (int i = 0; i < _labels.size(); i++) {
             returnArray[i] = _labels.get(i);

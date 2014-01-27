@@ -82,6 +82,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
     }
 
 
+    @Override
     public void mousePressed(MouseEvent e) {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         if (applicationModel.isEditionAllowed() && enablePopup) {
@@ -114,6 +115,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
      * Event handler for when the user releases the mouse, used in conjunction
      * with mouseDragged and mouseReleased to implement the moving action
      */
+    @Override
     public void mouseReleased(MouseEvent e) {
         // Have to check for popup here as well as on pressed for crossplatform!!
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
@@ -145,6 +147,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
     /**
      * Handler for dragging objects around
      */
+    @Override
     public void mouseDragged(MouseEvent e) {
 
         if (!SwingUtilities.isLeftMouseButton(e)) {

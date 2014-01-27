@@ -1,6 +1,6 @@
 package pipe.actions;
 
-import pipe.views.viewComponents.AnnotationNote;
+import pipe.views.viewComponents.AnnotationView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,10 +13,10 @@ import java.awt.event.ActionEvent;
 public class EditAnnotationBackgroundAction 
         extends AbstractAction {
 
-   private final AnnotationNote note;
+   private final AnnotationView note;
    
    
-   public EditAnnotationBackgroundAction(AnnotationNote an) {
+   public EditAnnotationBackgroundAction(AnnotationView an) {
       note = an;
    }
    

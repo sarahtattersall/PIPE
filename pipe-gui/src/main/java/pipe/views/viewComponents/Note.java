@@ -1,5 +1,6 @@
 package pipe.views.viewComponents;
 
+import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Translatable;
@@ -31,12 +32,39 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     private int originalY;
 
 
-    Note(String id, String text, int x, int y) {
-        this(x, y);
-        this._id = id;
-        note.setText(text);
+    Note(Annotation model, PetriNetController controller) {
+        super(model.getId(), model, controller);
+        initialise(model.getX(), model.getY());
+        note.setText(model.getText());
+        note.setSize(model.getWidth(), model.getHeight());
+    }
+
+    Note(int x, int y) {
+        initialise(x,y);
+    }
+
+    private void initialise(int x, int y) {
+        originalX = x;
+        originalY = y;
+
+        note.setAlignmentX(Component.CENTER_ALIGNMENT);
+        note.setAlignmentY(Component.CENTER_ALIGNMENT);
+        note.setOpaque(false);
+        note.setEditable(false);
+        note.setEnabled(false);
+        note.setLineWrap(true);
+        note.setWrapStyleWord(true);
+
+        // Set minimum size the preferred size for an empty string:
+        note.setText("");
+        note.setFont(new Font(Constants.ANNOTATION_DEFAULT_FONT, Font.PLAIN, Constants.ANNOTATION_DEFAULT_FONT_SIZE));
         note.setSize(note.getPreferredSize().width, note.getPreferredSize().height);
-        updateBounds();
+        note.setMinimumSize(note.getPreferredSize());
+        note.setHighlighter(new DefaultHighlighter());
+        note.setDisabledTextColor(Constants.NOTE_DISABLED_COLOUR);
+        note.setForeground(Constants.NOTE_EDITING_COLOUR);
+        add(note);
+        setLocation(x - Constants.RESERVED_BORDER / 2, y - Constants.RESERVED_BORDER / 2);
     }
 
     /**
@@ -63,39 +91,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
                 (rectHeight + Constants.RESERVED_BORDER +
                         +Constants.ANNOTATION_SIZE_OFFSET) + 20);
         setBounds(bounds);
-    }
-
-    Note(int x, int y) {
-        originalX = x;
-        originalY = y;
-
-        note.setAlignmentX(Component.CENTER_ALIGNMENT);
-        note.setAlignmentY(Component.CENTER_ALIGNMENT);
-        note.setOpaque(false);
-        note.setEditable(false);
-        note.setEnabled(false);
-        note.setLineWrap(true);
-        note.setWrapStyleWord(true);
-
-        // Set minimum size the preferred size for an empty string:
-        note.setText("");
-        note.setFont(new Font(Constants.ANNOTATION_DEFAULT_FONT, Font.PLAIN, Constants.ANNOTATION_DEFAULT_FONT_SIZE));
-        note.setSize(note.getPreferredSize().width, note.getPreferredSize().height);
-        note.setMinimumSize(note.getPreferredSize());
-        note.setHighlighter(new DefaultHighlighter());
-        note.setDisabledTextColor(Constants.NOTE_DISABLED_COLOUR);
-        note.setForeground(Constants.NOTE_EDITING_COLOUR);
-        add(note);
-        setLocation(x - Constants.RESERVED_BORDER / 2, y - Constants.RESERVED_BORDER / 2);
-    }
-
-
-    Note(String text, int x, int y, int w, int h, boolean border) {
-        this(x, y);
-        note.setText(text);
-        drawBorder = border;
-        note.setSize(w, h);
-        updateBounds();
     }
 
     public abstract void enableEditMode();

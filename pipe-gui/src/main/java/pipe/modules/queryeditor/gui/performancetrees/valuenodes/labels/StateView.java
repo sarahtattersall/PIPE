@@ -12,13 +12,10 @@
 
 package pipe.modules.queryeditor.gui.performancetrees.valuenodes.labels;
 
-import pipe.common.dataLayer.StateElement;
 import pipe.common.dataLayer.StateGroup;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.modules.interfaces.QueryConstants;
 import pipe.views.*;
-import pipe.views.viewComponents.AnnotationNote;
-import pipe.views.viewComponents.ArcPathPoint;
 
 import javax.swing.*;
 import java.awt.*;
