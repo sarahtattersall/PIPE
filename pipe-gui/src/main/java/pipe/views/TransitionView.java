@@ -1,6 +1,8 @@
 package pipe.views;
 
 import net.sourceforge.jeval.EvaluationException;
+import pipe.handlers.AnimationHandler;
+import pipe.handlers.TransitionAnimationHandler;
 import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
@@ -21,6 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -342,7 +345,9 @@ public final class TransitionView extends ConnectableView<Transition> implements
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);
-        addMouseListener(tab.getAnimationHandler());
+
+        MouseListener transitionAnimationHandler = new TransitionAnimationHandler(this.model, tab);
+        addMouseListener(transitionAnimationHandler);
     }
 
     public boolean isEnabled(boolean animationStatus) {

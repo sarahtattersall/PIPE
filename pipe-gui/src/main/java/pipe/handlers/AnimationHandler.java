@@ -32,6 +32,7 @@ public class AnimationHandler
 	// recover the group transition.
 	private final LinkedList<GroupTransitionView> _lastGroupTransitionView = new LinkedList<GroupTransitionView>();
    
+   @Override
    public void mouseClicked(MouseEvent e){
 
       if (e.getComponent() instanceof TransitionView) {

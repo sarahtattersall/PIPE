@@ -27,6 +27,7 @@ public class TransitionHandler
    }
 
    
+   @Override
    public void mouseWheelMoved (MouseWheelEvent e) {
 //
 //       if (!ApplicationSettings.getApplicationModel().isEditionAllowed() ||
@@ -55,11 +56,13 @@ public class TransitionHandler
     * Creates the popup menu that the user will see when they right click on a 
     * component 
     */
+   @Override
    protected JPopupMenu getPopup(MouseEvent e) {
       int index = 0;
       JPopupMenu popup = super.getPopup(e);
       JMenuItem menuItem = new JMenuItem("Edit Transition");
       menuItem.addActionListener(new ActionListener(){
+         @Override
          public void actionPerformed(ActionEvent e) {
             viewComponent.showEditor();
          }
@@ -69,6 +72,7 @@ public class TransitionHandler
       popup.insert(new JPopupMenu.Separator(), index);
       menuItem = new JMenuItem("Group Transitions");
       menuItem.addActionListener(new ActionListener(){
+         @Override
          public void actionPerformed(ActionEvent e) {
         	 HistoryItem edit = viewComponent.groupTransitions();
         	 if(edit != null){
@@ -82,6 +86,7 @@ public class TransitionHandler
    }
    
    
+   @Override
    public void mouseClicked(MouseEvent e) {
           PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
 //      if (SwingUtilities.isLeftMouseButton(e)){
