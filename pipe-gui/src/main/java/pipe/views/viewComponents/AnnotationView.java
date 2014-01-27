@@ -87,12 +87,17 @@ public class AnnotationView extends Note {
         }
     }
 
+    /**
+     * @param x
+     * @param y
+     * @return true if (x, y) intersect annotation location
+     */
     @Override
     public boolean contains(int x, int y) {
         boolean pointContains = false;
 
-        for (int i = 0; i < 8; i++) {
-            pointContains |= dragPoints[i].contains(x - dragPoints[i].getX(), y - dragPoints[i].getY());
+        for (ResizePoint dragPoint : dragPoints) {
+            pointContains |= dragPoint.contains(x - dragPoint.getX(), y - dragPoint.getY());
         }
 
         return super.contains(x, y) || pointContains;
@@ -103,6 +108,11 @@ public class AnnotationView extends Note {
         return Constants.NOTE_LAYER_OFFSET;
     }
 
+    /**
+     * Listens for changes to the annotation model
+     *
+     * @param annotation model to register changes to
+     */
     private void addChangeListener(Annotation annotation) {
         annotation.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -113,27 +123,30 @@ public class AnnotationView extends Note {
                     setText(text);
                 } else if (name.equals("x") || name.equals("y")) {
                     updateBounds();
-//                    setLocation(model.getX(), model.getY());
                 }
             }
         });
     }
 
+    /**
+     * Creates drag points for all the corners and half way along
+     * each edge
+     */
     private void setDragPoints() {
-        dragPoints[0] = new ResizePoint(this, ResizePoint.TOP | ResizePoint.LEFT);
-        dragPoints[1] = new ResizePoint(this, ResizePoint.TOP);
-        dragPoints[2] = new ResizePoint(this, ResizePoint.TOP | ResizePoint.RIGHT);
-        dragPoints[3] = new ResizePoint(this, ResizePoint.RIGHT);
-        dragPoints[4] = new ResizePoint(this, ResizePoint.BOTTOM | ResizePoint.RIGHT);
-        dragPoints[5] = new ResizePoint(this, ResizePoint.BOTTOM);
-        dragPoints[6] = new ResizePoint(this, ResizePoint.BOTTOM | ResizePoint.LEFT);
-        dragPoints[7] = new ResizePoint(this, ResizePoint.LEFT);
+        dragPoints[0] = new ResizePoint(ResizePoint.TOP | ResizePoint.LEFT);
+        dragPoints[1] = new ResizePoint(ResizePoint.TOP);
+        dragPoints[2] = new ResizePoint(ResizePoint.TOP | ResizePoint.RIGHT);
+        dragPoints[3] = new ResizePoint(ResizePoint.RIGHT);
+        dragPoints[4] = new ResizePoint(ResizePoint.BOTTOM | ResizePoint.RIGHT);
+        dragPoints[5] = new ResizePoint(ResizePoint.BOTTOM);
+        dragPoints[6] = new ResizePoint(ResizePoint.BOTTOM | ResizePoint.LEFT);
+        dragPoints[7] = new ResizePoint(ResizePoint.LEFT);
 
-        for (int i = 0; i < 8; i++) {
-            ResizePointHandler handler = new ResizePointHandler(dragPoints[i]);
-            dragPoints[i].addMouseListener(handler);
-            dragPoints[i].addMouseMotionListener(handler);
-            add(dragPoints[i]);
+        for (ResizePoint dragPoint : dragPoints) {
+            ResizePointHandler handler = new ResizePointHandler(dragPoint);
+            dragPoint.addMouseListener(handler);
+            dragPoint.addMouseMotionListener(handler);
+            add(dragPoint);
         }
     }
 
@@ -170,11 +183,9 @@ public class AnnotationView extends Note {
                 g2.draw(noteRect);
             }
         }
-        for (int i = 0; i < 8; i++) {
-            dragPoints[i].myPaintComponent(g);
+        for (ResizePoint dragPoint : dragPoints) {
+            dragPoint.paintOnCanvas(g);
         }
-
-
     }
 
     public void changeBackground() {
@@ -191,48 +202,53 @@ public class AnnotationView extends Note {
         note.addMouseMotionListener(noteHandler);
     }
 
+    /**
+     * Deals with resizing of the annotation by handling mouse events
+     */
     private class ResizePointHandler extends javax.swing.event.MouseInputAdapter {
 
-        private final ResizePoint myPoint;
+        /**
+         * Point to perform actions to
+         */
+        private final ResizePoint point;
 
         private Point start;
 
 
         public ResizePointHandler(ResizePoint point) {
-            myPoint = point;
+            this.point = point;
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            myPoint.myNote.setDraggable(false);
-            myPoint.isPressed = true;
-            myPoint.repaint();
+            setDraggable(false);
+            point.isPressed = true;
+            point.repaint();
             start = e.getPoint();
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            myPoint.myNote.setDraggable(true);
-            myPoint.isPressed = false;
-            myPoint.myNote.updateBounds();
-            myPoint.repaint();
+            setDraggable(true);
+            point.isPressed = false;
+            updateBounds();
+            point.repaint();
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            myPoint.drag(e.getX() - start.x, e.getY() - start.y);
-            myPoint.myNote.updateBounds();
-            myPoint.repaint();
+            point.drag(e.getX() - start.x, e.getY() - start.y);
+            updateBounds();
+            point.repaint();
         }
 
     }
 
+    /**
+     * Resizable point for changing the size of the annotation
+     * These appear on the boarder of the annotation
+     */
     public class ResizePoint extends javax.swing.JComponent {
-
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
 
         private static final int TOP = 1;
 
@@ -244,16 +260,13 @@ public class AnnotationView extends Note {
 
         public final int typeMask;
 
-        private final Note myNote;
-
         private int SIZE = 3;
 
         private Rectangle shape;
 
         private boolean isPressed = false;
 
-        public ResizePoint(Note obj, int type) {
-            myNote = obj;
+        public ResizePoint(int type) {
             setOpaque(false);
             setBounds(-SIZE - 1, -SIZE - 1, 2 * SIZE + Constants.ANNOTATION_SIZE_OFFSET + 1,
                     2 * SIZE + Constants.ANNOTATION_SIZE_OFFSET + 1);
@@ -266,24 +279,23 @@ public class AnnotationView extends Note {
 
         private void drag(int x, int y) {
             if ((typeMask & TOP) == TOP) {
-                myNote.adjustTop(y);
+                adjustTop(y);
             }
             if ((typeMask & BOTTOM) == BOTTOM) {
-                myNote.adjustBottom(y);
+                adjustBottom(y);
             }
             if ((typeMask & LEFT) == LEFT) {
-                myNote.adjustLeft(x);
+                adjustLeft(x);
             }
             if ((typeMask & RIGHT) == RIGHT) {
-                myNote.adjustRight(x);
+                adjustRight(x);
             }
-            ApplicationSettings.getApplicationView().getCurrentTab().setNetChanged(true);
         }
 
-        public void myPaintComponent(Graphics g) {
+        public void paintOnCanvas(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setTransform(prova);
-            if (myNote.isSelected() && !AbstractPetriNetViewComponent._ignoreSelection) {
+            if (isSelected() && !AbstractPetriNetViewComponent._ignoreSelection) {
                 g2.translate(this.getLocation().x, this.getLocation().y);
                 shape = new Rectangle(0, 0, 2 * SIZE, 2 * SIZE);
                 g2.fill(shape);
