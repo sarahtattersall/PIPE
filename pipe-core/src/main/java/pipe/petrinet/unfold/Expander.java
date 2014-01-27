@@ -212,7 +212,7 @@ public class Expander {
         return arcWeights;
     }
 
-    private Place getNewPlace(Place original, Double newX, Double newY, int tokenCount, String id) {
+    private Place getNewPlace(Place original, int newX, int newY, int tokenCount, String id) {
         if (newPlaces.containsKey(id)) {
             return newPlaces.get(id);
         }

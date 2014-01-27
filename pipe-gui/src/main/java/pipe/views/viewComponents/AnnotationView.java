@@ -31,6 +31,91 @@ public class AnnotationView extends Note {
 
     private AffineTransform prova = new AffineTransform();
 
+    public AnnotationView(Annotation annotation, PetriNetController controller) {
+        super(annotation, controller);
+        registerChangeListener(annotation);
+        setDragPoints();
+        updateBounds();
+    }
+
+    @Override
+    public final void updateBounds() {
+        super.updateBounds();
+        // TOP-LEFT
+        dragPoints[0].setLocation(noteRect.getMinX(), noteRect.getMinY());
+        // TOP-MIDDLE
+        dragPoints[1].setLocation(noteRect.getCenterX(), noteRect.getMinY());
+        // TOP-RIGHT
+        dragPoints[2].setLocation(noteRect.getMaxX(), noteRect.getMinY());
+        // MIDDLE-RIGHT
+        dragPoints[3].setLocation(noteRect.getMaxX(), noteRect.getCenterY());
+        // BOTTOM-RIGHT
+        dragPoints[4].setLocation(noteRect.getMaxX(), noteRect.getMaxY());
+        // BOTTOM-MIDDLE
+        dragPoints[5].setLocation(noteRect.getCenterX(), noteRect.getMaxY());
+        // BOTTOM-LEFT
+        dragPoints[6].setLocation(noteRect.getMinX(), noteRect.getMaxY());
+        // MIDDLE-LEFT
+        dragPoints[7].setLocation(noteRect.getMinX(), noteRect.getCenterY());
+    }
+
+    @Override
+    public void enableEditMode() {
+        String oldText = note.getText();
+
+        // Build interface
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+
+        guiDialog.add(new AnnotationPanel(model));
+
+        // Make window fit contents' preferred size
+        guiDialog.pack();
+
+        // Move window to the middle of the screen
+        guiDialog.setLocationRelativeTo(null);
+
+        guiDialog.setResizable(false);
+        guiDialog.setVisible(true);
+
+        guiDialog.dispose();
+
+        String newText = note.getText();
+        if (oldText != null && !newText.equals(oldText)) {
+            // Text has been changed
+            petriNetController.getHistoryManager().addNewEdit(new AnnotationText(this, oldText, newText));
+            updateBounds();
+        }
+    }
+
+    @Override
+    public boolean contains(int x, int y) {
+        boolean pointContains = false;
+
+        for (int i = 0; i < 8; i++) {
+            pointContains |= dragPoints[i].contains(x - dragPoints[i].getX(), y - dragPoints[i].getY());
+        }
+
+        return super.contains(x, y) || pointContains;
+    }
+
+    @Override
+    public int getLayerOffset() {
+        return Constants.NOTE_LAYER_OFFSET;
+    }
+
+    private void registerChangeListener(Annotation annotation) {
+        annotation.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals("text")) {
+                    String text = (String) propertyChangeEvent.getNewValue();
+                    setText(text);
+                }
+            }
+        });
+    }
+
     private void setDragPoints() {
         dragPoints[0] = new ResizePoint(this, ResizePoint.TOP | ResizePoint.LEFT);
         dragPoints[1] = new ResizePoint(this, ResizePoint.TOP);
@@ -47,26 +132,6 @@ public class AnnotationView extends Note {
             dragPoints[i].addMouseMotionListener(handler);
             add(dragPoints[i]);
         }
-    }
-
-    public AnnotationView(Annotation annotation, PetriNetController controller) {
-        super(annotation, controller);
-        registerChangeListener(annotation);
-        setDragPoints();
-        updateBounds();
-    }
-
-    private void registerChangeListener(Annotation annotation) {
-        annotation.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("text")) {
-                    String text = (String) propertyChangeEvent.getNewValue();
-                    setText(text);
-                }
-            }
-        });
     }
 
     @Override
@@ -115,44 +180,12 @@ public class AnnotationView extends Note {
     }
 
     @Override
-    public void updateBounds() {
-        super.updateBounds();
-        // TOP-LEFT
-        dragPoints[0].setLocation(noteRect.getMinX(), noteRect.getMinY());
-        // TOP-MIDDLE
-        dragPoints[1].setLocation(noteRect.getCenterX(), noteRect.getMinY());
-        // TOP-RIGHT
-        dragPoints[2].setLocation(noteRect.getMaxX(), noteRect.getMinY());
-        // MIDDLE-RIGHT
-        dragPoints[3].setLocation(noteRect.getMaxX(), noteRect.getCenterY());
-        // BOTTOM-RIGHT
-        dragPoints[4].setLocation(noteRect.getMaxX(), noteRect.getMaxY());
-        // BOTTOM-MIDDLE
-        dragPoints[5].setLocation(noteRect.getCenterX(), noteRect.getMaxY());
-        // BOTTOM-LEFT
-        dragPoints[6].setLocation(noteRect.getMinX(), noteRect.getMaxY());
-        // MIDDLE-LEFT
-        dragPoints[7].setLocation(noteRect.getMinX(), noteRect.getCenterY());
-    }
-
-    @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(this, tab, this.model, petriNetController);
         addMouseListener(noteHandler);
         addMouseMotionListener(noteHandler);
         note.addMouseListener(noteHandler);
         note.addMouseMotionListener(noteHandler);
-    }
-
-    @Override
-    public boolean contains(int x, int y) {
-        boolean pointContains = false;
-
-        for (int i = 0; i < 8; i++) {
-            pointContains |= dragPoints[i].contains(x - dragPoints[i].getX(), y - dragPoints[i].getY());
-        }
-
-        return super.contains(x, y) || pointContains;
     }
 
     private class ResizePointHandler extends javax.swing.event.MouseInputAdapter {
@@ -189,34 +222,6 @@ public class AnnotationView extends Note {
             myPoint.repaint();
         }
 
-    }
-
-    @Override
-    public void enableEditMode() {
-        String oldText = note.getText();
-
-        // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-
-        guiDialog.add(new AnnotationPanel(model));
-
-        // Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setResizable(false);
-        guiDialog.setVisible(true);
-
-        guiDialog.dispose();
-
-        String newText = note.getText();
-        if (oldText != null && !newText.equals(oldText)) {
-            // Text has been changed
-            petriNetController.getHistoryManager().addNewEdit(new AnnotationText(this, oldText, newText));
-            updateBounds();
-        }
     }
 
     public class ResizePoint extends javax.swing.JComponent {
@@ -293,12 +298,6 @@ public class AnnotationView extends Note {
                 g2.setTransform(prova);
             }
         }
-    }
-
-
-    @Override
-    public int getLayerOffset() {
-        return Constants.NOTE_LAYER_OFFSET;
     }
 
 

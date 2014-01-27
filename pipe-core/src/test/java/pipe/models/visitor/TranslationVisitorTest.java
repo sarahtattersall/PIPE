@@ -106,7 +106,7 @@ public class TranslationVisitorTest {
     @Test
     public void translatesPlaceCorrectly() {
         Place place = mock(Place.class);
-        double x_y_value = 40.0;
+        int x_y_value = 40;
         when(place.getX()).thenReturn(x_y_value);
         when(place.getY()).thenReturn(x_y_value);
 
@@ -124,7 +124,7 @@ public class TranslationVisitorTest {
         Transition transition = mock(Transition.class);
 
 
-        double x_y_value = 40.0;
+        int x_y_value = 40;
         when(transition.getX()).thenReturn(x_y_value);
         when(transition.getY()).thenReturn(x_y_value);
 

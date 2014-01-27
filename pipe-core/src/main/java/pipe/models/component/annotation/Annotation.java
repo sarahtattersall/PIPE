@@ -1,9 +1,9 @@
 package pipe.models.component.annotation;
 
-import pipe.models.component.AbstractPetriNetComponent;
+import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
-public class Annotation extends AbstractPetriNetComponent {
+public class Annotation extends PlaceablePetriNetComponent {
 
     /**
      * True if display border for annotation box
@@ -54,10 +54,12 @@ public class Annotation extends AbstractPetriNetComponent {
         return border;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
@@ -66,10 +68,12 @@ public class Annotation extends AbstractPetriNetComponent {
         return text;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }

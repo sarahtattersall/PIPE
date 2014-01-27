@@ -137,8 +137,8 @@ public class PetriNetControllerTest {
     @Test
     public void selectsItemLocatedWithinSelectionArea() {
         Place place = mock(Place.class);
-        when(place.getX()).thenReturn(5.0);
-        when(place.getY()).thenReturn(10.0);
+        when(place.getX()).thenReturn(5);
+        when(place.getY()).thenReturn(10);
         when(place.getWidth()).thenReturn(5);
         when(place.getHeight()).thenReturn(20);
 
@@ -156,8 +156,8 @@ public class PetriNetControllerTest {
     @Test
     public void selectsItemWithWidthAndHeightWithinSelectionArea() {
         Place place = mock(Place.class);
-        when(place.getX()).thenReturn(0.0);
-        when(place.getY()).thenReturn(0.0);
+        when(place.getX()).thenReturn(0);
+        when(place.getY()).thenReturn(0);
         when(place.getWidth()).thenReturn(10);
         when(place.getHeight()).thenReturn(10);
 
@@ -171,7 +171,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void selectsArcIfIntersects() {
-        Arc arc = mock(Arc.class);
+        Arc<? extends Connectable, ? extends Connectable> arc = mock(Arc.class);
         Point2D.Double start = new Point2D.Double(0, 0);
         when(arc.getStartPoint()).thenReturn(start);
 
@@ -187,7 +187,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void doesNotSelectArcIfDoesntIntersect() {
-        Arc arc = mock(Arc.class);
+        Arc<? extends Connectable, ? extends Connectable> arc = mock(Arc.class);
         Point2D.Double start = new Point2D.Double(0, 0);
         when(arc.getStartPoint()).thenReturn(start);
 
@@ -211,7 +211,7 @@ public class PetriNetControllerTest {
         controller.select(place);
         controller.select(transition);
 
-        double x_y_value = 40.0;
+        int x_y_value = 40;
         when(place.getX()).thenReturn(x_y_value);
         when(place.getY()).thenReturn(x_y_value);
         when(transition.getX()).thenReturn(x_y_value);

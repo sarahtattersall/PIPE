@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
  * This class is used for PetriNetComponents that can be connected
  * to and Connected from by an {@link pipe.models.component.arc.Arc}
  */
-public abstract class Connectable extends AbstractPetriNetComponent {
+public abstract class Connectable extends PlaceablePetriNetComponent {
     /**
      * Connectable position x
      */
@@ -165,8 +165,9 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         changeSupport.firePropertyChange("id", old, id);
     }
 
-    public double getX() {
-        return x;
+    @Override
+    public int getX() {
+        return (int)x;
     }
 
     public void setX(double x) {
@@ -176,8 +177,9 @@ public abstract class Connectable extends AbstractPetriNetComponent {
 
     }
 
-    public double getY() {
-        return y;
+    @Override
+    public int getY() {
+        return (int)y;
     }
 
     public void setY(double y) {
@@ -185,10 +187,6 @@ public abstract class Connectable extends AbstractPetriNetComponent {
         this.y = y;
         changeSupport.firePropertyChange("y", oldValue, y);
     }
-
-    public abstract int getHeight();
-
-    public abstract int getWidth();
 
     public abstract Point2D.Double getCentre();
 

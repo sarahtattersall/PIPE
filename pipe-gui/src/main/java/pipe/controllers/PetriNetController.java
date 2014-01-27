@@ -9,6 +9,8 @@ import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.PlaceablePetriNetComponent;
+import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
@@ -116,18 +118,42 @@ public class PetriNetController implements IController, Serializable {
      */
     public void select(Rectangle selectionRectangle) {
         for (Place place : petriNet.getPlaces()) {
-            selectConnectable(place, selectionRectangle);
+            selectPlaceable(place, selectionRectangle);
         }
         for (Transition transition : petriNet.getTransitions()) {
-            selectConnectable(transition, selectionRectangle);
+            selectPlaceable(transition, selectionRectangle);
         }
-        for (Arc arc : petriNet.getArcs()) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : petriNet.getArcs()) {
             if (isArcSelected(arc, selectionRectangle) ||
                     selectedComponents.contains(arc.getSource()) ||
                     selectedComponents.contains(arc.getTarget())) {
                 select(arc);
             }
         }
+        for (Annotation annotation : petriNet.getAnnotations()) {
+            selectPlaceable(annotation, selectionRectangle);
+        }
+    }
+
+    /**
+     *
+     * Tests to see if the object is in the selection rectangle
+     * If it is it selects in
+     *
+     * @param placeable object to see if it is selectable
+     * @param selectionRectangle bounds for selection
+     */
+    private void selectPlaceable(PlaceablePetriNetComponent placeable, Rectangle selectionRectangle) {
+        int x = new Double(placeable.getX()).intValue();
+        int y = new Double(placeable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, placeable.getHeight(), placeable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(placeable);
+        }
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
     }
 
     /**
@@ -160,26 +186,6 @@ public class PetriNetController implements IController, Serializable {
         Point2D end = arc.getEndPoint();
         path.lineTo(end.getX(), end.getY());
         return path;
-    }
-
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
-    }
-
-    /**
-     * Currently must be of type Connectable, since yhis is the only abstract
-     * class containing getters for X and Y
-     *
-     * @param connectable        object to select
-     * @param selectionRectangle
-     */
-    private void selectConnectable(Connectable connectable, Rectangle selectionRectangle) {
-        int x = new Double(connectable.getX()).intValue();
-        int y = new Double(connectable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, connectable.getHeight(), connectable.getWidth());
-        if (selectionRectangle.intersects(rectangle)) {
-            select(connectable);
-        }
     }
 
     /**
@@ -272,6 +278,11 @@ public class PetriNetController implements IController, Serializable {
         selectToken(getToken(tokenName));
     }
 
+    //TODO: Should this be in the model???
+    public void selectToken(Token token) {
+        this.selectedToken = token;
+    }
+
     public Token getToken(String tokenName) {
         return getTokenForName(tokenName);
     }
@@ -283,11 +294,6 @@ public class PetriNetController implements IController, Serializable {
      */
     private Token getTokenForName(String name) {
         return petriNet.getToken(name);
-    }
-
-    //TODO: Should this be in the model???
-    public void selectToken(Token token) {
-        this.selectedToken = token;
     }
 
     public void copySelection() {

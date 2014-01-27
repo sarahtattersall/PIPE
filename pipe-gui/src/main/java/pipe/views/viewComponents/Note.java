@@ -20,9 +20,14 @@ import java.awt.geom.RectangularShape;
  * Parameter class
  */
 public abstract class Note extends AbstractPetriNetViewComponent<Annotation> implements Translatable {
-
+    /**
+     * Text note to appear on screen
+     */
     final JTextArea note = new JTextArea();
 
+    /**
+     * Rectangular border for the note
+     */
     final RectangularShape noteRect = new Rectangle();
 
     boolean drawBorder = true;

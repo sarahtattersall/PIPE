@@ -63,10 +63,10 @@ public class ArcTest {
     }
 
     private double setUpSourceXAndYAndReturnAngle() {
-        double sourceX = 0;
-        double sourceY = 0;
-        double targetX = 50;
-        double targetY = 100;
+        int sourceX = 0;
+        int sourceY = 0;
+        int targetX = 50;
+        int targetY = 100;
 
         when(mockSource.getX()).thenReturn(sourceX);
         when(mockSource.getY()).thenReturn(sourceY);
@@ -125,10 +125,10 @@ public class ArcTest {
     public void sourceReturnsTargetAsNextIfNoIntermediatePoints() {
         Point2D.Double center = mock(Point2D.Double.class);
         when(mockSource.getCentre()).thenReturn(center);
-        when(mockSource.getX()).thenReturn(0.);
-        when(mockSource.getY()).thenReturn(0.);
-        when(mockTarget.getX()).thenReturn(0.);
-        when(mockTarget.getY()).thenReturn(0.);
+        when(mockSource.getX()).thenReturn(0);
+        when(mockSource.getY()).thenReturn(0);
+        when(mockTarget.getX()).thenReturn(0);
+        when(mockTarget.getY()).thenReturn(0);
 
         Point2D.Double targetEnd = mock(Point2D.Double.class);
         when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);

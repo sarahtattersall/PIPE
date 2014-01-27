@@ -25,8 +25,8 @@ public class SelectionManager
    private Point startPoint;
    private final Rectangle selectionRectangle = new Rectangle(-1,-1);
    private boolean isSelecting;
-   private static final Color selectionColor = new Color(0, 0, 255, 24);
-   private static final Color selectionColorOutline = new Color(0, 0, 100);
+   private static final Color SELECTION_COLOR = new Color(0, 0, 255, 24);
+   private static final Color SELECTION_COLOR_OUTLINE = new Color(0, 0, 100);
    private final PetriNetTab petriNetTab;
    private boolean enabled = true;
    private final PetriNetController petriNetController;
@@ -103,36 +103,20 @@ public class SelectionManager
     }
 
    
+   @Override
    public void paintComponent(Graphics g) {
       super.paintComponent(g);
       Graphics2D g2d = (Graphics2D) g;
-      g2d.setPaint(selectionColor);
+      g2d.setPaint(SELECTION_COLOR);
       g2d.fill(selectionRectangle);
-      g2d.setPaint(selectionColorOutline);
+      g2d.setPaint(SELECTION_COLOR_OUTLINE);
       g2d.draw(selectionRectangle);
    }
 
-   
-   public void deleteSelection() {
-      // Get all the objects in the current window
-//      ArrayList <PetriNetViewComponent> pns = petriNetTab.getPNObjects();
-//       for(PetriNetViewComponent pn : pns)
-//       {
-//           if(pn.isSelected())
-//           {
-//               pn.delete();
-//           }
-//       }
-//      petriNetTab.updatePreferredSize();
-//       petriNetController.deleteSelection();
-   }
-
-   
    public void clearSelection() {
        petriNetController.deselectAll();
    }
 
-   
    public void translateSelection(int transX, int transY) {
 
       if (transX == 0 && transY == 0) {
@@ -200,9 +184,7 @@ public class SelectionManager
    }
 
    
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-    */
+   @Override
    public void mousePressed(MouseEvent e) {
       if (e.getButton() == MouseEvent.BUTTON1 && !(e.isControlDown())) {
          isSelecting = true;
@@ -218,9 +200,7 @@ public class SelectionManager
    }
 
    
-   /* (non-Javadoc)
-    * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-    */
+   @Override
    public void mouseReleased(MouseEvent e) {
       if (isSelecting) {
          // Select anything that intersects with the rectangle.
@@ -236,6 +216,7 @@ public class SelectionManager
    /* (non-Javadoc)
     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
     */
+   @Override
    public void mouseDragged(MouseEvent e) {
       if (isSelecting) {
          selectionRectangle.setSize(
@@ -253,6 +234,7 @@ public class SelectionManager
    }
 
 
+   @Override
    public void mouseWheelMoved(MouseWheelEvent e) {
       if (e.isControlDown()) {
          if (e.getWheelRotation()> 0) {
@@ -263,16 +245,19 @@ public class SelectionManager
       }
    }   
    
+   @Override
    public void mouseClicked(MouseEvent e) {
        // Not needed
    }
 
    
+   @Override
    public void mouseEntered(MouseEvent e) {
        // Not needed
    }
 
    
+   @Override
    public void mouseExited(MouseEvent e) {
        // Not needed
    }
@@ -281,6 +266,7 @@ public class SelectionManager
    /* (non-Javadoc)
     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
     */
+   @Override
    public void mouseMoved(MouseEvent e) {
        // Not needed
    }
