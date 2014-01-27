@@ -35,7 +35,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     ConnectableView(String id, T model,
                     PetriNetController controller) {
         super(id, model, controller);
-        setLocation((int) model.getX(), (int) model.getY());
+        setLocation(model.getX(), model.getY());
 
         int x = (int) (model.getX() + model.getNameXOffset());
         int y = (int) (model.getX() + model.getNameXOffset());
@@ -79,7 +79,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     protected void updateBounds() {
-        bounds.setBounds((int) model.getX(), (int) model.getY(), model.getHeight(), model.getHeight());
+        bounds.setBounds(model.getX(), model.getY(), model.getHeight(), model.getHeight());
         bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
         setBounds(bounds);
     }

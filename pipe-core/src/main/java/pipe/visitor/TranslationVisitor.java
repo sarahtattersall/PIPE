@@ -2,6 +2,8 @@ package pipe.visitor;
 
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.annotation.Annotation;
+import pipe.models.component.annotation.AnnotationVisitor;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.ArcPointVisitor;
@@ -18,7 +20,8 @@ import java.util.List;
 /**
  * Translates PetriNetComponents by a given amount
  */
-public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVisitor, TransitionVisitor {
+public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVisitor, TransitionVisitor,
+        AnnotationVisitor {
     private final Point2D translation;
 
     private final Collection<PetriNetComponent> selected;
@@ -60,5 +63,11 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
         double x = arcPoint.getX() + translation.getX();
         double y = arcPoint.getY() + translation.getY();
         arcPoint.setPoint(new Point2D.Double(x, y));
+    }
+
+    @Override
+    public void visit(Annotation annotation) {
+        annotation.setX(annotation.getX() + (int)translation.getX());
+        annotation.setY(annotation.getY() + (int)translation.getY());
     }
 }

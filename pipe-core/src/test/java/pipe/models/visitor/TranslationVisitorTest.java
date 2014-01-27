@@ -3,6 +3,7 @@ package pipe.models.visitor;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
@@ -135,5 +136,23 @@ public class TranslationVisitorTest {
         double expectedYValue = x_y_value + translateAmount.getY();
         verify(transition).setX(expectedXValue);
         verify(transition).setY(expectedYValue);
+    }
+
+    @Test
+    public void translatesAnnotationCorrectly() {
+        Annotation annotation = mock(Annotation.class);
+
+
+        int x_y_value = 40;
+        when(annotation.getX()).thenReturn(x_y_value);
+        when(annotation.getY()).thenReturn(x_y_value);
+
+
+        translationVisitor.visit(annotation);
+
+        int expectedXValue = x_y_value + (int)translateAmount.getX();
+        int expectedYValue = x_y_value + (int)translateAmount.getY();
+        verify(annotation).setX(expectedXValue);
+        verify(annotation).setY(expectedYValue);
     }
 }

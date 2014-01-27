@@ -91,7 +91,7 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
         note.setLocation((int) noteRect.getX() + (rectWidth - note.getWidth()) / 2,
                 (int) noteRect.getY() + (rectHeight - note.getHeight()) / 2);
 
-        bounds.setBounds(originalX - 20, originalY - 20,
+        bounds.setBounds(model.getX() - 20, model.getY() - 20,
                 (rectWidth + Constants.RESERVED_BORDER + Constants.ANNOTATION_SIZE_OFFSET) + 20,
                 (rectHeight + Constants.RESERVED_BORDER +
                         +Constants.ANNOTATION_SIZE_OFFSET) + 20);

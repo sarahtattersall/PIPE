@@ -118,4 +118,16 @@ public class Annotation extends PlaceablePetriNetComponent {
         border = !border;
         changeSupport.firePropertyChange("toggleBorder", !border, border);
     }
+
+    public void setX(int x) {
+        int old = this.x;
+        this.x = x;
+        changeSupport.firePropertyChange("x", old, x);
+    }
+
+    public void setY(int y) {
+        int old = this.y;
+        this.y = y;
+        changeSupport.firePropertyChange("y", old, y);
+    }
 }

@@ -33,7 +33,7 @@ public class AnnotationView extends Note {
 
     public AnnotationView(Annotation annotation, PetriNetController controller) {
         super(annotation, controller);
-        registerChangeListener(annotation);
+        addChangeListener(annotation);
         setDragPoints();
         updateBounds();
     }
@@ -103,7 +103,7 @@ public class AnnotationView extends Note {
         return Constants.NOTE_LAYER_OFFSET;
     }
 
-    private void registerChangeListener(Annotation annotation) {
+    private void addChangeListener(Annotation annotation) {
         annotation.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -111,6 +111,9 @@ public class AnnotationView extends Note {
                 if (name.equals("text")) {
                     String text = (String) propertyChangeEvent.getNewValue();
                     setText(text);
+                } else if (name.equals("x") || name.equals("y")) {
+                    updateBounds();
+//                    setLocation(model.getX(), model.getY());
                 }
             }
         });
