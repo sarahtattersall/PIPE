@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 
 
-public class Transition extends Connectable implements Serializable {
+public class Transition extends Connectable {
 
     /**
      * Message fired when the Transitions priority changes
