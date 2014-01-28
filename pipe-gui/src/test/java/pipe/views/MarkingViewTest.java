@@ -45,19 +45,6 @@ public class MarkingViewTest implements Observer
 		tokenView.disableAndNotifyObservers(); 
 		assertNull(markingView.getToken()); 
 	}
-	@Test
-	public void verifyMarkingViewTellsObserversToDeleteSelfIfItsTokenViewIsSetDisabled() throws Exception
-	{
-		markingView = new MarkingView(tokenView, 3); 
-		markingView.addObserver(this); 
-		newMarkingViewShouldBeNull = true; 
-		markingView.setChanged();
-		markingView.notifyObservers(null); 
-		while (!called)
-		{
-			Thread.sleep(10);
-		}	
-	}
 	@Override
 	public void update(Observable oldObject, Object newObject)
 	{
