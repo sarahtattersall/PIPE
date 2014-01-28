@@ -232,23 +232,23 @@ public class Transition extends Connectable {
 
     @Override
     public Point2D.Double getArcEdgePoint(double angle) {
-        double half_height = getHeight() / 2;
-        double centre_x =
-                x + half_height; //Use height since the actual object is a square, width is just the displayed width
-        double centre_y = y + half_height;
+        double halfHeight = getHeight() / 2;
+        double centreX =
+                x + halfHeight; //Use height since the actual object is a square, width is just the displayed width
+        double centre_y = y + halfHeight;
 
-        Point2D.Double connectionPoint = new Point2D.Double(centre_x, centre_y);
+        Point2D.Double connectionPoint = new Point2D.Double(centreX, centre_y);
 
-        double half_width = getWidth() / 2;
+        double halfWidth = getWidth() / 2;
         double rotatedAngle = angle + Math.toRadians(this.angle);
         if (connectToTop(rotatedAngle)) {
-            connectionPoint.y -= half_height;
+            connectionPoint.y -= halfHeight;
         } else if (connectToBottom(rotatedAngle)) {
-            connectionPoint.y += half_height;
+            connectionPoint.y += halfHeight;
         } else if (connectToLeft(rotatedAngle)) {
-            connectionPoint.x -= half_width;
+            connectionPoint.x -= halfWidth;
         } else { //connectToRight
-            connectionPoint.x += half_width;
+            connectionPoint.x += halfWidth;
         }
 
         return rotateAroundCenter(Math.toRadians(this.angle), connectionPoint);

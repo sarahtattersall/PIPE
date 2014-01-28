@@ -12,14 +12,14 @@ import java.util.Map;
 public class IncidenceMatrix {
 
     /**
-     * Holds weight between connection
+     * Holds weight between connected components
      */
-    final Map<Connection, Integer> matrixValues = new HashMap<Connection, Integer>();
+    final Map<MatrixElement, Integer> matrixValues = new HashMap<MatrixElement, Integer>();
 
 
     public void put(Place place, Transition transition, int value) {
-        Connection connection = new Connection(place, transition);
-        matrixValues.put(connection, value);
+        MatrixElement matrixElement = new MatrixElement(place, transition);
+        matrixValues.put(matrixElement, value);
 
     }
 
@@ -31,15 +31,15 @@ public class IncidenceMatrix {
      * @return place transition weight
      */
     public int get(Place place, Transition transition) {
-        Connection connection = new Connection(place, transition);
-        return matrixValues.containsKey(connection) ? matrixValues.get(connection) : 0;
+        MatrixElement matrixElement = new MatrixElement(place, transition);
+        return matrixValues.containsKey(matrixElement) ? matrixValues.get(matrixElement) : 0;
     }
 
 
     /**
      * A connection is a pair of Place and Transition and represents x and y in a matrix
      */
-    private static class Connection {
+    private static class MatrixElement {
         final Place place;
 
         final Transition transition;
@@ -53,7 +53,7 @@ public class IncidenceMatrix {
                 return false;
             }
 
-            Connection that = (Connection) o;
+            MatrixElement that = (MatrixElement) o;
 
             if (!place.equals(that.place)) {
                 return false;
@@ -72,7 +72,7 @@ public class IncidenceMatrix {
             return result;
         }
 
-        private Connection(Place place, Transition transition) {
+        private MatrixElement(Place place, Transition transition) {
             this.place = place;
             this.transition = transition;
         }

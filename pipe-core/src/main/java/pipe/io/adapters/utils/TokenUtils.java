@@ -5,7 +5,7 @@ import pipe.models.component.token.Token;
 import java.awt.*;
 import java.util.Map;
 
-public class TokenUtils {
+public final class TokenUtils {
     /**
      * Hidden constructor for utility class since this class
      * is not designed to be instantiated

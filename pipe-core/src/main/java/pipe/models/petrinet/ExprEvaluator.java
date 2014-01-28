@@ -83,10 +83,11 @@ public class ExprEvaluator {
      * @return expression with place name replaced with its number of tokens
      */
     private String findAndReplaceTokens(String lexpr, String name, int numOfToken) {
+        String lexicalExpression = lexpr;
         do {
-            lexpr = lexpr.toLowerCase().replace(name.toLowerCase(), Integer.toString(numOfToken));
-        } while (lexpr.toLowerCase().contains(name.toLowerCase()));
-        return lexpr;
+            lexicalExpression = lexicalExpression.toLowerCase().replace(name.toLowerCase(), Integer.toString(numOfToken));
+        } while (lexicalExpression.toLowerCase().contains(name.toLowerCase()));
+        return lexicalExpression;
     }
 
     /**
@@ -108,12 +109,13 @@ public class ExprEvaluator {
      * cap(<name>) would be replaced by cap(<capacity>) = cap(10)
      */
     private String findAndReplaceCapacity(String expr, Place place) {
+        String returnExpression = expr;
         String capacityWithPlaceName = "cap(" + place.getName().replaceAll("\\s", "") + ")";
-        if (expr.toLowerCase().contains(capacityWithPlaceName.toLowerCase())) {
+        if (returnExpression.toLowerCase().contains(capacityWithPlaceName.toLowerCase())) {
             int capacity = place.getCapacity();
-            expr = expr.toLowerCase().replace(capacityWithPlaceName.toLowerCase(), Double.toString(capacity));
+            returnExpression = returnExpression.toLowerCase().replace(capacityWithPlaceName.toLowerCase(), Double.toString(capacity));
         }
-        return expr;
+        return returnExpression;
     }
 
     private boolean validFloatAndDivision(String raw) {

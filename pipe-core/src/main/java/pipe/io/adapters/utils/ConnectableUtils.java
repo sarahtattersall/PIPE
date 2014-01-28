@@ -6,7 +6,7 @@ import pipe.io.adapters.model.Point;
 import pipe.io.adapters.model.PositionGraphics;
 import pipe.models.component.Connectable;
 
-public class ConnectableUtils {
+public final class ConnectableUtils {
 
     /**
      * Hidden constructor for utility class since this class

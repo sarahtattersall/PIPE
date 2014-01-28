@@ -121,7 +121,7 @@ public class MarkingView extends JComponent implements Serializable, Observer {
     }
 
     public void setChanged() {
-        _pipeObservable.setChanged();
+//        _pipeObservable.setChanged();
     }
 
     protected PipeObservable getObservable() {
