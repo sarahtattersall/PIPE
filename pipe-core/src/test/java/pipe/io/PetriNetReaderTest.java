@@ -1,7 +1,9 @@
 package pipe.io;
 
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
@@ -211,6 +213,22 @@ public class PetriNetReaderTest {
         assertEquals("red", token.getId());
         assertTrue(token.isEnabled());
         assertEquals(new Color(255, 0, 0), token.getColor());
+    }
+
+    @Test
+    public void createsAnnotation() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(getAnnotationFile()));
+        Annotation annotation = petriNet.getAnnotations().iterator().next();
+        assertNotNull(annotation);
+        assertEquals("#P12s", annotation.getText());
+        assertEquals(93, annotation.getX());
+        assertEquals(145, annotation.getY());
+        assertEquals(20, annotation.getHeight());
+        assertEquals(48, annotation.getWidth());
+    }
+
+    private String getAnnotationFile() {
+        return "/xml/annotation/annotation.xml";
     }
 
     private String getTokenFile() {

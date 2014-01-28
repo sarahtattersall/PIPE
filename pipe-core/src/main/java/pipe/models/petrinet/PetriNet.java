@@ -1,9 +1,6 @@
 package pipe.models.petrinet;
 
-import pipe.io.adapters.modelAdapter.ArcAdapter;
-import pipe.io.adapters.modelAdapter.PlaceAdapter;
-import pipe.io.adapters.modelAdapter.TokenAdapter;
-import pipe.io.adapters.modelAdapter.TransitionAdapter;
+import pipe.io.adapters.modelAdapter.*;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
@@ -22,7 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 
-@XmlType(propOrder = {"tokens", "places", "transitions", "arcs"})
+@XmlType(propOrder = {"tokens", "annotations", "places", "transitions", "arcs"})
 public class PetriNet {
 
 
@@ -48,6 +45,8 @@ public class PetriNet {
     private final Set<Arc<? extends Connectable, ? extends Connectable>> arcs =
             new HashSet<Arc<? extends Connectable, ? extends Connectable>>();
 
+    @XmlElement(name = "labels")
+    @XmlJavaTypeAdapter(AnnotationAdapter.class)
     private final Set<Annotation> annotations = new HashSet<Annotation>();
 
     /**

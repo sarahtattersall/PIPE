@@ -3,42 +3,48 @@ package pipe.models.component.annotation;
 import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
+/**
+ * This class is for labels that can be added to the Petri net
+ */
 public class Annotation extends PlaceablePetriNetComponent {
 
     /**
      * True if display border for annotation box
      */
+    @XmlAttribute
     private boolean border;
 
     /**
      * Top left x position
      */
+    @XmlAttribute
     private int x;
 
     /**
      * Top left y position
      */
+    @XmlAttribute
     private int y;
-
-    public void setText(String text) {
-        String old = this.text;
-        this.text = text;
-        changeSupport.firePropertyChange("text", old, text);
-    }
 
     /**
      * Text to be displayed
      */
+    @XmlElement
     private String text;
 
     /**
      * Annotation box width
      */
+    @XmlAttribute
     private int width;
 
     /**
      * Annotation box height
      */
+    @XmlAttribute
     private int height;
 
     public Annotation(int x, int y, String text, int width, int height, boolean border) {
@@ -50,6 +56,10 @@ public class Annotation extends PlaceablePetriNetComponent {
         this.height = height;
     }
 
+    public void setBorder(boolean border) {
+        this.border = border;
+    }
+
     public boolean hasBoarder() {
         return border;
     }
@@ -59,13 +69,26 @@ public class Annotation extends PlaceablePetriNetComponent {
         return x;
     }
 
+    public void setX(int x) {
+        int old = this.x;
+        this.x = x;
+        changeSupport.firePropertyChange("x", old, x);
+    }
+
     @Override
     public int getY() {
         return y;
     }
 
-    public String getText() {
-        return text;
+    public void setY(int y) {
+        int old = this.y;
+        this.y = y;
+        changeSupport.firePropertyChange("y", old, y);
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
     }
 
     @Override
@@ -73,9 +96,22 @@ public class Annotation extends PlaceablePetriNetComponent {
         return width;
     }
 
-    @Override
-    public int getHeight() {
-        return height;
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        String old = this.text;
+        this.text = text;
+        changeSupport.firePropertyChange("text", old, text);
     }
 
     @Override
@@ -117,17 +153,5 @@ public class Annotation extends PlaceablePetriNetComponent {
     public void toggleBorder() {
         border = !border;
         changeSupport.firePropertyChange("toggleBorder", !border, border);
-    }
-
-    public void setX(int x) {
-        int old = this.x;
-        this.x = x;
-        changeSupport.firePropertyChange("x", old, x);
-    }
-
-    public void setY(int y) {
-        int old = this.y;
-        this.y = y;
-        changeSupport.firePropertyChange("y", old, y);
     }
 }
