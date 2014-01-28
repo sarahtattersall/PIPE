@@ -1,6 +1,5 @@
 package pipe.models.component.token;
 
-import pipe.exceptions.TokenLockedException;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
@@ -43,6 +42,16 @@ public class Token extends AbstractPetriNetComponent {
         this.enabled = token.isEnabled();
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        Color old = this.color;
+        this.color = color;
+        changeSupport.firePropertyChange(COLOR_CHANGE_MESSAGE, old, color);
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -54,16 +63,6 @@ public class Token extends AbstractPetriNetComponent {
         boolean old = this.enabled;
         this.enabled = enabled;
         changeSupport.firePropertyChange(TOKEN_ENABLED_CHANGE_MESSAGE, old, enabled);
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        Color old = this.color;
-        this.color = color;
-        changeSupport.firePropertyChange(COLOR_CHANGE_MESSAGE, old, color);
     }
 
     public int getCurrentMarking() {

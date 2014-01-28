@@ -5,7 +5,6 @@ import pipe.models.component.token.Token;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,14 +13,14 @@ import java.util.Map;
  */
 public class Place extends Connectable {
     /**
-     * Place diameter
-     */
-    private final static int DIAMETER = 30;
-
-    /**
      * Message fired when the places tokens change in any way
      */
     public final static String TOKEN_CHANGE_MESSAGE = "tokens";
+
+    /**
+     * Place diameter
+     */
+    private final static int DIAMETER = 30;
 
     /**
      * Marking x offset relative to the place x coordinate
@@ -114,16 +113,16 @@ public class Place extends Connectable {
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
-    public boolean hasCapacityRestriction() {
-        return capacity > 0;
-    }
-
     private int getNumberOfTokensStored(Map<Token, Integer> tokens) {
         int sum = 0;
         for (Integer value : tokens.values()) {
             sum += value;
         }
         return sum;
+    }
+
+    public boolean hasCapacityRestriction() {
+        return capacity > 0;
     }
 
     /**
@@ -158,18 +157,18 @@ public class Place extends Connectable {
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
-    /**
-     * @return the number of tokens currently stored in this place
-     */
-    public int getNumberOfTokensStored() {
-        return getNumberOfTokensStored(tokenCounts);
-    }
-
     public int getTokenCount(Token token) {
         if (tokenCounts.containsKey(token)) {
             return tokenCounts.get(token);
         }
         return 0;
+    }
+
+    /**
+     * @return the number of tokens currently stored in this place
+     */
+    public int getNumberOfTokensStored() {
+        return getNumberOfTokensStored(tokenCounts);
     }
 
     public void decrementTokenCount(Token token) {
@@ -230,16 +229,6 @@ public class Place extends Connectable {
     }
 
     @Override
-    public int getHeight() {
-        return DIAMETER;
-    }
-
-    @Override
-    public int getWidth() {
-        return DIAMETER;
-    }
-
-    @Override
     public Point2D.Double getCentre() {
         return new Point2D.Double(getX() + getWidth() / 2, getY() + getHeight() / 2);
     }
@@ -273,5 +262,15 @@ public class Place extends Connectable {
     @Override
     public boolean isEndPoint() {
         return true;
+    }
+
+    @Override
+    public int getHeight() {
+        return DIAMETER;
+    }
+
+    @Override
+    public int getWidth() {
+        return DIAMETER;
     }
 }

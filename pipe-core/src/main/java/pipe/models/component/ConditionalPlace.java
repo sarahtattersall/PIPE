@@ -3,10 +3,9 @@ package pipe.models.component;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 
 //TODO: FIGURE UT WHAT THIS DOES AND FIX GENERICS
-public class ConditionalPlace extends Connectable  {
+public class ConditionalPlace extends Connectable {
     private static final int DIAMETER = 30;
 
     public ConditionalPlace(String id, String name) {

@@ -5,7 +5,6 @@ import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 
 
 public class Transition extends Connectable {
@@ -39,7 +38,6 @@ public class Transition extends Connectable {
      * Message fired when the transition is enabled
      */
     public static final String ENABLED_CHANGE_MESSAGE = "enabled";
-
 
     /**
      * Mesasge fired when the transition is enabled
@@ -98,12 +96,12 @@ public class Transition extends Connectable {
         return rateExpr;
     }
 
-    public void setRateExpr(String string) {
-        rateExpr = string;
-    }
-
     public void setRateExpr(double expr) {
         rateExpr = Double.toString(expr);
+    }
+
+    public void setRateExpr(String string) {
+        rateExpr = string;
     }
 
     public int getAngle() {
@@ -256,48 +254,6 @@ public class Transition extends Connectable {
         return rotateAroundCenter(Math.toRadians(this.angle), connectionPoint);
     }
 
-    @Override
-    public int getHeight() {
-        return TRANSITION_HEIGHT;
-    }
-
-    @Override
-    public int getWidth() {
-        return TRANSITION_WIDTH;
-    }
-
-    /**
-     * @param angle in radians
-     * @return true if an arc connecting to this should
-     * connect to the top edge of the transition
-     */
-    private boolean connectToTop(double angle) {
-        return Math.cos(angle) > ROOT_THREE_OVER_TWO;
-    }
-
-    /**
-     * @param angle in radians
-     * @return true if an arc connecting to this should connect to the bottom edge
-     * of the transition
-     */
-    private boolean connectToBottom(double angle) {
-        return Math.cos(angle) < -ROOT_THREE_OVER_TWO;
-    }
-
-    /**
-     * @param angle in radians
-     * @return true if an arc connecting to this should
-     * connect to the left edge of the transition
-     */
-    private boolean connectToLeft(double angle) {
-        return (Math.sin(angle) > 0);
-    }
-
-    @Override
-    public boolean isEndPoint() {
-        return true;
-    }
-
     /**
      * Rotates point on transition around transition center
      *
@@ -312,5 +268,47 @@ public class Transition extends Connectable {
         Point2D.Double rotatedPoint = new Point2D.Double();
         tx.transform(point, rotatedPoint);
         return rotatedPoint;
+    }
+
+    @Override
+    public boolean isEndPoint() {
+        return true;
+    }
+
+    /**
+     * @param angle in radians
+     * @return true if an arc connecting to this should
+     * connect to the left edge of the transition
+     */
+    private boolean connectToLeft(double angle) {
+        return (Math.sin(angle) > 0);
+    }
+
+    /**
+     * @param angle in radians
+     * @return true if an arc connecting to this should connect to the bottom edge
+     * of the transition
+     */
+    private boolean connectToBottom(double angle) {
+        return Math.cos(angle) < -ROOT_THREE_OVER_TWO;
+    }
+
+    /**
+     * @param angle in radians
+     * @return true if an arc connecting to this should
+     * connect to the top edge of the transition
+     */
+    private boolean connectToTop(double angle) {
+        return Math.cos(angle) > ROOT_THREE_OVER_TWO;
+    }
+
+    @Override
+    public int getHeight() {
+        return TRANSITION_HEIGHT;
+    }
+
+    @Override
+    public int getWidth() {
+        return TRANSITION_WIDTH;
     }
 }
