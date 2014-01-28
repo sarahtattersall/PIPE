@@ -8,6 +8,16 @@ import java.awt.*;
 
 public class Token extends AbstractPetriNetComponent {
 
+    /**
+     * Message fired when the token is enabled/disabled
+     */
+    public static final String TOKEN_ENABLED_CHANGE_MESSAGE = "enabled";
+
+    /**
+     * Message fired when the token color changes
+     */
+    public static final String COLOR_CHANGE_MESSAGE = "color";
+
     private String id;
 
     private boolean enabled;
@@ -44,7 +54,7 @@ public class Token extends AbstractPetriNetComponent {
     public void setEnabled(boolean enabled) throws TokenLockedException {
         boolean old = this.enabled;
         this.enabled = enabled;
-        changeSupport.firePropertyChange("enabled", old, enabled);
+        changeSupport.firePropertyChange(TOKEN_ENABLED_CHANGE_MESSAGE, old, enabled);
     }
 
     public Color getColor() {
@@ -54,7 +64,7 @@ public class Token extends AbstractPetriNetComponent {
     public void setColor(Color color) {
         Color old = this.color;
         this.color = color;
-        changeSupport.firePropertyChange("color", old, color);
+        changeSupport.firePropertyChange(COLOR_CHANGE_MESSAGE, old, color);
     }
 
     public int getCurrentMarking() {
@@ -91,7 +101,7 @@ public class Token extends AbstractPetriNetComponent {
     public void setId(String id) {
         String old = this.id;
         this.id = id;
-        changeSupport.firePropertyChange("id", old, id);
+        changeSupport.firePropertyChange(ID_CHANGE_MESSAGE, old, id);
     }
 
     @Override

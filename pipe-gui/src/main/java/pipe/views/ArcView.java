@@ -81,7 +81,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("x") || name.equals("y")) {
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
                     sourcePoint.setPoint(model.getStartPoint());
                     arcSpecificUpdate();
                 }
@@ -91,7 +91,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("x") || name.equals("y")) {
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
                     endPoint.setPoint(model.getEndPoint());
                     arcSpecificUpdate();
                 }
@@ -104,11 +104,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("newIntermediatePoint")) {
+                if (name.equals(Arc.NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
                     updatePath();
                     arcSpecificUpdate();
                     updateBounds();
-                } else if (name.equals("deleteIntermediatePoint")) {
+                } else if (name.equals(Arc.DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
                     ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
                     arcPath.deletePoint(point);
                     updatePath();

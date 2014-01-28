@@ -8,6 +8,16 @@ import java.beans.PropertyChangeSupport;
  */
 public abstract class AbstractPetriNetComponent implements PetriNetComponent {
 
+    /**
+     * Message fired with the id field is set
+     */
+    public static final String ID_CHANGE_MESSAGE = "id";
+
+    /**
+     * Message fired when the name field is set
+     */
+    public static final String NAME_CHANGE_MESSAGE = "name";
+
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

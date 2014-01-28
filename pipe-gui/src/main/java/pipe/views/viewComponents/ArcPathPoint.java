@@ -9,12 +9,10 @@ package pipe.views.viewComponents;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetView;
-import pipe.views.PetriNetViewComponent;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -31,23 +29,23 @@ import java.beans.PropertyChangeListener;
 public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     public static final boolean STRAIGHT = false;
+
     public static final boolean CURVED = true;
-    private static int SIZE = 3;
+
     private static final int SIZE_OFFSET = 1;
 
-    private ArcPath arcPath;
+    private static int SIZE = 3;
+
     private final ArcPoint model;
-//
-//    private final Point2D.Double point = new Point2D.Double();
-//    private final Point2D.Double realPoint = new Point2D.Double();
 
     private final Point2D.Double control1 = new Point2D.Double();
+    //
+    //    private final Point2D.Double point = new Point2D.Double();
+    //    private final Point2D.Double realPoint = new Point2D.Double();
+
     private final Point2D.Double control = new Point2D.Double();
 
-    private void setup() {
-        _copyPasteable = false; //we can't copy & paste indivial arc points!
-    }
-
+    private ArcPath arcPath;
 
     public ArcPathPoint(ArcPath a) {
         setup();
@@ -56,6 +54,13 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         setPointLocation(0, 0);
     }
 
+    public void setPointLocation(double x, double y) {
+        setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
+    }
+
+    private void setup() {
+        _copyPasteable = false; //we can't copy & paste indivial arc points!
+    }
 
     public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController) {
         super("", point, petriNetController);
@@ -66,7 +71,7 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                if (propertyChangeEvent.getPropertyName().equals("updateLocation")) {
+                if (propertyChangeEvent.getPropertyName().equals(ArcPoint.UPDATE_LOCATION_CHANGE_MESSAGE)) {
                     Point2D point = (Point2D) propertyChangeEvent.getNewValue();
                     setPointLocation(point.getX(), point.getY());
                 }
@@ -75,56 +80,41 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
 
     }
 
-    @Override
-    public ArcPoint getModel() {
-        return model;
+    public void setPointLocation(Point2D point) {
+        setPointLocation(point.getX(), point.getY());
     }
 
     public Point2D getPoint() {
         return model.getPoint();
     }
 
-
-    public void setPointLocation(Point2D point) {
-        setPointLocation(point.getX(), point.getY());
-    }
-    public void setPointLocation(double x, double y) {
-        setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
-    }
-
-
     public boolean isCurved() {
         return model.isCurved();
     }
 
-
     public void updatePointLocation() {
-//        setPointLocation(point.x, point.y);
+        //        setPointLocation(point.x, point.y);
     }
-
 
     public void setPointType(boolean type) {
-//        if (pointType != type) {
-//            pointType = type;
-//            arcPath.createPath();
-//            arcPath.getArc().updateArcPosition();
-//        }
+        //        if (pointType != type) {
+        //            pointType = type;
+        //            arcPath.createPath();
+        //            arcPath.getArc().updateArcPosition();
+        //        }
     }
-
 
     public HistoryItem togglePointType() {
-//        pointType = !pointType;
-//        arcPath.createPath();
-//        arcPath.getArc().updateArcPosition();
-//        return new ArcPathPointType(this);
+        //        pointType = !pointType;
+        //        arcPath.createPath();
+        //        arcPath.getArc().updateArcPosition();
+        //        return new ArcPathPointType(this);
         return null;
     }
-
 
     public void setVisibilityLock(boolean lock) {
         arcPath.setPointVisibilityLock(lock);
     }
-
 
     public double getAngle(Point2D.Double p2) {
         double angle;
@@ -142,6 +132,155 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         return angle;
     }
 
+    /**
+     * splitPoint()
+     * This method is called when the user selects the popup menu option
+     * Split Point on an Arc Point.
+     * The method determines the index of the selected point in the listarray of
+     * ArcPathPoints that an arcpath has. Then then a new point is created BEFORE
+     * this one in the list and offset by a small delta in the x direction.
+     *
+     * @return
+     */
+    //TODO: IMPLEMENT
+    public HistoryItem splitPoint() {
+        //        int i = getIndex(); // Get the index of this point
+        //
+        //        int DELTA = 10;
+        //        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, arcPath);
+        //        arcPath.insertPoint(i + 1, newPoint);
+        //        arcPath.getArc().updateArcPosition();
+        //        return new AddArcPathPoint(arcPath.getArc(), newPoint);
+        return null;
+    }
+
+    public Point2D.Double getMidPoint(ArcPathPoint target) {
+        return new Point2D.Double((target.model.getPoint().getX() + model.getPoint().getX()) / 2,
+                (target.model.getPoint().getY() + model.getPoint().getY()) / 2);
+    }
+
+    public Point2D.Double getControl1() {
+        return control1;
+    }
+
+    public void setControl1(Point2D.Double p) {
+        control1.x = p.x;
+        control1.y = p.y;
+    }
+
+    public Point2D.Double getControl() {
+        return control;
+    }
+
+    public void setControl(Point2D.Double p) {
+        control.x = p.x;
+        control.y = p.y;
+    }
+
+    public void setControl1(double _x, double _y) {
+        control1.x = _x;
+        control1.y = _y;
+    }
+
+    public void setControl2(double _x, double _y) {
+        control.x = _x;
+        control.y = _y;
+    }
+
+    void hidePoint() {
+        super.removeFromContainer();
+    }
+
+    @Override
+    public void addToPetriNetTab(PetriNetTab tab) {
+
+    }
+
+    @Override
+    public void translate(int x, int y) {
+        //        this.setPointLocation(point.x + x, point.y + y);
+        //        arcPath.updateArc();
+    }
+
+    public void undelete(PetriNetView model, PetriNetTab view) {
+    }
+
+    @Override
+    public String getName() {
+        return this.getArcPath().getArc().getName() + " - Point " + this.getIndex();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + model.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ArcPathPoint pathPoint = (ArcPathPoint) o;
+
+        if (!model.equals(pathPoint.model)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public ArcPoint getModel() {
+        return model;
+    }
+
+    @Override
+    public void addedToGui() {
+    }
+
+    @Override
+    public void delete() {// Won't delete if only two points left. General delete.
+        if (isDeleteable()) {
+            if (getArcPath().getArc().isSelected()) {
+                return;
+            }
+            kill();
+            arcPath.updateArc();
+        }
+    }
+
+    public ArcPath getArcPath() {
+        return arcPath;
+    }
+
+    public void kill() {        // delete without the safety check :)
+        super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
+        //        arcPath.deletePoint(this);
+        super.delete();
+    }
+
+    public boolean isDeleteable() {
+        int i = getIndex();
+        return (i > 0 && i != arcPath.getNumPoints() - 1);
+    }
+
+    public int getIndex() {
+        for (int i = 0; i < arcPath.getNumPoints(); i++) {
+            if (arcPath.getPathPoint(i) == this) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     @Override
     public void paintComponent(Graphics g) {
@@ -174,177 +313,14 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         }
     }
 
-
-    public int getIndex() {
-        for (int i = 0; i < arcPath.getNumPoints(); i++) {
-            if (arcPath.getPathPoint(i) == this) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-
-    /**
-     * splitPoint()
-     * This method is called when the user selects the popup menu option
-     * Split Point on an Arc Point.
-     * The method determines the index of the selected point in the listarray of
-     * ArcPathPoints that an arcpath has. Then then a new point is created BEFORE
-     * this one in the list and offset by a small delta in the x direction.
-     *
-     * @return
-     */
-    //TODO: IMPLEMENT
-    public HistoryItem splitPoint() {
-//        int i = getIndex(); // Get the index of this point
-//
-//        int DELTA = 10;
-//        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, arcPath);
-//        arcPath.insertPoint(i + 1, newPoint);
-//        arcPath.getArc().updateArcPosition();
-//        return new AddArcPathPoint(arcPath.getArc(), newPoint);
-        return null;
-    }
-
-
-    public Point2D.Double getMidPoint(ArcPathPoint target) {
-        return new Point2D.Double((target.model.getPoint().getX() + model.getPoint().getX()) / 2, (target.model.getPoint().getY() + model.getPoint().getY()) / 2);
-    }
-
-
-    public boolean isDeleteable() {
-        int i = getIndex();
-        return (i > 0 && i != arcPath.getNumPoints() - 1);
-    }
-
-
-    @Override
-    public void delete() {// Won't delete if only two points left. General delete.
-        if (isDeleteable()) {
-            if (getArcPath().getArc().isSelected()) {
-                return;
-            }
-            kill();
-            arcPath.updateArc();
-        }
-    }
-
-
-    public void kill() {        // delete without the safety check :)
-        super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
-//        arcPath.deletePoint(this);
-        super.delete();
-    }
-
-
-    public Point2D.Double getControl1() {
-        return control1;
-    }
-
-
-    public Point2D.Double getControl() {
-        return control;
-    }
-
-
-    public void setControl1(double _x, double _y) {
-        control1.x = _x;
-        control1.y = _y;
-    }
-
-
-    public void setControl2(double _x, double _y) {
-        control.x = _x;
-        control.y = _y;
-    }
-
-
-    public void setControl1(Point2D.Double p) {
-        control1.x = p.x;
-        control1.y = p.y;
-    }
-
-
-    public void setControl(Point2D.Double p) {
-        control.x = p.x;
-        control.y = p.y;
-    }
-
-
-    public ArcPath getArcPath() {
-        return arcPath;
-    }
-
-
-    @Override
-    public void addedToGui() {
-    }
-
-
-    void hidePoint() {
-        super.removeFromContainer();
-    }
-
     @Override
     public int getLayerOffset() {
         return Constants.ARC_POINT_LAYER_OFFSET;
-    }
-
-    @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
-
-    }
-
-
-    @Override
-    public void translate(int x, int y) {
-//        this.setPointLocation(point.x + x, point.y + y);
-//        arcPath.updateArc();
-    }
-
-
-    public void undelete(PetriNetView model, PetriNetTab view) {
-    }
-
-
-    @Override
-    public String getName() {
-        return this.getArcPath().getArc().getName() + " - Point " + this.getIndex();
     }
 
     //TODO: WORK OUT HOW TO SELECT THESE?
     @Override
     public boolean isSelected() {
         return false;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        ArcPathPoint pathPoint = (ArcPathPoint) o;
-
-        if (!model.equals(pathPoint.model)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + model.hashCode();
-        return result;
     }
 }

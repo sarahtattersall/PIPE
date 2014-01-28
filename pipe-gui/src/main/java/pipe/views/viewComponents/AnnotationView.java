@@ -11,7 +11,6 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.AnnotationPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
-import pipe.historyActions.AnnotationText;
 import pipe.models.component.annotation.Annotation;
 import pipe.views.AbstractPetriNetViewComponent;
 
@@ -109,10 +108,10 @@ public class AnnotationView extends Note {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("text")) {
+                if (name.equals(Annotation.TEXT_CHANGE_MESSAGE)) {
                     String text = (String) propertyChangeEvent.getNewValue();
                     setText(text);
-                } else if (name.equals("x") || name.equals("y")) {
+                } else if (name.equals(Annotation.X_CHANGE_MESSAGE) || name.equals(Annotation.Y_CHANGE_MESSAGE)) {
                     updateBounds();
                 }
             }

@@ -13,6 +13,31 @@ import java.util.Map;
 
 public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
 
+    /**
+     * Message fired when the arc source is changed
+     */
+    public static final String SOURCE_CHANGE_MESSAGE = "source";
+
+    /**
+     * Message fired when the arc target is changed
+     */
+    public static final String TARGET_CHANGE_MESSAGE = "target";
+
+    /**
+     * Message fired when the arc weight is changed
+     */
+    public static final String WEIGHT_CHANGE_MESSAGE = "weight";
+
+    /**
+     * Message fired when an intermediate point is deleted
+     */
+    public static final String DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE = "deleteIntermediatePoint";
+
+    /**
+     * Message fired when an intermediate point is created
+     */
+    public static final String NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE = "newIntermediatePoint";
+
     private S source;
 
     private T target;
@@ -59,7 +84,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public void setSource(S source) {
         S old = this.source;
         this.source = source;
-        changeSupport.firePropertyChange("source", old, source);
+        changeSupport.firePropertyChange(SOURCE_CHANGE_MESSAGE, old, source);
     }
 
     public T getTarget() {
@@ -70,7 +95,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         T old = this.target;
         this.target = target;
         //        target.addInbound(this);
-        changeSupport.firePropertyChange("target", old, target);
+        changeSupport.firePropertyChange(TARGET_CHANGE_MESSAGE, old, target);
     }
 
     /**
@@ -111,7 +136,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public void setId(String id) {
         String old = this.id;
         this.id = id;
-        changeSupport.firePropertyChange("id", old, old);
+        changeSupport.firePropertyChange(ID_CHANGE_MESSAGE, old, old);
     }
 
     @Override
@@ -138,7 +163,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public void setWeight(Token defaultToken, String weight) {
         Map<Token, String> old = new HashMap<Token, String>(tokenWeights);
         tokenWeights.put(defaultToken, weight);
-        changeSupport.firePropertyChange("weight", old, tokenWeights);
+        changeSupport.firePropertyChange(WEIGHT_CHANGE_MESSAGE, old, tokenWeights);
     }
 
     /**
@@ -170,7 +195,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public void addIntermediatePoint(ArcPoint point) {
 
         intermediatePoints.add(point);
-        changeSupport.firePropertyChange("newIntermediatePoint", null, point);
+        changeSupport.firePropertyChange(NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE, null, point);
     }
 
     public List<ArcPoint> getIntermediatePoints() {
@@ -179,7 +204,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
     public void removeIntermediatePoint(ArcPoint point) {
         intermediatePoints.remove(point);
-        changeSupport.firePropertyChange("deleteIntermediatePoint", point, null);
+        changeSupport.firePropertyChange(DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE, point, null);
     }
 
     public ArcPoint getNextPoint(ArcPoint arcPoint) {

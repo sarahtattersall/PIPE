@@ -10,6 +10,42 @@ import java.io.Serializable;
 
 public class Transition extends Connectable implements Serializable {
 
+    /**
+     * Message fired when the Transitions priority changes
+     */
+    public static final String PRIORITY_CHANGE_MESSAGE = "priority";
+
+    /**
+     * Message fired when the rate changes
+     */
+    public static final String RATE_CHANGE_MESSAGE = "rate";
+
+    /**
+     * Message fired when the angle changes
+     */
+    public static final String ANGLE_CHANGE_MESSAGE = "angle";
+
+    /**
+     * Message fired when the transition becomes timed/becomes immediate
+     */
+    public static final String TIMED_CHANGE_MESSAGE = "timed";
+
+    /**
+     * Message fired when the transition becomes an infinite/single server
+     */
+    public static final String INFINITE_SEVER_CHANGE_MESSAGE = "infiniteServer";
+
+    /**
+     * Message fired when the transition is enabled
+     */
+    public static final String ENABLED_CHANGE_MESSAGE = "enabled";
+
+
+    /**
+     * Mesasge fired when the transition is enabled
+     */
+    public static final String DISABLED_CHANGE_MESSAGE = "disabled";
+
     public static final int TRANSITION_HEIGHT = 30;
 
     public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
@@ -19,8 +55,6 @@ public class Transition extends Connectable implements Serializable {
     private int priority;
 
     private String rateExpr;
-
-    private int orientation = 0;
 
     private boolean timed = false;
 
@@ -57,7 +91,7 @@ public class Transition extends Connectable implements Serializable {
     public void setPriority(int priority) {
         int old = this.priority;
         this.priority = priority;
-        changeSupport.firePropertyChange("priority", old, priority);
+        changeSupport.firePropertyChange(PRIORITY_CHANGE_MESSAGE, old, priority);
     }
 
     public String getRateExpr() {
@@ -79,17 +113,7 @@ public class Transition extends Connectable implements Serializable {
     public void setAngle(int angle) {
         int old = this.angle;
         this.angle = angle;
-        changeSupport.firePropertyChange("angle", old, angle);
-    }
-
-    public int getOrientation() {
-        return orientation;
-    }
-
-    public void setOrientation(int orientation) {
-        int old = this.orientation;
-        this.orientation = orientation;
-        changeSupport.firePropertyChange("oritentation", old, orientation);
+        changeSupport.firePropertyChange(ANGLE_CHANGE_MESSAGE, old, angle);
     }
 
     public boolean isTimed() {
@@ -99,7 +123,7 @@ public class Transition extends Connectable implements Serializable {
     public void setTimed(boolean timed) {
         boolean old = this.timed;
         this.timed = timed;
-        changeSupport.firePropertyChange("timed", old, timed);
+        changeSupport.firePropertyChange(TIMED_CHANGE_MESSAGE, old, timed);
     }
 
     public boolean isInfiniteServer() {
@@ -109,7 +133,7 @@ public class Transition extends Connectable implements Serializable {
     public void setInfiniteServer(boolean infiniteServer) {
         boolean old = this.infiniteServer;
         this.infiniteServer = infiniteServer;
-        changeSupport.firePropertyChange("infiniteServer", old, infiniteServer);
+        changeSupport.firePropertyChange(INFINITE_SEVER_CHANGE_MESSAGE, old, infiniteServer);
     }
 
     @Override
@@ -131,12 +155,12 @@ public class Transition extends Connectable implements Serializable {
 
     public void enable() {
         enabled = true;
-        changeSupport.firePropertyChange("enabled", false, true);
+        changeSupport.firePropertyChange(ENABLED_CHANGE_MESSAGE, false, true);
     }
 
     public void disable() {
         enabled = false;
-        changeSupport.firePropertyChange("disabled", true, false);
+        changeSupport.firePropertyChange(DISABLED_CHANGE_MESSAGE, true, false);
     }
 
     public boolean isEnabled() {
@@ -148,7 +172,6 @@ public class Transition extends Connectable implements Serializable {
         int result = super.hashCode();
         result = 31 * result + priority;
         result = 31 * result + rateExpr.hashCode();
-        result = 31 * result + orientation;
         result = 31 * result + (timed ? 1 : 0);
         result = 31 * result + (infiniteServer ? 1 : 0);
         result = 31 * result + angle;
@@ -183,9 +206,6 @@ public class Transition extends Connectable implements Serializable {
         if (infiniteServer != that.infiniteServer) {
             return false;
         }
-        if (orientation != that.orientation) {
-            return false;
-        }
         if (priority != that.priority) {
             return false;
         }
@@ -200,8 +220,8 @@ public class Transition extends Connectable implements Serializable {
     }
 
     @Override
-    public int getHeight() {
-        return TRANSITION_HEIGHT;
+    public Point2D.Double getCentre() {
+        return new Point2D.Double(getX() + getHeight() / 2, getY() + getHeight() / 2);
     }
 
     //    public RateParameter getRateParameter() {
@@ -211,16 +231,6 @@ public class Transition extends Connectable implements Serializable {
     //    public void setRateParameter(RateParameter rateParameter) {
     //        this.rateParameter = rateParameter;
     //    }
-
-    @Override
-    public int getWidth() {
-        return TRANSITION_WIDTH;
-    }
-
-    @Override
-    public Point2D.Double getCentre() {
-        return new Point2D.Double(getX() + getHeight() / 2, getY() + getHeight() / 2);
-    }
 
     @Override
     public Point2D.Double getArcEdgePoint(double angle) {
@@ -246,34 +256,38 @@ public class Transition extends Connectable implements Serializable {
         return rotateAroundCenter(Math.toRadians(this.angle), connectionPoint);
     }
 
+    @Override
+    public int getHeight() {
+        return TRANSITION_HEIGHT;
+    }
+
+    @Override
+    public int getWidth() {
+        return TRANSITION_WIDTH;
+    }
+
     /**
-     * Return true if an arc connecting to this should
-     * connect to the top
-     *
      * @param angle in radians
-     * @return
+     * @return true if an arc connecting to this should
+     * connect to the top edge of the transition
      */
     private boolean connectToTop(double angle) {
         return Math.cos(angle) > ROOT_THREE_OVER_TWO;
     }
 
     /**
-     * Return true if an arc connecting to this should
-     * connect to the bottom
-     *
      * @param angle in radians
-     * @return
+     * @return true if an arc connecting to this should connect to the bottom edge
+     * of the transition
      */
     private boolean connectToBottom(double angle) {
         return Math.cos(angle) < -ROOT_THREE_OVER_TWO;
     }
 
     /**
-     * Return true if an arc connecting to this should
-     * connect to the left
-     *
      * @param angle in radians
-     * @return
+     * @return true if an arc connecting to this should
+     * connect to the left edge of the transition
      */
     private boolean connectToLeft(double angle) {
         return (Math.sin(angle) > 0);
@@ -287,9 +301,9 @@ public class Transition extends Connectable implements Serializable {
     /**
      * Rotates point on transition around transition center
      *
-     * @param angle
-     * @param point
-     * @return
+     * @param angle rotation angle in degrees
+     * @param point point to rotate
+     * @return rotated point
      */
     private Point2D.Double rotateAroundCenter(double angle, Point2D.Double point) {
         AffineTransform tx = new AffineTransform();

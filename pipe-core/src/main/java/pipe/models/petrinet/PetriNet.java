@@ -23,6 +23,45 @@ import java.util.*;
 public class PetriNet {
 
 
+    /**
+     * Message fired when an annotation is added to the Petri net
+     */
+    public static final String NEW_ANNOTATION_CHANGE_MESSAGE = "newAnnotation";
+    /**
+     * Message fired when a place is deleted from the Petri net
+     */
+    public static final String DELETE_PLACE_CHANGE_MESSAGE = "deletePlace";
+    /**
+     * Message fired when an arc is deleted from the Petri net
+     */
+    public static final String DELETE_ARC_CHANGE_MESSAGE = "deleteArc";
+    /**
+     * Message fired when a transition is deleted from the Petri net
+     */
+    public static final String DELETE_TRANSITION_CHANGE_MESSAGE = "deleteTransition";
+    /**
+     * Message fired when an annotation is deleted from the Petri net
+     */
+    public static final String DELETE_ANNOTATION_CHANGE_MESSAGE = "deleteAnnotation";
+    /**
+     * Message fired when a Place is added to the Petri net
+     */
+    public static final String NEW_PLACE_CHANGE_MESSAGE = "newPlace";
+    /**
+     * Message fired when a transition is added to the Petri net
+     */
+    public static final String NEW_TRANSITION_CHANGE_MESSAGE = "newTransition";
+    /**
+     * Message fired when an arc is added to the Petri net
+     */
+    public static final String NEW_ARC_CHANGE_MESSAGE = "newArc";
+    /**
+     * Message fired when a token is added to the Petri net
+     */
+    public static final String NEW_TOKEN_CHANGE_MESSAGE = "newToken";
+
+    public static final String DELETE_TOKEN_CHANGE_MESSAGE = "deleteToken";
+
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
@@ -106,28 +145,28 @@ public class PetriNet {
     public void addPlace(Place place) {
         if (!places.contains(place)) {
             places.add(place);
-            changeSupport.firePropertyChange("newPlace", null, place);
+            changeSupport.firePropertyChange(NEW_PLACE_CHANGE_MESSAGE, null, place);
         }
     }
 
     public void addTransition(Transition transition) {
         if (!transitions.contains(transition)) {
             transitions.add(transition);
-            changeSupport.firePropertyChange("newTransition", null, transition);
+            changeSupport.firePropertyChange(NEW_TRANSITION_CHANGE_MESSAGE, null, transition);
         }
     }
 
     public void addArc(Arc<? extends Connectable, ? extends Connectable> arc) {
         if (!arcs.contains(arc)) {
             arcs.add(arc);
-            changeSupport.firePropertyChange("newArc", null, arc);
+            changeSupport.firePropertyChange(NEW_ARC_CHANGE_MESSAGE, null, arc);
         }
     }
 
     public void addToken(Token token) {
         if (!tokens.contains(token)) {
             tokens.add(token);
-            changeSupport.firePropertyChange("newToken", null, token);
+            changeSupport.firePropertyChange(NEW_TOKEN_CHANGE_MESSAGE, null, token);
         }
     }
 
@@ -147,7 +186,7 @@ public class PetriNet {
     public void addAnnotaiton(Annotation annotation) {
         if (!annotations.contains(annotation)) {
             annotations.add(annotation);
-            changeSupport.firePropertyChange("newAnnotation", null, annotation);
+            changeSupport.firePropertyChange(NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);
         }
     }
 
@@ -177,7 +216,7 @@ public class PetriNet {
         for (Arc<Place, Transition> arc : outboundArcs(place)) {
             removeArc(arc);
         }
-        changeSupport.firePropertyChange("deletePlace", place, null);
+        changeSupport.firePropertyChange(DELETE_PLACE_CHANGE_MESSAGE, place, null);
     }
 
     /**
@@ -197,7 +236,7 @@ public class PetriNet {
     public void removeArc(Arc<? extends Connectable, ? extends Connectable> arc) {
         this.arcs.remove(arc);
         removeArcFromSourceAndTarget(arc);
-        changeSupport.firePropertyChange("deleteArc", arc, null);
+        changeSupport.firePropertyChange(DELETE_ARC_CHANGE_MESSAGE, arc, null);
     }
 
     /**
@@ -213,7 +252,7 @@ public class PetriNet {
         for (Arc<Transition, Place> arc : outboundArcs(transition)) {
             removeArc(arc);
         }
-        changeSupport.firePropertyChange("deleteTransition", transition, null);
+        changeSupport.firePropertyChange(DELETE_TRANSITION_CHANGE_MESSAGE, transition, null);
     }
 
     /**
@@ -236,6 +275,7 @@ public class PetriNet {
 
     public void removeToken(Token token) {
         tokens.remove(token);
+        changeSupport.firePropertyChange(DELETE_TOKEN_CHANGE_MESSAGE, token, null);
     }
 
     //    public void removeRateParameter(RateParameter parameter) {
@@ -248,7 +288,7 @@ public class PetriNet {
 
     public void removeAnnotaiton(Annotation annotation) {
         annotations.remove(annotation);
-        changeSupport.firePropertyChange("deleteAnnotation", annotation, null);
+        changeSupport.firePropertyChange(DELETE_ANNOTATION_CHANGE_MESSAGE, annotation, null);
     }
 
     public boolean containsDefaultToken() {

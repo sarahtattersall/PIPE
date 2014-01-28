@@ -8,7 +8,6 @@ import pipe.models.component.Connectable;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
@@ -20,6 +19,8 @@ import java.util.LinkedList;
  */
 public abstract class ConnectableView<T extends Connectable> extends AbstractPetriNetViewComponent<T>
         implements Cloneable, Serializable {
+    protected NameLabel nameLabel;
+
     boolean _attributesVisible = false;
 
     ConnectableView(T model) {
@@ -30,10 +31,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         this(id, model, null);
     }
 
-    protected NameLabel nameLabel;
-
-    ConnectableView(String id, T model,
-                    PetriNetController controller) {
+    ConnectableView(String id, T model, PetriNetController controller) {
         super(id, model, controller);
         setLocation(model.getX(), model.getY());
 
@@ -41,20 +39,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         int y = (int) (model.getX() + model.getNameXOffset());
         nameLabel = new NameLabel(model.getName(), x, y);
         addChangeListener();
-//        updateLabelLocation();
-    }
-
-
-    @Override
-    public String getName() {
-        return model.getName();
-    }
-
-    /**
-     * Updates label position according to the Connectable location
-     */
-    private void updateLabelLocation() {
-        nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
+        //        updateLabelLocation();
     }
 
     private void addChangeListener() {
@@ -62,12 +47,13 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("x") || name.equals("y")) {
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
                     updateBounds();
                     updateLabelLocation();
-                } else if (name.equals("nameOffsetX") || name.equals("nameOffsetY")) {
+                } else if (name.equals(Connectable.NAME_X_OFFSET_CHANGE_MESSAGE) || name.equals(
+                        Connectable.NAME_Y_OFFSET_CHANGE_MESSAGE)) {
                     updateLabelLocation();
-                } else if (name.equals("id") || name.equals("name")) {
+                } else if (name.equals(Connectable.ID_CHANGE_MESSAGE) || name.equals(Connectable.NAME_CHANGE_MESSAGE)) {
                     //TODO: NAMELABEL SHOULD LISTEN?
                     String newName = (String) propertyChangeEvent.getNewValue();
                     nameLabel.setName(newName);
@@ -78,10 +64,27 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         });
     }
 
+    /**
+     * Updates label position according to the Connectable location
+     */
+    private void updateLabelLocation() {
+        nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
+    }
+
     protected void updateBounds() {
         bounds.setBounds(model.getX(), model.getY(), model.getHeight(), model.getHeight());
         bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
         setBounds(bounds);
+    }
+
+    @Override
+    public String getName() {
+        return model.getName();
+    }
+
+    @Override
+    public String getId() {
+        return model.getId();
     }
 
     @Override
@@ -90,8 +93,43 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     @Override
-    public String getId() {
-        return model.getId();
+    public T getModel() {
+        return model;
+    }
+
+    @Override
+    public void addedToGui() {
+        _deleted = false;
+        _markedAsDeleted = false;
+        updateBounds();
+        //        update();
+    }
+
+    @Override
+    public void delete() {
+        if (getParent() != null) {
+            getParent().remove(nameLabel);
+        }
+        super.delete();
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
+    }
+
+    @Override
+    public int getLayerOffset() {
+        return Constants.PLACE_TRANSITION_LAYER_OFFSET;
+    }
+
+    @Override
+    public AbstractPetriNetViewComponent clone() {
+        AbstractPetriNetViewComponent<?> pnCopy = super.clone();
+        return pnCopy;
     }
 
     public int centreOffsetTop() {
@@ -109,14 +147,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         nameLabel.addMouseListener(labelHandler);
         nameLabel.addMouseMotionListener(labelHandler);
         nameLabel.addMouseWheelListener(labelHandler);
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        Graphics2D g2 = (Graphics2D) g;
-        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
     }
 
     public void removeFromArc(ArcView oldArcView) {
@@ -168,27 +198,11 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         return null;
     }
 
-    @Override
-    public void delete() {
-        if (getParent() != null) {
-            getParent().remove(nameLabel);
-        }
-        super.delete();
-    }
-
     void setOriginal(ConnectableView<?> ptObject) {
         //        _original = ptObject;
     }
 
     public abstract void showEditor();
-
-    @Override
-    public void addedToGui() {
-        _deleted = false;
-        _markedAsDeleted = false;
-        updateBounds();
-        //        update();
-    }
 
     public boolean getAttributesVisible() {
         return _attributesVisible;
@@ -199,21 +213,4 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     public abstract void toggleAttributesVisible();
-
-    @Override
-    public int getLayerOffset() {
-        return Constants.PLACE_TRANSITION_LAYER_OFFSET;
-    }
-
-
-    @Override
-    public AbstractPetriNetViewComponent clone() {
-        AbstractPetriNetViewComponent<?> pnCopy = super.clone();
-        return pnCopy;
-    }
-
-    @Override
-    public T getModel() {
-        return model;
-    }
 }

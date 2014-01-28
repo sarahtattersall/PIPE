@@ -9,6 +9,16 @@ import java.awt.geom.Point2D;
  */
 public abstract class Connectable extends PlaceablePetriNetComponent {
     /**
+     * Message fired when x name offset is changed
+     */
+    public static final String NAME_X_OFFSET_CHANGE_MESSAGE = "nameXOffset";
+
+    /**
+     * Message fired when y name offset is changed
+     */
+    public static final String NAME_Y_OFFSET_CHANGE_MESSAGE = "nameYOffset";
+
+    /**
      * Connectable position x
      */
     protected double x = 0;
@@ -121,7 +131,7 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
     public void setNameXOffset(double nameXOffset) {
         double oldValue = this.nameXOffset;
         this.nameXOffset = nameXOffset;
-        changeSupport.firePropertyChange("nameOffsetX", oldValue, nameXOffset);
+        changeSupport.firePropertyChange(NAME_X_OFFSET_CHANGE_MESSAGE, oldValue, nameXOffset);
     }
 
     public double getNameYOffset() {
@@ -139,7 +149,7 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
     public void setNameYOffset(double nameYOffset) {
         double oldValue = this.nameYOffset;
         this.nameYOffset = nameYOffset;
-        changeSupport.firePropertyChange("nameOffsetY", oldValue, nameXOffset);
+        changeSupport.firePropertyChange(NAME_Y_OFFSET_CHANGE_MESSAGE, oldValue, nameXOffset);
     }
 
     public String getName() {
@@ -150,7 +160,7 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
     public void setName(String name) {
         String old = this.name;
         this.name = name;
-        changeSupport.firePropertyChange("name", old, name);
+        changeSupport.firePropertyChange(NAME_CHANGE_MESSAGE, old, name);
     }
 
     @Override
@@ -162,7 +172,7 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
     public void setId(String id) {
         String old = this.id;
         this.id = id;
-        changeSupport.firePropertyChange("id", old, id);
+        changeSupport.firePropertyChange(ID_CHANGE_MESSAGE, old, id);
     }
 
     @Override
@@ -173,7 +183,7 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
     public void setX(double x) {
         double oldValue = this.x;
         this.x = x;
-        changeSupport.firePropertyChange("x", oldValue, x);
+        changeSupport.firePropertyChange(X_CHANGE_MESSAGE, oldValue, x);
 
     }
 
@@ -185,7 +195,7 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
     public void setY(double y) {
         double oldValue = this.y;
         this.y = y;
-        changeSupport.firePropertyChange("y", oldValue, y);
+        changeSupport.firePropertyChange(Y_CHANGE_MESSAGE, oldValue, y);
     }
 
     public abstract Point2D.Double getCentre();

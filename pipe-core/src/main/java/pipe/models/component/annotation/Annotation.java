@@ -12,6 +12,16 @@ import javax.xml.bind.annotation.XmlElement;
 public class Annotation extends PlaceablePetriNetComponent {
 
     /**
+     * Message fired when annotation text is changed
+     */
+    public static final String TEXT_CHANGE_MESSAGE = "text";
+
+    /**
+     * Message fired when the border is toggled on/off
+     */
+    public static final String TOGGLE_BORDER_CHANGE_MESSAGE = "toggleBorder";
+
+    /**
      * True if display border for annotation box
      */
     @XmlAttribute
@@ -72,7 +82,7 @@ public class Annotation extends PlaceablePetriNetComponent {
     public void setX(int x) {
         int old = this.x;
         this.x = x;
-        changeSupport.firePropertyChange("x", old, x);
+        changeSupport.firePropertyChange(X_CHANGE_MESSAGE, old, x);
     }
 
     @Override
@@ -83,7 +93,7 @@ public class Annotation extends PlaceablePetriNetComponent {
     public void setY(int y) {
         int old = this.y;
         this.y = y;
-        changeSupport.firePropertyChange("y", old, y);
+        changeSupport.firePropertyChange(Y_CHANGE_MESSAGE, old, y);
     }
 
     @Override
@@ -111,7 +121,7 @@ public class Annotation extends PlaceablePetriNetComponent {
     public void setText(String text) {
         String old = this.text;
         this.text = text;
-        changeSupport.firePropertyChange("text", old, text);
+        changeSupport.firePropertyChange(TEXT_CHANGE_MESSAGE, old, text);
     }
 
     @Override
@@ -152,6 +162,6 @@ public class Annotation extends PlaceablePetriNetComponent {
      */
     public void toggleBorder() {
         border = !border;
-        changeSupport.firePropertyChange("toggleBorder", !border, border);
+        changeSupport.firePropertyChange(TOGGLE_BORDER_CHANGE_MESSAGE, !border, border);
     }
 }

@@ -139,27 +139,27 @@ public class PipeApplicationController {
      */
     private void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {
         for (Token token : net.getTokens()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newToken", null, token);
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_TOKEN_CHANGE_MESSAGE, null, token);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (Place place : net.getPlaces()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newPlace", null, place);
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_PLACE_CHANGE_MESSAGE, null, place);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (Transition transition : net.getTransitions()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newTransition", null, transition);
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_TRANSITION_CHANGE_MESSAGE, null, transition);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (Arc<? extends Connectable, ? extends Connectable> arc : net.getArcs()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newArc", null, arc);
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_ARC_CHANGE_MESSAGE, null, arc);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (Annotation annotation : net.getAnnotations()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newAnnotation", null, annotation);
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);
             propertyChangeListener.propertyChange(changeEvent);
         }
     }

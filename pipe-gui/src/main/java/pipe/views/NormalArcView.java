@@ -45,7 +45,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("weight")) {
+                if (name.equals(Arc.WEIGHT_CHANGE_MESSAGE)) {
                     updateWeights();
                 }
             }

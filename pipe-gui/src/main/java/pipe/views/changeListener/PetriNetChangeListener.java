@@ -9,6 +9,7 @@ import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.*;
 import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationView;
@@ -69,7 +70,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         }
     }
 
-    @EventAction("newPlace")
+    @EventAction(PetriNet.NEW_PLACE_CHANGE_MESSAGE)
     private void newPlace(PropertyChangeEvent propertyChangeEvent) {
         Place place = (Place) propertyChangeEvent.getNewValue();
         PlaceViewBuilder builder = new PlaceViewBuilder(place, controller);
@@ -77,7 +78,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         petriNetTab.addNewPetriNetObject(view);
     }
 
-    @EventAction("newTransition")
+    @EventAction(PetriNet.NEW_TRANSITION_CHANGE_MESSAGE)
     private void newTransition(PropertyChangeEvent propertyChangeEvent) {
         Transition transition = (Transition) propertyChangeEvent.getNewValue();
         TransitionViewBuilder builder = new TransitionViewBuilder(transition, controller);
@@ -87,7 +88,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
-    @EventAction("newArc")
+    @EventAction(PetriNet.NEW_ARC_CHANGE_MESSAGE)
     private void newArc(PropertyChangeEvent propertyChangeEvent) {
         Arc<? extends Connectable, ? extends Connectable> arc =
                 (Arc<? extends Connectable, ? extends Connectable>) propertyChangeEvent.getNewValue();
@@ -109,7 +110,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
      * Refreshes the token class choices, and starts listening incase a token changes
      * @param propertyChangeEvent
      */
-    @EventAction("newToken")
+    @EventAction(PetriNet.NEW_TOKEN_CHANGE_MESSAGE)
     private void newToken(PropertyChangeEvent propertyChangeEvent) {
         Token token = (Token) propertyChangeEvent.getNewValue();
         token.addPropertyChangeListener(new TokenChangeListener(applicationView));
@@ -121,7 +122,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
-    @EventAction("newAnnotation")
+    @EventAction(PetriNet.NEW_ANNOTATION_CHANGE_MESSAGE)
     private void newAnnotation(PropertyChangeEvent propertyChangeEvent) {
         Annotation annotation = (Annotation) propertyChangeEvent.getNewValue();
         AnnotationViewBuilder builder = new AnnotationViewBuilder(annotation, controller);
@@ -136,28 +137,28 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
-    @EventAction("deletePlace")
+    @EventAction(PetriNet.DELETE_PLACE_CHANGE_MESSAGE)
     private void deletePlace(PropertyChangeEvent propertyChangeEvent) {
         Place place = (Place) propertyChangeEvent.getOldValue();
         petriNetTab.deletePetriNetComponent(place.getId());
 
     }
 
-    @EventAction("deleteTransition")
+    @EventAction(PetriNet.DELETE_TRANSITION_CHANGE_MESSAGE)
     private void deleteTransition(PropertyChangeEvent propertyChangeEvent) {
         Transition transition = (Transition) propertyChangeEvent.getOldValue();
         petriNetTab.deletePetriNetComponent(transition.getId());
 
     }
 
-    @EventAction("deleteArc")
+    @EventAction(PetriNet.DELETE_ARC_CHANGE_MESSAGE)
     private void deleteArc(PropertyChangeEvent propertyChangeEvent) {
         Arc<? extends Connectable, ? extends Connectable> arc =
                 (Arc<? extends Connectable, ? extends Connectable>) propertyChangeEvent.getOldValue();
         petriNetTab.deletePetriNetComponent(arc.getId());
     }
 
-    @EventAction("deleteToken")
+    @EventAction(PetriNet.DELETE_TOKEN_CHANGE_MESSAGE)
     private void deleteToken(PropertyChangeEvent propertyChangeEvent) {
         applicationView.refreshTokenClassChoices();
     }
@@ -167,7 +168,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
-    @EventAction("deleteAnnotation")
+    @EventAction(PetriNet.DELETE_ANNOTATION_CHANGE_MESSAGE)
     private void deleteAnnotation(PropertyChangeEvent propertyChangeEvent) {
         Annotation annotation = (Annotation) propertyChangeEvent.getOldValue();
         petriNetTab.deletePetriNetComponent(annotation.getId());

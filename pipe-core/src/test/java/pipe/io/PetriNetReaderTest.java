@@ -146,7 +146,6 @@ public class PetriNetReaderTest {
         assertEquals(225, transition.getY(), DOUBLE_DELTA);
         assertEquals("T0", transition.getName());
         assertEquals("T0", transition.getId());
-        assertEquals(0, transition.getOrientation());
         assertEquals("1.0", transition.getRateExpr());
         assertFalse(transition.isTimed());
         assertFalse(transition.isInfiniteServer());

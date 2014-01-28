@@ -1,9 +1,6 @@
 package pipe.views;
 
 import net.sourceforge.jeval.EvaluationException;
-import pipe.handlers.AnimationHandler;
-import pipe.handlers.TransitionAnimationHandler;
-import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
@@ -11,12 +8,13 @@ import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
-import pipe.handlers.LabelHandler;
+import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.ExprEvaluator;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
@@ -36,21 +34,31 @@ import java.util.ArrayList;
 
 public final class TransitionView extends ConnectableView<Transition> implements Serializable {
     public boolean _highlighted;
+
     private GeneralPath shape;
+
     private boolean _enabled;
+
     private boolean _enabledBackwards;
+
     private double _delay;
+
     private boolean _delayValid;
+
     private RateParameter _rateParameter;
+
     private GroupTransitionView _groupTransitionView;
+
     private int _delayForShowingWarnings;
 
     public TransitionView() {
-        this("", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false, false, 0, new Transition("", "", "1", 1), null);
+        this("", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false, false, 0,
+                new Transition("", "", "1", 1), null);
     }
 
 
-    public TransitionView(String id, String name, double nameOffsetX, double nameOffsetY, boolean timed, boolean infServer, int angleInput, Transition model, PetriNetController controller) {
+    public TransitionView(String id, String name, double nameOffsetX, double nameOffsetY, boolean timed,
+                          boolean infServer, int angleInput, Transition model, PetriNetController controller) {
         super(id, model, controller);
         constructTransition();
         setChangeListener();
@@ -66,30 +74,33 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     }
 
-    private void constructTransition() {
-        shape = new GeneralPath();
-        //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
-        shape.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(), model.getHeight()), false);
-    }
-
-    public void rotate(int angleInc) {
-        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2, model.getHeight() / 2));
-    }
-
     private void setChangeListener() {
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("priority") || name.equals("rate")) {
+                if (name.equals(Transition.PRIORITY_CHANGE_MESSAGE) || name.equals(Transition.RATE_CHANGE_MESSAGE)) {
                     repaint();
-                } else if (name.equals("angle") || name.equals("timed") || name.equals("infiniteServer")) {
+                } else if (name.equals(Transition.ANGLE_CHANGE_MESSAGE) || name.equals(
+                        Transition.TIMED_CHANGE_MESSAGE) || name.equals(Transition.INFINITE_SEVER_CHANGE_MESSAGE)) {
                     repaint();
-                } else if (name.equals("enabled") || name.equals("disabled")) {
+                }else if (name.equals(Transition.ENABLED_CHANGE_MESSAGE) || name.equals(Transition.DISABLED_CHANGE_MESSAGE)) {
                     repaint();
                 }
             }
         });
+    }
+
+    public void rotate(int angleInc) {
+        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
+                model.getHeight() / 2));
+    }
+
+    private void constructTransition() {
+        shape = new GeneralPath();
+        //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
+        shape.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
+                model.getHeight()), false);
     }
 
     public TransitionView(TransitionController transitionController, Transition model) {
@@ -115,37 +126,19 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     }
 
-    public double getRate() {
-        if (isInfiniteServer()) {
-            PetriNet petriNet = petriNetController.getPetriNet();
-            return petriNet.getEnablingDegree(model);
-        }
-
-        if (model.getRateExpr() == null) {
-            return -1;
-        }
-        try {
-            return Double.parseDouble(model.getRateExpr());
-        } catch (Exception e) {
-            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
-            try {
-                return parser.parseAndEvalExprForTransition(model.getRateExpr());
-            } catch (EvaluationException ee) {
-                showErrorMessage();
-                return 1.0;
-            }
-
-        }
+    @Override
+    public void addedToGui() {
+        super.addedToGui();
+        update();
     }
 
-    private void showErrorMessage() {
-        String message = "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
-        String title = "Error";
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-    }
-
-    public boolean isInfiniteServer() {
-        return model.isInfiniteServer();
+    @Override
+    public void delete() {
+        if (_rateParameter != null) {
+            _rateParameter.remove(this);
+            _rateParameter = null;
+        }
+        super.delete();
     }
 
     @Override
@@ -211,6 +204,82 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     }
 
+    /**
+     * @return true if in animate mode and the model is enabled
+     */
+    private boolean highlightView() {
+        //TODO: GET THIS IN A BETTER WAY
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        PetriNetTab tab = view.getCurrentTab();
+
+        return model.isEnabled() && tab.isInAnimationMode();
+    }
+
+    private void changeToolTipText() {
+        try {
+            Double.parseDouble(getRateExpr());
+            if (this.isTimed()) {
+                setToolTipText("r = " + this.getRate());
+            } else {
+                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
+            }
+        } catch (Exception e) {
+            if (this.isTimed()) {
+                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
+            } else {
+                setToolTipText(
+                        "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
+            }
+        }
+    }
+
+    public int getPriority() {
+        return model.
+                getPriority();
+    }
+
+    public boolean isTimed() {
+        return model.isTimed();
+    }
+
+    public String getRateExpr() {
+        return model.getRateExpr();
+    }
+
+    public double getRate() {
+        if (isInfiniteServer()) {
+            PetriNet petriNet = petriNetController.getPetriNet();
+            return petriNet.getEnablingDegree(model);
+        }
+
+        if (model.getRateExpr() == null) {
+            return -1;
+        }
+        try {
+            return Double.parseDouble(model.getRateExpr());
+        } catch (Exception e) {
+            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
+            try {
+                return parser.parseAndEvalExprForTransition(model.getRateExpr());
+            } catch (EvaluationException ee) {
+                showErrorMessage();
+                return 1.0;
+            }
+
+        }
+    }
+
+    public boolean isInfiniteServer() {
+        return model.isInfiniteServer();
+    }
+
+    private void showErrorMessage() {
+        String message =
+                "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
+        String title = "Error";
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+    }
+
     @Override
     void setCentre(double x, double y) {
         super.setCentre(x, y);
@@ -218,18 +287,22 @@ public final class TransitionView extends ConnectableView<Transition> implements
     }
 
     @Override
-    public void delete() {
-        if (_rateParameter != null) {
-            _rateParameter.remove(this);
-            _rateParameter = null;
-        }
-        super.delete();
+    public void showEditor() {
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(),
+                petriNetController.getTransitionController(this.model), petriNetController);
+        guiDialog.add(te);
+        guiDialog.getRootPane().setDefaultButton(null);
+        guiDialog.setResizable(false);
+        guiDialog.pack();
+        guiDialog.setLocationRelativeTo(null);
+        guiDialog.setVisible(true);
+        guiDialog.dispose();
     }
 
     @Override
-    public void addedToGui() {
-        super.addedToGui();
-        update();
+    public void toggleAttributesVisible() {
+        _attributesVisible = !_attributesVisible;
     }
 
     public void update() {
@@ -276,65 +349,6 @@ public final class TransitionView extends ConnectableView<Transition> implements
             }
         }
         return "";
-    }
-
-    @Override
-    public void showEditor() {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(), petriNetController.getTransitionController(this.model), petriNetController);
-        guiDialog.add(te);
-        guiDialog.getRootPane().setDefaultButton(null);
-        guiDialog.setResizable(false);
-        guiDialog.pack();
-        guiDialog.setLocationRelativeTo(null);
-        guiDialog.setVisible(true);
-        guiDialog.dispose();
-    }
-
-    @Override
-    public void toggleAttributesVisible() {
-        _attributesVisible = !_attributesVisible;
-    }
-
-    private void changeToolTipText() {
-        try {
-            Double.parseDouble(getRateExpr());
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRate());
-            } else {
-                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
-            }
-        } catch (Exception e) {
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
-            } else {
-                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
-            }
-        }
-    }
-
-    public String getRateExpr() {
-        return model.getRateExpr();
-    }
-
-    public boolean isTimed() {
-        return model.isTimed();
-    }
-
-    public int getPriority() {
-        return model.
-                getPriority();
-    }
-
-    /**
-     * @return true if in animate mode and the model is enabled
-     */
-    private boolean highlightView() {
-        //TODO: GET THIS IN A BETTER WAY
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        PetriNetTab tab = view.getCurrentTab();
-
-        return model.isEnabled() && tab.isInAnimationMode();
     }
 
     @Override
@@ -570,12 +584,13 @@ public final class TransitionView extends ConnectableView<Transition> implements
         return new GroupTransition(newGroupTransitionView);
     }
 
-    public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide, GroupTransitionView newGroupTransitionView) {
-    }
-
     private ArrayList<TransitionView> groupTransitionsValidation() {
         ArrayList<TransitionView> transitionsToHide = new ArrayList<TransitionView>();
         return transitionsToHide;
+    }
+
+    public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide,
+                                       GroupTransitionView newGroupTransitionView) {
     }
 
     public void hideFromCanvas() {
@@ -632,12 +647,17 @@ public final class TransitionView extends ConnectableView<Transition> implements
     class ArcAngleCompare implements Comparable {
 
         private final static boolean SOURCE = false;
+
         private final static boolean TARGET = true;
+
         private final ArcView<? extends Connectable, ? extends Connectable> _arcView;
+
         private final TransitionView _transitionView;
+
         private double angle;
 
-        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> arcView, TransitionView transitionView) {
+        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> arcView,
+                               TransitionView transitionView) {
             this._arcView = arcView;
             this._transitionView = transitionView;
             calcAngle();
@@ -646,7 +666,8 @@ public final class TransitionView extends ConnectableView<Transition> implements
         private void calcAngle() {
             int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
             Point2D.Double p1 = new Point2D.Double(model.getX() + centreOffsetLeft(), model.getY() + centreOffsetTop());
-            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).getX(), _arcView.getArcPath().getPoint(index).getY());
+            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).getX(),
+                    _arcView.getArcPath().getPoint(index).getY());
 
             if (p1.y <= p2.y) {
                 angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y));

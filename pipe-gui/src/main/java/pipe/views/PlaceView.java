@@ -73,7 +73,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals("tokens")) {
+                if (name.equals(Place.TOKEN_CHANGE_MESSAGE)) {
                     updateDisplayTokens();
                 }
                 repaint();

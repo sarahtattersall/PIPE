@@ -19,6 +19,11 @@ public class Place extends Connectable implements Serializable {
     private final static int DIAMETER = 30;
 
     /**
+     * Message fired when the places tokens change in any way
+     */
+    public final static String TOKEN_CHANGE_MESSAGE = "tokens";
+
+    /**
      * Marking x offset relative to the place x coordinate
      */
     double markingXOffset = 0;
@@ -106,7 +111,7 @@ public class Place extends Connectable implements Serializable {
         }
         Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         this.tokenCounts = tokenCounts;
-        changeSupport.firePropertyChange("tokens", old, tokenCounts);
+        changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
     public boolean hasCapacityRestriction() {
@@ -136,7 +141,7 @@ public class Place extends Connectable implements Serializable {
         }
         Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         setTokenCount(token, count);
-        changeSupport.firePropertyChange("tokens", old, tokenCounts);
+        changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
     public void setTokenCount(Token token, int count) {
@@ -150,7 +155,7 @@ public class Place extends Connectable implements Serializable {
         }
         Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
         tokenCounts.put(token, count);
-        changeSupport.firePropertyChange("tokens", old, tokenCounts);
+        changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
     /**
@@ -175,7 +180,7 @@ public class Place extends Connectable implements Serializable {
             count--;
             tokenCounts.put(token, count);
         }
-        changeSupport.firePropertyChange("tokens", old, tokenCounts);
+        changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
     @Override

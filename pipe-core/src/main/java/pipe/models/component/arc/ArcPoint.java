@@ -7,6 +7,16 @@ import java.awt.geom.Point2D;
 
 public class ArcPoint extends AbstractPetriNetComponent {
 
+    /**
+     * Message fired when the curved attribute changes
+     */
+    public static final String UPDATE_CURVED_CHANGE_MESSAGE = "updateCurved";
+
+    /**
+     * Message fired when the location attribute changes
+     */
+    public static final String UPDATE_LOCATION_CHANGE_MESSAGE = "updateLocation";
+
     private double x;
 
     private double y;
@@ -39,7 +49,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
         Point2D old = new Point2D.Double(this.x, this.y);
         this.x = point.getX();
         this.y = point.getY();
-        changeSupport.firePropertyChange("updateLocation", old, point);
+        changeSupport.firePropertyChange(UPDATE_LOCATION_CHANGE_MESSAGE, old, point);
     }
 
     public double getX() {
@@ -89,7 +99,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
     public void setCurved(boolean curved) {
         boolean old = this.curved;
         this.curved = curved;
-        changeSupport.firePropertyChange("updateCurved", old, curved);
+        changeSupport.firePropertyChange(UPDATE_CURVED_CHANGE_MESSAGE, old, curved);
     }
 
     @Override
