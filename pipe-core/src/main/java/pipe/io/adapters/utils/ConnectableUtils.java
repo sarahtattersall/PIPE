@@ -9,6 +9,12 @@ import pipe.models.component.Connectable;
 public class ConnectableUtils {
 
     /**
+     * Hidden constructor for utility class since this class
+     * is not designed to be instantiated
+     */
+    private ConnectableUtils() {}
+
+    /**
      * Sets adaptedConnectable name based on the connectable name
      *
      * @param connectable

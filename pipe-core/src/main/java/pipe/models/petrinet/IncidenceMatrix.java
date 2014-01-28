@@ -39,7 +39,7 @@ public class IncidenceMatrix {
     /**
      * A connection is a pair of Place and Transition and represents x and y in a matrix
      */
-    private class Connection {
+    private static class Connection {
         final Place place;
 
         final Transition transition;
