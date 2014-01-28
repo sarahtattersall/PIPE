@@ -237,8 +237,6 @@ public class PetriNet {
      * Removes the arc from the source and target inbound/outbound Collections
      */
     private <S extends Connectable, T extends Connectable> void removeArcFromSourceAndTarget(Arc<S, T> arc) {
-        Connectable source = arc.getSource();
-        Connectable target = arc.getTarget();
     }
 
     /**
