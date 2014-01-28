@@ -8,13 +8,13 @@ import java.awt.geom.Point2D;
 
 public class ArcPointAdapter extends XmlAdapter<AdaptedArcPoint, ArcPoint> {
     @Override
-    public ArcPoint unmarshal(AdaptedArcPoint adaptedArcPoint) throws Exception {
+    public ArcPoint unmarshal(AdaptedArcPoint adaptedArcPoint) {
         Point2D point = new Point2D.Double(adaptedArcPoint.getX(), adaptedArcPoint.getY());
         return new ArcPoint(point, adaptedArcPoint.isCurved());
     }
 
     @Override
-    public AdaptedArcPoint marshal(ArcPoint arcPoint) throws Exception {
+    public AdaptedArcPoint marshal(ArcPoint arcPoint) {
         AdaptedArcPoint adaptedArcPoint = new AdaptedArcPoint();
         adaptedArcPoint.setX(arcPoint.getX());
         adaptedArcPoint.setY(arcPoint.getY());

@@ -7,12 +7,12 @@ import java.awt.geom.Point2D;
 public class PointAdapter extends XmlAdapter<PointAdapter.AdaptedPoint, Point2D> {
 
     @Override
-    public Point2D unmarshal(AdaptedPoint adaptedPoint) throws Exception {
+    public Point2D unmarshal(AdaptedPoint adaptedPoint) {
         return new Point2D.Double(adaptedPoint.x, adaptedPoint.y);
     }
 
     @Override
-    public AdaptedPoint marshal(Point2D point2D) throws Exception {
+    public AdaptedPoint marshal(Point2D point2D) {
         AdaptedPoint adaptedPoint = new AdaptedPoint();
         adaptedPoint.x = point2D.getX();
         adaptedPoint.y = point2D.getY();

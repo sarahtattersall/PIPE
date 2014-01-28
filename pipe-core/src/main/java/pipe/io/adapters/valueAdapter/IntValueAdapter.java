@@ -4,12 +4,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class IntValueAdapter extends XmlAdapter<IntValueAdapter.IntAdapter, Integer> {
     @Override
-    public Integer unmarshal(IntAdapter intAdapter) throws Exception {
+    public Integer unmarshal(IntAdapter intAdapter) {
         return intAdapter.value;
     }
 
     @Override
-    public IntAdapter marshal(Integer integer) throws Exception {
+    public IntAdapter marshal(Integer integer) {
         IntAdapter adapter = new IntAdapter();
         adapter.value = integer;
         return adapter;

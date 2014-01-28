@@ -26,7 +26,7 @@ public class TransitionAdapter extends XmlAdapter<AdaptedTransition, Transition>
     }
 
     @Override
-    public Transition unmarshal(AdaptedTransition adaptedTransition) throws Exception {
+    public Transition unmarshal(AdaptedTransition adaptedTransition) {
         AdaptedConnectable.NameDetails nameDetails = adaptedTransition.getName();
         Transition transition = new Transition(adaptedTransition.getId(), nameDetails.getName());
         ConnectableUtils.setConntactableNameOffset(transition, adaptedTransition);
@@ -41,7 +41,7 @@ public class TransitionAdapter extends XmlAdapter<AdaptedTransition, Transition>
     }
 
     @Override
-    public AdaptedTransition marshal(Transition transition) throws Exception {
+    public AdaptedTransition marshal(Transition transition) {
         AdaptedTransition adaptedTransition = new AdaptedTransition();
         ConnectableUtils.setAdaptedName(transition, adaptedTransition);
 

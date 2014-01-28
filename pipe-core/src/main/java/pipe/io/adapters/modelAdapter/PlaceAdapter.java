@@ -34,7 +34,7 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
     }
 
     @Override
-    public Place unmarshal(AdaptedPlace adaptedPlace) throws Exception {
+    public Place unmarshal(AdaptedPlace adaptedPlace) {
         AdaptedConnectable.NameDetails nameDetails = adaptedPlace.getName();
         Place place = new Place(adaptedPlace.getId(), nameDetails.getName());
         place.setCapacity(adaptedPlace.getCapacity());
@@ -46,7 +46,7 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
     }
 
     @Override
-    public AdaptedPlace marshal(Place place) throws Exception {
+    public AdaptedPlace marshal(Place place) {
         AdaptedPlace adapted = new AdaptedPlace();
         adapted.setId(place.getId());
         ConnectableUtils.setAdaptedName(place, adapted);

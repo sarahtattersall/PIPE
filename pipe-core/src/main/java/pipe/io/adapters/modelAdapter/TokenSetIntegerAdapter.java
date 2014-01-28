@@ -25,7 +25,7 @@ public class TokenSetIntegerAdapter
     }
 
     @Override
-    public Map<Token, Integer> unmarshal(AdaptedIntegerTokenSet adaptedTokenSet) throws Exception {
+    public Map<Token, Integer> unmarshal(AdaptedIntegerTokenSet adaptedTokenSet)  {
         Map<Token, Integer> tokenWeights = new HashMap<Token, Integer>();
         String weightInput = adaptedTokenSet.value;
         String[] commaSeperatedMarkings = weightInput.split(",");
@@ -45,7 +45,7 @@ public class TokenSetIntegerAdapter
     }
 
     @Override
-    public AdaptedIntegerTokenSet marshal(Map<Token, Integer> tokenIntegerMap) throws Exception {
+    public AdaptedIntegerTokenSet marshal(Map<Token, Integer> tokenIntegerMap) {
         AdaptedIntegerTokenSet adapted = new AdaptedIntegerTokenSet();
         adapted.value = Joiner.on(",").withKeyValueSeparator(",").join(tokenIntegerMap);
         return adapted;

@@ -41,7 +41,7 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
     }
 
     @Override
-    public Arc<? extends Connectable, ? extends Connectable> unmarshal(AdaptedArc adaptedArc) throws Exception {
+    public Arc<? extends Connectable, ? extends Connectable> unmarshal(AdaptedArc adaptedArc)  {
         Arc<? extends Connectable, ? extends Connectable> arc;
         String source = adaptedArc.getSource();
         String target = adaptedArc.getTarget();
@@ -135,7 +135,7 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
     }
 
     @Override
-    public AdaptedArc marshal(Arc<? extends Connectable, ? extends Connectable> arc) throws Exception {
+    public AdaptedArc marshal(Arc<? extends Connectable, ? extends Connectable> arc) {
         AdaptedArc adapted = new AdaptedArc();
         setArcPoints(arc, adapted);
         adapted.setId(arc.getId());

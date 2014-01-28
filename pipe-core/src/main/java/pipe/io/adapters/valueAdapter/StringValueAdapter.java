@@ -13,12 +13,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class StringValueAdapter extends XmlAdapter<StringValueAdapter.AdaptedString, String> {
     @Override
-    public String unmarshal(AdaptedString adaptedString) throws Exception {
+    public String unmarshal(AdaptedString adaptedString) {
         return adaptedString.value;
     }
 
     @Override
-    public AdaptedString marshal(String s) throws Exception {
+    public AdaptedString marshal(String s) {
         AdaptedString adaptedString = new AdaptedString();
         adaptedString.value = s;
         return adaptedString;
