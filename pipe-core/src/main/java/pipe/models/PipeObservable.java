@@ -24,15 +24,6 @@ public class PipeObservable extends Observable implements Serializable {
         this.observable = observable;
     }
 
-    /**
-     * setChanged() must be invoked prior to calling notifyObservers().
-     */
-    // This is a protected method in Observable, hence the need for this class.
-    @Override
-    public void setChanged() {
-        super.setChanged();
-    }
-
     public Object getObservable() {
         return observable;
     }
