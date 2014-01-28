@@ -3,6 +3,7 @@ package pipe.actions.type;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.HistoryManager;
 import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
@@ -24,13 +25,12 @@ public class AnnotationAction extends TypeAction {
 
     private Annotation getAnnotation(Point point, PetriNetController petriNetController) {
 
-        int x = new Double(point.getX()).intValue();;
+        int x = new Double(point.getX()).intValue();
         int y = new Double(point.getY()).intValue();
-        Annotation annotation = new Annotation(x, y, "blah blah blah", 50,50,true);
+        Annotation annotation = new Annotation(x, y, "blah blah blah", 100, 50, true);
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addAnnotaiton(annotation);
-
         return annotation;
     }
 
@@ -39,8 +39,8 @@ public class AnnotationAction extends TypeAction {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public AnnotationAction(final String name, final int typeID,
-                            final String tooltip, final String keystroke) {
+    public AnnotationAction(String name, int typeID,
+                            String tooltip, String keystroke) {
         super(name, typeID, tooltip, keystroke);
     }
 

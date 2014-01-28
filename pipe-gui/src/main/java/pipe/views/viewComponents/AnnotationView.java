@@ -61,8 +61,6 @@ public class AnnotationView extends Note {
 
     @Override
     public void enableEditMode() {
-        String oldText = note.getText();
-
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
@@ -78,13 +76,6 @@ public class AnnotationView extends Note {
         guiDialog.setVisible(true);
 
         guiDialog.dispose();
-
-        String newText = note.getText();
-        if (oldText != null && !newText.equals(oldText)) {
-            // Text has been changed
-            petriNetController.getHistoryManager().addNewEdit(new AnnotationText(this, oldText, newText));
-            updateBounds();
-        }
     }
 
     /**

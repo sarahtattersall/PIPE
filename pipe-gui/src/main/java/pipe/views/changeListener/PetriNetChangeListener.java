@@ -169,7 +169,8 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction("deleteAnnotation")
     private void deleteAnnotation(PropertyChangeEvent propertyChangeEvent) {
-
+        Annotation annotation = (Annotation) propertyChangeEvent.getOldValue();
+        petriNetTab.deletePetriNetComponent(annotation.getId());
     }
 
     @EventAction("deleteStateGroup")

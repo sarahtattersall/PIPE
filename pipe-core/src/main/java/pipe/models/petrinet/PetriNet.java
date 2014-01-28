@@ -249,6 +249,7 @@ public class PetriNet {
 
     public void removeAnnotaiton(Annotation annotation) {
         annotations.remove(annotation);
+        changeSupport.firePropertyChange("deleteAnnotation", annotation, null);
     }
 
     public boolean containsDefaultToken() {
