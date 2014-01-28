@@ -5,9 +5,9 @@ import pipe.visitor.foo.PetriNetComponentVisitor;
 
 public interface PetriNetComponent {
 
-    public boolean isSelectable();
+    boolean isSelectable();
 
-    public boolean isDraggable();
+    boolean isDraggable();
 
     /**
      * Visitor pattern, this is particularly useful when we do not know
@@ -15,7 +15,7 @@ public interface PetriNetComponent {
      *
      * @param visitor
      */
-    public void accept(PetriNetComponentVisitor visitor);
+    void accept(PetriNetComponentVisitor visitor);
 
     /**
      * @return objectId

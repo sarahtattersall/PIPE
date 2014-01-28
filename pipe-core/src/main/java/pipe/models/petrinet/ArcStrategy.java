@@ -8,5 +8,5 @@ import pipe.models.component.arc.Arc;
  * It's package only since it's only meant to be used in the petri net to fire transitions
  */
 interface ArcStrategy<S extends Connectable, T extends Connectable> {
-    public boolean canFire(PetriNet petriNet, Arc<S, T> arc);
+    boolean canFire(PetriNet petriNet, Arc<S, T> arc);
 }
