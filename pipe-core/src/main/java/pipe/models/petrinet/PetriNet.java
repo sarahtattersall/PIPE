@@ -27,34 +27,42 @@ public class PetriNet {
      * Message fired when an annotation is added to the Petri net
      */
     public static final String NEW_ANNOTATION_CHANGE_MESSAGE = "newAnnotation";
+
     /**
      * Message fired when a place is deleted from the Petri net
      */
     public static final String DELETE_PLACE_CHANGE_MESSAGE = "deletePlace";
+
     /**
      * Message fired when an arc is deleted from the Petri net
      */
     public static final String DELETE_ARC_CHANGE_MESSAGE = "deleteArc";
+
     /**
      * Message fired when a transition is deleted from the Petri net
      */
     public static final String DELETE_TRANSITION_CHANGE_MESSAGE = "deleteTransition";
+
     /**
      * Message fired when an annotation is deleted from the Petri net
      */
     public static final String DELETE_ANNOTATION_CHANGE_MESSAGE = "deleteAnnotation";
+
     /**
      * Message fired when a Place is added to the Petri net
      */
     public static final String NEW_PLACE_CHANGE_MESSAGE = "newPlace";
+
     /**
      * Message fired when a transition is added to the Petri net
      */
     public static final String NEW_TRANSITION_CHANGE_MESSAGE = "newTransition";
+
     /**
      * Message fired when an arc is added to the Petri net
      */
     public static final String NEW_ARC_CHANGE_MESSAGE = "newArc";
+
     /**
      * Message fired when a token is added to the Petri net
      */
@@ -219,20 +227,6 @@ public class PetriNet {
         changeSupport.firePropertyChange(DELETE_PLACE_CHANGE_MESSAGE, place, null);
     }
 
-    /**
-     * @param place
-     * @return arcs that are outbound from place
-     */
-    public Collection<Arc<Place, Transition>> outboundArcs(Place place) {
-        Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            if (arc.getSource().equals(place)) {
-                outbound.add((Arc<Place, Transition>) arc);
-            }
-        }
-        return outbound;
-    }
-
     public void removeArc(Arc<? extends Connectable, ? extends Connectable> arc) {
         this.arcs.remove(arc);
         removeArcFromSourceAndTarget(arc);
@@ -245,6 +239,20 @@ public class PetriNet {
     private <S extends Connectable, T extends Connectable> void removeArcFromSourceAndTarget(Arc<S, T> arc) {
         Connectable source = arc.getSource();
         Connectable target = arc.getTarget();
+    }
+
+    /**
+     * @param place
+     * @return arcs that are outbound from place
+     */
+    public Collection<Arc<Place, Transition>> outboundArcs(Place place) {
+        Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            if (arc.getSource().equals(place)) {
+                outbound.add((Arc<Place, Transition>) arc);
+            }
+        }
+        return outbound;
     }
 
     public void removeTransition(Transition transition) {
@@ -333,49 +341,96 @@ public class PetriNet {
     }
 
     /**
+     * Finds all of the transitions which are enabled
+     * If we have any immediate transitions then these take priority
+     * and timed transactions are not counted as enabled
+     * <p/>
+     * It also disables any immediate transitions with a lower
+     * priority than the highest available priority.
+     * <p/>
      * @param backwards firing backwards or forwards
      * @return all transitions that can be enabled
      */
     public Set<Transition> getEnabledTransitions(boolean backwards) {
-        boolean hasTimed = false;
-        boolean hasImmediate = false;
-        int maxPriority = 0;
-        Set<Transition> enabledTransitions = new HashSet<Transition>();
+        Set<Transition> enabledTransitions = findEnabledTransitions(backwards);
+        boolean hasImmediate = areAnyTransitionsImmediate(enabledTransitions);
+        int maxPriority = hasImmediate ? getMaxPriority(enabledTransitions) : 0;
 
+        if (hasImmediate) {
+            removeTimedTransitions(enabledTransitions);
+        }
+
+        removePrioritiesLessThan(maxPriority, enabledTransitions);
+        return enabledTransitions;
+    }
+
+    /**
+     *
+     * Note we must use an iterator in order to ensure save removal
+     * whilst looping
+     *
+     * @param priority minimum priority of transitions allowed to remain in the Collection
+     * @param transitions to remove if their priority is less than the specified value
+     */
+    private void removePrioritiesLessThan(int priority, Collection<Transition> transitions) {
+        Iterator<Transition> transitionIterator = transitions.iterator();
+        while(transitionIterator.hasNext()) {
+            Transition transition = transitionIterator.next();
+            if (!transition.isTimed() && transition.getPriority() < priority) {
+                transitionIterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Removes timed transitions from transitions
+     *
+     * Note have to use an iterator for save deletions whilst
+     * iterating through the list
+     *
+     * @param transitions to remove timed transitions from
+     */
+    private void removeTimedTransitions(Set<Transition> transitions) {
+        Iterator<Transition> transitionIterator = transitions.iterator();
+        while(transitionIterator.hasNext()) {
+            Transition transition = transitionIterator.next();
+            if (transition.isTimed()) {
+                transitionIterator.remove();
+            }
+        }
+    }
+
+    /**
+     * @param transitions to find max prioirty of
+     * @return the maximum priority of immediate transitions in the collection
+     */
+    private int getMaxPriority(Iterable<Transition> transitions) {
+        int maxPriority = 0;
+        for (Transition transition : transitions) {
+            if (!transition.isTimed()) {
+                maxPriority = Math.max(maxPriority, transition.getPriority());
+            }
+        }
+        return maxPriority;
+    }
+
+    /**
+     * @param backwards true if transitions are being fired backwards
+     * @return all the currently enabed transitions in the petri net
+     */
+    private Set<Transition> findEnabledTransitions(boolean backwards) {
+
+        Set<Transition> enabledTransitions = new HashSet<Transition>();
         for (Transition transition : getTransitions()) {
             if (isEnabled(transition, backwards)) {
                 enabledTransitions.add(transition);
-
-                // we look for the highest priority of the enabled transitions
-                if (transition.isTimed()) {
-                    hasTimed = true;
-                } else {
-                    hasImmediate = true;
-                    if (transition.getPriority() > maxPriority) {
-                        maxPriority = transition.getPriority();
-                    }
-                }
             }
         }
-
-        //        Now make sure that if any of the enabled transitions are immediate
-        // transitions, only they can fire as this must then be a vanishing
-        // state. That is:
-        // - disable the immediate transitions with lower priority.
-        // - disable all timed transitions if there is an immediate transition
-        // enabled.
-        Iterator<Transition> enabledTransitionIter = enabledTransitions.iterator();
-        while (enabledTransitionIter.hasNext())
-
-        {
-            Transition enabledTransition = enabledTransitionIter.next();
-            if ((!enabledTransition.isTimed() && enabledTransition.getPriority() < maxPriority) || (hasTimed
-                    && hasImmediate && enabledTransition.isTimed())) {
-                enabledTransitionIter.remove();
-            }
-        }
-
         return enabledTransitions;
+    }
+
+    public Collection<Transition> getTransitions() {
+        return transitions;
     }
 
     /**
@@ -410,8 +465,17 @@ public class PetriNet {
         return outbound;
     }
 
-    public Collection<Transition> getTransitions() {
-        return transitions;
+    /**
+     * @param transitions to check if any are timed
+     * @return true if any of the transitions are timed
+     */
+    private boolean areAnyTransitionsImmediate(Collection<Transition> transitions) {
+        for (Transition transition : transitions) {
+            if (!transition.isTimed()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -446,51 +510,6 @@ public class PetriNet {
             }
         }
         markEnabledTransitions();
-    }
-
-    /**
-     * Calculates enabled transitions and enables them.
-     */
-    public void markEnabledTransitions() {
-        Set<Transition> enabledTransitions = getEnabledTransitions(false);
-        for (Transition transition : transitions) {
-            if (enabledTransitions.contains(transition)) {
-                transition.enable();
-            } else {
-                transition.disable();
-            }
-        }
-    }
-
-    /**
-     * Calculates weights of connections from transitions to places for given token
-     *
-     * @param token
-     * @return
-     * @throws Exception
-     */
-    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
-
-        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-            Connectable target = arc.getTarget();
-            Connectable source = arc.getSource();
-
-            if (target instanceof Place) {
-                Place place = (Place) target;
-                if (source instanceof Transition) {
-                    Transition transition = (Transition) source;
-
-                    String expression = arc.getWeightForToken(token);
-
-                    ExprEvaluator paser = new ExprEvaluator(this);
-
-                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
-                    forwardsIncidenceMatrix.put(place, transition, weight);
-                }
-            }
-        }
-        return forwardsIncidenceMatrix;
     }
 
     /**
@@ -557,6 +576,51 @@ public class PetriNet {
             }
         }
         return enablingDegree;
+    }
+
+    /**
+     * Calculates weights of connections from transitions to places for given token
+     *
+     * @param token
+     * @return
+     * @throws Exception
+     */
+    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+
+        IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+            Connectable target = arc.getTarget();
+            Connectable source = arc.getSource();
+
+            if (target instanceof Place) {
+                Place place = (Place) target;
+                if (source instanceof Transition) {
+                    Transition transition = (Transition) source;
+
+                    String expression = arc.getWeightForToken(token);
+
+                    ExprEvaluator paser = new ExprEvaluator(this);
+
+                    Integer weight = paser.parseAndEvalExpr(expression, token.getId());
+                    forwardsIncidenceMatrix.put(place, transition, weight);
+                }
+            }
+        }
+        return forwardsIncidenceMatrix;
+    }
+
+    /**
+     * Calculates enabled transitions and enables them.
+     */
+    public void markEnabledTransitions() {
+        Set<Transition> enabledTransitions = getEnabledTransitions(false);
+        for (Transition transition : transitions) {
+            if (enabledTransitions.contains(transition)) {
+                transition.enable();
+            } else {
+                transition.disable();
+            }
+        }
     }
 
     /**
