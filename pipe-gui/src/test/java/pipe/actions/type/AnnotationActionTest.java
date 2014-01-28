@@ -50,7 +50,7 @@ public class AnnotationActionTest {
         action.doAction(mockEvent, mockController);
 
         verify(mockNet).addAnnotaiton(
-                argThat(new HasMultiple<Annotation>(new HasAnnotationFields("", 10, 20, 50, 50))));
+                argThat(new HasMultiple<Annotation>(new HasAnnotationFields("Enter text here", 10, 20, 100, 50))));
     }
 
     @Test
