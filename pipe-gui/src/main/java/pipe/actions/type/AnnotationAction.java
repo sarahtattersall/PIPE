@@ -27,7 +27,7 @@ public class AnnotationAction extends TypeAction {
 
         int x = new Double(point.getX()).intValue();
         int y = new Double(point.getY()).intValue();
-        Annotation annotation = new Annotation(x, y, "blah blah blah", 100, 50, true);
+        Annotation annotation = new Annotation(x, y, "Enter text here", 100, 50, true);
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addAnnotaiton(annotation);
