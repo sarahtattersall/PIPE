@@ -309,7 +309,7 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertTrue("Petri net did not put transition in enabled collection",
                 enabled.contains(container.transitions.get(0)));
     }
@@ -323,7 +323,7 @@ public class PetriNetTest {
         container.petriNet.addToken(redToken);
         container.arcs.get(0).setWeight(redToken, "0");
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertTrue("Petri net did not put transition in enabled collection",
                 enabled.contains(container.transitions.get(0)));
     }
@@ -334,7 +334,7 @@ public class PetriNetTest {
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
         container.places.get(0).decrementTokenCount(container.tokens.get(0));
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
@@ -343,7 +343,7 @@ public class PetriNetTest {
         int tokenWeight = 4;
         PetriNetContainer container = createSimplePetriNet(tokenWeight);
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
@@ -352,7 +352,7 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNetContainer container = createSimplePetriNetTwoPlacesToTransition(tokenWeight);
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
@@ -402,7 +402,7 @@ public class PetriNetTest {
         container.petriNet.addToken(redToken);
         container.arcs.get(0).getTokenWeights().put(redToken, "1");
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertFalse("Petri net put transition in enabled collection", enabled.contains(container.transitions.get(0)));
     }
 
@@ -416,7 +416,7 @@ public class PetriNetTest {
         container.arcs.get(0).getTokenWeights().put(redToken, "1");
         container.places.get(0).incrementTokenCount(redToken);
 
-        Collection<Transition> enabled = container.petriNet.getEnabledTransitions(false);
+        Collection<Transition> enabled = container.petriNet.getEnabledTransitions();
         assertTrue("Petri net did not put transition in enabled collection",
                 enabled.contains(container.transitions.get(0)));
     }

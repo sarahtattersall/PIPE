@@ -63,7 +63,7 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
         }
 
         Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getType());
-        setId(newArc);
+//        setId(newArc);
         copyIntermediatePoints(arc, newArc);
         petriNet.addArc(newArc);
         createdComponents.add(newArc);
@@ -119,9 +119,6 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
 
     private void setId(Transition transition) {
         transition.setId(multipleNamer.getTransitionName());
-    }
-
-    private void setId(Arc<? extends Connectable, ? extends Connectable> transition) {
     }
 
     private void setName(Place place) {

@@ -324,7 +324,7 @@ public class PetriNet {
 
     public Transition getRandomTransition() {
 
-        Collection<Transition> enabledTransitions = getEnabledTransitions(false);
+        Collection<Transition> enabledTransitions = getEnabledTransitions();
         if (enabledTransitions.isEmpty()) {
             throw new RuntimeException("Error - no transitions to fire!");
         }
@@ -348,11 +348,10 @@ public class PetriNet {
      * It also disables any immediate transitions with a lower
      * priority than the highest available priority.
      * <p/>
-     * @param backwards firing backwards or forwards
      * @return all transitions that can be enabled
      */
-    public Set<Transition> getEnabledTransitions(boolean backwards) {
-        Set<Transition> enabledTransitions = findEnabledTransitions(backwards);
+    public Set<Transition> getEnabledTransitions() {
+        Set<Transition> enabledTransitions = findEnabledTransitions();
         boolean hasImmediate = areAnyTransitionsImmediate(enabledTransitions);
         int maxPriority = hasImmediate ? getMaxPriority(enabledTransitions) : 0;
 
@@ -415,14 +414,13 @@ public class PetriNet {
     }
 
     /**
-     * @param backwards true if transitions are being fired backwards
      * @return all the currently enabed transitions in the petri net
      */
-    private Set<Transition> findEnabledTransitions(boolean backwards) {
+    private Set<Transition> findEnabledTransitions() {
 
         Set<Transition> enabledTransitions = new HashSet<Transition>();
         for (Transition transition : getTransitions()) {
-            if (isEnabled(transition, backwards)) {
+            if (isEnabled(transition)) {
                 enabledTransitions.add(transition);
             }
         }
@@ -434,10 +432,11 @@ public class PetriNet {
     }
 
     /**
+     *
      * @param transition
      * @return true if transition is enabled
      */
-    private boolean isEnabled(Transition transition, boolean backwards) {
+    private boolean isEnabled(Transition transition) {
         boolean enabledForArcs = true;
         for (Arc<Place, Transition> arc : inboundArcs(transition)) {
 
@@ -613,7 +612,7 @@ public class PetriNet {
      * Calculates enabled transitions and enables them.
      */
     public void markEnabledTransitions() {
-        Set<Transition> enabledTransitions = getEnabledTransitions(false);
+        Set<Transition> enabledTransitions = getEnabledTransitions();
         for (Transition transition : transitions) {
             if (enabledTransitions.contains(transition)) {
                 transition.enable();

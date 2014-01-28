@@ -1,7 +1,6 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.exceptions.TokenLockedException;
 import pipe.gui.Animator;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.ZoomController;
@@ -136,27 +135,6 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     *
-     * Tests to see if the object is in the selection rectangle
-     * If it is it selects in
-     *
-     * @param placeable object to see if it is selectable
-     * @param selectionRectangle bounds for selection
-     */
-    private void selectPlaceable(PlaceablePetriNetComponent placeable, Rectangle selectionRectangle) {
-        int x = new Double(placeable.getX()).intValue();
-        int y = new Double(placeable.getY()).intValue();
-        Rectangle rectangle = new Rectangle(x, y, placeable.getHeight(), placeable.getWidth());
-        if (selectionRectangle.intersects(rectangle)) {
-            select(placeable);
-        }
-    }
-
-    public void select(PetriNetComponent component) {
-        selectedComponents.add(component);
-    }
-
-    /**
      * A crude method for selecting arcs, does not take into account bezier curves
      *
      * @param arc
@@ -186,6 +164,26 @@ public class PetriNetController implements IController, Serializable {
         Point2D end = arc.getEndPoint();
         path.lineTo(end.getX(), end.getY());
         return path;
+    }
+
+    public void select(PetriNetComponent component) {
+        selectedComponents.add(component);
+    }
+
+    /**
+     * Tests to see if the object is in the selection rectangle
+     * If it is it selects in
+     *
+     * @param placeable          object to see if it is selectable
+     * @param selectionRectangle bounds for selection
+     */
+    private void selectPlaceable(PlaceablePetriNetComponent placeable, Rectangle selectionRectangle) {
+        int x = new Double(placeable.getX()).intValue();
+        int y = new Double(placeable.getY()).intValue();
+        Rectangle rectangle = new Rectangle(x, y, placeable.getHeight(), placeable.getWidth());
+        if (selectionRectangle.intersects(rectangle)) {
+            select(placeable);
+        }
     }
 
     /**
@@ -243,11 +241,7 @@ public class PetriNetController implements IController, Serializable {
             token.setId(name);
         }
         if (token.isEnabled() != enabled) {
-            try {
-                token.setEnabled(enabled);
-            } catch (TokenLockedException e) {
-                e.printStackTrace();
-            }
+            token.setEnabled(enabled);
         }
         if (!token.getColor().equals(color)) {
             token.setColor(color);
@@ -278,11 +272,6 @@ public class PetriNetController implements IController, Serializable {
         selectToken(getToken(tokenName));
     }
 
-    //TODO: Should this be in the model???
-    public void selectToken(Token token) {
-        this.selectedToken = token;
-    }
-
     public Token getToken(String tokenName) {
         return getTokenForName(tokenName);
     }
@@ -294,6 +283,11 @@ public class PetriNetController implements IController, Serializable {
      */
     private Token getTokenForName(String name) {
         return petriNet.getToken(name);
+    }
+
+    //TODO: Should this be in the model???
+    public void selectToken(Token token) {
+        this.selectedToken = token;
     }
 
     public void copySelection() {
