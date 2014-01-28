@@ -228,9 +228,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
         if (isJoined) {
             _inverse.removeFromView();
-            TransitionView transitionView = this.getTransition();
-            transitionView.removeFromArc(_inverse);
-            transitionView.removeArcCompareObject(_inverse);
+//            TransitionView transitionView = this.getTransition();
+//            transitionView.removeFromArc(_inverse);
+//            transitionView.removeArcCompareObject(_inverse);
 //            transitionView.updateConnected();
             joined = isJoined;
         }
@@ -273,8 +273,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.translate(getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getX(),
-                getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getY());
+        g2.translate(getComponentDrawOffset() +  - arcPath.getBounds().getX(),
+                getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
         AffineTransform reset = g2.getTransform();
 

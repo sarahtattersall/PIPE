@@ -114,8 +114,8 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.translate(getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getX(),
-                getComponentDrawOffset() + zoomGrow - arcPath.getBounds().getY());
+        g2.translate(getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getX(),
+                getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);

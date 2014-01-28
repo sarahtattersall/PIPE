@@ -7,7 +7,6 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
-import pipe.historyActions.HistoryItem;
 import pipe.models.PipeObservable;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
@@ -32,14 +31,18 @@ import java.util.Observer;
  * @param <S> Model source type
  * @param <T> Model target type
  */
-public abstract class ArcView<S extends Connectable, T extends Connectable> extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
+public abstract class ArcView<S extends Connectable, T extends Connectable>
+        extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
+    /**
+     * Bounds of arc need to be grown in order to avoid clipping problems.
+     * This value achieves it.
+     */
+    protected static final int ZOOM_GROW = 10;
+
     /**
      * Actual visible path
      */
     final protected ArcPath arcPath;
-
-    // bounds of arc need to be grown in order to avoid clipping problems
-    final int zoomGrow = 10;
 
     /**
      * This is a reference to the petri net tab that this arc is placed on.
@@ -48,7 +51,9 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
      */
     protected PetriNetTab tab = null;
 
-    // true if arc is not hidden when a bidirectional arc is used
+    /**
+     * true if arc is not hidden when a bidirectional arc is used
+     */
     boolean inView = true;
 
     private ArcPoint sourcePoint;
@@ -67,11 +72,86 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         addConnectableListener();
     }
 
+    /**
+     * Updates the bounding box of the arc component based on the arcs bounds
+     */
+    public void updateBounds() {
+        bounds = arcPath.getBounds();
+        bounds.grow(getComponentDrawOffset() + ZOOM_GROW, getComponentDrawOffset() + ZOOM_GROW);
+        setBounds(bounds);
+    }
+
+    private void addPathSourceLocation() {
+        Point2D.Double startPoint = model.getStartPoint();
+        sourcePoint = new ArcPoint(startPoint, false);
+        arcPath.addPoint(sourcePoint);
+    }
+
+    private void addPathEndLocation() {
+        Point2D.Double targetPoint = model.getEndPoint();
+        endPoint = new ArcPoint(targetPoint, false);
+        arcPath.addPoint(endPoint);
+    }
+
+    /**
+     * Repopulates the path with the models points
+     */
+    private void updatePath() {
+        addIntermediatePoints();
+        arcPath.createPath();
+        if (tab != null) {
+            arcPath.addPointsToGui(tab);
+        }
+        repaint();
+    }
+
+    /**
+     * Loops through points in revese order adding them to the path
+     * Since addPointAt inserts to the left of the index to get
+     * between and the start we need to always insert left of the
+     * end.
+     */
+    private void addIntermediatePoints() {
+        Iterable<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
+        for (ArcPoint arcPoint : points) {
+            if (!arcPath.contains(arcPoint)) {
+                arcPath.insertIntermediatePoint(arcPoint);
+            }
+        }
+    }
+
     private void addConnectableListener() {
         addArcChangeListener();
         addSourceTargetConnectableListener();
 
     }
+
+    private void addArcChangeListener() {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals(Arc.NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
+                    updatePath();
+                    arcSpecificUpdate();
+                    updateBounds();
+                } else if (name.equals(Arc.DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
+                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
+                    arcPath.deletePoint(point);
+                    updatePath();
+                    arcSpecificUpdate();
+                    updateBounds();
+                }
+            }
+        };
+        model.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Perform any updates specific to the arc type
+     * E.g. NormalArc should show weights
+     */
+    public abstract void arcSpecificUpdate();
 
     /**
      * Listens to the source/target changing position
@@ -99,27 +179,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         });
     }
 
-    private void addArcChangeListener() {
-        PropertyChangeListener listener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals(Arc.NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
-                    updatePath();
-                    arcSpecificUpdate();
-                    updateBounds();
-                } else if (name.equals(Arc.DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
-                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
-                    arcPath.deletePoint(point);
-                    updatePath();
-                    arcSpecificUpdate();
-                    updateBounds();
-                }
-            }
-        };
-        model.addPropertyChangeListener(listener);
-    }
-
     public PetriNetTab getTab() {
         return tab;
     }
@@ -132,8 +191,8 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     @Override
     public boolean contains(int x, int y) {
         Point2D.Double point = new Point2D.Double(x + arcPath.getBounds().getX() - getComponentDrawOffset() -
-                zoomGrow, y + arcPath.getBounds().getY() - getComponentDrawOffset() -
-                zoomGrow);
+                ZOOM_GROW, y + arcPath.getBounds().getY() - getComponentDrawOffset() -
+                ZOOM_GROW);
         if (!ApplicationSettings.getApplicationView().getCurrentTab().isInAnimationMode()) {
             if (arcPath.proximityContains(point) || isSelected()) {
                 // show also if Arc itself selected
@@ -167,6 +226,20 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         //addWeightLabelsToContainer(getParent());
     }
 
+    //TODO: DELETE
+    public void updateArcPosition() {
+        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
+        //        addPathSourceLocation(points.first.x, points.first.y);
+        //        setTargetLocation(points.second.x, points.second.y);
+        //        if (_source != null) {
+        //            _source.updateEndPoint(this);
+        //        }
+        //        if (_target != null) {
+        //            _target.updateEndPoint(this);
+        //        }
+        //        arcPath.createPath();
+    }
+
     @Override
     public void delete() {
         if (!_deleted) {
@@ -177,11 +250,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
             _deleted = true;
         }
     }
-
-    /**
-     * Perform any arc specific deletion acitons
-     */
-    protected abstract void arcSpecificDelete();
 
     @Override
     public int getLayerOffset() {
@@ -196,19 +264,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return super.clone();
     }
 
-    //TODO: DELETE
-    public void updateArcPosition() {
-        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
-        //        addPathSourceLocation(points.first.x, points.first.y);
-        //        setTargetLocation(points.second.x, points.second.y);
-        //        if (_source != null) {
-        //            _source.updateEndPoint(this);
-        //        }
-        //        if (_target != null) {
-        //            _target.updateEndPoint(this);
-        //        }
-        //        arcPath.createPath();
-    }
+    /**
+     * Perform any arc specific deletion acitons
+     */
+    protected abstract void arcSpecificDelete();
 
     @Override
     public void translate(int x, int y) {
@@ -262,82 +321,14 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         return 1;
     }
 
-    /**
-     * Repopulates the path with the models points
-     */
-    private void updatePath() {
-        addIntermediatePoints();
-        arcPath.createPath();
-        if (tab != null) {
-            arcPath.addPointsToGui(tab);
-        }
-        repaint();
-    }
-
-    /**
-     * Loops through points in revese order adding them to the path
-     * Since addPointAt inserts to the left of the index to get
-     * between and the start we need to always insert left of the
-     * end.
-     */
-    private void addIntermediatePoints() {
-        List<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
-        for (ArcPoint arcPoint : points) {
-            if (!arcPath.contains(arcPoint)) {
-                arcPath.insertIntermediatePoint(arcPoint);
-            }
-        }
-    }
-
-    private void addPathEndLocation() {
-        Point2D.Double targetPoint = model.getEndPoint();
-        endPoint = new ArcPoint(targetPoint, false);
-        arcPath.addPoint(endPoint);
-    }
-
-    private void addPathSourceLocation() {
-        Point2D.Double startPoint = model.getStartPoint();
-        sourcePoint = new ArcPoint(startPoint, false);
-        arcPath.addPoint(sourcePoint);
-    }
-
-    /**
-     * Updates the bounding box of the arc component based on the arcs bounds
-     */
-    public void updateBounds() {
-        bounds = arcPath.getBounds();
-        bounds.grow(getComponentDrawOffset() + zoomGrow, getComponentDrawOffset() + zoomGrow);
-        setBounds(bounds);
-    }
-
     public ArcPath getArcPath() {
         return arcPath;
-    }
-
-    public void setPathToTransitionAngle(int angle) {
-        arcPath.set_transitionAngle(angle);
-    }
-
-    public HistoryItem split(Point2D.Double mouseposition) {
-        //        ArcPathPoint newPoint = arcPath.splitSegment(mouseposition);
-        //        return new AddArcPathPoint(getModel(), newPoint);
-        return null;
     }
 
     public abstract String getType();
 
     public boolean inView() {
         return inView;
-    }
-
-    //TODO: DELETE
-    public TransitionView getTransition() {
-        //        if (getTarget() instanceof TransitionView) {
-        //            return (TransitionView) getTarget();
-        //        } else {
-        //            return (TransitionView) getSource();
-        //        }
-        return null;
     }
 
     public void removeFromView() {
@@ -356,17 +347,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
         view.add(this);
     }
 
-    /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
-     */
-    public abstract void arcSpecificUpdate();
-
     public void showEditor() {
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
-        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController, petriNetController.getArcController(this.model));
+        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
+                petriNetController.getArcController(this.model));
 
         guiDialog.add(arcWeightEditor);
 
@@ -399,11 +385,4 @@ public abstract class ArcView<S extends Connectable, T extends Connectable> exte
     public List<MarkingView> getWeight() {
         return null;
     }
-
-    protected void updateHistory(HistoryItem historyItem) { // Steve Doubleday:  changed from addEdit to avoid NPE when HistoryManager edits is list of nulls
-
-        petriNetController.getHistoryManager().addNewEdit(historyItem);
-    }
-
-
 }

@@ -634,6 +634,7 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
+        points.add(newpoint.getModel());
         addPointsToGui(parent.getTab());
     }
 
