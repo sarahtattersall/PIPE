@@ -48,10 +48,9 @@ public class Token extends AbstractPetriNetComponent {
     }
 
     /**
-     * @param enabled
-     * @throws TokenLockedException if the Token is locked
+     * @param enabled new value for enabled
      */
-    public void setEnabled(boolean enabled) throws TokenLockedException {
+    public void setEnabled(boolean enabled) {
         boolean old = this.enabled;
         this.enabled = enabled;
         changeSupport.firePropertyChange(TOKEN_ENABLED_CHANGE_MESSAGE, old, enabled);
