@@ -7,6 +7,7 @@ import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
+import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.*;
 import pipe.io.PetriNetIOImpl;
@@ -154,6 +155,11 @@ public class PipeApplicationController {
 
         for (Arc<? extends Connectable, ? extends Connectable> arc : net.getArcs()) {
             PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newArc", null, arc);
+            propertyChangeListener.propertyChange(changeEvent);
+        }
+
+        for (Annotation annotation : net.getAnnotations()) {
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, "newAnnotation", null, annotation);
             propertyChangeListener.propertyChange(changeEvent);
         }
     }
