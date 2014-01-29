@@ -222,14 +222,6 @@ public class Transition extends Connectable {
         return new Point2D.Double(getX() + getHeight() / 2, getY() + getHeight() / 2);
     }
 
-    //    public RateParameter getRateParameter() {
-    //        return rateParameter;
-    //    }
-
-    //    public void setRateParameter(RateParameter rateParameter) {
-    //        this.rateParameter = rateParameter;
-    //    }
-
     @Override
     public Point2D.Double getArcEdgePoint(double angle) {
         double halfHeight = getHeight() / 2;

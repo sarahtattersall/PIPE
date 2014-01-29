@@ -7,10 +7,9 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
@@ -38,7 +37,8 @@ public class ArcPath implements Shape, Cloneable {
     public final Point2D.Double midPoint = new Point2D.Double();
 
     /**
-     * Use  this to only add enw arcpoints
+     * This is used for quick O(1) time in order to determine if a point
+     * is alread in the path.
      */
     private final Set<ArcPoint> points = new HashSet<ArcPoint>();
 
@@ -58,7 +58,8 @@ public class ArcPath implements Shape, Cloneable {
 
     private int _transitionAngle;
 
-    public ArcPath(ArcView<? extends Connectable, ? extends Connectable> parent, PetriNetController petriNetController) {
+    public ArcPath(ArcView<? extends Connectable, ? extends Connectable> parent,
+                   PetriNetController petriNetController) {
         this.parent = parent;
         this.petriNetController = petriNetController;
         _transitionAngle = 0;
@@ -269,12 +270,6 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
-    private void setControlPoint(Place foo) {
-
-    }
-
-    private static interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {}
-
     private void setEndControlPoints() {
         ConnectableVisitor endPointVisitor = new ConnectableVisitor() {
             @Override
@@ -321,19 +316,6 @@ public class ArcPath implements Shape, Cloneable {
         pathPoints.add(createPoint(arcPoint));
     }
 
-    /**
-     * Wont readd arcPoint if its already in the path
-     *
-     * @param arcPoint
-     * @param index
-     */
-    public void addPointAt(ArcPoint arcPoint, int index) {
-        if (!points.contains(arcPoint)) {
-            pathPoints.add(index, createPoint(arcPoint));
-            points.add(arcPoint);
-        }
-    }
-
     private ArcPathPoint createPoint(ArcPoint point) {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
@@ -370,32 +352,6 @@ public class ArcPath implements Shape, Cloneable {
         parent.updateArcPosition();
     }
 
-    public void setPointLocation(int index, Point2D point) {
-        if (index < pathPoints.size() && index >= 0) {
-            pathPoints.get(index).setPointLocation((float) point.getX(), (float) point.getY());
-        }
-    }
-
-    public void setPointType(int index, boolean type) {
-        pathPoints.get(index).setPointType(type);
-    }
-
-    public void setFinalPointType(boolean type) {
-        pathPoints.get(getEndIndex()).setPointType(type);
-    }
-
-    public int getEndIndex() {
-        return pathPoints.size() - 1;
-    }
-
-    public void togglePointType(int index) {
-        pathPoints.get(index).togglePointType();
-    }
-
-    public boolean getPointType(int index) {
-        return pathPoints.get(index).isCurved();
-    }
-
     public int getNumPoints() {
         return pathPoints.size();
     }
@@ -423,9 +379,6 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#intersects(java.awt.geom.Rectangle2D)
-     */
     public void setPointVisibilityLock(boolean lock) {
         pointLock = lock;
     }
@@ -449,6 +402,10 @@ public class ArcPath implements Shape, Cloneable {
         return 0;
     }
 
+    public int getEndIndex() {
+        return pathPoints.size() - 1;
+    }
+
     public double getStartAngle() {
         if (getEndIndex() > 0) {
             return pathPoints.get(0).getAngle(pathPoints.get(1).getControl());
@@ -456,81 +413,51 @@ public class ArcPath implements Shape, Cloneable {
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#getBounds()
-     */
     @Override
     public Rectangle getBounds() {
         return path.getBounds();
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#getBounds2D()
-     */
     @Override
     public Rectangle2D getBounds2D() {
         return null;
     }
 
-    /* (non-Javadoc)
- * @see java.awt.Shape#contains(double, double)
- */
     @Override
     public boolean contains(double arg0, double arg1) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#contains(java.awt.geom.Point2D)
-     */
     @Override
     public boolean contains(Point2D p) {
         return shape.contains(p);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#intersects(double, double, double, double)
-     */
     @Override
     public boolean intersects(double arg0, double arg1, double arg2, double arg3) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#intersects(java.awt.geom.Rectangle2D)
-     */
     @Override
     public boolean intersects(Rectangle2D r) {
         return shape.intersects(r);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#contains(double, double, double, double)
-     */
     @Override
     public boolean contains(double arg0, double arg1, double arg2, double arg3) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#contains(java.awt.geom.Rectangle2D)
-     */
     @Override
     public boolean contains(Rectangle2D arg0) {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#getPathIterator(java.awt.geom.AffineTransform)
-     */
     @Override
     public PathIterator getPathIterator(AffineTransform arg0) {
         return path.getPathIterator(arg0);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#getPathIterator(java.awt.geom.AffineTransform, double)
-     */
     @Override
     public PathIterator getPathIterator(AffineTransform arg0, double arg1) {
         return path.getPathIterator(arg0, arg1);
@@ -541,13 +468,6 @@ public class ArcPath implements Shape, Cloneable {
      */
     public boolean proximityContains(Point2D p) {
         return proximityShape.contains(p);
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.Shape#intersects(java.awt.geom.Rectangle2D)
-     */
-    public boolean proximityIntersects(Rectangle2D r) {
-        return proximityShape.intersects(r);
     }
 
     private Cubic[] calcNaturalCubic(int n, int[] x) {
@@ -700,7 +620,8 @@ public class ArcPath implements Shape, Cloneable {
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
                 ArcController<? extends Connectable, ? extends Connectable> arcController =
                         petriNetController.getArcController(parent.getModel());
-                ArcPathPointHandler pointHandler = new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
+                ArcPathPointHandler pointHandler =
+                        new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
 
                 if (point.getMouseListeners().length == 0) {
                     point.addMouseListener(pointHandler);
@@ -716,35 +637,6 @@ public class ArcPath implements Shape, Cloneable {
                 point.updatePointLocation();
             }
         }
-    }
-
-    /**
-     * splitSegment()
-     * Goes through neighbouring pairs of ArcPathPoints determining the midpoint
-     * between them. Then calculates the distance from midpoint to the point
-     * passed as an argument. The pair of ArcPathPoints resulting in the shortest
-     * distance then have an extra point added between them at the midpoint
-     * effectively splitting that segment into two.
-     *
-     * @param mouseposition
-     * @return
-     */
-    //TODO: REIMPLEMENT
-    public ArcPathPoint splitSegment(Point2D.Double mouseposition) {
-        //        int wantedpoint = findPoint(mouseposition);
-        //
-        //        // wantedpoint is now the index of the first point in the pair of arc
-        //        // points marking the segment to be split. So we have all we need to
-        //        // split the arc.
-        //        ArcPathPoint first = pathPoints.get(wantedpoint);
-        //        ArcPathPoint second = pathPoints.get(wantedpoint + 1);
-        //        ArcPathPoint newpoint = new ArcPathPoint(second.getMidPoint(first), first.isCurved(), this);
-        //        insertPoint(wantedpoint + 1, newpoint);
-        //        createPath();
-        //        parent.updateArcPosition();
-        //
-        //        return newpoint;
-        return null;
     }
 
     //TODO: REIMPLEMENT
@@ -799,6 +691,9 @@ public class ArcPath implements Shape, Cloneable {
             pathPoint.kill();
         }
         pathPoints.clear();
+    }
+
+    private static interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {
     }
 
 }
