@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.annotation.Annotation;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
@@ -226,6 +227,16 @@ public class PetriNetReaderTest {
         assertEquals(48, annotation.getWidth());
     }
 
+    @Test
+    public void createsRateParameter() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(getRateParameterFile()));
+        RateParameter rateParameter = petriNet.getRateParameters().iterator().next();
+        assertNotNull(rateParameter);
+        assertEquals("rate0", rateParameter.getId());
+        assertEquals("rate0", rateParameter.getName());
+        assertEquals("5.0", rateParameter.getExpression());
+    }
+
     private String getAnnotationFile() {
         return "/xml/annotation/annotation.xml";
     }
@@ -258,5 +269,9 @@ public class PetriNetReaderTest {
 
     private String getTransitionFile() {
         return "/xml/transition/singleTransition.xml";
+    }
+
+    private String getRateParameterFile() {
+        return "/xml/rateParameter/rateParameter.xml";
     }
 }

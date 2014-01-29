@@ -7,6 +7,7 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.visitor.foo.PetriNetComponentVisitor;
@@ -19,7 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 
-@XmlType(propOrder = {"tokens", "annotations", "places", "transitions", "arcs"})
+@XmlType(propOrder = {"tokens", "annotations", "rateParameters", "places", "transitions", "arcs"})
 public class PetriNet {
 
 
@@ -70,6 +71,8 @@ public class PetriNet {
 
     public static final String DELETE_TOKEN_CHANGE_MESSAGE = "deleteToken";
 
+    private static final String NEW_RATE_PARAMETER_CHANGE_MESSAGE = "newRateParameter";
+
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
@@ -95,6 +98,10 @@ public class PetriNet {
     @XmlElement(name = "labels")
     @XmlJavaTypeAdapter(AnnotationAdapter.class)
     private final Set<Annotation> annotations = new HashSet<Annotation>();
+
+    @XmlElement(name="definition")
+    @XmlJavaTypeAdapter(RateParameterAdapter.class)
+    private final Set<RateParameter> rateParameters = new HashSet<RateParameter>();
 
     /**
      * Houses the backwards strategies for arcs place -> transition
@@ -195,6 +202,13 @@ public class PetriNet {
         if (!annotations.contains(annotation)) {
             annotations.add(annotation);
             changeSupport.firePropertyChange(NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);
+        }
+    }
+
+    public void addRateParameter(RateParameter rateParameter) {
+        if (!rateParameters.contains(rateParameter)) {
+            rateParameters.add(rateParameter);
+            changeSupport.firePropertyChange(NEW_RATE_PARAMETER_CHANGE_MESSAGE, null, rateParameter);
         }
     }
 
@@ -652,5 +666,9 @@ public class PetriNet {
             }
         }
         markEnabledTransitions();
+    }
+
+    public Set<RateParameter> getRateParameters() {
+        return rateParameters;
     }
 }
