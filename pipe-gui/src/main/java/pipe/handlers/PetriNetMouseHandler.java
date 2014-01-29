@@ -65,7 +65,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
 //                    p = adjustPoint(e.getPoint(), petriNetTab.getZoom());
 //                    pn = new AnnotationNote(p.x, p.y);
 //                    petriNetView.addPetriNetObject(pn);
-//                    petriNetTab.addNewPetriNetObject(pn);
+//                    petriNetTab.addNewPetriNetComponent(pn);
 //                    petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, petriNetTab, petriNet));
 //                    ((AnnotationNote) pn).enableEditMode();
 //                    break;
@@ -88,7 +88,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
 
 //                        pn = new RateParameter(label,Double.parseDouble(value), p.x, p.y);
 //                        petriNetView.addPetriNetObject(pn);
-//                        petriNetTab.addNewPetriNetObject(pn);
+//                        petriNetTab.addNewPetriNetComponent(pn);
 //                        petriNetTab.getHistoryManager().addNewEdit(new AddPetriNetObject(pn, petriNetTab,
 //                                petriNetView));
 //                    }

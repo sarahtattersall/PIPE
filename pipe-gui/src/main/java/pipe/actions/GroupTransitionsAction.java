@@ -156,7 +156,7 @@ public class GroupTransitionsAction extends GuiAction
 //                    t.hideAssociatedArcs();
 //                }
 //                model.addPetriNetObject(groupTransitionView);
-//                petriNetTab.addNewPetriNetObject(groupTransitionView);
+//                petriNetTab.addNewPetriNetComponent(groupTransitionView);
 //                groupTransitionView.setVisible(true);
 //            }
 //

@@ -75,7 +75,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         Place place = (Place) propertyChangeEvent.getNewValue();
         PlaceViewBuilder builder = new PlaceViewBuilder(place, controller);
         PlaceView view = builder.build();
-        petriNetTab.addNewPetriNetObject(view);
+        petriNetTab.addNewPetriNetComponent(view);
     }
 
     @EventAction(PetriNet.NEW_TRANSITION_CHANGE_MESSAGE)
@@ -84,7 +84,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         TransitionViewBuilder builder = new TransitionViewBuilder(transition, controller);
         TransitionView view = builder.build();
 
-        petriNetTab.addNewPetriNetObject(view);
+        petriNetTab.addNewPetriNetComponent(view);
 
     }
 
@@ -97,11 +97,11 @@ public class PetriNetChangeListener implements PropertyChangeListener {
             Arc<Place, Transition> inhibitorArc = (Arc<Place, Transition>) arc;
             InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(inhibitorArc, controller);
             InhibitorArcView view = builder.build();
-            petriNetTab.addNewPetriNetObject(view);
+            petriNetTab.addNewPetriNetComponent(view);
         } else {
             NormalArcViewBuilder builder = new NormalArcViewBuilder(arc, controller);
             ArcView<? extends Connectable, ? extends Connectable> view = builder.build();
-            petriNetTab.addNewPetriNetObject(view);
+            petriNetTab.addNewPetriNetComponent(view);
         }
 
     }
@@ -128,7 +128,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         AnnotationViewBuilder builder = new AnnotationViewBuilder(annotation, controller);
 
         AnnotationView view = builder.build();
-        petriNetTab.addNewPetriNetObject(view);
+        petriNetTab.addNewPetriNetComponent(view);
 
     }
 

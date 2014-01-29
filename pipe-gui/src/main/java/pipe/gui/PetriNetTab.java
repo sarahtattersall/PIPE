@@ -74,16 +74,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     public void update(Observable o, Object diffObj) {
         if ((diffObj instanceof AbstractPetriNetViewComponent) && (diffObj != null)) {
             AbstractPetriNetViewComponent<?> component = (AbstractPetriNetViewComponent<?>) diffObj;
-            addNewPetriNetObject(component);
+            addNewPetriNetComponent(component);
         }
     }
 
     /**
-     * Add new component to the petrinet view
-     *
-     * @param component
+     * @param component to add to petri net view
      */
-    public void addNewPetriNetObject(AbstractPetriNetViewComponent<?> component) {
+    public void addNewPetriNetComponent(AbstractPetriNetViewComponent<?> component) {
         if (component.getMouseListeners().length == 0) {
             add(component);
             component.addToPetriNetTab(this);
@@ -95,6 +93,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         super.add(component);
         component.addedToGui();
         petriNetComponents.put(component.getId(), component);
+        repaint();
     }
 
     public int getZoom() {
@@ -137,14 +136,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         } else if (type.equals("move")) {
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         }
-    }
-
-//    public SelectionManager getSelectionObject() {
-//        return selection;
-//    }
-
-    public boolean isMetaDown() {
-        return metaDown;
     }
 
     public void setMetaDown(boolean down) {
