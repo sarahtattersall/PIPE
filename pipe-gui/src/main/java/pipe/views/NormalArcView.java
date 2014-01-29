@@ -273,7 +273,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.translate(getComponentDrawOffset() +  - arcPath.getBounds().getX(),
+        g2.translate(getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getX(),
                 getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
         AffineTransform reset = g2.getTransform();
