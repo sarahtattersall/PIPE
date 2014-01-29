@@ -7,6 +7,7 @@ import pipe.historyActions.HistoryManager;
 import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
+import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -16,7 +17,7 @@ public class AnnotationAction extends TypeAction {
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (event.getClickCount() > 0) {
-            Point point = event.getPoint();
+            Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
             Annotation annotation = getAnnotation(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
             petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(annotation, net));

@@ -7,10 +7,12 @@ import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
+import pipe.utilities.gui.GuiUtils;
 import pipe.visitor.connectable.arc.ArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -45,7 +47,8 @@ public class ArcAction extends TypeAction {
         if (temporaryArcView != null) {
             temporaryArcView.setEnd(event.getPoint());
             if (event.getClickCount() > 0) {
-                temporaryArcView.addIntermediatePoint(new ArcPoint(event.getPoint(), event.isShiftDown()));
+                Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
+                temporaryArcView.addIntermediatePoint(new ArcPoint(point, event.isShiftDown()));
             }
 
             PetriNetTab tab = applicationView.getCurrentTab();

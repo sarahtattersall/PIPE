@@ -3,10 +3,12 @@ package pipe.actions.type;
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Grid;
+import pipe.gui.ZoomController;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
+import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -25,7 +27,8 @@ public class PlaceAction extends TypeAction {
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (event.getClickCount() > 0) {
-            Place place = newPlace(event.getPoint(), petriNetController);
+            Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
+            Place place = newPlace(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
             petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(place, net));
         }

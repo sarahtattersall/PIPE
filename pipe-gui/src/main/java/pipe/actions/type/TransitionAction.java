@@ -7,6 +7,7 @@ import pipe.historyActions.AddPetriNetObject;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.transition.Transition;
+import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -24,7 +25,8 @@ public abstract class TransitionAction extends TypeAction {
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (event.getClickCount() > 0) {
-            Transition transition = newTransition(event.getPoint(), petriNetController);
+            Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
+            Transition transition = newTransition(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
             petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(transition, net));
         }

@@ -1,5 +1,6 @@
 package pipe.gui;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeListener;
@@ -100,6 +101,12 @@ public class ZoomController implements Serializable {
 
     public void setZoom(int newPercent) {
         setPercent(newPercent);
+    }
+
+    public Point getUnzoomedValue(Point point) {
+        int x = (int) getUnzoomedValue(point.getX());
+        int y = (int) getUnzoomedValue(point.getY());
+        return new Point(x, y);
     }
 
     //    public AffineTransform getTransform() {

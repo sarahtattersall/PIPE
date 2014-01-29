@@ -103,10 +103,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 petriNetController.select(component);
                 justSelected = true;
             }
-
-
-            MouseEvent accurateEvent = GuiUtils.getAccurateMouseEvent(contentPane, e);
-            dragInit = accurateEvent.getPoint();
+            dragInit = GuiUtils.getAccurateMouseLocation(contentPane, e, petriNetController);
         }
     }
 
@@ -161,13 +158,13 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 }
             }
 
-            MouseEvent accurateEvent = GuiUtils.getAccurateMouseEvent(contentPane, e);
+            Point point = GuiUtils.getAccurateMouseLocation(contentPane, e, petriNetController);
 
 
             // Calculate translation in mouse
-            int transX = accurateEvent.getX() - dragInit.x;
-            int transY = accurateEvent.getY() - dragInit.y;
-            dragInit = accurateEvent.getPoint();
+            int transX = (int) point.getX() - dragInit.x;
+            int transY = (int) point.getY() - dragInit.y;
+            dragInit = point;
 
             PipeApplicationController controller = ApplicationSettings.getApplicationController();
             SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
