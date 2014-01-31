@@ -77,7 +77,6 @@ public class ZoomUI extends LayerUI<JComponent> {
         return new Pair<>(x, y);
     }
 
-    //TODO: Remove duplication of x,y
     @Override
     protected void processMouseMotionEvent(MouseEvent e, JLayer<? extends JComponent> l) {
         MouseEvent localEvent = translateToLayerCoordinates(e, l);
