@@ -16,16 +16,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     public static final String ZOOM_IN_CHANGE_MESSAGE = "zoomIn";
 
     /**
-     * Change support for firing events when percent is changed.
-     */
-    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-
-    /**
-     * Zoom transformation 1 = unzoomed
-     */
-    private double zoom = 1;
-
-    /**
      * Amount to zoom in and out by
      */
     private final double zoomAmount;
@@ -41,10 +31,20 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     private final double zoomMax;
 
     /**
+     * Change support for firing events when percent is changed.
+     */
+    protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+    /**
+     * Zoom transformation 1 = unzoomed
+     */
+    private double zoom = 1;
+
+    /**
      * @param startingScale initialZoomScale where 1 = unzoomed
-     * @param zoomAmount amount to zoom in/out by
-     * @param zoomMax    maximum allowed zoom value
-     * @param zoomMin    minimum allowed zoom value
+     * @param zoomAmount    amount to zoom in/out by
+     * @param zoomMax       maximum allowed zoom value
+     * @param zoomMin       minimum allowed zoom value
      */
     public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin) {
         zoom = startingScale;
@@ -55,48 +55,65 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     @Override
     public void paint(Graphics g, JComponent c) {
-        Graphics2D g2 = (Graphics2D) g.create();
+        g.clearRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
+        Graphics2D g2 = (Graphics2D) g;
         g2.scale(zoom, zoom);
         super.paint(g2, c);
-        g2.dispose();
     }
 
     @Override
     protected void processMouseEvent(MouseEvent e, JLayer<? extends JComponent> l) {
         MouseEvent localEvent = translateToLayerCoordinates(e, l);
-        Component component = getComponentClickedOn(l, localEvent);
+        if (clickNotOutOfBounds(localEvent, l)) {
+            Component component = getComponentClickedOn(l, localEvent);
+            if (localEvent.getID() == MouseEvent.MOUSE_PRESSED) {
 
-        if (localEvent.getID() == MouseEvent.MOUSE_PRESSED) {
-
-            for (ActionListener listener : component.getListeners(ActionListener.class)) {
-                ActionEvent actionEvent = new ActionEvent(component, localEvent.getID(), "CLICK");
-                listener.actionPerformed(actionEvent);
+                for (ActionListener listener : component.getListeners(ActionListener.class)) {
+                    ActionEvent actionEvent = new ActionEvent(component, localEvent.getID(), "CLICK");
+                    listener.actionPerformed(actionEvent);
+                }
+                for (MouseListener listener : component.getListeners(MouseListener.class)) {
+                    listener.mousePressed(getNewMouseClickEvent(component, localEvent));
+                }
+            } else if (localEvent.getID() == MouseEvent.MOUSE_RELEASED) {
+                for (MouseListener listener : component.getListeners(MouseListener.class)) {
+                    listener.mouseReleased(getNewMouseClickEvent(component, localEvent));
+                }
             }
-            for (MouseListener listener : component.getListeners(MouseListener.class)) {
-                listener.mousePressed(getNewMouseClickEvent(component, localEvent));
-            }
-        } else if (localEvent.getID() == MouseEvent.MOUSE_RELEASED) {
-            for (MouseListener listener : component.getListeners(MouseListener.class)) {
-                listener.mouseReleased(getNewMouseClickEvent(component, localEvent));
-            }
+            e.consume();
         }
-        e.consume();
     }
 
     @Override
     protected void processMouseMotionEvent(MouseEvent e, JLayer<? extends JComponent> l) {
         MouseEvent localEvent = translateToLayerCoordinates(e, l);
-        Component component = getComponentClickedOn(l, localEvent);
-        if (localEvent.getID() == MouseEvent.MOUSE_MOVED) {
-            for (MouseMotionListener listener : l.getView().getListeners(MouseMotionListener.class)) {
-                listener.mouseMoved(getNewMouseClickEvent(component, localEvent));
+        if (clickNotOutOfBounds(localEvent, l)) {
+            Component component = getComponentClickedOn(l, localEvent);
+            if (localEvent.getID() == MouseEvent.MOUSE_MOVED) {
+                for (MouseMotionListener listener : l.getView().getListeners(MouseMotionListener.class)) {
+                    listener.mouseMoved(getNewMouseClickEvent(component, localEvent));
+                }
+            } else if (localEvent.getID() == MouseEvent.MOUSE_DRAGGED) {
+                for (MouseMotionListener listener : component.getListeners(MouseMotionListener.class)) {
+                    listener.mouseDragged(getNewMouseClickEvent(component, localEvent));
+                }
             }
-        } else if (localEvent.getID() == MouseEvent.MOUSE_DRAGGED) {
-            for (MouseMotionListener listener : component.getListeners(MouseMotionListener.class)) {
-                listener.mouseDragged(getNewMouseClickEvent(component, localEvent));
-            }
+            e.consume();
         }
-        e.consume();
+    }
+
+    @Override
+    public void installUI(JComponent c) {
+        super.installUI(c);
+        JLayer<? extends JComponent> jlayer = (JLayer<? extends JComponent>) c;
+        jlayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+    }
+
+    @Override
+    public void uninstallUI(JComponent c) {
+        JLayer<? extends JComponent> jlayer = (JLayer<? extends JComponent>) c;
+        jlayer.setLayerEventMask(0);
+        super.uninstallUI(c);
     }
 
     @Override
@@ -109,41 +126,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     @Override
-    public void installUI(JComponent c) {
-        super.installUI(c);
-        JLayer<? extends JComponent> jlayer = (JLayer<? extends JComponent>) c;
-        jlayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
-    }
-
-    @Override
-    public int getPercentageZoom() {
-        return (int) (zoom * 100);
-    }
-
-    @Override
-    public void uninstallUI(JComponent c) {
-        JLayer<? extends JComponent> jlayer = (JLayer<? extends JComponent>) c;
-        jlayer.setLayerEventMask(0);
-        super.uninstallUI(c);
-    }
-
-    @Override
-    public boolean canZoomOut() {
-        return zoom - zoomAmount >= zoomMin;
-    }
-
-    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void zoomIn() {
-        if (canZoomIn()) {
-            double old = zoom;
-            zoom += zoomAmount;
-            changeSupport.firePropertyChange(ZOOM_IN_CHANGE_MESSAGE, old, zoom);
-        }
     }
 
     @Override
@@ -152,8 +136,17 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     @Override
-    public boolean canZoomIn() {
-        return zoom + zoomAmount <= zoomMax;
+    public int getPercentageZoom() {
+        return (int) (zoom * 100);
+    }
+
+    @Override
+    public double getScale() {
+        return zoom;
+    }
+
+    private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
+        return getComponentClickedOn(l, event) != null;
     }
 
     /**
@@ -165,6 +158,11 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
         Pair<Integer, Integer> coordinates = zoomedXY(e);
         return l.getView().getComponentAt(coordinates.getKey(), coordinates.getValue());
+    }
+
+    @Override
+    public boolean canZoomOut() {
+        return zoom - zoomAmount >= zoomMin;
     }
 
     /**
@@ -187,6 +185,15 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         return SwingUtilities.convertMouseEvent(e.getComponent(), e, layer);
     }
 
+    @Override
+    public void zoomIn() {
+        if (canZoomIn()) {
+            double old = zoom;
+            zoom += zoomAmount;
+            changeSupport.firePropertyChange(ZOOM_IN_CHANGE_MESSAGE, old, zoom);
+        }
+    }
+
     private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {
         Pair<Integer, Integer> coordinates = zoomedXY(mouseEvent);
         return new MouseEvent(component, mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiers(),
@@ -194,5 +201,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
                 mouseEvent.getButton());
     }
 
-
+    @Override
+    public boolean canZoomIn() {
+        return zoom + zoomAmount <= zoomMax;
+    }
 }

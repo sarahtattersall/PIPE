@@ -29,16 +29,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     private final Ellipse2D.Double place;
 
-    private final Shape proximityPlace;
-
-    //transferred
     private List<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
 
-    //transferred
     private List<MarkingView> _currentMarkingView = new LinkedList<MarkingView>();
-
-    //transferred
-    private Integer totalMarking = 0;
 
     //transferred
     private TokenView _activeTokenView;
@@ -51,7 +44,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         //MODEL
         super(new Place("", ""));
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
-        proximityPlace = (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
     }
 
 
@@ -60,10 +52,8 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         super(idInput, model, controller);
         _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
         _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
-        totalMarking = getTotalMarking();
         setId(model.getId());
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
-        proximityPlace = (new BasicStroke(Constants.PLACE_TRANSITION_PROXIMITY_RADIUS)).createStrokedShape(place);
         updateDisplayTokens();
         setChangeListener();
     }
@@ -167,7 +157,7 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         Graphics2D g2 = (Graphics2D) g.create();
 
         g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
-
+        AffineTransform transform = g2.getTransform();
         Insets insets = getInsets();
 
         if (hasCapacity()) {

@@ -1,12 +1,14 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.LabelHandler;
 import pipe.models.component.Connectable;
 import pipe.views.viewComponents.NameLabel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,9 +41,11 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         int y = (int) (model.getX() + model.getNameXOffset());
         nameLabel = new NameLabel(model.getName(), x, y);
         addChangeListener();
+        updateBounds();
     }
 
     private void addChangeListener() {
+        final ConnectableView view = this;
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -74,6 +78,12 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         bounds.setBounds(model.getX(), model.getY(), model.getHeight(), model.getHeight());
         bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
         setBounds(bounds);
+
+        //TODO: THIS IS A DIRTY HACK IN ORDER TO GET DRAGGIGN WHEN ZOOMED WORKING
+        Component root = SwingUtilities.getRoot(this);
+        if (root != null) {
+            root.repaint();
+        }
     }
 
     @Override

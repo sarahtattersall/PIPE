@@ -1003,6 +1003,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         stepbackwardAction.setEnabled(stepBackwardAllowed);
     }
 
+    public ZoomManager getZoomManager() {
+        return zoomUI;
+    }
+
     private static class Line extends JComponent {
 
         @Override

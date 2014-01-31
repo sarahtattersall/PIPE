@@ -6,4 +6,5 @@ public interface ZoomManager {
     void zoomIn();
     void zoomOut();
     int getPercentageZoom();
+    double getScale();
 }

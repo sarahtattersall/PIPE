@@ -33,6 +33,4 @@ public class DragManager {
         dragStart = location;
         petriNetController.translateSelected(new Point2D.Double(x, y));
     }
-
-
 }

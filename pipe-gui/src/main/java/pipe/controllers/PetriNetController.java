@@ -215,7 +215,7 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Deletes single component, starts a newEdit for history manager
      *
-     * @param component
+     * @param component to delete
      */
     public void delete(PetriNetComponent component) {
         historyManager.newEdit();
