@@ -11,7 +11,7 @@ public class PipeApplicationModel implements Serializable {
 
 
     private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%", "120%", "140%", "160%", "180%", "200%", "300%"};
-    private List<ZoomAction> zoomActions = new ArrayList<ZoomAction>();
+    private List<ZoomAction> zoomActions = new ArrayList<>();
     private final String _name;
     private boolean editionAllowed = true;
     private int mode;

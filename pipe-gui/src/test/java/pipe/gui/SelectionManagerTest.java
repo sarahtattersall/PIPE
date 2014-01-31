@@ -9,23 +9,18 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
 import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class SelectionManagerTest {
 
     SelectionManager manager;
     PetriNetTab tab;
     PetriNetController mockController;
-    ZoomController zoomController;
 
     @Before
     public void setUp() {
         mockController = mock(PetriNetController.class);
-        zoomController = new ZoomController(100);
         tab = mock(PetriNetTab.class);
-        when(tab.getZoomController()).thenReturn(zoomController);
         manager = new SelectionManager(tab, mockController);
     }
 
@@ -36,14 +31,7 @@ public class SelectionManagerTest {
     }
 
     @Test
-    public void translateSelectionCallsController() {
-//        manager.translateSelection(5,10);
-//        verify(mockController).translateSelected(new Point2D.Double(5, 10));
-    }
-
-    @Test
-    public void selectsUsingUnZoomedLocationOnMousePress() {
-        zoomController.setZoom(120);
+    public void selectsUsingLocationOnMousePress() {
         MouseEvent e = mock(MouseEvent.class);
         when(e.getButton()).thenReturn(MouseEvent.BUTTON1);
         when(e.isControlDown()).thenReturn(false);
@@ -54,15 +42,13 @@ public class SelectionManagerTest {
 
         int x = (int) clickPoint.getX();
         int y = (int) clickPoint.getY();
-        Rectangle unzoomedRect = new Rectangle(x, y, 0, 0);
-        verify(mockController).select(unzoomedRect);
+        Rectangle rect = new Rectangle(x, y, 0, 0);
+        verify(mockController).select(rect);
     }
 
 
     @Test
-    public void selectsUsingUnZoomedLocationOnMouseDrag() {
-        zoomController.setZoom(120);
-
+    public void selectsLocationOnMouseDrag() {
         MouseEvent clickEvent = mock(MouseEvent.class);
         when(clickEvent.getButton()).thenReturn(MouseEvent.BUTTON1);
         when(clickEvent.isControlDown()).thenReturn(false);
@@ -80,12 +66,12 @@ public class SelectionManagerTest {
 
         manager.mouseDragged(dragEvent);
 
-        double x =clickPoint.getX();
+        double x = clickPoint.getX();
         double y = clickPoint.getY();
         double w = dragPoint.getX() - clickPoint.getX();
         double h = dragPoint.getY() - clickPoint.getY();
-        Rectangle unzoomedRect = new Rectangle((int) x, (int) y, (int) w, (int) h);
-        verify(mockController).select(unzoomedRect);
+        Rectangle rect = new Rectangle((int) x, (int) y, (int) w, (int) h);
+        verify(mockController, times(2)).select(rect);
     }
 }
 

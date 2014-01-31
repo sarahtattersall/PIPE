@@ -1,27 +1,24 @@
 package pipe.actions.zoom;
 
 import pipe.actions.GuiAction;
-import pipe.views.PipeApplicationView;
-import pipe.views.ZoomUI;
+import pipe.views.ZoomManager;
 
 import java.awt.event.ActionEvent;
 
 public class ZoomInAction extends GuiAction {
 
-    private final PipeApplicationView applicationView;
 
-    private final ZoomUI layerUI;
+    private final ZoomManager zoomManager;
 
-    public ZoomInAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
-                        ZoomUI layerUI) {
+    public ZoomInAction(String name, String tooltip, String keystroke, ZoomManager zoomManager) {
         super(name, tooltip, keystroke);
-        this.applicationView = applicationView;
-        this.layerUI = layerUI;
+        this.zoomManager = zoomManager;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        layerUI.zoom += 0.1;
-        applicationView.getTabComponent().repaint();
+        if (zoomManager.canZoomIn()) {
+            zoomManager.zoomIn();
+        }
     }
 }

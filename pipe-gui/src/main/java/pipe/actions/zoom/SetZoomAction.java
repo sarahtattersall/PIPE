@@ -15,13 +15,13 @@ public class SetZoomAction extends GuiAction {
 
     private final PipeApplicationController applicationController;
 
-    public SetZoomAction(final String name, final String tooltip, final String keystroke, final PipeApplicationController applicationController) {
+    public SetZoomAction(String name, String tooltip, String keystroke, PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
         this.applicationController = applicationController;
     }
 
     @Override
-    public void actionPerformed(final ActionEvent actionEvent) {
+    public void actionPerformed(ActionEvent actionEvent) {
         PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
 
         String selection = (String) pipeApplicationView.zoomComboBox.getSelectedItem();

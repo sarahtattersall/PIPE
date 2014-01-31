@@ -21,7 +21,6 @@ import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -29,6 +28,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
@@ -66,9 +67,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final FileAction openAction;
 
-    public JComboBox zoomComboBox;
+    public JComboBox<String> zoomComboBox;
 
-    public JComboBox tokenClassComboBox;
+    public JComboBox<String> tokenClassComboBox;
 
     public FileAction printAction = new PrintAction();
 
@@ -146,7 +147,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private FileAction saveAsAction = new SaveAsAction();
 
-    final ZoomUI layerUI = new ZoomUI();
+    final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4);
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs =  new ArrayList<>();
 
@@ -157,8 +158,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this), applicationController, this);
         arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController, this), applicationController, this);
-        zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", this, layerUI);
-        zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", this, layerUI);
+        zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", zoomUI);
+        zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
         openAction = new OpenAction(applicationController, this);
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
@@ -218,6 +219,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         applicationController.createEmptyPetriNet(this);
 
         setTabChangeListener();
+
+        setZoomChangeListener();
+    }
+
+    private void setZoomChangeListener() {
+        zoomUI.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                getTabComponent().repaint();
+                updateZoomCombo();
+            }
+        });
     }
 
     /**
@@ -545,7 +558,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private void addZoomComboBox(JToolBar toolBar, Action action) {
         Dimension zoomComboBoxDimension = new Dimension(65, 28);
         String[] zoomExamples = applicationModel.getZoomExamples();
-        zoomComboBox = new JComboBox(zoomExamples);
+        zoomComboBox = new JComboBox<>(zoomExamples);
         zoomComboBox.setEditable(true);
         zoomComboBox.setSelectedItem("100%");
         zoomComboBox.setMaximumRowCount(zoomExamples.length);
@@ -566,7 +579,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      */
     protected void addTokenClassComboBox(JToolBar toolBar, Action action) {
         String[] tokenClassChoices = new String[]{"Default"};
-        DefaultComboBoxModel model = new DefaultComboBoxModel(tokenClassChoices);
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
         tokenClassComboBox = new JComboBox(model);
         tokenClassComboBox.setEditable(true);
         tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
@@ -674,9 +687,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void updateZoomCombo() {
         ActionListener zoomComboListener = (zoomComboBox.getActionListeners())[0];
         zoomComboBox.removeActionListener(zoomComboListener);
-        PetriNetController controller = applicationController.getActivePetriNetController();
-        ZoomController zoomController = controller.getZoomController();
-        zoomComboBox.setSelectedItem(String.valueOf(zoomController.getPercent()) + "%");
+
+        String zoomPercentage = zoomUI.getPercentageZoom() + "%";
+        zoomComboBox.setSelectedItem(zoomPercentage);
         zoomComboBox.addActionListener(zoomComboListener);
     }
 
@@ -802,7 +815,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void addNewTab(String name, PetriNetTab tab) {
 
-        JLayer<JComponent> jLayer = new JLayer<>(tab, layerUI);
+        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
         wrappedPetrinetTabs.add(jLayer);
 
 
