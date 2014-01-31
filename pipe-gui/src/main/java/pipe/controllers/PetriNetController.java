@@ -3,6 +3,7 @@ package pipe.controllers;
 import pipe.controllers.interfaces.IController;
 import pipe.gui.Animator;
 import pipe.gui.CopyPasteManager;
+import pipe.gui.DragManager;
 import pipe.gui.ZoomController;
 import pipe.historyActions.DeletePetriNetObject;
 import pipe.historyActions.HistoryManager;
@@ -49,6 +50,8 @@ public class PetriNetController implements IController, Serializable {
     private Token selectedToken;
 
     private Animator animator;
+
+    private DragManager dragManager = new DragManager(this);
 
 
     public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator,
@@ -320,5 +323,9 @@ public class PetriNetController implements IController, Serializable {
 
     public boolean isPasteEnabled() {
         return copyPasteManager.pasteEnabled();
+    }
+
+    public DragManager getDragManager() {
+        return dragManager;
     }
 }

@@ -35,6 +35,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
         this.mouseUtilities = mouseUtilities;
     }
 
+    @Override
     public void mousePressed(MouseEvent event)
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
@@ -46,9 +47,9 @@ public class PetriNetMouseHandler extends MouseInputAdapter
         {
 
 //            Point point = adjustPoint(event.getPoint(), petriNetTab.getZoom());
-            MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(event.getComponent(), event,
-                    ApplicationSettings.getApplicationView().getCurrentTab());
-            action.doAction(accurateEvent, petriNetController);
+//            MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(event.getComponent(), event,
+//                    ApplicationSettings.getApplicationView().getCurrentTab());
+            action.doAction(event, petriNetController);
         }
 
 //            int mode = applicationModel.getMode();
@@ -212,6 +213,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
     }
 
 
+    @Override
     public void mouseDragged(MouseEvent e)
     {
         petriNetTab.drag(dragStart, e.getPoint());

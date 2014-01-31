@@ -7,25 +7,26 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
 import pipe.views.PipeApplicationView;
+import pipe.views.ZoomUI;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class ZoomOutAction extends GuiAction {
-    private final PipeApplicationController applicationController;
+    private final PipeApplicationView applicationView;
 
-    public ZoomOutAction(final String name, final String tooltip, final String keystroke, final PipeApplicationController applicationController) {
+    private final ZoomUI layerUI;
+
+    public ZoomOutAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
+                        ZoomUI layerUI) {
         super(name, tooltip, keystroke);
-        this.applicationController = applicationController;
+        this.applicationView = applicationView;
+        this.layerUI = layerUI;
     }
 
-
     @Override
-    public void actionPerformed(final ActionEvent actionEvent) {
-        PetriNetController currentPetriNetController = applicationController.getActivePetriNetController();
-        ZoomController zoomer = currentPetriNetController.getZoomController();
-        if (zoomer.canZoomOut()) {
-            zoomer.zoomOut();
-        }
+    public void actionPerformed(ActionEvent actionEvent) {
+        layerUI.zoom -= 0.1;
+        applicationView.getTabComponent().repaint();
     }
 }

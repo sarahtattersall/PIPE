@@ -39,7 +39,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         int y = (int) (model.getX() + model.getNameXOffset());
         nameLabel = new NameLabel(model.getName(), x, y);
         addChangeListener();
-        //        updateLabelLocation();
     }
 
     private void addChangeListener() {
@@ -116,9 +115,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        Graphics2D g2 = (Graphics2D) g;
-        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
     }
 
     @Override

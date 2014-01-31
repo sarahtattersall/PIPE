@@ -5,12 +5,11 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
-import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
-import pipe.utilities.gui.GuiUtils;
-import pipe.visitor.connectable.arc.ArcSourceVisitor;
+import pipe.models.component.arc.ArcPoint;
 import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
+import pipe.visitor.connectable.arc.ArcSourceVisitor;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -20,13 +19,16 @@ import java.awt.event.MouseEvent;
 public class ArcAction extends TypeAction {
 
     private final ArcSourceVisitor sourceVisitor;
+
     private final ArcActionCreator arcCreator;
+
     private final PipeApplicationController controller;
+
     private final PipeApplicationView applicationView;
+
     private TemporaryArcView<? extends Connectable> temporaryArcView = null;
 
-    public ArcAction(final String name, final int typeID,
-                     final String tooltip, final String keystroke, ArcSourceVisitor sourceVisitor,
+    public ArcAction(String name, int typeID, String tooltip, String keystroke, ArcSourceVisitor sourceVisitor,
                      ArcActionCreator arcCreator, PipeApplicationController controller,
                      PipeApplicationView applicationView) {
         super(name, typeID, tooltip, keystroke);
@@ -47,7 +49,7 @@ public class ArcAction extends TypeAction {
         if (temporaryArcView != null) {
             temporaryArcView.setEnd(event.getPoint());
             if (event.getClickCount() > 0) {
-                Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
+                Point point = event.getPoint();
                 temporaryArcView.addIntermediatePoint(new ArcPoint(point, event.isShiftDown()));
             }
 
@@ -62,8 +64,7 @@ public class ArcAction extends TypeAction {
      * @param petriNetController the controller for the current petrinet
      */
     @Override
-    public <T extends Connectable> void doConnectableAction(T connectable,
-                                                            PetriNetController petriNetController) {
+    public <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController) {
         if (temporaryArcView == null && sourceVisitor.canStart(connectable)) {
             PetriNetTab tab = applicationView.getCurrentTab();
             createTemporaryArc(connectable, tab);
@@ -71,6 +72,20 @@ public class ArcAction extends TypeAction {
         } else if (temporaryArcView != null && canCreateArcHere(connectable)) {
             createArc(connectable);
         }
+    }
+
+    private <T extends Connectable> boolean canCreateArcHere(T connectable) {
+        return arcCreator.canCreate(temporaryArcView.getSourceConnectable(), connectable);
+    }
+
+    private <T extends Connectable> void createArc(T connectable) {
+
+        arcCreator.create(temporaryArcView.getSourceConnectable(), connectable,
+                temporaryArcView.getIntermediatePoints());
+        PetriNetTab tab = applicationView.getCurrentTab();
+        tab.remove(temporaryArcView);
+        tab.repaint();
+        temporaryArcView = null;
     }
 
     /**
@@ -81,7 +96,7 @@ public class ArcAction extends TypeAction {
      */
     private <T extends Connectable> void createTemporaryArc(T connectable, final PetriNetTab tab) {
 
-        temporaryArcView = new TemporaryArcView<T>(connectable);
+        temporaryArcView = new TemporaryArcView<>(connectable);
         temporaryArcView.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
@@ -114,19 +129,6 @@ public class ArcAction extends TypeAction {
 
         tab.add(temporaryArcView);
         temporaryArcView.requestFocusInWindow();
-    }
-
-    private <T extends Connectable> void createArc(T connectable) {
-
-        arcCreator.create(temporaryArcView.getSourceConnectable(), connectable, temporaryArcView.getIntermediatePoints());
-        PetriNetTab tab = applicationView.getCurrentTab();
-        tab.remove(temporaryArcView);
-        tab.repaint();
-        temporaryArcView = null;
-    }
-
-    private <T extends Connectable> boolean canCreateArcHere(T connectable) {
-        return arcCreator.canCreate(temporaryArcView.getSourceConnectable(), connectable);
     }
 
 

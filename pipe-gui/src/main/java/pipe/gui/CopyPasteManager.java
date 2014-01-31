@@ -6,22 +6,23 @@ package pipe.gui;
 import pipe.controllers.PetriNetController;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcVisitor;
-import pipe.models.component.transition.TransitionVisitor;
-import pipe.naming.MultipleNamer;
-import pipe.naming.UniqueNamer;
-import pipe.visitor.PasteVisitor;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.token.Token;
 import pipe.models.component.token.TokenVisitor;
 import pipe.models.component.transition.Transition;
+import pipe.models.component.transition.TransitionVisitor;
+import pipe.models.petrinet.PetriNet;
+import pipe.naming.MultipleNamer;
+import pipe.naming.UniqueNamer;
 import pipe.views.PipeApplicationView;
+import pipe.visitor.PasteVisitor;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.*;
@@ -113,9 +114,7 @@ public class CopyPasteManager extends javax.swing.JComponent
 
         pasteRectangle.setRect(location.left, location.top, location.right - location.left,
                 location.bottom - location.top);
-        ZoomController zoomController = petriNetTab.getZoomController();
-        rectangleOrigin.setLocation(zoomController.getUnzoomedValue(location.left),
-                zoomController.getUnzoomedValue(location.top));
+        rectangleOrigin.setLocation(location.left, location.top);
     }
 
     public void showPasteRectangle() {
@@ -134,21 +133,21 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
-        ZoomController zoomController = petriNetTab.getZoomController();
-        int realWidth = zoomController.getUnzoomedValue(pasteRectangle.width);
-        int realHeight = zoomController.getUnzoomedValue(pasteRectangle.height);
-
-        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
-                (int) (realHeight * zoomController.getScaleFactor()));
-    }
-
     private void updateBounds() {
         if (pasteInProgress) {
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
             setBounds(0, 0, applicationView.getCurrentTab().getWidth(),
                     ApplicationSettings.getApplicationView().getCurrentTab().getHeight());
         }
+    }
+
+    private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
+        ZoomController zoomController = petriNetTab.getZoomController();
+        int realWidth = pasteRectangle.width;
+        int realHeight = pasteRectangle.height;
+
+        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
+                (int) (realHeight * zoomController.getScaleFactor()));
     }
 
     public boolean pasteInProgress() {
@@ -185,13 +184,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    private void updateRect(Point point) {
-        pasteRectangle.setLocation(point);
-        //view.updatePreferredSize();
-        repaint();
-        updateBounds();
-    }
-
     /* (non-Javadoc)
      * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
      */
@@ -202,6 +194,13 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
+    private void updateRect(Point point) {
+        pasteRectangle.setLocation(point);
+        //view.updatePreferredSize();
+        repaint();
+        updateBounds();
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         petriNetTab.updatePreferredSize();
@@ -209,32 +208,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         repaint();
         //now, we have the position of the pasted objects so we can show them.
         paste(petriNetTab);
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // Not needed
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // Not needed
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // Not needed
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // Not needed
     }
 
     /**
@@ -254,8 +227,8 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
 
         ZoomController zoomController = petriNetTab.getZoomController();
-        double despX = zoomController.getUnzoomedValue(pasteRectangle.getX()) - rectangleOrigin.getX();
-        double despY = zoomController.getUnzoomedValue(pasteRectangle.getY()) - rectangleOrigin.getY();
+        double despX = pasteRectangle.getX() - rectangleOrigin.getX();
+        double despY = pasteRectangle.getY() - rectangleOrigin.getY();
 
         MultipleNamer multipleNamer = new UniqueNamer(petriNet);
         PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);
@@ -268,6 +241,42 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
 
         createPasteHistoryItem(pasteVisitor.getCreatedComponents());
+    }
+
+    /**
+     * Creates a history item for the new components added to the petrinet
+     *
+     * @param createdComponents
+     */
+    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
+        PetriNetController controller = ApplicationSettings.getApplicationController().getActivePetriNetController();
+        HistoryManager historyManager = controller.getHistoryManager();
+        historyManager.newEdit();
+
+        for (PetriNetComponent component : createdComponents) {
+            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
+            historyManager.addEdit(addAction);
+        }
+    }
+
+    private Collection<Connectable> getConnectablesToPaste() {
+        final Collection<Connectable> connectables = new LinkedList<Connectable>();
+        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
+            @Override
+            public void visit(Place place) {
+                connectables.add(place);
+            }
+
+            @Override
+            public void visit(Transition transition) {
+                connectables.add(transition);
+            }
+        };
+
+        for (PetriNetComponent component : pasteComponents) {
+            component.accept(connectableVisitor);
+        }
+        return connectables;
     }
 
     private Collection<PetriNetComponent> getNonConnectablesToPaste() {
@@ -295,40 +304,30 @@ public class CopyPasteManager extends javax.swing.JComponent
         return components;
     }
 
-    private Collection<Connectable> getConnectablesToPaste() {
-        final Collection<Connectable> connectables = new LinkedList<Connectable>();
-        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
-            @Override
-            public void visit(Place place) {
-                connectables.add(place);
-            }
-
-            @Override
-            public void visit(Transition transition) {
-                connectables.add(transition);
-            }
-        };
-
-        for (PetriNetComponent component : pasteComponents) {
-            component.accept(connectableVisitor);
-        }
-        return connectables;
+    /* (non-Javadoc)
+     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // Not needed
     }
 
-    /**
-     * Creates a history item for the new components added to the petrinet
-     *
-     * @param createdComponents
+    /* (non-Javadoc)
+     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
      */
-    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
-        PetriNetController controller = ApplicationSettings.getApplicationController().getActivePetriNetController();
-        HistoryManager historyManager = controller.getHistoryManager();
-        historyManager.newEdit();
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // Not needed
+    }
 
-        for (PetriNetComponent component : createdComponents) {
-            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
-            historyManager.addEdit(addAction);
-        }
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Not needed
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Not needed
     }
 
     @Override
@@ -373,7 +372,6 @@ public class CopyPasteManager extends javax.swing.JComponent
     private static interface NonConnectableVisitor extends AnnotationVisitor, ArcVisitor, TokenVisitor {
 
     }
-
 
     /**
      * Private class used to set the bounds of a selectionn rectangle

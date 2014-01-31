@@ -3,13 +3,9 @@ package pipe.handlers;
 import pipe.actions.DeletePetriNetObjectAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
-import pipe.gui.SelectionManager;
+import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.PetriNetComponent;
-import pipe.utilities.gui.GuiUtils;
 import pipe.views.AbstractPetriNetViewComponent;
 
 import javax.swing.*;
@@ -27,20 +23,28 @@ import java.awt.event.MouseEvent;
  */
 public class PetriNetObjectHandler<T extends PetriNetComponent, V extends AbstractPetriNetViewComponent<T>>
         extends javax.swing.event.MouseInputAdapter {
-    final protected Container contentPane;
-    final T component;
-    final V viewComponent;
-
     // justSelected: set to true on press, and false on release;
     static boolean justSelected = false;
 
+    final protected Container contentPane;
+
+    protected final PetriNetController petriNetController;
+
+    final T component;
+
+    final V viewComponent;
+
+    final DragManager dragManager;
+
     boolean isDragging = false;
+
     boolean enablePopup = false;
+
     Point dragInit = new Point();
 
     private int totalX = 0;
+
     private int totalY = 0;
-    protected final PetriNetController petriNetController;
 
     // constructor passing in all required objects
     PetriNetObjectHandler(V viewComponent, Container contentpane, T component, PetriNetController controller) {
@@ -49,38 +53,8 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
         this.component = component;
         //TODO: PASS INTO CTR
         petriNetController = controller;
+        dragManager = petriNetController.getDragManager();
     }
-
-
-    /**
-     * Creates the popup menu that the user will see when they right click on a
-     * component
-     *
-     * @param e
-     * @return
-     */
-    protected JPopupMenu getPopup(MouseEvent e) {
-        JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem =
-                new JMenuItem(new DeletePetriNetObjectAction(component));
-        menuItem.setText("Delete");
-        popup.add(menuItem);
-        return popup;
-    }
-
-
-    /**
-     * Displays the popup menu
-     *
-     * @param e
-     */
-    private void checkForPopup(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            JPopupMenu m = getPopup(e);
-            m.show(viewComponent, e.getX(), e.getY());
-        }
-    }
-
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -103,10 +77,9 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 petriNetController.select(component);
                 justSelected = true;
             }
-            dragInit = GuiUtils.getAccurateMouseLocation(contentPane, e, petriNetController);
+            dragManager.setDragStart(e.getPoint());
         }
     }
-
 
     /**
      * Event handler for when the user releases the mouse, used in conjunction
@@ -140,7 +113,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
         justSelected = false;
     }
 
-
     /**
      * Handler for dragging objects around
      */
@@ -157,20 +129,35 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                     isDragging = true;
                 }
             }
-
-            Point point = GuiUtils.getAccurateMouseLocation(contentPane, e, petriNetController);
-
-
-            // Calculate translation in mouse
-            int transX = (int) point.getX() - dragInit.x;
-            int transY = (int) point.getY() - dragInit.y;
-            dragInit = point;
-
-            PipeApplicationController controller = ApplicationSettings.getApplicationController();
-            SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
-
-            selectionManager.translateSelection(transX, transY);
+            dragManager.drag(e.getPoint());
         }
+    }
+
+    /**
+     * Displays the popup menu
+     *
+     * @param e
+     */
+    private void checkForPopup(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            JPopupMenu m = getPopup(e);
+            m.show(viewComponent, e.getX(), e.getY());
+        }
+    }
+
+    /**
+     * Creates the popup menu that the user will see when they right click on a
+     * component
+     *
+     * @param e
+     * @return
+     */
+    protected JPopupMenu getPopup(MouseEvent e) {
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem menuItem = new JMenuItem(new DeletePetriNetObjectAction(component));
+        menuItem.setText("Delete");
+        popup.add(menuItem);
+        return popup;
     }
 
     //NOU-PERE: eliminat mouseWheelMoved

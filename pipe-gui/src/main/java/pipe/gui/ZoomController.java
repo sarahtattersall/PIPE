@@ -9,10 +9,14 @@ import java.io.Serializable;
 
 public class ZoomController implements Serializable {
 
-    //    private final AffineTransform transform = new AffineTransform();
-
+    /**
+     * Change support for firing events when percent is changed.
+     */
     protected PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
+    /**
+     * Zoom percentage, 100% = unzoomed
+     */
     private int percent;
 
     public ZoomController(int pct) {
@@ -27,40 +31,12 @@ public class ZoomController implements Serializable {
         changeSupport.removePropertyChangeListener(listener);
     }
 
-    public int getZoomedValue(int x) {
-        return (int) (x * percent * 0.01);
-    }
-
-    public float getZoomedValue(float value) {
-        return (float) (value * percent * 0.01);
-    }
-
     public AffineTransform getTransform() {
         return AffineTransform.getScaleInstance(percent * 0.01, percent * 0.01);
     }
 
     public double getScaleFactor() {
         return percent * 0.01;
-    }
-
-    public int getUnzoomedValue(int value) {
-        return (int) (value / (percent * 0.01));
-    }
-
-    public Point2D.Double getZoomedValue(Point2D.Double point) {
-        return new Point2D.Double(getZoomedValue(point.getX()), getZoomedValue(point.getY()));
-    }
-
-    public double getZoomedValue(double value) {
-        return (value * percent * 0.01);
-    }
-
-    public Point2D.Double getUnzoomedValue(final Point2D.Double point) {
-        return new Point2D.Double(getUnzoomedValue(point.getX()), getUnzoomedValue(point.getY()));
-    }
-
-    public double getUnzoomedValue(double value) {
-        return (value / (percent * 0.01));
     }
 
     public void zoomOut() {
@@ -102,14 +78,4 @@ public class ZoomController implements Serializable {
     public void setZoom(int newPercent) {
         setPercent(newPercent);
     }
-
-    public Point getUnzoomedValue(Point point) {
-        int x = (int) getUnzoomedValue(point.getX());
-        int y = (int) getUnzoomedValue(point.getY());
-        return new Point(x, y);
-    }
-
-    //    public AffineTransform getTransform() {
-    //        return transform;
-    //    }
 }

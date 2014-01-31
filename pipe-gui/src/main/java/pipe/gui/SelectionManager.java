@@ -28,8 +28,10 @@ public class SelectionManager extends javax.swing.JComponent
     private final PetriNetTab petriNetTab;
 
     private final PetriNetController petriNetController;
+    private final DragManager dragManager;
 
     private Point startPoint;
+    private Point dragPoint = new Point(-1, -1);
 
     private boolean isSelecting;
 
@@ -41,6 +43,7 @@ public class SelectionManager extends javax.swing.JComponent
         addMouseWheelListener(this);
         this.petriNetTab = _view;
         this.petriNetController = controller;
+        dragManager = controller.getDragManager();
     }
 
     public void enableSelection() {
@@ -74,18 +77,18 @@ public class SelectionManager extends javax.swing.JComponent
         g2d.draw(selectionRectangle);
     }
 
-    public void translateSelection(int transX, int transY) {
-        if (transX == 0 && transY == 0) {
-            return;
-        }
-        petriNetController.translateSelected(new Point2D.Double(transX, transY));
-        petriNetTab.updatePreferredSize();
-    }
+//    public void translateSelection(int transX, int transY) {
+//        if (transX == 0 && transY == 0) {
+//            return;
+//        }
+//        petriNetController.translateSelected(new Point2D.Double(transX, transY));
+//        petriNetTab.updatePreferredSize();
+//    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         if (isSelecting) {
-            Point point = GuiUtils.getUnZoomedPoint(e.getPoint(), petriNetController);
+            Point point = e.getPoint();
             selectionRectangle.setSize((int) Math.abs(point.getX() - startPoint.getX()),
                     (int) Math.abs(point.getY() - startPoint.getY()));
             selectionRectangle.setLocation((int) Math.min(startPoint.getX(), point.getX()),
@@ -94,8 +97,18 @@ public class SelectionManager extends javax.swing.JComponent
             processSelection(e);
             repaint();
         } else {
-            petriNetTab.drag(startPoint, e.getPoint());
+            handleOutOfBoundsDrag(e);
         }
+    }
+
+    /**
+     * Out of bounds drags are when the mouse has moved fast enough that they no longer
+     * contained in the object they are dragging. Since the SelectionManager spans the whole
+     * screen when in selection mode, it defaults back to this class with a call to drag
+     * @param e mouse drag event
+     */
+    private void handleOutOfBoundsDrag(MouseEvent e) {
+        dragManager.drag(e.getPoint());
     }
 
     /* (non-Javadoc)
@@ -136,7 +149,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     @Override
     public void mousePressed(MouseEvent e) {
-        startPoint = GuiUtils.getUnZoomedPoint(e.getPoint(), petriNetController);
+        startPoint = e.getPoint();
         if (e.getButton() == MouseEvent.BUTTON1 && !(e.isControlDown())) {
             isSelecting = true;
             petriNetTab.setLayer(this, Constants.SELECTION_LAYER_OFFSET);

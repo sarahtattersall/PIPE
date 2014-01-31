@@ -146,6 +146,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private FileAction saveAsAction = new SaveAsAction();
 
+    final ZoomUI layerUI = new ZoomUI();
+
+    private List<JLayer<JComponent>> wrappedPetrinetTabs =  new ArrayList<>();
+
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
         ApplicationSettings.register(this);
         this.applicationController = applicationController;
@@ -153,8 +157,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this), applicationController, this);
         arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(), new NormalCreator(applicationController, this), applicationController, this);
-        zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", applicationController);
-        zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", applicationController);
+        zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", this, layerUI);
+        zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", this, layerUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
         openAction = new OpenAction(applicationController, this);
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
@@ -713,6 +717,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return getTab(index);
     }
 
+    public JComponent getTabComponent() {
+        return wrappedPetrinetTabs.get( frameForPetriNetTabs.getSelectedIndex());
+    }
+
     PetriNetTab getTab(int index) {
         if (index < 0 || index >= petriNetTabs.size()) {
             return null;
@@ -793,9 +801,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     public void addNewTab(String name, PetriNetTab tab) {
-        JScrollPane scroller = new JScrollPane(tab);
-        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        frameForPetriNetTabs.addTab(name, null, scroller, null);
+
+        JLayer<JComponent> jLayer = new JLayer<>(tab, layerUI);
+        wrappedPetrinetTabs.add(jLayer);
+
+
+//        JScrollPane scroller = new JScrollPane(jLayer);
+//        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        frameForPetriNetTabs.addTab(name, null, jLayer, null);
         petriNetTabs.add(tab);
         frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
     }

@@ -25,7 +25,7 @@ public abstract class TransitionAction extends TypeAction {
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (event.getClickCount() > 0) {
-            Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
+            Point point = event.getPoint();
             Transition transition = newTransition(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
             petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(transition, net));

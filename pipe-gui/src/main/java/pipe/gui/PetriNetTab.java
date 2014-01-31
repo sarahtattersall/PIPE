@@ -93,7 +93,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         super.add(component);
         component.addedToGui();
         petriNetComponents.put(component.getId(), component);
-        repaint();
+//        repaint();
     }
 
     public int getZoom() {
@@ -114,9 +114,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     @Override
     public void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        double scale = zoomController.getScaleFactor();
-        g2.scale(scale, scale);
         super.paintComponent(g);
         if (grid.isEnabled()) {
             grid.updateSize(this);

@@ -159,58 +159,60 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
      * Paints the Place component taking into account the n q12[umber of tokens from
      * the storeCurrentMarking
      *
-     * @param canvas The PositionGraphics object onto which the Place is drawn.
+     * @param g The PositionGraphics object onto which the Place is drawn.
      */
     @Override
-    public void paintComponent(Graphics canvas) {
-        super.paintComponent(canvas);
-        Graphics2D canvas2D = (Graphics2D) canvas;
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+
+        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
 
         Insets insets = getInsets();
 
         if (hasCapacity()) {
-            canvas2D.setStroke(new BasicStroke(2.0f));
+            g2.setStroke(new BasicStroke(2.0f));
             setToolTipText("k = " + this.getCapacity());
         } else {
-            canvas2D.setStroke(new BasicStroke(1.0f));
+            g2.setStroke(new BasicStroke(1.0f));
             setToolTipText("k = \u221E");
         }
-        canvas2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (isSelected() && !_ignoreSelection) {
-            canvas2D.setColor(Constants.SELECTION_FILL_COLOUR);
+            g2.setColor(Constants.SELECTION_FILL_COLOUR);
         } else {
-            canvas2D.setColor(Constants.ELEMENT_FILL_COLOUR);
+            g2.setColor(Constants.ELEMENT_FILL_COLOUR);
         }
-        canvas2D.fill(place);
+        g2.fill(place);
 
         if (isSelected() && !_ignoreSelection) {
-            canvas2D.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
-            canvas2D.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
-        canvas2D.draw(place);
+        g2.draw(place);
 
-        canvas2D.setStroke(new BasicStroke(1.0f));
+        g2.setStroke(new BasicStroke(1.0f));
 
         // Paints border round a tagged place - paint component is called after any action on the place, so this bit
         // of code doesn't have to be called specially
 
         if (this.isTagged()) {
-            final AffineTransform oldTransform = canvas2D.getTransform();
+            AffineTransform oldTransform = g2.getTransform();
 
-            final AffineTransform scaleTransform = new AffineTransform();
+            AffineTransform scaleTransform = new AffineTransform();
             scaleTransform.setToScale(1.2, 1.2);
 
-            canvas2D.transform(scaleTransform);
+            g2.transform(scaleTransform);
 
-            canvas2D.translate(-2, -2);
+            g2.translate(-2, -2);
 
-            canvas2D.fill(place);
+            g2.fill(place);
 
-            canvas2D.translate(2, 2);
+            g2.translate(2, 2);
 
-            canvas2D.setTransform(oldTransform);
+            g2.setTransform(oldTransform);
 
 
         }
@@ -221,17 +223,18 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         if (tempTotalMarking > 5) {
             int offset = 0;
             for (MarkingView m : _currentMarkingView) {
-                m.update(canvas, insets, offset, tempTotalMarking);
+                m.update(g, insets, offset, tempTotalMarking);
                 if (m.getCurrentMarking() != 0) {
                     offset += 10;
                 }
             }
         } else {
             for (MarkingView m : _currentMarkingView) {
-                m.update(canvas, insets, 0, tempTotalMarking);
+                m.update(g, insets, 0, tempTotalMarking);
                 tempTotalMarking = tempTotalMarking - m.getCurrentMarking();
             }
         }
+        g2.dispose();
     }
 
     public int getCapacity() {

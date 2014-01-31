@@ -17,7 +17,7 @@ public class AnnotationAction extends TypeAction {
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (event.getClickCount() > 0) {
-            Point point = GuiUtils.getUnZoomedPoint(event.getPoint(), petriNetController);
+            Point point = event.getPoint();
             Annotation annotation = getAnnotation(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
             petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(annotation, net));
