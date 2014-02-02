@@ -179,22 +179,14 @@ public class PetriNetMouseHandler extends MouseInputAdapter
 //        petriNetTab.updatePreferredSize();
     }
 
-
-    private void addPoint(final MouseEvent e)
-    {
-        int x = e.getX();
-        int y = e.getY();
-        boolean shiftDown = e.isShiftDown();
-        petriNetController.setEndPoint(x, y, shiftDown);
-    }
-
-
+    @Override
     public void mouseReleased(MouseEvent e)
     {
         petriNetTab.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     }
 
 
+    @Override
     public void mouseMoved(MouseEvent event)
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
@@ -220,6 +212,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
     }
 
 
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e)
     {
         if(!e.isControlDown())

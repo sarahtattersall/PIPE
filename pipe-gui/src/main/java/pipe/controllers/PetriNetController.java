@@ -68,18 +68,6 @@ public class PetriNetController implements IController, Serializable {
         transitionNamer = new TransitionNamer(model);
     }
 
-    public void setEndPoint(double x, double y, boolean shiftDown) {
-        //        if (currentlyCreatingArc) {
-        //            arc.setTarget(new TemporaryArcTarget(x, y));
-        //
-        //            petriNet.notifyObservers();
-        //        }
-    }
-
-    public void addPoint(Point2D point, boolean curved) {
-        //        arc.addIntermediatePoint(new ArcPoint(point, curved));
-    }
-
     /**
      * @return A unique name for a place in the current petri net
      */
@@ -116,7 +104,7 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Selects all components within this rectangle
      *
-     * @param selectionRectangle
+     * @param selectionRectangle bounds for selection
      */
     public void select(Rectangle selectionRectangle) {
         for (Place place : petriNet.getPlaces()) {
@@ -126,8 +114,13 @@ public class PetriNetController implements IController, Serializable {
             selectPlaceable(transition, selectionRectangle);
         }
         for (Arc<? extends Connectable, ? extends Connectable> arc : petriNet.getArcs()) {
-            if (isArcSelected(arc, selectionRectangle) ||
-                    selectedComponents.contains(arc.getSource()) ||
+            if (isArcSelected(arc, selectionRectangle)) {
+                select(arc);
+                for (ArcPoint arcPoint : arc.getIntermediatePoints()) {
+                    select(arcPoint);
+                }
+            } else if (
+            selectedComponents.contains(arc.getSource()) ||
                     selectedComponents.contains(arc.getTarget())) {
                 select(arc);
             }
@@ -144,7 +137,7 @@ public class PetriNetController implements IController, Serializable {
      * @param selectionRectangle
      * @return if selectionRectangle intersects the path
      */
-    private boolean isArcSelected(Arc arc, Rectangle selectionRectangle) {
+    private boolean isArcSelected(Arc<? extends Connectable, ? extends Connectable> arc, Rectangle selectionRectangle) {
         GeneralPath path = createStraightPath(arc);
         return path.intersects(selectionRectangle);
     }
@@ -153,7 +146,7 @@ public class PetriNetController implements IController, Serializable {
      * @param arc
      * @return Straight path for arc, ignoring Bezier curves
      */
-    private GeneralPath createStraightPath(Arc arc) {
+    private GeneralPath createStraightPath(Arc<? extends Connectable, ? extends Connectable> arc) {
         GeneralPath path = new GeneralPath();
         Point2D start = arc.getStartPoint();
         path.moveTo(start.getX(), start.getY());
