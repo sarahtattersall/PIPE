@@ -25,7 +25,7 @@ public class DragManager {
     /**
      * Drag items to location
      *
-     * @param location
+     * @param location location of mouse to drag items to
      */
     public void drag(Point location) {
         int x = (int) (location.getX() - dragStart.getX());

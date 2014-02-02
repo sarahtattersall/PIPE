@@ -4,12 +4,10 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.Point2D;
 
 
 /**
@@ -28,10 +26,10 @@ public class SelectionManager extends javax.swing.JComponent
     private final PetriNetTab petriNetTab;
 
     private final PetriNetController petriNetController;
+
     private final DragManager dragManager;
 
     private Point startPoint;
-    private Point dragPoint = new Point(-1, -1);
 
     private boolean isSelecting;
 
@@ -77,13 +75,13 @@ public class SelectionManager extends javax.swing.JComponent
         g2d.draw(selectionRectangle);
     }
 
-//    public void translateSelection(int transX, int transY) {
-//        if (transX == 0 && transY == 0) {
-//            return;
-//        }
-//        petriNetController.translateSelected(new Point2D.Double(transX, transY));
-//        petriNetTab.updatePreferredSize();
-//    }
+    //    public void translateSelection(int transX, int transY) {
+    //        if (transX == 0 && transY == 0) {
+    //            return;
+    //        }
+    //        petriNetController.translateSelected(new Point2D.Double(transX, transY));
+    //        petriNetTab.updatePreferredSize();
+    //    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -101,24 +99,6 @@ public class SelectionManager extends javax.swing.JComponent
         }
     }
 
-    /**
-     * Out of bounds drags are when the mouse has moved fast enough that they no longer
-     * contained in the object they are dragging. Since the SelectionManager spans the whole
-     * screen when in selection mode, it defaults back to this class with a call to drag
-     * @param e mouse drag event
-     */
-    private void handleOutOfBoundsDrag(MouseEvent e) {
-        dragManager.drag(e.getPoint());
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        // Not needed
-    }
-
     private void processSelection(MouseEvent e) {
         if (!e.isShiftDown()) {
             clearSelection();
@@ -129,6 +109,27 @@ public class SelectionManager extends javax.swing.JComponent
 
     public void clearSelection() {
         petriNetController.deselectAll();
+    }
+
+    /* (non-Javadoc)
+     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+     */
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        // Not needed
+    }
+
+    /**
+     * Out of bounds drags are when the mouse has moved fast enough that they no longer
+     * contained in the object they are dragging. Since the SelectionManager spans the whole
+     * screen when in selection mode, it defaults back to this class with a call to drag
+     *
+     * @param e mouse drag event
+     */
+    private void handleOutOfBoundsDrag(MouseEvent e) {
+        if (!e.isConsumed()) {
+            dragManager.drag(e.getPoint());
+        }
     }
 
     @Override

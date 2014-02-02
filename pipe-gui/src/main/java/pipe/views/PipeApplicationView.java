@@ -837,10 +837,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void addNewTab(String name, PetriNetTab tab) {
 
-        JScrollPane scroller = new JScrollPane(tab);
-        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
+//        JScrollPane scroller = new JScrollPane(tab);
+//        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-        JLayer<JComponent> jLayer = new JLayer<>(scroller, zoomUI);
+        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
         wrappedPetrinetTabs.add(jLayer);
 
 

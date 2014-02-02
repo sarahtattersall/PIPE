@@ -77,7 +77,9 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 petriNetController.select(component);
                 justSelected = true;
             }
-            dragManager.setDragStart(e.getPoint());
+            if (!e.isConsumed()) {
+                dragManager.setDragStart(e.getPoint());
+            }
         }
     }
 
@@ -129,7 +131,9 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                     isDragging = true;
                 }
             }
-            dragManager.drag(e.getPoint());
+            if (!e.isConsumed()) {
+                dragManager.drag(e.getPoint());
+            }
         }
     }
 

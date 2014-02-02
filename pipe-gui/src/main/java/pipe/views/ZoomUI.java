@@ -108,8 +108,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
                     listener.mouseDragged(getNewMouseClickEvent(component, localEvent));
                 }
             }
-            e.consume();
         }
+        e.consume();
     }
 
     @Override
@@ -132,6 +132,11 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
+    }
+
+    @Override
     public void zoomOut() {
         if (canZoomOut()) {
             double old = zoom;
@@ -140,17 +145,12 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         }
     }
 
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.removePropertyChangeListener(listener);
-    }
-
     private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
         return getComponentClickedOn(l, event) != null;
     }
 
     /**
-     * @param l
+     * @param l layer clicked
      * @param e mouse event with coordinates releative to l
      * @return component in l clicked on
      */
@@ -162,11 +162,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         return tab.getComponentAt(coordinates.x, coordinates.y);
     }
 
-    @Override
-    public int getPercentageZoom() {
-        return (int) (zoom * 100);
-    }
-
     /**
      * @param e mouse click event
      * @return the events x y coordinates zoomed
@@ -175,11 +170,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         int x = e.getX() == 0 ? 0 : (int) (e.getX() / zoom);
         int y = e.getY() == 0 ? 0 : (int) (e.getY() / zoom);
         return new Point(x, y);
-    }
-
-    @Override
-    public double getScale() {
-        return zoom;
     }
 
     /**
@@ -193,12 +183,23 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         return SwingUtilities.convertMouseEvent(e.getComponent(), e, tab);
     }
 
+    @Override
+    public int getPercentageZoom() {
+        return (int) (zoom * 100);
+    }
+
     private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {
         Point coordinates = zoomedXY(mouseEvent);
         return new MouseEvent(component, mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiers(),
                 coordinates.x, coordinates.y, mouseEvent.getClickCount(), mouseEvent.isPopupTrigger(),
                 mouseEvent.getButton());
     }
+
+    @Override
+    public double getScale() {
+        return zoom;
+    }
+
 
     @Override
     public boolean canZoomOut() {
