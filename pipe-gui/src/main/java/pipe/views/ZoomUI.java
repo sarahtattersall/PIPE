@@ -67,7 +67,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         if (clickNotOutOfBounds(localEvent, l)) {
             Component component = getComponentClickedOn(l, localEvent);
             if (localEvent.getID() == MouseEvent.MOUSE_PRESSED) {
-
                 for (ActionListener listener : component.getListeners(ActionListener.class)) {
                     ActionEvent actionEvent = new ActionEvent(component, localEvent.getID(), "CLICK");
                     listener.actionPerformed(actionEvent);
@@ -78,6 +77,10 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
             } else if (localEvent.getID() == MouseEvent.MOUSE_RELEASED) {
                 for (MouseListener listener : component.getListeners(MouseListener.class)) {
                     listener.mouseReleased(getNewMouseClickEvent(component, localEvent));
+                }
+            } else if (localEvent.getID() == MouseEvent.MOUSE_CLICKED) {
+                for (MouseListener listener : component.getListeners(MouseListener.class)) {
+                    listener.mouseClicked(getNewMouseClickEvent(component, localEvent));
                 }
             }
             e.consume();
