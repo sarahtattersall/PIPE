@@ -1,8 +1,16 @@
 package pipe.gui;
 
 import pipe.handlers.AnimationHandler;
+import pipe.models.component.AbstractPetriNetComponent;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.place.Place;
+import pipe.models.component.place.PlaceVisitor;
+import pipe.models.component.transition.Transition;
+import pipe.models.component.transition.TransitionVisitor;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -89,11 +97,20 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     public void add(AbstractPetriNetViewComponent<?> component) {
+        registerForLocationChange(component.getModel());
+
         setLayer(component, DEFAULT_LAYER + component.getLayerOffset());
         super.add(component);
         component.addedToGui();
         petriNetComponents.put(component.getId(), component);
+        updatePreferredSize();
 //        repaint();
+    }
+
+    private void registerForLocationChange(PetriNetComponent component) {
+
+        PetriNetComponentVisitor changeListener = new ChangeListener();
+        component.accept(changeListener);
     }
 
     public int getZoom() {
@@ -212,6 +229,42 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     public Grid getGrid() {
         return grid;
+    }
+
+    /**
+     * Listen to changes in x/y
+     */
+    private class ChangeListener implements PlaceVisitor, TransitionVisitor {
+        PropertyChangeListener updateListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String name = evt.getPropertyName();
+                if (name.equals(Connectable.X_CHANGE_MESSAGE)) {
+                    double x = (double) evt.getNewValue();
+                    if (x > getWidth()) {
+                        updatePreferredSize();
+                    }
+
+                }
+                if (name.equals(Connectable.Y_CHANGE_MESSAGE)) {
+                    double y = (double) evt.getNewValue();
+                    if (y > getHeight()) {
+                        updatePreferredSize();
+                    }
+
+                }
+            }
+        };
+
+        @Override
+        public void visit(Place place) {
+              place.addPropertyChangeListener(updateListener);
+        }
+
+        @Override
+        public void visit(Transition transition) {
+            transition.addPropertyChangeListener(updateListener);
+        }
     }
 }
 

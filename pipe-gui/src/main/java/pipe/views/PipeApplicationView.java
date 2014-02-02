@@ -21,6 +21,7 @@ import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -65,7 +66,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final AnimateAction randomAction;
 
-    final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4);
+    final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -836,12 +837,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void addNewTab(String name, PetriNetTab tab) {
 
-        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
+        JScrollPane scroller = new JScrollPane(tab);
+        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
+        JLayer<JComponent> jLayer = new JLayer<>(scroller, zoomUI);
         wrappedPetrinetTabs.add(jLayer);
 
 
-        //        JScrollPane scroller = new JScrollPane(jLayer);
-        //        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
         frameForPetriNetTabs.addTab(name, null, jLayer, null);
         petriNetTabs.add(tab);
         frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);

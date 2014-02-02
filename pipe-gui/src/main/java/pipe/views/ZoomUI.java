@@ -1,6 +1,9 @@
 package pipe.views;
 
 import javafx.util.Pair;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.PetriNetTab;
+import pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
@@ -26,6 +29,12 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     private final double zoomMin;
 
     /**
+     * ApplicationView that this zooming belongs for
+     * is used to get petri net tab
+     */
+    private final PipeApplicationView view;
+
+    /**
      * Maximum scale allowed to zoom to
      */
     private final double zoomMax;
@@ -46,11 +55,12 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * @param zoomMax       maximum allowed zoom value
      * @param zoomMin       minimum allowed zoom value
      */
-    public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin) {
+    public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin, PipeApplicationView view) {
         zoom = startingScale;
         this.zoomAmount = zoomAmount;
         this.zoomMax = zoomMax;
         this.zoomMin = zoomMin;
+        this.view = view;
     }
 
     @Override
@@ -159,8 +169,10 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      */
     private Component getComponentClickedOn(JLayer<? extends JComponent> l, MouseEvent e) {
 
+        PetriNetTab tab = view.getCurrentTab();
+
         Pair<Integer, Integer> coordinates = zoomedXY(e);
-        return l.getView().getComponentAt(coordinates.getKey(), coordinates.getValue());
+        return tab.getComponentAt(coordinates.getKey(), coordinates.getValue());
     }
 
     @Override
@@ -185,7 +197,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * rather than the whole application
      */
     private MouseEvent translateToLayerCoordinates(MouseEvent e, JLayer<? extends JComponent> layer) {
-        return SwingUtilities.convertMouseEvent(e.getComponent(), e, layer);
+        PetriNetTab tab = view.getCurrentTab();
+        return SwingUtilities.convertMouseEvent(e.getComponent(), e, tab);
     }
 
     @Override
