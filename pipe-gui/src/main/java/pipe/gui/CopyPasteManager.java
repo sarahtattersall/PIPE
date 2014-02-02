@@ -42,29 +42,50 @@ public class CopyPasteManager extends javax.swing.JComponent
         implements pipe.gui.Zoomable, java.awt.event.MouseListener, java.awt.event.MouseMotionListener,
         java.awt.event.KeyListener {
 
-    private static final Color PASTE_COLOR = new Color(155, 155, 155, 100);
+    /**
+     * Colour of rectange displayed when pasting
+     */
+    private static final Paint PASTE_COLOR = new Color(155, 155, 155, 100);
 
+    /**
+     * Colour of rectangle outline displayed when pasting
+     */
     private static final Color PASTE_COLOR_OUTLINE = new Color(155, 0, 0, 0);
 
+    /**
+     * Rectangle displayed which marks the outline of the objects to paste
+     */
     private final Rectangle pasteRectangle = new Rectangle(-1, -1);
 
+    /**
+     * Petri net tab where pasting takes place
+     */
     private final PetriNetTab petriNetTab;
 
+    /**
+     * Petri net pasting objects from/to
+     */
     private final PetriNet petriNet;
 
-    private final ArrayList<ArrayList> objectsToPaste = new ArrayList();
-
+    /**
+     * Origin of the selected components to paste (top left corner)
+     */
     private final Point rectangleOrigin = new Point();
 
-    // pasteInProgres is true when pasteRectangle is visible (user is doing a
-    // paste but still hasn't chosen the position where elements will be pasted).
+    /**
+     * pasteInProgres is true when pasteRectangle is visible (user is doing a
+     * paste but still hasn't chosen the position where elements will be pasted).
+     */
     private boolean pasteInProgress = false;
 
-    private PetriNetTab _sourceView;
-
+    //TODO: DELETE
     private int zoom;
 
-    private Collection<PetriNetComponent> pasteComponents = new ArrayList<PetriNetComponent>();
+    /**
+     * Components to paste when paste is clicked.
+     * These are set when copied
+     */
+    private Collection<PetriNetComponent> pasteComponents = new ArrayList<>();
 
 
     public CopyPasteManager(PetriNetTab petriNetTab, PetriNet net) {
@@ -77,6 +98,12 @@ public class CopyPasteManager extends javax.swing.JComponent
 
     }
 
+    /**
+     *
+     * Creates new components for the petri net to copy when pasted
+     *
+     * @param selectedComponents components to copy
+     */
     public void copy(Collection<PetriNetComponent> selectedComponents) {
         pasteComponents.clear();
         pasteComponents.addAll(selectedComponents);
@@ -117,6 +144,9 @@ public class CopyPasteManager extends javax.swing.JComponent
         rectangleOrigin.setLocation(location.left, location.top);
     }
 
+    /**
+     * Shows the paste rectangle on screen
+     */
     public void showPasteRectangle() {
         if (!pasteInProgress) {
             petriNetTab.add(this);
@@ -133,14 +163,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    private void updateBounds() {
-        if (pasteInProgress) {
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            setBounds(0, 0, applicationView.getCurrentTab().getWidth(),
-                    ApplicationSettings.getApplicationView().getCurrentTab().getHeight());
-        }
-    }
-
     private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
         ZoomController zoomController = petriNetTab.getZoomController();
         int realWidth = pasteRectangle.width;
@@ -150,12 +172,20 @@ public class CopyPasteManager extends javax.swing.JComponent
                 (int) (realHeight * zoomController.getScaleFactor()));
     }
 
+    private void updateBounds() {
+        if (pasteInProgress) {
+            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+            setBounds(0, 0, applicationView.getCurrentTab().getWidth(),
+                    ApplicationSettings.getApplicationView().getCurrentTab().getHeight());
+        }
+    }
+
     public boolean pasteInProgress() {
         return pasteInProgress;
     }
 
     public boolean pasteEnabled() {
-        return !objectsToPaste.isEmpty();
+        return !pasteComponents.isEmpty();
     }
 
     @Override
@@ -174,9 +204,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         zoom = newZoom;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
     @Override
     public void mouseDragged(MouseEvent e) {
         if (pasteInProgress) {
@@ -184,9 +211,13 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
+    private void updateRect(Point point) {
+        pasteRectangle.setLocation(point);
+        repaint();
+        updateBounds();
+    }
+
+
     @Override
     public void mouseMoved(MouseEvent e) {
         if (pasteInProgress) {
@@ -194,20 +225,31 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    private void updateRect(Point point) {
-        pasteRectangle.setLocation(point);
-        //view.updatePreferredSize();
-        repaint();
-        updateBounds();
+    @Override
+    public void mouseClicked(MouseEvent e) {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         petriNetTab.updatePreferredSize();
         petriNetTab.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
         repaint();
-        //now, we have the position of the pasted objects so we can show them.
         paste(petriNetTab);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // Not needed
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Not needed
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Not needed
     }
 
     /**
@@ -216,7 +258,7 @@ public class CopyPasteManager extends javax.swing.JComponent
      * It first pastes the connectables, and then other components. This ordering is important
      * and will ensure that arcs are created with the right components.
      *
-     * @param petriNetTab
+     * @param petriNetTab petri net tab to paste items to
      */
     private void paste(PetriNetTab petriNetTab) {
         pasteInProgress = false;
@@ -243,44 +285,8 @@ public class CopyPasteManager extends javax.swing.JComponent
         createPasteHistoryItem(pasteVisitor.getCreatedComponents());
     }
 
-    /**
-     * Creates a history item for the new components added to the petrinet
-     *
-     * @param createdComponents
-     */
-    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
-        PetriNetController controller = ApplicationSettings.getApplicationController().getActivePetriNetController();
-        HistoryManager historyManager = controller.getHistoryManager();
-        historyManager.newEdit();
-
-        for (PetriNetComponent component : createdComponents) {
-            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
-            historyManager.addEdit(addAction);
-        }
-    }
-
-    private Collection<Connectable> getConnectablesToPaste() {
-        final Collection<Connectable> connectables = new LinkedList<Connectable>();
-        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
-            @Override
-            public void visit(Place place) {
-                connectables.add(place);
-            }
-
-            @Override
-            public void visit(Transition transition) {
-                connectables.add(transition);
-            }
-        };
-
-        for (PetriNetComponent component : pasteComponents) {
-            component.accept(connectableVisitor);
-        }
-        return connectables;
-    }
-
     private Collection<PetriNetComponent> getNonConnectablesToPaste() {
-        final Collection<PetriNetComponent> components = new LinkedList<PetriNetComponent>();
+        final Collection<PetriNetComponent> components = new LinkedList<>();
         PetriNetComponentVisitor componentVisitor = new NonConnectableVisitor() {
             @Override
             public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
@@ -304,30 +310,40 @@ public class CopyPasteManager extends javax.swing.JComponent
         return components;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+    private Collection<Connectable> getConnectablesToPaste() {
+        final Collection<Connectable> connectables = new LinkedList<Connectable>();
+        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
+            @Override
+            public void visit(Place place) {
+                connectables.add(place);
+            }
+
+            @Override
+            public void visit(Transition transition) {
+                connectables.add(transition);
+            }
+        };
+
+        for (PetriNetComponent component : pasteComponents) {
+            component.accept(connectableVisitor);
+        }
+        return connectables;
+    }
+
+    /**
+     * Creates a history item for the new components added to the petrinet
+     *
+     * @param createdComponents new components that have been created
      */
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // Not needed
-    }
+    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
+        PetriNetController controller = ApplicationSettings.getApplicationController().getActivePetriNetController();
+        HistoryManager historyManager = controller.getHistoryManager();
+        historyManager.newEdit();
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // Not needed
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // Not needed
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // Not needed
+        for (PetriNetComponent component : createdComponents) {
+            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
+            historyManager.addEdit(addAction);
+        }
     }
 
     @Override
@@ -374,7 +390,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     /**
-     * Private class used to set the bounds of a selectionn rectangle
+     * Private class used to set the bounds of a selection rectangle
      * Needed to create a class so that the visitor can change the values
      */
     private static class Location {

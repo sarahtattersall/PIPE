@@ -20,10 +20,8 @@ public abstract class JarUtilities {
 
    
    public static boolean isJarFile(URL url) {
-       if(url ==null)
-           return false;
+       return url != null && url.toString().startsWith("jar:file:");
 
-      return url.toString().startsWith("jar:file:");
    }
 
    
@@ -32,15 +30,15 @@ public abstract class JarUtilities {
    }
 
    
-   public static ArrayList getJarEntries(JarFile jarFile, String directory) {
-      Enumeration enumeration = jarFile.entries();
-      ArrayList <JarEntry> nets = new ArrayList();
+   public static ArrayList<JarEntry> getJarEntries(JarFile jarFile, String directory) {
+      Enumeration<JarEntry> enumeration = jarFile.entries();
+      ArrayList <JarEntry> nets = new ArrayList<>();
       directory = directory + System.getProperty("file.separator");
       
       while (enumeration.hasMoreElements()) {
          JarEntry je = (JarEntry)enumeration.nextElement();
          String s = je.toString();
-         if ((s.indexOf(directory) > -1) && (s.length() > directory.length())){
+         if ((s.contains(directory)) && (s.length() > directory.length())){
             nets.add(je);
          }
       }

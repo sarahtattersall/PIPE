@@ -196,13 +196,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
-    public void zoomOut() {
-//        int zoom = zoomController.getPercent();
-//        if (zoomController.zoomOut()) {
-//            zoomTo(midpoint(zoom));
-//        }
-    }
-
     public AnimationHistoryView getAnimationView() {
         return animationHistoryView;
     }
