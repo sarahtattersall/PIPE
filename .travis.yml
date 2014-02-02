@@ -10,5 +10,3 @@ language: java
 branches:
   only:
     - develop
-    - clean_up
-    - travis
