@@ -1,9 +1,6 @@
 package pipe.views;
 
-import javafx.util.Pair;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
-import pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
@@ -130,6 +127,11 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    @Override
     public void zoomOut() {
         if (canZoomOut()) {
             double old = zoom;
@@ -139,23 +141,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
-    }
-
-    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public int getPercentageZoom() {
-        return (int) (zoom * 100);
-    }
-
-    @Override
-    public double getScale() {
-        return zoom;
     }
 
     private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
@@ -171,23 +158,28 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
         PetriNetTab tab = view.getCurrentTab();
 
-        Pair<Integer, Integer> coordinates = zoomedXY(e);
-        return tab.getComponentAt(coordinates.getKey(), coordinates.getValue());
+        Point coordinates = zoomedXY(e);
+        return tab.getComponentAt(coordinates.x, coordinates.y);
     }
 
     @Override
-    public boolean canZoomOut() {
-        return zoom - zoomAmount >= zoomMin;
+    public int getPercentageZoom() {
+        return (int) (zoom * 100);
     }
 
     /**
      * @param e mouse click event
      * @return the events x y coordinates zoomed
      */
-    private Pair<Integer, Integer> zoomedXY(MouseEvent e) {
+    private Point zoomedXY(MouseEvent e) {
         int x = e.getX() == 0 ? 0 : (int) (e.getX() / zoom);
         int y = e.getY() == 0 ? 0 : (int) (e.getY() / zoom);
-        return new Pair<>(x, y);
+        return new Point(x, y);
+    }
+
+    @Override
+    public double getScale() {
+        return zoom;
     }
 
     /**
@@ -201,6 +193,19 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         return SwingUtilities.convertMouseEvent(e.getComponent(), e, tab);
     }
 
+    private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {
+        Point coordinates = zoomedXY(mouseEvent);
+        return new MouseEvent(component, mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiers(),
+                coordinates.x, coordinates.y, mouseEvent.getClickCount(), mouseEvent.isPopupTrigger(),
+                mouseEvent.getButton());
+    }
+
+    @Override
+    public boolean canZoomOut() {
+        return zoom - zoomAmount >= zoomMin;
+    }
+
+
     @Override
     public void zoomIn() {
         if (canZoomIn()) {
@@ -210,12 +215,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         }
     }
 
-    private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {
-        Pair<Integer, Integer> coordinates = zoomedXY(mouseEvent);
-        return new MouseEvent(component, mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiers(),
-                coordinates.getKey(), coordinates.getValue(), mouseEvent.getClickCount(), mouseEvent.isPopupTrigger(),
-                mouseEvent.getButton());
-    }
 
     @Override
     public boolean canZoomIn() {

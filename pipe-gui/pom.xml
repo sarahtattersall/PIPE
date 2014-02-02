@@ -9,7 +9,7 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>PIPE-gui</artifactId>    
+    <artifactId>PIPE-gui</artifactId>
     <version>4.3.2</version>
     <packaging>jar</packaging>
 
@@ -20,6 +20,16 @@
     <build>
         <finalName>pipe</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -42,7 +52,6 @@
             </plugin>
         </plugins>
     </build>
-
 
 
     <repositories>
@@ -200,5 +209,4 @@
 
     </dependencies>
 
-    
 </project>

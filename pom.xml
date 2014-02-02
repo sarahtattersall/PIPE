@@ -11,6 +11,10 @@
     <version>1.0</version>
     <name>PIPE Parent Project</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <modules>
         <module>pipe-gui</module>
         <module>pipe-core</module>
@@ -22,6 +26,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.0</version>
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>
