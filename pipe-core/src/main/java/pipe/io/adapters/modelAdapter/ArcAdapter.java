@@ -29,9 +29,9 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
      * use these fields it's ok to initialise them as empty/null.
      */
     public ArcAdapter() {
-        places = new HashMap<String, Place>();
-        transitions = new HashMap<String, Transition>();
-        tokens = new HashMap<String, Token>();
+        places = new HashMap<>();
+        transitions = new HashMap<>();
+        tokens = new HashMap<>();
     }
 
     public ArcAdapter(Map<String, Place> places, Map<String, Transition> transitions, Map<String, Token> tokens) {
@@ -50,16 +50,16 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         if (adaptedArc.getType().equals("inhibitor")) {
             Place place = places.get(source);
             Transition transition = transitions.get(target);
-            arc = new Arc<Place, Transition>(place, transition, weights, ArcType.INHIBITOR);
+            arc = new Arc<>(place, transition, weights, ArcType.INHIBITOR);
         } else {
             if (places.containsKey(source)) {
                 Place place = places.get(source);
                 Transition transition = transitions.get(target);
-                arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+                arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
             } else {
                 Place place = places.get(target);
                 Transition transition = transitions.get(source);
-                arc = new Arc<Transition, Place>(transition, place, weights, ArcType.NORMAL);
+                arc = new Arc<>(transition, place, weights, ArcType.NORMAL);
             }
         }
         arc.setId(adaptedArc.getId());

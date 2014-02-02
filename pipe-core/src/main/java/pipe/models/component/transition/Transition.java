@@ -1,6 +1,8 @@
 package pipe.models.component.transition;
 
 import pipe.models.component.Connectable;
+import pipe.models.component.rate.NormalRate;
+import pipe.models.component.rate.Rate;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.geom.AffineTransform;
@@ -52,7 +54,7 @@ public class Transition extends Connectable {
 
     private int priority;
 
-    private String rateExpr;
+    private Rate rate;
 
     private boolean timed = false;
 
@@ -64,12 +66,12 @@ public class Transition extends Connectable {
     private boolean enabled = false;
 
     public Transition(String id, String name) {
-        this(id, name, "1", 1);
+        this(id, name, new NormalRate("1"), 1);
     }
 
-    public Transition(String id, String name, String rateExpr, int priority) {
+    public Transition(String id, String name, Rate rate, int priority) {
         super(id, name);
-        this.rateExpr = rateExpr;
+        this.rate = rate;
         this.priority = priority;
     }
 
@@ -78,7 +80,7 @@ public class Transition extends Connectable {
         this.infiniteServer = transition.infiniteServer;
         this.angle = transition.angle;
         this.timed = transition.timed;
-        this.rateExpr = transition.rateExpr;
+        this.rate = transition.rate;
         this.priority = transition.priority;
     }
 
@@ -93,16 +95,20 @@ public class Transition extends Connectable {
     }
 
     public String getRateExpr() {
-        return rateExpr;
+        return rate.getExpression();
     }
 
-    public void setRateExpr(double expr) {
-        rateExpr = Double.toString(expr);
+    public Rate getRate() {
+        return rate;
     }
 
-    public void setRateExpr(String string) {
-        rateExpr = string;
+    public void setRate(Rate rate) {
+        this.rate = rate;
     }
+
+//    public void setRateExpr(String string) {
+//        rateExpr = string;
+//    }
 
     public int getAngle() {
         return angle;
@@ -169,7 +175,7 @@ public class Transition extends Connectable {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + priority;
-        result = 31 * result + rateExpr.hashCode();
+        result = 31 * result + rate.hashCode();
         result = 31 * result + (timed ? 1 : 0);
         result = 31 * result + (infiniteServer ? 1 : 0);
         result = 31 * result + angle;
@@ -210,7 +216,7 @@ public class Transition extends Connectable {
         if (timed != that.timed) {
             return false;
         }
-        if (!rateExpr.equals(that.rateExpr)) {
+        if (!rate.equals(that.rate)) {
             return false;
         }
 

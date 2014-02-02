@@ -3,18 +3,17 @@ package pipe.io;
 import pipe.io.adapters.modelAdapter.*;
 import pipe.models.PetriNetHolder;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +33,19 @@ public class PetriNetIOImpl implements PetriNetIO {
             PetriNetHolder holder = new PetriNetHolder();
             holder.addNet(petriNet);
             m.marshal(holder, new File(path));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void writeTo(Writer stream, PetriNet petriNet) {
+        try {
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            PetriNetHolder holder = new PetriNetHolder();
+            holder.addNet(petriNet);
+            m.marshal(holder, stream);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -64,24 +76,26 @@ public class PetriNetIOImpl implements PetriNetIO {
         return null;
     }
 
+    private Token createDefaultToken() {
+        return new Token("Default", true, 0, new Color(0, 0, 0));
+    }
+
     private Unmarshaller initialiseUnmarshaller() throws JAXBException {
 
         Unmarshaller um = context.createUnmarshaller();
 
-        Map<String, Place> places = new HashMap<String, Place>();
-        Map<String, Transition> transitions = new HashMap<String, Transition>();
-        Map<String, Token> tokens = new HashMap<String, Token>();
+        Map<String, Place> places = new HashMap<>();
+        Map<String, Transition> transitions = new HashMap<>();
+        Map<String, Token> tokens = new HashMap<>();
+        Map<String, RateParameter> rateParameters = new HashMap<>();
 
+        um.setAdapter(new RateParameterAdapter(rateParameters));
         um.setAdapter(new ArcAdapter(places, transitions, tokens));
         um.setAdapter(new PlaceAdapter(places, tokens));
-        um.setAdapter(new TransitionAdapter(transitions));
+        um.setAdapter(new TransitionAdapter(transitions, rateParameters));
         um.setAdapter(new TokenAdapter(tokens));
         um.setAdapter(new TokenSetIntegerAdapter(tokens));
         return um;
-    }
-
-    private Token createDefaultToken() {
-        return new Token("Default", true, 0, new Color(0, 0, 0));
     }
 
 }

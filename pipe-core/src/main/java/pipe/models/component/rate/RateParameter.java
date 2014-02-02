@@ -3,7 +3,7 @@ package pipe.models.component.rate;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.visitor.foo.PetriNetComponentVisitor;
 
-public class RateParameter extends AbstractPetriNetComponent {
+public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
     private final String expression;
 
@@ -17,6 +17,7 @@ public class RateParameter extends AbstractPetriNetComponent {
         this.name = name;
     }
 
+    @Override
     public String getExpression() {
         return expression;
     }

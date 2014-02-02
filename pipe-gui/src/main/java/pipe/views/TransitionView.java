@@ -12,6 +12,7 @@ import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.*;
 import pipe.models.component.Connectable;
+import pipe.models.component.rate.NormalRate;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
 import pipe.models.petrinet.PetriNet;
@@ -53,7 +54,7 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     public TransitionView() {
         this("", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false, false, 0,
-                new Transition("", "", "1", 1), null);
+                new Transition("", "", new NormalRate("1"), 1), null);
     }
 
 
@@ -482,13 +483,15 @@ public final class TransitionView extends ConnectableView<Transition> implements
         return _rateParameter;
     }
 
+    //TODO: DELETE
     public HistoryItem setRateParameter(RateParameter rateParameter) {
-        double oldRate = getRate();
-        this._rateParameter = rateParameter;
-        this._rateParameter.add(this);
-        model.setRateExpr(rateParameter.getValue());
-        update();
-        return new SetRateParameter(this, oldRate, this._rateParameter);
+//        double oldRate = getRate();
+//        this._rateParameter = rateParameter;
+//        this._rateParameter.add(this);
+//        model.setRateExpr(rateParameter.getValue());
+//        update();
+//        return new SetRateParameter(this, oldRate, this._rateParameter);
+        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
     }
 
     public HistoryItem clearRateParameter() {
@@ -498,15 +501,16 @@ public final class TransitionView extends ConnectableView<Transition> implements
         update();
         return new ClearRateParameter(this, oldRateParameter);
     }
-
+    //TODO: DELETE
     public HistoryItem changeRateParameter(RateParameter rateParameter) {
-        RateParameter oldRateParameter = this._rateParameter;
-        this._rateParameter.remove(this);
-        this._rateParameter = rateParameter;
-        this._rateParameter.add(this);
-        model.setRateExpr(rateParameter.getValue());
-        update();
-        return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
+        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
+//        RateParameter oldRateParameter = this._rateParameter;
+//        this._rateParameter.remove(this);
+//        this._rateParameter = rateParameter;
+//        this._rateParameter.add(this);
+//        model.setRateExpr(rateParameter.getValue());
+//        update();
+//        return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
     }
 
     public void setModel(Transition model) {
@@ -602,97 +606,26 @@ public final class TransitionView extends ConnectableView<Transition> implements
     }
 
     public void hideAssociatedArcs() {
-        for (ArcView tempArcView : outboundArcs()) {
-            tempArcView.removeFromView();
-        }
-
-        for (ArcView tempArcView : inboundArcs()) {
-            tempArcView.removeFromView();
-        }
     }
 
     public void showAssociatedArcs() {
-        PetriNetTab view = ApplicationSettings.getApplicationView().getCurrentTab();
-        for (ArcView tempArcView : outboundArcs()) {
-            tempArcView.addToView(view);
-        }
-        for (ArcView tempArcView : inboundArcs()) {
-            tempArcView.addToView(view);
-        }
     }
 
-    public boolean isConst() {
-        try {
-            Double.parseDouble(model.getRateExpr());
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
+    //TODO: DELETE
     public HistoryItem setRate(double rate) {
-        String oldRate = model.getRateExpr();
-        model.setRateExpr(rate + "");
-        repaint();
-        return new TransitionRate(this, oldRate, model.getRateExpr());
+        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
+//        String oldRate = model.getRateExpr();
+//        model.setRateExpr(rate + "");
+//        repaint();
+//        return new TransitionRate(this, oldRate, model.getRateExpr());
     }
 
+    //TODO: DELETE
     public HistoryItem setRate(String rate) {
-        String oldRate = model.getRateExpr();
-        model.setRateExpr(rate + "");
-        repaint();
-        return new TransitionRate(this, oldRate, model.getRateExpr());
-    }
-
-    class ArcAngleCompare implements Comparable {
-
-        private final static boolean SOURCE = false;
-
-        private final static boolean TARGET = true;
-
-        private final ArcView<? extends Connectable, ? extends Connectable> _arcView;
-
-        private final TransitionView _transitionView;
-
-        private double angle;
-
-        public ArcAngleCompare(ArcView<? extends Connectable, ? extends Connectable> arcView,
-                               TransitionView transitionView) {
-            this._arcView = arcView;
-            this._transitionView = transitionView;
-            calcAngle();
-        }
-
-        private void calcAngle() {
-            int index = sourceOrTarget() ? _arcView.getArcPath().getEndIndex() - 1 : 1;
-            Point2D.Double p1 = new Point2D.Double(model.getX() + centreOffsetLeft(), model.getY() + centreOffsetTop());
-            Point2D.Double p2 = new Point2D.Double(_arcView.getArcPath().getPoint(index).getX(),
-                    _arcView.getArcPath().getPoint(index).getY());
-
-            if (p1.y <= p2.y) {
-                angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y));
-            } else {
-                angle = Math.atan((p1.x - p2.x) / (p2.y - p1.y)) + Math.PI;
-            }
-
-            if (angle < (Math.toRadians(30 + _transitionView.getAngle()))) {
-                angle += (2 * Math.PI);
-            }
-
-            if (p1.equals(p2)) {
-                angle = 0;
-            }
-        }
-
-        private boolean sourceOrTarget() {
-            return (_arcView.getModel().getSource() instanceof Transition ? SOURCE : TARGET);
-        }
-
-        @Override
-        public int compareTo(Object arg0) {
-            double angle2 = ((ArcAngleCompare) arg0).angle;
-            return (angle < angle2 ? -1 : (angle == angle2 ? 0 : 1));
-        }
-
+        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
+//        String oldRate = model.getRateExpr();
+//        model.setRateExpr(rate + "");
+//        repaint();
+//        return new TransitionRate(this, oldRate, model.getRateExpr());
     }
 }

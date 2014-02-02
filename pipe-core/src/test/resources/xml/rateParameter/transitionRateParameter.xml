@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pnml>
     <net>
+        <definition defType="real" expression="6.0" id="foo" name="foo" type="text"/>
         <transition id="T0">
             <graphics>
-                <position x="375.0" y="225.0"/>
+                <position x="435.0" y="180.0"/>
             </graphics>
             <name>
                 <value>T0</value>
@@ -15,10 +16,10 @@
                 <value>0</value>
             </orientation>
             <rate>
-                <value>1.0</value>
+                <value>6.0</value>
             </rate>
             <timed>
-                <value>false</value>
+                <value>true</value>
             </timed>
             <infiniteServer>
                 <value>false</value>
@@ -26,6 +27,7 @@
             <priority>
                 <value>1</value>
             </priority>
+            <toolspecific tool="PIPE" version="2.5" rateDefinition="foo"/>
         </transition>
     </net>
 </pnml>

@@ -66,7 +66,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void losesSourceAndTargetArcPath() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         assertTrue("Petri net has no arcs registered to it", petriNet.getArcs().size() > 0);
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
         assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1,
@@ -76,7 +76,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void keepsIntermediatePoints() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         assertTrue("Petri net has no arcs registered to it", petriNet.getArcs().size() > 0);
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
         assertEquals("Petri net did not process source/target/intermedaite arcs correctly", 1,
@@ -90,12 +90,12 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsPlace() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getSinglePlacePath()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getSinglePlacePath()));
         Place place = petriNet.getPlaces().iterator().next();
         assertNotNull(place);
 
         assertEquals("P0", place.getName());
-        assertEquals(225, place.getX(), DOUBLE_DELTA);
+        assertEquals(255, place.getX(), DOUBLE_DELTA);
         assertEquals(240, place.getY(), DOUBLE_DELTA);
 
         assertEquals(0, place.getMarkingXOffset(), DOUBLE_DELTA);
@@ -106,14 +106,11 @@ public class PetriNetReaderTest {
         assertEquals(1, place.getTokenCounts().size());
     }
 
-    private String getSinglePlacePath() {
-        return "/xml/place/singlePlace.xml";
-    }
 
     @Test
     public void createsMarkingCorrectlyWithTokenMap() {
 
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getSinglePlacePath()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getSinglePlacePath()));
         Place place = petriNet.getPlaces().iterator().next();
         Map<Token, Integer> counts = place.getTokenCounts();
 
@@ -139,7 +136,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsTransition() {
 
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getTransitionFile()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTransitionFile()));
         Transition transition = petriNet.getTransitions().iterator().next();
         assertNotNull(transition);
 
@@ -158,7 +155,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsArc() {
 
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getArcNoWeightFile()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getArcNoWeightFile()));
 
         assertTrue(petriNet.getArcs().size() > 0);
 
@@ -177,7 +174,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsCorrectMarkingIfWeightSpecified() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
 
         Map<Token, String> weights = arc.getTokenWeights();
@@ -190,7 +187,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsMarkingWithCorrectToken() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getNormalArcWithWeight()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
         Map<Token, String> weights = arc.getTokenWeights();
         assertEquals(1, weights.size());
@@ -199,7 +196,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsInhibitoryArc() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getInhibitorArcFile()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getInhibitorArcFile()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
 
         assertNotNull(arc);
@@ -208,7 +205,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsRedToken() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getTokenFile()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTokenFile()));
         Token token = petriNet.getTokens().iterator().next();
         assertEquals("red", token.getId());
         assertTrue(token.isEnabled());
@@ -217,7 +214,7 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsAnnotation() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getAnnotationFile()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getAnnotationFile()));
         Annotation annotation = petriNet.getAnnotations().iterator().next();
         assertNotNull(annotation);
         assertEquals("#P12s", annotation.getText());
@@ -229,49 +226,20 @@ public class PetriNetReaderTest {
 
     @Test
     public void createsRateParameter() {
-        PetriNet petriNet = reader.read(FileUtils.fileLocation(getRateParameterFile()));
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getRateParameterFile()));
         RateParameter rateParameter = petriNet.getRateParameters().iterator().next();
         assertNotNull(rateParameter);
         assertEquals("rate0", rateParameter.getId());
         assertEquals("rate0", rateParameter.getName());
         assertEquals("5.0", rateParameter.getExpression());
     }
-
-    private String getAnnotationFile() {
-        return "/xml/annotation/annotation.xml";
-    }
-
-    private String getTokenFile() {
-        return "/xml/token/token.xml";
-    }
-
-    private String getArcNoWeightFile() {
-        return "/xml/arc/arcNoWeight.xml";
-    }
-
-    private String getArcWeightNoTokenFile() {
-        return "/xml/arc/arcWeightNoToken.xml";
-    }
-
-    private String getArcWithSourceAndTargetFile() {
-        return "/xml/arc/arcWithSourceAndTarget.xml";
+    @Test
+    public void transitionReferencesRateParameter() {
+        PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTransitionRateParameterFile()));
+        RateParameter rateParameter = petriNet.getRateParameters().iterator().next();
+        Transition transition = petriNet.getTransitions().iterator().next();
+        assertEquals(rateParameter, transition.getRate());
     }
 
 
-    private String getInhibitorArcFile() {
-        return "/xml/arc/inhibitorArc.xml";
-    }
-
-    private String getNormalArcWithWeight() {
-        return "/xml/arc/normalArcWithWeight.xml";
-    }
-
-
-    private String getTransitionFile() {
-        return "/xml/transition/singleTransition.xml";
-    }
-
-    private String getRateParameterFile() {
-        return "/xml/rateParameter/rateParameter.xml";
-    }
 }

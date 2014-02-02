@@ -42,28 +42,5 @@ public class AdaptedConnectable {
         this.name = name;
     }
 
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class NameDetails {
-        @XmlElement(name = "value")
-        String name;
 
-        @XmlElement
-        OffsetGraphics graphics = new OffsetGraphics();
-
-        public OffsetGraphics getGraphics() {
-            return graphics;
-        }
-
-        public void setGraphics(OffsetGraphics graphics) {
-            this.graphics = graphics;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
 }

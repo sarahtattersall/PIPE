@@ -1,24 +1,36 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pnml>
-    <net id="Net-One" type="P/T net">
+    <net>
         <token id="Default" enabled="true" red="0" green="0" blue="0"/>
         <place id="P0">
             <graphics>
-                <position y="0.0" x="0.0"/>
+                <position x="0.0" y="0.0"/>
             </graphics>
             <name>
                 <value>P0</value>
+                <graphics>
+                    <offset x="-5.0" y="35.0"/>
+                </graphics>
             </name>
             <capacity>
                 <value>0</value>
             </capacity>
+            <initialMarking>
+                <graphics>
+                    <offset x="0.0" y="0.0"/>
+                </graphics>
+                <value></value>
+            </initialMarking>
         </place>
         <transition id="T0">
             <graphics>
-                <position y="0.0" x="0.0"/>
+                <position x="0.0" y="0.0"/>
             </graphics>
             <name>
                 <value>T0</value>
+                <graphics>
+                    <offset x="-5.0" y="35.0"/>
+                </graphics>
             </name>
             <infiniteServer>
                 <value>false</value>
@@ -36,24 +48,14 @@
                 <value>1</value>
             </rate>
         </transition>
-        <arc id="Arc0" source="P0" target="T0">
-            <name>
-                <value>arc0</value>
-                <graphics>
-                    <offset x="25" y="-19"/>
-                </graphics>
-            </name>
+        <arc id="P0 TO T0" source="P0" target="T0">
+            <arcpath id="" x="15.0" y="15.0" curvePoint="false"/>
+            <arcpath id="" x="87.0" y="36.0" curvePoint="true"/>
+            <arcpath id="" x="15.0" y="30.0" curvePoint="false"/>
+            <type value="normal"/>
             <inscription>
                 <value>Default,4</value>
-                <graphics>
-                    <offset x="10" y="20"/>
-                </graphics>
             </inscription>
-            <tagged>false</tagged>
-            <arcpath x="40" y="60" curvePoint="false"/>
-            <arcpath x="87" y="36" curvePoint="true"/>
-            <arcpath x="20" y="60" curvePoint="false"/>
-            <type value="normal"/>
         </arc>
     </net>
 </pnml>

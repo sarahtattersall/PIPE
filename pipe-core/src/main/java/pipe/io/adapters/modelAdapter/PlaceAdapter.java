@@ -1,10 +1,7 @@
 package pipe.io.adapters.modelAdapter;
 
 import com.google.common.base.Joiner;
-import pipe.io.adapters.model.AdaptedConnectable;
-import pipe.io.adapters.model.AdaptedPlace;
-import pipe.io.adapters.model.OffsetGraphics;
-import pipe.io.adapters.model.Point;
+import pipe.io.adapters.model.*;
 import pipe.io.adapters.utils.ConnectableUtils;
 import pipe.io.adapters.utils.TokenUtils;
 import pipe.models.component.place.Place;
@@ -35,7 +32,7 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
 
     @Override
     public Place unmarshal(AdaptedPlace adaptedPlace) {
-        AdaptedConnectable.NameDetails nameDetails = adaptedPlace.getName();
+        NameDetails nameDetails = adaptedPlace.getName();
         Place place = new Place(adaptedPlace.getId(), nameDetails.getName());
         place.setCapacity(adaptedPlace.getCapacity());
         ConnectableUtils.setConnectablePosition(place, adaptedPlace);

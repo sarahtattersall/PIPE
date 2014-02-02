@@ -81,7 +81,6 @@ public class AdaptedArc {
         this.arcPoints = arcPoints;
     }
 
-
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Inscription {
         @XmlElement(name = "value")

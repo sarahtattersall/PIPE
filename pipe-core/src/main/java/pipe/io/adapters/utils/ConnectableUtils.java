@@ -1,9 +1,6 @@
 package pipe.io.adapters.utils;
 
-import pipe.io.adapters.model.AdaptedConnectable;
-import pipe.io.adapters.model.OffsetGraphics;
-import pipe.io.adapters.model.Point;
-import pipe.io.adapters.model.PositionGraphics;
+import pipe.io.adapters.model.*;
 import pipe.models.component.Connectable;
 
 public final class ConnectableUtils {
@@ -21,7 +18,7 @@ public final class ConnectableUtils {
      * @param adaptedConnectable
      */
     public static void setAdaptedName(Connectable connectable, AdaptedConnectable adaptedConnectable) {
-        AdaptedConnectable.NameDetails details = new AdaptedConnectable.NameDetails();
+        NameDetails details = new NameDetails();
         details.setName(connectable.getName());
 
         OffsetGraphics graphics = new OffsetGraphics();
@@ -49,7 +46,7 @@ public final class ConnectableUtils {
      * @param adaptedConnectable
      */
     public static void setConntactableNameOffset(Connectable connectable, AdaptedConnectable adaptedConnectable) {
-        AdaptedConnectable.NameDetails nameDetails = adaptedConnectable.getName();
+        NameDetails nameDetails = adaptedConnectable.getName();
         OffsetGraphics offsetGraphics = nameDetails.getGraphics();
         if (offsetGraphics.point != null) {
             connectable.setNameXOffset(offsetGraphics.point.getX());

@@ -144,6 +144,11 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         setId(name);
     }
 
+    //TODO: Not sure if arcs should have names
+    public String getName() {
+        return id;
+    }
+
     public boolean isTagged() {
         return tagged;
     }
