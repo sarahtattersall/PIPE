@@ -7,7 +7,9 @@ import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
+import pipe.io.PetriNetReader;
 import pipe.models.component.annotation.Annotation;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.*;
 import pipe.io.PetriNetIOImpl;
@@ -119,7 +121,7 @@ public class PipeApplicationController {
 
         petriNetTab.updatePreferredSize();
 
-        PetriNetChangeListener changeListener = new PetriNetChangeListener(applicationView, petriNetTab, petriNetController);
+        PropertyChangeListener changeListener = new PetriNetChangeListener(applicationView, petriNetTab, petriNetController);
         net.addPropertyChangeListener(changeListener);
 
         setActiveTab(petriNetTab);
@@ -162,17 +164,16 @@ public class PipeApplicationController {
             PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);
             propertyChangeListener.propertyChange(changeEvent);
         }
+
+        for (RateParameter rateParameter : net.getRateParameters()) {
+            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE, null, rateParameter);
+            propertyChangeListener.propertyChange(changeEvent);
+        }
     }
 
     public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView, boolean isTN) {
-
-        if (isPasteInProgress()) {
-            cancelPaste();
-        }
-
-
         try {
-            pipe.io.PetriNetReader petriNetIO = new PetriNetIOImpl();
+            PetriNetReader petriNetIO = new PetriNetIOImpl();
             PetriNet net = petriNetIO.read(file.getAbsolutePath());
             return createNewTab(net, applicationView);
         } catch (JAXBException e) {
@@ -182,35 +183,9 @@ public class PipeApplicationController {
     }
 
     //TODO: DELETE
-    public boolean isPasteInProgress() {
-        return false;
-        //        return copyPasteManager.pasteInProgress();
-    }
-
-    //TODO: DELETE
-    public void cancelPaste() {
-
-        //        copyPasteManager.cancelPaste();
-    }
-
-    //TODO: DELETE
-    public CopyPasteManager getCopyPasteManager() {
-        return null;
-    }
-
-    //TODO: DELETE
     public boolean isPasteEnabled() {
         return false;
         //        return copyPasteManager.pasteEnabled();
-    }
-
-    //TODO: DELETE
-    public void copy(ArrayList selection, PetriNetTab appView) {
-        //        copyPasteManager.doCopy(selection, appView);
-    }
-
-    public PetriNetController getControllerForTab(PetriNetTab tab) {
-        return netControllers.get(tab);
     }
 
     public void setActiveTab(PetriNetTab tab) {

@@ -13,6 +13,11 @@ public class NormalRate implements Rate {
     }
 
     @Override
+    public RateType getRateType() {
+        return RateType.NORMAL_RATE;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

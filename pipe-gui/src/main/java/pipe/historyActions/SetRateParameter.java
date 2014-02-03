@@ -4,46 +4,46 @@
 package pipe.historyActions;
 
 
-import pipe.views.TransitionView;
-import pipe.views.viewComponents.RateParameter;
+import pipe.models.component.rate.Rate;
+import pipe.models.component.transition.Transition;
 
 
 /**
- *
  * @author corveau
  */
-public class SetRateParameter
-        extends HistoryItem
-{
-   
-   private final TransitionView _transitionView;
-   private final Double oldRate;
-   private final RateParameter newRateParameter;
-   
-   
-   /** Creates a new instance of placeCapacityEdit
-    * @param _transitionView
-    * @param _oldRate
-    * @param _newRateParameter*/
-   public SetRateParameter(TransitionView _transitionView,
-                           Double _oldRate,
-                           RateParameter _newRateParameter) {
-      this._transitionView = _transitionView;
-      oldRate = _oldRate;
-      newRateParameter = _newRateParameter;
-   }
+public class SetRateParameter extends HistoryItem {
 
-   
-   /** */
-   public void undo() {
-      _transitionView.clearRateParameter();
-      _transitionView.setRate(oldRate);
-   }
+    /**
+     * Transition to change rate of
+     */
+    private final Transition transition;
 
-   
-   /** */
-   public void redo() {
-      _transitionView.setRateParameter(newRateParameter);
-   }
-   
+    /**
+     * Previous value of the rate
+     */
+    private final Rate oldRate;
+
+    /**
+     * New rate value
+     */
+    private final Rate newRate;
+
+    public SetRateParameter(Transition transition, Rate oldRate, Rate newRate) {
+        this.transition = transition;
+        this.oldRate = oldRate;
+        this.newRate = newRate;
+    }
+
+    /** */
+    @Override
+    public void undo() {
+        transition.setRate(oldRate);
+    }
+
+    /** */
+    @Override
+    public void redo() {
+        transition.setRate(newRate);
+    }
+
 }

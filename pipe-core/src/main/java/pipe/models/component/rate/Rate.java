@@ -5,4 +5,5 @@ package pipe.models.component.rate;
  */
 public interface Rate {
     String getExpression();
+    RateType getRateType();
 }

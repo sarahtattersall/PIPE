@@ -4,11 +4,15 @@ import net.sourceforge.jeval.EvaluationException;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
+import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.NormalRate;
+import pipe.models.component.rate.Rate;
+import pipe.models.component.rate.RateParameter;
+import pipe.models.component.rate.RateType;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
-import pipe.models.component.rate.RateParameter;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -67,7 +71,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     /**
      * Creates new form Transition editor
      *
-     * @param rootPane            parent
+     * @param rootPane             parent
      * @param transitionController controller for the transition to edit
      * @param netController        petriNetController that transitionController belongs to.
      */
@@ -78,7 +82,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         this.rootPane = rootPane;
 
         initComponents();
-        initRates();
 
 
         this.serverLabel.setVisible(true);
@@ -87,9 +90,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         this.rootPane.setDefaultButton(okButton);
 
         if (transitionController.isTimed()) {
-            timedTransition();
+            setUpTimedTransition();
         } else {
-            immediateTransition();
+            setUpImmediateTransition();
         }
 
         if (transitionController.isInfiniteServer()) {
@@ -98,24 +101,22 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             singleServerRadioButton.setSelected(true);
         }
 
-//                if (transitionController.getRateParameter() != null) {
-//                    for (int i = 1; i < rateComboBox.getItemCount(); i++) {
-//                        if (transitionController.getRateParameter() ==
-//                                rateComboBox.getItemAt(i)) {
-//                            rateComboBox.setSelectedIndex(i);
-//                        }
-//                    }
-//                }
+
+        initRates();
+        setRateBasedOnTransition();
     }
 
     /**
      * Initialises the rate parameter combo dropdown
      * The first field is No rate parameter and means the user can input their
      * own value
+     * <p/>
+     * It then ses the rate to the transitions existing weight
      */
     private void initRates() {
         Collection<RateParameter> rateParameters = netController.getRateParameters();
         String[] ids = new String[rateParameters.size() + 1];
+
         ids[0] = NO_RATE_PARAMETER;
         int index = 1;
         for (RateParameter rateParameter : rateParameters) {
@@ -127,6 +128,38 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         if (transitionController.isTimed()) {
             rateComboBox.setEnabled(true);
         }
+    }
+
+    /**
+     * Initialises the rate field based on the transitions value
+     * It will find the rate parameter and select it
+     */
+    private void setRateBasedOnTransition() {
+        Rate rate = transitionController.getRate();
+        if (rate.getRateType().equals(RateType.RATE_PARAMETER)) {
+            PetriNetComponent rateParameter = (RateParameter) rate;
+            int index = getIndexOfRate(rateParameter.getId());
+            rateComboBox.setSelectedIndex(index);
+            if (index > 0) {
+                rateTextField.setEnabled(false);
+            }
+        }
+    }
+
+    /**
+     * Looks through the rateComboBox to find the index of the rateParameterId
+     *
+     * @param rateParameterId rate parameter id to search for in the rateComboBox
+     * @return index of rateParameterId in the rateComboBox
+     */
+    private int getIndexOfRate(String rateParameterId) {
+        for (int index = 0; index <= rateComboBox.getItemCount(); index++) {
+            String id = rateComboBox.getModel().getElementAt(index);
+            if (id.equals(rateParameterId)) {
+                return index;
+            }
+        }
+        throw new RuntimeException("No such element " + rateParameterId + " in petri net rate parameters");
     }
 
     private void initComponents() {
@@ -163,12 +196,12 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         nameTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
-                nameTextFieldFocusGained(evt);
+                nameTextFieldFocusGained();
             }
 
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
-                nameTextFieldFocusLost(evt);
+                nameTextFieldFocusLost();
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -206,7 +239,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         rateComboBox.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rateComboBoxActionPerformed(evt);
+                rateComboBoxActionPerformed();
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -334,21 +367,15 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         rateTextField.setMaximumSize(new java.awt.Dimension(40, 19));
         rateTextField.setMinimumSize(new java.awt.Dimension(40, 19));
         rateTextField.setPreferredSize(new java.awt.Dimension(40, 19));
-        rateTextField.addCaretListener(new javax.swing.event.CaretListener() {
-            @Override
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                rateTextFieldCaretUpdate(evt);
-            }
-        });
         rateTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
-                rateTextFieldFocusGained(evt);
+                rateTextFieldFocusGained();
             }
 
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
-                rateTextFieldFocusLost(evt);
+                rateTextFieldFocusLost();
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -407,7 +434,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonHandler(evt);
+                cancelButtonHandler();
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -424,7 +451,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         okButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonHandler(evt);
+                okButtonHandler();
             }
         });
         okButton.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -461,9 +488,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     /**
      * Handles the cancellation by exiting the editor
      *
-     * @param evt
+     * It does not perform any of the changes, the transition remains as is
      */
-    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
+    private void cancelButtonHandler() {
         exit();
     }
 
@@ -482,9 +509,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * - sets its angle
      * - sets (and evaluates) its rate expression
      *
-     * @param evt
      */
-    private void okButtonHandler(java.awt.event.ActionEvent evt) {
+    private void okButtonHandler() {
         if (canSetName() && canSetInfiniteServer() && canSetRate() && canSetAngle() && (canSetTimed()
                 || canSetPriority())) {
             setNameIfChanged();
@@ -606,53 +632,19 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         return true;
     }
 
-    //TODO: REIMPLEMENT
+    /**
+     * Sets the models rate based upon the settings of the editor panel
+     */
     public void setRateIfChanged() {
-        //        if (rateComboBox.getSelectedIndex() > 0) {
-        //            // There's a rate parameter selected
-        //            RateParameter parameter =
-        //                    (RateParameter) rateComboBox.getSelectedItem();
-        //            if (parameter != transitionController.getRateParameter()) {
-        //
-        //                if (rParameter != null) {
-        //                    // The rate parameter has been changed
-        //                    netController.getHistoryManager().addEdit(transitionController
-        //                            .changeRateParameter((RateParameter) rateComboBox
-        //                                    .getSelectedItem()));
-        //                }
-        //                else {
-        //                    // The rate parameter has been changed
-        //                    petriNetController.getHistoryManager().addEdit(transitionController
-        //                            .setRateParameter((RateParameter) rateComboBox
-        //                                    .getSelectedItem()));
-        //                }
-        //            }
-        //        }
-        //        else {
-        //
-        //            // There is no rate parameter selected
-        //            if (rParameter != null) {
-        //                // The rate parameter has been changed
-        //                petriNetController.getHistoryManager()
-        //                        .addEdit(transitionController.clearRateParameter());
-        //            }
-        //            try {
-        //                if (singleServerRadioButton.isSelected()) {
-        //                    // Double newRate = Double.parseDouble(rateTextField.getText());
-        //                    if (!(r == rate)) {
-        //                        petriNetController.getHistoryManager().addEdit(
-        //                                transitionController.setRate(rateTextField.getText()));
-        //                        //  transitionController.setRateType("C");
-        //                    }
-        //                }
-        //            } catch (NumberFormatException nfe) {
-        //                rateTextField.setBackground(new Color(255, 0, 0));
-        //                rateTextField.addCaretListener(caretListener);
-        //                return true;
-        //            } catch (Exception e) {
-        //                System.out.println(":" + e);
-        //            }
-        //        }
+        if (rateComboBox.getSelectedIndex() > 0) {
+            String rateParameterId = (String) rateComboBox.getSelectedItem();
+            RateParameter rateParameter = netController.getPetriNet().getRateParameter(rateParameterId);
+            transitionController.setRate(rateParameter);
+        } else {
+            String rateExpression = rateTextField.getText();
+            Rate rate = new NormalRate(rateExpression);
+            transitionController.setRate(rate);
+        }
     }
 
     /**
@@ -689,7 +681,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
+            okButtonHandler();
         }
     }
 
@@ -699,9 +691,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private void immediateRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (immediateRadioButton.isSelected()) {
-            immediateTransition();
+            setUpImmediateTransition();
         } else {
-            timedTransition();
+            setUpTimedTransition();
         }
     }
 
@@ -743,9 +735,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private void timedRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (timedRadioButton.isSelected()) {
-            timedTransition();
+            setUpTimedTransition();
         } else {
-            immediateTransition();
+            setUpImmediateTransition();
         }
     }
 
@@ -753,11 +745,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * Updates the text field to the value of the rate parameter
      * If no rate parameter is selected allow the user to edit the text field
      * otherwise disable the text field and show the value
-     *
-     * @param evt action event
      */
-    private void rateComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
-        int index = rateComboBox.getSelectedIndex();
+    private void rateComboBoxActionPerformed() {
         String selected = (String) rateComboBox.getModel().getSelectedItem();
         if (!selected.equals(NO_RATE_PARAMETER)) {
             RateParameter rateParameter = netController.getPetriNet().getRateParameter(selected);
@@ -768,20 +757,20 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         }
     }
 
-    private void rateTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+    private void rateTextFieldFocusGained() {
         focusGained(rateTextField);
     }
 
-    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+    private void nameTextFieldFocusGained() {
         focusGained(nameTextField);
     }
 
-    private void focusGained(javax.swing.JTextField textField) {
+    private void focusGained(JTextField textField) {
         textField.setCaretPosition(0);
         textField.moveCaretPosition(textField.getText().length());
     }
 
-    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
+    private void nameTextFieldFocusLost() {
         focusLost(nameTextField);
     }
 
@@ -789,23 +778,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         textField.setCaretPosition(0);
     }
 
-    private void rateTextFieldFocusLost(java.awt.event.FocusEvent evt) {
+    private void rateTextFieldFocusLost() {
         focusLost(rateTextField);
-    }
-
-    private void rateTextFieldCaretUpdate(javax.swing.event.CaretEvent evt) {
-//        try {
-//            if ((rateComboBox.getSelectedIndex() > 0) && (((RateParameter) rateComboBox.getSelectedItem()).getExpression()
-//                    != Double.parseDouble(rateTextField.getText()))) {
-//                rateComboBox.setSelectedIndex(0);
-//            }
-//        } catch (NumberFormatException nfe) {
-//            if (!nfe.getMessage().equalsIgnoreCase("empty String")) {
-//                System.out.println("NumberFormatException (not Empty String): \n" + nfe.getMessage());
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e.toString());
-//        }
     }
 
     private void createWindow() {
@@ -819,7 +793,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         guiDialog.dispose();
     }
 
-    private void immediateTransition() {
+    private void setUpImmediateTransition() {
         immediateRadioButton.setSelected(true);
         rateLabel.setText("Weight:");
         if (transitionController.isInfiniteServer()) {
@@ -838,20 +812,10 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
         priorityLabel.setEnabled(true);
         priorityPanel.setEnabled(true);
-
-        //        RateParameter[] rates = _pnmlData.markingRateParameters();
-        //        if (rates.length > 0) {
-        if (false) {
-            //            rateComboBox.addItem("");
-            //            for (RateParameter rate1 : rates) {
-            //                rateComboBox.addItem(rate1);
-            //            }
-        } else {
-            rateComboBox.setEnabled(false);
-        }
+        rateComboBox.setEnabled(false);
     }
 
-    private void timedTransition() {
+    private void setUpTimedTransition() {
         timedRadioButton.setSelected(true);
         rateLabel.setText("Rate:");
         if (transitionController.isInfiniteServer()) {
@@ -868,9 +832,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         prioritySlider.setEnabled(false);
         priorityTextField.setText("0");
 
-        Enumeration buttons = semanticsButtonGroup.getElements();
+        Enumeration<AbstractButton> buttons = semanticsButtonGroup.getElements();
         while (buttons.hasMoreElements()) {
-            ((AbstractButton) buttons.nextElement()).setEnabled(true);
+            buttons.nextElement().setEnabled(true);
         }
 
         priorityLabel.setEnabled(false);

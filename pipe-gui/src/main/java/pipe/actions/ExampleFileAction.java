@@ -30,6 +30,7 @@ public class ExampleFileAction extends GuiAction
         putValue(SMALL_ICON, new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + "Net.png")));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e)
     {
         ApplicationSettings.getApplicationController().createNewTabFromFile(

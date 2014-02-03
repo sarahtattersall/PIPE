@@ -22,6 +22,11 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
         return expression;
     }
 
+    @Override
+    public RateType getRateType() {
+        return RateType.RATE_PARAMETER;
+    }
+
     public void setExpression(String expression) {
         this.expression = expression;
     }
