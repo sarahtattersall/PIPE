@@ -6,6 +6,8 @@ import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TransitionNamerTest {
     PetriNet petriNet;
@@ -101,5 +103,36 @@ public class TransitionNamerTest {
 
         String actual = newNamer.getName();
         assertEquals("T1", actual);
+    }
+
+    @Test
+    public void identifiesNonUniqueName() {
+        String name = "Transition 0";
+        Transition transition = new Transition(name, name);
+        petriNet.addTransition(transition);
+        TransitionNamer newNamer = new TransitionNamer(petriNet);
+        assertFalse(newNamer.isUniqueName(name));
+    }
+
+
+    @Test
+    public void identifiesUniqueName() {
+        String name = "Transition 0";
+        Transition transition = new Transition(name, name);
+        petriNet.addTransition(transition);
+        TransitionNamer newNamer = new TransitionNamer(petriNet);
+        assertTrue(newNamer.isUniqueName("Transition 1"));
+    }
+
+    @Test
+    public void observesTransitionNameChanges() {
+        String orignalId = "Transition 0";
+        Transition transition = new Transition(orignalId, orignalId);
+        petriNet.addTransition(transition);
+        PetriNetComponentNamer newNamer = new TransitionNamer(petriNet);
+        String newId = "Transition 1";
+        transition.setId(newId);
+        assertFalse(newNamer.isUniqueName(newId));
+        assertTrue(newNamer.isUniqueName(orignalId));
     }
 }

@@ -2,10 +2,13 @@ package pipe.naming;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.place.Place;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PlaceNamerTest {
     PetriNet petriNet;
@@ -105,6 +108,39 @@ public class PlaceNamerTest {
             Place place = new Place(id, id);
             petriNet.addPlace(place);
         }
+    }
+
+    @Test
+    public void identifiesNonUniqueName() {
+        String name = "Place 0";
+        Place place = new Place(name, name);
+        petriNet.addPlace(place);
+        PlaceNamer newNamer = new PlaceNamer(petriNet);
+
+        assertFalse(newNamer.isUniqueName(name));
+    }
+
+
+    @Test
+    public void identifiesUniqueName() {
+        String name = "Place 0";
+        Place place = new Place(name, name);
+        petriNet.addPlace(place);
+        PlaceNamer newNamer = new PlaceNamer(petriNet);
+
+        assertTrue(newNamer.isUniqueName("Transition 1"));
+    }
+
+    @Test
+    public void observesTransitionNameChanges() {
+        String originalId = "Place 0";
+        Place place = new Place(originalId, originalId);
+        petriNet.addPlace(place);
+        PetriNetComponentNamer newNamer = new PlaceNamer(petriNet);
+        String newId = "Place 1";
+        place.setId(newId);
+        assertFalse(newNamer.isUniqueName(newId));
+        assertTrue(newNamer.isUniqueName(originalId));
     }
 
 

@@ -15,6 +15,10 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Enumeration;
 
@@ -448,15 +452,15 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         okButton.setMaximumSize(new java.awt.Dimension(75, 25));
         okButton.setMinimumSize(new java.awt.Dimension(75, 25));
         okButton.setPreferredSize(new java.awt.Dimension(75, 25));
-        okButton.addActionListener(new java.awt.event.ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 okButtonHandler();
             }
         });
-        okButton.addKeyListener(new java.awt.event.KeyAdapter() {
+        okButton.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+            public void keyPressed(KeyEvent evt) {
                 okButtonKeyPressed(evt);
             }
         });
@@ -562,12 +566,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private boolean canSetName() {
         String newName = nameTextField.getText();
         if (!newName.equals(transitionController.getName())) {
-            //TODO: REIMPLEMENT:
-            if (false) {
-                //            if (.checkTransitionIDAvailability(newName)) {
-                //                return true;
-            } else {
-                JOptionPane.showMessageDialog(null, "There is already a transitionController named " + newName, "Error",
+            if (!netController.isUniqueName(newName)) {
+                JOptionPane.showMessageDialog(null, "There is already a transition named " + newName, "Error",
                         JOptionPane.WARNING_MESSAGE);
                 return false;
             }

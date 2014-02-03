@@ -1,6 +1,7 @@
 package pipe.naming;
 
 import pipe.models.component.place.Place;
+import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 
 import java.beans.PropertyChangeEvent;
@@ -17,6 +18,8 @@ public class PlaceNamer implements PetriNetComponentNamer {
 
     private final Set<String> placeNames = new HashSet<String>();
 
+    private final PropertyChangeListener nameChangeListener = new NameChangeListener(placeNames);
+
     public PlaceNamer(PetriNet petriNet) {
 
         this.petriNet = petriNet;
@@ -26,6 +29,7 @@ public class PlaceNamer implements PetriNetComponentNamer {
 
     private void initialisePlaceNames() {
         for (Place place : petriNet.getPlaces()) {
+            place.addPropertyChangeListener(nameChangeListener);
             placeNames.add(place.getId());
         }
     }
@@ -37,9 +41,11 @@ public class PlaceNamer implements PetriNetComponentNamer {
                 String name = propertyChangeEvent.getPropertyName();
                 if (name.equals("newPlace")) {
                     Place place = (Place) propertyChangeEvent.getNewValue();
+                    place.addPropertyChangeListener(nameChangeListener);
                     placeNames.add(place.getId());
                 } else if (name.equals("deletePlace")) {
                     Place place = (Place) propertyChangeEvent.getOldValue();
+                    place.removePropertyChangeListener(nameChangeListener);
                     placeNames.remove(place.getId());
                 }
             }
@@ -56,5 +62,10 @@ public class PlaceNamer implements PetriNetComponentNamer {
             name = "P" + placeNumber;
         }
         return name;
+    }
+
+    @Override
+    public boolean isUniqueName(String name) {
+        return !placeNames.contains(name);
     }
 }

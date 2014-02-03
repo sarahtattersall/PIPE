@@ -339,4 +339,8 @@ public class PetriNetController implements IController, Serializable {
         rateParameter.setName(newId);
         rateParameter.setExpression(newExpression);
     }
+
+    public boolean isUniqueName(String newName) {
+        return placeNamer.isUniqueName(newName) && transitionNamer.isUniqueName(newName);
+    }
 }
