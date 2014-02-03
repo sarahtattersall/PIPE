@@ -2,11 +2,12 @@ package pipe.views.changeListener;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
@@ -31,17 +32,21 @@ import java.util.Map;
  */
 public class PetriNetChangeListener implements PropertyChangeListener {
     private final PipeApplicationView applicationView;
+
     /**
      * PetriNetTab that this listener refers to
      */
     private final PetriNetTab petriNetTab;
+
     private final PetriNetController controller;
+
     /**
      * Contains the property name and method it maps to
      */
     private Map<String, Method> eventMethods = new HashMap<String, Method>();
 
-    public PetriNetChangeListener(PipeApplicationView applicationView, PetriNetTab petriNetTab, PetriNetController controller) {
+    public PetriNetChangeListener(PipeApplicationView applicationView, PetriNetTab petriNetTab,
+                                  PetriNetController controller) {
         this.applicationView = applicationView;
         this.petriNetTab = petriNetTab;
         this.controller = controller;
@@ -108,6 +113,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     /**
      * Refreshes the token class choices, and starts listening incase a token changes
+     *
      * @param propertyChangeEvent
      */
     @EventAction(PetriNet.NEW_TOKEN_CHANGE_MESSAGE)
@@ -117,8 +123,10 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         applicationView.refreshTokenClassChoices();
     }
 
-    @EventAction("newRate")
+    @EventAction(PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE)
     private void newRate(PropertyChangeEvent propertyChangeEvent) {
+        RateParameter rateParameter = (RateParameter) propertyChangeEvent.getNewValue();
+        applicationView.refreshRateParameters();
 
     }
 
@@ -163,9 +171,9 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         applicationView.refreshTokenClassChoices();
     }
 
-    @EventAction("deleteRate")
+    @EventAction(PetriNet.DELETE_RATE_PARAMETER_CHANGE_MESSAGE)
     private void deleteRate(PropertyChangeEvent propertyChangeEvent) {
-
+        applicationView.refreshRateParameters();
     }
 
     @EventAction(PetriNet.DELETE_ANNOTATION_CHANGE_MESSAGE)

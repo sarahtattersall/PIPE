@@ -14,6 +14,7 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
@@ -320,5 +321,22 @@ public class PetriNetController implements IController, Serializable {
 
     public DragManager getDragManager() {
         return dragManager;
+    }
+
+    public Collection<RateParameter> getRateParameters() {
+        return petriNet.getRateParameters();
+    }
+
+    public void createNewRateParameter(String id, String expression) {
+        RateParameter rateParameter = new RateParameter(expression, id, id);
+        petriNet.addRateParameter(rateParameter);
+    }
+
+
+    public void updateRateParameter(String oldId, String newId, String newExpression) {
+        RateParameter rateParameter = petriNet.getRateParameter(oldId);
+        rateParameter.setId(newId);
+        rateParameter.setName(newId);
+        rateParameter.setExpression(newExpression);
     }
 }

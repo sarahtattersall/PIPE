@@ -77,9 +77,7 @@ public class TokenPanel extends JPanel {
             int index = 0;
             for (Token token : petriNetController.getNetTokens()) {
                 initialData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());
-                ;
                 modifiedData[index] = new Datum(token.isEnabled(), token.getId(), token.getColor());
-                ;
                 index++;
             }
         }
@@ -90,7 +88,7 @@ public class TokenPanel extends JPanel {
          */
         private void initialiseRowColours() {
 
-            final Random randomNumberGenerator = new Random();
+            Random randomNumberGenerator = new Random();
             for (int i = 0; i < DATA_SIZE; i++) {
                 Color color;
                 switch (i) {

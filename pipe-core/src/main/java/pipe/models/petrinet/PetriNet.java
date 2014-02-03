@@ -71,7 +71,9 @@ public class PetriNet {
 
     public static final String DELETE_TOKEN_CHANGE_MESSAGE = "deleteToken";
 
-    private static final String NEW_RATE_PARAMETER_CHANGE_MESSAGE = "newRateParameter";
+    public static final String NEW_RATE_PARAMETER_CHANGE_MESSAGE = "newRateParameter";
+
+    public static final String DELETE_RATE_PARAMETER_CHANGE_MESSAGE = "deleteRateParameter";
 
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
@@ -298,9 +300,10 @@ public class PetriNet {
         changeSupport.firePropertyChange(DELETE_TOKEN_CHANGE_MESSAGE, token, null);
     }
 
-    //    public void removeRateParameter(RateParameter parameter) {
-    //        rates.remove(parameter);
-    //    }
+    public void removeRateParameter(RateParameter parameter) {
+        rateParameters.remove(parameter);
+        changeSupport.firePropertyChange(DELETE_RATE_PARAMETER_CHANGE_MESSAGE, parameter, null);
+    }
 
     //    public void removeStateGroup(StateGroup group) {
     //        stateGroups.remove(group);
@@ -328,6 +331,15 @@ public class PetriNet {
             }
         }
         throw new RuntimeException("No token " + tokenId + " exists in petrinet.");
+    }
+
+    public RateParameter getRateParameter(String rateParameterId) {
+        for (RateParameter rateParameter : rateParameters) {
+            if (rateParameter.getId().equals(rateParameterId)) {
+                return rateParameter;
+            }
+        }
+        throw new RuntimeException("No rate parameter " + rateParameterId + " exists in petrinet.");
     }
 
     public void add(PetriNetComponent component) {

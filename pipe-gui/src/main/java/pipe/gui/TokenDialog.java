@@ -21,7 +21,8 @@ public class TokenDialog extends JDialog implements ActionListener {
         this.dialogContent = dialogContent;
     }
 
-	public void actionPerformed(ActionEvent e) {
+	@Override
+    public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("OK")){
             if (dialogContent.isDataValid()) {
                 dialogContent.setChanges();

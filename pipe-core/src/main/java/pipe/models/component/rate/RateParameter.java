@@ -5,11 +5,11 @@ import pipe.visitor.foo.PetriNetComponentVisitor;
 
 public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
-    private final String expression;
+    private String expression;
 
-    private final String id;
+    private String id;
 
-    private final String name;
+    private String name;
 
     public RateParameter(String expression, String id, String name) {
         this.expression = expression;
@@ -20,6 +20,10 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
     @Override
     public String getExpression() {
         return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
     public String getName() {
