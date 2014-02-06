@@ -15,17 +15,18 @@ import java.util.Collection;
 import java.util.Observable;
 
 
+/**
+ * Used to display tokens as dots/numbers on the petri net in a place
+ */
 public class TokenView extends Observable implements Serializable {
     private Token _model;  // Steve Doubleday was final, but changed for replace(tokenView)
-    private TokenController _controller;
     private Matrix previousIncidenceMatrix;
 
     public TokenView(TokenController controller, Token model) {
-        _controller = controller;
         _model = model;
-        //        _model.registerObserver(this);
     }
 
+    //TODO: DELETE
     public TokenView(boolean enabled, String id, Color color) {
         _model = new Token(id, enabled, 0, color);
     }
@@ -115,30 +116,12 @@ public class TokenView extends Observable implements Serializable {
         _model.setCurrentMarking(marking);
     }
 
-    public Matrix getPreviousIncidenceMatrix() {
-        return previousIncidenceMatrix;
-    }
-
-    public boolean hasSameId(TokenView otherTokenView) {
-        return otherTokenView.getID().equals(getID());
-    }
-
     public String getID() {
         return _model.getId();
     }
 
     public void setID(String id) {
         _model.setId(id);
-    }
-
-    public void createIncidenceMatrix(Collection<ArcView> arcsArray, Collection<TransitionView> transitionsArray,
-                                      Collection<PlaceView> placesArray) {
-        //        _model.createIncidenceMatrix(arcsArray, transitionsArray, placesArray);
-    }
-
-    public void createInhibitionMatrix(Collection<InhibitorArcView> inhibitorsArray,
-                                       Collection<TransitionView> transitionsArray, Collection<PlaceView> placesArray) {
-        //        _model.createInhibitionMatrix(inhibitorsArray, transitionsArray, placesArray);
     }
 
     /**

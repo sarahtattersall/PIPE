@@ -17,9 +17,7 @@ public class PlaceViewBuilder {
     }
 
     public PlaceView build() {
-        PlaceView view =
-                new PlaceView(place.getId(), place.getName(), new LinkedList<MarkingView>(), place, controller);
-        return view;
+        return new PlaceView(place, controller);
     }
 
 }

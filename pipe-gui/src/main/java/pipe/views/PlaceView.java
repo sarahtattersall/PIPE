@@ -8,11 +8,8 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.models.PipeObservable;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
-import pipe.utilities.Copier;
-import pipe.views.builder.TokenViewBuilder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,129 +17,57 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.*;
 import java.util.List;
+import java.util.Map;
 
-// Steve Doubleday (Oct 2013): added as Observer of changes to MarkingViews; refactored to simplify testing
-public class PlaceView extends ConnectableView<Place> implements Serializable, Observer {
+/**
+ * Graphical representation of a {@link pipe.models.component.place.Place}
+ */
+public class PlaceView extends ConnectableView<Place> {
 
-    private final Ellipse2D.Double place;
+    /**
+     * Shape of the place on the Petri net
+     */
+    private final Ellipse2D place;
 
-    private List<MarkingView> _initialMarkingView = new LinkedList<MarkingView>();
-
-    private List<MarkingView> _currentMarkingView = new LinkedList<MarkingView>();
-
-    //transferred
-    private TokenView _activeTokenView;
-
-    private List<MarkingView> initBackUp;
-
-    private List<MarkingView> currentBackUp;
-
-    public PlaceView(double positionXInput, double positionYInput) {
-        //MODEL
-        super(new Place("", ""));
+    public PlaceView(Place model, PetriNetController controller) {
+        super(model.getId(), model, controller);
         place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
-    }
-
-
-    public PlaceView(String idInput, String nameInput, LinkedList<MarkingView> initialMarkingViewInput, Place model, PetriNetController controller) {
-        //MODEL
-        super(idInput, model, controller);
-        _initialMarkingView = Copier.mediumCopy(initialMarkingViewInput);
-        _currentMarkingView = Copier.mediumCopy(initialMarkingViewInput);
-        setId(model.getId());
-        place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
-        updateDisplayTokens();
         setChangeListener();
     }
 
+    /**
+     * Listens for changes in the model
+     * All changes cause a repaint
+     */
     private void setChangeListener() {
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals(Place.TOKEN_CHANGE_MESSAGE)) {
-                    updateDisplayTokens();
-                }
                 repaint();
             }
         });
-    }
-
-    private void updateDisplayTokens() {
-        removeExistingTokens();
-
-        Map<Token, Integer> tokenCounts = model.getTokenCounts();
-        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
-            Token token = entry.getKey();
-            Integer count = entry.getValue();
-
-            TokenViewBuilder builder = new TokenViewBuilder(token);
-            TokenView tokenView = builder.build();
-            MarkingView markingView = new MarkingView(tokenView, count);
-            _currentMarkingView.add(markingView);
-        }
-        repaint();
-    }
-
-    private void removeExistingTokens() {
-        for (MarkingView view : _currentMarkingView) {
-            //TODO: THIS NEEDS TO BE DONE IN A LESS HACKY WAY
-            this.getParent().remove(view);
-        }
-        _currentMarkingView.clear();
     }
 
     /**
      * Used to quickly calculate the total marking of this place and sums up the
      * marking of each token class.
      *
-     * @return
+     * @return the total number of tokens in the place
      */
     public int getTotalMarking() {
-
-        int size = _currentMarkingView.size();
-        int totalMarking = 0;
-        for (MarkingView a_currentMarkingView : _currentMarkingView) {
-            totalMarking += a_currentMarkingView.getCurrentMarking();
-        }
-        return totalMarking;
+        return model.getNumberOfTokensStored();
     }
 
-    public TokenView getActiveTokenView() {
-        return _activeTokenView;
+    @Override
+    public void addedToGui() {
+        super.addedToGui();
     }
 
-    public void setActiveTokenView(TokenView tokenView) {
-        this._activeTokenView = tokenView;
-        int markingListPos = getMarkingListPos(tokenView.getID(), _currentMarkingView);
-        if (markingListPos == -1) {
-            MarkingView m = new MarkingView(tokenView, 0);
-            m.addObserver(this);
-            //_currentMarkingView.add(m);
-        }
-    }
-
-    /**
-     * Create Petri-Net Place object returns the position of the element in the
-     * list "markings" where the token class with this ID is.
-     *
-     * @param id
-     * @param markingViews
-     * @return
-     */
-    //transferred
-    private int getMarkingListPos(String id, List<MarkingView> markingViews) {
-        int size = markingViews.size();
-        for (int i = 0; i < size; i++) {
-            if (markingViews.get(i).getToken().getID().equals(id)) {
-                return i;
-            }
-        }
-        // marking with such an ID does not exist
-        return -1;
+    @Override
+    public void delete() {
+        super.delete();
+        //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
     }
 
     /**
@@ -157,8 +82,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         Graphics2D g2 = (Graphics2D) g.create();
 
         g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
-        AffineTransform transform = g2.getTransform();
-        Insets insets = getInsets();
 
         if (hasCapacity()) {
             g2.setStroke(new BasicStroke(2.0f));
@@ -203,28 +126,132 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
             g2.translate(2, 2);
 
             g2.setTransform(oldTransform);
-
-
         }
 
+        paintTokens(g2);
 
-        int tempTotalMarking = getTotalMarking();
-
-        if (tempTotalMarking > 5) {
-            int offset = 0;
-            for (MarkingView m : _currentMarkingView) {
-                m.update(g, insets, offset, tempTotalMarking);
-                if (m.getCurrentMarking() != 0) {
-                    offset += 10;
-                }
-            }
-        } else {
-            for (MarkingView m : _currentMarkingView) {
-                m.update(g, insets, 0, tempTotalMarking);
-                tempTotalMarking = tempTotalMarking - m.getCurrentMarking();
-            }
-        }
         g2.dispose();
+    }
+
+    /**
+     * Displays tokens in the Place
+     */
+    private void paintTokens(Graphics2D g2) {
+        int totalMarking = model.getNumberOfTokensStored();
+        boolean displayTextualNumber = totalMarking > 5;
+        if (displayTextualNumber) {
+            displayTextualTokens(g2);
+        } else {
+            displayOvalTokens(g2);
+        }
+
+    }
+
+    /**
+     * Displays each token in the Place as an oval
+     *
+     * @param g2 graphics
+     */
+    private void displayOvalTokens(Graphics2D g2) {
+        int offset = 0;
+
+        Map<Token, Integer> tokenCounts = model.getTokenCounts();
+        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
+            Token token = entry.getKey();
+            Integer count = entry.getValue();
+            Insets insets = getInsets();
+            paintOvalTokens(g2, insets, token.getColor(), count, offset);
+            offset += count;
+        }
+    }
+
+    /**
+     * Paints tokens as ovals on the place
+     * Can only paint five tokens so tokenNumber represents which number the count is
+     * starting at
+     *
+     * @param g2          graphics
+     * @param insets      insets
+     * @param color       colour of oval
+     * @param count       number of token ovals to paint
+     * @param tokenNumber token number
+     */
+    void paintOvalTokens(Graphics2D g2, Insets insets, Color color, int count, int tokenNumber) {
+        int x = insets.left;
+        int y = insets.top;
+        g2.setColor(color);
+        int WIDTH = 4;
+        int HEIGHT = 4;
+        int position = tokenNumber;
+        for (int i = 0; i < count; i++) {
+            switch (position) {
+                case 4:
+                    g2.drawOval(x + 6, y + 6, WIDTH, HEIGHT);
+                    g2.fillOval(x + 6, y + 6, WIDTH, HEIGHT);
+                    break;
+                case 3:
+                    g2.drawOval(x + 18, y + 20, WIDTH, HEIGHT);
+                    g2.fillOval(x + 18, y + 20, WIDTH, HEIGHT);
+                    break;
+                case 2:
+                    g2.drawOval(x + 6, y + 20, WIDTH, HEIGHT);
+                    g2.fillOval(x + 6, y + 20, WIDTH, HEIGHT);
+                    break;
+                case 1:
+                    g2.drawOval(x + 18, y + 6, WIDTH, HEIGHT);
+                    g2.fillOval(x + 18, y + 6, WIDTH, HEIGHT);
+                    break;
+                case 0:
+                    g2.drawOval(x + 12, y + 13, WIDTH, HEIGHT);
+                    g2.fillOval(x + 12, y + 13, WIDTH, HEIGHT);
+                    break;
+                default:
+                    break;
+            }
+            position++;
+        }
+    }
+
+    /**
+     * Display each token in the place as a number textually
+     *
+     * @param g2 graphics
+     */
+    private void displayTextualTokens(Graphics2D g2) {
+        int offset = 0;
+
+        Map<Token, Integer> tokenCounts = model.getTokenCounts();
+        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
+            Token token = entry.getKey();
+            Integer count = entry.getValue();
+            Insets insets = getInsets();
+            paintTextualTokens(g2, insets, token.getColor(), count, offset);
+            offset += 10;
+        }
+    }
+
+    /**
+     * Paints tokens as a string representation of their number in the place
+     *
+     * @param g2     graphics
+     * @param insets insets
+     * @param color  color of token
+     * @param count  number of tokens to represent
+     * @param offset offset of textual representation relative to the place
+     */
+    void paintTextualTokens(Graphics2D g2, Insets insets, Color color, int count, int offset) {
+        int x = insets.left;
+        int y = insets.top;
+        g2.setColor(color);
+        if (count > 999) {
+            g2.drawString(String.valueOf(count), x, y + 10 + offset);
+        } else if (count > 99) {
+            g2.drawString(String.valueOf(count), x + 3, y + 10 + offset);
+        } else if (count > 9) {
+            g2.drawString(String.valueOf(count), x + 7, y + 10 + offset);
+        } else if (count != 0) {
+            g2.drawString(String.valueOf(count), x + 12, y + 10 + offset);
+        }
     }
 
     public int getCapacity() {
@@ -233,12 +260,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
 
     boolean hasCapacity() {
         return model.getCapacity() > 0;
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-        //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
     }
 
     @Override
@@ -252,7 +273,9 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
         // 2 Add Place editor
-        contentPane.add(new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()), ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
+        contentPane.add(
+                new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
+                        ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
 
         guiDialog.setResizable(false);
 
@@ -262,11 +285,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         // Move window to the middle of the screen
         guiDialog.setLocationRelativeTo(null);
         guiDialog.setVisible(true);
-    }
-
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
     }
 
     @Override
@@ -293,20 +311,12 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         return null;
     }
 
-    public HistoryItem setCapacity(int newCapacity) {
+    public List<MarkingView> getCurrentMarkingView() {
         return null;
     }
 
-    public List<MarkingView> getInitialMarkingView() {
-        return _initialMarkingView;
-    }
-
-    public List<MarkingView> getCurrentMarkingView() {
-        return _currentMarkingView;
-    }
-
     public List<MarkingView> getCurrentMarkingObject() {
-        return _currentMarkingView;
+        return null;
     }
 
     public Double getMarkingOffsetXObject() {
@@ -343,35 +353,6 @@ public class PlaceView extends ConnectableView<Place> implements Serializable, O
         //        } else {
         return place.contains(x, y);
         //        }
-    }
-
-    public void backUpMarking() {
-        initBackUp = Copier.mediumCopy(_initialMarkingView);
-        currentBackUp = Copier.mediumCopy(_currentMarkingView);
-
-    }
-
-    public void restoreMarking() {
-        _initialMarkingView = initBackUp;
-        _currentMarkingView = currentBackUp;
-    }
-
-    @Override
-    public void update(Observable observable, Object obj) {
-        if ((observable instanceof PipeObservable) && (obj == null)) {
-            // if multiple cases are added, consider creating specific subclasses of Observable
-            Object originalObject = ((PipeObservable) observable).getObservable();
-            if (originalObject instanceof MarkingView) {
-                MarkingView viewToDelete = (MarkingView) originalObject;
-                _currentMarkingView.remove(viewToDelete);
-            }
-        }
-        if (obj instanceof Place) {
-            Place place = (Place) obj;
-            this.model = place;
-            //            setPositionX(_model.getX());
-            //            setPositionY(_model.getY());
-        }
     }
 
 }

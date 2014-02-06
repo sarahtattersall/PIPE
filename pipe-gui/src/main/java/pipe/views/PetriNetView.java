@@ -26,11 +26,11 @@ import java.io.Serializable;
 import java.util.*;
 
 
-/*
-
- * @author yufei wang(minor change)
- * 		Steve Doubleday (Oct 2013):  refactored to use TokenSetController for access to TokenViews
+/**
+ * 	@Deprecated This class no longer should be used. Use {@link pipe.models.petrinet.PetriNet}
+ * 	and general model structure
  */
+@Deprecated
 public class PetriNetView extends Observable implements Cloneable, Serializable, Observer {
     private static boolean _currentMarkingVectorChanged = true;
     private final HashSet _rateParameterHashSet = new HashSet();
@@ -137,73 +137,6 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         }
     }
 
-    private void addAnnotation(AnnotationView labelInput) {
-        boolean unique = true;
-        //        _labels.add(labelInput);
-        setChanged();
-        notifyObservers(labelInput);
-    }
-
-    private void displayArcs(Collection<Arc<? extends Connectable, ? extends Connectable>> arcs) {
-        //        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
-        //            ArcView view;
-        //            if (_arcViews.containsKey(arc)) {
-        //                view = _arcViews.get(arc);
-        //                view.update();
-        //            } else if (arc.getType().equals(ArcType.NORMAL)) {
-        //                NormalArcViewBuilder builder = new NormalArcViewBuilder(arc, petriNetController);
-        //                view = builder.build();
-        //                _arcViews.put(arc, view);
-        //                //TODO: Add back in:
-        //                //checkForInverseArc(view);
-        //            } else {
-        //                InhibitorArcViewBuilder builder = new InhibitorArcViewBuilder(arc, petriNetController);
-        //                view = builder.build();
-        //                _arcViews.put(arc, view);
-        //            }
-        //
-        ////            addArcToArcsMap(view);
-        //            setChanged();
-        //            notifyObservers(view);
-        //        }
-    }
-
-    private void displayPlaces(Collection<Place> places) {
-        System.out.println("DISPLAY PLACES");
-        for (Place place : places) {
-            PlaceView view;
-            if (_placeViews.containsKey(place)) {
-                view = _placeViews.get(place);
-                view.update(this, place);
-            } else {
-                PlaceViewBuilder builder = new PlaceViewBuilder(place, petriNetController);
-                view = builder.build();
-                _placeViews.put(place, view);
-            }
-            view.setActiveTokenView(_tokenSetController.getActiveTokenView());
-            setChanged();
-            notifyObservers(view);
-
-        }
-    }
-
-    private void displayTransitions(Collection<Transition> transitions) {
-        for (Transition transition : transitions) {
-            TransitionView view;
-            if (_transitionViews.containsKey(transition)) {
-                view = _transitionViews.get(transition);
-                view.update();
-            } else {
-                TransitionViewBuilder builder = new TransitionViewBuilder(transition, petriNetController);
-                view = builder.build();
-                _transitionViews.put(transition, view);
-            }
-
-            setChanged();
-            notifyObservers(view);
-        }
-
-    }
 
     /**
      * Removes any models that have been deleted from the petrinet
@@ -357,7 +290,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
 
     protected void updatePlaceViewsWithActiveToken(TokenView tc) {
         for (PlaceView p : _placeViews.values()) {
-            p.setActiveTokenView(tc);
+//            p.setActiveTokenView(tc);
         }
     }
 
@@ -432,7 +365,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
                     placeView.setId("error");
                 }
             }
-            placeView.setActiveTokenView(_tokenSetController.getActiveTokenView());
+//            placeView.setActiveTokenView(_tokenSetController.getActiveTokenView());
             //            placeView.setActiveTokenView(_activeTokenView); // SJD
             //            _placeViews.add(placeView);
             setChanged();
@@ -850,7 +783,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         int placeSize = _placeViews.size();
         _initialMarkingVector = new LinkedList[placeSize];
         for (int placeNo = 0; placeNo < placeSize; placeNo++) {
-            _initialMarkingVector[placeNo] = _placeViews.get(placeNo).getInitialMarkingView();
+//            _initialMarkingVector[placeNo] = _placeViews.get(placeNo).getInitialMarkingView();
         }
     }
 
@@ -1354,13 +1287,13 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
      */
     public void backUpPlaceViewsMarking() {
         for (PlaceView place : _placeViews.values()) {
-            place.backUpMarking();
+//            place.backUpMarking();
         }
     }
 
     public void restorePlaceViewsMarking() {
         for (PlaceView place : _placeViews.values()) {
-            place.restoreMarking();
+//            place.restoreMarking();
         }
         for (ArcView arc : _arcViews.values()) {
             //arc.updateArcWeight();
