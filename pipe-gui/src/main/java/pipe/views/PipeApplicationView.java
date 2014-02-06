@@ -59,8 +59,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final SpecifyTokenAction specifyTokenClasses;
 
-    private final SpecifyRateParameterAction specifyRateParameterAction;
-
     public final AnimateAction startAction;
 
     public final AnimateAction stepbackwardAction;
@@ -70,6 +68,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final AnimateAction randomAction;
 
     final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
+
+    private final SpecifyRateParameterAction specifyRateParameterAction;
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -86,11 +86,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public JComboBox<String> zoomComboBox;
 
     public JComboBox<String> tokenClassComboBox;
-
-    /**
-     * Displays rate parameters associated with the current Petri net
-     */
-    private JComboBox<String> rateParamComboBox;
 
     public FileAction printAction = new PrintAction();
 
@@ -154,6 +149,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public ChooseTokenClassAction chooseTokenClassAction =
             new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
 
+    /**
+     * Displays rate parameters associated with the current Petri net
+     */
+    private JComboBox<String> rateParamComboBox;
+
     private JToolBar animationToolBar, drawingToolBar;
 
     private HelpBox helpAction;
@@ -162,7 +162,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private FileAction createAction = new CreateAction(this);
 
-    private FileAction closeAction = new CloseAction();
+    private FileAction closeAction = new CloseAction(this);
 
     private FileAction saveAction = new SaveAction();
 
@@ -627,7 +627,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     /**
-     *
      * @param toolBar the JToolBar to add the rate parameter combo box to
      */
     protected void addRateParameterComboBox(JToolBar toolBar) {
@@ -650,17 +649,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     controller.cancelPaste();
                 }
 
+
                 PetriNetTab petriNetTab = getCurrentTab();
                 applicationController.setActiveTab(petriNetTab);
-                petriNetTab.setVisible(true);
-                petriNetTab.repaint();
-                updateZoomCombo();
 
-                enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
+                if (frameForPetriNetTabs.getTabCount() > 0) {
+                    petriNetTab.setVisible(true);
+                    petriNetTab.repaint();
+                    updateZoomCombo();
 
-                setTitle(petriNetTab.getName());
+                    enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
 
-                setAnimationMode(petriNetTab.isInAnimationMode());
+                    setTitle(petriNetTab.getName());
+
+                    setAnimationMode(petriNetTab.isInAnimationMode());
+                }
 
                 refreshTokenClassChoices();
                 refreshRateParameters();
@@ -745,16 +748,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     /**
      * Refreshes the combo box that presents the Tokens available for use.
+     * If there are no Petri nets being displayed this clears it
      */
     public void refreshTokenClassChoices() {
-        String[] tokenClassChoices = buildTokenClassChoices();
-        ComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
-        tokenClassComboBox.setModel(model);
-        PetriNetController controller = applicationController.getActivePetriNetController();
-        try {
-            controller.selectToken(getSelectedTokenName());
-        } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
-            GuiUtils.displayErrorMessage(this, petriNetComponentNotFoundException.getMessage());
+        if (tabsDisplayed()) {
+            String[] tokenClassChoices = buildTokenClassChoices();
+            ComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
+            tokenClassComboBox.setModel(model);
+            PetriNetController controller = applicationController.getActivePetriNetController();
+            try {
+                controller.selectToken(getSelectedTokenName());
+            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                GuiUtils.displayErrorMessage(this, petriNetComponentNotFoundException.getMessage());
+            }
+        } else {
+            tokenClassComboBox.setModel(new DefaultComboBoxModel<String>());
         }
     }
 
@@ -762,22 +770,42 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * @return names of Tokens for the combo box
      */
     protected String[] buildTokenClassChoices() {
-        PetriNetController petriNetController = applicationController.getActivePetriNetController();
-        Collection<Token> tokens = petriNetController.getNetTokens();
-        String[] tokenClassChoices = new String[tokens.size()];
-        int index = 0;
-        for (Token token : tokens) {
-            tokenClassChoices[index] = token.getId();
-            index++;
+        if (tabsDisplayed()) {
+            PetriNetController petriNetController = applicationController.getActivePetriNetController();
+            Collection<Token> tokens = petriNetController.getNetTokens();
+            String[] tokenClassChoices = new String[tokens.size()];
+            int index = 0;
+            for (Token token : tokens) {
+                tokenClassChoices[index] = token.getId();
+                index++;
+            }
+            return tokenClassChoices;
         }
-        return tokenClassChoices;
+        return new String[0];
+    }
+
+    /**
+     * @return true if any tabs are displayed
+     */
+    private boolean tabsDisplayed() {
+        return applicationController.getActivePetriNetController() != null;
+    }
+
+    public String getSelectedTokenName() {
+        ComboBoxModel<String> model = tokenClassComboBox.getModel();
+        Object selected = model.getSelectedItem();
+        return selected.toString();
     }
 
     public void refreshRateParameters() {
-        PetriNetController petriNetController = applicationController.getActivePetriNetController();
-        String[] rateNames = buildRates(petriNetController.getRateParameters());
-        ComboBoxModel<String> model = new DefaultComboBoxModel<>(rateNames);
-        rateParamComboBox.setModel(model);
+        if (tabsDisplayed()) {
+            PetriNetController petriNetController = applicationController.getActivePetriNetController();
+            String[] rateNames = buildRates(petriNetController.getRateParameters());
+            ComboBoxModel<String> model = new DefaultComboBoxModel<>(rateNames);
+            rateParamComboBox.setModel(model);
+        } else {
+            rateParamComboBox.setModel(new DefaultComboBoxModel<String>());
+        }
     }
 
     protected String[] buildRates(Collection<RateParameter> components) {
@@ -788,13 +816,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             index++;
         }
         return rates;
-    }
-
-
-    public String getSelectedTokenName() {
-        ComboBoxModel<String> model = tokenClassComboBox.getModel();
-        Object selected = model.getSelectedItem();
-        return selected.toString();
     }
 
     public PetriNetTab getCurrentTab() {
@@ -1026,10 +1047,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
-    public void removeTab(int index) {
-        petriNetTabs.remove(index);
-    }
-
     public void close() {
         exitAction.actionPerformed(null);
     }
@@ -1055,5 +1072,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         stepbackwardAction.setEnabled(stepBackwardAllowed);
     }
 
+    public void removeCurrentTab() {
+        removeTab(frameForPetriNetTabs.getSelectedIndex());
+    }
+
+    public void removeTab(int index) {
+        petriNetTabs.remove(index);
+        if ((frameForPetriNetTabs.getTabCount() > 0)) {
+            frameForPetriNetTabs.remove(index);
+        }
+    }
 }
 

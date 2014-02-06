@@ -28,10 +28,16 @@ public class SpecifyTokenAction extends GuiAction {
         this.pipeApplicationController = pipeApplicationController;
     }
 
+    /**
+     * Pops up to change the petri net tokens if there is an active petri net
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        buildTokenGuiClasses();
-        finishBuildingGui();
+        if (pipeApplicationController.getActivePetriNetController() != null) {
+            buildTokenGuiClasses();
+            finishBuildingGui();
+        }
     }
 
     public void buildTokenGuiClasses() {

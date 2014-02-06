@@ -19,10 +19,16 @@ public class SpecifyRateParameterAction extends GuiAction {
         this.pipeApplicationController = pipeApplicationController;
     }
 
+    /**
+     * Pops up with an editor for the token rates if there is an active petri net
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        buildGuiClasses();
-        showGui();
+        if (pipeApplicationController.getActivePetriNetController() != null) {
+            buildGuiClasses();
+            showGui();
+        }
 
     }
 

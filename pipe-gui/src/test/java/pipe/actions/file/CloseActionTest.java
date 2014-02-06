@@ -2,7 +2,6 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -12,19 +11,17 @@ import static org.mockito.Mockito.*;
 
 public class CloseActionTest {
     CloseAction closeAction;
+
     PipeApplicationView mockView;
 
     @Before
-    public void setUp()
-    {
-        closeAction = new CloseAction();
+    public void setUp() {
+        closeAction = new CloseAction(mockView);
         mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
     }
 
     @Test
-    public void actionPerformed()
-    {
+    public void actionPerformed() {
         int selectedIndex = 20;
         JTabbedPane mockpane = mock(JTabbedPane.class);
         when(mockpane.getTabCount()).thenReturn(1);
@@ -36,15 +33,13 @@ public class CloseActionTest {
     }
 
     @Test
-    public void setShortDescription()
-    {
+    public void setShortDescription() {
         Object shortDescription = closeAction.getValue(Action.SHORT_DESCRIPTION);
         assertEquals("Close the current tab", shortDescription);
     }
 
     @Test
-    public void setKeyboardShortcut()
-    {
+    public void setKeyboardShortcut() {
         Object acceleratorKey = closeAction.getValue(Action.ACCELERATOR_KEY);
         KeyStroke stroke = KeyStroke.getKeyStroke("ctrl W");
         assertEquals(stroke, acceleratorKey);

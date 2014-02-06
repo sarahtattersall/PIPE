@@ -10,7 +10,4 @@ public abstract class FileAction extends GuiAction
     {
         super(name, tooltip, keystroke);
     }
-
-    public abstract void actionPerformed(ActionEvent e);
-
 }
