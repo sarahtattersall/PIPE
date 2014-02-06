@@ -4,19 +4,22 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.*;
-import pipe.historyActions.DeletePetriNetObject;
-import pipe.historyActions.HistoryManager;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.*;
+import pipe.historyActions.*;
+import pipe.models.component.AbstractPetriNetComponent;
+import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.visitor.foo.PetriNetComponentVisitor;
-import pipe.visitor.TranslationVisitor;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
+import pipe.visitor.TranslationVisitor;
+import pipe.visitor.foo.PetriNetComponentVisitor;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -30,9 +33,13 @@ import static org.mockito.Mockito.*;
 public class PetriNetControllerTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+
     private PetriNetController controller;
+
     private PetriNet net;
+
     private HistoryManager mockHistoryManager;
+
     private Animator mockAnimator;
 
     @Before
@@ -226,7 +233,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void updateNameIfChanged() {
+    public void updateNameIfChanged() throws PetriNetComponentNotFound {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -243,7 +250,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotUpdateNameIfNotChanged() {
+    public void doesNotUpdateNameIfNotChanged() throws PetriNetComponentNotFound {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -260,7 +267,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void updateEnabledIfChanged() throws TokenLockedException {
+    public void updateEnabledIfChanged() throws TokenLockedException, PetriNetComponentNotFound {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -277,7 +284,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotUpdateEnabledIfNotChanged() throws TokenLockedException {
+    public void doesNotUpdateEnabledIfNotChanged() throws TokenLockedException, PetriNetComponentNotFound {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -294,7 +301,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void updateTokenColorIfChanged() {
+    public void updateTokenColorIfChanged() throws PetriNetComponentNotFound {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -312,7 +319,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotUpdateTokenColorIfNotChanged() {
+    public void doesNotUpdateTokenColorIfNotChanged() throws PetriNetComponentNotFound {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -328,19 +335,45 @@ public class PetriNetControllerTest {
         verify(token, never()).setColor(any(Color.class));
     }
 
-    private PetriNet setupPetriNet() {
-        createMockTab();
-        assertEquals(0, net.getArcs().size());
-        return net;
+    @Test
+    public void creatingRateParameterMakesHistoryItem() {
+        controller.createNewRateParameter("rate", "5.0");
+        verify(mockHistoryManager).addNewEdit(any(AddPetriNetObject.class));
     }
 
-    private PetriNetTab createMockTab() {
-        PipeApplicationView mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
-        PetriNetTab mockTab = mock(PetriNetTab.class);
-        when(mockView.getCurrentTab()).thenReturn(mockTab);
-        return mockTab;
+    @Test
+    public void editingRateExpressionMakesHistoryItem() throws PetriNetComponentNotFound {
+        net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
+
+        controller.updateRateParameter("rate", "rate", "6.0");
+        verify(mockHistoryManager).addNewEdit(any(RateParameterValue.class));
     }
+
+    @Test
+    public void editingRateParameterIdMakesHistoryItem() throws PetriNetComponentNotFound {
+        net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
+
+        controller.updateRateParameter("rate", "newRate", "5.0");
+        verify(mockHistoryManager).addNewEdit(any(RateParameterId.class));
+    }
+
+    @Test
+    public void editingRateParameterIdAndValueMakesHistoryItems() throws PetriNetComponentNotFound {
+        net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
+
+        controller.updateRateParameter("rate", "newRate", "6.0");
+        verify(mockHistoryManager, times(2)).addNewEdit(any(RateParameterId.class));
+        verify(mockHistoryManager, times(2)).addNewEdit(any(RateParameterValue.class));
+    }
+
+
+    @Test
+    public void editingRateParameterThrowsErrorIfRateDoesNotExist() throws PetriNetComponentNotFound {
+        expectedEx.expect(PetriNetComponentNotFound.class);
+        expectedEx.expectMessage("No rate parameter rate exists in Petri net");
+        controller.updateRateParameter("rate", "newRate", "newExpression");
+    }
+
 
     @Test
     public void createNewToken() {

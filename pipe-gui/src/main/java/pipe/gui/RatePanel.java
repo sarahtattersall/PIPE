@@ -1,7 +1,9 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.models.component.rate.RateParameter;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -152,7 +154,11 @@ public class RatePanel extends JPanel {
                 if (isExistingRateParameter(row)) {
                     Datum initial = initialData[row];
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
-                        petriNetController.updateRateParameter(initial.id, modified.id, modified.expression);
+                        try {
+                            petriNetController.updateRateParameter(initial.id, modified.id, modified.expression);
+                        } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+                            GuiUtils.displayErrorMessage(null, petriNetComponentNotFound.getMessage());
+                        }
                     }
                 } else if (modified.hasBeenSet()) {
                     petriNetController.createNewRateParameter(modified.id, modified.expression);

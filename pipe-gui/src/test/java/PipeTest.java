@@ -192,65 +192,7 @@ public class PipeTest {
 		assertEquals("Help",menu.getItem(0).getText());
 		assertEquals("About PIPE",menu.getItem(1).getText());
 	}
-	@Test
-	public void verifyToolbarAddedToGui() throws Exception
-	{
-		Container c = applicationView.getContentPane(); 
-		toolbar = (JToolBar) c.getComponent(1);
-		String separator = null; 
-		checkButton("New", 0);
-		checkButton("Open", 1);
-		checkButton("Save", 2);
-		checkButton("Save as", 3);
-		checkButton("Close", 4);
-		checkButton(separator, 5);
-		checkButton("Print", 6);
-		checkButton(separator, 7);
-		checkButton("Cut", 8);
-		checkButton("Copy", 9);
-		checkButton("Paste", 10);
-		checkButton("Delete", 11);
-		checkButton("Undo", 12);
-		checkButton("Redo", 13);
-		checkButton(separator, 14);
-		checkButton("Zoom out", 15);
-		assertTrue("zoom combo box",toolbar.getComponent(16) instanceof JComboBox);
-		checkButton("Zoom in", 17);
-		checkButton(separator, 18);
-		checkButton("Cycle grid", 19);
-		checkButton("Drag", 20);
-		checkButton("Animation mode", 21);
-		checkButton(separator, 22);
-		checkButton(separator, 25);
-		checkButton("Help", 26);
-		//stash animation toolbar
-		JToolBar animationToolbar = (JToolBar) toolbar.getComponent(24);
-		//back up to check drawing toolbar
-		toolbar = (JToolBar) toolbar.getComponent(23);
-		checkButton("Select", 0);
-		checkButton(separator, 1);
-		checkButton("Place", 2);
-		checkButton("Immediate transition", 3);
-		checkButton("Timed transition", 4);
-		checkButton("Arc", 5);
-		checkButton("Inhibitor Arc", 6);
-		checkButton("Annotation", 7);
-		checkButton(separator, 8);
-		checkButton("Add token", 9);
-		checkButton("Delete token", 10);
-		assertTrue("token combo box",toolbar.getComponent(11) instanceof JComboBox);
-		checkButton("SpecifyTokenClasses", 12);
-		checkButton("groupTransitions", 13);
-		checkButton("ungroupTransitions", 14);
-		checkButton("unfoldAction", 15);
-		checkButton(separator, 16);
-		checkButton("Rate Parameter", 17);
-		toolbar = animationToolbar;
-		checkButton("Back", 0);
-		checkButton("Forward", 1);
-		checkButton("Random", 2);
-		checkButton("Animate", 3);
-	}
+
 	@Test
 	public void verifyExampleNetLoadsAndAnimates() throws Exception
 	{

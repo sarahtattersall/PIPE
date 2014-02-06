@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.dsl.*;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
@@ -211,7 +212,7 @@ public class PetriNetTest {
     }
 
     @Test
-    public void returnsCorrectToken() {
+    public void returnsCorrectToken() throws PetriNetComponentNotFound {
         String id = "Token1";
         boolean enabled = true;
         Color color = new Color(132, 16, 130);
@@ -221,9 +222,9 @@ public class PetriNetTest {
     }
 
     @Test
-    public void throwsErrorIfNoTokenExists() {
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("No token foo exists in petrinet.");
+    public void throwsErrorIfNoTokenExists() throws PetriNetComponentNotFound {
+        exception.expect(PetriNetComponentNotFound.class);
+        exception.expectMessage("No token foo exists in Petri net");
         net.getToken("foo");
     }
 
@@ -236,7 +237,6 @@ public class PetriNetTest {
                 .and(ANormalArc.withSource("P1").andTarget("T1").with("4", "Default").tokens())
                 .andFinally(ANormalArc.withSource("T1").andTarget("P2").with("4", "Default").tokens());
 
-
         Token token = getComponent("Default", petriNet.getTokens());
 
         IncidenceMatrix forwardMatrix = petriNet.getForwardsIncidenceMatrix(token);
@@ -247,6 +247,13 @@ public class PetriNetTest {
 
         assertEquals(0, forwardMatrix.get(p1, transition));
         assertEquals(4, forwardMatrix.get(p2, transition));
+    }
+
+    @Test
+    public void throwsExceptionIfNoRateParameterExists() throws PetriNetComponentNotFound {
+        exception.expect(PetriNetComponentNotFound.class);
+        exception.expectMessage("No rate parameter foo exists in Petri net");
+        net.getRateParameter("foo");
     }
 
     /**
@@ -437,7 +444,7 @@ public class PetriNetTest {
     }
 
     @Test
-    public void correctlyMarksEnabledTransitionIfSelfLoop() {
+    public void correctlyMarksEnabledTransitionIfSelfLoop() throws PetriNetComponentNotFound {
         PetriNet petriNet = createSelfLoopPetriNet(1);
         Place place = petriNet.getPlaces().iterator().next();
         Token token = petriNet.getToken("Default");

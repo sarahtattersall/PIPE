@@ -19,6 +19,7 @@ import pipe.views.PlaceView;
 import pipe.views.TransitionView;
 
 import javax.swing.*;
+import java.util.List;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -53,6 +54,7 @@ public class SteadyState implements IModule
         _pnmlData = petriNetView;
     }
 
+    @Override
     public void start()
     {
         _pnmlData = ApplicationSettings.getApplicationView().getCurrentPetriNetView();
@@ -101,6 +103,7 @@ public class SteadyState implements IModule
     }
 
 
+    @Override
     public String getName()
     {
         return MODULE_NAME;
@@ -108,6 +111,7 @@ public class SteadyState implements IModule
 
     private final ActionListener analyseButtonClick = new ActionListener()
     {
+        @Override
         public void actionPerformed(ActionEvent arg0)
         {
             // Returns reference to either current / selected P-N
@@ -175,7 +179,6 @@ public class SteadyState implements IModule
      */
     public PerformanceMeasure getSelectedEstimators()
     {
-        String name;
         PlaceView currPlaceView;
         TransitionView currTrans;
         PerformanceMeasure performanceMeasure = new PerformanceMeasure();
@@ -183,12 +186,11 @@ public class SteadyState implements IModule
         // 1. Get State Measure information
 
         // Retrieve the names of selected state measures
-        Object[] selectedStates = _placesList.getSelectedValues();
+        List<String> selectedStates = _placesList.getSelectedValuesList();
 
         // Convert the place names into IDs, and add to output
-        for(Object selectedState : selectedStates)
+        for(String name : selectedStates)
         {
-            name = (String) selectedState;
             currPlaceView = _pnmlData.getPlaceByName(name);
             performanceMeasure.addState(currPlaceView.getId());
         }
@@ -210,12 +212,11 @@ public class SteadyState implements IModule
         // 2. Get Count Measure information
 
         // Retrieve the names of selected count measures
-        Object[] selectedCounts = transitionList.getSelectedValues();
+        List<String> selectedCounts = transitionList.getSelectedValuesList();
 
         // Convert the transition names into IDs, and add to output
-        for(Object selectedCount : selectedCounts)
+        for(String name : selectedCounts)
         {
-            name = (String) selectedCount;
             currTrans = _pnmlData.getTransitionByName(name);
             performanceMeasure.addCount(currTrans.getId());
         }
@@ -308,6 +309,7 @@ class ToggleSelectionModel extends DefaultListSelectionModel
     private static final long serialVersionUID = 1L;
     private boolean gestureStarted = false;
 
+    @Override
     public void setSelectionInterval(int index0, int index1)
     {
         if(isSelectedIndex(index0) && !gestureStarted)
@@ -322,6 +324,7 @@ class ToggleSelectionModel extends DefaultListSelectionModel
         gestureStarted = true;
     }
 
+    @Override
     public void setValueIsAdjusting(boolean isAdjusting)
     {
         if(!isAdjusting)

@@ -2,6 +2,7 @@ package pipe.models.petrinet;
 
 import net.sourceforge.jeval.EvaluationException;
 import net.sourceforge.jeval.Evaluator;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
@@ -49,7 +50,13 @@ public class ExprEvaluator {
 
         String lexpr = new String(expr.replaceAll("\\s", ""));
 
-        Token token = petriNet.getToken(tokenId);
+        Token token = null;
+        try {
+            token = petriNet.getToken(tokenId);
+        } catch (PetriNetComponentNotFound e) {
+            e.printStackTrace();
+            return -1;
+        }
         for (Place place : petriNet.getPlaces()) {
             lexpr = findAndReplaceCapacity(lexpr, place);
             String name = getPlaceNameRepresentation(place);

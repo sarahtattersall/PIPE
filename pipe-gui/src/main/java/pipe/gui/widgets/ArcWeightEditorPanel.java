@@ -1,12 +1,14 @@
 package pipe.gui.widgets;
 
-import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.ExprEvaluator;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -177,13 +179,29 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         add(buttonPanel, gridBagConstraints);
     }
 
-    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
-        // Provisional!
-        exit();
+    public void createEditorWindow(Token token) {
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        ArcFunctionEditor feditor =
+                new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
+        guiDialog.add(feditor);
+        guiDialog.setSize(270, 230);
+        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
+        guiDialog.setVisible(true);
+        guiDialog.dispose();
     }
 
-    private void exit() {
-        _rootPane.getParent().setVisible(false);
+    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
+        // focusLost(nameTextField);
+    }
+
+    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+        // focusGained(nameTextField);
+    }
+
+    private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
+        }
     }
 
     private void okButtonHandler(java.awt.event.ActionEvent evt) {
@@ -252,76 +270,42 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         //        int totalMarking = 0;
         for (int i = 0; i < inputtedWeights.size(); i++) {
             String tokenClassName = inputtedTokenClassNames.get(i);
-            Token token = petriNetController.getToken(tokenClassName);
-            String weight = inputtedWeights.get(i).getText();
-            newWeights.put(token, weight);
             try {
+                Token token = petriNetController.getToken(tokenClassName);
+
+                String weight = inputtedWeights.get(i).getText();
+                newWeights.put(token, weight);
                 int evaluatedWeight = parser.parseAndEvalExpr(weight, tokenClassName);
                 if (evaluatedWeight == -1) {
-                    JOptionPane.showMessageDialog(null,
+                    GuiUtils.displayErrorMessage(null,
                             "Error in weight expression. Please make sure\r\n it is an integer");
                     return;
                 }
                 if (evaluatedWeight == -2) {
-                    JOptionPane.showMessageDialog(null,
+                    GuiUtils.displayErrorMessage(null,
                             "Please make sure division and floating numbers are " + "surrounded by ceil() or floor()");
                     return;
                 }
                 if (evaluatedWeight < 0) {
-                    JOptionPane.showMessageDialog(null, "Weighting cannot be less than 0. Please re-enter");
+                    GuiUtils.displayErrorMessage(null, "Weighting cannot be less than 0. Please re-enter");
                     return;
                 }
 
-            }
-            //            catch (EvaluationException e) {
-            //                JOptionPane.showMessageDialog(null,
-            //                        "Error in Arc weight expression");
-            //                return;
-            //            } catch (MarkingDividedByNumberException eee) {
-            //                JOptionPane.showMessageDialog(null,
-            //                        "Marking-dependent arc weight divided by number not supported.\r\n" +
-            //                                "Since this may cause non-integer arc weight.");
-            //                return;
-            //            }
-            catch (Exception ee) {
-                JOptionPane.showMessageDialog(null, "Error in Arc weight expression");
+            } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+                GuiUtils.displayErrorMessage(null, petriNetComponentNotFound.getMessage());
                 return;
             }
-
-        }
-        //        if (totalMarking <= 0) {
-        //            JOptionPane.showMessageDialog(null,
-        //                    "Total weight of arc must be greater than 0. Please re-enter");
-        //            return;
-        //        }
-
-        arcController.setWeights(newWeights);
+        } arcController.setWeights(newWeights);
         exit();
     }
 
-    private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
-        }
+    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
+        // Provisional!
+        exit();
     }
 
-    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
-        // focusGained(nameTextField);
-    }
-
-    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
-        // focusLost(nameTextField);
-    }
-
-    public void createEditorWindow(Token token) {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        ArcFunctionEditor feditor =
-                new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
-        guiDialog.add(feditor);
-        guiDialog.setSize(270, 230);
-        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
-        guiDialog.setVisible(true);
-        guiDialog.dispose();
+    private void exit() {
+        _rootPane.getParent().setVisible(false);
     }
 
     public void setWeight(String func, String id) {

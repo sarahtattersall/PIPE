@@ -1,5 +1,6 @@
 package pipe.models.petrinet;
 
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.io.adapters.modelAdapter.*;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
@@ -323,23 +324,23 @@ public class PetriNet {
         return false;
     }
 
-    public Token getToken(String tokenId) {
+    public Token getToken(String tokenId) throws PetriNetComponentNotFound {
         //TODO: Find an O(1) name to do this, perhaps Map?
         for (Token token : tokens) {
             if (token.getId().equals(tokenId)) {
                 return token;
             }
         }
-        throw new RuntimeException("No token " + tokenId + " exists in petrinet.");
+        throw new PetriNetComponentNotFound("No token " + tokenId + " exists in Petri net.");
     }
 
-    public RateParameter getRateParameter(String rateParameterId) {
+    public RateParameter getRateParameter(String rateParameterId) throws PetriNetComponentNotFound {
         for (RateParameter rateParameter : rateParameters) {
             if (rateParameter.getId().equals(rateParameterId)) {
                 return rateParameter;
             }
         }
-        throw new RuntimeException("No rate parameter " + rateParameterId + " exists in petrinet.");
+        throw new PetriNetComponentNotFound("No rate parameter " + rateParameterId + " exists in Petri net.");
     }
 
     public void add(PetriNetComponent component) {

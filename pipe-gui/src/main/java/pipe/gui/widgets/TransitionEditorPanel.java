@@ -3,6 +3,7 @@ package pipe.gui.widgets;
 import net.sourceforge.jeval.EvaluationException;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
@@ -13,6 +14,7 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.rate.RateType;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -567,8 +569,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         String newName = nameTextField.getText();
         if (!newName.equals(transitionController.getName())) {
             if (!netController.isUniqueName(newName)) {
-                JOptionPane.showMessageDialog(null, "There is already a transition named " + newName, "Error",
-                        JOptionPane.WARNING_MESSAGE);
+                showErrorMessage("There is already a transition named " + newName);
                 return false;
             }
         }
@@ -609,24 +610,21 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private boolean canSetRate() {
         ExprEvaluator parser = new ExprEvaluator(netController.getPetriNet());
-        double rate = 0;
+        double rate;
         try {
             rate = parser.parseAndEvalExprForTransition(rateTextField.getText());
-        } catch (EvaluationException e1) {
+        } catch (EvaluationException ignored) {
+            showErrorMessage("Functional rate expression is invalid. Please check your function.");
             return false;
         }
 
         if (rate == -1) {
-            String message = " Functional rate expression is invalid. Please check your function.";
-            String title = "Error";
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+            showErrorMessage("Functional rate expression is invalid. Please check your function.");
             return false;
         }
 
         if (transitionController.getRateExpr().equals("")) {
-            String message = "Functional rate expression is empty. Please check.";
-            String title = "Error";
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+            showErrorMessage("Functional rate expression is empty. Please check.");
             return false;
         }
         return true;
@@ -638,13 +636,28 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     public void setRateIfChanged() {
         if (rateComboBox.getSelectedIndex() > 0) {
             String rateParameterId = (String) rateComboBox.getSelectedItem();
-            RateParameter rateParameter = netController.getPetriNet().getRateParameter(rateParameterId);
+            RateParameter rateParameter = null;
+            try {
+                rateParameter = netController.getPetriNet().getRateParameter(rateParameterId);
+            } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+                showErrorMessage(petriNetComponentNotFound.getMessage());
+            }
             transitionController.setRate(rateParameter);
         } else {
             String rateExpression = rateTextField.getText();
             Rate rate = new NormalRate(rateExpression);
             transitionController.setRate(rate);
         }
+    }
+
+    /**
+     *
+     * Pops up a dialog with error message
+     *
+     * @param message message to be displayed on error
+     */
+    private void showErrorMessage(String message) {
+        GuiUtils.displayErrorMessage(null, message);
     }
 
     /**
@@ -708,8 +721,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             if (checkIfArcsAreFunctional()) {
                 String message = "Infinite server cannot be connect directly to \r\n"
                         + "arcs with functional weights for this version";
-                String title = "Error";
-                JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+                showErrorMessage(message);
                 functionalratebutton.setEnabled(true);
                 singleServerRadioButton.setSelected(true);
                 infiniteServerRadioButton.setSelected(false);
@@ -749,7 +761,12 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private void rateComboBoxActionPerformed() {
         String selected = (String) rateComboBox.getModel().getSelectedItem();
         if (!selected.equals(NO_RATE_PARAMETER)) {
-            RateParameter rateParameter = netController.getPetriNet().getRateParameter(selected);
+            RateParameter rateParameter = null;
+            try {
+                rateParameter = netController.getPetriNet().getRateParameter(selected);
+            } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+                showErrorMessage(petriNetComponentNotFound.getMessage());
+            }
             rateTextField.setEnabled(false);
             rateTextField.setText(rateParameter.getExpression());
         } else {

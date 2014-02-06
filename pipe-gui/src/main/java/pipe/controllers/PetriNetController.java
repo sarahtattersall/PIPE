@@ -1,12 +1,12 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.gui.Animator;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.DragManager;
 import pipe.gui.ZoomController;
-import pipe.historyActions.DeletePetriNetObject;
-import pipe.historyActions.HistoryManager;
+import pipe.historyActions.*;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.PlaceablePetriNetComponent;
@@ -120,9 +120,7 @@ public class PetriNetController implements IController, Serializable {
                 for (ArcPoint arcPoint : arc.getIntermediatePoints()) {
                     select(arcPoint);
                 }
-            } else if (
-            selectedComponents.contains(arc.getSource()) ||
-                    selectedComponents.contains(arc.getTarget())) {
+            } else if (selectedComponents.contains(arc.getSource()) || selectedComponents.contains(arc.getTarget())) {
                 select(arc);
             }
         }
@@ -232,7 +230,8 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getTokens();
     }
 
-    public void updateToken(String currentTokenName, String name, boolean enabled, Color color) {
+    public void updateToken(String currentTokenName, String name, boolean enabled, Color color)
+            throws PetriNetComponentNotFound {
         Token token = petriNet.getToken(currentTokenName);
         if (!token.getId().equals(name)) {
             token.setId(name);
@@ -265,12 +264,8 @@ public class PetriNetController implements IController, Serializable {
         return new TransitionController(transition, historyManager);
     }
 
-    public void selectToken(String tokenName) {
+    public void selectToken(String tokenName) throws PetriNetComponentNotFound {
         selectToken(getToken(tokenName));
-    }
-
-    public Token getToken(String tokenName) {
-        return getTokenForName(tokenName);
     }
 
     /**
@@ -278,7 +273,7 @@ public class PetriNetController implements IController, Serializable {
      * @return Token from PetriNet
      * @throw RuntimeException if the token does not exist
      */
-    private Token getTokenForName(String name) {
+    public Token getToken(String name) throws PetriNetComponentNotFound {
         return petriNet.getToken(name);
     }
 
@@ -329,15 +324,42 @@ public class PetriNetController implements IController, Serializable {
 
     public void createNewRateParameter(String id, String expression) {
         RateParameter rateParameter = new RateParameter(expression, id, id);
+        HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
+        historyManager.addNewEdit(historyItem);
         petriNet.addRateParameter(rateParameter);
     }
 
-
-    public void updateRateParameter(String oldId, String newId, String newExpression) {
+    /**
+     * Updates the rate parameter according to the id and expression
+     * If they are the same as the old values it will not update them
+     *
+     * @param oldId registered id for the RateParameter in the petri net
+     * @param newId new id to change the name to
+     * @param newExpression new Expression to change to
+     */
+    public void updateRateParameter(String oldId, String newId, String newExpression) throws PetriNetComponentNotFound {
         RateParameter rateParameter = petriNet.getRateParameter(oldId);
+
+        if (!oldId.equals(newId)) {
+            changeRateParameterId(rateParameter, oldId, newId);
+        }
+        if (!rateParameter.getExpression().equals(newExpression)) {
+            changeRateParameterRate(rateParameter, rateParameter.getExpression(), newExpression);
+        }
+    }
+
+    private void changeRateParameterId(RateParameter rateParameter, String oldId, String newId) {
+        HistoryItem historyItem = new RateParameterId(rateParameter, oldId, newId);
+        historyManager.addNewEdit(historyItem);
         rateParameter.setId(newId);
         rateParameter.setName(newId);
-        rateParameter.setExpression(newExpression);
+    }
+
+    private void changeRateParameterRate(RateParameter rateParameter, String oldRate, String newRate) {
+
+        HistoryItem historyItem = new RateParameterValue(rateParameter, oldRate, newRate);
+        historyManager.addNewEdit(historyItem);
+        rateParameter.setExpression(newRate);
     }
 
     public boolean isUniqueName(String newName) {

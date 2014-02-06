@@ -37,7 +37,7 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
     @Override
     public void setName(String name) {
-
+       this.name = name;
     }
 
     @Override

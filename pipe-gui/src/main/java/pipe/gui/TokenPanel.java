@@ -1,8 +1,10 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -217,7 +219,11 @@ public class TokenPanel extends JPanel {
                 if (isExistingToken(row)) {
                     Datum initial = initialData[row];
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
-                        petriNetController.updateToken(initial.name, modified.name, modified.isEnabled, modified.color);
+                        try {
+                            petriNetController.updateToken(initial.name, modified.name, modified.isEnabled, modified.color);
+                        } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+                            GuiUtils.displayErrorMessage(null, petriNetComponentNotFound.getMessage());
+                        }
                     }
                 } else if (modified.hasBeenSet()) {
                     petriNetController.createNewToken(modified.name, modified.isEnabled, modified.color);

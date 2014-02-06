@@ -533,20 +533,6 @@ public final class TransitionView extends ConnectableView<Transition> implements
         _groupTransitionView = null;
     }
 
-    private void showWarningDialog(String message) {
-        JOptionPane pane = new JOptionPane(message, JOptionPane.ERROR_MESSAGE);
-        final JDialog dialog = pane.createDialog(ApplicationSettings.getApplicationView(), "Invalid selection");
-        ActionListener exiter = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        };
-        new Timer(_delayForShowingWarnings, exiter).start();
-        dialog.show();
-    }
-
     public int confirmOrTimeout(String message, String title) throws HeadlessException {
         JOptionPane pane = new JOptionPane(message, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
         return showWithTimeout(pane, null, title);
@@ -565,13 +551,13 @@ public final class TransitionView extends ConnectableView<Transition> implements
                 {
                     @Override
                     public void run() {
-                        dialog.hide();
+                        dialog.setVisible(false);
                     }
                 });            //   thread
             }
         };
         timeoutThread.start();
-        dialog.show();
+        dialog.setVisible(true);
         Object selection = pane.getValue();                      // We get to this point when
         int result = JOptionPane.CLOSED_OPTION;                   // (1) The user makes a selection
         if (selection != null && selection instanceof Integer)        // or (2) the timeout thread closes

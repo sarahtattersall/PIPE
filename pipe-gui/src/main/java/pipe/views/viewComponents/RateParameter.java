@@ -64,7 +64,7 @@ public class RateParameter extends Parameter {
         double oldValue = value;
         value = _value;
         valueChanged = true;
-        return new RateParameterValue(this, oldValue, value);
+        return null;
     }
 
 

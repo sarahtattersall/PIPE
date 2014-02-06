@@ -5,46 +5,44 @@
 package pipe.historyActions;
 
 
-import pipe.views.viewComponents.RateParameter;
+import pipe.models.component.rate.RateParameter;
 
 /**
- *
- * @author corveau
+ * HistoryItem responsible for undo/redoing a rate parameters
+ * expression
  */
-public class RateParameterValue
-        extends HistoryItem
-{
-   
-   private final RateParameter rateParameter;
-   private final Double newValue;
-   private final Double oldValue;
-   
-   
-   /** Creates a new instance of placeCapacityEdit
-    * @param _rateParameter
-    * @param _oldValue
-    * @param _newValue*/
-   public RateParameterValue(RateParameter _rateParameter,
-                             Double _oldValue, Double _newValue) {
-      rateParameter = _rateParameter;
-      oldValue = _oldValue;      
-      newValue = _newValue;
-   }
+public class RateParameterValue extends HistoryItem {
 
-   
-   /** */
-   public void undo() {
-      rateParameter.setValue(oldValue);
-      rateParameter.update();
-      rateParameter.updateBounds();
-   }
+    /**
+     * Rate parameter whose expression has changed
+     */
+    private final RateParameter rateParameter;
 
-   
-   /** */
-   public void redo() {
-      rateParameter.setValue(newValue);
-      rateParameter.update();
-      rateParameter.updateBounds();
-   }
-   
+    /**
+     * Previous value
+     */
+    private final String previousExpression;
+
+    /**
+     * Value the expression has been changed to
+     */
+    private final String newExpression;
+
+    public RateParameterValue(RateParameter rateParameter, String previousExpression, String newExpression) {
+        this.rateParameter = rateParameter;
+        this.previousExpression = previousExpression;
+        this.newExpression = newExpression;
+    }
+
+    @Override
+    public void undo() {
+        rateParameter.setExpression(previousExpression);
+    }
+
+    /** */
+    @Override
+    public void redo() {
+        rateParameter.setExpression(newExpression);
+    }
+
 }

@@ -1,6 +1,7 @@
 package pipe.actions;
 
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -21,6 +22,10 @@ public class ChooseTokenClassAction extends GuiAction {
         String currentSelection = (String) pipeApplicationView.tokenClassComboBox.getSelectedItem();
         PetriNetController petriNetController =
                 ApplicationSettings.getApplicationController().getActivePetriNetController();
-        petriNetController.selectToken(petriNetController.getToken(currentSelection));
+        try {
+            petriNetController.selectToken(currentSelection);
+        } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+            petriNetComponentNotFound.printStackTrace();
+        }
     }
 }

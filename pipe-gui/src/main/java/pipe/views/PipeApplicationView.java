@@ -12,6 +12,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.InhibitorCreator;
 import pipe.controllers.arcCreator.NormalCreator;
+import pipe.exceptions.PetriNetComponentNotFound;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.gui.widgets.FileBrowser;
@@ -19,6 +20,7 @@ import pipe.io.JarUtilities;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
+import pipe.utilities.gui.GuiUtils;
 import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
@@ -750,7 +752,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         ComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
         tokenClassComboBox.setModel(model);
         PetriNetController controller = applicationController.getActivePetriNetController();
-        controller.selectToken(getSelectedTokenName());
+        try {
+            controller.selectToken(getSelectedTokenName());
+        } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
+            GuiUtils.displayErrorMessage(this, petriNetComponentNotFound.getMessage());
+        }
     }
 
     /**
