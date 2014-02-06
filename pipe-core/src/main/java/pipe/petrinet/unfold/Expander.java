@@ -1,6 +1,6 @@
 package pipe.petrinet.unfold;
 
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
@@ -104,7 +104,7 @@ public class Expander {
     private Token getDefaultToken() {
         try {
             return petriNet.getToken("Default");
-        } catch (PetriNetComponentNotFound ignored) {
+        } catch (PetriNetComponentNotFoundException ignored) {
             return null;
         }
     }

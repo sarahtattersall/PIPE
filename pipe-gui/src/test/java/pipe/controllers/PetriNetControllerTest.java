@@ -4,7 +4,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.*;
 import pipe.historyActions.*;
@@ -233,7 +234,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void updateNameIfChanged() throws PetriNetComponentNotFound {
+    public void updateNameIfChanged() throws PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -250,7 +251,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotUpdateNameIfNotChanged() throws PetriNetComponentNotFound {
+    public void doesNotUpdateNameIfNotChanged() throws PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -267,7 +268,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void updateEnabledIfChanged() throws TokenLockedException, PetriNetComponentNotFound {
+    public void updateEnabledIfChanged() throws TokenLockedException, PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -284,7 +285,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotUpdateEnabledIfNotChanged() throws TokenLockedException, PetriNetComponentNotFound {
+    public void doesNotUpdateEnabledIfNotChanged() throws TokenLockedException, PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -301,7 +302,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void updateTokenColorIfChanged() throws PetriNetComponentNotFound {
+    public void updateTokenColorIfChanged() throws PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -319,7 +320,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotUpdateTokenColorIfNotChanged() throws PetriNetComponentNotFound {
+    public void doesNotUpdateTokenColorIfNotChanged() throws PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";
         when(token.getId()).thenReturn(id);
@@ -336,13 +337,14 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void creatingRateParameterMakesHistoryItem() {
+    public void creatingRateParameterMakesHistoryItem() throws InvalidRateException {
         controller.createNewRateParameter("rate", "5.0");
         verify(mockHistoryManager).addNewEdit(any(AddPetriNetObject.class));
     }
 
     @Test
-    public void editingRateExpressionMakesHistoryItem() throws PetriNetComponentNotFound {
+    public void editingRateExpressionMakesHistoryItem() throws PetriNetComponentNotFoundException,
+            InvalidRateException {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "rate", "6.0");
@@ -350,7 +352,8 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void editingRateParameterIdMakesHistoryItem() throws PetriNetComponentNotFound {
+    public void editingRateParameterIdMakesHistoryItem() throws PetriNetComponentNotFoundException,
+            InvalidRateException {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "newRate", "5.0");
@@ -358,7 +361,8 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void editingRateParameterIdAndValueMakesHistoryItems() throws PetriNetComponentNotFound {
+    public void editingRateParameterIdAndValueMakesHistoryItems()
+            throws PetriNetComponentNotFoundException, InvalidRateException {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "newRate", "6.0");
@@ -368,8 +372,8 @@ public class PetriNetControllerTest {
 
 
     @Test
-    public void editingRateParameterThrowsErrorIfRateDoesNotExist() throws PetriNetComponentNotFound {
-        expectedEx.expect(PetriNetComponentNotFound.class);
+    public void editingRateParameterThrowsErrorIfRateDoesNotExist() throws PetriNetComponentNotFoundException {
+        expectedEx.expect(PetriNetComponentNotFoundException.class);
         expectedEx.expectMessage("No rate parameter rate exists in Petri net");
         controller.updateRateParameter("rate", "newRate", "newExpression");
     }

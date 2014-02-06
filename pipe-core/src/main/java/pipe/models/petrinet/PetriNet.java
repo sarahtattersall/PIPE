@@ -1,6 +1,8 @@
 package pipe.models.petrinet;
 
-import pipe.exceptions.PetriNetComponentNotFound;
+import net.sourceforge.jeval.EvaluationException;
+import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.io.adapters.modelAdapter.*;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
@@ -8,6 +10,7 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.Rate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -208,10 +211,29 @@ public class PetriNet {
         }
     }
 
-    public void addRateParameter(RateParameter rateParameter) {
+    public void addRateParameter(RateParameter rateParameter) throws InvalidRateException {
+        if (!validRateParameterExpression(rateParameter)) {
+            throw new InvalidRateException(rateParameter.getExpression());
+        }
+
         if (!rateParameters.contains(rateParameter)) {
             rateParameters.add(rateParameter);
             changeSupport.firePropertyChange(NEW_RATE_PARAMETER_CHANGE_MESSAGE, null, rateParameter);
+        }
+    }
+
+    /**
+     * Attempts to parse the expression of the rate
+     * @param rate
+     * @return false if the rate's expression is invalid
+     */
+    private boolean validRateParameterExpression(Rate rate) {
+        ExprEvaluator exprEvaluator = new ExprEvaluator(this);
+        try {
+            exprEvaluator.parseAndEvalExprForTransition(rate.getExpression());
+            return true;
+        } catch (EvaluationException ignored) {
+            return false;
         }
     }
 
@@ -324,23 +346,23 @@ public class PetriNet {
         return false;
     }
 
-    public Token getToken(String tokenId) throws PetriNetComponentNotFound {
+    public Token getToken(String tokenId) throws PetriNetComponentNotFoundException {
         //TODO: Find an O(1) name to do this, perhaps Map?
         for (Token token : tokens) {
             if (token.getId().equals(tokenId)) {
                 return token;
             }
         }
-        throw new PetriNetComponentNotFound("No token " + tokenId + " exists in Petri net.");
+        throw new PetriNetComponentNotFoundException("No token " + tokenId + " exists in Petri net.");
     }
 
-    public RateParameter getRateParameter(String rateParameterId) throws PetriNetComponentNotFound {
+    public RateParameter getRateParameter(String rateParameterId) throws PetriNetComponentNotFoundException {
         for (RateParameter rateParameter : rateParameters) {
             if (rateParameter.getId().equals(rateParameterId)) {
                 return rateParameter;
             }
         }
-        throw new PetriNetComponentNotFound("No rate parameter " + rateParameterId + " exists in Petri net.");
+        throw new PetriNetComponentNotFoundException("No rate parameter " + rateParameterId + " exists in Petri net.");
     }
 
     public void add(PetriNetComponent component) {

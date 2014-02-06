@@ -8,13 +8,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.dsl.*;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.IncidenceMatrix;
@@ -212,7 +214,7 @@ public class PetriNetTest {
     }
 
     @Test
-    public void returnsCorrectToken() throws PetriNetComponentNotFound {
+    public void returnsCorrectToken() throws PetriNetComponentNotFoundException {
         String id = "Token1";
         boolean enabled = true;
         Color color = new Color(132, 16, 130);
@@ -222,8 +224,8 @@ public class PetriNetTest {
     }
 
     @Test
-    public void throwsErrorIfNoTokenExists() throws PetriNetComponentNotFound {
-        exception.expect(PetriNetComponentNotFound.class);
+    public void throwsErrorIfNoTokenExists() throws PetriNetComponentNotFoundException {
+        exception.expect(PetriNetComponentNotFoundException.class);
         exception.expectMessage("No token foo exists in Petri net");
         net.getToken("foo");
     }
@@ -250,11 +252,20 @@ public class PetriNetTest {
     }
 
     @Test
-    public void throwsExceptionIfNoRateParameterExists() throws PetriNetComponentNotFound {
-        exception.expect(PetriNetComponentNotFound.class);
+    public void throwsExceptionIfNoRateParameterExists() throws PetriNetComponentNotFoundException {
+        exception.expect(PetriNetComponentNotFoundException.class);
         exception.expectMessage("No rate parameter foo exists in Petri net");
         net.getRateParameter("foo");
     }
+
+    @Test
+    public void throwsExceptionIfRateParameterIsNotValid() throws InvalidRateException {
+        exception.expect(InvalidRateException.class);
+        exception.expectMessage("Rate of hsfg is invalid");
+        RateParameter rateParameter = new RateParameter("hsfg", "id", "name");
+        net.addRateParameter(rateParameter);
+    }
+
 
     /**
      * Create simple petrinet with P1 -> T1 -> P2
@@ -444,7 +455,7 @@ public class PetriNetTest {
     }
 
     @Test
-    public void correctlyMarksEnabledTransitionIfSelfLoop() throws PetriNetComponentNotFound {
+    public void correctlyMarksEnabledTransitionIfSelfLoop() throws PetriNetComponentNotFoundException {
         PetriNet petriNet = createSelfLoopPetriNet(1);
         Place place = petriNet.getPlaces().iterator().next();
         Token token = petriNet.getToken("Default");

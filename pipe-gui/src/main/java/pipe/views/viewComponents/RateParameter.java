@@ -27,7 +27,6 @@ public class RateParameter extends Parameter {
     // the set of transitions that use this parameter
     private final HashSet<TransitionView> _transitionsHashSet;
 
-
     public RateParameter(String name, Double value, int x, int y) {
         super(x, y);
         this.name = name;
@@ -37,6 +36,7 @@ public class RateParameter extends Parameter {
     }
 
 
+    @Override
     public void enableEditMode() {
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
@@ -91,6 +91,7 @@ public class RateParameter extends Parameter {
 
 
     // updates each transition in transitionsHashSet to current parameter value
+    @Override
     public void update() {
         if (valueChanged) {
             valueChanged = false;
@@ -116,6 +117,7 @@ public class RateParameter extends Parameter {
     }
 
 
+    @Override
     public void delete() {
         Object[] transitions = _transitionsHashSet.toArray();
         if (transitions.length > 0) {

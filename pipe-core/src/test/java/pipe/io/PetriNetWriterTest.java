@@ -2,6 +2,7 @@ package pipe.io;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.SAXException;
+import pipe.exceptions.InvalidRateException;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
@@ -72,7 +73,7 @@ public class PetriNetWriterTest extends XMLTestCase {
         assertResultsEqual(FileUtils.fileLocation(XMLUtils.getTransitionFile()), petriNet);
     }
 
-    public void testMarshalsTransitionWithRateParameter() throws IOException, SAXException {
+    public void testMarshalsTransitionWithRateParameter() throws IOException, SAXException, InvalidRateException {
         PetriNet petriNet = new PetriNet();
         RateParameter rateParameter = new RateParameter("6.0", "foo", "foo");
 

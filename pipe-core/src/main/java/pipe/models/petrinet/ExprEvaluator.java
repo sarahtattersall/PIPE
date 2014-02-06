@@ -2,7 +2,7 @@ package pipe.models.petrinet;
 
 import net.sourceforge.jeval.EvaluationException;
 import net.sourceforge.jeval.Evaluator;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
@@ -53,7 +53,7 @@ public class ExprEvaluator {
         Token token = null;
         try {
             token = petriNet.getToken(tokenId);
-        } catch (PetriNetComponentNotFound e) {
+        } catch (PetriNetComponentNotFoundException e) {
             e.printStackTrace();
             return -1;
         }

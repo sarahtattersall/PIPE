@@ -1,7 +1,8 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.rate.RateParameter;
 import pipe.utilities.gui.GuiUtils;
 
@@ -156,12 +157,16 @@ public class RatePanel extends JPanel {
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {
                             petriNetController.updateRateParameter(initial.id, modified.id, modified.expression);
-                        } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
-                            GuiUtils.displayErrorMessage(null, petriNetComponentNotFound.getMessage());
+                        } catch (PetriNetComponentNotFoundException e) {
+                            GuiUtils.displayErrorMessage(null, e.getMessage());
                         }
                     }
                 } else if (modified.hasBeenSet()) {
-                    petriNetController.createNewRateParameter(modified.id, modified.expression);
+                    try {
+                        petriNetController.createNewRateParameter(modified.id, modified.expression);
+                    } catch (InvalidRateException e) {
+                        GuiUtils.displayErrorMessage(null, e.getMessage());
+                    }
                 }
             }
         }

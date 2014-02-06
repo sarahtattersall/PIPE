@@ -1,7 +1,7 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.utilities.gui.GuiUtils;
@@ -221,8 +221,8 @@ public class TokenPanel extends JPanel {
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {
                             petriNetController.updateToken(initial.name, modified.name, modified.isEnabled, modified.color);
-                        } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
-                            GuiUtils.displayErrorMessage(null, petriNetComponentNotFound.getMessage());
+                        } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                            GuiUtils.displayErrorMessage(null, petriNetComponentNotFoundException.getMessage());
                         }
                     }
                 } else if (modified.hasBeenSet()) {

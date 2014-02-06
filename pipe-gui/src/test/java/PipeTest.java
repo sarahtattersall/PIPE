@@ -194,7 +194,7 @@ public class PipeTest {
 	}
 
 	@Test
-	public void verifyExampleNetLoadsAndAnimates() throws Exception
+	public void verifyExampleNetLoadsAndAnimates()
 	{
 		menu = applicationView.getJMenuBar().getMenu(0); 
 		subMenu = (JMenu) menu.getMenuComponent(12); 
@@ -215,9 +215,8 @@ public class PipeTest {
 	}
 	protected Action getActionForMenuItem(JMenu menu, int selection)
 	{
-		JMenuItem item = menu.getItem(selection); 
-		Action action = item.getAction();
-		return action;
+		JMenuItem item = menu.getItem(selection);
+        return item.getAction();
 	}
 	private void checkTokenViews()
 	{

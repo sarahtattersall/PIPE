@@ -2,7 +2,7 @@ package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
@@ -291,8 +291,8 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                     return;
                 }
 
-            } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
-                GuiUtils.displayErrorMessage(null, petriNetComponentNotFound.getMessage());
+            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                GuiUtils.displayErrorMessage(null, petriNetComponentNotFoundException.getMessage());
                 return;
             }
         } arcController.setWeights(newWeights);

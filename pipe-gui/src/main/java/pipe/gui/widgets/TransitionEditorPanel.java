@@ -3,7 +3,7 @@ package pipe.gui.widgets;
 import net.sourceforge.jeval.EvaluationException;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
@@ -639,8 +639,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             RateParameter rateParameter = null;
             try {
                 rateParameter = netController.getPetriNet().getRateParameter(rateParameterId);
-            } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
-                showErrorMessage(petriNetComponentNotFound.getMessage());
+            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                showErrorMessage(petriNetComponentNotFoundException.getMessage());
             }
             transitionController.setRate(rateParameter);
         } else {
@@ -764,8 +764,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             RateParameter rateParameter = null;
             try {
                 rateParameter = netController.getPetriNet().getRateParameter(selected);
-            } catch (PetriNetComponentNotFound petriNetComponentNotFound) {
-                showErrorMessage(petriNetComponentNotFound.getMessage());
+            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                showErrorMessage(petriNetComponentNotFoundException.getMessage());
             }
             rateTextField.setEnabled(false);
             rateTextField.setText(rateParameter.getExpression());

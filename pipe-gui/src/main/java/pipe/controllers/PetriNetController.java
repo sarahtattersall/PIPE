@@ -1,7 +1,8 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.exceptions.PetriNetComponentNotFound;
+import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.Animator;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.DragManager;
@@ -231,7 +232,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void updateToken(String currentTokenName, String name, boolean enabled, Color color)
-            throws PetriNetComponentNotFound {
+            throws PetriNetComponentNotFoundException {
         Token token = petriNet.getToken(currentTokenName);
         if (!token.getId().equals(name)) {
             token.setId(name);
@@ -264,7 +265,7 @@ public class PetriNetController implements IController, Serializable {
         return new TransitionController(transition, historyManager);
     }
 
-    public void selectToken(String tokenName) throws PetriNetComponentNotFound {
+    public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {
         selectToken(getToken(tokenName));
     }
 
@@ -273,7 +274,7 @@ public class PetriNetController implements IController, Serializable {
      * @return Token from PetriNet
      * @throw RuntimeException if the token does not exist
      */
-    public Token getToken(String name) throws PetriNetComponentNotFound {
+    public Token getToken(String name) throws PetriNetComponentNotFoundException {
         return petriNet.getToken(name);
     }
 
@@ -322,7 +323,7 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getRateParameters();
     }
 
-    public void createNewRateParameter(String id, String expression) {
+    public void createNewRateParameter(String id, String expression) throws InvalidRateException {
         RateParameter rateParameter = new RateParameter(expression, id, id);
         HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
         historyManager.addNewEdit(historyItem);
@@ -337,7 +338,8 @@ public class PetriNetController implements IController, Serializable {
      * @param newId new id to change the name to
      * @param newExpression new Expression to change to
      */
-    public void updateRateParameter(String oldId, String newId, String newExpression) throws PetriNetComponentNotFound {
+    public void updateRateParameter(String oldId, String newId, String newExpression) throws
+            PetriNetComponentNotFoundException {
         RateParameter rateParameter = petriNet.getRateParameter(oldId);
 
         if (!oldId.equals(newId)) {
