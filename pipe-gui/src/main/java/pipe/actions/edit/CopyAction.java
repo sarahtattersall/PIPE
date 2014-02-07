@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 /**
  * Responsible for copying selected items on the Petri net
  */
-public class CopyAction extends GuiAction{
+public class CopyAction extends GuiAction {
     private final PipeApplicationController applicationController;
 
     public CopyAction(PipeApplicationController applicationController) {

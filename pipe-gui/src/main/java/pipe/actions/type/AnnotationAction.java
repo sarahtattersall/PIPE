@@ -1,13 +1,10 @@
 package pipe.actions.type;
 
-import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
 import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
-import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
 import java.awt.event.InputEvent;

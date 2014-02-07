@@ -1,7 +1,7 @@
 package pipe.handler;
 
 import org.junit.Before;
-import pipe.actions.TypeAction;
+import pipe.actions.type.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;

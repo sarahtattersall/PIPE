@@ -1,6 +1,5 @@
 package pipe.actions.type;
 
-import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;

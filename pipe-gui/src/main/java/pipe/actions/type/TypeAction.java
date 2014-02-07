@@ -1,5 +1,7 @@
-package pipe.actions;
+package pipe.actions.type;
 
+import pipe.actions.GuiAction;
+import pipe.actions.grid.SelectAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
@@ -29,48 +31,15 @@ public abstract class TypeAction extends GuiAction
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        PipeApplicationModel pipeApplicationView = ApplicationSettings.getApplicationModel();
         PipeApplicationModel model = ApplicationSettings.getApplicationModel();
         model.selectTypeAction(this);
 
-//        pipeApplicationView.setMode(typeID);
-        StatusBar statusBar = ApplicationSettings.getApplicationView().statusBar;
-//        statusBar.changeText(typeID);
-
         PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
+        petriNetTab.setCursorType("crosshair");
+
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         SelectionManager selectionManager = controller.getSelectionManager(petriNetTab);
-        if(petriNetTab == null)
-        {
-            return;
-        }
-
-        //TODO: DO I NEED THIS?
         selectionManager.disableSelection();
-        // _petriNetTabView.getSelectionObject().clearSelection();
-
-//        if((typeID != Constants.ARC))// && (petriNetController.isCurrentlyCreatingArc()))
-//        {
-////            petriNetController.cancelArcCreation();
-//            petriNetTab.repaint();
-//        }
-//
-//        if(typeID == Constants.SELECT)
-//        {
-//            // disable drawing to eliminate possiblity of connecting arc to
-//            // old coord of moved component
-//            statusBar.changeText(typeID);
-//            selectionManager.enableSelection();
-//            petriNetTab.setCursorType("arrow");
-//        }
-//        else if(typeID == Constants.DRAG)
-//        {
-//            petriNetTab.setCursorType("move");
-//        }
-//        else
-//        {
-//            petriNetTab.setCursorType("crosshair");
-//        }
     }
 
 }

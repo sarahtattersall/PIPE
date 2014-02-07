@@ -1,7 +1,7 @@
 package pipe.handlers;
 
 import pipe.actions.ShowHideInfoAction;
-import pipe.actions.TypeAction;
+import pipe.actions.type.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;

@@ -1,6 +1,6 @@
 package pipe.handlers;
 
-import pipe.actions.TypeAction;
+import pipe.actions.type.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.handlers.mouse.MouseUtilities;
@@ -8,7 +8,6 @@ import pipe.models.petrinet.PetriNet;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PetriNetViewComponent;
 
-import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -191,7 +190,9 @@ public class PetriNetMouseHandler extends MouseInputAdapter
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         TypeAction action = applicationModel.getSelectedAction();
-        action.doAction(event, petriNetController);
+        if (action != null) {
+            action.doAction(event, petriNetController);
+        }
 //        if(petriNetController.isCurrentlyCreatingArc())
 //        {
 //            petriNetController.setEndPoint(Grid.getModifiedValue(event.getX()), Grid.getModifiedY(

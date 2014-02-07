@@ -4,6 +4,8 @@ import pipe.actions.*;
 import pipe.actions.animate.*;
 import pipe.actions.edit.*;
 import pipe.actions.file.*;
+import pipe.actions.grid.DragAction;
+import pipe.actions.grid.SelectAction;
 import pipe.actions.type.*;
 import pipe.actions.zoom.SetZoomAction;
 import pipe.actions.zoom.ZoomInAction;
@@ -107,7 +109,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
 
-    public TypeAction selectAction = new SelectAction();
+    public final GuiAction selectAction;
 
     public TypeAction placeAction = new PlaceAction();
 
@@ -121,7 +123,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public TypeAction deleteTokenAction = new DeleteTokenAction();
 
-    public TypeAction dragAction = new DragAction();
+    public GuiAction dragAction = new DragAction(this);
 
     public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G", this);
 
@@ -189,7 +191,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         randomAction =
                 new RandomAnimateAction("Random", "Randomly fire a transition", "5", this, applicationController);
         stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", this, applicationController);
-
+        selectAction = new SelectAction(this, applicationController);
         setTitle(null);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -729,7 +731,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * If there are no Petri nets being displayed this clears it
      */
     public void refreshTokenClassChoices() {
-        if (tabsDisplayed()) {
+        if (areAnyTabsDisplayed()) {
             String[] tokenClassChoices = buildTokenClassChoices();
             ComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
             tokenClassComboBox.setModel(model);
@@ -748,7 +750,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * @return names of Tokens for the combo box
      */
     protected String[] buildTokenClassChoices() {
-        if (tabsDisplayed()) {
+        if (areAnyTabsDisplayed()) {
             PetriNetController petriNetController = applicationController.getActivePetriNetController();
             Collection<Token> tokens = petriNetController.getNetTokens();
             String[] tokenClassChoices = new String[tokens.size()];
@@ -765,7 +767,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     /**
      * @return true if any tabs are displayed
      */
-    private boolean tabsDisplayed() {
+    public boolean areAnyTabsDisplayed() {
         return applicationController.getActivePetriNetController() != null;
     }
 

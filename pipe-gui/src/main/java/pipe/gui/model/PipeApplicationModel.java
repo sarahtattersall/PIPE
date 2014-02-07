@@ -1,6 +1,7 @@
 package pipe.gui.model;
 
 import pipe.actions.*;
+import pipe.actions.type.TypeAction;
 import pipe.gui.ApplicationSettings;
 
 import java.io.Serializable;

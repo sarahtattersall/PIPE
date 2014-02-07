@@ -1,6 +1,5 @@
 package pipe.actions.type;
 
-import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.models.component.Connectable;
