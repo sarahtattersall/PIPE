@@ -1,11 +1,15 @@
 package pipe.actions.file;
 
+import pipe.actions.GuiAction;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
-public class ImportAction extends FileAction {
+public class ImportAction extends GuiAction {
     public ImportAction() {
-        super("Import", "Import from eDSPN", "ctrl I");
+        super("Import", "Import from eDSPN", KeyEvent.VK_I, InputEvent.META_DOWN_MASK);
     }
 
     @Override

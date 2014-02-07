@@ -1,15 +1,17 @@
 package pipe.actions.file;
 
+import pipe.actions.GuiAction;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.widgets.FileBrowser;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
-public class OpenAction extends FileAction {
+public class OpenAction extends GuiAction {
 
     private String userPath;
     private File testFile;
@@ -17,7 +19,7 @@ public class OpenAction extends FileAction {
     private final PipeApplicationView applicationView;
 
     public OpenAction(PipeApplicationController applicationController, PipeApplicationView applicationView) {
-        super("Open", "Open", "ctrl O");
+        super("Open", "Open", KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
         this.applicationView = applicationView;
     }

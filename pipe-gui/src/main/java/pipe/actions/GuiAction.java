@@ -6,6 +6,8 @@ package pipe.actions;
 import pipe.gui.ApplicationSettings;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.net.URL;
 
 
@@ -22,6 +24,29 @@ import java.net.URL;
 public abstract class GuiAction
         extends AbstractAction
 {
+
+    /**
+     *
+     * @param name image name
+     * @param tooltip tooltip message
+     * @param key {@link java.awt.event.KeyEvent} key
+     * @param modifiers e.g. ctrl/shift obtained from {@link java.awt.event.InputEvent}
+     */
+    protected GuiAction(String name, String tooltip, int key, int modifiers) {
+        super(name);
+        URL iconURL = Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + name + ".png");
+        if(iconURL != null)
+        {
+            putValue(SMALL_ICON, new ImageIcon(iconURL));
+        }
+
+        if(tooltip != null)
+        {
+            putValue(SHORT_DESCRIPTION, tooltip);
+        }
+
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(key, modifiers));
+    }
 
     protected GuiAction(String name, String tooltip, String keystroke)
     {
