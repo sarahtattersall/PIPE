@@ -94,7 +94,6 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
     @Override
     public void setId(String id) {
-
-
+        this.id = id;
     }
 }

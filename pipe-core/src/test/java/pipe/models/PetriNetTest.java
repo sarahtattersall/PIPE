@@ -282,7 +282,6 @@ public class PetriNetTest {
                                     .and(ATransition.withId("T1"))
                                     .and(ANormalArc.withSource("P1").andTarget("T1").with(arcWeight, "Default").tokens())
                                     .andFinally(ANormalArc.withSource("T1").andTarget("P2").with(arcWeight, "Default").tokens());
-
     }
 
     @Test
@@ -463,6 +462,7 @@ public class PetriNetTest {
         place.setCapacity(1);
         petriNet.markEnabledTransitions();
 
+
         Transition transition = petriNet.getTransitions().iterator().next();
         assertTrue("Did not enable transition when it can fire", transition.isEnabled());
     }
@@ -563,6 +563,7 @@ public class PetriNetTest {
                 .and(ANormalArc.withSource("T1").andTarget("P2").with("1", "Default").token())
                 .andFinally(ANormalArc.withSource("P2").andTarget("T2").with("1", "Default").token());
 
+
         petriNet.markEnabledTransitions();
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
@@ -604,13 +605,14 @@ public class PetriNetTest {
         assertTrue("Transition was not enabled", transition.isEnabled());
     }
 
-
     private <T extends PetriNetComponent> T getComponent(String id, Iterable<T> components) {
         for (T component : components) {
             if (component.getId().equals(id)) {
                 return component;
             }
         }
+
         return null;
+
     }
 }

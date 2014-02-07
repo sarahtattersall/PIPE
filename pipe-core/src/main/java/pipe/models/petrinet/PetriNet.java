@@ -73,10 +73,19 @@ public class PetriNet {
      */
     public static final String NEW_TOKEN_CHANGE_MESSAGE = "newToken";
 
+    /**
+     * Message fired when a token is deleted
+     */
     public static final String DELETE_TOKEN_CHANGE_MESSAGE = "deleteToken";
 
+    /**
+     * Message fired when a rate parameter is added
+     */
     public static final String NEW_RATE_PARAMETER_CHANGE_MESSAGE = "newRateParameter";
 
+    /**
+     * Message fired when a rate parameter is deleted
+     */
     public static final String DELETE_RATE_PARAMETER_CHANGE_MESSAGE = "deleteRateParameter";
 
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);

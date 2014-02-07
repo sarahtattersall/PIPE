@@ -35,24 +35,55 @@ import java.util.Set;
 
 public class PetriNetController implements IController, Serializable {
 
+    /**
+     * Responsible for zooming of the current Petri net
+     */
     private final ZoomController zoomController;
 
+    /**
+     * Deals with undo/redo history of current Petri net
+     */
     private final HistoryManager historyManager;
 
+    /**
+     * Petri net being displayed
+     */
     private final PetriNet petriNet;
 
-    private final Set<PetriNetComponent> selectedComponents = new HashSet<PetriNetComponent>();
+    /**
+     * Selected components in the Petri net
+     */
+    private final Set<PetriNetComponent> selectedComponents = new HashSet<>();
 
+    /**
+     * Responsible for copy and pasting of selected components
+     */
     private final CopyPasteManager copyPasteManager;
 
+    /**
+     * Responsible for naming places
+     */
     private final PetriNetComponentNamer placeNamer;
 
+    /**
+     * Responsible for creating unique transition names
+     */
     private final PetriNetComponentNamer transitionNamer;
 
+    /**
+     * Token that is currently selected in the drop down
+     */
     private Token selectedToken;
 
+    /**
+     * Animator class for animating tokens in the petri net
+     */
     private Animator animator;
 
+
+    /**
+     * Drag manager for dragging selected objects
+     */
     private DragManager dragManager = new DragManager(this);
 
 
@@ -133,8 +164,8 @@ public class PetriNetController implements IController, Serializable {
     /**
      * A crude method for selecting arcs, does not take into account bezier curves
      *
-     * @param arc
-     * @param selectionRectangle
+     * @param arc arc to test to see if it is selected
+     * @param selectionRectangle bounds of selection on screen
      * @return if selectionRectangle intersects the path
      */
     private boolean isArcSelected(Arc<? extends Connectable, ? extends Connectable> arc, Rectangle selectionRectangle) {
@@ -143,6 +174,9 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
+     *
+     * Creates an arc with a straight path arc
+     *
      * @param arc
      * @return Straight path for arc, ignoring Bezier curves
      */
@@ -366,5 +400,12 @@ public class PetriNetController implements IController, Serializable {
 
     public boolean isUniqueName(String newName) {
         return placeNamer.isUniqueName(newName) && transitionNamer.isUniqueName(newName);
+    }
+
+    public void deleteRateParameter(String name) throws PetriNetComponentNotFoundException {
+        RateParameter rateParameter = petriNet.getRateParameter(name);
+        HistoryItem historyItem = new DeletePetriNetObject(rateParameter, petriNet);
+        historyManager.addNewEdit(historyItem);
+        petriNet.removeRateParameter(rateParameter);
     }
 }
