@@ -17,9 +17,8 @@ import java.awt.event.MouseEvent;
  */
 public abstract class TransitionAction extends TypeAction {
 
-    public TransitionAction(final String name, final int typeID,
-                            final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public TransitionAction(String name, String tooltip, int key, int modifiers) {
+        super(name,  tooltip, key, modifiers);
     }
 
     @Override

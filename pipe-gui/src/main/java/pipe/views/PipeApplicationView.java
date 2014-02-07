@@ -30,6 +30,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -81,21 +83,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final PipeApplicationModel applicationModel;
 
-    private final FileAction openAction;
+    private final GuiAction openAction;
 
     public JComboBox<String> zoomComboBox;
 
     public JComboBox<String> tokenClassComboBox;
 
-    public FileAction printAction = new PrintAction();
+    public GuiAction printAction = new PrintAction();
 
-    public FileAction exportPNGAction = new ExportPNGAction();
+    public GuiAction exportPNGAction = new ExportPNGAction();
 
-    public FileAction exportTNAction = new ExportTNAction();
+    public GuiAction exportTNAction = new ExportTNAction();
 
-    public FileAction exportPSAction = new ExportPSAction();
+    public GuiAction exportPSAction = new ExportPSAction();
 
-    public FileAction importAction = new ImportAction();
+    public GuiAction importAction = new ImportAction();
 
     public GuiAction exitAction = new ExitAction(this);
 
@@ -105,26 +107,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
 
-    public TypeAction selectAction = new SelectAction("Select", Constants.SELECT, "Select components", "S");
+    public TypeAction selectAction = new SelectAction();
 
-    public TypeAction placeAction = new PlaceAction("Place", Constants.PLACE, "Add a place", "P");
+    public TypeAction placeAction = new PlaceAction();
 
-    public TypeAction transAction =
-            new ImmediateTransitionAction("Immediate transition", Constants.IMMTRANS, "Add an immediate transition",
-                    "I");
+    public TypeAction transAction = new ImmediateTransitionAction();
 
-    public TypeAction timedtransAction =
-            new TimedTransitionAction("Timed transition", Constants.TIMEDTRANS, "Add a timed transition", "T");
+    public TypeAction timedtransAction = new TimedTransitionAction();
 
-    public TypeAction annotationAction =
-            new AnnotationAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N");
+    public TypeAction annotationAction = new AnnotationAction();
 
-    public TypeAction tokenAction = new AddTokenAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD");
+    public TypeAction tokenAction = new AddTokenAction();
 
-    public TypeAction deleteTokenAction =
-            new DeleteTokenAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT");
+    public TypeAction deleteTokenAction = new DeleteTokenAction();
 
-    public TypeAction dragAction = new DragAction("Drag", Constants.DRAG, "Drag the drawing", "D");
+    public TypeAction dragAction = new DragAction();
 
     public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G", this);
 
@@ -153,13 +150,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private JScrollPane scroller;
 
-    private FileAction createAction = new CreateAction(this);
+    private GuiAction createAction = new CreateAction(this);
 
-    private FileAction closeAction = new CloseAction(this);
+    private GuiAction closeAction = new CloseAction(this);
 
-    private FileAction saveAction = new SaveAction();
+    private GuiAction saveAction = new SaveAction();
 
-    private FileAction saveAsAction = new SaveAsAction();
+    private GuiAction saveAsAction = new SaveAsAction();
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
@@ -168,20 +165,22 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
 
-        inhibarcAction = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H",
-                new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this), applicationController,
+        inhibarcAction =
+                new ArcAction("Inhibitor Arc", "Add an inhibitor arc (alt-h)", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
+                        new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this),
+                        applicationController, this);
+        arcAction = new ArcAction("Arc", "Add an arc (alt-a)", KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK,
+                new NormalArcSourceVisitor(), new NormalCreator(applicationController, this), applicationController,
                 this);
-        arcAction = new ArcAction("Arc", Constants.ARC, "Add an arc", "A", new NormalArcSourceVisitor(),
-                new NormalCreator(applicationController, this), applicationController, this);
-        zoomOutAction = new ZoomOutAction("Zoom out", "Zoom out by 10% ", "ctrl MINUS", zoomUI);
-        zoomInAction = new ZoomInAction("Zoom in", "Zoom in by 10% ", "ctrl PLUS", zoomUI);
+        zoomOutAction = new ZoomOutAction(zoomUI);
+        zoomInAction = new ZoomInAction(zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
         openAction = new OpenAction(applicationController, this);
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
         specifyRateParameterAction = new SpecifyRateParameterAction(applicationController);
-        copyAction = new CopyAction("Copy", "Copy (Ctrl-C)", "ctrl C", applicationController);
-        pasteAction = new PasteAction("Paste", "Paste (Ctrl-V)", "ctrl V", applicationController);
-        cutAction = new CutAction("Cut", "Cut (Ctrl-X)", "ctrl X", applicationController);
+        copyAction = new CopyAction(applicationController);
+        pasteAction = new PasteAction(applicationController);
+        cutAction = new CutAction(applicationController);
         unfoldAction =
                 new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U", this, applicationController);
         startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this,
@@ -776,16 +775,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return selected.toString();
     }
 
-    protected String[] buildRates(Collection<RateParameter> components) {
-        String[] rates = new String[components.size()];
-        int index = 0;
-        for (RateParameter parameter : components) {
-            rates[index] = parameter.getId();
-            index++;
-        }
-        return rates;
-    }
-
     public PetriNetTab getCurrentTab() {
         int index = frameForPetriNetTabs.getSelectedIndex();
         return getTab(index);
@@ -838,6 +827,16 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final void setTitle(String title) {
         String name = applicationModel.getName();
         super.setTitle((title == null) ? name : name + ": " + title);
+    }
+
+    protected String[] buildRates(Collection<RateParameter> components) {
+        String[] rates = new String[components.size()];
+        int index = 0;
+        for (RateParameter parameter : components) {
+            rates[index] = parameter.getId();
+            index++;
+        }
+        return rates;
     }
 
     public JTabbedPane getFrameForPetriNetTabs() {

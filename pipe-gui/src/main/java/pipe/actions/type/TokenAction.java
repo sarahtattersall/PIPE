@@ -11,8 +11,8 @@ import java.awt.event.MouseEvent;
 
 public abstract class TokenAction extends TypeAction {
 
-    public TokenAction(String name, int typeID, String tooltip, String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public TokenAction(String name, String tooltip, int key, int modifiers) {
+        super(name, tooltip, key, modifiers);
     }
 
     /**

@@ -4,14 +4,15 @@ import pipe.actions.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class CutAction extends GuiAction {
     private final PipeApplicationController applicationController;
 
-    public CutAction(final String name, final String tooltip,
-                     final String keystroke, PipeApplicationController applicationController) {
-        super(name, tooltip, keystroke);
+    public CutAction(PipeApplicationController applicationController) {
+        super("Cut", "Cut (Ctrl-X)", KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
     }
 

@@ -30,7 +30,7 @@ public class AnnotationActionTest {
 
     @Before
     public void setUp() {
-        action = new AnnotationAction("Annotation", Constants.ANNOTATION, "Add an annotation", "N");
+        action = new AnnotationAction();
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);

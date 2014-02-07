@@ -3,11 +3,13 @@ package pipe.actions.type;
 import pipe.controllers.PlaceController;
 import pipe.models.component.token.Token;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 public class AddTokenAction extends TokenAction {
 
-    public AddTokenAction(final String name, final int typeID,
-                          final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public AddTokenAction() {
+        super("Add token", "Add a token (alt-t)", KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK);
     }
 
     @Override

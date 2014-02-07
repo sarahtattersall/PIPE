@@ -16,18 +16,14 @@ public abstract class TypeAction extends GuiAction
     public abstract void doAction(MouseEvent event, PetriNetController petriNetController);
     public abstract <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController);
 
-    private final int typeID;
-
-    public TypeAction(String name, int typeID, String tooltip, String keystroke)
+    public TypeAction(String name, String tooltip, int key, int modifiers)
     {
-        super(name, tooltip, keystroke);
-        this.typeID = typeID;
+        super(name, tooltip, key, modifiers);
     }
 
-    public TypeAction(String name, int typeID, String tooltip, String keystroke, boolean toggleable)
+    public TypeAction(String name, String tooltip, String keystroke, boolean toggleable)
     {
         super(name, tooltip, keystroke, toggleable);
-        this.typeID = typeID;
     }
 
     @Override
@@ -37,9 +33,9 @@ public abstract class TypeAction extends GuiAction
         PipeApplicationModel model = ApplicationSettings.getApplicationModel();
         model.selectTypeAction(this);
 
-        pipeApplicationView.setMode(typeID);
+//        pipeApplicationView.setMode(typeID);
         StatusBar statusBar = ApplicationSettings.getApplicationView().statusBar;
-        statusBar.changeText(typeID);
+//        statusBar.changeText(typeID);
 
         PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
@@ -53,28 +49,28 @@ public abstract class TypeAction extends GuiAction
         selectionManager.disableSelection();
         // _petriNetTabView.getSelectionObject().clearSelection();
 
-        if((typeID != Constants.ARC))// && (petriNetController.isCurrentlyCreatingArc()))
-        {
-//            petriNetController.cancelArcCreation();
-            petriNetTab.repaint();
-        }
-
-        if(typeID == Constants.SELECT)
-        {
-            // disable drawing to eliminate possiblity of connecting arc to
-            // old coord of moved component
-            statusBar.changeText(typeID);
-            selectionManager.enableSelection();
-            petriNetTab.setCursorType("arrow");
-        }
-        else if(typeID == Constants.DRAG)
-        {
-            petriNetTab.setCursorType("move");
-        }
-        else
-        {
-            petriNetTab.setCursorType("crosshair");
-        }
+//        if((typeID != Constants.ARC))// && (petriNetController.isCurrentlyCreatingArc()))
+//        {
+////            petriNetController.cancelArcCreation();
+//            petriNetTab.repaint();
+//        }
+//
+//        if(typeID == Constants.SELECT)
+//        {
+//            // disable drawing to eliminate possiblity of connecting arc to
+//            // old coord of moved component
+//            statusBar.changeText(typeID);
+//            selectionManager.enableSelection();
+//            petriNetTab.setCursorType("arrow");
+//        }
+//        else if(typeID == Constants.DRAG)
+//        {
+//            petriNetTab.setCursorType("move");
+//        }
+//        else
+//        {
+//            petriNetTab.setCursorType("crosshair");
+//        }
     }
 
 }

@@ -17,6 +17,9 @@ import pipe.visitor.connectable.arc.ArcSourceVisitor;
 import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 import static org.mockito.Mockito.*;
 
 public class ArcActionTest {
@@ -56,7 +59,7 @@ public class ArcActionTest {
         mockApplicationController = mock(PipeApplicationController.class);
         when(mockApplicationController.getActivePetriNetController()).thenReturn(mockController);
 
-        action = new ArcAction("Inhibitor Arc", Constants.INHIBARC, "Add an inhibitor arc", "H", mockSourceVisitor, mockCreatorVisitor, mockApplicationController, mockApplicationView);
+        action = new ArcAction("Inhibitor Arc", "Add an inhibitor arc", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK, mockSourceVisitor, mockCreatorVisitor, mockApplicationController, mockApplicationView);
     }
 
     @Test

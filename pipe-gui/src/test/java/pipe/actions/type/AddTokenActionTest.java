@@ -23,7 +23,7 @@ public class AddTokenActionTest {
 
     @Before
     public void setUp() {
-        action = new AddTokenAction("Add token", Constants.ADDTOKEN, "Add a token", "ADD");
+        action = new AddTokenAction();
         mockPetriNetController = mock(PetriNetController.class);
         mockPlaceController = mock(PlaceController.class);
         place = mock(Place.class);

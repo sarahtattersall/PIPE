@@ -30,7 +30,7 @@ public class PlaceActionTest {
 
     @Before
     public void setUp() {
-        action = new PlaceAction("Place", Constants.PLACE, "place", "p");
+        action = new PlaceAction();
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);

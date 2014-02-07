@@ -26,7 +26,7 @@ public class DeleteTokenActionTest {
 
     @Before
     public void setUp() {
-        action = new DeleteTokenAction("Delete token", Constants.DELTOKEN, "Delete a token", "SUBTRACT");
+        action = new DeleteTokenAction();
         mockPetriNetController = mock(PetriNetController.class);
         mockPlaceController = mock(PlaceController.class);
         place = mock(Place.class);

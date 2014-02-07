@@ -3,15 +3,17 @@ package pipe.actions.zoom;
 import pipe.actions.GuiAction;
 import pipe.views.ZoomManager;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class ZoomInAction extends GuiAction {
 
 
     private final ZoomManager zoomManager;
 
-    public ZoomInAction(String name, String tooltip, String keystroke, ZoomManager zoomManager) {
-        super(name, tooltip, keystroke);
+    public ZoomInAction(ZoomManager zoomManager) {
+        super("Zoom in", "Zoom in by 10% ", KeyEvent.VK_PLUS, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.zoomManager = zoomManager;
     }
 

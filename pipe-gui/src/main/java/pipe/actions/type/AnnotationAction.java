@@ -10,6 +10,8 @@ import pipe.models.petrinet.PetriNet;
 import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class AnnotationAction extends TypeAction {
@@ -40,9 +42,8 @@ public class AnnotationAction extends TypeAction {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public AnnotationAction(String name, int typeID,
-                            String tooltip, String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public AnnotationAction() {
+        super("Annotation", "Add an annotation (alt-N)", KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK);
     }
 
 

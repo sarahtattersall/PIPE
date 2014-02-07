@@ -4,9 +4,11 @@ import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
 import pipe.models.component.Connectable;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-//TODO
+//TODO IS THIS EVEN A TYPE ACTION?
 public class DragAction extends TypeAction {
 
     @Override
@@ -19,9 +21,8 @@ public class DragAction extends TypeAction {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public DragAction(final String name, final int typeID,
-                     final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public DragAction() {
+        super("Drag", "Drag the drawing alt-D", KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK);
     }
 
 

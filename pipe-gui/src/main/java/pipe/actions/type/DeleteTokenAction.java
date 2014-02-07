@@ -3,10 +3,12 @@ package pipe.actions.type;
 import pipe.controllers.PlaceController;
 import pipe.models.component.token.Token;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 public class DeleteTokenAction extends TokenAction {
-    public DeleteTokenAction(final String name, final int typeID,
-                     final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public DeleteTokenAction() {
+       super("Delete token", "Delete a token (alt-D)", KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK);
     }
 
     @Override

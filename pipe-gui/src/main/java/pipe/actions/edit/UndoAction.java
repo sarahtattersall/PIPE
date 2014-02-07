@@ -5,12 +5,14 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class UndoAction extends GuiAction {
 
     public UndoAction() {
-        super("Undo", "Undo (Ctrl-Z)", "ctrl Z");
+        super("Undo", "Undo (Ctrl-Z)", KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
     }
 
     @Override

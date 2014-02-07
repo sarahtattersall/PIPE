@@ -4,6 +4,9 @@ import pipe.controllers.PetriNetController;
 import pipe.models.component.Connectable;
 import pipe.views.PipeApplicationView;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 public class ImmediateTransitionAction extends TransitionAction {
 
 
@@ -12,9 +15,7 @@ public class ImmediateTransitionAction extends TransitionAction {
         return false;
     }
 
-    public ImmediateTransitionAction(final String name, final int typeID,
-                                     final String tooltip,
-                                     final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public ImmediateTransitionAction() {
+        super("Immediate transition", "Add an immediate transition (alt-I)", KeyEvent.VK_I, InputEvent.ALT_DOWN_MASK);
     }
 }

@@ -28,10 +28,10 @@ public class ArcAction extends TypeAction {
 
     private TemporaryArcView<? extends Connectable> temporaryArcView = null;
 
-    public ArcAction(String name, int typeID, String tooltip, String keystroke, ArcSourceVisitor sourceVisitor,
+    public ArcAction(String name, String tooltip, int key, int modifiers, ArcSourceVisitor sourceVisitor,
                      ArcActionCreator arcCreator, PipeApplicationController controller,
                      PipeApplicationView applicationView) {
-        super(name, typeID, tooltip, keystroke);
+        super(name, tooltip, key, modifiers);
         this.sourceVisitor = sourceVisitor;
         this.arcCreator = arcCreator;
         this.controller = controller;

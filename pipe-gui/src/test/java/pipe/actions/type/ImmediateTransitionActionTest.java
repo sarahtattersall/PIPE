@@ -31,7 +31,7 @@ public class ImmediateTransitionActionTest {
 
     @Before
     public void setUp() {
-        action = new ImmediateTransitionAction("dummy", Constants.IMMTRANS, "tooltip", "key");
+        action = new ImmediateTransitionAction();
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);

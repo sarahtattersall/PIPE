@@ -2,6 +2,7 @@ package pipe.actions.type;
 
 import pipe.actions.TypeAction;
 import pipe.controllers.PetriNetController;
+import pipe.gui.Constants;
 import pipe.gui.Grid;
 import pipe.gui.ZoomController;
 import pipe.historyActions.AddPetriNetObject;
@@ -11,6 +12,8 @@ import pipe.models.component.place.Place;
 import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 /**
@@ -19,9 +22,8 @@ import java.awt.event.MouseEvent;
 public class PlaceAction extends TypeAction {
 
 
-    public PlaceAction(final String name, final int typeID,
-                       final String tooltip, final String keystroke) {
-        super(name, typeID, tooltip, keystroke);
+    public PlaceAction() {
+        super("Place", "Add a place", KeyEvent.VK_P, InputEvent.ALT_DOWN_MASK);
     }
 
     @Override

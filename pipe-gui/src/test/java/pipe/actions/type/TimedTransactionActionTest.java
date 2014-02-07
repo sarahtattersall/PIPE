@@ -32,7 +32,7 @@ public class TimedTransactionActionTest {
 
     @Before
     public void setUp() {
-        action = new TimedTransitionAction("dummy", Constants.IMMTRANS, "tooltip", "key");
+        action = new TimedTransitionAction();
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);
