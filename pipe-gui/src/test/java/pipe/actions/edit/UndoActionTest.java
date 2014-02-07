@@ -2,6 +2,7 @@ package pipe.actions.edit;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.edit.UndoAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
@@ -49,7 +50,7 @@ public class UndoActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = undoAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl Z");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta Z");
         assertEquals(stroke, acceleratorKey);
     }
 }

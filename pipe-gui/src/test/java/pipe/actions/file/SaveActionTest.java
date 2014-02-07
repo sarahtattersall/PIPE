@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.file.SaveAction;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -41,7 +42,7 @@ public class SaveActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = saveAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl S");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta S");
         assertEquals(stroke, acceleratorKey);
     }
 

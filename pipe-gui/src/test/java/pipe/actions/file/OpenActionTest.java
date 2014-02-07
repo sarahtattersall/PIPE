@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.file.OpenAction;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
@@ -53,7 +54,7 @@ public class OpenActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = openAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl O");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta O");
         assertEquals(stroke, acceleratorKey);
     }
 }

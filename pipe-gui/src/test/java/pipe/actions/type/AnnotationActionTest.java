@@ -5,6 +5,7 @@ import matchers.component.HasAnnotationFields;
 import matchers.component.HasMultiple;
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.create.AnnotationAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.historyActions.AddPetriNetObject;

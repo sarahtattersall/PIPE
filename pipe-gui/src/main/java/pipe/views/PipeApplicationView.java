@@ -1,15 +1,23 @@
 package pipe.views;
 
 import pipe.actions.*;
-import pipe.actions.animate.*;
-import pipe.actions.edit.*;
-import pipe.actions.file.*;
-import pipe.actions.grid.DragAction;
-import pipe.actions.grid.SelectAction;
-import pipe.actions.type.*;
-import pipe.actions.zoom.SetZoomAction;
-import pipe.actions.zoom.ZoomInAction;
-import pipe.actions.zoom.ZoomOutAction;
+import pipe.actions.gui.DeleteAction;
+import pipe.actions.gui.ExampleFileAction;
+import pipe.actions.gui.GuiAction;
+import pipe.actions.gui.UnfoldAction;
+import pipe.actions.gui.animate.*;
+import pipe.actions.gui.create.*;
+import pipe.actions.gui.edit.*;
+import pipe.actions.gui.file.*;
+import pipe.actions.gui.grid.DragAction;
+import pipe.actions.gui.grid.GridAction;
+import pipe.actions.gui.grid.SelectAction;
+import pipe.actions.gui.tokens.ChooseTokenClassAction;
+import pipe.actions.gui.tokens.SpecifyTokenAction;
+import pipe.actions.gui.window.ExitAction;
+import pipe.actions.gui.zoom.SetZoomAction;
+import pipe.actions.gui.zoom.ZoomInAction;
+import pipe.actions.gui.zoom.ZoomOutAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.InhibitorCreator;
@@ -57,9 +65,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final GuiAction pasteAction;
 
-    public final TypeAction arcAction;
+    public final CreateAction arcAction;
 
-    public final TypeAction inhibarcAction;
+    public final CreateAction inhibarcAction;
 
     public final SpecifyTokenAction specifyTokenClasses;
 
@@ -70,6 +78,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final AnimateAction stepforwardAction;
 
     public final AnimateAction randomAction;
+
+    public final GuiAction selectAction;
+
+    public final DeleteAction deleteAction;
 
     final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
 
@@ -107,25 +119,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public GuiAction redoAction = new RedoAction();
 
-    public DeleteAction deleteAction = new DeleteAction("Delete", "Delete selection", "DELETE");
+    public CreateAction placeAction = new PlaceAction();
 
-    public final GuiAction selectAction;
+    public CreateAction transAction = new ImmediateTransitionAction();
 
-    public TypeAction placeAction = new PlaceAction();
+    public CreateAction timedtransAction = new TimedTransitionAction();
 
-    public TypeAction transAction = new ImmediateTransitionAction();
+    public CreateAction annotationAction = new AnnotationAction();
 
-    public TypeAction timedtransAction = new TimedTransitionAction();
+    public CreateAction tokenAction = new AddTokenAction();
 
-    public TypeAction annotationAction = new AnnotationAction();
-
-    public TypeAction tokenAction = new AddTokenAction();
-
-    public TypeAction deleteTokenAction = new DeleteTokenAction();
+    public CreateAction deleteTokenAction = new DeleteTokenAction();
 
     public GuiAction dragAction = new DragAction(this);
 
-    public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G", this);
+    public GridAction toggleGrid = new GridAction(this);
 
     public GuiAction zoomOutAction;
 
@@ -143,8 +151,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public UngroupTransitionsAction ungroupTransitions =
             new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
 
-    public ChooseTokenClassAction chooseTokenClassAction =
-            new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
+    public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(this);
 
     private JToolBar animationToolBar, drawingToolBar;
 
@@ -152,7 +159,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private JScrollPane scroller;
 
-    private GuiAction createAction = new CreateAction(this);
+    private GuiAction createAction = new NewPetriNetAction(this);
 
     private GuiAction closeAction = new CloseAction(this);
 
@@ -184,7 +191,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         pasteAction = new PasteAction(applicationController);
         cutAction = new CutAction(applicationController);
         unfoldAction =
-                new UnfoldAction("unfoldAction", "Unfold Petri Net", "shift ctrl U", this, applicationController);
+                new UnfoldAction(this, applicationController);
         startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this,
                 applicationController);
         stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", this, applicationController);
@@ -192,6 +199,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 new RandomAnimateAction("Random", "Randomly fire a transition", "5", this, applicationController);
         stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", this, applicationController);
         selectAction = new SelectAction(this, applicationController);
+        deleteAction = new DeleteAction(applicationController);
+
         setTitle(null);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -418,7 +427,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     for (JarEntry net : nets) {
                         if (net.getName().toLowerCase().endsWith(".xml")) {
                             addMenuItem(exampleMenu,
-                                    new ExampleFileAction(net, (index < 10) ? ("ctrl " + index) : null, this));
+                                    new ExampleFileAction(net, this));
                             index++;
                         }
                     }
@@ -464,8 +473,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     int k = 0;
                     for (File net : nets) {
                         if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu,
-                                    new ExampleFileAction(net, (k < 10) ? "ctrl " + (k++) : null, this));
+                            addMenuItem(exampleMenu, new ExampleFileAction(net, this));
                         }
                     }
 

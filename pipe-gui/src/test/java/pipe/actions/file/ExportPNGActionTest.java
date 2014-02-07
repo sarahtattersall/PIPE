@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.file.ExportPNGAction;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -39,7 +40,7 @@ public class ExportPNGActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = exportPNGAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl G");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta G");
         assertEquals(stroke, acceleratorKey);
     }
 }

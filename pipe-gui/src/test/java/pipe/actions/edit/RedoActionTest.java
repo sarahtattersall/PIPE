@@ -2,6 +2,7 @@ package pipe.actions.edit;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.edit.RedoAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
@@ -49,7 +50,7 @@ public class RedoActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = redoAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl Y");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta Y");
         assertEquals(stroke, acceleratorKey);
     }
 }

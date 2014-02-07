@@ -5,9 +5,9 @@
  */
 package pipe.handlers;
 
-import pipe.actions.SplitArcPointAction;
-import pipe.actions.ToggleArcPointAction;
-import pipe.actions.edit.DeleteArcPathPointAction;
+import pipe.actions.petrinet.SplitArcPointAction;
+import pipe.actions.petrinet.ToggleArcPointAction;
+import pipe.actions.gui.edit.DeleteArcPathPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;

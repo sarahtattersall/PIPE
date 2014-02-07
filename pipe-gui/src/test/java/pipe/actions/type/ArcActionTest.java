@@ -2,6 +2,7 @@ package pipe.actions.type;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.create.ArcAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;

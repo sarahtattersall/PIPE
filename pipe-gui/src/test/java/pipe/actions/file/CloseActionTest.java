@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.file.CloseAction;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -16,8 +17,8 @@ public class CloseActionTest {
 
     @Before
     public void setUp() {
-        closeAction = new CloseAction(mockView);
         mockView = mock(PipeApplicationView.class);
+        closeAction = new CloseAction(mockView);
     }
 
     @Test
@@ -28,8 +29,7 @@ public class CloseActionTest {
         when(mockpane.getSelectedIndex()).thenReturn(selectedIndex);
         when(mockView.getFrameForPetriNetTabs()).thenReturn(mockpane);
         closeAction.actionPerformed(null);
-        verify(mockView).removeTab(selectedIndex);
-        verify(mockpane).remove(selectedIndex);
+        verify(mockView).removeCurrentTab();
     }
 
     @Test
@@ -41,7 +41,7 @@ public class CloseActionTest {
     @Test
     public void setKeyboardShortcut() {
         Object acceleratorKey = closeAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl W");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta W");
         assertEquals(stroke, acceleratorKey);
     }
 }

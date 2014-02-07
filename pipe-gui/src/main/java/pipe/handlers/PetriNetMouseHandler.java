@@ -1,6 +1,6 @@
 package pipe.handlers;
 
-import pipe.actions.type.TypeAction;
+import pipe.actions.gui.create.CreateAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.handlers.mouse.MouseUtilities;
@@ -38,7 +38,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
     public void mousePressed(MouseEvent event)
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-        TypeAction action = applicationModel.getSelectedAction();
+        CreateAction action = applicationModel.getSelectedAction();
 //        Point start = e.getPoint();
 //        Point p;
 
@@ -189,7 +189,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
     public void mouseMoved(MouseEvent event)
     {
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-        TypeAction action = applicationModel.getSelectedAction();
+        CreateAction action = applicationModel.getSelectedAction();
         if (action != null) {
             action.doAction(event, petriNetController);
         }

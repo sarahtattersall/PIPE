@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.file.ExportTNAction;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -39,7 +40,7 @@ public class ExportTNActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = exportTAAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl E");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta E");
         assertEquals(stroke, acceleratorKey);
     }
 }

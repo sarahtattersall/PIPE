@@ -1,7 +1,7 @@
 package pipe.gui.model;
 
 import pipe.actions.*;
-import pipe.actions.type.TypeAction;
+import pipe.actions.gui.create.CreateAction;
 import pipe.gui.ApplicationSettings;
 
 import java.io.Serializable;
@@ -22,7 +22,7 @@ public class PipeApplicationModel implements Serializable {
     /**
      * Type that is currently selected on the petrinet
      */
-    private TypeAction selectedType;
+    private CreateAction selectedType;
 
     public PipeApplicationModel(String version) {
         ApplicationSettings.register(this);
@@ -83,11 +83,11 @@ public class PipeApplicationModel implements Serializable {
     }
 
 
-    public void selectTypeAction(TypeAction action) {
+    public void selectTypeAction(CreateAction action) {
         selectedType = action;
     }
 
-    public TypeAction getSelectedAction() {
+    public CreateAction getSelectedAction() {
         return selectedType;
     }
 }

@@ -4,6 +4,7 @@ import matchers.component.HasMultiple;
 import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.create.PlaceAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.historyActions.AddPetriNetObject;

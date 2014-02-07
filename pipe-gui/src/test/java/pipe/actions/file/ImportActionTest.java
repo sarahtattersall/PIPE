@@ -2,6 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.file.ImportAction;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
@@ -39,7 +40,7 @@ public class ImportActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = importAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("ctrl I");
+        KeyStroke stroke = KeyStroke.getKeyStroke("meta I");
         assertEquals(stroke, acceleratorKey);
     }
 }

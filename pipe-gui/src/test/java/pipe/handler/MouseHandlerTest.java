@@ -1,7 +1,7 @@
 package pipe.handler;
 
 import org.junit.Before;
-import pipe.actions.type.TypeAction;
+import pipe.actions.gui.create.CreateAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
@@ -26,7 +26,7 @@ public class MouseHandlerTest {
     MouseEvent mockEvent;
 
 
-    TypeAction mockAction;
+    CreateAction mockAction;
 
     @Before
     public void setup() {
@@ -40,7 +40,7 @@ public class MouseHandlerTest {
         mockEvent = mock(MouseEvent.class);
         when(mockEvent.getPoint()).thenReturn(new Point(0,0));
         when(mockUtilities.isLeftMouse(mockEvent)).thenReturn(true);
-        mockAction = mock(TypeAction.class);
+        mockAction = mock(CreateAction.class);
     }
 
 }

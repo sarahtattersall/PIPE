@@ -3,7 +3,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.io.File;
 import java.util.Collection;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
-import javax.swing.JComboBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
@@ -21,15 +19,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import pipe.actions.*;
-import pipe.actions.animate.*;
-import pipe.actions.edit.*;
-import pipe.actions.file.*;
-import pipe.actions.type.*;
+import pipe.actions.gui.GuiAction;
+import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.TokenPanel;
-import pipe.gui.model.PipeApplicationModel;
-import pipe.utilities.Copier;
 import pipe.views.ArcView;
 import pipe.views.MarkingView;
 import pipe.views.PetriNetView;

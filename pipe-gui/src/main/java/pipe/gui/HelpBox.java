@@ -3,7 +3,7 @@
  */
 package pipe.gui;
 
-import pipe.actions.GuiAction;
+import pipe.actions.gui.GuiAction;
 import pipe.gui.widgets.ButtonBar;
 
 import javax.swing.*;

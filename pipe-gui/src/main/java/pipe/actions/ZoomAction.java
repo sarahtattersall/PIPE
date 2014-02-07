@@ -1,12 +1,7 @@
 package pipe.actions;
 
-import pipe.gui.ApplicationSettings;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
-import pipe.views.PipeApplicationView;
+import pipe.actions.gui.GuiAction;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class ZoomAction extends GuiAction
@@ -16,6 +11,7 @@ public class ZoomAction extends GuiAction
         super(name, tooltip, keystroke);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e)
     {
 //        PipeApplicationView _pipeApplicationView = ApplicationSettings.getApplicationView();

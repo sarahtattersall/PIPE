@@ -1,7 +1,7 @@
 package pipe.handlers;
 
-import pipe.actions.ShowHideInfoAction;
-import pipe.actions.type.TypeAction;
+import pipe.actions.petrinet.ShowHideInfoAction;
+import pipe.actions.gui.create.CreateAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;
@@ -36,7 +36,7 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
         } else if (e.getButton() == MouseEvent.BUTTON1) {
 
             PipeApplicationModel model = ApplicationSettings.getApplicationModel();
-            TypeAction selectedAction = model.getSelectedAction();
+            CreateAction selectedAction = model.getSelectedAction();
             selectedAction.doConnectableAction(component, petriNetController);
         }
     }
@@ -49,7 +49,7 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
     @Override
     protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popupMenu = super.getPopup(e);
-        JMenuItem menuItem = new JMenuItem(new ShowHideInfoAction(viewComponent));
+        JMenuItem menuItem = new JMenuItem(new ShowHideInfoAction<>(viewComponent));
         if (viewComponent.getAttributesVisible()){
             menuItem.setText("Hide Attributes");
         } else {

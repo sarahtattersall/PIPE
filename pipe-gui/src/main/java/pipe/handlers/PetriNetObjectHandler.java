@@ -1,6 +1,6 @@
 package pipe.handlers;
 
-import pipe.actions.DeletePetriNetObjectAction;
+import pipe.actions.petrinet.DeletePetriNetObjectAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
@@ -84,6 +84,33 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
     }
 
     /**
+     * Displays the popup menu
+     *
+     * @param e
+     */
+    private void checkForPopup(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            JPopupMenu m = getPopup(e);
+            m.show(viewComponent, e.getX(), e.getY());
+        }
+    }
+
+    /**
+     * Creates the popup menu that the user will see when they right click on a
+     * component
+     *
+     * @param e
+     * @return
+     */
+    protected JPopupMenu getPopup(MouseEvent e) {
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem menuItem = new JMenuItem(new DeletePetriNetObjectAction(component));
+        menuItem.setText("Delete");
+        popup.add(menuItem);
+        return popup;
+    }
+
+    /**
      * Event handler for when the user releases the mouse, used in conjunction
      * with mouseDragged and mouseReleased to implement the moving action
      */
@@ -135,33 +162,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 dragManager.drag(e.getPoint());
             }
         }
-    }
-
-    /**
-     * Displays the popup menu
-     *
-     * @param e
-     */
-    private void checkForPopup(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            JPopupMenu m = getPopup(e);
-            m.show(viewComponent, e.getX(), e.getY());
-        }
-    }
-
-    /**
-     * Creates the popup menu that the user will see when they right click on a
-     * component
-     *
-     * @param e
-     * @return
-     */
-    protected JPopupMenu getPopup(MouseEvent e) {
-        JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem = new JMenuItem(new DeletePetriNetObjectAction(component));
-        menuItem.setText("Delete");
-        popup.add(menuItem);
-        return popup;
     }
 
     //NOU-PERE: eliminat mouseWheelMoved

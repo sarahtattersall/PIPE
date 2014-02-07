@@ -5,6 +5,8 @@ import matchers.component.HasTimed;
 import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
+import pipe.actions.gui.create.ImmediateTransitionAction;
+import pipe.actions.gui.create.TransitionAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.Grid;
