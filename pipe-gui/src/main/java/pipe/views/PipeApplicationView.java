@@ -1,5 +1,9 @@
 package pipe.views;
 
+import com.apple.eawt.AppEvent;
+import com.apple.eawt.Application;
+import com.apple.eawt.QuitHandler;
+import com.apple.eawt.QuitResponse;
 import pipe.actions.*;
 import pipe.actions.gui.DeleteAction;
 import pipe.actions.gui.ExampleFileAction;
@@ -38,10 +42,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -113,7 +114,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public GuiAction importAction = new ImportAction();
 
-    public GuiAction exitAction = new ExitAction(this);
+    public final ExitAction exitAction;
 
     public GuiAction undoAction = new UndoAction();
 
@@ -161,11 +162,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private GuiAction createAction = new NewPetriNetAction(this);
 
-    private GuiAction closeAction = new CloseAction(this);
+    private GuiAction closeAction = new CloseWindowAction(this);
 
-    private GuiAction saveAction = new SaveAction();
+    private final GuiAction saveAction;
 
-    private GuiAction saveAsAction = new SaveAsAction();
+    private final GuiAction saveAsAction;
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
@@ -201,6 +202,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         selectAction = new SelectAction(this, applicationController);
         deleteAction = new DeleteAction(applicationController);
 
+        FileDialog fileDialog = new FileDialog(this, "Save Petri Net", FileDialog.SAVE);
+        saveAction = new SaveAction(this, applicationController, fileDialog);
+        saveAsAction= new SaveAsAction(this, applicationController, fileDialog);
+        exitAction = new ExitAction(this, applicationController);
+
         setTitle(null);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -214,7 +220,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 80 / 100, screenSize.height * 80 / 100);
         this.setLocationRelativeTo(null);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        setExitAction();
+
         buildMenus();
 
         // Status bar...
@@ -223,8 +231,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         // Build menus
         buildToolbar();
-
-        addWindowListener(new WindowHandler(this));
 
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
@@ -252,6 +258,27 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         setTabChangeListener();
 
         setZoomChangeListener();
+    }
+
+    /**
+     * Sets the default behaviour for exit for both Windows/Linux/Mac OS X
+     */
+    private void setExitAction() {
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exitAction.tryToExit();
+            }
+        });
+
+        Application.getApplication().setQuitHandler(new QuitHandler() {
+            @Override
+            public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
+                //TODO: Why does this fire two events?
+                exitAction.tryToExit();
+            }
+        });
     }
 
     private void setZoomChangeListener() {
@@ -954,7 +981,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         File modelFile = getFile();
         if (!forceSaveAs && modelFile != null) {
-            saveNet(modelFile, saveFunctional);
+            saveNet(modelFile);
         } else {
             String path;
             if (modelFile != null) {
@@ -964,16 +991,16 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             }
             String filename = new FileBrowser(path).saveFile();
             if (filename != null) {
-                saveNet(new File(filename), saveFunctional);
+                saveNet(new File(filename));
             }
         }
     }
 
     // Steve Doubleday:  public to simplify testing
-    public void saveNet(File outFile, boolean saveFunctional) {
+    public void saveNet(File outFile) {
         try {
 
-            applicationController.saveCurrentPetriNet(outFile, saveFunctional);
+            applicationController.saveCurrentPetriNet(outFile);
             setFile(outFile, frameForPetriNetTabs.getSelectedIndex());
             PetriNetTab currentTab = getCurrentTab();
             currentTab.setNetChanged(false);
@@ -1006,22 +1033,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public StatusBar getStatusBar() {
         return statusBar;
-    }
-
-    /* This method can be used for simulating button clicks during testing
-    *
-    */
-    public void executeAction(String action) {
-        if (action.equals("toggleAnimation")) {
-            startAction.actionPerformed(null);
-        } else if (action.equals("groupTransitionsAction")) {
-            groupTransitions.actionPerformed(null);
-        } else if (action.equals("ungroupTransitionsAction")) {
-            ungroupTransitions.actionPerformed(null);
-        } else if (action.equals("exit")) {
-            dispose();
-            System.exit(0);
-        }
     }
 
     public void close() {

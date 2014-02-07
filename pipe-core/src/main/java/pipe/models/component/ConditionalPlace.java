@@ -1,6 +1,6 @@
 package pipe.models.component;
 
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 

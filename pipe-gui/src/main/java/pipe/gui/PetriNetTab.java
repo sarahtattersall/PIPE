@@ -1,16 +1,20 @@
 package pipe.gui;
 
 import pipe.handlers.AnimationHandler;
-import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.annotation.Annotation;
+import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
+import pipe.models.component.rate.Rate;
+import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.AllComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +48,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     public File _appFile;
 
-    public boolean netChanged = false;
+    private boolean netChanged = false;
 
     private boolean animationmode = false;
 

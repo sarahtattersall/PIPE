@@ -35,7 +35,7 @@ public class ExampleFileAction extends GuiAction
     public void actionPerformed(ActionEvent e)
     {
         ApplicationSettings.getApplicationController().createNewTabFromFile(
-                filename, applicationView, false);
+                filename, applicationView);
     }
 
 }

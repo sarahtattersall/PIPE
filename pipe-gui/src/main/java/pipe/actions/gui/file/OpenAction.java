@@ -31,7 +31,7 @@ public class OpenAction extends GuiAction {
         {
             userPath = filePath.getParent();
             applicationController.createNewTabFromFile(
-                    filePath, applicationView, false);
+                    filePath, applicationView);
         }
         if((filePath != null) && (!filePath.exists()))
         {

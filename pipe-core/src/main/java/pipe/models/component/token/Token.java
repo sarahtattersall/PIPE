@@ -1,7 +1,7 @@
 package pipe.models.component.token;
 
 import pipe.models.component.AbstractPetriNetComponent;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.*;
 

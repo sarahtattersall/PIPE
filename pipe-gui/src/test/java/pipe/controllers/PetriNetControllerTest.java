@@ -20,7 +20,7 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
 import pipe.visitor.TranslationVisitor;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

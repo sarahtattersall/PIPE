@@ -196,7 +196,7 @@ class StateEditor extends JDialog
 		}	
 		
 		// Inform Pipe that the model has been modified
-        ApplicationSettings.getApplicationView().getCurrentTab().netChanged = true;
+//        ApplicationSettings.getApplicationView().getCurrentTab().netChanged = true;
 	}
 	
 	private final ActionListener saveState = new ActionListener()

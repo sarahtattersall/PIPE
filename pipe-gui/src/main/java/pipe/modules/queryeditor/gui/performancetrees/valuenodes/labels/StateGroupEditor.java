@@ -172,7 +172,7 @@ class StateGroupEditor extends JDialog
 		if (this.newStateGroup)
 			this._pnModel.addStateGroup(this.activeStateGroup);
 		// Inform Pipe that the model has been modified
-        ApplicationSettings.getApplicationView().getCurrentTab().netChanged = true;
+//        ApplicationSettings.getApplicationView().getCurrentTab().netChanged = true;
 	}
 
 	private final ActionListener	saveState		= new ActionListener()

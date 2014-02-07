@@ -20,7 +20,7 @@ import pipe.naming.MultipleNamer;
 import pipe.naming.UniqueNamer;
 import pipe.views.PipeApplicationView;
 import pipe.visitor.PasteVisitor;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

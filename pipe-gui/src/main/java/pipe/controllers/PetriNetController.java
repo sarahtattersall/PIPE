@@ -22,8 +22,9 @@ import pipe.models.petrinet.PetriNet;
 import pipe.naming.PetriNetComponentNamer;
 import pipe.naming.PlaceNamer;
 import pipe.naming.TransitionNamer;
+import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -86,10 +87,18 @@ public class PetriNetController implements IController, Serializable {
      */
     private DragManager dragManager = new DragManager(this);
 
+    /**
+     * Name of file the Petri net is saved to. Empty string if it has not yet been saved/loaded
+     * from file
+     */
+    private String fileName = "";
+
+    private final PetriNet lastSavedNet;
 
     public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController) {
         petriNet = model;
+        lastSavedNet = ClonePetriNet.clone(model);
         this.zoomController = zoomController;
         this.animator = animator;
         this.copyPasteManager = copyPasteManager;
@@ -106,6 +115,14 @@ public class PetriNetController implements IController, Serializable {
      */
     public String getUniquePlaceName() {
         return placeNamer.getName();
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     /**
@@ -407,5 +424,9 @@ public class PetriNetController implements IController, Serializable {
         HistoryItem historyItem = new DeletePetriNetObject(rateParameter, petriNet);
         historyManager.addNewEdit(historyItem);
         petriNet.removeRateParameter(rateParameter);
+    }
+
+    public boolean hasChanged() {
+        return !petriNet.equals(lastSavedNet);
     }
 }

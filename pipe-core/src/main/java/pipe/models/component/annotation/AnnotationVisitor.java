@@ -1,6 +1,6 @@
 package pipe.models.component.annotation;
 
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 public interface AnnotationVisitor extends PetriNetComponentVisitor {
     void visit(Annotation annotation);

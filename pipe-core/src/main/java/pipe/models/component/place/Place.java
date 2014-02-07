@@ -2,7 +2,7 @@ package pipe.models.component.place;
 
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;

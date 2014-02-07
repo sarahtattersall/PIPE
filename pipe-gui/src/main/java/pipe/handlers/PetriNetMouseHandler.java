@@ -42,7 +42,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter
 //        Point start = e.getPoint();
 //        Point p;
 
-        if(mouseUtilities.isLeftMouse(event))
+        if(mouseUtilities.isLeftMouse(event) && action != null)
         {
 
 //            Point point = adjustPoint(event.getPoint(), petriNetTab.getZoom());

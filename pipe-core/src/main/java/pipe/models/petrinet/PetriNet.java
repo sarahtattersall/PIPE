@@ -1,6 +1,7 @@
 package pipe.models.petrinet;
 
 import net.sourceforge.jeval.EvaluationException;
+import org.apache.commons.collections.CollectionUtils;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.io.adapters.modelAdapter.*;
@@ -15,7 +16,7 @@ import pipe.models.component.rate.Rate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -28,6 +29,51 @@ import java.util.*;
 @XmlType(propOrder = {"tokens", "annotations", "rateParameters", "places", "transitions", "arcs"})
 public class PetriNet {
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        PetriNet petriNet = (PetriNet) o;
+
+
+        if (!CollectionUtils.isEqualCollection(annotations, petriNet.annotations)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(arcs, petriNet.arcs)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(places, petriNet.places)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(rateParameters, petriNet.rateParameters)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(tokens, petriNet.tokens)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(transitions, petriNet.transitions)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = transitions.hashCode();
+        result = 31 * result + places.hashCode();
+        result = 31 * result + tokens.hashCode();
+        result = 31 * result + arcs.hashCode();
+        result = 31 * result + annotations.hashCode();
+        result = 31 * result + rateParameters.hashCode();
+        return result;
+    }
 
     /**
      * Message fired when an annotation is added to the Petri net

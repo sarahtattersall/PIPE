@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class PipeApplicationController {
 
@@ -109,12 +110,7 @@ public class PipeApplicationController {
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
 
-        String name;
-        if (net.getPnmlName().isEmpty()) {
-            name = "Petri net " + (applicationModel.newPetriNetNumber());
-        } else {
-            name = FilenameUtils.getBaseName(net.getPnmlName());
-        }
+        String name = getPetriNetName(petriNetController);
 
         petriNetTab.setNetChanged(false); // Status is unchanged
 
@@ -126,9 +122,18 @@ public class PipeApplicationController {
 
         setActiveTab(petriNetTab);
         initialiseNet(net, changeListener);
+        petriNetTab.setNetChanged(false);
         applicationView.addNewTab(name, petriNetTab);
 
         return petriNetTab;
+    }
+
+    private String getPetriNetName(PetriNetController petriNetController) {
+        if (petriNetController.getFileName().isEmpty()) {
+            return  "Petri net " + (applicationModel.newPetriNetNumber());
+        } else {
+            return  FilenameUtils.getBaseName(petriNetController.getFileName());
+        }
     }
 
     /**
@@ -171,7 +176,7 @@ public class PipeApplicationController {
         }
     }
 
-    public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView, boolean isTN) {
+    public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView) {
         try {
             PetriNetReader petriNetIO = new PetriNetIOImpl();
             PetriNet net = petriNetIO.read(file.getAbsolutePath());
@@ -192,14 +197,12 @@ public class PipeApplicationController {
         this.activeTab = tab;
     }
 
-    public void saveCurrentPetriNet(File outFile, boolean saveFunctional)
+    public void saveCurrentPetriNet(File outFile)
             throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         PetriNetController petriNetController = getActivePetriNetController();
         PetriNet petriNet = petriNetController.getPetriNet();
 
-
-        //TODO: WORK OUT WHAT TO DO WITH SAVE FUNCTIONAL
         try {
             pipe.io.PetriNetWriter writer = new PetriNetIOImpl();
             writer.writeTo(outFile.getAbsolutePath(), petriNet);
@@ -215,5 +218,24 @@ public class PipeApplicationController {
 
     public SelectionManager getSelectionManager(PetriNetTab petriNetTab) {
         return selectionManagers.get(petriNetTab);
+    }
+
+    /**
+     *
+     * @return the names of the petri nets that have changed
+     */
+    //FIXME: THIS DOESNT WORK BECAUSE IT CHOOSES NEW NAMES FOR THE PETRI NET
+    public List<String> getNetsChanged() {
+        List<String> changed = new ArrayList<>();
+        for (PetriNetController controller : netControllers.values()) {
+            if(controller.hasChanged()) {
+                changed.add(getPetriNetName(controller));
+            }
+        }
+        return changed;
+    }
+
+    public boolean anyNetsChanged() {
+        return !getNetsChanged().isEmpty();
     }
 }

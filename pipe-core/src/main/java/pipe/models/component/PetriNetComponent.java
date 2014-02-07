@@ -1,6 +1,8 @@
 package pipe.models.component;
 
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
+
+import java.beans.PropertyChangeListener;
 
 
 public interface PetriNetComponent {
@@ -25,5 +27,9 @@ public interface PetriNetComponent {
     void setId(String id);
 
     void setName(String name);
+
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    void removePropertyChangeListener(PropertyChangeListener listener);
 
 }

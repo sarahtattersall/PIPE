@@ -621,6 +621,38 @@ public class PetriNetTest {
         assertTrue("Transition was not enabled", transition.isEnabled());
     }
 
+    @Test
+    public void testEqualityEqualPetriNets() {
+        PetriNet net1 = createSimplePetriNet(1);
+        PetriNet net2 = createSimplePetriNet(1);
+        assertTrue(net1.equals(net2));
+    }
+
+
+    @Test
+    public void testEqualityNotEqualPetriNets() {
+        PetriNet net1 = createSimplePetriNet(1);
+        PetriNet net2 = createSimplePetriNet(4);
+        assertFalse(net1.equals(net2));
+    }
+
+    @Test
+    public void equalsAndHashCodeLawsWhenEqual() {
+        PetriNet net1 = createSimplePetriNet(1);
+        PetriNet net2 = createSimplePetriNet(1);
+        assertTrue(net1.equals(net2));
+        assertEquals(net1.hashCode(), net2.hashCode());
+    }
+
+    @Test
+    public void equalsAndHashCodeLawsWhenNotEqual() {
+        PetriNet net1 = createSimplePetriNet(1);
+        PetriNet net2 = createSimplePetriNet(5);
+        assertFalse(net1.equals(net2));
+        assertNotEquals(net1.hashCode(), net2.hashCode());
+    }
+
+
     private <T extends PetriNetComponent> T getComponent(String id, Iterable<T> components) {
         for (T component : components) {
             if (component.getId().equals(id)) {

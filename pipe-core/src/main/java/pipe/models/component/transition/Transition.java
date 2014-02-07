@@ -3,7 +3,7 @@ package pipe.models.component.transition;
 import pipe.models.component.Connectable;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.Rate;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;

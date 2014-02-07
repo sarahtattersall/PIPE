@@ -1,7 +1,7 @@
 package pipe.models.component.annotation;
 
 import pipe.models.component.PlaceablePetriNetComponent;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -56,6 +56,14 @@ public class Annotation extends PlaceablePetriNetComponent {
      */
     @XmlAttribute
     private int height;
+
+    /**
+     * Copy constructor
+     * @param annotation to copy
+     */
+    public Annotation(Annotation annotation) {
+        this(annotation.x, annotation.y, annotation.text, annotation.width, annotation.height, annotation.border);
+    }
 
     public Annotation(int x, int y, String text, int width, int height, boolean border) {
         this.border = border;

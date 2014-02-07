@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;

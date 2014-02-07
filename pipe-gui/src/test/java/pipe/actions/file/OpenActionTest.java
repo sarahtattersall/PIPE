@@ -38,7 +38,7 @@ public class OpenActionTest {
         openAction.setFileForTesting(mockFile);
 
         openAction.actionPerformed(null);
-        verify(mockController).createNewTabFromFile(mockFile, mockView, false);
+        verify(mockController).createNewTabFromFile(mockFile, mockView);
     }
 
     //TODO: Need to test dialog box error

@@ -1,4 +1,4 @@
-package pipe.visitor.foo;
+package pipe.visitor.component;
 
 /**
  * Degenerate visitor interface for visiting {@link pipe.models.component.PetriNetComponent}

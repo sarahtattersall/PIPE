@@ -1,7 +1,7 @@
 package pipe.models.component.rate;
 
 import pipe.models.component.AbstractPetriNetComponent;
-import pipe.visitor.foo.PetriNetComponentVisitor;
+import pipe.visitor.component.PetriNetComponentVisitor;
 
 public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
@@ -10,6 +10,14 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
     private String id;
 
     private String name;
+
+    /**
+     * Copy constructor
+     * @param rateParameter
+     */
+    public RateParameter(RateParameter rateParameter) {
+        this(rateParameter.expression, rateParameter.id, rateParameter.name);
+    }
 
     public RateParameter(String expression, String id, String name) {
         this.expression = expression;

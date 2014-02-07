@@ -14,6 +14,9 @@ import pipe.naming.MultipleNamer;
 
 import java.util.*;
 
+/**
+ * Paste visitor pastes components into a petri net
+ */
 public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor {
 
     private final MultipleNamer multipleNamer;
@@ -62,7 +65,7 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
             target = (T) createdConnectables.get(target);
         }
 
-        Arc<S, T> newArc = new Arc<S, T>(source, target, arc.getTokenWeights(), arc.getType());
+        Arc<S, T> newArc = new Arc<>(source, target, arc.getTokenWeights(), arc.getType());
 //        setId(newArc);
         copyIntermediatePoints(arc, newArc);
         petriNet.addArc(newArc);
