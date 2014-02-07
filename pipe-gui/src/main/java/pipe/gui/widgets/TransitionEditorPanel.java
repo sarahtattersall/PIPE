@@ -3,7 +3,6 @@ package pipe.gui.widgets;
 import net.sourceforge.jeval.EvaluationException;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
@@ -23,6 +22,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author pere
@@ -73,6 +74,11 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private final JRadioButton singleServerRadioButton = new JRadioButton();
 
     private final JRadioButton timedRadioButton = new JRadioButton();
+
+    /**
+     * Contains the index of the rate in the rateComboBox to the RateParameter it maps
+     */
+    private final Map<Integer, RateParameter> indexToRates = new HashMap<>();
 
     /**
      * Creates new form Transition editor
@@ -126,7 +132,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         ids[0] = NO_RATE_PARAMETER;
         int index = 1;
         for (RateParameter rateParameter : rateParameters) {
-            ids[index] = rateParameter.getId();
+            ids[index] = rateParameter.toString();
+            indexToRates.put(index, rateParameter);
             index++;
         }
 
@@ -159,10 +166,10 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * @return index of rateParameterId in the rateComboBox
      */
     private int getIndexOfRate(String rateParameterId) {
-        for (int index = 0; index <= rateComboBox.getItemCount(); index++) {
-            String id = rateComboBox.getModel().getElementAt(index);
+        for (Map.Entry<Integer, RateParameter> entry : indexToRates.entrySet()) {
+            String id = entry.getValue().getId();
             if (id.equals(rateParameterId)) {
-                return index;
+                return entry.getKey();
             }
         }
         throw new RuntimeException("No such element " + rateParameterId + " in petri net rate parameters");
@@ -493,7 +500,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     /**
      * Handles the cancellation by exiting the editor
-     *
+     * <p/>
      * It does not perform any of the changes, the transition remains as is
      */
     private void cancelButtonHandler() {
@@ -514,7 +521,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * - sets its priority
      * - sets its angle
      * - sets (and evaluates) its rate expression
-     *
      */
     private void okButtonHandler() {
         if (canSetName() && canSetInfiniteServer() && canSetRate() && canSetAngle() && (canSetTimed()
@@ -634,14 +640,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * Sets the models rate based upon the settings of the editor panel
      */
     public void setRateIfChanged() {
-        if (rateComboBox.getSelectedIndex() > 0) {
-            String rateParameterId = (String) rateComboBox.getSelectedItem();
-            RateParameter rateParameter = null;
-            try {
-                rateParameter = netController.getPetriNet().getRateParameter(rateParameterId);
-            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
-                showErrorMessage(petriNetComponentNotFoundException.getMessage());
-            }
+        int selected = rateComboBox.getSelectedIndex();
+        if (selected > 0) {
+            RateParameter rateParameter = indexToRates.get(selected);
             transitionController.setRate(rateParameter);
         } else {
             String rateExpression = rateTextField.getText();
@@ -651,7 +652,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     }
 
     /**
-     *
      * Pops up a dialog with error message
      *
      * @param message message to be displayed on error
@@ -759,14 +759,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * otherwise disable the text field and show the value
      */
     private void rateComboBoxActionPerformed() {
-        String selected = (String) rateComboBox.getModel().getSelectedItem();
-        if (!selected.equals(NO_RATE_PARAMETER)) {
-            RateParameter rateParameter = null;
-            try {
-                rateParameter = netController.getPetriNet().getRateParameter(selected);
-            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
-                showErrorMessage(petriNetComponentNotFoundException.getMessage());
-            }
+        int selected = rateComboBox.getSelectedIndex();
+        if (selected > 0) {
+            RateParameter rateParameter = indexToRates.get(selected);
             rateTextField.setEnabled(false);
             rateTextField.setText(rateParameter.getExpression());
         } else {
