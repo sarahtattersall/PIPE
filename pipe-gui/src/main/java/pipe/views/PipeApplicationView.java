@@ -126,7 +126,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public TypeAction dragAction = new DragAction("Drag", Constants.DRAG, "Drag the drawing", "D");
 
-    public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
+//    public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
 
     public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G", this);
 
@@ -148,11 +148,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public ChooseTokenClassAction chooseTokenClassAction =
             new ChooseTokenClassAction("chooseTokenClass", "Select current token", null);
-
-    /**
-     * Displays rate parameters associated with the current Petri net
-     */
-    private JComboBox<String> rateParamComboBox;
 
     private JToolBar animationToolBar, drawingToolBar;
 
@@ -341,7 +336,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addMenuItem(drawMenu, ungroupTransitions);
         addMenuItem(drawMenu, unfoldAction);
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, rateAction);
+        addMenuItem(drawMenu, specifyRateParameterAction);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
@@ -556,7 +551,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addButton(drawingToolBar, unfoldAction);
         drawingToolBar.addSeparator();
         addButton(drawingToolBar, specifyRateParameterAction);
-        addRateParameterComboBox(drawingToolBar);
 
         toolBar.add(drawingToolBar);
 
@@ -626,18 +620,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         toolBar.add(tokenClassComboBox);
     }
 
-    /**
-     * @param toolBar the JToolBar to add the rate parameter combo box to
-     */
-    protected void addRateParameterComboBox(JToolBar toolBar) {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        rateParamComboBox = new JComboBox<>(model);
-        rateParamComboBox.setEditable(false);
-        rateParamComboBox.setMaximumRowCount(100);
-        toolBar.add(rateParamComboBox);
-
-    }
-
     // set tabbed pane properties and add change listener that updates tab with
     // linked model and view
     private void setTabChangeListener() {
@@ -666,7 +648,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 }
 
                 refreshTokenClassChoices();
-                refreshRateParameters();
             }
         });
     }
@@ -797,17 +778,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return selected.toString();
     }
 
-    public void refreshRateParameters() {
-        if (tabsDisplayed()) {
-            PetriNetController petriNetController = applicationController.getActivePetriNetController();
-            String[] rateNames = buildRates(petriNetController.getRateParameters());
-            ComboBoxModel<String> model = new DefaultComboBoxModel<>(rateNames);
-            rateParamComboBox.setModel(model);
-        } else {
-            rateParamComboBox.setModel(new DefaultComboBoxModel<String>());
-        }
-    }
-
     protected String[] buildRates(Collection<RateParameter> components) {
         String[] rates = new String[components.size()];
         int index = 0;
@@ -844,7 +814,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         deleteAction.setEnabled(editMode);
         selectAction.setEnabled(editMode);
         deleteTokenAction.setEnabled(editMode);
-        rateAction.setEnabled(editMode);
+        specifyRateParameterAction.setEnabled(editMode);
         //toggleGrid.setEnabled(status);
 
         if (editMode) {

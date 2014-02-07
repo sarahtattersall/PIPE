@@ -15,7 +15,7 @@ public class SpecifyRateParameterAction extends GuiAction {
     private JDialog guiDialog;
 
     public SpecifyRateParameterAction(PipeApplicationController pipeApplicationController) {
-        super("SpecifyRateParameters", "Specify Rate Parameters", "shift ctrl R");
+        super("Rate Parameter", "Specify Rate Parameters", "shift ctrl R");
         this.pipeApplicationController = pipeApplicationController;
     }
 

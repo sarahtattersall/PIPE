@@ -125,8 +125,6 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction(PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE)
     private void newRate(PropertyChangeEvent propertyChangeEvent) {
-        RateParameter rateParameter = (RateParameter) propertyChangeEvent.getNewValue();
-        applicationView.refreshRateParameters();
 
     }
 
@@ -173,7 +171,6 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction(PetriNet.DELETE_RATE_PARAMETER_CHANGE_MESSAGE)
     private void deleteRate(PropertyChangeEvent propertyChangeEvent) {
-        applicationView.refreshRateParameters();
     }
 
     @EventAction(PetriNet.DELETE_ANNOTATION_CHANGE_MESSAGE)
