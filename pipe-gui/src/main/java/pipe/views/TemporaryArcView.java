@@ -1,8 +1,8 @@
 package pipe.views;
 
 import pipe.gui.Constants;
-import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
+import pipe.models.component.arc.ArcPoint;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +16,7 @@ import static java.lang.Math.max;
 /**
  * Building tool for creating an arc, allows the user to go from source to
  * target before adding to petri net
+ *
  * @param <T> source class
  */
 public class TemporaryArcView<T extends Connectable> extends JComponent {
@@ -36,6 +37,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
      * Maximum intermediate point for setting rectangle bounds
      */
     private double maxX;
+
     private double maxY;
 
     public TemporaryArcView(T source) {
@@ -45,6 +47,14 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         end = new Point2D.Double(centre.getX(), centre.getY());
         updateMax(end);
         setBounds(0, 0, (int) centre.getX(), (int) centre.getY());
+    }
+
+    /**
+     * Updates max points based on point
+     */
+    private void updateMax(Point2D point) {
+        maxX = max(maxX, point.getX());
+        maxY = max(maxY, point.getY());
     }
 
     public void setEnd(Point2D end) {
@@ -68,14 +78,6 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         updateBounds();
     }
 
-    /**
-     * Updates max points based on point
-     */
-    private void updateMax(Point2D point) {
-        maxX = max(maxX, point.getX());
-        maxY = max(maxY, point.getY());
-    }
-
     public T getSourceConnectable() {
         return source;
     }
@@ -94,6 +96,19 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         }
         path.lineTo(end.getX(), end.getY());
         g2.draw(path);
+    }
+
+    /**
+     * This method always returns false as to avoid any interaction with the
+     * temporary arc view
+     *
+     * @param x x location of mouse
+     * @param y y location of mouse
+     * @return false
+     */
+    @Override
+    public boolean contains(int x, int y) {
+        return false;
     }
 
     public List<ArcPoint> getIntermediatePoints() {

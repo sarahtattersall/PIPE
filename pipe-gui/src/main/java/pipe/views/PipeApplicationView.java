@@ -126,8 +126,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public TypeAction dragAction = new DragAction("Drag", Constants.DRAG, "Drag the drawing", "D");
 
-//    public TypeAction rateAction = new RateAction("Rate Parameter", Constants.RATE, "Rate Parameter", "R");
-
     public GridAction toggleGrid = new GridAction("Cycle grid", "Change the grid size", "G", this);
 
     public GuiAction zoomOutAction;
