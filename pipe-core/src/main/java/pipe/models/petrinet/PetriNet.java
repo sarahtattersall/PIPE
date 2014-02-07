@@ -10,6 +10,7 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.Rate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
@@ -333,8 +334,24 @@ public class PetriNet {
     }
 
     public void removeRateParameter(RateParameter parameter) {
+        removeRateParameterFromTransitions(parameter);
         rateParameters.remove(parameter);
         changeSupport.firePropertyChange(DELETE_RATE_PARAMETER_CHANGE_MESSAGE, parameter, null);
+    }
+
+    /**
+     * Removes the Rate Parameter from any transitions that refer to it
+     * and replaces it with a {@link pipe.models.component.rate.NormalRate} with the
+     * same value
+     * @param parameter to remove
+     */
+    private void removeRateParameterFromTransitions(RateParameter parameter) {
+        for (Transition transition : transitions) {
+            if (transition.getRate().equals(parameter)) {
+                Rate rate = new NormalRate(parameter.getExpression());
+                transition.setRate(rate);
+            }
+        }
     }
 
     //    public void removeStateGroup(StateGroup group) {

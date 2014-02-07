@@ -16,6 +16,7 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -563,7 +564,6 @@ public class PetriNetTest {
                 .and(ANormalArc.withSource("T1").andTarget("P2").with("1", "Default").token())
                 .andFinally(ANormalArc.withSource("P2").andTarget("T2").with("1", "Default").token());
 
-
         petriNet.markEnabledTransitions();
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
@@ -592,6 +592,22 @@ public class PetriNetTest {
     }
 
     @Test
+    public void deletingRateParameterRemovesItFromTransition() throws InvalidRateException {
+        String rate = "5.0";
+        RateParameter rateParameter = new RateParameter(rate, "R0", "R0");
+        Transition transition = new Transition("T0", "T0", rateParameter, 0);
+
+        net.addRateParameter(rateParameter);
+        net.addTransition(transition);
+
+        net.removeRateParameter(rateParameter);
+
+        assertEquals(rate, transition.getRateExpr());
+        assertTrue("Transition rate was not changed to normal rate on deletion",
+                transition.getRate() instanceof NormalRate);
+    }
+
+    @Test
     public void firingTransitionBackwardEnablesTransition() {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
                 .and(APlace.withId("P1"))
@@ -611,8 +627,6 @@ public class PetriNetTest {
                 return component;
             }
         }
-
         return null;
-
     }
 }
