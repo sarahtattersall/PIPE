@@ -1,9 +1,5 @@
 package pipe.views;
 
-import com.apple.eawt.AppEvent;
-import com.apple.eawt.Application;
-import com.apple.eawt.QuitHandler;
-import com.apple.eawt.QuitResponse;
 import pipe.actions.*;
 import pipe.actions.gui.DeleteAction;
 import pipe.actions.gui.ExampleFileAction;
@@ -268,14 +264,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                exitAction.tryToExit();
-            }
-        });
-
-        Application.getApplication().setQuitHandler(new QuitHandler() {
-            @Override
-            public void handleQuitRequestWith(AppEvent.QuitEvent quitEvent, QuitResponse quitResponse) {
-                //TODO: Why does this fire two events?
                 exitAction.tryToExit();
             }
         });
