@@ -31,7 +31,7 @@ public class APetriNetTest {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.RED))
                                      .and(APlace.withId("P0"))
                                      .and(ATransition.withId("T0"))
-                                     .andFinally(ANormalArc.withSource("P0").andTarget("T0").with("5", "Red").tokens());
+                                     .andFinally(ANormalArc.withSource("P0").andTarget("T0").with("5", "Default").tokens());
 
         PetriNet expected = new PetriNet();
         Token token = new Token("Default", true, 0, Color.RED);

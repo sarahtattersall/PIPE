@@ -129,7 +129,7 @@ public class PetriNetReaderTest {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getArcNoWeightFile()));
         Place expectedSource = new Place("P0", "P0");
         Transition expectedTarget = new Transition("T0", "T0");
-        assertThat(petriNet.getArcs()).extracting("type", "source", "target", "id").containsExactly(
+        assertThat(petriNet.getArcs()).extracting("type", "source", "target", "id").contains(
                 tuple(ArcType.NORMAL, expectedSource, expectedTarget, "P0 TO T0"));
     }
 

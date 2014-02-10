@@ -652,7 +652,6 @@ public class PetriNetTest {
         assertNotEquals(net1.hashCode(), net2.hashCode());
     }
 
-
     private <T extends PetriNetComponent> T getComponent(String id, Iterable<T> components) {
         for (T component : components) {
             if (component.getId().equals(id)) {

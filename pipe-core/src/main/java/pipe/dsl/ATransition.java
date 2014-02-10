@@ -12,7 +12,7 @@ public class ATransition implements DSLCreator<Transition> {
 
     private String id;
 
-    private int priority = 0;
+    private int priority = 1;
 
     private boolean timed = false;
 
