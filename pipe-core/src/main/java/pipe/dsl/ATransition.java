@@ -67,12 +67,12 @@ public class ATransition implements DSLCreator<Transition> {
         return this;
     }
 
-    public ATransition andAnInfinite() {
+    public ATransition andIsAnInfinite() {
         infinite = true;
         return this;
     }
 
-    public ATransition andASingle() {
+    public ATransition andIsASingle() {
        infinite = false;
         return this;
     }
@@ -90,7 +90,7 @@ public class ATransition implements DSLCreator<Transition> {
         return this;
     }
 
-    public ATransition andRateParameter(String rateParameterName) {
+    public ATransition withRateParameter(String rateParameterName) {
         this.rateParameter = rateParameterName;
         return this;
     }

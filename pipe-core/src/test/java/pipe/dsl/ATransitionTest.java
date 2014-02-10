@@ -69,7 +69,7 @@ public class ATransitionTest {
 
     @Test
     public void createsInfiniteServerTransition() {
-        Transition transition = ATransition.withId("T0").andAnInfinite().server().create(tokens, connectables, rateParameters);
+        Transition transition = ATransition.withId("T0").andIsAnInfinite().server().create(tokens, connectables, rateParameters);
         Transition expected = new Transition("T0", "T0");
         expected.setInfiniteServer(true);
         assertEquals(expected, transition);
@@ -77,7 +77,7 @@ public class ATransitionTest {
 
     @Test
     public void createsSingleServerTransition() {
-        Transition transition = ATransition.withId("T0").andASingle().server().create(tokens, connectables, rateParameters);
+        Transition transition = ATransition.withId("T0").andIsASingle().server().create(tokens, connectables, rateParameters);
         Transition expected = new Transition("T0", "T0");
         expected.setInfiniteServer(false);
         assertEquals(expected, transition);
@@ -94,7 +94,7 @@ public class ATransitionTest {
     @Test
     public void createsTransitionWithARateParameter() {
         rateParameters.put("Foo", new RateParameter("5", "Foo", "Foo"));
-        Transition transition = ATransition.withId("T0").andRateParameter("Foo").create(tokens, connectables, rateParameters);
+        Transition transition = ATransition.withId("T0").withRateParameter("Foo").create(tokens, connectables, rateParameters);
         Transition expected = new Transition("T0", "T0");
         expected.setRate(rateParameters.get("Foo"));
         assertEquals(expected, transition);

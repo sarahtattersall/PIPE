@@ -1,6 +1,8 @@
 package pipe.models.component.rate;
 
+import pipe.exceptions.InvalidRateException;
 import pipe.models.component.AbstractPetriNetComponent;
+import pipe.models.component.place.PlaceVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 public class RateParameter extends AbstractPetriNetComponent implements Rate {
@@ -60,6 +62,13 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
     @Override
     public void accept(PetriNetComponentVisitor visitor) {
+        if (visitor instanceof RateParameterVisitor) {
+            try {
+                ((RateParameterVisitor) visitor).visit(this);
+            } catch (InvalidRateException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
 
     }
 
