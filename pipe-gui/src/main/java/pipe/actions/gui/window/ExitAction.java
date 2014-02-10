@@ -36,9 +36,7 @@ public class ExitAction extends GuiAction {
             view.dispose();
             System.exit(0);
         } else {
-            List<String> changedNames = pipeApplicationController.getNetsChanged();
-            String message = changedNamesMessage(changedNames);
-            int result = JOptionPane.showConfirmDialog(view,  message,
+            int result = JOptionPane.showConfirmDialog(view,  "Do you really want to exit? Some unsaved Petri nets have changed.",
                     "Confirm Exit", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             switch (result) {
                 case JOptionPane.YES_OPTION:
