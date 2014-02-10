@@ -213,7 +213,6 @@ public class PlaceTest {
         place.incrementTokenCount(token);
 
         place.setTokenCount(token, 1);
-        ;
     }
 
     @Test
