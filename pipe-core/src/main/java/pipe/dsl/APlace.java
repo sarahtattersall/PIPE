@@ -1,8 +1,8 @@
 package pipe.dsl;
 
 import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
 import java.util.HashMap;
@@ -50,7 +50,8 @@ public class APlace implements DSLCreator<Place> {
     }
 
     @Override
-    public Place create(Map<String, Token> tokens, Map<String, Connectable> connectables) {
+    public Place create(Map<String, Token> tokens, Map<String, Connectable> connectables,
+                        Map<String, RateParameter> rateParameters) {
         Place place = new Place(id, id);
         place.setCapacity(capacity);
 

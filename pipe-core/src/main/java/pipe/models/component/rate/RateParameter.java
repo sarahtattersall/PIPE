@@ -61,7 +61,40 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RateParameter that = (RateParameter) o;
+
+        if (!expression.equals(that.expression)) {
+            return false;
+        }
+        if (!id.equals(that.id)) {
+            return false;
+        }
+        if (!name.equals(that.name)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = expression.hashCode();
+        result = 31 * result + id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+    @Override
     public void setId(String id) {
+
 
     }
 }

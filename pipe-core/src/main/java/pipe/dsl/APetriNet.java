@@ -2,6 +2,7 @@ package pipe.dsl;
 
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 
@@ -81,10 +82,11 @@ public class APetriNet {
     private PetriNet makePetriNet() {
         Map<String, Token> tokens = new HashMap<>();
         Map<String, Connectable> connectables = new HashMap<>();
+        Map<String, RateParameter> rateParameters = new HashMap<>();
 
         PetriNet petriNet = new PetriNet();
         for (DSLCreator<? extends PetriNetComponent> creator : creators) {
-            petriNet.add(creator.create(tokens, connectables));
+            petriNet.add(creator.create(tokens, connectables, rateParameters));
         }
         return petriNet;
     }

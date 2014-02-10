@@ -1,0 +1,104 @@
+package pipe.dsl;
+
+import org.junit.Before;
+import org.junit.Test;
+import pipe.models.component.Connectable;
+import pipe.models.component.rate.NormalRate;
+import pipe.models.component.rate.RateParameter;
+import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+
+public class ATransitionTest {
+
+    private Map<String, Token> tokens;
+    private Map<String, Connectable> connectables;
+    private Map<String, RateParameter> rateParameters;
+
+
+    @Before
+    public void setUp() {
+        tokens = new HashMap<>();
+        connectables = new HashMap<>();
+        rateParameters = new HashMap<>();
+    }
+
+    @Test
+    public void createsTransitionWithId() {
+        Transition transition = ATransition.withId("T0").create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        assertEquals(expected, transition);
+    }
+
+    @Test
+    public void addsTransitionToConnectables() {
+        Transition transition = ATransition.withId("T0").create(tokens, connectables, rateParameters);
+        assertThat(connectables).containsEntry("T0", transition);
+    }
+
+    @Test
+    public void createsTransitionWithPriority() {
+        Transition transition = ATransition.withId("T0").andPriority(5).create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setPriority(5);
+        assertEquals(expected, transition);
+    }
+
+
+    @Test
+    public void createsTimedTransition() {
+        Transition transition = ATransition.withId("T0").whichIsTimed().create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setTimed(true);
+        assertEquals(expected, transition);
+    }
+
+
+    @Test
+    public void createsImmediateTransition() {
+        Transition transition = ATransition.withId("T0").whichIsImmediate().create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setTimed(false);
+        assertEquals(expected, transition);
+    }
+
+    @Test
+    public void createsInfiniteServerTransition() {
+        Transition transition = ATransition.withId("T0").andAnInfinite().server().create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setInfiniteServer(true);
+        assertEquals(expected, transition);
+    }
+
+    @Test
+    public void createsSingleServerTransition() {
+        Transition transition = ATransition.withId("T0").andASingle().server().create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setInfiniteServer(false);
+        assertEquals(expected, transition);
+    }
+
+    @Test
+    public void createsNormalRateTransition() {
+        Transition transition = ATransition.withId("T0").andRate("5").create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setRate(new NormalRate("5"));
+        assertEquals(expected, transition);
+    }
+
+    @Test
+    public void createsTransitionWithARateParameter() {
+        rateParameters.put("Foo", new RateParameter("5", "Foo", "Foo"));
+        Transition transition = ATransition.withId("T0").andRateParameter("Foo").create(tokens, connectables, rateParameters);
+        Transition expected = new Transition("T0", "T0");
+        expected.setRate(rateParameters.get("Foo"));
+        assertEquals(expected, transition);
+    }
+
+
+}

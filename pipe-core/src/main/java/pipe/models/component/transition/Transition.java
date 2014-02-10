@@ -10,6 +10,53 @@ import java.awt.geom.Point2D;
 
 
 public class Transition extends Connectable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        Transition that = (Transition) o;
+
+        if (angle != that.angle) {
+            return false;
+        }
+        if (enabled != that.enabled) {
+            return false;
+        }
+        if (infiniteServer != that.infiniteServer) {
+            return false;
+        }
+        if (priority != that.priority) {
+            return false;
+        }
+        if (timed != that.timed) {
+            return false;
+        }
+        if (rate != null ? !rate.equals(that.rate) : that.rate != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + priority;
+        result = 31 * result + (rate != null ? rate.hashCode() : 0);
+        result = 31 * result + (timed ? 1 : 0);
+        result = 31 * result + (infiniteServer ? 1 : 0);
+        result = 31 * result + angle;
+        result = 31 * result + (enabled ? 1 : 0);
+        return result;
+    }
 
     /**
      * Message fired when the Transitions priority changes
@@ -52,7 +99,7 @@ public class Transition extends Connectable {
 
     private static final double ROOT_THREE_OVER_TWO = 0.5 * Math.sqrt(3);
 
-    private int priority;
+    private int priority = 0;
 
     private Rate rate;
 
@@ -66,7 +113,7 @@ public class Transition extends Connectable {
     private boolean enabled = false;
 
     public Transition(String id, String name) {
-        this(id, name, new NormalRate("1"), 1);
+        super(id, name);
     }
 
     public Transition(String id, String name, Rate rate, int priority) {
@@ -169,58 +216,6 @@ public class Transition extends Connectable {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + priority;
-        result = 31 * result + rate.hashCode();
-        result = 31 * result + (timed ? 1 : 0);
-        result = 31 * result + (infiniteServer ? 1 : 0);
-        result = 31 * result + angle;
-        result = 31 * result + (enabled ? 1 : 0);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        Transition that = (Transition) o;
-
-        if (!super.equals(that)) {
-            return false;
-        }
-
-        if (angle != that.angle) {
-            return false;
-        }
-        if (enabled != that.enabled) {
-            return false;
-        }
-        if (infiniteServer != that.infiniteServer) {
-            return false;
-        }
-        if (priority != that.priority) {
-            return false;
-        }
-        if (timed != that.timed) {
-            return false;
-        }
-        if (!rate.equals(that.rate)) {
-            return false;
-        }
-
-        return true;
     }
 
     @Override

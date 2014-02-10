@@ -233,8 +233,8 @@ public class PetriNetTest {
                 .and(APlace.withId("P1"))
                 .and(APlace.withId("P2"))
                 .and(ATransition.withId("T1"))
-                .and(ANormalArc.withSource("P1").andTarget("T1").withTokenWeight("Default", "4"))
-                .andFinally(ANormalArc.withSource("T1").andTarget("P2").withTokenWeight("Default", "4"));
+                .and(ANormalArc.withSource("P1").andTarget("T1").with("4", "Default").tokens())
+                .andFinally(ANormalArc.withSource("T1").andTarget("P2").with("4", "Default").tokens());
 
 
         Token token = getComponent("Default", petriNet.getTokens());
@@ -262,9 +262,8 @@ public class PetriNetTest {
                                     .and(APlace.withId("P1").containing(1, "Default").token())
                                     .and(APlace.withId("P2"))
                                     .and(ATransition.withId("T1"))
-                                    .and(ANormalArc.withSource("P1").andTarget("T1").withTokenWeight("Default", arcWeight))
-                                    .andFinally(ANormalArc.withSource("T1").andTarget("P2").withTokenWeight("Default",
-                                            arcWeight));
+                                    .and(ANormalArc.withSource("P1").andTarget("T1").with(arcWeight, "Default").tokens())
+                                    .andFinally(ANormalArc.withSource("T1").andTarget("P2").with(arcWeight, "Default").tokens());
 
     }
 
@@ -302,7 +301,7 @@ public class PetriNetTest {
                 .and(APlace.withId("P1").containing(1, "Red").token().and(1, "Default").token())
                 .and(APlace.withId("P2"))
                 .and(ATransition.withId("T1"))
-                .andFinally(ANormalArc.withSource("P1").andTarget("T1").withTokenWeights("Default", "1", "Red", "0"));
+                .andFinally(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token().and("0", "Red").tokens());
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
 
@@ -357,8 +356,8 @@ public class PetriNetTest {
                         .and(APlace.withId("P1"))
                         .and(APlace.withId("P2"))
                         .and(ATransition.withId("T1"))
-                        .and(ANormalArc.withSource("P1").andTarget("T1").withTokenWeight("Default", weight))
-                        .andFinally(ANormalArc.withSource("P2").andTarget("T1").withTokenWeight("Default", weight));
+                        .and(ANormalArc.withSource("P1").andTarget("T1").with(weight, "Default").tokens())
+                        .andFinally(ANormalArc.withSource("P2").andTarget("T1").with(weight, "Default").tokens());
     }
 
     @Test
@@ -455,9 +454,8 @@ public class PetriNetTest {
                                     .and(APlace.withId("P0"))
                                     .and(ATransition.withId("T1"))
                                     .and(ANormalArc.withSource("T1").andTarget("P0")
-                                                   .withTokenWeight("Default", Integer.toString(tokenWeight)))
-                                    .andFinally(ANormalArc.withSource("P0").andTarget("T1").withTokenWeight("Default",
-                                            Integer.toString(tokenWeight)));
+                                                   .with(Integer.toString(tokenWeight), "Default").tokens())
+                                    .andFinally(ANormalArc.withSource("P0").andTarget("T1").with(Integer.toString(tokenWeight), "Default").tokens());
     }
 
     @Test
@@ -481,7 +479,7 @@ public class PetriNetTest {
                         .and(APlace.withId("P2"))
                         .and(ATransition.withId("T1"))
                         .and(AnInhibitorArc.withSource("P1").andTarget("T1"))
-                        .andFinally(ANormalArc.withSource("T1").andTarget("P2").withTokenWeight("Default", Integer.toString(tokenWeight)));
+                        .andFinally(ANormalArc.withSource("T1").andTarget("P2").with( Integer.toString(tokenWeight), "Default").tokens());
     }
 
     @Test
@@ -543,11 +541,9 @@ public class PetriNetTest {
                 .and(APlace.withId("P2"))
                 .and(ATransition.withId("T1"))
                 .and(ATransition.withId("T2"))
-                .and(ANormalArc.withSource("P1").andTarget("T1").withTokenWeight("Default",
-                        "1"))
-                .and(ANormalArc.withSource("T1").andTarget("P2").withTokenWeight("Default",
-                        "1"))
-                .andFinally(ANormalArc.withSource("P2").andTarget("T2").withTokenWeight("Default", "1"));
+                .and(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token())
+                .and(ANormalArc.withSource("T1").andTarget("P2").with("1", "Default").token())
+                .andFinally(ANormalArc.withSource("P2").andTarget("T2").with("1", "Default").token());
 
         petriNet.markEnabledTransitions();
 
@@ -564,7 +560,7 @@ public class PetriNetTest {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
                 .and(APlace.withId("P1").containing(0, "Default").token())
                 .and(ATransition.withId("T1"))
-                .andFinally(ANormalArc.withSource("P1").andTarget("T1").withTokenWeight("Default", "1"));
+                .andFinally(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
 
         
         Transition transition = getComponent("T1", petriNet.getTransitions());
@@ -582,7 +578,7 @@ public class PetriNetTest {
                 .and(APlace.withId("P1"))
                 .and(APlace.withId("P2").containing(1, "Default").token())
                 .and(ATransition.withId("T1"))
-                .andFinally(ANormalArc.withSource("P1").andTarget("T1").withTokenWeight("Default", "1"));
+                .andFinally(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
         petriNet.fireTransitionBackwards(transition);

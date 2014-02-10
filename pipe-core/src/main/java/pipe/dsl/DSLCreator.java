@@ -2,6 +2,7 @@ package pipe.dsl;
 
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
 import java.util.Map;
@@ -37,9 +38,12 @@ public interface DSLCreator<T extends PetriNetComponent> {
      * Transitions
      * Arcs
      *
+     *
      * @param tokens map of created tokens with id -> Token
      * @param connectables map of created connectables with id -> Connectable
+     * @param rateParameters
      * @return new {@link PetriNetComponent}
      */
-    T create(Map<String, Token> tokens, Map<String, Connectable> connectables);
+    T create(Map<String, Token> tokens, Map<String, Connectable> connectables,
+             Map<String, RateParameter> rateParameters);
 }

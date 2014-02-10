@@ -578,7 +578,7 @@ public class PetriNet {
 
 
         for (Arc<Place, Transition> arc : inboundArcs(transition)) {
-            Place place = (Place) arc.getSource();
+            Place place = arc.getSource();
             Map<Token, String> arcWeights = arc.getTokenWeights();
             for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
                 Token arcToken = entry.getKey();

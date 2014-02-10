@@ -3,6 +3,7 @@ package pipe.dsl;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
 import java.util.HashMap;
@@ -29,7 +30,8 @@ public class AnInhibitorArc implements DSLCreator<Arc<? extends Connectable, ? e
 
     @Override
     public Arc<? extends Connectable, ? extends Connectable> create(Map<String, Token> tokens,
-                                                                    Map<String, Connectable> connectables) {
+                                                                    Map<String, Connectable> connectables,
+                                                                    Map<String, RateParameter> rateParameters) {
         return new Arc<>(connectables.get(source), connectables.get(target), new HashMap<Token, String>(),
                 ArcType.INHIBITOR);
     }
