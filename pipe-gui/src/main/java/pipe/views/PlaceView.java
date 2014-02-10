@@ -275,7 +275,7 @@ public class PlaceView extends ConnectableView<Place> {
         // 2 Add Place editor
         contentPane.add(
                 new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
-                        ApplicationSettings.getApplicationView().getCurrentPetriNetView()));
+                       petriNetController));
 
         guiDialog.setResizable(false);
 

@@ -237,9 +237,8 @@ private final GroupTransitionView _groupTransitionView;
          if (_pnmlData.checkTransitionIDAvailability(newName)){
             historyManager.addEdit(_groupTransitionView.setPNObjectName(newName));
          } else{
-            // aquest nom no est disponible...
             JOptionPane.showMessageDialog(null,
-                    "There is already a transition named " + newName, "Error",
+                    "There is already a component named " + newName, "Error",
                                 JOptionPane.WARNING_MESSAGE);
             return;
          }

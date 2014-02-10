@@ -52,7 +52,7 @@ public class PlaceController
         historyManager.addNewEdit(capacityAction);
     }
 
-    public double getCapacity() {
+    public int getCapacity() {
         return place.getCapacity();
     }
 
