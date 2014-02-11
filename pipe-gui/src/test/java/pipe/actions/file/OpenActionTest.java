@@ -8,6 +8,8 @@ import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +56,7 @@ public class OpenActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = openAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("meta O");
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         assertEquals(stroke, acceleratorKey);
     }
 }

@@ -13,6 +13,9 @@ import pipe.historyActions.HistoryManager;
 
 import javax.swing.*;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -57,7 +60,7 @@ public class UndoActionTest {
     public void setKeyboardShortcut()
     {
         Object acceleratorKey = undoAction.getValue(Action.ACCELERATOR_KEY);
-        KeyStroke stroke = KeyStroke.getKeyStroke("meta Z");
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         assertEquals(stroke, acceleratorKey);
     }
 }
