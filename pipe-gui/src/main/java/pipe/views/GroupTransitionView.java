@@ -57,7 +57,7 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
 
     public GroupTransitionView(TransitionView _foldedInto, double positionXInput, double positionYInput) {
         //MODEL
-        super(new Transition("", ""));
+        super(new Transition("", ""), new GeneralPath());
         this._foldedInto = _foldedInto;
         constructTransition();
         updateBounds();

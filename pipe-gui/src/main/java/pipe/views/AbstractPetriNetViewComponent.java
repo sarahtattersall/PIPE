@@ -176,7 +176,7 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         }
     }
 
-    static int getComponentDrawOffset() {
+    protected static int getComponentDrawOffset() {
         return COMPONENT_DRAW_OFFSET;
     }
 

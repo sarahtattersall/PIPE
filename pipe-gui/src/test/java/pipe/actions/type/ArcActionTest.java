@@ -6,7 +6,6 @@ import pipe.actions.gui.create.ArcAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
-import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.HistoryManager;
 import pipe.models.petrinet.PetriNet;
@@ -16,7 +15,7 @@ import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.visitor.connectable.arc.ArcSourceVisitor;
 import pipe.views.PipeApplicationView;
-import pipe.views.TemporaryArcView;
+import pipe.views.arc.TemporaryArcView;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

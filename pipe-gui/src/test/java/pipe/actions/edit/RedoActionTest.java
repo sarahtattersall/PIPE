@@ -2,6 +2,9 @@ package pipe.actions.edit;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.edit.RedoAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
@@ -15,17 +18,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
+@RunWith(MockitoJUnitRunner.class)
 public class RedoActionTest {
     RedoAction redoAction;
+
+    @Mock
     PipeApplicationController mockController;
+
+    @Mock
     PetriNetController mockPetriNetController;
 
     @Before
     public void setUp()
     {
         redoAction = new RedoAction();
-        mockController = mock(PipeApplicationController.class);
-        mockPetriNetController = mock(PetriNetController.class);
         ApplicationSettings.register(mockController);
     }
 

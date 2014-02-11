@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
+import pipe.views.arc.TemporaryArcView;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

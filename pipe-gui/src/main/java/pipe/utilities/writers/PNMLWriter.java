@@ -3,6 +3,8 @@ package pipe.utilities.writers;
 import org.w3c.dom.*;
 import pipe.common.dataLayer.StateGroup;
 import pipe.views.*;
+import pipe.views.arc.InhibitorArcView;
+import pipe.views.arc.NormalArcView;
 import pipe.views.viewComponents.AnnotationView;
 import pipe.views.viewComponents.RateParameter;
 

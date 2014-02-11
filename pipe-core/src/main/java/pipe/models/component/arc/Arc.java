@@ -66,10 +66,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         this.type = type;
 
         this.id = source.getId() + " TO " + target.getId();
-
-
-        //        source.addOutbound(this);
-        //        target.addInbound(this);
         tagged = false;
     }
 
@@ -94,7 +90,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public void setTarget(T target) {
         T old = this.target;
         this.target = target;
-        //        target.addInbound(this);
         changeSupport.firePropertyChange(TARGET_CHANGE_MESSAGE, old, target);
     }
 
@@ -102,9 +97,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
      * @return The start coordinate of the arc
      */
     public Point2D.Double getStartPoint() {
-        //        double angle = getAngleBetweenSourceAndTarget();
-        //        return source.getArcEdgePoint(angle);
-        return source.getCentre();
+                double angle = getAngleBetweenSourceAndTarget();
+                return source.getArcEdgePoint(angle);
+//        return source.getCentre();
     }
 
     /**
@@ -239,7 +234,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     /**
-     * @return angle in randians between source and target
+     * @return angle in radians between source and target
      */
     private double getAngleBetweenSourceAndTarget() {
         double deltax = source.getX() - target.getX();

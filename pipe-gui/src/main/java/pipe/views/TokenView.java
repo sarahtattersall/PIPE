@@ -8,6 +8,7 @@ import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.utilities.math.Matrix;
+import pipe.views.arc.InhibitorArcView;
 
 import java.awt.*;
 import java.io.Serializable;

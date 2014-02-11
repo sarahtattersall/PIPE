@@ -7,7 +7,7 @@ import pipe.gui.PetriNetTab;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.PipeApplicationView;
-import pipe.views.TemporaryArcView;
+import pipe.views.arc.TemporaryArcView;
 import pipe.visitor.connectable.arc.ArcSourceVisitor;
 
 import java.awt.*;

@@ -3,7 +3,7 @@ package pipe.views.builder;
 import pipe.controllers.PetriNetController;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
-import pipe.views.NormalArcView;
+import pipe.views.arc.NormalArcView;
 
 public class NormalArcViewBuilder {
     private final Arc<? extends Connectable, ? extends Connectable> arc;

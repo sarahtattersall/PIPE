@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ZoomController;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
+import pipe.views.arc.NormalArcView;
 import pipe.views.viewComponents.ArcPath;
 
 public class ArcViewTest {

@@ -1,11 +1,12 @@
-package pipe.views;
+package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
-import pipe.gui.ZoomController;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
+import pipe.views.ArcView;
+import pipe.views.PetriNetView;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -25,6 +26,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
     private final static int OVAL_WIDTH = 8;
     private final static int OVAL_HEIGHT = 8;
 
+    ArcHead arcHead = new InhibitorArcHead();
 
     public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller) {
         super(model, controller);
@@ -135,15 +137,17 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
 
         AffineTransform reset = g2.getTransform();
 
-        g2.setStroke(new BasicStroke(0.8f));
-        g2.fillOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
+//        g2.setStroke(new BasicStroke(0.8f));
+//        g2.fillOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
-        g2.drawOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
+
+        arcHead.draw(g2);
+//        g2.drawOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
 
         g2.setTransform(reset);
     }

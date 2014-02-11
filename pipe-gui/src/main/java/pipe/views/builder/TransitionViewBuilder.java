@@ -15,9 +15,7 @@ public class TransitionViewBuilder {
 
     public TransitionView build() {
         TransitionView view =
-                new TransitionView(transition.getId(), transition.getName(),
-                        transition.getNameXOffset(), transition.getNameYOffset(), transition.isTimed(),
-                        transition.isInfiniteServer(), transition.getAngle(), transition, controller);
+                new TransitionView(transition, controller);
         return view;
     }
 }

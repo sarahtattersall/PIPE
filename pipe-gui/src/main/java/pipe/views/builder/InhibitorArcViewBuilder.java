@@ -4,7 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
-import pipe.views.InhibitorArcView;
+import pipe.views.arc.InhibitorArcView;
 
 public class InhibitorArcViewBuilder {
     private final Arc<Place, Transition> arc;

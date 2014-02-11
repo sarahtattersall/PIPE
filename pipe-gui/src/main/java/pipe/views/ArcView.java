@@ -54,7 +54,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * true if arc is not hidden when a bidirectional arc is used
      */
-    boolean inView = true;
+    protected boolean inView = true;
 
     private ArcPoint sourcePoint;
 

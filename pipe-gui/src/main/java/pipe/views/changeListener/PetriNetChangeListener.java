@@ -7,11 +7,11 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
-import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.views.*;
+import pipe.views.arc.InhibitorArcView;
 import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationView;
 

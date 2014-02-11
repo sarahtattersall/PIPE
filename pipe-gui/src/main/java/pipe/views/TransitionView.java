@@ -1,6 +1,7 @@
 package pipe.views;
 
 import net.sourceforge.jeval.EvaluationException;
+import org.jfree.util.ShapeUtilities;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
@@ -10,8 +11,9 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
-import pipe.historyActions.*;
-import pipe.models.component.Connectable;
+import pipe.historyActions.ClearRateParameter;
+import pipe.historyActions.GroupTransition;
+import pipe.historyActions.HistoryItem;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
@@ -20,23 +22,17 @@ import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public final class TransitionView extends ConnectableView<Transition> implements Serializable {
+public class TransitionView extends ConnectableView<Transition> {
     public boolean _highlighted;
-
-    private GeneralPath shape;
 
     private boolean _enabled;
 
@@ -50,29 +46,30 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     private GroupTransitionView _groupTransitionView;
 
-    private int _delayForShowingWarnings;
-
-    public TransitionView() {
-        this("", "", Constants.DEFAULT_OFFSET_X, Constants.DEFAULT_OFFSET_Y, false, false, 0,
-                new Transition("", "", new NormalRate("1"), 1), null);
-    }
-
-
-    public TransitionView(String id, String name, double nameOffsetX, double nameOffsetY, boolean timed,
-                          boolean infServer, int angleInput, Transition model, PetriNetController controller) {
-        super(id, model, controller);
-        constructTransition();
+    public TransitionView(Transition model, PetriNetController controller) {
+        super(model.getId(), model, controller, new Rectangle2D.Double(0, 0, model.getWidth(),
+                model.getHeight()));
+//        constructTransition();
         setChangeListener();
 
         _enabled = false;
         _enabledBackwards = false;
         _highlighted = false;
-        _delayForShowingWarnings = 10000;
 
         rotate(model.getAngle());
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
         //        changeToolTipText();
 
+    }
+
+//    private void constructTransition() {
+//        shape.append(), false);
+//    }
+
+    public void rotate(int angleInc) {
+        ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(), new Double(model.getCentre().getY()).floatValue());
+//        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
+//                model.getHeight() / 2));
     }
 
     private void setChangeListener() {
@@ -82,32 +79,15 @@ public final class TransitionView extends ConnectableView<Transition> implements
                 String name = propertyChangeEvent.getPropertyName();
                 if (name.equals(Transition.PRIORITY_CHANGE_MESSAGE) || name.equals(Transition.RATE_CHANGE_MESSAGE)) {
                     repaint();
-                } else if (name.equals(Transition.ANGLE_CHANGE_MESSAGE) || name.equals(
-                        Transition.TIMED_CHANGE_MESSAGE) || name.equals(Transition.INFINITE_SEVER_CHANGE_MESSAGE)) {
+                } else if (name.equals(Transition.ANGLE_CHANGE_MESSAGE) || name.equals(Transition.TIMED_CHANGE_MESSAGE)
+                        || name.equals(Transition.INFINITE_SEVER_CHANGE_MESSAGE)) {
                     repaint();
-                }else if (name.equals(Transition.ENABLED_CHANGE_MESSAGE) || name.equals(Transition.DISABLED_CHANGE_MESSAGE)) {
+                } else if (name.equals(Transition.ENABLED_CHANGE_MESSAGE) || name.equals(
+                        Transition.DISABLED_CHANGE_MESSAGE)) {
                     repaint();
                 }
             }
         });
-    }
-
-    public void rotate(int angleInc) {
-        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
-                model.getHeight() / 2));
-    }
-
-    private void constructTransition() {
-        shape = new GeneralPath();
-        //TODO: CHANGE THIS BACK! _componentWidth = TRANSITION_HEIGHT
-        shape.append(new Rectangle2D.Double((model.getHeight() - model.getWidth()) / 2, 0, model.getWidth(),
-                model.getHeight()), false);
-    }
-
-    public TransitionView(TransitionController transitionController, Transition model) {
-        super(model);
-        model = model;
-        //        model.registerObserver(this);
     }
 
     @Override
@@ -131,6 +111,10 @@ public final class TransitionView extends ConnectableView<Transition> implements
     public void addedToGui() {
         super.addedToGui();
         update();
+    }
+
+    public void update() {
+        this.repaint();
     }
 
     @Override
@@ -201,84 +185,6 @@ public final class TransitionView extends ConnectableView<Transition> implements
             g2.fill(shape);
         }
         changeToolTipText();
-
-
-    }
-
-    /**
-     * @return true if in animate mode and the model is enabled
-     */
-    private boolean highlightView() {
-        //TODO: GET THIS IN A BETTER WAY
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        PetriNetTab tab = view.getCurrentTab();
-
-        return model.isEnabled() && tab.isInAnimationMode();
-    }
-
-    private void changeToolTipText() {
-        try {
-            Double.parseDouble(getRateExpr());
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRate());
-            } else {
-                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
-            }
-        } catch (Exception e) {
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
-            } else {
-                setToolTipText(
-                        "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
-            }
-        }
-    }
-
-    public int getPriority() {
-        return model.
-                getPriority();
-    }
-
-    public boolean isTimed() {
-        return model.isTimed();
-    }
-
-    public String getRateExpr() {
-        return model.getRateExpr();
-    }
-
-    public double getRate() {
-        if (isInfiniteServer()) {
-            PetriNet petriNet = petriNetController.getPetriNet();
-            return petriNet.getEnablingDegree(model);
-        }
-
-        if (model.getRateExpr() == null) {
-            return -1;
-        }
-        try {
-            return Double.parseDouble(model.getRateExpr());
-        } catch (Exception e) {
-            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
-            try {
-                return parser.parseAndEvalExprForTransition(model.getRateExpr());
-            } catch (EvaluationException ee) {
-                showErrorMessage();
-                return 1.0;
-            }
-
-        }
-    }
-
-    public boolean isInfiniteServer() {
-        return model.isInfiniteServer();
-    }
-
-    private void showErrorMessage() {
-        String message =
-                "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
-        String title = "Error";
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
     }
 
     @Override
@@ -306,8 +212,80 @@ public final class TransitionView extends ConnectableView<Transition> implements
         _attributesVisible = !_attributesVisible;
     }
 
-    public void update() {
-        this.repaint();
+    private void changeToolTipText() {
+        try {
+            Double.parseDouble(getRateExpr());
+            if (this.isTimed()) {
+                setToolTipText("r = " + this.getRate());
+            } else {
+                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
+            }
+        } catch (Exception e) {
+            if (this.isTimed()) {
+                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
+            } else {
+                setToolTipText(
+                        "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
+            }
+        }
+    }
+
+    public double getRate() {
+        if (isInfiniteServer()) {
+            PetriNet petriNet = petriNetController.getPetriNet();
+            return petriNet.getEnablingDegree(model);
+        }
+
+        if (model.getRateExpr() == null) {
+            return -1;
+        }
+        try {
+            return Double.parseDouble(model.getRateExpr());
+        } catch (Exception e) {
+            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
+            try {
+                return parser.parseAndEvalExprForTransition(model.getRateExpr());
+            } catch (EvaluationException ee) {
+                showErrorMessage();
+                return 1.0;
+            }
+
+        }
+    }
+
+    private void showErrorMessage() {
+        String message =
+                "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
+        String title = "Error";
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+    }
+
+    public boolean isInfiniteServer() {
+        return model.isInfiniteServer();
+    }
+
+    public String getRateExpr() {
+        return model.getRateExpr();
+    }
+
+    public boolean isTimed() {
+        return model.isTimed();
+    }
+
+    public int getPriority() {
+        return model.
+                getPriority();
+    }
+
+    /**
+     * @return true if in animate mode and the model is enabled
+     */
+    private boolean highlightView() {
+        //TODO: GET THIS IN A BETTER WAY
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
+        PetriNetTab tab = view.getCurrentTab();
+
+        return model.isEnabled() && tab.isInAnimationMode();
     }
 
     private String getAttributes() {
@@ -485,12 +463,12 @@ public final class TransitionView extends ConnectableView<Transition> implements
 
     //TODO: DELETE
     public HistoryItem setRateParameter(RateParameter rateParameter) {
-//        double oldRate = getRate();
-//        this._rateParameter = rateParameter;
-//        this._rateParameter.add(this);
-//        model.setRateExpr(rateParameter.getValue());
-//        update();
-//        return new SetRateParameter(this, oldRate, this._rateParameter);
+        //        double oldRate = getRate();
+        //        this._rateParameter = rateParameter;
+        //        this._rateParameter.add(this);
+        //        model.setRateExpr(rateParameter.getValue());
+        //        update();
+        //        return new SetRateParameter(this, oldRate, this._rateParameter);
         throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
     }
 
@@ -501,16 +479,17 @@ public final class TransitionView extends ConnectableView<Transition> implements
         update();
         return new ClearRateParameter(this, oldRateParameter);
     }
+
     //TODO: DELETE
     public HistoryItem changeRateParameter(RateParameter rateParameter) {
         throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
-//        RateParameter oldRateParameter = this._rateParameter;
-//        this._rateParameter.remove(this);
-//        this._rateParameter = rateParameter;
-//        this._rateParameter.add(this);
-//        model.setRateExpr(rateParameter.getValue());
-//        update();
-//        return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
+        //        RateParameter oldRateParameter = this._rateParameter;
+        //        this._rateParameter.remove(this);
+        //        this._rateParameter = rateParameter;
+        //        this._rateParameter.add(this);
+        //        model.setRateExpr(rateParameter.getValue());
+        //        update();
+        //        return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
     }
 
     public void setModel(Transition model) {
@@ -574,13 +553,13 @@ public final class TransitionView extends ConnectableView<Transition> implements
         return new GroupTransition(newGroupTransitionView);
     }
 
+    public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide,
+                                       GroupTransitionView newGroupTransitionView) {
+    }
+
     private ArrayList<TransitionView> groupTransitionsValidation() {
         ArrayList<TransitionView> transitionsToHide = new ArrayList<TransitionView>();
         return transitionsToHide;
-    }
-
-    public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide,
-                                       GroupTransitionView newGroupTransitionView) {
     }
 
     public void hideFromCanvas() {
@@ -600,18 +579,9 @@ public final class TransitionView extends ConnectableView<Transition> implements
     //TODO: DELETE
     public HistoryItem setRate(double rate) {
         throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
-//        String oldRate = model.getRateExpr();
-//        model.setRateExpr(rate + "");
-//        repaint();
-//        return new TransitionRate(this, oldRate, model.getRateExpr());
-    }
-
-    //TODO: DELETE
-    public HistoryItem setRate(String rate) {
-        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
-//        String oldRate = model.getRateExpr();
-//        model.setRateExpr(rate + "");
-//        repaint();
-//        return new TransitionRate(this, oldRate, model.getRateExpr());
+        //        String oldRate = model.getRateExpr();
+        //        model.setRateExpr(rate + "");
+        //        repaint();
+        //        return new TransitionRate(this, oldRate, model.getRateExpr());
     }
 }

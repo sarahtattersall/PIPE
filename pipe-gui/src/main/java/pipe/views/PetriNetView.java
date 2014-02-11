@@ -13,10 +13,9 @@ import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.petrinet.transformer.PNMLTransformer;
 import pipe.utilities.Copier;
-import pipe.views.builder.AnnotationViewBuilder;
-import pipe.views.builder.PlaceViewBuilder;
+import pipe.views.arc.InhibitorArcView;
+import pipe.views.arc.NormalArcView;
 import pipe.views.builder.TokenViewBuilder;
-import pipe.views.builder.TransitionViewBuilder;
 import pipe.views.viewComponents.AnnotationView;
 import pipe.views.viewComponents.RateParameter;
 

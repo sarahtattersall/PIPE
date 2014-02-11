@@ -16,7 +16,7 @@ public class UndoAction extends GuiAction {
     }
 
     @Override
-    public void actionPerformed(final ActionEvent actionEvent) {
+    public void actionPerformed(ActionEvent actionEvent) {
         PipeApplicationController applicationController = ApplicationSettings
                 .getApplicationController();
         PetriNetController controller = applicationController.getActivePetriNetController();

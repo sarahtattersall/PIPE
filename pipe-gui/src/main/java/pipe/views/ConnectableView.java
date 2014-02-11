@@ -23,18 +23,25 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         implements Cloneable, Serializable {
     protected NameLabel nameLabel;
 
+
+    /**
+     * Shape of the place on the Petri net
+     */
+    protected final Shape shape;
+
     boolean _attributesVisible = false;
 
-    ConnectableView(T model) {
-        this("", model);
+    ConnectableView(T model, Shape shape) {
+        this("", model, shape);
     }
 
-    private ConnectableView(String id, T model) {
-        this(id, model, null);
+    private ConnectableView(String id, T model, Shape shape) {
+        this(id, model, null, shape);
     }
 
-    ConnectableView(String id, T model, PetriNetController controller) {
+    ConnectableView(String id, T model, PetriNetController controller, Shape shape) {
         super(id, model, controller);
+        this.shape = shape;
         setLocation(model.getX(), model.getY());
 
         int x = (int) (model.getX() + model.getNameXOffset());
@@ -75,9 +82,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     protected void updateBounds() {
-        bounds.setBounds(model.getX(), model.getY(), model.getHeight(), model.getHeight());
-        bounds.grow(getComponentDrawOffset(), getComponentDrawOffset());
-        setBounds(bounds);
+        setBounds(model.getX(), model.getY(), model.getWidth() + getComponentDrawOffset(), model.getHeight() + getComponentDrawOffset());
 
         //TODO: THIS IS A DIRTY HACK IN ORDER TO GET DRAGGIGN WHEN ZOOMED WORKING
         Component root = SwingUtilities.getRoot(this);
@@ -132,6 +137,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         return Constants.PLACE_TRANSITION_LAYER_OFFSET;
     }
 
+    // TODO: DELETE
     @Override
     public AbstractPetriNetViewComponent clone() {
         AbstractPetriNetViewComponent<?> pnCopy = super.clone();

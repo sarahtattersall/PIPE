@@ -1,4 +1,4 @@
-package pipe.views;
+package pipe.views.arc;
 
 import pipe.gui.Constants;
 import pipe.models.component.Connectable;
@@ -21,6 +21,8 @@ import static java.lang.Math.max;
  */
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     private T source;
+
+    private ArcHead arcHead = new NormalHead();
 
     /**
      * Current end location of the mouse
@@ -96,6 +98,9 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         }
         path.lineTo(end.getX(), end.getY());
         g2.draw(path);
+
+        //TODO: ACTAULLY GET TO DRAW
+        arcHead.draw(g2);
     }
 
     /**

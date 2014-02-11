@@ -1,14 +1,13 @@
-package pipe.views;
+package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
 import pipe.historyActions.*;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
+import pipe.views.ArcView;
 import pipe.views.viewComponents.NameLabel;
 
 import java.awt.*;
@@ -22,10 +21,9 @@ import java.util.Map;
 
 
 public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T> implements Serializable {
+    ArcHead arcHead = new NormalHead();
     private final static String type = "normal";
-    private final static Polygon head = new Polygon(new int[]{0, 5, 0, -5}, new int[]{0, -10, -7, -10}, 4);
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
-    private final java.util.List<MarkingView> _weight = new LinkedList<MarkingView>();
     // bidirectional arc?
     private boolean joined = false;
     // Whether or not exists an inverse arc
@@ -185,34 +183,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     }
 
-    public void setInView(boolean flag) {
-        inView = flag;
-    }
-
-    public HistoryItem clearInverse() {
-        NormalArcView oldInverse = _inverse;
-
-        _inverse.inView = true;
-        inView = true;
-
-        _inverse.joined = false;
-        joined = false;
-
-        _inverse.updateWeightLabel();
-        updateWeightLabel();
-
-        _inverse._inverse = null;
-        _inverse = null;
-
-        return new ClearInverseArc(this, oldInverse, false);
-    }
-
     public boolean hasInverse() {
         return _inverse != null;
-    }
-
-    public NormalArcView getInverse() {
-        return _inverse;
     }
 
     public HistoryItem setInverse(NormalArcView<S,T> _inverse, boolean joined) {
@@ -235,10 +207,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             joined = isJoined;
         }
         updateWeightLabel();
-    }
-
-    public boolean isJoined() {
-        return joined;
     }
 
     void setJoined(boolean flag) {
@@ -305,8 +273,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
 
-        g2.setStroke(new BasicStroke(0.8f));
-        g2.fillPolygon(head);
+        arcHead.draw(g2);
 
         g2.transform(reset);
     }

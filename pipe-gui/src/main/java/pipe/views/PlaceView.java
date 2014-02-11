@@ -25,14 +25,9 @@ import java.util.Map;
  */
 public class PlaceView extends ConnectableView<Place> {
 
-    /**
-     * Shape of the place on the Petri net
-     */
-    private final Ellipse2D place;
 
     public PlaceView(Place model, PetriNetController controller) {
-        super(model.getId(), model, controller);
-        place = new Ellipse2D.Double(0, 0, model.getWidth(), model.getWidth());
+        super(model.getId(), model, controller, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
         setChangeListener();
     }
 
@@ -81,7 +76,7 @@ public class PlaceView extends ConnectableView<Place> {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
 
-        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
+//        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
 
         if (hasCapacity()) {
             g2.setStroke(new BasicStroke(2.0f));
@@ -97,14 +92,14 @@ public class PlaceView extends ConnectableView<Place> {
         } else {
             g2.setColor(Constants.ELEMENT_FILL_COLOUR);
         }
-        g2.fill(place);
+        g2.fill(shape);
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
-        g2.draw(place);
+        g2.draw(shape);
 
         g2.setStroke(new BasicStroke(1.0f));
 
@@ -121,7 +116,7 @@ public class PlaceView extends ConnectableView<Place> {
 
             g2.translate(-2, -2);
 
-            g2.fill(place);
+            g2.fill(shape);
 
             g2.translate(2, 2);
 
@@ -351,7 +346,7 @@ public class PlaceView extends ConnectableView<Place> {
         //                return false;
         //            }
         //        } else {
-        return place.contains(x, y);
+        return shape.contains(x, y);
         //        }
     }
 
