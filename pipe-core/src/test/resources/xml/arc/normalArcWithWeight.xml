@@ -51,7 +51,7 @@
         <arc id="P0 TO T0" source="P0" target="T0">
             <arcpath id="" x="15.0" y="15.0" curvePoint="false"/>
             <arcpath id="" x="87.0" y="36.0" curvePoint="true"/>
-            <arcpath id="" x="15.0" y="30.0" curvePoint="false"/>
+            <arcpath id="" x="10.0" y="15.0" curvePoint="false"/>
             <type value="normal"/>
             <inscription>
                 <value>Default,4</value>

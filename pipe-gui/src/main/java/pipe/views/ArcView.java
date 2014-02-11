@@ -88,7 +88,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     }
 
     private void addPathEndLocation() {
-        Point2D.Double targetPoint = model.getEndPoint();
+        Point2D targetPoint = model.getEndPoint();
         endPoint = new ArcPoint(targetPoint, false);
         arcPath.addPoint(endPoint);
     }

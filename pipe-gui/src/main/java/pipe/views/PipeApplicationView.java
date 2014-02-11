@@ -30,6 +30,8 @@ import pipe.io.JarUtilities;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.utilities.gui.GuiUtils;
+import pipe.views.arc.InhibitorArcHead;
+import pipe.views.arc.NormalHead;
 import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
@@ -174,10 +176,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         inhibarcAction =
                 new ArcAction("Inhibitor Arc", "Add an inhibitor arc (alt-h)", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
                         new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this),
-                        applicationController, this);
+                        applicationController, this, new InhibitorArcHead());
         arcAction = new ArcAction("Arc", "Add an arc (alt-a)", KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK,
                 new NormalArcSourceVisitor(), new NormalCreator(applicationController, this), applicationController,
-                this);
+                this, new NormalHead());
         zoomOutAction = new ZoomOutAction(zoomUI);
         zoomInAction = new ZoomInAction(zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);

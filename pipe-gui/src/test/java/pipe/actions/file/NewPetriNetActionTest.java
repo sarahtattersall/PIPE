@@ -2,6 +2,9 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.NewPetriNetAction;
 import pipe.views.PipeApplicationView;
 
@@ -10,14 +13,15 @@ import javax.swing.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NewPetriNetActionTest {
     NewPetriNetAction createAction;
 
+    @Mock
     PipeApplicationView mockView;
 
     @Before
     public void setUp() {
-        mockView = mock(PipeApplicationView.class);
         createAction = new NewPetriNetAction(mockView);
     }
 

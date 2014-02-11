@@ -97,9 +97,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
      * @return The start coordinate of the arc
      */
     public Point2D.Double getStartPoint() {
-                double angle = getAngleBetweenSourceAndTarget();
-                return source.getArcEdgePoint(angle);
-//        return source.getCentre();
+//        Point2D sourcePoint = new Point2D.Double(source.getX(), source.getY());
+//        double angle = getAngleBetweenTwoPoints(sourcePoint, getSecondPoint());
+        return source.getCentre();
     }
 
     /**
@@ -228,18 +228,23 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     /**
      * @return The end coordinate of the arc
      */
-    public Point2D.Double getEndPoint() {
-        double angle = getAngleBetweenSourceAndTarget();
-        return target.getArcEdgePoint(Math.PI + angle);
+    public Point2D getEndPoint() {
+
+        return target.getArcEdgePoint(getEndAngle());
+    }
+
+    public double getEndAngle() {
+        Point2D targetPoint = new Point2D.Double(target.getX(), target.getY());
+        return getAngleBetweenTwoPoints(getPenultimatePoint(), targetPoint);
     }
 
     /**
-     * @return angle in radians between source and target
+     * @return angle in radians between first and second
      */
-    private double getAngleBetweenSourceAndTarget() {
-        double deltax = source.getX() - target.getX();
-        double deltay = source.getY() - target.getY();
-        return Math.atan2(deltax, deltay);
+    private double getAngleBetweenTwoPoints(Point2D first, Point2D second) {
+        double deltax = second.getX() - first.getX();
+        double deltay = second.getY() - first.getY();
+        return Math.atan2(deltay, deltax);
     }
 
     @Override
@@ -285,6 +290,24 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         //        }
 
         return true;
+    }
+
+    /**
+     *
+     * @return last point before the target
+     */
+    private Point2D getPenultimatePoint() {
+        if (!intermediatePoints.isEmpty()) {
+            return intermediatePoints.get(intermediatePoints.size() - 1).getPoint();
+        }
+        return new Point2D.Double(source.getX(), source.getY());
+    }
+
+    private Point2D getSecondPoint() {
+        if (!intermediatePoints.isEmpty()) {
+            return intermediatePoints.get(0).getPoint();
+        }
+        return new Point2D.Double(target.getX(), target.getY());
     }
 
 }

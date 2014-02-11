@@ -7,6 +7,7 @@ import pipe.gui.PetriNetTab;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.PipeApplicationView;
+import pipe.views.arc.ArcHead;
 import pipe.views.arc.TemporaryArcView;
 import pipe.visitor.connectable.arc.ArcSourceVisitor;
 
@@ -25,16 +26,19 @@ public class ArcAction extends CreateAction {
 
     private final PipeApplicationView applicationView;
 
+    private final ArcHead arcHead;
+
     private TemporaryArcView<? extends Connectable> temporaryArcView = null;
 
     public ArcAction(String name, String tooltip, int key, int modifiers, ArcSourceVisitor sourceVisitor,
                      ArcActionCreator arcCreator, PipeApplicationController controller,
-                     PipeApplicationView applicationView) {
+                     PipeApplicationView applicationView, ArcHead arcHead) {
         super(name, tooltip, key, modifiers);
         this.sourceVisitor = sourceVisitor;
         this.arcCreator = arcCreator;
         this.controller = controller;
         this.applicationView = applicationView;
+        this.arcHead = arcHead;
     }
 
     /**
@@ -95,7 +99,7 @@ public class ArcAction extends CreateAction {
      */
     private <T extends Connectable> void createTemporaryArc(T connectable, final PetriNetTab tab) {
 
-        temporaryArcView = new TemporaryArcView<>(connectable);
+        temporaryArcView = new TemporaryArcView<>(connectable, arcHead);
         temporaryArcView.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {

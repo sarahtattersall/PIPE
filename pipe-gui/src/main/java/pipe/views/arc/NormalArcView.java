@@ -263,7 +263,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
         g2.translate(arcPath.getPoint(arcPath.getEndIndex()).getX(), arcPath.getPoint(arcPath.getEndIndex()).getY());
 
-        g2.rotate(arcPath.getEndAngle() + Math.PI);
+        g2.rotate(model.getEndAngle());
         g2.setColor(java.awt.Color.WHITE);
 
 

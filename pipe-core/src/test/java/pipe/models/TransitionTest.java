@@ -11,65 +11,66 @@ public class TransitionTest {
 
 
     @Test
-    public void calculatesCorrectArcConnectionPointForAbove() {
+    public void calculatesCorrectArcConnectionForTransitionAbove() {
         Transition transition = new Transition("id", "name");
         // No rotation
         transition.setAngle(0);
 
-        double x1 = 10;
-        double y1 = 100;
-        double x2 = 10;
-        double y2 = 50;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double sourceX = 0;
+        double sourceY = 50;
+        double targetX = 0;
+        double targetY = 0;
+        double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
-        transition.setX(x1);
-        transition.setY(y1);
+        transition.setX(targetX);
+        transition.setY(targetY);
 
+        assertEquals(-90, Math.toDegrees(angle),0.001);
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2, y1);
+        Point2D.Double expected = new Point2D.Double(targetX + transition.getWidth()/2, targetY + transition.getHeight());
         assertEquals(expected, point);
     }
 
 
     @Test
-    public void calculatesCorrectArcConnectionPointForRight() {
+    public void calculatesCorrectArcConnectionPointForTransitionRight() {
         Transition transition = new Transition("id", "name");
         // No rotation
         transition.setAngle(0);
 
-        double x1 = 10;
-        double y1 = 100;
-        double x2 = 50;
-        double y2 = 100;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double sourceX = 0;
+        double sourceY = 0;
+        double targetX = 50;
+        double targetY = 0;
+        double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
-        transition.setX(x1);
-        transition.setY(y1);
+        transition.setX(targetX);
+        transition.setY(targetY);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2 + transition.getWidth() / 2,
-                y1 + transition.getHeight() / 2);
+        Point2D.Double expected = new Point2D.Double(targetX,
+                targetY + transition.getHeight() / 2);
         assertEquals(expected, point);
     }
 
     @Test
-    public void calculatesCorrectArcConnectionPointForLeft() {
+    public void calculatesCorrectArcConnectionPointForTargetOnLeft() {
         Transition transition = new Transition("id", "name");
         // No rotation
         transition.setAngle(0);
 
-        double x1 = 200;
-        double y1 = 100;
-        double x2 = 100;
-        double y2 = 100;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double sourceX = 50;
+        double sourceY = 0;
+        double targetX = 0;
+        double targetY = 0;
+        double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
-        transition.setX(x1);
-        transition.setY(y1);
+        transition.setX(targetX);
+        transition.setY(targetY);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2 - transition.getWidth() / 2,
-                y1 + transition.getHeight() / 2);
+        Point2D.Double expected = new Point2D.Double(targetX + transition.getWidth(),
+                targetY + transition.getHeight() / 2);
         assertEquals(expected, point);
     }
 
@@ -88,34 +89,33 @@ public class TransitionTest {
         transition.setY(y1);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2, y1 + transition.getHeight());
+        Point2D.Double expected = new Point2D.Double(100, 115);
         assertEquals(expected, point);
     }
 
     @Test
-    public void calculatesCorrectArcConnectionPointForBottomRotated90() {
+    public void calculatesCorrectArcConnectionPointForTransitionBelowRotated90() {
         Transition transition = new Transition("id", "name");
         transition.setAngle(90);
 
-        double x1 = 0;
-        double y1 = 0;
-        double x2 = 0;
-        double y2 = 50;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double sourceX = 0;
+        double sourceY = 0;
+        double targetX = 0;
+        double targetY = 50;
+        double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
-        transition.setX(x1);
-        transition.setY(y1);
+        transition.setX(targetX);
+        transition.setY(targetY);
 
         Point2D.Double point = transition.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + transition.getHeight() / 2,
-                y1 + transition.getHeight() - transition.getWidth());
+        Point2D.Double expected = new Point2D.Double(5,70);
         assertEquals(expected, point);
     }
 
 
     private double getAngleBetweenObjects(double x1, double y1, double x2, double y2) {
-        double deltax = x1 - x2;
-        double deltay = y1 - y2;
-        return Math.atan2(deltax, deltay);
+        double deltax = x2 - x1;
+        double deltay = y2 - y1;
+        return Math.atan2(deltay, deltax);
     }
 }

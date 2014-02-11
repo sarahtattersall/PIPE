@@ -131,23 +131,15 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
 
         Point2D endPoint = model.getEndPoint();
         g2.translate(endPoint.getX(), endPoint.getY());
-
-        g2.rotate(arcPath.getEndAngle() + Math.PI);
-        g2.setColor(java.awt.Color.WHITE);
-
         AffineTransform reset = g2.getTransform();
 
-//        g2.setStroke(new BasicStroke(0.8f));
-//        g2.fillOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
+        arcHead.draw(g2);
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
         }
-
-        arcHead.draw(g2);
-//        g2.drawOval(OVAL_X, OVAL_Y, OVAL_WIDTH, OVAL_HEIGHT);
 
         g2.setTransform(reset);
     }

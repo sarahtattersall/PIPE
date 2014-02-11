@@ -4,6 +4,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.ArcType;
@@ -19,25 +22,27 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ArcTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Mock
     Place mockSource;
 
+    @Mock
     Transition mockTarget;
 
     Arc<Place, Transition> arc;
 
     @Before
     public void setUp() {
-        mockSource = mock(Place.class);
         when(mockSource.getId()).thenReturn("source");
-        mockTarget = mock(Transition.class);
         when(mockTarget.getId()).thenReturn("target");
-        arc = new Arc<Place, Transition>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
     }
 
     @Test
@@ -51,15 +56,48 @@ public class ArcTest {
     }
 
     @Test
-    public void gettingEndUsesTargetMathematicsCalculation() {
-        double angle = setUpSourceXAndYAndReturnAngle();
+    public void calculatesCorrectAngleTargetRightOfSource() {
+        when(mockSource.getX()).thenReturn(0);
+        when(mockSource.getY()).thenReturn(0);
+        when(mockTarget.getX()).thenReturn(50);
+        when(mockTarget.getY()).thenReturn(0);
+
+        arc.getEndPoint();
+        verify(mockTarget).getArcEdgePoint(Math.toRadians(0));
+    }
 
 
-        Point2D.Double expectedEndPoint = new Point2D.Double(100, 100);
-        when(mockTarget.getArcEdgePoint(Math.PI + angle)).thenReturn(expectedEndPoint);
+    @Test
+    public void calculatesCorrectAngleTargetLeftOfSource() {
+        when(mockSource.getX()).thenReturn(50);
+        when(mockSource.getY()).thenReturn(0);
+        when(mockTarget.getX()).thenReturn(0);
+        when(mockTarget.getY()).thenReturn(0);
 
-        Point2D.Double arcEndPoint = arc.getEndPoint();
-        assertEquals(expectedEndPoint, arcEndPoint);
+        arc.getEndPoint();
+        verify(mockTarget).getArcEdgePoint(Math.toRadians(180));
+    }
+
+    @Test
+    public void calculatesCorrectAngleTargetBelowSource() {
+        when(mockSource.getX()).thenReturn(0);
+        when(mockSource.getY()).thenReturn(0);
+        when(mockTarget.getX()).thenReturn(0);
+        when(mockTarget.getY()).thenReturn(50);
+
+        arc.getEndPoint();
+        verify(mockTarget).getArcEdgePoint(Math.toRadians(90));
+    }
+
+    @Test
+    public void calculatesCorrectAngleTargetAboveSource() {
+        when(mockSource.getX()).thenReturn(0);
+        when(mockSource.getY()).thenReturn(50);
+        when(mockTarget.getX()).thenReturn(0);
+        when(mockTarget.getY()).thenReturn(0);
+
+        arc.getEndPoint();
+        verify(mockTarget).getArcEdgePoint(Math.toRadians(-90));
     }
 
     private double setUpSourceXAndYAndReturnAngle() {
@@ -74,7 +112,7 @@ public class ArcTest {
         when(mockTarget.getX()).thenReturn(targetX);
         when(mockTarget.getY()).thenReturn(targetY);
 
-        return Math.atan2(sourceX - targetX, sourceY - targetY);
+        return Math.atan2(sourceY - targetY, sourceX - targetX);
     }
 
     @Test

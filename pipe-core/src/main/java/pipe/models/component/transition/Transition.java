@@ -141,9 +141,9 @@ public class Transition extends Connectable {
         double halfWidth = getWidth() / 2;
         double centreX =
                 x + halfWidth;
-        double centre_y = y + halfHeight;
+        double centreY = y + halfHeight;
 
-        Point2D.Double connectionPoint = new Point2D.Double(centreX, centre_y);
+        Point2D.Double connectionPoint = new Point2D.Double(centreX, centreY);
 
         double rotatedAngle = angle + Math.toRadians(this.angle);
         if (connectToTop(rotatedAngle)) {
@@ -174,8 +174,8 @@ public class Transition extends Connectable {
      * @return true if an arc connecting to this should
      * connect to the top edge of the transition
      */
-    private boolean connectToTop(double angle) {
-        return Math.cos(angle) > ROOT_THREE_OVER_TWO;
+    private boolean connectToBottom(double angle) {
+        return angle < Math.toRadians(-45) && angle > Math.toRadians(-135);
     }
 
     //    public void setRateExpr(String string) {
@@ -187,8 +187,8 @@ public class Transition extends Connectable {
      * @return true if an arc connecting to this should connect to the bottom edge
      * of the transition
      */
-    private boolean connectToBottom(double angle) {
-        return Math.cos(angle) < -ROOT_THREE_OVER_TWO;
+    private boolean connectToTop(double angle) {
+        return angle > Math.toRadians(45) && angle < Math.toRadians(135);
     }
 
     /**
@@ -197,7 +197,7 @@ public class Transition extends Connectable {
      * connect to the left edge of the transition
      */
     private boolean connectToLeft(double angle) {
-        return (Math.sin(angle) > 0);
+        return angle > Math.toRadians(-45) && angle < Math.toRadians(45);
     }
 
     @Override

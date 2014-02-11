@@ -22,7 +22,7 @@ import static java.lang.Math.max;
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     private T source;
 
-    private ArcHead arcHead = new NormalHead();
+    private final ArcHead arcHead;
 
     /**
      * Current end location of the mouse
@@ -42,9 +42,10 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
 
     private double maxY;
 
-    public TemporaryArcView(T source) {
+    public TemporaryArcView(T source, ArcHead arcHead) {
         super();
         this.source = source;
+        this.arcHead = arcHead;
         Point2D centre = source.getCentre();
         end = new Point2D.Double(centre.getX(), centre.getY());
         updateMax(end);
@@ -99,8 +100,20 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         path.lineTo(end.getX(), end.getY());
         g2.draw(path);
 
-        //TODO: ACTAULLY GET TO DRAW
+        g2.translate(end.getX(), end.getY());
+        g2.rotate(getRotationAngle());
         arcHead.draw(g2);
+    }
+
+    /**
+     * @return angle in radians between last point on the arc and the current end
+     */
+    private double getRotationAngle() {
+        Point2D lastPoint = getLastPoint();
+        double deltax = end.getX() - lastPoint.getX();
+        double deltay = end.getY() - lastPoint.getY();
+        return Math.atan2(deltay, deltax);
+
     }
 
     /**
@@ -114,6 +127,13 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
     @Override
     public boolean contains(int x, int y) {
         return false;
+    }
+
+    public Point2D getLastPoint() {
+        if (!intermediatePoints.isEmpty()) {
+            return intermediatePoints.get(intermediatePoints.size() - 1).getPoint();
+        }
+        return source.getCentre();
     }
 
     public List<ArcPoint> getIntermediatePoints() {
