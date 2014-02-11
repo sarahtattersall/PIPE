@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 /**
  * @author dazz
@@ -53,7 +54,7 @@ public class ServerDrmaaSession extends DrmaaSession
 
 		JobTemplate jobTempl = createJobTemplate();
 		jobTempl.setRemoteCommand(executable);
-		jobTempl.setArgs(jobArgs);
+		jobTempl.setArgs(Arrays.asList(jobArgs));
 		jobTempl.setWorkingDirectory(workPath);
 		jobTempl.setJoinFiles(true); // Merges stdout and stderr to a single
 		// file

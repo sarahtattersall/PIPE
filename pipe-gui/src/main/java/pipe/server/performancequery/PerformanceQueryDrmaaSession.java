@@ -5,6 +5,7 @@ import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.JobTemplate;
 import pipe.server.serverCommon.DrmaaSession;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class PerformanceQueryDrmaaSession extends DrmaaSession implements ServerLoggingHandler
@@ -42,7 +43,7 @@ public class PerformanceQueryDrmaaSession extends DrmaaSession implements Server
 		}
 		final JobTemplate jobTempl = this.createJobTemplate();
 		jobTempl.setRemoteCommand(scriptForTool);
-		jobTempl.setArgs(jobArgs);
+		jobTempl.setArgs(Arrays.asList(jobArgs));
 		jobTempl.setWorkingDirectory(workPath);
 		jobTempl.setJoinFiles(true); // Merges stdout and stderr to a
 		// single file
