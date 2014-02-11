@@ -52,12 +52,14 @@ public abstract class CreateAction extends GuiAction {
         PipeApplicationModel model = ApplicationSettings.getApplicationModel();
         model.selectTypeAction(this);
 
-        PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
-        petriNetTab.setCursorType("crosshair");
 
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
-        SelectionManager selectionManager = controller.getSelectionManager(petriNetTab);
-        selectionManager.disableSelection();
+        PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
+        if (petriNetTab != null) {
+            petriNetTab.setCursorType("crosshair");
+            PipeApplicationController controller = ApplicationSettings.getApplicationController();
+            SelectionManager selectionManager = controller.getSelectionManager(petriNetTab);
+            selectionManager.disableSelection();
+        }
     }
 
 }

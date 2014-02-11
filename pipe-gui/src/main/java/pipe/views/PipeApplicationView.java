@@ -11,7 +11,7 @@ import pipe.actions.gui.edit.*;
 import pipe.actions.gui.file.*;
 import pipe.actions.gui.grid.DragAction;
 import pipe.actions.gui.grid.GridAction;
-import pipe.actions.gui.grid.SelectAction;
+import pipe.actions.gui.create.SelectAction;
 import pipe.actions.gui.tokens.ChooseTokenClassAction;
 import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.actions.gui.window.ExitAction;
