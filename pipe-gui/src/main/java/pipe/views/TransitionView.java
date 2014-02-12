@@ -415,46 +415,9 @@ public class TransitionView extends ConnectableView<Transition> {
         _delayValid = true;
     }
 
-    public boolean isDelayValid() {
-        return _delayValid;
-    }
-
-    public void setDelayValid(boolean _delayValid) {
-        this._delayValid = _delayValid;
-    }
-
     @Override
     public boolean contains(int x, int y) {
-
-        double unZoomedX = x - getComponentDrawOffset();
-        double unZoomedY = y - getComponentDrawOffset();
-
-        //TODO: WORK OUT WHAT THIS DOES AND REMOVE DUPLICATED CODE BETWEEN THIS AND PLACE
-        ArcView someArcView = null; //ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
-        //        if (someArcView != null) {
-        //            if ((proximityTransition.contains((int) unZoomedX, (int) unZoomedY) ||
-        //                    shape.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-        //                if (someArcView.getTarget() != this) {
-        //                    someArcView.setTarget(this);
-        //                }
-        //                someArcView.updateArcPosition();
-        //                return true;
-        //            } else {
-        //                if (someArcView.getTarget() == this) {
-        //                    if (!ConnectableHandler.isMouseDown()) {
-        //                        someArcView.setTarget(null);
-        //                        removeArcCompareObject(someArcView);
-        //                        updateConnected();
-        //                    }
-        //                }
-        //                return false;
-        //            }
-        //        } else {
-        return shape.contains((int) unZoomedX, (int) unZoomedY);
-        //        }
-    }
-
-    public void removeArcCompareObject(ArcView arcView) {
+        return shape.contains(x,y);
     }
 
     public RateParameter getRateParameter() {
@@ -463,12 +426,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     //TODO: DELETE
     public HistoryItem setRateParameter(RateParameter rateParameter) {
-        //        double oldRate = getRate();
-        //        this._rateParameter = rateParameter;
-        //        this._rateParameter.add(this);
-        //        model.setRateExpr(rateParameter.getValue());
-        //        update();
-        //        return new SetRateParameter(this, oldRate, this._rateParameter);
         throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
     }
 

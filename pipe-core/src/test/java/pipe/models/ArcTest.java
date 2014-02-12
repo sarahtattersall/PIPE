@@ -46,21 +46,18 @@ public class ArcTest {
     }
 
     @Test
-    public void gettingStartReturnsCenter() {
-        Point2D.Double center = new Point2D.Double(100, 401);
+    public void gettingStartReturnsEndPoint() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(65,15));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
 
-        when(mockSource.getCentre()).thenReturn(center);
-
-        Point2D.Double arcSourcePoint = arc.getStartPoint();
-        assertEquals(center, arcSourcePoint);
+        arc.getStartPoint();
+        verify(mockSource).getArcEdgePoint(Math.toRadians(0));
     }
 
     @Test
     public void calculatesCorrectAngleTargetRightOfSource() {
-        when(mockSource.getX()).thenReturn(0);
-        when(mockSource.getY()).thenReturn(0);
-        when(mockTarget.getX()).thenReturn(50);
-        when(mockTarget.getY()).thenReturn(0);
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,15));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(65,15));
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(0));
@@ -69,10 +66,8 @@ public class ArcTest {
 
     @Test
     public void calculatesCorrectAngleTargetLeftOfSource() {
-        when(mockSource.getX()).thenReturn(50);
-        when(mockSource.getY()).thenReturn(0);
-        when(mockTarget.getX()).thenReturn(0);
-        when(mockTarget.getY()).thenReturn(0);
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(65,15));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(180));
@@ -80,10 +75,8 @@ public class ArcTest {
 
     @Test
     public void calculatesCorrectAngleTargetBelowSource() {
-        when(mockSource.getX()).thenReturn(0);
-        when(mockSource.getY()).thenReturn(0);
-        when(mockTarget.getX()).thenReturn(0);
-        when(mockTarget.getY()).thenReturn(50);
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,15));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,65));
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(90));
@@ -91,28 +84,11 @@ public class ArcTest {
 
     @Test
     public void calculatesCorrectAngleTargetAboveSource() {
-        when(mockSource.getX()).thenReturn(0);
-        when(mockSource.getY()).thenReturn(50);
-        when(mockTarget.getX()).thenReturn(0);
-        when(mockTarget.getY()).thenReturn(0);
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(-90));
-    }
-
-    private double setUpSourceXAndYAndReturnAngle() {
-        int sourceX = 0;
-        int sourceY = 0;
-        int targetX = 50;
-        int targetY = 100;
-
-        when(mockSource.getX()).thenReturn(sourceX);
-        when(mockSource.getY()).thenReturn(sourceY);
-
-        when(mockTarget.getX()).thenReturn(targetX);
-        when(mockTarget.getY()).thenReturn(targetY);
-
-        return Math.atan2(sourceY - targetY, sourceX - targetX);
     }
 
     @Test
@@ -163,10 +139,8 @@ public class ArcTest {
     public void sourceReturnsTargetAsNextIfNoIntermediatePoints() {
         Point2D.Double center = mock(Point2D.Double.class);
         when(mockSource.getCentre()).thenReturn(center);
-        when(mockSource.getX()).thenReturn(0);
-        when(mockSource.getY()).thenReturn(0);
-        when(mockTarget.getX()).thenReturn(0);
-        when(mockTarget.getY()).thenReturn(0);
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(0,0));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(0,0));
 
         Point2D.Double targetEnd = mock(Point2D.Double.class);
         when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);
@@ -204,6 +178,8 @@ public class ArcTest {
 
     @Test
     public void lastIntermediateReturnsTarget() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(65,15));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
         Point2D.Double targetEnd = mock(Point2D.Double.class);
         when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);
 

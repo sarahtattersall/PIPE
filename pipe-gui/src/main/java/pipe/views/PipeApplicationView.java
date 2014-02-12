@@ -9,7 +9,6 @@ import pipe.actions.gui.animate.*;
 import pipe.actions.gui.create.*;
 import pipe.actions.gui.edit.*;
 import pipe.actions.gui.file.*;
-import pipe.actions.gui.grid.DragAction;
 import pipe.actions.gui.grid.GridAction;
 import pipe.actions.gui.create.SelectAction;
 import pipe.actions.gui.tokens.ChooseTokenClassAction;
@@ -129,8 +128,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public CreateAction tokenAction = new AddTokenAction();
 
     public CreateAction deleteTokenAction = new DeleteTokenAction();
-
-    public GuiAction dragAction = new DragAction(this);
 
     public GridAction toggleGrid = new GridAction(this);
 
@@ -378,7 +375,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         viewMenu.addSeparator();
         addMenuItem(viewMenu, toggleGrid);
-        addMenuItem(viewMenu, dragAction);
 
         JMenu animateMenu = new JMenu("Animate");
         animateMenu.setMnemonic('A');
@@ -550,7 +546,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addButton(toolBar, zoomInAction);
         toolBar.addSeparator();
         addButton(toolBar, toggleGrid);
-        addButton(toolBar, dragAction);
         addButton(toolBar, startAction);
 
         drawingToolBar = new JToolBar();

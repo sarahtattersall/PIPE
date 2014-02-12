@@ -1,19 +1,13 @@
 package pipe.gui;
 
-import pipe.handlers.AnimationHandler;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
-import pipe.models.component.rate.Rate;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
-import pipe.visitor.AllComponentVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.*;
@@ -31,20 +25,19 @@ import java.util.Observer;
 
 public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
-    private final AnimationHandler animationHandler = new AnimationHandler();
-
     /**
      * Map of components in the tab with id -> component
      */
     private final Map<String, PetriNetViewComponent> petriNetComponents = new HashMap<String, PetriNetViewComponent>();
 
-    public ZoomController getZoomController() {
-        return zoomController;
-    }
-
     private final ZoomController zoomController;
 
     private final AnimationHistoryView animationHistoryView;
+
+    /**
+     * Grid displayed on petri net tab
+     */
+    private final Grid grid = new Grid();
 
     public File _appFile;
 
@@ -53,11 +46,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     private boolean animationmode = false;
 
     private boolean metaDown = false;
-
-    /**
-     * Grid displayed on petri net tab
-     */
-    private final Grid grid = new Grid();
 
     public PetriNetTab(ZoomController controller, AnimationHistoryView animationHistoryView) {
         zoomController = controller;
@@ -80,6 +68,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
                 repaint();
             }
         });
+    }
+
+    public ZoomController getZoomController() {
+        return zoomController;
     }
 
     @Override
@@ -108,7 +100,31 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         component.addedToGui();
         petriNetComponents.put(component.getId(), component);
         updatePreferredSize();
-//        repaint();
+        //        repaint();
+    }
+
+    public void updatePreferredSize() {
+        Component[] components = getComponents();
+        Dimension d = new Dimension(0, 0);
+        for (Component component : components) {
+            if (component.getClass() == SelectionManager.class) {
+                continue;
+            }
+            Rectangle r = component.getBounds();
+            int x = r.x + r.width + 20;
+            int y = r.y + r.height + 20;
+            if (x > d.width) {
+                d.width = x;
+            }
+            if (y > d.height) {
+                d.height = y;
+            }
+        }
+        setPreferredSize(d);
+        Container parent = getParent();
+        if (parent != null) {
+            parent.validate();
+        }
     }
 
     private void registerForLocationChange(PetriNetComponent component) {
@@ -160,10 +176,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         metaDown = down;
     }
 
-    public AnimationHandler getAnimationHandler() {
-        return animationHandler;
-    }
-
     public boolean isInAnimationMode() {
         return animationmode;
     }
@@ -191,30 +203,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         offScreen.translate(dragStart.x - dragEnd.x, dragStart.y - dragEnd.y);
         Rectangle r = new Rectangle(offScreen.x, offScreen.y, 1, 1);
         scrollRectToVisible(r);
-    }
-
-    public void updatePreferredSize() {
-        Component[] components = getComponents();
-        Dimension d = new Dimension(0, 0);
-        for (Component component : components) {
-            if (component.getClass() == SelectionManager.class) {
-                continue;
-            }
-            Rectangle r = component.getBounds();
-            int x = r.x + r.width + 20;
-            int y = r.y + r.height + 20;
-            if (x > d.width) {
-                d.width = x;
-            }
-            if (y > d.height) {
-                d.height = y;
-            }
-        }
-        setPreferredSize(d);
-        Container parent = getParent();
-        if (parent != null) {
-            parent.validate();
-        }
     }
 
     public AnimationHistoryView getAnimationView() {
@@ -262,7 +250,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
         @Override
         public void visit(Place place) {
-              place.addPropertyChangeListener(updateListener);
+            place.addPropertyChangeListener(updateListener);
         }
 
         @Override

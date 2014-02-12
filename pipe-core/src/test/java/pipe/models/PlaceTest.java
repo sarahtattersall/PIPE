@@ -42,18 +42,31 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyAbove() {
-        double x1 = 10;
-        double y1 = 100;
-        double x2 = 10;
-        double y2 = 50;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double x1 = 0;
+        double y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
 
-        Point2D.Double point = place.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + place.getWidth() / 2, y1);
-        assertEquals(expected, point);
+        Point2D.Double point = place.getArcEdgePoint(Math.toRadians(90));
+        Point2D.Double expected = new Point2D.Double(15, 0);
+        assertEquals(expected.x, point.x, 0.001);
+        assertEquals(expected.y, point.y, 0.001);
+    }
+
+
+    @Test
+    public void calculatesCorrectArcAttachmentPointsDirectlyBelow() {
+        double x1 = 0;
+        double y1 = 0;
+
+        place.setX(x1);
+        place.setY(y1);
+
+        Point2D.Double point = place.getArcEdgePoint(Math.toRadians(-90));
+        Point2D.Double expected = new Point2D.Double(15, 30);
+        assertEquals(expected.x, point.x, 0.001);
+        assertEquals(expected.y, point.y, 0.001);
     }
 
     private double getAngleBetweenObjects(double x1, double y1, double x2, double y2) {
@@ -64,34 +77,30 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyRight() {
-        double x1 = 100;
-        double y1 = 100;
-        double x2 = 200;
-        double y2 = 100;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double x1 = 0;
+        double y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
 
-        Point2D.Double point = place.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1 + place.getWidth(), y1 + place.getHeight() / 2);
-        assertEquals(expected, point);
+        Point2D.Double point = place.getArcEdgePoint(Math.toRadians(180));
+        Point2D.Double expected = new Point2D.Double(30, 15);
+        assertEquals(expected.x, point.x, 0.001);
+        assertEquals(expected.y, point.y, 0.001);
     }
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyLeft() {
-        double x1 = 100;
-        double y1 = 100;
-        double x2 = 0;
-        double y2 = 100;
-        double angle = getAngleBetweenObjects(x1, y1, x2, y2);
+        double x1 = 0;
+        double y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
 
-        Point2D.Double point = place.getArcEdgePoint(angle);
-        Point2D.Double expected = new Point2D.Double(x1, y1 + place.getHeight() / 2);
-        assertEquals(expected, point);
+        Point2D.Double point = place.getArcEdgePoint(0);
+        Point2D.Double expected = new Point2D.Double(0, 15);
+        assertEquals(expected.x, point.x, 0.001);
+        assertEquals(expected.y, point.y, 0.001);
     }
 
     /**

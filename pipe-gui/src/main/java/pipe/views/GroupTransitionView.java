@@ -224,7 +224,6 @@ public class GroupTransitionView extends ConnectableView<Transition> implements 
         addMouseListener(groupTransitionHandler);
         addMouseMotionListener(groupTransitionHandler);
         addMouseWheelListener(groupTransitionHandler);
-        addMouseListener(tab.getAnimationHandler());
     }
 
     /**

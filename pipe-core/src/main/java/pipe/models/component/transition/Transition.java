@@ -49,8 +49,6 @@ public class Transition extends Connectable {
 
     public static final int TRANSITION_WIDTH = TRANSITION_HEIGHT / 3;
 
-    private static final double ROOT_THREE_OVER_TWO = 0.5 * Math.sqrt(3);
-
     private int priority = 1;
 
     private Rate rate = new NormalRate("1");

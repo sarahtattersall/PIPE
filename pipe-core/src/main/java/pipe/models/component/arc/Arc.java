@@ -97,9 +97,8 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
      * @return The start coordinate of the arc
      */
     public Point2D.Double getStartPoint() {
-//        Point2D sourcePoint = new Point2D.Double(source.getX(), source.getY());
-//        double angle = getAngleBetweenTwoPoints(sourcePoint, getSecondPoint());
-        return source.getCentre();
+        double angle = getAngleBetweenTwoPoints(getSecondPoint(), source.getCentre());
+        return source.getArcEdgePoint(angle);
     }
 
     /**
@@ -229,13 +228,11 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
      * @return The end coordinate of the arc
      */
     public Point2D getEndPoint() {
-
         return target.getArcEdgePoint(getEndAngle());
     }
 
     public double getEndAngle() {
-        Point2D targetPoint = new Point2D.Double(target.getX(), target.getY());
-        return getAngleBetweenTwoPoints(getPenultimatePoint(), targetPoint);
+        return getAngleBetweenTwoPoints(getPenultimatePoint(), target.getCentre());
     }
 
     /**
@@ -300,14 +297,18 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         if (!intermediatePoints.isEmpty()) {
             return intermediatePoints.get(intermediatePoints.size() - 1).getPoint();
         }
-        return new Point2D.Double(source.getX(), source.getY());
+        return source.getCentre();
     }
 
+    /**
+     *
+     * @return next point after the source
+     */
     private Point2D getSecondPoint() {
         if (!intermediatePoints.isEmpty()) {
             return intermediatePoints.get(0).getPoint();
         }
-        return new Point2D.Double(target.getX(), target.getY());
+        return target.getCentre();
     }
 
 }

@@ -72,7 +72,7 @@ public class PipeTest {
 	@Test
 	public void verifyMenusAddedToGui() throws Exception
 	{
-		assertEquals("expecting 6 top-level menus",6, applicationView.getJMenuBar().getMenuCount()); 
+		assertEquals("expecting 6 top-level menus",6, applicationView.getJMenuBar().getMenuCount());
 		menu = applicationView.getJMenuBar().getMenu(0); 
 		assertEquals("File",menu.getText());
 		assertEquals("expecting 15 File menu items, including separators",15,menu.getItemCount());
@@ -127,7 +127,7 @@ public class PipeTest {
 
 		menu = applicationView.getJMenuBar().getMenu(2); 
 		assertEquals("View",menu.getText());
-		assertEquals("expecting 6 View menu items, including separators",6,menu.getItemCount());
+		assertEquals("expecting 6 View menu items, including separators",5,menu.getItemCount());
 		assertEquals("Zoom out",menu.getItem(0).getText());
 		assertEquals("Zoom in",menu.getItem(1).getText());
 		assertEquals("Zoom",menu.getItem(2).getText());
@@ -145,7 +145,6 @@ public class PipeTest {
 		assertEquals("300%",subMenu.getItem(9).getText());
 		assertNull("separator",menu.getItem(3));
 		assertEquals("Cycle grid",menu.getItem(4).getText());
-		assertEquals("Drag",menu.getItem(5).getText());
 
 		menu = applicationView.getJMenuBar().getMenu(3); 
 		assertEquals("Draw",menu.getText());
@@ -193,7 +192,7 @@ public class PipeTest {
 		selectMenuItem(subMenu, 0); 
 		Container c = applicationView.getContentPane(); 
 		toolbar = (JToolBar) c.getComponent(1);
-		AbstractButton animateButton = ((AbstractButton) toolbar.getComponent(21));
+		AbstractButton animateButton = ((AbstractButton) toolbar.getComponent(20));
 		animateButton.getAction().actionPerformed(null); 
 		assertTrue(applicationView.getCurrentTab().isInAnimationMode());
 		selectMenuItem(menu, 2); 

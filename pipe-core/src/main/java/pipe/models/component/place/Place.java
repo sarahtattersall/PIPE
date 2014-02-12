@@ -247,13 +247,13 @@ public class Place extends Connectable {
      */
     @Override
     public Point2D.Double getArcEdgePoint(double angle) {
-        double radius = getWidth() / 2;
+        double radius = DIAMETER/ 2;
         double centreX = x + radius;
-        double opposite = Math.sin(angle);
+        double opposite = Math.cos(angle);
         double attachX = centreX - radius * opposite;
 
         double centreY = y + radius;
-        double adjacent = Math.cos(angle);
+        double adjacent = Math.sin(angle);
         double attachY = centreY - radius * adjacent;
 
         return new Point2D.Double(attachX, attachY);
