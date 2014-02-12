@@ -74,6 +74,7 @@
             <artifactId>pipe-core</artifactId>
             <version>1.0</version>
         </dependency>
+
         <dependency>
             <groupId>maven</groupId>
             <artifactId>maven-abbot-plugin</artifactId>
@@ -123,9 +124,9 @@
         </dependency>
 
         <dependency>
-            <groupId>internal</groupId>
-            <artifactId>drmaa</artifactId>
-            <version>1.0.0</version>
+            <groupId>us.levk</groupId>
+            <artifactId>drmaa-common</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
