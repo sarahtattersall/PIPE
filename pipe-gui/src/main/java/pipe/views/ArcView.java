@@ -157,26 +157,19 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Listens to the source/target changing position
      */
     private void addSourceTargetConnectableListener() {
-        model.getSource().addPropertyChangeListener(new PropertyChangeListener() {
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
+            public void propertyChange(PropertyChangeEvent evt) {
+                String name = evt.getPropertyName();
                 if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
                     sourcePoint.setPoint(model.getStartPoint());
-                    arcSpecificUpdate();
-                }
-            }
-        });
-        model.getTarget().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
                     endPoint.setPoint(model.getEndPoint());
                     arcSpecificUpdate();
                 }
             }
-        });
+        };
+        model.getSource().addPropertyChangeListener(changeListener);
+        model.getTarget().addPropertyChangeListener(changeListener);
     }
 
     public PetriNetTab getTab() {
