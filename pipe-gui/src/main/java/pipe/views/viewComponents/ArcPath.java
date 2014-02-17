@@ -336,9 +336,6 @@ public class ArcPath implements Shape, Cloneable {
         return points.contains(point);
     }
 
-    public void addPoint() {
-        pathPoints.add(new ArcPathPoint(this));
-    }
 
     public void deletePoint(ArcPoint point) {
         ArcPathPoint delete = new ArcPathPoint(point, this, petriNetController);
@@ -556,45 +553,6 @@ public class ArcPath implements Shape, Cloneable {
         pathPoints.add(index, newpoint);
         points.add(newpoint.getModel());
         addPointsToGui(parent.getTab());
-    }
-
-    public void addPointsToGui(JLayeredPane editWindow) {
-        ArcPathPoint pathPoint;
-        ArcPathPointHandler pointHandler;
-
-        pathPoints.get(0).setDraggable(false);
-        pathPoints.get(pathPoints.size() - 1).setDraggable(false);
-
-        for (ArcPathPoint pathPoint1 : pathPoints) {
-            pathPoint = pathPoint1;
-            pathPoint.setVisible(false);
-
-            // Check whether the point has already been added to the gui
-            // as addPointsToGui() may have been called after the user
-            // split an existing point. If this is the case, we don't want
-            // to add all the points again along with new action listeners,
-            // we just want to add the new point.
-            // Nadeem 21/06/2005
-            if (editWindow.getIndexOf(pathPoint) < 0) {
-                editWindow.add(pathPoint);
-                //TODO: SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER
-                pointHandler = new ArcPathPointHandler(editWindow, pathPoint, petriNetController,
-                        petriNetController.getArcController(parent.getModel()));
-
-                if (pathPoint.getMouseListeners().length == 0) {
-                    pathPoint.addMouseListener(pointHandler);
-                }
-
-                if (pathPoint.getMouseMotionListeners().length == 0) {
-                    pathPoint.addMouseMotionListener(pointHandler);
-                }
-
-                if (pathPoint.getMouseWheelListeners().length == 0) {
-                    pathPoint.addMouseWheelListener(pointHandler);
-                }
-                pathPoint.updatePointLocation();
-            }
-        }
     }
 
     public void addPointsToGui(PetriNetTab petriNetTab) {

@@ -12,7 +12,6 @@ import pipe.gui.PetriNetTab;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.arc.ArcPoint;
 import pipe.views.AbstractPetriNetViewComponent;
-import pipe.views.PetriNetView;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -26,40 +25,28 @@ import java.beans.PropertyChangeListener;
 /**
  * This class represents each point on the arc path.
  */
-public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
+public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     public static final boolean STRAIGHT = false;
 
-    public static final boolean CURVED = true;
-
     private static final int SIZE_OFFSET = 1;
 
-    private static int SIZE = 3;
+    private static final int SIZE = 3;
 
     private final ArcPoint model;
 
     private final Point2D.Double control1 = new Point2D.Double();
-    //
-    //    private final Point2D.Double point = new Point2D.Double();
-    //    private final Point2D.Double realPoint = new Point2D.Double();
 
     private final Point2D.Double control = new Point2D.Double();
 
     private ArcPath arcPath;
 
-    public ArcPathPoint(ArcPath a) {
-        setup();
-        model = null;
-        arcPath = a;
-        setPointLocation(0, 0);
+    private void setup() {
+        _copyPasteable = false; //we can't copy & paste indivial arc points!
     }
 
     public void setPointLocation(double x, double y) {
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
-    }
-
-    private void setup() {
-        _copyPasteable = false; //we can't copy & paste indivial arc points!
     }
 
     public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController) {
@@ -132,28 +119,6 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         return angle;
     }
 
-    /**
-     * splitPoint()
-     * This method is called when the user selects the popup menu option
-     * Split Point on an Arc Point.
-     * The method determines the index of the selected point in the listarray of
-     * ArcPathPoints that an arcpath has. Then then a new point is created BEFORE
-     * this one in the list and offset by a small delta in the x direction.
-     *
-     * @return
-     */
-    //TODO: IMPLEMENT
-    public HistoryItem splitPoint() {
-        //        int i = getIndex(); // Get the index of this point
-        //
-        //        int DELTA = 10;
-        //        ArcPathPoint newPoint = new ArcPathPoint(point.x + DELTA, point.y, pointType, arcPath);
-        //        arcPath.insertPoint(i + 1, newPoint);
-        //        arcPath.getArc().updateArcPosition();
-        //        return new AddArcPathPoint(arcPath.getArc(), newPoint);
-        return null;
-    }
-
     public Point2D.Double getMidPoint(ArcPathPoint target) {
         return new Point2D.Double((target.model.getPoint().getX() + model.getPoint().getX()) / 2,
                 (target.model.getPoint().getY() + model.getPoint().getY()) / 2);
@@ -202,12 +167,22 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         //        arcPath.updateArc();
     }
 
-    public void undelete(PetriNetView model, PetriNetTab view) {
-    }
-
     @Override
     public String getName() {
         return this.getArcPath().getArc().getName() + " - Point " + this.getIndex();
+    }
+
+    public int getIndex() {
+        for (int i = 0; i < arcPath.getNumPoints(); i++) {
+            if (arcPath.getPathPoint(i) == this) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public ArcPath getArcPath() {
+        return arcPath;
     }
 
     @Override
@@ -258,30 +233,6 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
         }
     }
 
-    public ArcPath getArcPath() {
-        return arcPath;
-    }
-
-    public void kill() {        // delete without the safety check :)
-        super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
-        //        arcPath.deletePoint(this);
-        super.delete();
-    }
-
-    public boolean isDeleteable() {
-        int i = getIndex();
-        return (i > 0 && i != arcPath.getNumPoints() - 1);
-    }
-
-    public int getIndex() {
-        for (int i = 0; i < arcPath.getNumPoints(); i++) {
-            if (arcPath.getPathPoint(i) == this) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     @Override
     public void paintComponent(Graphics g) {
 
@@ -322,5 +273,16 @@ public final class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> 
     @Override
     public boolean isSelected() {
         return false;
+    }
+
+    public boolean isDeleteable() {
+        int i = getIndex();
+        return (i > 0 && i != arcPath.getNumPoints() - 1);
+    }
+
+    public void kill() {        // delete without the safety check :)
+        super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
+        //        arcPath.deletePoint(this);
+        super.delete();
     }
 }

@@ -36,7 +36,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
      * Creates the popup menu that the user will see when they right click on a component
      */
     @Override
-    public JPopupMenu getPopup(MouseEvent e) {
+    public JPopupMenu getPopup(MouseEvent event) {
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem =
                 new JMenuItem(new DeleteArcPathPointAction(component, arcController));

@@ -44,10 +44,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
         note.setSize(model.getWidth(), model.getHeight());
     }
 
-    Note(int x, int y) {
-        initialise(x,y);
-    }
-
     private void initialise(int x, int y) {
         originalX = x;
         originalY = y;

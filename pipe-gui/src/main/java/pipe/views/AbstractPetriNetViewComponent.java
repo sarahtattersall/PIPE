@@ -37,10 +37,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     private boolean _draggable;
 
-    protected AbstractPetriNetViewComponent() {
-        this(null, null, null);
-    }
-
     public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller) {
         _id = id;
         _selectable = true;
@@ -91,14 +87,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     public T getModel() {
         return model;
-    }
-
-    public boolean isSelectable() {
-        return _selectable;
-    }
-
-    public void setSelectable(boolean allow) {
-        _selectable = allow;
     }
 
     public boolean isDraggable() {

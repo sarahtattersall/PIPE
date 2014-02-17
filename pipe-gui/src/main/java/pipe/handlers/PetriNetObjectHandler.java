@@ -84,14 +84,15 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
     }
 
     /**
-     * Displays the popup menu
+     * Displays the popup menu in the top left
+     * of the item
      *
-     * @param e
+     * @param e event
      */
     private void checkForPopup(MouseEvent e) {
         if (e.isPopupTrigger()) {
             JPopupMenu m = getPopup(e);
-            m.show(viewComponent, e.getX(), e.getY());
+            m.show(viewComponent, 0, 0);
         }
     }
 

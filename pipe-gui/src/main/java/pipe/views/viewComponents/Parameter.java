@@ -22,7 +22,7 @@ public abstract class Parameter extends Note {
 
 
     Parameter(int x, int y) {
-        super(x, y);
+        super(null, null);
         _copyPasteable = false;
         note.setLineWrap(false);
         note.setWrapStyleWord(false);
