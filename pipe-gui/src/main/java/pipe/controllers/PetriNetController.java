@@ -93,7 +93,7 @@ public class PetriNetController implements IController, Serializable {
      */
     private String fileName = "";
 
-    private final PetriNet lastSavedNet;
+    private PetriNet lastSavedNet;
 
     public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController) {
@@ -428,5 +428,9 @@ public class PetriNetController implements IController, Serializable {
 
     public boolean hasChanged() {
         return !petriNet.equals(lastSavedNet);
+    }
+
+    public void save() {
+        lastSavedNet = ClonePetriNet.clone(petriNet);
     }
 }

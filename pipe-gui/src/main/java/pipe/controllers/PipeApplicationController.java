@@ -234,6 +234,7 @@ public class PipeApplicationController {
             writer.writeTo(outFile.getAbsolutePath(), petriNet);
             petriNetNamer.deRegisterPetriNet(petriNet);
             namePetriNetFromFile(petriNet, outFile);
+            petriNetController.save();
         } catch (JAXBException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to write!");
