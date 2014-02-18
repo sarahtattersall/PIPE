@@ -18,11 +18,6 @@ public class SaveAsAction extends AbstractSaveAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        saveOperation();
-    }
-
-    @Override
-    protected boolean doSaveAs() {
-        return true;
+        saveAsOperation();
     }
 }

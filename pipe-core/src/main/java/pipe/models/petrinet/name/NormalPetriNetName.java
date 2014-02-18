@@ -11,4 +11,11 @@ public class NormalPetriNetName implements PetriNetName {
     public String getName() {
         return name;
     }
+
+    @Override
+    public void visit(NameVisitor visitor) {
+        if (visitor instanceof FileNameVisitor) {
+            ((NormalNameVisitor) visitor).visit(this);
+        }
+    }
 }

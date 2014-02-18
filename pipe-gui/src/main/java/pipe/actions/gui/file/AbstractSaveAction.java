@@ -17,23 +17,15 @@ import java.lang.reflect.InvocationTargetException;
  * Deals with saving of the petri net
  */
 public abstract class AbstractSaveAction extends GuiAction {
-    private final PipeApplicationController pipeApplicationController;
+    protected final PipeApplicationController pipeApplicationController;
 
     private final PipeApplicationView pipeApplicationView;
 
-
     private final FileDialog fileDialog;
-
-    /**
-     *
-     * @return true if subclass should force a save-as
-     */
-    protected abstract boolean doSaveAs();
 
     public AbstractSaveAction(String name, String tooltip, int key, int modifiers,
                               PipeApplicationView pipeApplicationView,
-                              PipeApplicationController pipeApplicationController,
-                              FileDialog fileDialog) {
+                              PipeApplicationController pipeApplicationController, FileDialog fileDialog) {
         super(name, tooltip, key, modifiers);
         this.pipeApplicationView = pipeApplicationView;
         this.pipeApplicationController = pipeApplicationController;
@@ -41,51 +33,45 @@ public abstract class AbstractSaveAction extends GuiAction {
     }
 
     //TODO: Move out into save actions
-    protected void saveOperation() {
+    protected void saveAsOperation() {
         PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
 
 
         boolean saveFunctional = false;
         //        if (getCurrentPetriNetView().hasFunctionalRatesOrWeights()) {
-//        if (false) {
-//            if (JOptionPane.showConfirmDialog(null, "This net has functional rates or weights expressions. \r\n" +
-//                    "Saving these expression will not allow this PNML file compatible with other tools. \r\n" +
-//                    "Press 'yes' to save them anyway. Press 'no' to save their constant values", "Request",
-//                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-//                saveFunctional = true;
-//            } else {
-//                saveFunctional = false;
-//            }
-//        }
-        String filePath = petriNetController.getFileName();
-        if (!doSaveAs() && !filePath.isEmpty()) {
-            saveNet(filePath);
-        } else {
-            fileDialog.setVisible(true);
-            String path = fileDialog.getFile();
-            if (path!= null) {
-//            if (returnVal == JFileChooser.APPROVE_OPTION) {
-//                File file = fileChooser.getSelectedFile();
-                saveNet(path);
-                petriNetController.setFileName(path);
-            }
+        //        if (false) {
+        //            if (JOptionPane.showConfirmDialog(null, "This net has functional rates or weights expressions. \r\n" +
+        //                    "Saving these expression will not allow this PNML file compatible with other tools. \r\n" +
+        //                    "Press 'yes' to save them anyway. Press 'no' to save their constant values", "Request",
+        //                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        //                saveFunctional = true;
+        //            } else {
+        //                saveFunctional = false;
+        //            }
+        //        }
+        fileDialog.setVisible(true);
+        String path = fileDialog.getFile();
+        if (path != null) {
+            saveNet(path);
+            petriNetController.setFileName(path);
         }
     }
 
     /**
      * Saves the petri net out to file
+     *
      * @param path location of file to save to
      */
-    private void saveNet(String path ) {
+    protected void saveNet(String path) {
         saveNet(new File(path));
     }
 
     /**
      * Saves the petri net out to file
+     *
      * @param file file path to save petri net to
      */
-    private void saveNet(File file) {
-
+    protected void saveNet(File file) {
         try {
             pipeApplicationController.saveAsCurrentPetriNet(file);
         } catch (ParserConfigurationException | TransformerException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

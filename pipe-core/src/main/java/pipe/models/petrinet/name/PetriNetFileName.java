@@ -11,9 +11,19 @@ public class PetriNetFileName implements PetriNetName {
         this.file = file;
     }
 
+    public String getPath() {
+        return file.getAbsolutePath();
+    }
 
     @Override
     public String getName() {
         return FilenameUtils.removeExtension(file.getName());
+    }
+
+    @Override
+    public void visit(NameVisitor visitor) {
+        if (visitor instanceof FileNameVisitor) {
+            ((FileNameVisitor) visitor).visit(this);
+        }
     }
 }
