@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.OpenAction;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -21,46 +20,43 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class OpenActionTest {
     OpenAction openAction;
+
     @Mock
     PipeApplicationView mockView;
+
     @Mock
     PipeApplicationController mockController;
+
     @Mock
     FileDialog mockFileChooser;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         openAction = new OpenAction(mockController, mockView, mockFileChooser);
     }
 
     @Test
-    public void actionPerformed()
-    {
-        //TODO: Needs a re-write for testing getFile() properly so can remove
-        // set test file
-        File mockFile = mock(File.class);
-        when(mockFile.exists()).thenReturn(true);
-        when(mockFile.isFile()).thenReturn(true);
-        when(mockFile.canRead()).thenReturn(true);
-        openAction.setFileForTesting(mockFile);
+    public void actionPerformed() {
+        File file = mock(File.class);
+        when(file.exists()).thenReturn(true);
+        when(file.isFile()).thenReturn(true);
+        when(file.canRead()).thenReturn(true);
+        when(mockFileChooser.getFiles()).thenReturn(new File[] {file});
 
         openAction.actionPerformed(null);
-        verify(mockController).createNewTabFromFile(mockFile, mockView);
+        verify(mockController).createNewTabFromFile(file, mockView);
     }
 
     //TODO: Need to test dialog box error
 
     @Test
-    public void setShortDescription()
-    {
+    public void setShortDescription() {
         Object shortDescription = openAction.getValue(Action.SHORT_DESCRIPTION);
         assertEquals("Open", shortDescription);
     }
 
     @Test
-    public void setKeyboardShortcut()
-    {
+    public void setKeyboardShortcut() {
         Object acceleratorKey = openAction.getValue(Action.ACCELERATOR_KEY);
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         assertEquals(stroke, acceleratorKey);

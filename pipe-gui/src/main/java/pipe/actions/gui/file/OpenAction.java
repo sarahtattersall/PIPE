@@ -18,10 +18,6 @@ public class OpenAction extends GuiAction {
 
     private final FileDialog fileChooser;
 
-    private String userPath;
-
-    private File testFile;
-
     public OpenAction(PipeApplicationController applicationController, PipeApplicationView applicationView,
                       FileDialog fileChooser) {
         super("Open", "Open", KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -32,31 +28,14 @@ public class OpenAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String path = getFile();
-        if (path != null) {
-            File file = new File(fileChooser.getDirectory(), path);
+        fileChooser.setVisible(true);
+        for (File file : fileChooser.getFiles()) {
             if (file.exists() && file.isFile() && file.canRead()) {
-                userPath = file.getParent();
                 applicationController.createNewTabFromFile(file, applicationView);
             } else {
                 String message = "File \"" + file.getName() + "\" does not exist.";
                 JOptionPane.showMessageDialog(null, message, "Warning", JOptionPane.WARNING_MESSAGE);
             }
         }
-    }
-
-    /**
-     * @return File selected from FileBrowser
-     */
-    private String getFile() {
-        if (testFile != null) {
-            return testFile.getAbsolutePath();
-        }
-        fileChooser.setVisible(true);
-        return fileChooser.getFile();
-    }
-
-    public void setFileForTesting(File fileForTesting) {
-        testFile = fileForTesting;
     }
 }
