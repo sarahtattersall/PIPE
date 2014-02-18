@@ -88,7 +88,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final JTabbedPane frameForPetriNetTabs = new JTabbedPane();
 
-    private final List<PetriNetTab> petriNetTabs = new ArrayList<PetriNetTab>();
+    private final List<PetriNetTab> petriNetTabs = new ArrayList<>();
 
     private final PipeApplicationController applicationController;
 
@@ -903,9 +903,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
         wrappedPetrinetTabs.add(jLayer);
 
-
-        frameForPetriNetTabs.addTab(name, null, jLayer, null);
         petriNetTabs.add(tab);
+        frameForPetriNetTabs.addTab(name, null, jLayer, null);
         frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
     }
 
