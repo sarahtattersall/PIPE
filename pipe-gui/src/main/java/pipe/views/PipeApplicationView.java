@@ -69,7 +69,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final SpecifyTokenAction specifyTokenClasses;
 
-    public final AnimateAction startAction;
+    public final AnimateAction toggleAnimationAction;
 
     public final AnimateAction stepbackwardAction;
 
@@ -188,7 +188,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         cutAction = new CutAction(applicationController);
         unfoldAction =
                 new UnfoldAction(this, applicationController);
-        startAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this,
+        toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this,
                 applicationController);
         stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", this, applicationController);
         randomAction =
@@ -378,7 +378,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         JMenu animateMenu = new JMenu("Animate");
         animateMenu.setMnemonic('A');
-        addMenuItem(animateMenu, startAction);
+        addMenuItem(animateMenu, toggleAnimationAction);
         animateMenu.addSeparator();
         addMenuItem(animateMenu, stepbackwardAction);
         addMenuItem(animateMenu, stepforwardAction);
@@ -546,7 +546,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addButton(toolBar, zoomInAction);
         toolBar.addSeparator();
         addButton(toolBar, toggleGrid);
-        addButton(toolBar, startAction);
+        addButton(toolBar, toggleAnimationAction);
 
         drawingToolBar = new JToolBar();
         drawingToolBar.setFloatable(false);
@@ -677,7 +677,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         stepforwardAction.setEnabled(false);
         stepbackwardAction.setEnabled(false);
         multipleRandomAction.setSelected(false);
-        startAction.setSelected(animateMode);
+        toggleAnimationAction.setSelected(animateMode);
 
         PetriNetTab petriNetTab = getCurrentTab();
         petriNetTab.changeAnimationMode(animateMode);
@@ -827,7 +827,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         //toggleGrid.setEnabled(status);
 
         if (editMode) {
-            startAction.setSelected(false);
+            toggleAnimationAction.setSelected(false);
             multipleRandomAction.setSelected(false);
             stepbackwardAction.setEnabled(false);
             stepforwardAction.setEnabled(false);

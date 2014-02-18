@@ -170,7 +170,7 @@ public class Animator {
 
     private class TimedTransitionActionListener implements ActionListener {
         @Override
-        public void actionPerformed(final ActionEvent actionEvent) {
+        public void actionPerformed(ActionEvent actionEvent) {
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
             if ((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode()) {
                 timer.stop();

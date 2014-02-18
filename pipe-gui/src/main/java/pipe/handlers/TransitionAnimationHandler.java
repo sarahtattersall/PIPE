@@ -6,6 +6,7 @@ import pipe.gui.Animator;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.models.component.transition.Transition;
+import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -32,6 +33,10 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
             PetriNetController petriNetController = controller.getActivePetriNetController();
             Animator animator = petriNetController.getAnimator();
             animator.fireTransition(transition);
+
+            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+            applicationView.setStepForward(animator.isStepForwardAllowed());
+            applicationView.setStepBackward(animator.isStepBackAllowed());
         }
     }
 
