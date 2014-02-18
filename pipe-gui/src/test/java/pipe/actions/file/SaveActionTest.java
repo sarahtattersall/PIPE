@@ -2,6 +2,9 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.SaveAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
@@ -18,24 +21,25 @@ import java.lang.reflect.InvocationTargetException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SaveActionTest {
     SaveAction saveAction;
 
+    @Mock
     PipeApplicationView mockView;
 
+    @Mock
     PipeApplicationController mockController;
 
+    @Mock
     PetriNetController mockPetriNetController;
 
+    @Mock
     FileDialog mockFileChooser;
 
     @Before
     public void setUp() {
-        mockFileChooser = mock(FileDialog.class);
-        mockController = mock(PipeApplicationController.class);
         saveAction = new SaveAction(mockView, mockController, mockFileChooser);
-        mockView = mock(PipeApplicationView.class);
-        mockPetriNetController = mock(PetriNetController.class);
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
     }
 

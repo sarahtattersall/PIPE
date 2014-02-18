@@ -180,7 +180,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         zoomOutAction = new ZoomOutAction(zoomUI);
         zoomInAction = new ZoomInAction(zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
-        openAction = new OpenAction(applicationController, this);
+
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
         specifyRateParameterAction = new SpecifyRateParameterAction(applicationController);
         copyAction = new CopyAction(applicationController);
@@ -200,6 +200,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         FileDialog fileDialog = new FileDialog(this, "Save Petri Net", FileDialog.SAVE);
         saveAction = new SaveAction(this, applicationController, fileDialog);
         saveAsAction= new SaveAsAction(this, applicationController, fileDialog);
+
+        FileDialog loadFileDialog = new FileDialog(this, "Open Petri Net", FileDialog.LOAD);
+        openAction = new OpenAction(applicationController, this, loadFileDialog);
+
         exitAction = new ExitAction(this, applicationController);
 
         setTitle(null);

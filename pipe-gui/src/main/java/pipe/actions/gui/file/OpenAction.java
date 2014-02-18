@@ -2,7 +2,6 @@ package pipe.actions.gui.file;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.widgets.FileBrowser;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -13,47 +12,48 @@ import java.io.File;
 
 public class OpenAction extends GuiAction {
 
-    private String userPath;
-    private File testFile;
     private final PipeApplicationController applicationController;
+
     private final PipeApplicationView applicationView;
 
-    public OpenAction(PipeApplicationController applicationController, PipeApplicationView applicationView) {
+    private final FileDialog fileChooser;
+
+    private String userPath;
+
+    private File testFile;
+
+    public OpenAction(PipeApplicationController applicationController, PipeApplicationView applicationView,
+                      FileDialog fileChooser) {
         super("Open", "Open", KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
         this.applicationView = applicationView;
+        this.fileChooser = fileChooser;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        File filePath = getFile();
-        if((filePath != null) && filePath.exists() && filePath.isFile() && filePath.canRead())
-        {
-            userPath = filePath.getParent();
-            applicationController.createNewTabFromFile(
-                    filePath, applicationView);
-        }
-        if((filePath != null) && (!filePath.exists()))
-        {
-            String message = "File \"" + filePath.getName()
-                    + "\" does not exist.";
-            JOptionPane.showMessageDialog(null, message, "Warning",
-                                          JOptionPane.WARNING_MESSAGE);
+        String path = getFile();
+        if (path != null) {
+            File file = new File(fileChooser.getDirectory(), path);
+            if (file.exists() && file.isFile() && file.canRead()) {
+                userPath = file.getParent();
+                applicationController.createNewTabFromFile(file, applicationView);
+            } else {
+                String message = "File \"" + file.getName() + "\" does not exist.";
+                JOptionPane.showMessageDialog(null, message, "Warning", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
 
     /**
-     *
      * @return File selected from FileBrowser
      */
-    private File getFile()
-    {
-        if (testFile != null)
-        {
-            return testFile;
+    private String getFile() {
+        if (testFile != null) {
+            return testFile.getAbsolutePath();
         }
-        FileBrowser browser = new FileBrowser(userPath);
-        return browser.openFile();
+        fileChooser.setVisible(true);
+        return fileChooser.getFile();
     }
 
     public void setFileForTesting(File fileForTesting) {

@@ -2,6 +2,9 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.OpenAction;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
@@ -15,17 +18,20 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class OpenActionTest {
     OpenAction openAction;
+    @Mock
     PipeApplicationView mockView;
+    @Mock
     PipeApplicationController mockController;
+    @Mock
+    FileDialog mockFileChooser;
 
     @Before
     public void setUp()
     {
-        mockController = mock(PipeApplicationController.class);
-        mockView = mock(PipeApplicationView.class);
-        openAction = new OpenAction(mockController, mockView);
+        openAction = new OpenAction(mockController, mockView, mockFileChooser);
     }
 
     @Test
