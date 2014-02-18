@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 
 public class SaveAction extends AbstractSaveAction {
 
@@ -25,7 +26,7 @@ public class SaveAction extends AbstractSaveAction {
         } else {
             PetriNet petriNet = pipeApplicationController.getActivePetriNetController().getPetriNet();
             FileNamer fileNamer = new FileNamer();
-            saveNet(fileNamer.getFileName(petriNet));
+            saveNet(fileNamer.getFile(petriNet));
         }
     }
 
@@ -42,20 +43,20 @@ public class SaveAction extends AbstractSaveAction {
      */
     private class FileNamer implements NormalNameVisitor, FileNameVisitor {
 
-        private String fileName = "";
+        private File file = new File("");
 
         /**
          * @param petriNet
          * @return file location and name to save petri net to
          */
-        public String getFileName(PetriNet petriNet) {
+        public File getFile(PetriNet petriNet) {
             petriNet.getName().visit(this);
-            return fileName;
+            return file;
         }
 
         @Override
         public void visit(PetriNetFileName name) {
-            fileName = name.getPath();
+            file = name.getFile();
         }
 
         @Override

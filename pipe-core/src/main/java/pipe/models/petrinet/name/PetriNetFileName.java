@@ -26,4 +26,8 @@ public class PetriNetFileName implements PetriNetName {
             ((FileNameVisitor) visitor).visit(this);
         }
     }
+
+    public File getFile() {
+        return file;
+    }
 }

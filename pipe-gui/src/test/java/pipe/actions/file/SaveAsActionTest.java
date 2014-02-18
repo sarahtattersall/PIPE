@@ -2,9 +2,16 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.SaveAsAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.models.petrinet.PetriNet;
+import pipe.models.petrinet.name.NormalPetriNetName;
+import pipe.models.petrinet.name.PetriNetFileName;
+import pipe.models.petrinet.name.PetriNetName;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -19,23 +26,28 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SaveAsActionTest {
     SaveAsAction saveAsAction;
+    @Mock
     PipeApplicationView mockView;
 
+    @Mock
     PipeApplicationController mockController;
 
+    @Mock
     PetriNetController mockPetriNetController;
 
+    @Mock
     FileDialog mockFileChooser;
+
+    @Mock
+    PetriNet mockPetriNet;
 
     @Before
     public void setUp() {
-        mockView = mock(PipeApplicationView.class);
-        mockController = mock(PipeApplicationController.class);
-        mockFileChooser= mock(FileDialog.class);
-        mockPetriNetController = mock(PetriNetController.class);
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
+        when(mockPetriNetController.getPetriNet()).thenReturn(mockPetriNet);
         saveAsAction = new SaveAsAction(mockView, mockController, mockFileChooser);
     }
 
@@ -58,9 +70,11 @@ public class SaveAsActionTest {
     public void performsSaveAsWhenPetriNetHasNoFile()
             throws InvocationTargetException, ParserConfigurationException, NoSuchMethodException,
             IllegalAccessException, TransformerException {
-        when(mockPetriNetController.getFileName()).thenReturn("");
+        PetriNetName normalName = new NormalPetriNetName("");
+        when(mockPetriNet.getName()).thenReturn(normalName);
+
         File file = new File("test.xml");
-        when(mockFileChooser.getFile()).thenReturn(file.getPath());
+        when(mockFileChooser.getFiles()).thenReturn(new File[]{file});
         saveAsAction.actionPerformed(null);
         verify(mockController).saveAsCurrentPetriNet(file);
     }
@@ -69,21 +83,13 @@ public class SaveAsActionTest {
     public void performsSaveAsWhenEvenIfPetriNetHasFile()
             throws InvocationTargetException, ParserConfigurationException, NoSuchMethodException,
             IllegalAccessException, TransformerException {
-        File file = new File("test.xml");
-        when(mockPetriNetController.getFileName()).thenReturn(file.getPath());
-        when(mockFileChooser.getFile()).thenReturn(file.getPath());
+        File file1 = new File("test.xml");
+        PetriNetName fileName = new PetriNetFileName(file1);
+        when(mockPetriNet.getName()).thenReturn(fileName);
+        File file2 = new File("test2.xml");
+        when(mockFileChooser.getFiles()).thenReturn(new File[]{file2});
         saveAsAction.actionPerformed(null);
-        verify(mockController).saveAsCurrentPetriNet(file);
-    }
-
-
-    @Test
-    public void updatesPetriNetName() {
-        when(mockPetriNetController.getFileName()).thenReturn("");
-        File file = new File("test.xml");
-        when(mockFileChooser.getFile()).thenReturn(file.getPath());
-        saveAsAction.actionPerformed(null);
-        verify(mockPetriNetController).setFileName(file.getName());
+        verify(mockController).saveAsCurrentPetriNet(file2);
     }
 
 }
