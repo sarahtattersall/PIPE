@@ -17,7 +17,6 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -69,28 +68,79 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         addPathEndLocation();
         updatePath();
         updateBounds();
-        addConnectableListener();
+        registerModelListeners();
     }
 
     /**
-     * Updates the bounding box of the arc component based on the arcs bounds
+     * Registers listeners for the arc model and it's source and target models
      */
-    public void updateBounds() {
-        bounds = arcPath.getBounds();
-        bounds.grow(getComponentDrawOffset() + ZOOM_GROW, getComponentDrawOffset() + ZOOM_GROW);
-        setBounds(bounds);
+    private void registerModelListeners() {
+        addArcChangeListener();
+        addSourceTargetConnectableListener();
     }
 
-    private void addPathSourceLocation() {
-        Point2D.Double startPoint = model.getStartPoint();
-        sourcePoint = new ArcPoint(startPoint, false);
-        arcPath.addPoint(sourcePoint);
+    /**
+     * Listens to the source/target changing position
+     */
+    private void addSourceTargetConnectableListener() {
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String name = evt.getPropertyName();
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
+                    setSourceStartAndEnd();
+                    arcSpecificUpdate();
+                }
+            }
+        };
+        model.getSource().addPropertyChangeListener(changeListener);
+        model.getTarget().addPropertyChangeListener(changeListener);
     }
 
-    private void addPathEndLocation() {
-        Point2D targetPoint = model.getEndPoint();
-        endPoint = new ArcPoint(targetPoint, false);
-        arcPath.addPoint(endPoint);
+    /**
+     * Perform any updates specific to the arc type
+     * E.g. NormalArc should show weights
+     */
+    public abstract void arcSpecificUpdate();
+
+    /**
+     * Sets the source start and end based on the models start and end points
+     */
+    private void setSourceStartAndEnd() {
+        sourcePoint.setPoint(model.getStartPoint());
+        endPoint.setPoint(model.getEndPoint());
+    }
+
+    /**
+     * Listens for intermediate points being added/deleted
+     * Will call a redraw of the existing points
+     */
+    private void addArcChangeListener() {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                String name = propertyChangeEvent.getPropertyName();
+                if (name.equals(Arc.NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
+                    updateAllPoints();
+                } else if (name.equals(Arc.DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
+                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
+                    arcPath.deletePoint(point);
+                    updateAllPoints();
+                }
+            }
+        };
+        model.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Updates all arc points displayed based on their positions
+     * in the model
+     */
+    private void updateAllPoints() {
+        updatePath();
+        setSourceStartAndEnd();
+        arcSpecificUpdate();
+        updateBounds();
     }
 
     /**
@@ -117,56 +167,25 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         }
     }
 
-    private void addConnectableListener() {
-        addArcChangeListener();
-        addSourceTargetConnectableListener();
-
+    private void addPathEndLocation() {
+        Point2D targetPoint = model.getEndPoint();
+        endPoint = new ArcPoint(targetPoint, false);
+        arcPath.addPoint(endPoint);
     }
 
-    private void addArcChangeListener() {
-        PropertyChangeListener listener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String name = propertyChangeEvent.getPropertyName();
-                if (name.equals(Arc.NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
-                    updatePath();
-                    arcSpecificUpdate();
-                    updateBounds();
-                } else if (name.equals(Arc.DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
-                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
-                    arcPath.deletePoint(point);
-                    updatePath();
-                    arcSpecificUpdate();
-                    updateBounds();
-                }
-            }
-        };
-        model.addPropertyChangeListener(listener);
+    private void addPathSourceLocation() {
+        Point2D.Double startPoint = model.getStartPoint();
+        sourcePoint = new ArcPoint(startPoint, false);
+        arcPath.addPoint(sourcePoint);
     }
 
     /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
+     * Updates the bounding box of the arc component based on the arcs bounds
      */
-    public abstract void arcSpecificUpdate();
-
-    /**
-     * Listens to the source/target changing position
-     */
-    private void addSourceTargetConnectableListener() {
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String name = evt.getPropertyName();
-                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-                    sourcePoint.setPoint(model.getStartPoint());
-                    endPoint.setPoint(model.getEndPoint());
-                    arcSpecificUpdate();
-                }
-            }
-        };
-        model.getSource().addPropertyChangeListener(changeListener);
-        model.getTarget().addPropertyChangeListener(changeListener);
+    public void updateBounds() {
+        bounds = arcPath.getBounds();
+        bounds.grow(getComponentDrawOffset() + ZOOM_GROW, getComponentDrawOffset() + ZOOM_GROW);
+        setBounds(bounds);
     }
 
     public PetriNetTab getTab() {
@@ -216,20 +235,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         //addWeightLabelsToContainer(getParent());
     }
 
-    //TODO: DELETE
-    public void updateArcPosition() {
-        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
-        //        addPathSourceLocation(points.first.x, points.first.y);
-        //        setTargetLocation(points.second.x, points.second.y);
-        //        if (_source != null) {
-        //            _source.updateEndPoint(this);
-        //        }
-        //        if (_target != null) {
-        //            _target.updateEndPoint(this);
-        //        }
-        //        arcPath.createPath();
-    }
-
     @Override
     public void delete() {
         if (!_deleted) {
@@ -240,6 +245,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             _deleted = true;
         }
     }
+
+    /**
+     * Perform any arc specific deletion acitons
+     */
+    protected abstract void arcSpecificDelete();
 
     @Override
     public int getLayerOffset() {
@@ -254,10 +264,19 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return super.clone();
     }
 
-    /**
-     * Perform any arc specific deletion acitons
-     */
-    protected abstract void arcSpecificDelete();
+    //TODO: DELETE
+    public void updateArcPosition() {
+        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
+        //        addPathSourceLocation(points.first.x, points.first.y);
+        //        setTargetLocation(points.second.x, points.second.y);
+        //        if (_source != null) {
+        //            _source.updateEndPoint(this);
+        //        }
+        //        if (_target != null) {
+        //            _target.updateEndPoint(this);
+        //        }
+        //        arcPath.createPath();
+    }
 
     @Override
     public void translate(int x, int y) {
