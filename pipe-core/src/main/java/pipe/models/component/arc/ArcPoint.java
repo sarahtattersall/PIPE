@@ -116,26 +116,25 @@ public class ArcPoint extends AbstractPetriNetComponent {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ArcPoint arcPoint = (ArcPoint) o;
+
+        if (curved != arcPoint.curved) {
+            return false;
+        }
+        if (Double.compare(arcPoint.x, x) != 0) {
+            return false;
+        }
+        if (Double.compare(arcPoint.y, y) != 0) {
+            return false;
+        }
+
         return true;
-//        if (this == o) {
-//            return true;
-//        }
-//        if (o == null || getClass() != o.getClass()) {
-//            return false;
-//        }
-//
-//        ArcPoint arcPoint = (ArcPoint) o;
-//
-//        if (curved != arcPoint.curved) {
-//            return false;
-//        }
-//        if (Double.compare(arcPoint.x, x) != 0) {
-//            return false;
-//        }
-//        if (Double.compare(arcPoint.y, y) != 0) {
-//            return false;
-//        }
-//
-//        return true;
     }
 }

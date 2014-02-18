@@ -106,14 +106,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     }
 
     /**
-     * Loops through points in revese order adding them to the path
-     * Since addPointAt inserts to the left of the index to get
-     * between and the start we need to always insert left of the
-     * end.
+     * Loops through points adding them to the path if they don't already
+     * exist
      */
     private void addIntermediatePoints() {
-        Iterable<ArcPoint> points = new ArrayList<ArcPoint>(model.getIntermediatePoints());
-        for (ArcPoint arcPoint : points) {
+        for (ArcPoint arcPoint : model.getIntermediatePoints()) {
             if (!arcPath.contains(arcPoint)) {
                 arcPath.insertIntermediatePoint(arcPoint);
             }

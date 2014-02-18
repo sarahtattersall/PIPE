@@ -24,6 +24,7 @@ import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcTest {
@@ -189,6 +190,20 @@ public class ArcTest {
         ArcPoint expectedPoint = new ArcPoint(targetEnd, false);
         assertEquals(expectedPoint, actualPoint);
     }
+
+    @Test
+    public void deletesCorrectArcPoint() {
+
+        ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 1), false);
+        arc.addIntermediatePoint(intermediate);
+        ArcPoint intermediate2 = new ArcPoint(new Point2D.Double(2, 2), false);
+        arc.addIntermediatePoint(intermediate2);
+
+        arc.removeIntermediatePoint(intermediate);
+        assertThat(arc.getIntermediatePoints()).doesNotContain(intermediate);
+        assertThat(arc.getIntermediatePoints()).contains(intermediate2);
+    }
+
 
     @Test
     public void throwsExceptionIfNoNextPoint() {

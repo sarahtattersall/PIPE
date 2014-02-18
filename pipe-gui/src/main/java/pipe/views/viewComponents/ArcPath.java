@@ -23,10 +23,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 public class ArcPath implements Shape, Cloneable {
 
@@ -40,9 +38,9 @@ public class ArcPath implements Shape, Cloneable {
      * This is used for quick O(1) time in order to determine if a point
      * is alread in the path.
      */
-    private final Set<ArcPoint> points = new HashSet<ArcPoint>();
+    private final Map<ArcPoint, ArcPathPoint> points = new HashMap<>();
 
-    private final List<ArcPathPoint> pathPoints = new ArrayList<ArcPathPoint>();
+    private final List<ArcPathPoint> pathPoints = new ArrayList<>();
 
     private final ArcView<? extends Connectable, ? extends Connectable> parent;
 
@@ -312,8 +310,9 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public void addPoint(ArcPoint arcPoint) {
-        points.add(arcPoint);
-        pathPoints.add(createPoint(arcPoint));
+        ArcPathPoint arcPathPoint = createPoint(arcPoint);
+        points.put(arcPoint, arcPathPoint);
+        pathPoints.add(arcPathPoint);
     }
 
     private ArcPathPoint createPoint(ArcPoint point) {
@@ -333,16 +332,17 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public boolean contains(ArcPoint point) {
-        return points.contains(point);
+        return points.get(point) != null;
     }
 
 
     public void deletePoint(ArcPoint point) {
-        ArcPathPoint delete = new ArcPathPoint(point, this, petriNetController);
-        int index = pathPoints.indexOf(delete);
-        pathPoints.get(index).delete();
-        pathPoints.remove(delete);
-        points.remove(point);
+        ArcPathPoint pointView = points.get(point);
+        if (pointView != null) {
+            pointView.delete();
+            pathPoints.remove(pointView);
+            points.remove(point);
+        }
     }
 
     public void updateArc() {
@@ -551,7 +551,7 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
-        points.add(newpoint.getModel());
+        points.put(newpoint.getModel(), newpoint);
         addPointsToGui(parent.getTab());
     }
 
