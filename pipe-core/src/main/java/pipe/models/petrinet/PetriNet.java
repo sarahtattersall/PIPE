@@ -29,6 +29,8 @@ import java.util.*;
 
 @XmlType(propOrder = {"tokens", "annotations", "rateParameters", "places", "transitions", "arcs"})
 public class PetriNet {
+    public static final String PETRI_NET_NAME_CHANGE_MESSAGE = "nameChange";
+
     /**
      * Message fired when an annotation is added to the Petri net
      */
@@ -798,6 +800,8 @@ public class PetriNet {
     }
 
     public void setName(PetriNetName name) {
+        PetriNetName old = this.petriNetName;
         this.petriNetName = name;
+        changeSupport.firePropertyChange(PETRI_NET_NAME_CHANGE_MESSAGE, old, name);
     }
 }

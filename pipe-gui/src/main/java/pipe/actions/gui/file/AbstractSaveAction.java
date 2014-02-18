@@ -1,5 +1,6 @@
 package pipe.actions.gui.file;
 
+import org.apache.commons.io.FilenameUtils;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
@@ -50,11 +51,24 @@ public abstract class AbstractSaveAction extends GuiAction {
         //            }
         //        }
         fileDialog.setVisible(true);
-        String path = fileDialog.getFile();
-        if (path != null) {
-            saveNet(path);
-            petriNetController.setFileName(path);
+        File[] files = fileDialog.getFiles();
+        if (files.length != 0) {
+            File file = files[0];
+            saveNet(ensureExtension(file));
         }
+    }
+
+    /**
+     * Append XML extension onto file if it is missing
+     * @param file
+     * @return file with extension
+     */
+    private File ensureExtension(File file) {
+        String ext = FilenameUtils.getExtension(file.getAbsolutePath());
+        if (ext.isEmpty()) {
+            return new File(file.getAbsolutePath() + ".xml");
+        }
+        return file;
     }
 
     /**

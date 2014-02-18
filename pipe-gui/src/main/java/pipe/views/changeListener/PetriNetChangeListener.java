@@ -10,6 +10,7 @@ import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
+import pipe.models.petrinet.name.PetriNetName;
 import pipe.views.*;
 import pipe.views.arc.InhibitorArcView;
 import pipe.views.builder.*;
@@ -73,6 +74,12 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    @EventAction(PetriNet.PETRI_NET_NAME_CHANGE_MESSAGE)
+    private void nameChange(PropertyChangeEvent propertyChangeEvent) {
+        PetriNetName name = (PetriNetName) propertyChangeEvent.getNewValue();
+        applicationView.updateSelectedTabName(name.getName());
     }
 
     @EventAction(PetriNet.NEW_PLACE_CHANGE_MESSAGE)

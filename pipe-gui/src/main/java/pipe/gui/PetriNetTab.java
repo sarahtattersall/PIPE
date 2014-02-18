@@ -28,7 +28,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     /**
      * Map of components in the tab with id -> component
      */
-    private final Map<String, PetriNetViewComponent> petriNetComponents = new HashMap<String, PetriNetViewComponent>();
+    private final Map<String, PetriNetViewComponent> petriNetComponents = new HashMap<>();
 
     private final ZoomController zoomController;
 
@@ -41,11 +41,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     public File _appFile;
 
-    private boolean netChanged = false;
-
     private boolean animationmode = false;
-
-    private boolean metaDown = false;
 
     public PetriNetTab(ZoomController controller, AnimationHistoryView animationHistoryView) {
         zoomController = controller;
@@ -173,19 +169,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     public void setMetaDown(boolean down) {
-        metaDown = down;
+        boolean metaDown = down;
     }
 
     public boolean isInAnimationMode() {
         return animationmode;
-    }
-
-    public boolean getNetChanged() {
-        return netChanged;
-    }
-
-    public void setNetChanged(boolean _netChanged) {
-        netChanged = _netChanged;
     }
 
     public void drag(Point dragStart, Point dragEnd) {

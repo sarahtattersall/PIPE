@@ -149,10 +149,6 @@ public class PipeApplicationController {
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
 
-
-        petriNetTab.setNetChanged(false); // Status is unchanged
-
-
         petriNetTab.updatePreferredSize();
 
         PropertyChangeListener changeListener = new PetriNetChangeListener(applicationView, petriNetTab, petriNetController);
@@ -160,7 +156,6 @@ public class PipeApplicationController {
 
         setActiveTab(petriNetTab);
         initialiseNet(net, changeListener);
-        petriNetTab.setNetChanged(false);
         applicationView.addNewTab(net.getNameValue(), petriNetTab);
 
         return petriNetTab;
@@ -237,6 +232,8 @@ public class PipeApplicationController {
         try {
             pipe.io.PetriNetWriter writer = new PetriNetIOImpl();
             writer.writeTo(outFile.getAbsolutePath(), petriNet);
+            petriNetNamer.deRegisterPetriNet(petriNet);
+            namePetriNetFromFile(petriNet, outFile);
         } catch (JAXBException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to write!");

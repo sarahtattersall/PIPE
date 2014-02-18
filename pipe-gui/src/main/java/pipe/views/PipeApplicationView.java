@@ -24,9 +24,7 @@ import pipe.controllers.arcCreator.NormalCreator;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.gui.widgets.FileBrowser;
 import pipe.io.JarUtilities;
-import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.utilities.gui.GuiUtils;
 import pipe.views.arc.InhibitorArcHead;
@@ -43,6 +41,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
@@ -193,10 +192,22 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         deleteAction = new DeleteAction(applicationController);
 
         FileDialog fileDialog = new FileDialog(this, "Save Petri Net", FileDialog.SAVE);
+        fileDialog.setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".xml");
+            }
+        });
         saveAction = new SaveAction(this, applicationController, fileDialog);
         saveAsAction= new SaveAsAction(this, applicationController, fileDialog);
 
         FileDialog loadFileDialog = new FileDialog(this, "Open Petri Net", FileDialog.LOAD);
+        fileDialog.setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".xml");
+            }
+        });
         openAction = new OpenAction(applicationController, this, loadFileDialog);
 
         exitAction = new ExitAction(this, applicationController);
@@ -846,16 +857,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         super.setTitle((title == null) ? name : name + ": " + title);
     }
 
-    protected String[] buildRates(Collection<RateParameter> components) {
-        String[] rates = new String[components.size()];
-        int index = 0;
-        for (RateParameter parameter : components) {
-            rates[index] = parameter.getId();
-            index++;
-        }
-        return rates;
-    }
-
     public JTabbedPane getFrameForPetriNetTabs() {
         return frameForPetriNetTabs;
     }
@@ -884,7 +885,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         System.out.println("UPDATE APPLICATION VIEW");
         PetriNetTab currentTab = getCurrentTab();
         if ((applicationModel.getMode() != Constants.CREATING) && (!currentTab.isInAnimationMode())) {
-            currentTab.setNetChanged(true);
+//            currentTab.setNetChanged(true);
         }
     }
 
@@ -951,6 +952,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         if ((frameForPetriNetTabs.getTabCount() > 0)) {
             frameForPetriNetTabs.remove(index);
         }
+    }
+
+    public void updateSelectedTabName(String title) {
+        int index = frameForPetriNetTabs.getSelectedIndex();
+        frameForPetriNetTabs.setTitleAt(index, title);
     }
 }
 
