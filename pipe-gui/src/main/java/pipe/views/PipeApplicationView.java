@@ -140,12 +140,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public AnimateAction multipleRandomAction =
             new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
 
-    public GroupTransitionsAction groupTransitions = new GroupTransitionsAction();
-
     public UnfoldAction unfoldAction;
-
-    public UngroupTransitionsAction ungroupTransitions =
-            new UngroupTransitionsAction("ungroupTransitions", "Ungroup any possible transitions", "shift ctrl H");
 
     public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(this);
 
@@ -358,8 +353,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addMenuItem(drawMenu, tokenAction);
         addMenuItem(drawMenu, deleteTokenAction);
         addMenuItem(drawMenu, specifyTokenClasses);
-        addMenuItem(drawMenu, groupTransitions);
-        addMenuItem(drawMenu, ungroupTransitions);
         addMenuItem(drawMenu, unfoldAction);
         drawMenu.addSeparator();
         addMenuItem(drawMenu, specifyRateParameterAction);
@@ -569,8 +562,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addButton(drawingToolBar, deleteTokenAction);
         addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
         addButton(drawingToolBar, specifyTokenClasses);
-        addButton(drawingToolBar, groupTransitions);
-        addButton(drawingToolBar, ungroupTransitions);
         addButton(drawingToolBar, unfoldAction);
         drawingToolBar.addSeparator();
         addButton(drawingToolBar, specifyRateParameterAction);

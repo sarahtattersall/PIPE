@@ -148,7 +148,7 @@ public class PipeTest {
 
 		menu = applicationView.getJMenuBar().getMenu(3); 
 		assertEquals("Draw",menu.getText());
-		assertEquals("expecting 17 Edit menu items, including separators",17,menu.getItemCount());
+		assertEquals("expecting 17 Edit menu items, including separators", 15 ,menu.getItemCount());
 		assertEquals("Select",menu.getItem(0).getText());
 		assertNull("separator",menu.getItem(1));
 		assertEquals("Place",menu.getItem(2).getText());
@@ -161,11 +161,9 @@ public class PipeTest {
 		assertEquals("Add token",menu.getItem(9).getText());
 		assertEquals("Delete token",menu.getItem(10).getText());
 		assertEquals("SpecifyTokenClasses",menu.getItem(11).getText());
-		assertEquals("groupTransitions",menu.getItem(12).getText());
-		assertEquals("ungroupTransitions",menu.getItem(13).getText());
-		assertEquals("unfoldAction",menu.getItem(14).getText());
-		assertNull("separator",menu.getItem(15));
-		assertEquals("Rate Parameter",menu.getItem(16).getText());
+		assertEquals("unfoldAction",menu.getItem(12).getText());
+		assertNull("separator",menu.getItem(13));
+		assertEquals("Rate Parameter",menu.getItem(14).getText());
 		
 		menu = applicationView.getJMenuBar().getMenu(4); 
 		assertEquals("Animate",menu.getText());
