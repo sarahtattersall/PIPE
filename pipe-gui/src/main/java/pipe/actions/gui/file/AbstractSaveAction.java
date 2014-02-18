@@ -6,7 +6,6 @@ import pipe.controllers.PipeApplicationController;
 import pipe.utilities.gui.GuiUtils;
 import pipe.views.PipeApplicationView;
 
-import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
@@ -29,7 +28,7 @@ public abstract class AbstractSaveAction extends GuiAction {
      *
      * @return true if subclass should force a save-as
      */
-    protected abstract boolean forceSaveAs();
+    protected abstract boolean doSaveAs();
 
     public AbstractSaveAction(String name, String tooltip, int key, int modifiers,
                               PipeApplicationView pipeApplicationView,
@@ -59,7 +58,7 @@ public abstract class AbstractSaveAction extends GuiAction {
 //            }
 //        }
         String filePath = petriNetController.getFileName();
-        if (!forceSaveAs() && !filePath.isEmpty()) {
+        if (!doSaveAs() && !filePath.isEmpty()) {
             saveNet(filePath);
         } else {
             fileDialog.setVisible(true);
@@ -88,7 +87,7 @@ public abstract class AbstractSaveAction extends GuiAction {
     private void saveNet(File file) {
 
         try {
-            pipeApplicationController.saveCurrentPetriNet(file);
+            pipeApplicationController.saveAsCurrentPetriNet(file);
         } catch (ParserConfigurationException | TransformerException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             GuiUtils.displayErrorMessage(null, e.getMessage());
         }

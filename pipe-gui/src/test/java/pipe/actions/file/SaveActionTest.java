@@ -51,7 +51,7 @@ public class SaveActionTest {
         File file = new File("test.xml");
         when(mockFileChooser.getFile()).thenReturn(file.getPath());
         saveAction.actionPerformed(null);
-        verify(mockController).saveCurrentPetriNet(file);
+        verify(mockController).saveAsCurrentPetriNet(file);
     }
 
 
@@ -83,7 +83,7 @@ public class SaveActionTest {
 
         saveAction.actionPerformed(null);
 
-        verify(mockController).saveCurrentPetriNet(file);
+        verify(mockController).saveAsCurrentPetriNet(file);
         verify(mockFileChooser, never()).setVisible(true);
 
     }

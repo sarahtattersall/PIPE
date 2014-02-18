@@ -888,6 +888,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
+    /**
+     * Adds the tab to the main application view in the tabbed view frame
+     * @param name name of tab
+     * @param tab tab to add
+     */
+    //TODO: ADD SCROLL PANE
     public void addNewTab(String name, PetriNetTab tab) {
 
         //        JScrollPane scroller = new JScrollPane(tab);
@@ -900,110 +906,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         frameForPetriNetTabs.addTab(name, null, jLayer, null);
         petriNetTabs.add(tab);
         frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
-    }
-
-    /**
-     * If current net has modifications, asks if you want to save and does it if
-     * you want.
-     *
-     * @return true if handled, false if cancelled
-     */
-    public boolean checkForSaveAll() {
-        // Loop through all tabs and check if they have been saved
-        for (int counter = 0; counter < frameForPetriNetTabs.getTabCount(); counter++) {
-            frameForPetriNetTabs.setSelectedIndex(counter);
-            if (!checkForSave()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * If current net has modifications, asks if you want to save and does it if
-     * you want.
-     *
-     * @return true if handled, false if cancelled
-     */
-    public boolean checkForSave() {
-        if (getCurrentTab().getNetChanged()) {
-            int result = JOptionPane.showConfirmDialog(this, "Current file has changed. Save current file?",
-                    "Confirm Save Current File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-            switch (result) {
-                case JOptionPane.YES_OPTION:
-                    saveOperation(false);
-                    break;
-                case JOptionPane.CLOSED_OPTION:
-                case JOptionPane.CANCEL_OPTION:
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    //TODO: Move out into save actions
-    public void saveOperation(boolean forceSaveAs) {
-
-        if (getCurrentTab() == null) {
-            return;
-        }
-        boolean saveFunctional = false;
-        //        if (getCurrentPetriNetView().hasFunctionalRatesOrWeights()) {
-        if (false) {
-            if (JOptionPane.showConfirmDialog(null, "This net has functional rates or weights expressions. \r\n" +
-                    "Saving these expression will not allow this PNML file compatible with other tools. \r\n" +
-                    "Press 'yes' to save them anyway. Press 'no' to save their constant values", "Request",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-                saveFunctional = true;
-            } else {
-                saveFunctional = false;
-            }
-        }
-        File modelFile = getFile();
-        if (!forceSaveAs && modelFile != null) {
-            saveNet(modelFile);
-        } else {
-            String path;
-            if (modelFile != null) {
-                path = modelFile.toString();
-            } else {
-                path = frameForPetriNetTabs.getTitleAt(frameForPetriNetTabs.getSelectedIndex());
-            }
-            String filename = new FileBrowser(path).saveFile();
-            if (filename != null) {
-                saveNet(new File(filename));
-            }
-        }
-    }
-
-    // Steve Doubleday:  public to simplify testing
-    public void saveNet(File outFile) {
-        try {
-
-            applicationController.saveCurrentPetriNet(outFile);
-            setFile(outFile, frameForPetriNetTabs.getSelectedIndex());
-            PetriNetTab currentTab = getCurrentTab();
-            currentTab.setNetChanged(false);
-            String name = outFile.getName().split(".xml")[0];
-            frameForPetriNetTabs.setTitleAt(frameForPetriNetTabs.getSelectedIndex(), name);
-            setTitle(outFile.getName());
-            //TODO: WHY CLEAR THIS?
-            //            currentTab.getHistoryManager().finish();
-            undoAction.setEnabled(false);
-            redoAction.setEnabled(false);
-        } catch (Exception e) {
-            System.err.println(e);
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, e.toString(), "File Output Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    void setFile(File modelfile, int fileNo) {
-        if (fileNo >= petriNetTabs.size()) {
-            return;
-        }
-        PetriNetTab petriNetTab = petriNetTabs.get(fileNo);
-        petriNetTab._appFile = modelfile;
     }
 
     public File getFile() {

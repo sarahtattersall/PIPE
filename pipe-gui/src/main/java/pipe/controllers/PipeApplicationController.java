@@ -17,6 +17,10 @@ import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.name.NormalPetriNetName;
+import pipe.models.petrinet.name.PetriNetFileName;
+import pipe.models.petrinet.name.PetriNetName;
+import pipe.naming.PetriNetNamer;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
 import pipe.views.changeListener.TokenChangeListener;
@@ -37,17 +41,15 @@ import java.util.List;
 
 public class PipeApplicationController {
 
-    private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<PetriNetTab, PetriNetController>();
+    private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<>();
 
-    private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<PetriNetTab, SelectionManager>();
+    private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<>();
 
-    //TODO: Circular dependency between these two classes
-    private final PipeApplicationModel applicationModel;
+    private final PetriNetNamer petriNetNamer = new PetriNetNamer();
 
     private PetriNetTab activeTab;
 
     public PipeApplicationController(PipeApplicationModel applicationModel) {
-        this.applicationModel = applicationModel;
         ApplicationSettings.register(this);
     }
 
@@ -55,10 +57,47 @@ public class PipeApplicationController {
      * Creates an empty petrinet with a default token
      */
     public PetriNetTab createEmptyPetriNet(PipeApplicationView applicationView) {
+        PetriNet model = createEmptyNet(applicationView);
+        namePetriNet(model);
+        return createNewTab(model, applicationView);
+    }
+
+    /**
+     * Creates an empty petri net and default token
+     * Registers the application view to listen on the default token
+     * @param applicationView
+     * @return new petri net
+     */
+    private PetriNet createEmptyNet(PipeApplicationView applicationView) {
         PetriNet model = new PetriNet();
         Token defaultToken = createDefaultToken(applicationView);
         model.addToken(defaultToken);
-        return createNewTab(model, applicationView);
+        return model;
+    }
+
+    /**
+     *
+     * Names the petri net with a unique name
+     * Adds petri net to the unique namer so not to produce the same name twice
+     *
+     * @param petriNet petri net to name
+     */
+    private void namePetriNet(PetriNet petriNet) {
+        String name = petriNetNamer.getName();
+        PetriNetName petriNetName = new NormalPetriNetName(name);
+        petriNet.setName(petriNetName);
+        petriNetNamer.registerPetriNet(petriNet);
+    }
+
+    /**
+     * Names the petri net based on the file
+     * @param petriNet petri net loaded from file
+     * @param file xml location
+     */
+    private void namePetriNetFromFile(PetriNet petriNet, File file) {
+        PetriNetName petriNetName = new PetriNetFileName(file);
+        petriNet.setName(petriNetName);
+        petriNetNamer.registerPetriNet(petriNet);
     }
 
     private Token createDefaultToken(PipeApplicationView applicationView) {
@@ -110,7 +149,6 @@ public class PipeApplicationController {
         petriNetTab.addMouseMotionListener(handler);
         petriNetTab.addMouseWheelListener(handler);
 
-        String name = getPetriNetName(petriNetController);
 
         petriNetTab.setNetChanged(false); // Status is unchanged
 
@@ -123,17 +161,9 @@ public class PipeApplicationController {
         setActiveTab(petriNetTab);
         initialiseNet(net, changeListener);
         petriNetTab.setNetChanged(false);
-        applicationView.addNewTab(name, petriNetTab);
+        applicationView.addNewTab(net.getNameValue(), petriNetTab);
 
         return petriNetTab;
-    }
-
-    private String getPetriNetName(PetriNetController petriNetController) {
-        if (petriNetController.getFileName().isEmpty()) {
-            return  "Petri net " + (applicationModel.newPetriNetNumber());
-        } else {
-            return  FilenameUtils.getBaseName(petriNetController.getFileName());
-        }
     }
 
     /**
@@ -180,6 +210,7 @@ public class PipeApplicationController {
         try {
             PetriNetReader petriNetIO = new PetriNetIOImpl();
             PetriNet net = petriNetIO.read(file.getAbsolutePath());
+            namePetriNetFromFile(net, file);
             return createNewTab(net, applicationView);
         } catch (JAXBException e) {
             e.printStackTrace();
@@ -197,7 +228,7 @@ public class PipeApplicationController {
         this.activeTab = tab;
     }
 
-    public void saveCurrentPetriNet(File outFile)
+    public void saveAsCurrentPetriNet(File outFile)
             throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
         PetriNetController petriNetController = getActivePetriNetController();
@@ -229,7 +260,7 @@ public class PipeApplicationController {
         List<String> changed = new ArrayList<>();
         for (PetriNetController controller : netControllers.values()) {
             if(controller.hasChanged()) {
-                changed.add(getPetriNetName(controller));
+                changed.add(controller.getPetriNet().getNameValue());
             }
         }
         return changed;

@@ -129,7 +129,7 @@ public class TransitionNamerTest {
         String orignalId = "Transition 0";
         Transition transition = new Transition(orignalId, orignalId);
         petriNet.addTransition(transition);
-        PetriNetComponentNamer newNamer = new TransitionNamer(petriNet);
+        UniqueNamer newNamer = new TransitionNamer(petriNet);
         String newId = "Transition 1";
         transition.setId(newId);
         assertFalse(newNamer.isUniqueName(newId));

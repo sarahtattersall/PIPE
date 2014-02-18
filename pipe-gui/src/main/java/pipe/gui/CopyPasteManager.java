@@ -17,7 +17,7 @@ import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
 import pipe.models.petrinet.PetriNet;
 import pipe.naming.MultipleNamer;
-import pipe.naming.UniqueNamer;
+import pipe.naming.PetriNetComponentNamer;
 import pipe.views.PipeApplicationView;
 import pipe.visitor.PasteVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
@@ -270,7 +270,7 @@ public class CopyPasteManager extends javax.swing.JComponent
         double despX = pasteRectangle.getX() - rectangleOrigin.getX();
         double despY = pasteRectangle.getY() - rectangleOrigin.getY();
 
-        MultipleNamer multipleNamer = new UniqueNamer(petriNet);
+        MultipleNamer multipleNamer = new PetriNetComponentNamer(petriNet);
         PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);
 
         for (Connectable component : getConnectablesToPaste()) {

@@ -16,6 +16,7 @@ import pipe.models.component.rate.Rate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.name.PetriNetName;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -28,53 +29,6 @@ import java.util.*;
 
 @XmlType(propOrder = {"tokens", "annotations", "rateParameters", "places", "transitions", "arcs"})
 public class PetriNet {
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        PetriNet petriNet = (PetriNet) o;
-
-
-        if (!CollectionUtils.isEqualCollection(annotations, petriNet.annotations)) {
-            return false;
-        }
-        if (!CollectionUtils.isEqualCollection(arcs, petriNet.arcs)) {
-            return false;
-        }
-        if (!CollectionUtils.isEqualCollection(places, petriNet.places)) {
-            return false;
-        }
-        if (!CollectionUtils.isEqualCollection(rateParameters, petriNet.rateParameters)) {
-            return false;
-        }
-        if (!CollectionUtils.isEqualCollection(tokens, petriNet.tokens)) {
-            return false;
-        }
-        if (!CollectionUtils.isEqualCollection(transitions, petriNet.transitions)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = transitions.hashCode();
-        result = 31 * result + places.hashCode();
-        result = 31 * result + tokens.hashCode();
-        result = 31 * result + arcs.hashCode();
-        result = 31 * result + annotations.hashCode();
-        result = 31 * result + rateParameters.hashCode();
-        return result;
-    }
-
     /**
      * Message fired when an annotation is added to the Petri net
      */
@@ -161,9 +115,12 @@ public class PetriNet {
     @XmlJavaTypeAdapter(AnnotationAdapter.class)
     private final Set<Annotation> annotations = new HashSet<Annotation>();
 
-    @XmlElement(name="definition")
+    @XmlElement(name = "definition")
     @XmlJavaTypeAdapter(RateParameterAdapter.class)
     private final Set<RateParameter> rateParameters = new HashSet<RateParameter>();
+
+    @XmlTransient
+    private PetriNetName petriNetName;
 
     /**
      * Houses the backwards strategies for arcs place -> transition
@@ -183,10 +140,61 @@ public class PetriNet {
     @XmlTransient
     private boolean validated = false;
 
+    //TODO: INITIALSE NAME?
     public PetriNet() {
         backwardsStrategies.put(ArcType.NORMAL, new BackwardsNormalStrategy());
         backwardsStrategies.put(ArcType.INHIBITOR, new InhibitorStrategy());
         forwardStrategies.put(ArcType.NORMAL, new ForwardsNormalStrategy());
+    }
+
+    public PetriNet(PetriNetName name) {
+        this();
+        this.petriNetName = name;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = transitions.hashCode();
+        result = 31 * result + places.hashCode();
+        result = 31 * result + tokens.hashCode();
+        result = 31 * result + arcs.hashCode();
+        result = 31 * result + annotations.hashCode();
+        result = 31 * result + rateParameters.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        PetriNet petriNet = (PetriNet) o;
+
+
+        if (!CollectionUtils.isEqualCollection(annotations, petriNet.annotations)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(arcs, petriNet.arcs)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(places, petriNet.places)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(rateParameters, petriNet.rateParameters)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(tokens, petriNet.tokens)) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(transitions, petriNet.transitions)) {
+            return false;
+        }
+
+        return true;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -280,6 +288,7 @@ public class PetriNet {
 
     /**
      * Attempts to parse the expression of the rate
+     *
      * @param rate
      * @return false if the rate's expression is invalid
      */
@@ -389,6 +398,7 @@ public class PetriNet {
      * Removes the Rate Parameter from any transitions that refer to it
      * and replaces it with a {@link pipe.models.component.rate.NormalRate} with the
      * same value
+     *
      * @param parameter to remove
      */
     private void removeRateParameterFromTransitions(RateParameter parameter) {
@@ -467,6 +477,7 @@ public class PetriNet {
      * It also disables any immediate transitions with a lower
      * priority than the highest available priority.
      * <p/>
+     *
      * @return all transitions that can be enabled
      */
     public Set<Transition> getEnabledTransitions() {
@@ -483,16 +494,15 @@ public class PetriNet {
     }
 
     /**
-     *
      * Note we must use an iterator in order to ensure save removal
      * whilst looping
      *
-     * @param priority minimum priority of transitions allowed to remain in the Collection
+     * @param priority    minimum priority of transitions allowed to remain in the Collection
      * @param transitions to remove if their priority is less than the specified value
      */
     private void removePrioritiesLessThan(int priority, Collection<Transition> transitions) {
         Iterator<Transition> transitionIterator = transitions.iterator();
-        while(transitionIterator.hasNext()) {
+        while (transitionIterator.hasNext()) {
             Transition transition = transitionIterator.next();
             if (!transition.isTimed() && transition.getPriority() < priority) {
                 transitionIterator.remove();
@@ -502,7 +512,7 @@ public class PetriNet {
 
     /**
      * Removes timed transitions from transitions
-     *
+     * <p/>
      * Note have to use an iterator for save deletions whilst
      * iterating through the list
      *
@@ -510,7 +520,7 @@ public class PetriNet {
      */
     private void removeTimedTransitions(Set<Transition> transitions) {
         Iterator<Transition> transitionIterator = transitions.iterator();
-        while(transitionIterator.hasNext()) {
+        while (transitionIterator.hasNext()) {
             Transition transition = transitionIterator.next();
             if (transition.isTimed()) {
                 transitionIterator.remove();
@@ -551,7 +561,6 @@ public class PetriNet {
     }
 
     /**
-     *
      * @param transition
      * @return true if transition is enabled
      */
@@ -777,5 +786,18 @@ public class PetriNet {
 
     public Set<RateParameter> getRateParameters() {
         return rateParameters;
+    }
+
+    @XmlTransient
+    public PetriNetName getName() {
+        return petriNetName;
+    }
+
+    public String getNameValue() {
+        return petriNetName.getName();
+    }
+
+    public void setName(PetriNetName name) {
+        this.petriNetName = name;
     }
 }

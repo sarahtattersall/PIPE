@@ -17,7 +17,6 @@ public class PipeApplicationModel implements Serializable {
     private boolean editionAllowed = true;
     private int mode;
     private int old_mode;
-    private int newNameCounter = 0;
 
     /**
      * Type that is currently selected on the petrinet
@@ -76,10 +75,6 @@ public class PipeApplicationModel implements Serializable {
 
     public List<ZoomAction> getZoomActions() {
         return zoomActions;
-    }
-
-    public int newPetriNetNumber() {
-        return ++newNameCounter;
     }
 
 

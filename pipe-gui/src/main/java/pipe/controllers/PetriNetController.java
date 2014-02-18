@@ -19,7 +19,7 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
-import pipe.naming.PetriNetComponentNamer;
+import pipe.naming.UniqueNamer;
 import pipe.naming.PlaceNamer;
 import pipe.naming.TransitionNamer;
 import pipe.visitor.ClonePetriNet;
@@ -64,12 +64,12 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Responsible for naming places
      */
-    private final PetriNetComponentNamer placeNamer;
+    private final UniqueNamer placeNamer;
 
     /**
      * Responsible for creating unique transition names
      */
-    private final PetriNetComponentNamer transitionNamer;
+    private final UniqueNamer transitionNamer;
 
     /**
      * Token that is currently selected in the drop down

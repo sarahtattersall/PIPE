@@ -2,11 +2,9 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.actions.gui.file.SaveAction;
 import pipe.actions.gui.file.SaveAsAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -20,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
 public class SaveAsActionTest {
     SaveAsAction saveAsAction;
@@ -65,7 +62,7 @@ public class SaveAsActionTest {
         File file = new File("test.xml");
         when(mockFileChooser.getFile()).thenReturn(file.getPath());
         saveAsAction.actionPerformed(null);
-        verify(mockController).saveCurrentPetriNet(file);
+        verify(mockController).saveAsCurrentPetriNet(file);
     }
 
     @Test
@@ -76,7 +73,7 @@ public class SaveAsActionTest {
         when(mockPetriNetController.getFileName()).thenReturn(file.getPath());
         when(mockFileChooser.getFile()).thenReturn(file.getPath());
         saveAsAction.actionPerformed(null);
-        verify(mockController).saveCurrentPetriNet(file);
+        verify(mockController).saveAsCurrentPetriNet(file);
     }
 
 

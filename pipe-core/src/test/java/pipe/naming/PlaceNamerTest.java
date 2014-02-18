@@ -2,7 +2,6 @@ package pipe.naming;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.place.Place;
 
@@ -136,7 +135,7 @@ public class PlaceNamerTest {
         String originalId = "Place 0";
         Place place = new Place(originalId, originalId);
         petriNet.addPlace(place);
-        PetriNetComponentNamer newNamer = new PlaceNamer(petriNet);
+        UniqueNamer newNamer = new PlaceNamer(petriNet);
         String newId = "Place 1";
         place.setId(newId);
         assertFalse(newNamer.isUniqueName(newId));

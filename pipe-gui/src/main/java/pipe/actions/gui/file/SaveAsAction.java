@@ -22,7 +22,7 @@ public class SaveAsAction extends AbstractSaveAction {
     }
 
     @Override
-    protected boolean forceSaveAs() {
+    protected boolean doSaveAs() {
         return true;
     }
 }

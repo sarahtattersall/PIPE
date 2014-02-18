@@ -1,34 +1,19 @@
 package pipe.naming;
 
-import pipe.models.petrinet.PetriNet;
-
 /**
- * Gives unique names to places, transitions and arcs
+ * Namer is used to find unique names for {@link pipe.models.component.PetriNetComponent}'s within a
+ * {@link pipe.models.petrinet.PetriNet}
  */
-public class UniqueNamer implements MultipleNamer {
+public interface UniqueNamer {
+    /**
+     * @return a unique name for the {@link pipe.models.component.PetriNetComponent}
+     */
+    String getName();
 
-    private final PetriNetComponentNamer placeNamer;
-    private final PetriNetComponentNamer transitionNamer;
-
-    public UniqueNamer(PetriNet net) {
-        placeNamer = new PlaceNamer(net);
-        transitionNamer = new TransitionNamer(net);
-    }
-
-
-    @Override
-    public String getPlaceName() {
-        return placeNamer.getName();
-    }
-
-    @Override
-    public String getTransitionName() {
-        return transitionNamer.getName();
-    }
-
-    //TODO:
-    @Override
-    public String getArcName() {
-        return "";
-    }
+    /**
+     *
+     * @param name
+     * @return true if name doesn't exist anywhere else in the {@link pipe.models.component.PetriNetComponent}
+     */
+    boolean isUniqueName(String name);
 }
