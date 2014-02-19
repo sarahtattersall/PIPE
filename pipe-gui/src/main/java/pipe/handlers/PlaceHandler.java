@@ -24,12 +24,14 @@ public class PlaceHandler
         super(view, contentpane, place, controller);
     }
 
+    @Override
     protected JPopupMenu getPopup(MouseEvent e) {
         int index = 0;
         JPopupMenu popup = super.getPopup(e);
 
         JMenuItem menuItem = new JMenuItem("Edit Place");
         ActionListener actionListener = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 viewComponent.showEditor();
             }
@@ -41,6 +43,7 @@ public class PlaceHandler
         return popup;
     }
 
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         //
         //        if(!ApplicationSettings.getApplicationModel().isEditionAllowed() || e.isControlDown())
