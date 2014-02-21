@@ -8,7 +8,7 @@
     <artifactId>PIPE</artifactId>
 
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>5.0.0-beta-1</version>
     <name>PIPE Parent Project</name>
 
     <properties>
