@@ -6,11 +6,11 @@
     <parent>
         <groupId>uk.ac.imperial</groupId>
         <artifactId>PIPE</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>PIPE-gui</artifactId>
-    <version>4.3.2</version>
+    <version>4.3.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
