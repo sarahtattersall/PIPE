@@ -6,7 +6,7 @@
     <parent>
         <groupId>uk.ac.imperial</groupId>
         <artifactId>PIPE</artifactId>
-        <version>5.0.0-beta-1</version>
+        <version>5.0.0-beta-2</version>
     </parent>
 
     <artifactId>PIPE-gui</artifactId>
