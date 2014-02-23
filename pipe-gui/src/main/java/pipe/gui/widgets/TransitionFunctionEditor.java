@@ -33,7 +33,7 @@ public class TransitionFunctionEditor extends JPanel {
         init(petriNet);
     }
 
-    private void init(PetriNet petriNet) {
+    private void init(final PetriNet petriNet) {
 
         final JTextArea function = new JTextArea();
         function.setText(transitionController.getRateExpr());
@@ -80,8 +80,7 @@ public class TransitionFunctionEditor extends JPanel {
                         exit();
                         return;
                     }
-                    //TODD: DONT PASS NULL
-                    ExprEvaluator parser = new ExprEvaluator(null);
+                    ExprEvaluator parser = new ExprEvaluator(petriNet);
                     if (parser.parseAndEvalExprForTransition(func) != null) {
                         _editor.setRate(func);
                         //transitionController.setRate(func);
