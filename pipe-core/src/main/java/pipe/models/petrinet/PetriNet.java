@@ -440,6 +440,17 @@ public class PetriNet {
         throw new PetriNetComponentNotFoundException("No token " + tokenId + " exists in Petri net.");
     }
 
+
+    public Place getPlace(String id) throws PetriNetComponentNotFoundException {
+        //TODO: Find an O(1) name to do this, perhaps Map?
+        for (Place place : places) {
+            if (place.getId().equals(id)) {
+                return place;
+            }
+        }
+        throw new PetriNetComponentNotFoundException("No place " + id + " exists in Petri net.");
+    }
+
     public RateParameter getRateParameter(String rateParameterId) throws PetriNetComponentNotFoundException {
         for (RateParameter rateParameter : rateParameters) {
             if (rateParameter.getId().equals(rateParameterId)) {
