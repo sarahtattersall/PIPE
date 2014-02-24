@@ -59,6 +59,13 @@
             <artifactId>jeval</artifactId>
             <version>0.9.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4</artifactId>
+            <version>4.2</version>
+        </dependency>
+
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
@@ -85,6 +92,12 @@
     <build>
         <pluginManagement>
             <plugins>
+                        <plugin>
+                            <groupId>org.antlr</groupId>
+                            <artifactId>antlr4-maven-plugin</artifactId>
+                            <version>4.2</version>
+                        </plugin>
+
                 <plugin>
                     <groupId>org.assertj</groupId>
                     <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
@@ -108,6 +121,24 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.2</version>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

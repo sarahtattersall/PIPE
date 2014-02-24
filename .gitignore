@@ -16,5 +16,8 @@
 log/
 target/
 
+#ANTLR
+pipe-core/gen
+
 #PIPE
 PipeTestFile.xml
