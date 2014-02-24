@@ -1,4 +1,4 @@
-# PIPE 2  [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=develop)](https://travis-ci.org/sarahtattersall/PIPE)
+# PIPE 2  [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=master)](https://travis-ci.org/sarahtattersall/PIPE)
 
 
 A tool for creating and analysing Petri nets, migrated from http://pipe2.sourceforge.net/about.html
