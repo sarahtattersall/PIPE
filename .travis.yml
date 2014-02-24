@@ -1,15 +1,13 @@
 language: java
 
 # blacklist
-# branches:
-#   except:
-#     - legacy
-#     - experimental
+branches:
+  except:
+    - legacy
 
 # whitelist
-branches:
-  only:
-    - develop
+# branches:
+#   only:
 
 before_install:
   - "export DISPLAY=:99.0"
