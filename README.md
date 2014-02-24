@@ -1,4 +1,4 @@
-# PIPE 2 #
+# PIPE 2 [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=develop)](https://travis-ci.org/sarahtattersall/PIPE)
 
 A tool for creating and analysing Petri nets, migrated from http://pipe2.sourceforge.net/about.html
 
@@ -45,11 +45,6 @@ There are some internal libraries, which need to be found for maven. For the mea
 The original method for these local libraries required running a Python script to install the local libraries using ``mvn install``, however this new method removes the need for a pre-install stp).
 
 If you know of a better way to do this, please raise it in the issues section.
-
-## Testing ##
-PIPE is using Travis for it's builds. The current build status is:
-[![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=develop)](https://travis-ci.org/sarahtattersall/PIPE)
-
 
 ## Contributing ##
 
