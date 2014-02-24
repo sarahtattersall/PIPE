@@ -1,4 +1,5 @@
-# PIPE 2 #
+# PIPE 2  [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=develop)](https://travis-ci.org/sarahtattersall/PIPE)
+
 
 A tool for creating and analysing Petri nets, migrated from http://pipe2.sourceforge.net/about.html
 
@@ -46,6 +47,14 @@ The original method for these local libraries required running a Python script t
 
 If you know of a better way to do this, please raise it in the issues section.
 
-## Testing ##
-PIPE is using Travis for it's builds. The current build status is:
-[![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=develop)](https://travis-ci.org/sarahtattersall/PIPE)
+
+## Contributing ##
+
+Just follow the following recommended process:
+
+- Fork it
+- Create your feature branch (`git checkout -b my-new-feature`)
+- Ensure your new code is tested thoroughly
+- Commit your changes (`git commit -am 'Add some feature'`)
+- Push to the branch (`git push origin my-new-feature`)
+- Create new Pull Request
