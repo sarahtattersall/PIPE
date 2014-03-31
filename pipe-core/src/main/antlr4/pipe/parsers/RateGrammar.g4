@@ -10,12 +10,16 @@ expression
     | expression op=('+'|'-') expression   # addOrSubtract
     | capacity                             # placeCapacity
     | token_number                         # placeTokens
+    | token_color_number                   # placeColorTokens
     | INT                                  # integer
     | DOUBLE                               # double;
 
+// Probably dont need this
 capacity: 'cap(' ID ')';
 
 token_number: '#(' ID ')';
+
+token_color_number: '#(' ID ',' ID ')';
 
 // LEXER
 ID     : ('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'0'..'9')*;

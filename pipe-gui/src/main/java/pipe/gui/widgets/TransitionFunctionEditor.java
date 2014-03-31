@@ -2,6 +2,7 @@ package pipe.gui.widgets;
 
 import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.TransitionController;
+import pipe.models.petrinet.FunctionalEvaluationException;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
@@ -86,13 +87,12 @@ public class TransitionFunctionEditor extends JPanel {
                         //transitionController.setRate(func);
                     }
                     exit();
-                } catch (Exception e) {
+                } catch (FunctionalEvaluationException e) {
                     System.err.println("Error in functional rates expression.");
                     String message =
-                            " Expression is invalid. Please check your function.";
+                            " Expression is invalid. " + e.getMessage();
                     String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title,
-                            JOptionPane.YES_NO_OPTION);
+                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
                 }
             }
         });

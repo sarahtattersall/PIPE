@@ -138,7 +138,7 @@ public class Place extends Connectable {
         } else {
             count = 1;
         }
-        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
+        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
         setTokenCount(token, count);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
@@ -152,7 +152,7 @@ public class Place extends Connectable {
                         "the capacity of " + count);
             }
         }
-        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
+        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
         tokenCounts.put(token, count);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
@@ -165,6 +165,21 @@ public class Place extends Connectable {
     }
 
     /**
+     * A less efficient way to get the count for a token. Use in cases where token is not avaiable
+     * @param tokenName
+     * @return token count for the colour token
+     */
+    //TODO: Make this O(n). Maybe change the hashmap to store name rather than token?
+    public int getTokenCount(String tokenName) {
+        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
+            if (entry.getKey().getId().equals(tokenName)) {
+                return entry.getValue();
+            }
+        }
+        return 0;
+    }
+
+    /**
      * @return the number of tokens currently stored in this place
      */
     public int getNumberOfTokensStored() {
@@ -172,7 +187,7 @@ public class Place extends Connectable {
     }
 
     public void decrementTokenCount(Token token) {
-        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
+        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
         Integer count;
         if (tokenCounts.containsKey(token)) {
             count = tokenCounts.get(token);
@@ -273,4 +288,6 @@ public class Place extends Connectable {
     public int getWidth() {
         return DIAMETER;
     }
+
+
 }

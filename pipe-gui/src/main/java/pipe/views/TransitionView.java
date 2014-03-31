@@ -17,6 +17,7 @@ import pipe.historyActions.HistoryItem;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
+import pipe.models.petrinet.FunctionalEvaluationException;
 import pipe.models.petrinet.PetriNet;
 import pipe.views.viewComponents.RateParameter;
 
@@ -184,7 +185,7 @@ public class TransitionView extends ConnectableView<Transition> {
             g2.draw(shape);
             g2.fill(shape);
         }
-        changeToolTipText();
+//        changeToolTipText();
     }
 
     @Override
@@ -213,23 +214,15 @@ public class TransitionView extends ConnectableView<Transition> {
     }
 
     private void changeToolTipText() {
-        try {
-            Double.parseDouble(getRateExpr());
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRate());
-            } else {
-                setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
-            }
-        } catch (Exception e) {
-            if (this.isTimed()) {
-                setToolTipText("r = " + this.getRateExpr() + " = " + this.getRate());
-            } else {
-                setToolTipText(
-                        "\u03c0 = " + this.getPriority() + "; w = " + this.getRateExpr() + " = " + this.getRate());
-            }
+        if (this.isTimed()) {
+            setToolTipText("r = " + this.getRate());
+        } else {
+            setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
         }
     }
 
+
+    //TODO: DON'T CALCULATE THIS IN HERE?
     public double getRate() {
         if (isInfiniteServer()) {
             PetriNet petriNet = petriNetController.getPetriNet();
@@ -239,17 +232,13 @@ public class TransitionView extends ConnectableView<Transition> {
         if (model.getRateExpr() == null) {
             return -1;
         }
-        try {
-            return Double.parseDouble(model.getRateExpr());
-        } catch (Exception e) {
-            ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
-            try {
-                return parser.parseAndEvalExprForTransition(model.getRateExpr());
-            } catch (EvaluationException ee) {
-                showErrorMessage();
-                return 1.0;
-            }
 
+        ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
+        try {
+            return parser.parseAndEvalExprForTransition(model.getRateExpr());
+        } catch (FunctionalEvaluationException ignored) {
+            showErrorMessage();
+            return -1;
         }
     }
 
@@ -286,48 +275,6 @@ public class TransitionView extends ConnectableView<Transition> {
         PetriNetTab tab = view.getCurrentTab();
 
         return model.isEnabled() && tab.isInAnimationMode();
-    }
-
-    private String getAttributes() {
-        if (_attributesVisible) {
-            try {
-                Double.parseDouble(getRateExpr());
-                if (isInfiniteServer()) {
-                    return "\nr=" + "ED(" + this.getId() + ",M)=" + getRate();
-                }
-                if (isTimed()) {
-                    if (_rateParameter != null) {
-                        return "\nr=" + _rateParameter.getName();
-                    } else {
-                        return "\nr=" + getRate();
-                    }
-                } else {
-                    if (_rateParameter != null) {
-                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + _rateParameter.getName();
-                    } else {
-                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + getRate();
-                    }
-                }
-            } catch (Exception e) {
-                if (isInfiniteServer()) {
-                    return "\nr=" + "ED(" + this.getId() + ",M)=" + getRate();
-                }
-                if (isTimed()) {
-                    if (_rateParameter != null) {
-                        return "\nr=" + _rateParameter.getName();
-                    } else {
-                        return "\nr=" + getRateExpr() + "=" + getRate();
-                    }
-                } else {
-                    if (_rateParameter != null) {
-                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + _rateParameter.getName();
-                    } else {
-                        return "\n" + '\u03c0' + "=" + model.getPriority() + "\nw=" + getRateExpr() + "=" + getRate();
-                    }
-                }
-            }
-        }
-        return "";
     }
 
     @Override

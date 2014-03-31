@@ -2,6 +2,7 @@ package pipe.parsers;
 
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
+import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 
 public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
@@ -53,7 +54,18 @@ public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
         }
     }
 
-    //TODO: HANDLE COLOURS
+    @Override
+    public Double visitToken_color_number(RateGrammarParser.Token_color_numberContext ctx) {
+        String name = ctx.ID().get(0).getText();
+        String color = ctx.ID().get(1).getText();
+        try {
+            Place place = getPlace(name);
+            return (double) place.getTokenCount(color);
+        } catch (PetriNetComponentNotFoundException ignored) {
+            return 0.0;
+        }
+    }
+
     @Override
     public Double visitCapacity(RateGrammarParser.CapacityContext ctx) {
         try {

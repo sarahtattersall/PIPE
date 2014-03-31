@@ -23,62 +23,8 @@ public class ExprEvaluatorTest {
         exprEvaluator = new ExprEvaluator(net);
     }
 
-    @Test
-    public void evaluatesCorrectCapacityWhenExpressionIsTrue() throws EvaluationException {
-        Place place = new Place("P0", "P0");
-        place.setCapacity(2);
 
-        net.addPlace(place);
-
-        double result = exprEvaluator.parseAndEvalExprForTransition("cap(P0) <= 2");
-
-        assertTrue("cap(P0) <= is false", isTrue(result));
-    }
-
-    @Test
-    public void evaluatesCorrectCapacityWhenExpressionIsFalse() throws EvaluationException {
-        Place place = new Place("P0", "P0");
-        place.setCapacity(2);
-
-        net.addPlace(place);
-        double result = exprEvaluator.parseAndEvalExprForTransition("cap(P0) != 2");
-
-        assertTrue("cap(P0) != 2 is true", isFalse(result));
-    }
-
-
-    @Test
-    public void evaluatesCorrectTokensWhenExpressionIsTrue() throws EvaluationException {
-        Token defaultToken = TokenUtils.createDefaultToken();
-        net.addToken(defaultToken);
-
-        Place place = new Place("P0", "P0");
-        int tokenCount = 2;
-        place.setTokenCount(defaultToken, tokenCount);
-
-        net.addPlace(place);
-        double result = exprEvaluator.parseAndEvalExprForTransition("#(P0) <= " + tokenCount);
-
-        assertTrue("#(P0) <= 2 is false", isTrue(result));
-    }
-
-    @Test
-    public void evaluatesCorrectTokensWhenExpressionIsFalse() throws EvaluationException {
-        Token defaultToken = TokenUtils.createDefaultToken();
-        net.addToken(defaultToken);
-
-        Place place = new Place("P0", "P0");
-        int tokenCount = 2;
-        place.setTokenCount(defaultToken, tokenCount);
-
-        net.addPlace(place);
-        double result = exprEvaluator.parseAndEvalExprForTransition("#(P0) != " + tokenCount);
-
-        assertTrue("#(P0) != 2 is true", isFalse(result));
-    }
-
-
-    boolean isTrue(double value) {
+     boolean isTrue(double value) {
         return value == 1.0;
     }
 

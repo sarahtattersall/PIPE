@@ -5,6 +5,9 @@ import net.sourceforge.jeval.Evaluator;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
+import pipe.parsers.FunctionalWeightParser;
+import pipe.parsers.TransitionWeightParser;
+import pipe.parsers.UnparsableException;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -18,22 +21,16 @@ public class ExprEvaluator {
         this.petriNet = petriNet;
     }
 
-    public Double parseAndEvalExprForTransition(String expr) throws EvaluationException {
-
-        String lexpr = new String(expr.replaceAll("\\s", ""));
-
-        for (Place place : petriNet.getPlaces()) {
-            lexpr = findAndReplaceCapacity(lexpr, place);
-            String name = getPlaceNameRepresentation(place);
-            if (lexpr.toLowerCase().contains(name.toLowerCase())) {
-                int numOfToken = place.getNumberOfTokensStored();
-                lexpr = findAndReplaceTokens(lexpr, name, numOfToken);
-            }
+    public Double parseAndEvalExprForTransition(String expr) throws FunctionalEvaluationException {
+        FunctionalWeightParser transitionWeightParser = new TransitionWeightParser(petriNet, expr);
+        if (transitionWeightParser.containsErrors()) {
+            throw new FunctionalEvaluationException(transitionWeightParser.getErrors());
         }
-
-        Evaluator evaluator = new Evaluator();
-        String result = evaluator.evaluate(lexpr);
-        return Double.parseDouble(result);
+        try {
+            return transitionWeightParser.evaluateExpression();
+        } catch (UnparsableException e) {
+            throw new FunctionalEvaluationException(e.getMessage());
+        }
     }
 
     /**

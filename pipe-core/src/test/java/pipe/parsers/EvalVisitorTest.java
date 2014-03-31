@@ -144,6 +144,19 @@ public class EvalVisitorTest {
     }
 
     @Test
+    public void parsesPlaceColorTokenNumber() throws PetriNetComponentNotFoundException {
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                AToken.called("Red").withColor(Color.RED)).andFinally(
+                APlace.withId("P0").and(4, "Default").tokens().and(6, "Red").tokens());
+
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(petriNet);
+        ParseTree parseTree = parseTreeForExpr("#(P0, Red)");
+        Double result = evalVisitor.visit(parseTree);
+
+        assertEquals(new Double(6.0), result);
+    }
+
+    @Test
     public void parsesPlaceTokenNumberAsZeroIfDoesNotExist() throws PetriNetComponentNotFoundException {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).andFinally(
                 APlace.withId("P0").and(4, "Default").tokens());
@@ -154,7 +167,6 @@ public class EvalVisitorTest {
 
         assertEquals(new Double(0.0), result);
     }
-
 
 
     @Test

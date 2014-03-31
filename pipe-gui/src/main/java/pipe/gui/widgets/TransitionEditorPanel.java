@@ -13,6 +13,7 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.rate.RateType;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
+import pipe.models.petrinet.FunctionalEvaluationException;
 import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
@@ -619,8 +620,8 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         double rate;
         try {
             rate = parser.parseAndEvalExprForTransition(rateTextField.getText());
-        } catch (EvaluationException ignored) {
-            showErrorMessage("Functional rate expression is invalid. Please check your function.");
+        } catch (FunctionalEvaluationException e) {
+            showErrorMessage("Functional rate expression is invalid. Please check your function." + e.getMessage());
             return false;
         }
 
