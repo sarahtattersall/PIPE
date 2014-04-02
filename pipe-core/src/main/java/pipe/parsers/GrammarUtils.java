@@ -17,16 +17,16 @@ public class GrammarUtils {
      * @param expression string to parse
      * @return ParseTree
      */
-    public static ParseTree parse(String expression) {
+    public static ParseTree parse(String expression, ANTLRErrorListener... errorListeners) {
         CharStream input = new ANTLRInputStream(expression);
         RateGrammarLexer lexer = new RateGrammarLexer(input);
         TokenStream tokens = new CommonTokenStream(lexer);
         RateGrammarParser parser = new RateGrammarParser(tokens);
         parser.removeErrorListeners();
 
-        ANTLRErrorListener errorListener = new RateGrammarErrorListener();
-
-        parser.addErrorListener(errorListener);
+        for (ANTLRErrorListener errorListener : errorListeners) {
+            parser.addErrorListener(errorListener);
+        }
         return parser.program();
     }
 }

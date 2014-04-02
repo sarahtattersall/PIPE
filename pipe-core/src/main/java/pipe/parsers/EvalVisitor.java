@@ -7,7 +7,7 @@ import pipe.models.petrinet.PetriNet;
 
 public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
 
-    private PetriNet petriNet = new PetriNet();
+    private PetriNet petriNet;
 
     /**
      * Constructor for evaluating expressions that contain petri
@@ -16,13 +16,6 @@ public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
     public EvalVisitor(PetriNet petriNet) {
 
         this.petriNet = petriNet;
-    }
-
-    /**
-     * Constructor for evaluating expressions that contain no places
-     */
-    public EvalVisitor() {
-
     }
 
     @Override

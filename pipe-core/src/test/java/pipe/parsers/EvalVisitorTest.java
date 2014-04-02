@@ -18,6 +18,7 @@ import java.awt.*;
 import static org.junit.Assert.assertEquals;
 
 public class EvalVisitorTest {
+    private static final PetriNet EMPTY_PETRI_NET = new PetriNet();
 
     public ParseTree parseTreeForExpr(String expr) {
         CharStream input = new ANTLRInputStream(expr);
@@ -30,7 +31,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicInt() {
         ParseTree tree = parseTreeForExpr("2");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(2.0), result);
@@ -39,7 +40,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicIntegerAddition() {
         ParseTree tree = parseTreeForExpr("2 + 8");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(10.0), result);
@@ -49,7 +50,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicDoubleAddition() {
         ParseTree tree = parseTreeForExpr("2.5 + 8.3");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(10.8), result);
@@ -58,7 +59,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicIntegerSubtraction() {
         ParseTree tree = parseTreeForExpr("5 - 1");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(4.0), result);
@@ -67,7 +68,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicDoubleSubraction() {
         ParseTree tree = parseTreeForExpr("2.5 - 0.2");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(2.3), result);
@@ -77,7 +78,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicIntegerMultiplication() {
         ParseTree tree = parseTreeForExpr("5 * 2");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(10.0), result);
@@ -86,7 +87,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicDoubleMultiplication() {
         ParseTree tree = parseTreeForExpr("2.5 * 4");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(10.0), result);
@@ -96,7 +97,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicIntegerDivision() {
         ParseTree tree = parseTreeForExpr("5 / 2");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(2.5), result);
@@ -105,7 +106,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicDoubleDivision() {
         ParseTree tree = parseTreeForExpr("5 / 2.5");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(2), result);
@@ -115,7 +116,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesBasicParentheses() {
         ParseTree tree = parseTreeForExpr("(2)");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(2), result);
@@ -124,7 +125,7 @@ public class EvalVisitorTest {
     @Test
     public void parsesAdditionParentheses() {
         ParseTree tree = parseTreeForExpr("(2 + 3) * 5");
-        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor();
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
         Double result = evalVisitor.visit(tree);
 
         assertEquals(new Double(25), result);

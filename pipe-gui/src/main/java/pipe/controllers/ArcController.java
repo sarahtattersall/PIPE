@@ -34,14 +34,15 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Creates a historyItem for updating weight and applies it
-     * @param token
-     * @param expr
+     * @param token token to associate the expression with
+     * @param expr new weight expression for the arc
      */
     private void updateWeightForArc(Token token,
                                     String expr) {
         String oldWeight = arc.getWeightForToken(token);
+        arc.setWeight(token, expr);
+
         SetArcWeightAction<S,T> weightAction = new SetArcWeightAction<>(arc, token, oldWeight, expr);
-        weightAction.redo();
         historyManager.addEdit(weightAction);
     }
 

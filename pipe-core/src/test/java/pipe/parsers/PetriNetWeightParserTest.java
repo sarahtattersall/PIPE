@@ -23,31 +23,31 @@ public class PetriNetWeightParserTest {
 
     @Test
     public void correctlyIdentifiesErrors() {
-        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET, "2 + ");
-        assertTrue(parser.containsErrors());
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET);
+        FunctionalResults<Double> result = parser.evaluateExpression("2 +");
+        assertTrue(result.hasErrors());
     }
 
     @Test
     public void producesCorrectErrorMessage() {
-        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET, "2 *");
-        assertThat(parser.getErrors()).containsExactly("line 1:3 no viable alternative at input '<EOF>'");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET);
+        FunctionalResults<Double> result = parser.evaluateExpression("2 *");
+        assertThat(result.getErrors()).containsExactly("line 1:3 no viable alternative at input '<EOF>'");
     }
 
     @Test
-    public void willNotEvaluateExpressionIfContainsErrors() throws UnparsableException {
-        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET, "2 *");
-
-        expectedException.expect(UnparsableException.class);
-        expectedException.expectMessage("There were errors in parsing the expression, cannot calculate value!");
-
-        parser.evaluateExpression();
+    public void willExpressionIsNegativeIfContainsErrors() throws UnparsableException {
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET);
+        FunctionalResults<Double> result = parser.evaluateExpression("2 *");
+        assertEquals(new Double(-1.), result.getResult());
     }
 
     @Test
     public void willNotEvaluateExpressionIfPetriNetDoesNotContainComponent() throws UnparsableException {
         PetriNet petriNet = APetriNet.withOnly(APlace.withId("P1"));
-        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet, "#(P0)");
-        assertThat(parser.getErrors()).contains("Not all referenced components exist in the Petri net!");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet);
+        FunctionalResults<Double> result = parser.evaluateExpression("#(P0)");
+        assertThat(result.getErrors()).contains("Not all referenced components exist in the Petri net!");
     }
 
 
@@ -56,10 +56,9 @@ public class PetriNetWeightParserTest {
     public void evaluatesIfPlaceIsInPetriNet() throws UnparsableException {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).andFinally(APlace.withId("P0").containing(10, "Default").tokens());
 
-        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet, "#(P0)");
-
-        Double value = parser.evaluateExpression();
-        assertEquals(new Double(10), value);
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet);
+        FunctionalResults<Double> result = parser.evaluateExpression("#(P0)");
+        assertEquals(new Double(10), result.getResult());
     }
 
 

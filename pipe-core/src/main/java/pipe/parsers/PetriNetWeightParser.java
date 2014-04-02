@@ -10,30 +10,32 @@ import pipe.models.petrinet.PetriNet;
 
 import java.util.*;
 
-public class PetriNetWeightParser extends AbstractFunctionalWeightParser<Double> {
+public class PetriNetWeightParser implements FunctionalWeightParser<Double> {
 
 
-
+    /**
+     * Petri net to parse results aginst
+     */
     private final PetriNet petriNet;
+
+    /**
+     * Evaluator for the PetriNet and functional expression
+     */
+    private final EvalVisitor evalVisitor;
 
     /**
      * Parses Transition Rates to determine their value and
      * the components they reference.
      *
-     * @param expression functional transition rate expression
      */
-    public PetriNetWeightParser(PetriNet petriNet, String expression) {
-        super(expression);
+    public PetriNetWeightParser(PetriNet petriNet) {
+        evalVisitor = new EvalVisitor(petriNet);
         this.petriNet = petriNet;
-
-        if (!allComponentsInPetriNet()) {
-            errors.add("Not all referenced components exist in the Petri net!");
-        }
     }
 
 
     //TODO: Use memoization
-    public Set<String> getReferencedComponents() {
+    private Set<String> getReferencedComponents(ParseTree parseTree) {
         ParseTreeWalker walker = new ParseTreeWalker();
         ComponentListener listener = new ComponentListener();
         walker.walk(listener, parseTree);
@@ -47,9 +49,8 @@ public class PetriNetWeightParser extends AbstractFunctionalWeightParser<Double>
      * @return true if all referenced components in expression
      * are valid in the Petri net
      */
-    private boolean allComponentsInPetriNet() {
-        Set<String> placeComponents = getReferencedComponents();
-        for (String id : placeComponents) {
+    private boolean allComponentsInPetriNet(Set<String> components) {
+        for (String id : components) {
             try {
                 petriNet.getPlace(id);
             } catch (PetriNetComponentNotFoundException ignored) {
@@ -61,8 +62,26 @@ public class PetriNetWeightParser extends AbstractFunctionalWeightParser<Double>
 
 
     @Override
-    public Double evaluateExpression() throws UnparsableException {
-        return getValue(new EvalVisitor(petriNet));
+    public FunctionalResults<Double> evaluateExpression(String expression) {
+
+        RateGrammarErrorListener errorListener = new RateGrammarErrorListener();
+        ParseTree parseTree = GrammarUtils.parse(expression, errorListener);
+
+        List<String> errors = new LinkedList<>();
+        if (errorListener.hasErrors()) {
+            errors.addAll(errorListener.getErrors());
+        }
+
+        Set<String> components = getReferencedComponents(parseTree);
+        if (!allComponentsInPetriNet(components)) {
+            errors.add("Not all referenced components exist in the Petri net!");
+        }
+
+        if (!errors.isEmpty()) {
+            return new FunctionalResults<>(-1., errors, components);
+        }
+
+        return new FunctionalResults<>(evalVisitor.visit(parseTree), components);
     }
 
     /**
@@ -84,21 +103,4 @@ public class PetriNetWeightParser extends AbstractFunctionalWeightParser<Double>
             return componentIds;
         }
     }
-
-    /**
-     * Listener that registers error in string format to be reported
-     * back to the user whilst parsing the tree
-     */
-    class RateGrammarErrorListener extends BaseErrorListener {
-
-        @Override
-        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
-                                String msg, RecognitionException e) {
-            List<String> stack = ((Parser) recognizer).getRuleInvocationStack();
-            Collections.reverse(stack);
-            errors.add(String.format("line %d:%d %s", line, charPositionInLine, msg));
-        }
-    }
-
-
 }

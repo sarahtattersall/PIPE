@@ -16,6 +16,7 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.name.PetriNetName;
+import pipe.parsers.FunctionalResults;
 import pipe.parsers.FunctionalWeightParser;
 import pipe.parsers.PetriNetWeightParser;
 import pipe.parsers.UnparsableException;
@@ -96,6 +97,11 @@ public class PetriNet {
     public static final String DELETE_RATE_PARAMETER_CHANGE_MESSAGE = "deleteRateParameter";
 
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+    /**
+     * Functional weight parser
+     */
+    private final FunctionalWeightParser<Double> functionalWeightParser = new PetriNetWeightParser(this);
 
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
@@ -282,7 +288,7 @@ public class PetriNet {
     }
 
     public void addRateParameter(RateParameter rateParameter) throws InvalidRateException {
-        if (!validRateParameterExpression(rateParameter)) {
+        if (!validFunctionalExpression(rateParameter.getExpression())) {
             throw new InvalidRateException(rateParameter.getExpression());
         }
 
@@ -295,26 +301,19 @@ public class PetriNet {
     /**
      * Attempts to parse the expression of the rate
      *
-     * @param rate
+     * @param expression functional expression to evaluate for Petri net
      * @return false if the rate's expression is invalid
      */
-    private boolean validRateParameterExpression(Rate rate) {
-        FunctionalWeightParser transitionWeightParser = new PetriNetWeightParser(this, rate.getExpression());
-        return transitionWeightParser.getErrors().isEmpty();
+    public boolean validFunctionalExpression(String expression) {
+        FunctionalResults<Double> result = functionalWeightParser.evaluateExpression(expression);
+        return !result.hasErrors();
     }
+
+
 
     public Collection<Annotation> getAnnotations() {
         return annotations;
     }
-
-    //    public void addStateGroup(StateGroup group) {
-    //        stateGroups.add(group);
-    //        changeSupport.firePropertyChange("newStateGroup", null, group);
-    //    }
-
-    //    public Collection<StateGroup> getStateGroups() {
-    //        return stateGroups;
-    //    }
 
     public Collection<Arc<? extends Connectable, ? extends Connectable>> getArcs() {
         return arcs;
@@ -717,12 +716,8 @@ public class PetriNet {
 
     //TODO: SHOULD WE BE CATCHING THE ERROR?
     private int getEvaluatedExpressionAsInt(String expression) {
-        FunctionalWeightParser parser = new PetriNetWeightParser(this, expression);
-        try {
-            return (int) parser.evaluateExpression().doubleValue();
-        } catch (UnparsableException ignored) {
-            return -1;
-        }
+        FunctionalResults<Double> result = functionalWeightParser.evaluateExpression(expression);
+        return (int) result.getResult().doubleValue();
     }
 
     /**

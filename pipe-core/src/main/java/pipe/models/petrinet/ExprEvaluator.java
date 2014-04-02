@@ -5,6 +5,7 @@ import net.sourceforge.jeval.Evaluator;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
+import pipe.parsers.FunctionalResults;
 import pipe.parsers.FunctionalWeightParser;
 import pipe.parsers.PetriNetWeightParser;
 import pipe.parsers.UnparsableException;
@@ -22,15 +23,13 @@ public class ExprEvaluator {
     }
 
     public Double parseAndEvalExprForTransition(String expr) throws FunctionalEvaluationException {
-        FunctionalWeightParser<Double> transitionWeightParser = new PetriNetWeightParser(petriNet, expr);
-        if (transitionWeightParser.containsErrors()) {
-            throw new FunctionalEvaluationException(transitionWeightParser.getErrors());
+        FunctionalWeightParser<Double> transitionWeightParser = new PetriNetWeightParser(petriNet);
+        FunctionalResults<Double> result = transitionWeightParser.evaluateExpression(expr);
+        if (result.hasErrors()) {
+            throw new FunctionalEvaluationException(result.getErrors());
         }
-        try {
-            return transitionWeightParser.evaluateExpression();
-        } catch (UnparsableException e) {
-            throw new FunctionalEvaluationException(e.getMessage());
-        }
+        return result.getResult();
+
     }
 
     /**
