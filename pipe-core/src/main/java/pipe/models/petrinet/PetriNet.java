@@ -19,7 +19,6 @@ import pipe.models.petrinet.name.PetriNetName;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.FunctionalWeightParser;
 import pipe.parsers.PetriNetWeightParser;
-import pipe.parsers.UnparsableException;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -299,7 +298,6 @@ public class PetriNet {
         FunctionalResults<Double> result = functionalWeightParser.evaluateExpression(expression);
         return !result.hasErrors();
     }
-
 
 
     public Collection<Annotation> getAnnotations() {
@@ -610,34 +608,49 @@ public class PetriNet {
     /**
      * Removes tokens from places into the transition
      * Adds tokens to the places out of the transition according to the arc weight
+     * <p/>
+     * Handles functional weights e.g. removing all of a places tokens and adding them
+     * to the receiving place by calculating all incidence matricies before setting any token counts
+     * <p/>
      * Recalculates enabled transitions
      *
      * @param transition transition to fire
      */
     public void fireTransition(Transition transition) {
+        Map<Place, Map<Token, Integer>> placeTokenCounts = new HashMap<>();
         if (transition.isEnabled()) {
             //Decrement previous places
             for (Arc<Place, Transition> arc : inboundArcs(transition)) {
                 Place place = arc.getSource();
+                Map<Token, Integer> tokenCounts = new HashMap<>();
+                placeTokenCounts.put(place, tokenCounts);
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getBackwardsIncidenceMatrix(token);
                     int currentCount = place.getTokenCount(token);
                     int newCount = currentCount - matrix.get(place, transition);
-                    place.setTokenCount(token, newCount);
+                    tokenCounts.put(token, newCount);
                 }
             }
 
             //Increment new places
             for (Arc<Transition, Place> arc : outboundArcs(transition)) {
                 Place place = arc.getTarget();
+                Map<Token, Integer> tokenCounts = new HashMap<>();
+                placeTokenCounts.put(place, tokenCounts);
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = getForwardsIncidenceMatrix(token);
                     int currentCount = place.getTokenCount(token);
                     int newCount = currentCount + matrix.get(place, transition);
-                    place.setTokenCount(token, newCount);
+                    tokenCounts.put(token, newCount);
                 }
             }
         }
+
+        //Set all counts
+        for (Map.Entry<Place, Map<Token, Integer>> entry : placeTokenCounts.entrySet()) {
+            entry.getKey().setTokenCounts(entry.getValue());
+        }
+
         markEnabledTransitions();
     }
 
@@ -735,7 +748,8 @@ public class PetriNet {
                     forwardsIncidenceMatrix.put(place, transition, weight);
                 }
             }
-        } return forwardsIncidenceMatrix;
+        }
+        return forwardsIncidenceMatrix;
     }
 
     /**

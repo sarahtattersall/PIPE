@@ -26,13 +26,13 @@ import pipe.models.petrinet.PetriNet;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-
-import static org.assertj.core.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PetriNetTest {
@@ -233,17 +233,16 @@ public class PetriNetTest {
 
     @Test
     public void correctlyGeneratesForwardIncidenceMatrix() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                .and(APlace.withId("P1"))
-                .and(APlace.withId("P2"))
-                .and(ATransition.withId("T1"))
-                .and(ANormalArc.withSource("P1").andTarget("T1").with("4", "Default").tokens())
-                .andFinally(ANormalArc.withSource("T1").andTarget("P2").with("4", "Default").tokens());
+        PetriNet petriNet =
+                APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P1")).and(
+                        APlace.withId("P2")).and(ATransition.withId("T1")).and(
+                        ANormalArc.withSource("P1").andTarget("T1").with("4", "Default").tokens()).andFinally(
+                        ANormalArc.withSource("T1").andTarget("P2").with("4", "Default").tokens());
 
         Token token = getComponent("Default", petriNet.getTokens());
 
         IncidenceMatrix forwardMatrix = petriNet.getForwardsIncidenceMatrix(token);
-        
+
         Transition transition = getComponent("T1", petriNet.getTransitions());
         Place p1 = getComponent("P1", petriNet.getPlaces());
         Place p2 = getComponent("P2", petriNet.getPlaces());
@@ -277,12 +276,11 @@ public class PetriNetTest {
      */
     public PetriNet createSimplePetriNet(int tokenWeight) {
         String arcWeight = Integer.toString(tokenWeight);
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                                    .and(APlace.withId("P1").containing(1, "Default").token())
-                                    .and(APlace.withId("P2"))
-                                    .and(ATransition.withId("T1"))
-                                    .and(ANormalArc.withSource("P1").andTarget("T1").with(arcWeight, "Default").tokens())
-                                    .andFinally(ANormalArc.withSource("T1").andTarget("P2").with(arcWeight, "Default").tokens());
+        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P1").containing(1, "Default").token()).and(APlace.withId("P2")).and(
+                ATransition.withId("T1")).and(
+                ANormalArc.withSource("P1").andTarget("T1").with(arcWeight, "Default").tokens()).andFinally(
+                ANormalArc.withSource("T1").andTarget("P2").with(arcWeight, "Default").tokens());
     }
 
     @Test
@@ -308,24 +306,21 @@ public class PetriNetTest {
 
         Collection<Transition> enabled = petriNet.getEnabledTransitions();
         Transition transition = getComponent("T1", petriNet.getTransitions());
-        assertTrue("Petri net did not put transition in enabled collection",
-                enabled.contains(transition));
+        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(transition));
     }
 
     @Test
     public void correctlyIdentifiesEnabledWithNoSecondColourToken() {
-        PetriNet petriNet =  APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                .and(AToken.called("Red").withColor(Color.RED))
-                .and(APlace.withId("P1").containing(1, "Red").token().and(1, "Default").token())
-                .and(APlace.withId("P2"))
-                .and(ATransition.withId("T1"))
-                .andFinally(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token().and("0", "Red").tokens());
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                AToken.called("Red").withColor(Color.RED)).and(
+                APlace.withId("P1").containing(1, "Red").token().and(1, "Default").token()).and(
+                APlace.withId("P2")).and(ATransition.withId("T1")).andFinally(
+                ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token().and("0", "Red").tokens());
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
 
         Collection<Transition> enabled = petriNet.getEnabledTransitions();
-        assertTrue("Petri net did not put transition in enabled collection",
-                enabled.contains(transition));
+        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(transition));
     }
 
     @Test
@@ -370,12 +365,10 @@ public class PetriNetTest {
      */
     public PetriNet createSimplePetriNetTwoPlacesToTransition(int tokenWeight) {
         String weight = Integer.toString(tokenWeight);
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                        .and(APlace.withId("P1"))
-                        .and(APlace.withId("P2"))
-                        .and(ATransition.withId("T1"))
-                        .and(ANormalArc.withSource("P1").andTarget("T1").with(weight, "Default").tokens())
-                        .andFinally(ANormalArc.withSource("P2").andTarget("T1").with(weight, "Default").tokens());
+        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P1")).and(
+                APlace.withId("P2")).and(ATransition.withId("T1")).and(
+                ANormalArc.withSource("P1").andTarget("T1").with(weight, "Default").tokens()).andFinally(
+                ANormalArc.withSource("P2").andTarget("T1").with(weight, "Default").tokens());
     }
 
     @Test
@@ -469,12 +462,11 @@ public class PetriNetTest {
     }
 
     private PetriNet createSelfLoopPetriNet(int tokenWeight) {
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                                    .and(APlace.withId("P0"))
-                                    .and(ATransition.withId("T1"))
-                                    .and(ANormalArc.withSource("T1").andTarget("P0")
-                                                   .with(Integer.toString(tokenWeight), "Default").tokens())
-                                    .andFinally(ANormalArc.withSource("P0").andTarget("T1").with(Integer.toString(tokenWeight), "Default").tokens());
+        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0")).and(
+                ATransition.withId("T1")).and(
+                ANormalArc.withSource("T1").andTarget("P0").with(Integer.toString(tokenWeight),
+                        "Default").tokens()).andFinally(
+                ANormalArc.withSource("P0").andTarget("T1").with(Integer.toString(tokenWeight), "Default").tokens());
     }
 
     @Test
@@ -493,12 +485,10 @@ public class PetriNetTest {
      * @return
      */
     public PetriNet createSimpleInhibitorPetriNet(int tokenWeight) {
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                        .and(APlace.withId("P1"))
-                        .and(APlace.withId("P2"))
-                        .and(ATransition.withId("T1"))
-                        .and(AnInhibitorArc.withSource("P1").andTarget("T1"))
-                        .andFinally(ANormalArc.withSource("T1").andTarget("P2").with( Integer.toString(tokenWeight), "Default").tokens());
+        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P1")).and(
+                APlace.withId("P2")).and(ATransition.withId("T1")).and(
+                AnInhibitorArc.withSource("P1").andTarget("T1")).andFinally(
+                ANormalArc.withSource("T1").andTarget("P2").with(Integer.toString(tokenWeight), "Default").tokens());
     }
 
     @Test
@@ -525,6 +515,28 @@ public class PetriNetTest {
         Place p2 = getComponent("P2", petriNet.getPlaces());
         assertEquals(0, p1.getTokenCount(token));
         assertEquals(1, p2.getTokenCount(token));
+    }
+
+    @Test
+    public void firingFunctionalTransitionMovesTokens() {
+        PetriNet petriNet = APetriNet.with(AToken.called("Red").withColor(Color.RED)).and(
+                AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P0").containing(5, "Default").tokens()).and(APlace.withId("P1")).and(
+                ATransition.withId("T1")).and(
+                ANormalArc.withSource("P0").andTarget("T1").with("#(P0)", "Default").tokens()).andFinally(
+                ANormalArc.withSource("T1").andTarget("P1").with("#(P0)*2", "Red").tokens());
+
+        petriNet.markEnabledTransitions();
+
+        Transition transition = getComponent("T1", petriNet.getTransitions());
+        petriNet.fireTransition(transition);
+
+        Token token = getComponent("Default", petriNet.getTokens());
+        Token redToken = getComponent("Red", petriNet.getTokens());
+        Place p1 = getComponent("P0", petriNet.getPlaces());
+        Place p2 = getComponent("P1", petriNet.getPlaces());
+        assertEquals(0, p1.getTokenCount(token));
+        assertEquals(10, p2.getTokenCount(redToken));
     }
 
     @Test
@@ -555,14 +567,12 @@ public class PetriNetTest {
 
     @Test
     public void firingTransitionEnablesNextTransition() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                .and(APlace.withId("P1").containing(1, "Default").token())
-                .and(APlace.withId("P2"))
-                .and(ATransition.withId("T1"))
-                .and(ATransition.withId("T2"))
-                .and(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token())
-                .and(ANormalArc.withSource("T1").andTarget("P2").with("1", "Default").token())
-                .andFinally(ANormalArc.withSource("P2").andTarget("T2").with("1", "Default").token());
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P1").containing(1, "Default").token()).and(APlace.withId("P2")).and(
+                ATransition.withId("T1")).and(ATransition.withId("T2")).and(
+                ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token()).and(
+                ANormalArc.withSource("T1").andTarget("P2").with("1", "Default").token()).andFinally(
+                ANormalArc.withSource("P2").andTarget("T2").with("1", "Default").token());
 
         petriNet.markEnabledTransitions();
 
@@ -576,12 +586,11 @@ public class PetriNetTest {
 
     @Test
     public void firingTransitionBackwardMovesTokensBack() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                .and(APlace.withId("P1").containing(0, "Default").token())
-                .and(ATransition.withId("T1"))
-                .andFinally(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P1").containing(0, "Default").token()).and(ATransition.withId("T1")).andFinally(
+                ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
 
-        
+
         Transition transition = getComponent("T1", petriNet.getTransitions());
         petriNet.fireTransitionBackwards(transition);
 
@@ -609,11 +618,10 @@ public class PetriNetTest {
 
     @Test
     public void firingTransitionBackwardEnablesTransition() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
-                .and(APlace.withId("P1"))
-                .and(APlace.withId("P2").containing(1, "Default").token())
-                .and(ATransition.withId("T1"))
-                .andFinally(ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
+        PetriNet petriNet =
+                APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P1")).and(
+                        APlace.withId("P2").containing(1, "Default").token()).and(ATransition.withId("T1")).andFinally(
+                        ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
         petriNet.fireTransitionBackwards(transition);
