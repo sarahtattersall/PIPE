@@ -20,10 +20,12 @@ public abstract class AbstractPetriNetComponent implements PetriNetComponent {
 
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
     }
 
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);
     }

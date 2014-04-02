@@ -212,7 +212,9 @@ public class PetriNetControllerTest {
     @Test
     public void translatesSelectedItemsCorrectly() {
         Transition transition = mock(Transition.class);
+        when(transition.isDraggable()).thenReturn(true);
         Place place = mock(Place.class);
+        when(place.isDraggable()).thenReturn(true);
         net.addPlace(place);
         net.addTransition(transition);
 

@@ -70,7 +70,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
         return new Point2D.Double(x, y);
     }
 
-    public final void setPoint(Point2D point) {
+    public void setPoint(Point2D point) {
         Point2D old = new Point2D.Double(this.x, this.y);
         this.x = point.getX();
         this.y = point.getY();

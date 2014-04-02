@@ -58,7 +58,7 @@ public class TranslationVisitorTest {
     }
 
     @Test
-    public void doesNotTranslateIfSourceIsOnlySelected() {
+    public void doesNotTranslateArcIfSourceIsOnlySelected() {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
         Arc<Place, Transition> arc = mock(Arc.class);
