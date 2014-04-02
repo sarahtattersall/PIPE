@@ -36,11 +36,20 @@ public class PetriNetWeightParserTest {
     }
 
     @Test
-    public void willExpressionIsNegativeIfContainsErrors() throws UnparsableException {
+    public void expressionIsNegativeIfContainsErrors() throws UnparsableException {
         FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET);
         FunctionalResults<Double> result = parser.evaluateExpression("2 *");
         assertEquals(new Double(-1.), result.getResult());
     }
+
+
+    @Test
+    public void returnsErrorIfResultIsLessThanZero() throws UnparsableException {
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET);
+        FunctionalResults<Double> result = parser.evaluateExpression("2 - 6");
+        assertThat(result.getErrors()).containsExactly("Expression result cannot be less than zero!");
+    }
+
 
     @Test
     public void willNotEvaluateExpressionIfPetriNetDoesNotContainComponent() throws UnparsableException {

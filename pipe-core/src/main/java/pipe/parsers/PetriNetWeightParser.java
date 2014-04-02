@@ -81,6 +81,12 @@ public class PetriNetWeightParser implements FunctionalWeightParser<Double> {
             return new FunctionalResults<>(-1., errors, components);
         }
 
+        Double result = evalVisitor.visit(parseTree);
+        if (result < 0) {
+            errors.add("Expression result cannot be less than zero!");
+            return new FunctionalResults<>(-1., errors, components);
+        }
+
         return new FunctionalResults<>(evalVisitor.visit(parseTree), components);
     }
 
