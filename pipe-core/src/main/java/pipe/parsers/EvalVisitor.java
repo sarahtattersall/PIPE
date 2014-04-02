@@ -2,7 +2,6 @@ package pipe.parsers;
 
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 
 public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
@@ -78,6 +77,19 @@ public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
     public Double visitDouble(RateGrammarParser.DoubleContext ctx) {
         return Double.valueOf(ctx.DOUBLE().getText());
     }
+
+    @Override
+    public Double visitFloor(RateGrammarParser.FloorContext ctx) {
+        Double value = visit(ctx.expression());
+        return Math.floor(value);
+    }
+
+    @Override
+    public Double visitCeil(RateGrammarParser.CeilContext ctx) {
+        Double value = visit(ctx.expression());
+        return Math.ceil(value);
+    }
+
 
     public Place getPlace(String name) throws PetriNetComponentNotFoundException {
         return petriNet.getPlace(name);

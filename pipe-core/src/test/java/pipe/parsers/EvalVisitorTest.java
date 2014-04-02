@@ -131,6 +131,24 @@ public class EvalVisitorTest {
         assertEquals(new Double(25), result);
     }
 
+
+    @Test
+    public void parsesFloor() {
+        ParseTree tree = parseTreeForExpr("floor(2.1)");
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
+        Double result = evalVisitor.visit(tree);
+        assertEquals(new Double(2.0), result);
+    }
+
+    @Test
+    public void parsesCeil() {
+        ParseTree tree = parseTreeForExpr("ceil(2.1)");
+        ParseTreeVisitor<Double> evalVisitor = new EvalVisitor(EMPTY_PETRI_NET);
+        Double result = evalVisitor.visit(tree);
+        assertEquals(new Double(3.0), result);
+    }
+
+
     @Test
     public void parsesPlaceTokenNumber() throws PetriNetComponentNotFoundException {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).andFinally(
@@ -194,5 +212,6 @@ public class EvalVisitorTest {
 
         assertEquals(new Double(0.0), result);
     }
+
 
 }

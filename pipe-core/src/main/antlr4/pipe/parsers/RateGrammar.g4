@@ -8,6 +8,8 @@ expression
     : '(' expression ')'                   # parenExpression
     | expression op=('*'|'/') expression   # multOrDiv
     | expression op=('+'|'-') expression   # addOrSubtract
+    | 'ceil(' expression ')'               # ceil
+    | 'floor(' expression ')'              # floor
     | capacity                             # placeCapacity
     | token_number                         # placeTokens
     | token_color_number                   # placeColorTokens
