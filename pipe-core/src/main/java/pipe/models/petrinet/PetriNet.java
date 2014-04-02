@@ -277,6 +277,11 @@ public class PetriNet {
         }
     }
 
+    /**
+     * Adds the RateParameter to the Petri Net
+     * @param rateParameter
+     * @throws InvalidRateException if the rate is not parseable
+     */
     public void addRateParameter(RateParameter rateParameter) throws InvalidRateException {
         if (!validFunctionalExpression(rateParameter.getExpression())) {
             throw new InvalidRateException(rateParameter.getExpression());
@@ -304,14 +309,28 @@ public class PetriNet {
         return annotations;
     }
 
+    /**
+     *
+     * @return Petri net's collection of arcs
+     */
     public Collection<Arc<? extends Connectable, ? extends Connectable>> getArcs() {
+
         return arcs;
     }
 
+    /**
+     * @return Petri net's list of tokens
+     */
     public Collection<Token> getTokens() {
         return tokens;
     }
 
+    /**
+     * Removes the place and all arcs connected to the place from the
+     * Petri net
+     *
+     * @param place to remove from Petri net
+     */
     public void removePlace(Place place) {
         this.places.remove(place);
         for (Arc<Place, Transition> arc : outboundArcs(place)) {
@@ -320,16 +339,14 @@ public class PetriNet {
         changeSupport.firePropertyChange(DELETE_PLACE_CHANGE_MESSAGE, place, null);
     }
 
+    /**
+     * Removes the specified arc from the Petri net
+     *
+     * @param arc to remove from the Petri net
+     */
     public void removeArc(Arc<? extends Connectable, ? extends Connectable> arc) {
         this.arcs.remove(arc);
-        removeArcFromSourceAndTarget(arc);
         changeSupport.firePropertyChange(DELETE_ARC_CHANGE_MESSAGE, arc, null);
-    }
-
-    /**
-     * Removes the arc from the source and target inbound/outbound Collections
-     */
-    private <S extends Connectable, T extends Connectable> void removeArcFromSourceAndTarget(Arc<S, T> arc) {
     }
 
     /**
@@ -346,6 +363,12 @@ public class PetriNet {
         return outbound;
     }
 
+    /**
+     * Removes transition from the petri net. Also removes any arcs connected
+     * to this transition
+     *
+     * @param transition to remove
+     */
     public void removeTransition(Transition transition) {
         this.transitions.remove(transition);
         for (Arc<Transition, Place> arc : outboundArcs(transition)) {
@@ -355,7 +378,10 @@ public class PetriNet {
     }
 
     /**
-     * @param transition
+     * An outbound arc of a transition is any arc that starts at the transition
+     * and connects elsewhere
+     *
+     * @param transition to find outbound arcs for
      * @return arcs that are outbound from transition
      */
     public Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
@@ -500,7 +526,7 @@ public class PetriNet {
      * @param priority    minimum priority of transitions allowed to remain in the Collection
      * @param transitions to remove if their priority is less than the specified value
      */
-    private void removePrioritiesLessThan(int priority, Collection<Transition> transitions) {
+    private void removePrioritiesLessThan(int priority, Iterable<Transition> transitions) {
         Iterator<Transition> transitionIterator = transitions.iterator();
         while (transitionIterator.hasNext()) {
             Transition transition = transitionIterator.next();
@@ -561,13 +587,17 @@ public class PetriNet {
     }
 
     /**
-     * @param transition
+     * Works out if an transition is enabled. This means that it checks if
+     * a) places connected by an incoming arc to this transition have enough tokens to fire
+     * b) places connected by an outgoing arc to this transition have enough space to fit the
+     * new tokens (that is enough capacity).
+     *
+     * @param transition to see if it is enabled
      * @return true if transition is enabled
      */
     private boolean isEnabled(Transition transition) {
         boolean enabledForArcs = true;
         for (Arc<Place, Transition> arc : inboundArcs(transition)) {
-
             ArcStrategy<Place, Transition> strategy = backwardsStrategies.get(arc.getType());
             enabledForArcs &= strategy.canFire(this, arc);
         }
@@ -579,8 +609,8 @@ public class PetriNet {
     }
 
     /**
-     * @param transition
-     * @return arcs that are inbound to transition
+     * @param transition to calculate inbound arc for
+     * @return arcs that are inbound to transition, that is arcs that come into the transition
      */
     public Collection<Arc<Place, Transition>> inboundArcs(Transition transition) {
         Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
@@ -596,7 +626,7 @@ public class PetriNet {
      * @param transitions to check if any are timed
      * @return true if any of the transitions are timed
      */
-    private boolean areAnyTransitionsImmediate(Collection<Transition> transitions) {
+    private boolean areAnyTransitionsImmediate(Iterable<Transition> transitions) {
         for (Transition transition : transitions) {
             if (!transition.isTimed()) {
                 return true;
@@ -688,7 +718,7 @@ public class PetriNet {
      * <p/>
      * The enabling degree is the number of times that a transition is enabled
      *
-     * @param transition
+     * @param transition to work out enabling degree of
      * @return the transitions enabling degree
      */
     public int getEnablingDegree(Transition transition) {
@@ -727,9 +757,9 @@ public class PetriNet {
     /**
      * Calculates weights of connections from transitions to places for given token
      *
-     * @param token
-     * @return
-     * @throws Exception
+     * @param token token to calculate incidence matrix for
+     * @return forwards incidence matrix for the specified token. That is the
+     * token weights needed in order to fire an arc from transition to place
      */
     public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
 
@@ -771,7 +801,7 @@ public class PetriNet {
      * Adds tokens to the places into the transition according to the arc weight
      * Enables fired transition
      *
-     * @param transition
+     * @param transition transition to fire backwards
      */
     //TODO: NOT SURE IF BETTER TO JUST HAVE UNDO/REDO IN ANIMATION HISTORY? HAVE TO STORE ENTIRE PETRI
     //      NET STATES SO MAYBE NOT?
