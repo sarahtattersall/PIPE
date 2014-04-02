@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.actions.gui.create.AnnotationAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.annotation.Annotation;
@@ -50,7 +49,7 @@ public class AnnotationActionTest {
 
         action.doAction(mockEvent, mockController);
 
-        verify(mockNet).addAnnotaiton(
+        verify(mockNet).addAnnotation(
                 argThat(new HasMultiple<Annotation>(new HasAnnotationFields("Enter text here", 10, 20, 100, 50))));
     }
 

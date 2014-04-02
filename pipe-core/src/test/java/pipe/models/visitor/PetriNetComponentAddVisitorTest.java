@@ -59,7 +59,7 @@ public class PetriNetComponentAddVisitorTest {
     public void testAddAnnotation() {
         Annotation annotation = new Annotation(0, 0, "", 0, 0, false);
         annotation.accept(visitor);
-        verify(mockNet).addAnnotaiton(annotation);
+        verify(mockNet).addAnnotation(annotation);
 
     }
 

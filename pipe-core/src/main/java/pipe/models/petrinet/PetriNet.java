@@ -271,16 +271,7 @@ public class PetriNet {
         return places;
     }
 
-    //    public void addRate(RateParameter parameter) {
-    //        rates.add(parameter);
-    //        changeSupport.firePropertyChange("newRate", null, parameter);
-    //    }
-
-    //    public Collection<RateParameter> getRateParameters() {
-    //        return rates;
-    //    }
-
-    public void addAnnotaiton(Annotation annotation) {
+    public void addAnnotation(Annotation annotation) {
         if (!annotations.contains(annotation)) {
             annotations.add(annotation);
             changeSupport.firePropertyChange(NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);

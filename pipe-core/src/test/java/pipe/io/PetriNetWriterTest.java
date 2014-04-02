@@ -125,7 +125,7 @@ public class PetriNetWriterTest extends XMLTestCase {
     public void testMarshalsAnnotation() throws IOException, SAXException {
         PetriNet petriNet = new PetriNet();
         Annotation annotation = new Annotation(93, 145, "#P12s", 48, 20, false);
-        petriNet.addAnnotaiton(annotation);
+        petriNet.addAnnotation(annotation);
         assertResultsEqual(FileUtils.fileLocation(XMLUtils.getAnnotationFile()), petriNet);
     }
 }

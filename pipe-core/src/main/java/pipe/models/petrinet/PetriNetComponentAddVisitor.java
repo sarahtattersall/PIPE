@@ -8,10 +8,8 @@ import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcVisitor;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
-import pipe.models.component.rate.Rate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.rate.RateParameterVisitor;
-import pipe.models.component.rate.RateVisitor;
 import pipe.models.component.token.Token;
 import pipe.models.component.token.TokenVisitor;
 import pipe.models.component.transition.Transition;
@@ -48,7 +46,7 @@ public class PetriNetComponentAddVisitor
 
     @Override
     public void visit(Annotation annotation) {
-        petriNet.addAnnotaiton(annotation);
+        petriNet.addAnnotation(annotation);
     }
 
     @Override

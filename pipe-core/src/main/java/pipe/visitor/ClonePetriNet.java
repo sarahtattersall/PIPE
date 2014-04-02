@@ -59,7 +59,7 @@ public class ClonePetriNet {
 
     public void visit(Annotation annotation) {
         Annotation newAnnotation =  new Annotation(annotation);
-        newPetriNet.addAnnotaiton(newAnnotation);
+        newPetriNet.addAnnotation(newAnnotation);
 
     }
 

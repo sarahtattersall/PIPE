@@ -30,7 +30,7 @@ public class AnnotationAction extends CreateAction {
         Annotation annotation = new Annotation(x, y, "Enter text here", 100, 50, true);
 
         PetriNet petriNet = petriNetController.getPetriNet();
-        petriNet.addAnnotaiton(annotation);
+        petriNet.addAnnotation(annotation);
         return annotation;
     }
 

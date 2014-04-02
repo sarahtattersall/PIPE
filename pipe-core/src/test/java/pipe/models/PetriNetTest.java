@@ -142,16 +142,16 @@ public class PetriNetTest {
     public void addingAnnotationNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
         Annotation annotation = new Annotation(10, 10, "", 10, 10, false);
-        net.addAnnotaiton(annotation);
+        net.addAnnotation(annotation);
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
     public void addingDuplicateAnnotationDoesNotNotifyObservers() {
         Annotation annotation = new Annotation(10, 10, "", 10, 10, false);
-        net.addAnnotaiton(annotation);
+        net.addAnnotation(annotation);
         net.addPropertyChangeListener(mockListener);
-        net.addAnnotaiton(annotation);
+        net.addAnnotation(annotation);
         verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
     }
 
