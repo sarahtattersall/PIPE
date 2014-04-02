@@ -211,10 +211,8 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void okButtonHandler(java.awt.event.ActionEvent evt) {
-
         for (JTextField inputtedWeight : inputtedWeights) {
             String expr = inputtedWeight.getText();
-
                 if (expr.isEmpty()) {
                     System.err.println("Error in functional rates expression.");
                     String message = " Expression is invalid. Please check your function.";
@@ -222,54 +220,6 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-
-                //                String tokenClassName = inputtedTokenClassNames.get(i);
-                //                Token token = petriNetController.getToken(tokenClassName);
-                //
-                //                if (parser.parseAndEvalExpr(expr, tokenClassName) != -1) {
-                //                    arcController.setWeight(token, expr);
-                //                } else {
-                //                    if (parser.parseAndEvalExpr(expr, tokenClassName) == -2) {
-                //                        JOptionPane.showMessageDialog(null, "Please make sure division and floating numbers are "
-                //                                + "surrounded by ceil() or floor()");
-                //                        return;
-                //                    } else {
-                //                        System.err.println("Error in functional rates expression.");
-                //                        String message = " Expression is invalid. Please check your function.";
-                //                        String title = "Error";
-                //                        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-                //                        return;
-                //                    }
-                //                }
-                //            }
-                //            //            catch (MarkingDividedByNumberException e) {
-                //            //                JOptionPane.showMessageDialog(null,
-                //            //                        "Marking-dependent arc weight divided by number not supported.\r\n" +
-                //            //                                "Since this may cause non-integer arc weight.");
-                //            //                return;
-                //            //            }
-//            } catch (Exception e) {
-//                System.err.println("Error in functional rates expression.");
-//                String message = " Expression is invalid. Please check your function.";
-//                String title = "Error";
-//                JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-//                return;
-//            }
-        }
-
-        //TODO: PUSH THIS METHOD DOWN
-        if (arcController.hasFunctionalWeight()) {
-            Connectable target = arcController.getTarget();
-            if (target instanceof Transition) {
-                Transition transition = (Transition) target;
-                if (transition.isInfiniteServer()) {
-                    String message = "This arc points to an infinite server transition. \r\n"
-                            + "Thus this arc could not have functional weights at the moment";
-                    String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-                    return;
-                }
-            }
         }
 
         Map<Token, String> newWeights = new HashMap<>();
@@ -279,21 +229,6 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 Token token = petriNetController.getToken(tokenClassName);
                 String weight = inputtedWeights.get(i).getText();
                 newWeights.put(token, weight);
-//                int evaluatedWeight = parser.parseAndEvalExpr(weight, tokenClassName);
-//                if (evaluatedWeight == -1) {
-//                    GuiUtils.displayErrorMessage(null,
-//                            "Error in weight expression. Please make sure\r\n it is an integer");
-//                    return;
-//                }
-//                if (evaluatedWeight == -2) {
-//                    GuiUtils.displayErrorMessage(null,
-//                            "Please make sure division and floating numbers are " + "surrounded by ceil() or floor()");
-//                    return;
-//                }
-//                if (evaluatedWeight < 0) {
-//                    GuiUtils.displayErrorMessage(null, "Weighting cannot be less than 0. Please re-enter");
-//                    return;
-//                }
 
             } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
                 GuiUtils.displayErrorMessage(null, petriNetComponentNotFoundException.getMessage());
