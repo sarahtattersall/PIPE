@@ -55,8 +55,14 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected boolean inView = true;
 
+    /**
+     * Source of arc
+     */
     private ArcPoint sourcePoint;
 
+    /**
+     * Target of arc
+     */
     private ArcPoint endPoint;
 
     public ArcView(Arc<S, T> model, PetriNetController controller) {
@@ -169,20 +175,20 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     private void addPathEndLocation() {
         Point2D targetPoint = model.getEndPoint();
-        endPoint = new ArcPoint(targetPoint, false);
+        endPoint = new ArcPoint(targetPoint, false, false);
         arcPath.addPoint(endPoint);
     }
 
     private void addPathSourceLocation() {
         Point2D.Double startPoint = model.getStartPoint();
-        sourcePoint = new ArcPoint(startPoint, false);
+        sourcePoint = new ArcPoint(startPoint, false, false);
         arcPath.addPoint(sourcePoint);
     }
 
     /**
      * Updates the bounding box of the arc component based on the arcs bounds
      */
-    public void updateBounds() {
+    public final void updateBounds() {
         bounds = arcPath.getBounds();
         bounds.grow(getComponentDrawOffset() + ZOOM_GROW, getComponentDrawOffset() + ZOOM_GROW);
         setBounds(bounds);

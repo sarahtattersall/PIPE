@@ -26,6 +26,10 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Class that displays the path of an arc graphically on screen.
+ * It's old code so needs tidying up at some point
+ */
 public class ArcPath implements Shape, Cloneable {
 
     private static final Stroke proximityStroke = new BasicStroke(Constants.ARC_PATH_PROXIMITY_WIDTH);
@@ -48,6 +52,10 @@ public class ArcPath implements Shape, Cloneable {
 
     private GeneralPath path = new GeneralPath();
 
+    /**
+     * When pointlock is on no points will be displayed when the cursor is hovered
+     * over them. Nor will they be dragable
+     */
     private boolean pointLock = false;
 
     private Shape shape = stroke.createStrokedShape(this);
@@ -189,7 +197,6 @@ public class ArcPath implements Shape, Cloneable {
         }
 
         ArcPathPoint firstPoint = pathPoints.get(0);
-        firstPoint.setPointType(ArcPathPoint.STRAIGHT);
 
         Cubic[] X, Y;
 
@@ -592,7 +599,6 @@ public class ArcPath implements Shape, Cloneable {
                 if (point.getMouseWheelListeners().length == 0) {
                     point.addMouseWheelListener(pointHandler);
                 }
-                point.updatePointLocation();
             }
         }
     }
@@ -651,6 +657,9 @@ public class ArcPath implements Shape, Cloneable {
         pathPoints.clear();
     }
 
+    /**
+     * Visitor interface that visits Places and Transitions
+     */
     private static interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {
     }
 

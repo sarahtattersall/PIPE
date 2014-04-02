@@ -209,13 +209,13 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public ArcPoint getNextPoint(ArcPoint arcPoint) {
         if (arcPoint.getPoint().equals(source.getCentre())) {
             if (intermediatePoints.isEmpty()) {
-                return new ArcPoint(getEndPoint(), false);
+                return new ArcPoint(getEndPoint(), false, false);
             }
             return intermediatePoints.get(0);
         }
         int location = intermediatePoints.indexOf(arcPoint);
         if (location == intermediatePoints.size() - 1 && !intermediatePoints.isEmpty()) {
-            return new ArcPoint(getEndPoint(), false);
+            return new ArcPoint(getEndPoint(), false, false);
         }
         if (location == -1 || location + 1 > intermediatePoints.size()) {
 

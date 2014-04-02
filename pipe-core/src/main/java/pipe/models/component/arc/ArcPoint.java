@@ -5,6 +5,9 @@ import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
 
+/**
+ * Represents a point on the arc
+ */
 public class ArcPoint extends AbstractPetriNetComponent {
 
     /**
@@ -26,9 +29,30 @@ public class ArcPoint extends AbstractPetriNetComponent {
      */
     private boolean curved;
 
+    /**
+     * Denotes if the arcpoint is draggable in GUI mode
+     */
+    private final boolean draggable;
+
+    /**
+     * Constructor, sets draggable to true by default
+     * @param point
+     * @param curved
+     */
     public ArcPoint(Point2D point, boolean curved) {
+        this(point, curved, true);
+    }
+
+    /**
+     * Constructor that allows you to choose whether the point is draggable
+     * @param point
+     * @param curved
+     * @param draggable
+     */
+    public ArcPoint(Point2D point, boolean curved, boolean draggable) {
         setPoint(point);
         this.curved = curved;
+        this.draggable = draggable;
     }
 
     /**
@@ -39,13 +63,14 @@ public class ArcPoint extends AbstractPetriNetComponent {
         this.x = arcPoint.x;
         this.y = arcPoint.y;
         this.curved = arcPoint.curved;
+        this.draggable = arcPoint.draggable;
     }
 
     public Point2D getPoint() {
         return new Point2D.Double(x, y);
     }
 
-    public void setPoint(Point2D point) {
+    public final void setPoint(Point2D point) {
         Point2D old = new Point2D.Double(this.x, this.y);
         this.x = point.getX();
         this.y = point.getY();
@@ -67,7 +92,7 @@ public class ArcPoint extends AbstractPetriNetComponent {
 
     @Override
     public boolean isDraggable() {
-        return false;
+        return draggable;
     }
 
     @Override

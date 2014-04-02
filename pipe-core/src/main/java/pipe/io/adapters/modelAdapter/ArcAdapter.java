@@ -160,10 +160,10 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
     private void setArcPoints(Arc<? extends Connectable, ? extends Connectable> arc, AdaptedArc adapted) {
 
         List<ArcPoint> arcPoints = adapted.getArcPoints();
-        ArcPoint source = new ArcPoint(arc.getStartPoint(), false);
+        ArcPoint source = new ArcPoint(arc.getStartPoint(), false, false);
         arcPoints.add(source);
         arcPoints.addAll(arc.getIntermediatePoints());
-        ArcPoint target = new ArcPoint(arc.getEndPoint(), false);
+        ArcPoint target = new ArcPoint(arc.getEndPoint(), false, false);
         arcPoints.add(target);
     }
 

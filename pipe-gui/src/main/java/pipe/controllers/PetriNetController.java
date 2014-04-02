@@ -148,7 +148,9 @@ public class PetriNetController implements IController, Serializable {
     public void translateSelected(Point2D.Double translation) {
         PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, selectedComponents);
         for (PetriNetComponent component : selectedComponents) {
-            component.accept(translationVisitor);
+            if (component.isDraggable()) {
+                component.accept(translationVisitor);
+            }
         }
     }
 

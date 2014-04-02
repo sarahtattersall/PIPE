@@ -103,10 +103,6 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         return arc.getWeightForToken(token);
     }
 
-    public boolean hasFunctionalWeight() {
-        return arc.hasFunctionalWeight();
-    }
-
     public Connectable getTarget() {
         return arc.getTarget();
     }
@@ -117,7 +113,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         historyManager.addNewEdit(historyItem);
     }
 
-    public void splitArcPoint(final ArcPoint arcPoint) {
+    public void splitArcPoint(ArcPoint arcPoint) {
         ArcPoint nextPoint = arc.getNextPoint(arcPoint);
 
         double x = (arcPoint.getPoint().getX() + nextPoint.getPoint().getX())/2;
@@ -125,20 +121,20 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
         Point2D point = new Point2D.Double(x,y);
         ArcPoint newPoint = new ArcPoint(point, arcPoint.isCurved());
-        HistoryItem historyItem = new AddArcPathPoint<S,T>(arc, newPoint);
+        HistoryItem historyItem = new AddArcPathPoint<>(arc, newPoint);
         historyItem.redo();
         historyManager.addNewEdit(historyItem);
     }
 
     public void addPoint(Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
-        HistoryItem historyItem = new AddArcPathPoint<S,T>(arc, newPoint);
+        HistoryItem historyItem = new AddArcPathPoint<>(arc, newPoint);
         historyItem.redo();
         historyManager.addNewEdit(historyItem);
     }
 
     public void deletePoint(ArcPoint component) {
-        HistoryItem historyItem = new DeleteArcPathPoint<S,T>(arc, component);
+        HistoryItem historyItem = new DeleteArcPathPoint<>(arc, component);
         historyItem.redo();
         historyManager.addNewEdit(historyItem);
     }

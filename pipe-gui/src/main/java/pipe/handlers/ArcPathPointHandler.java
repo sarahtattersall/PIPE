@@ -95,7 +95,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
         }
 
         if (e.isShiftDown()) {
-            petriNetController.getHistoryManager().addNewEdit(viewComponent.togglePointType());
+//            petriNetController.getHistoryManager().addNewEdit(viewComponent.togglePointType());
         }
     }
 

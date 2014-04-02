@@ -234,6 +234,15 @@ public class PetriNetControllerTest {
     }
 
     @Test
+    public void doesNotTranslateNonDraggableItems() {
+        PetriNetComponent petriNetComponent = mock(PetriNetComponent.class);
+        when(petriNetComponent.isDraggable()).thenReturn(false);
+        controller.select(petriNetComponent);
+        controller.translateSelected(new Point2D.Double(23, 58));
+        verify(petriNetComponent, never()).accept(any(TranslationVisitor.class));
+    }
+
+    @Test
     public void updateNameIfChanged() throws PetriNetComponentNotFoundException {
         Token token = mock(Token.class);
         String id = "id";

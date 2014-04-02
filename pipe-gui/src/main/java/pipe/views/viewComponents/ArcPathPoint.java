@@ -23,22 +23,38 @@ import java.beans.PropertyChangeListener;
 
 
 /**
- * This class represents each point on the arc path.
+ * This class represents each point on the arc path graphically.
+ * It's old code so the Bezier maths etc. needs to be addressed
  */
 public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
+    /**
+     * Boolean value determining if the arc is straight or a curve
+     */
     public static final boolean STRAIGHT = false;
 
     private static final int SIZE_OFFSET = 1;
 
     private static final int SIZE = 3;
 
+    /**
+     * Underlying point model
+     */
     private final ArcPoint model;
 
+    /**
+     * Control used for Bezier curve
+     */
     private final Point2D.Double control1 = new Point2D.Double();
 
+    /**
+     * Control used for Bezier curve
+     */
     private final Point2D.Double control = new Point2D.Double();
 
+    /**
+     * Path point belongs to
+     */
     private ArcPath arcPath;
 
     private void setup() {
@@ -67,7 +83,7 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     }
 
-    public void setPointLocation(Point2D point) {
+    public final void setPointLocation(Point2D point) {
         setPointLocation(point.getX(), point.getY());
     }
 
@@ -77,26 +93,6 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     public boolean isCurved() {
         return model.isCurved();
-    }
-
-    public void updatePointLocation() {
-        //        setPointLocation(point.x, point.y);
-    }
-
-    public void setPointType(boolean type) {
-        //        if (pointType != type) {
-        //            pointType = type;
-        //            arcPath.createPath();
-        //            arcPath.getArc().updateArcPosition();
-        //        }
-    }
-
-    public HistoryItem togglePointType() {
-        //        pointType = !pointType;
-        //        arcPath.createPath();
-        //        arcPath.getArc().updateArcPosition();
-        //        return new ArcPathPointType(this);
-        return null;
     }
 
     public void setVisibilityLock(boolean lock) {
