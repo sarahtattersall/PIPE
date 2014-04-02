@@ -1,5 +1,6 @@
 package pipe.actions.gui.animate;
 
+import pipe.actions.gui.create.NoopAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
@@ -8,6 +9,7 @@ import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This action is responsible for toggling the petri net in and out of animation mode
@@ -16,6 +18,12 @@ public class ToggleAnimateAction extends AnimateAction {
     private final PipeApplicationView applicationView;
 
     private final PipeApplicationController applicationController;
+
+    /**
+     * Noop action to be used for toggling in and out of animation
+     * Removes any spurious creates happening in animation mode
+     */
+    private final ActionListener noopAction = new NoopAction();
 
     public ToggleAnimateAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
                                PipeApplicationController applicationController) {
@@ -30,6 +38,8 @@ public class ToggleAnimateAction extends AnimateAction {
 
         boolean isTabAnimated = currentTab.isInAnimationMode();
         applicationView.setAnimationMode(!isTabAnimated);
+
+        noopAction.actionPerformed(null);
 
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Animator animator = petriNetController.getAnimator();

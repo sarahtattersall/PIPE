@@ -1,6 +1,5 @@
 package pipe.actions.gui.create;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
