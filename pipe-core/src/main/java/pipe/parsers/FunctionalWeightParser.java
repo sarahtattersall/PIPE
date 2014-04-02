@@ -5,7 +5,7 @@ import pipe.models.petrinet.PetriNet;
 import java.util.List;
 import java.util.Set;
 
-public interface FunctionalWeightParser {
+public interface FunctionalWeightParser<T extends Number> {
     /**
      * @return true if parsing threw errors
      */
@@ -24,7 +24,7 @@ public interface FunctionalWeightParser {
      *
      * @return evaluated expression
      */
-    public Double evaluateExpression() throws UnparsableException;
+    public T evaluateExpression() throws UnparsableException;
 
 
 }

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TransitionWeightParserTest {
+public class PetriNetWeightParserTest {
 
     private static final PetriNet EMPTY_PETRI_NET = new PetriNet();
 
@@ -23,19 +23,19 @@ public class TransitionWeightParserTest {
 
     @Test
     public void correctlyIdentifiesErrors() {
-        FunctionalWeightParser parser = new TransitionWeightParser(EMPTY_PETRI_NET, "2 + ");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET, "2 + ");
         assertTrue(parser.containsErrors());
     }
 
     @Test
     public void producesCorrectErrorMessage() {
-        FunctionalWeightParser parser = new TransitionWeightParser(EMPTY_PETRI_NET, "2 *");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET, "2 *");
         assertThat(parser.getErrors()).containsExactly("line 1:3 no viable alternative at input '<EOF>'");
     }
 
     @Test
     public void willNotEvaluateExpressionIfContainsErrors() throws UnparsableException {
-        FunctionalWeightParser parser = new TransitionWeightParser(EMPTY_PETRI_NET, "2 *");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(EMPTY_PETRI_NET, "2 *");
 
         expectedException.expect(UnparsableException.class);
         expectedException.expectMessage("There were errors in parsing the expression, cannot calculate value!");
@@ -46,7 +46,7 @@ public class TransitionWeightParserTest {
     @Test
     public void willNotEvaluateExpressionIfPetriNetDoesNotContainComponent() throws UnparsableException {
         PetriNet petriNet = APetriNet.withOnly(APlace.withId("P1"));
-        FunctionalWeightParser parser = new TransitionWeightParser(petriNet, "#(P0)");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet, "#(P0)");
         assertThat(parser.getErrors()).contains("Not all referenced components exist in the Petri net!");
     }
 
@@ -56,7 +56,7 @@ public class TransitionWeightParserTest {
     public void evaluatesIfPlaceIsInPetriNet() throws UnparsableException {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).andFinally(APlace.withId("P0").containing(10, "Default").tokens());
 
-        FunctionalWeightParser parser = new TransitionWeightParser(petriNet, "#(P0)");
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet, "#(P0)");
 
         Double value = parser.evaluateExpression();
         assertEquals(new Double(10), value);

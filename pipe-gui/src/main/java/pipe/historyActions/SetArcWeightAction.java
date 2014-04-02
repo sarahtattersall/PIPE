@@ -11,15 +11,14 @@ import pipe.models.component.token.Token;
 /**
  * @author Alex Charalambous
  */
-public class ArcWeight<S extends Connectable, T extends Connectable> extends HistoryItem {
+public class SetArcWeightAction<S extends Connectable, T extends Connectable> extends HistoryItem {
 
     private final Arc<S,T> arc;
     private final Token token;
     private final String newWeight;
     private final String oldWeight;
 
-    public ArcWeight(final Arc<S,T> arc, final Token token,
-                     final String oldWeight, final String newWeight) {
+    public SetArcWeightAction(Arc<S, T> arc, Token token, String oldWeight, String newWeight) {
 
         this.arc = arc;
         this.token = token;
@@ -27,8 +26,6 @@ public class ArcWeight<S extends Connectable, T extends Connectable> extends His
         this.newWeight = newWeight;
     }
 
-
-    /** */
     @Override
     public void undo() {
         arc.setWeight(token, oldWeight);
@@ -45,12 +42,12 @@ public class ArcWeight<S extends Connectable, T extends Connectable> extends His
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ArcWeight arcWeight = (ArcWeight) o;
+        SetArcWeightAction setArcWeightAction = (SetArcWeightAction) o;
 
-        if (!arc.equals(arcWeight.arc)) return false;
-        if (!newWeight.equals(arcWeight.newWeight)) return false;
-        if (!oldWeight.equals(arcWeight.oldWeight)) return false;
-        if (!token.equals(arcWeight.token)) return false;
+        if (!arc.equals(setArcWeightAction.arc)) return false;
+        if (!newWeight.equals(setArcWeightAction.newWeight)) return false;
+        if (!oldWeight.equals(setArcWeightAction.oldWeight)) return false;
+        if (!token.equals(setArcWeightAction.token)) return false;
 
         return true;
     }

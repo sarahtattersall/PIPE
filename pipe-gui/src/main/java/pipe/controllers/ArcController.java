@@ -7,6 +7,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
 
 import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ArcController<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponentController<Arc<S, T>>
@@ -26,7 +27,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      * @param token
      * @param expr
      */
-    public void setWeight(final Token token, final String expr) {
+    public void setWeight(Token token, String expr) {
         historyManager.newEdit();
         updateWeightForArc(token, expr);
     }
@@ -36,22 +37,24 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      * @param token
      * @param expr
      */
-    private void updateWeightForArc(final Token token,
-                                    final String expr) {
+    private void updateWeightForArc(Token token,
+                                    String expr) {
         String oldWeight = arc.getWeightForToken(token);
-        ArcWeight<S,T> weightAction = new ArcWeight<S,T>(arc, token, oldWeight, expr);
+        SetArcWeightAction<S,T> weightAction = new SetArcWeightAction<>(arc, token, oldWeight, expr);
         weightAction.redo();
         historyManager.addEdit(weightAction);
     }
 
-    public void setWeights(final Map<Token, String> newWeights) {
+    public void setWeights(Map<Token, String> newWeights) {
+        HashMap<Token, String> previousRates = new HashMap<>(arc.getTokenWeights());
+
         historyManager.newEdit();
         for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
             updateWeightForArc(entry.getKey(), entry.getValue());
         }
     }
 
-    public String getWeightForToken(final Token token) {
+    public String getWeightForToken(Token token) {
         return arc.getWeightForToken(token);
     }
 
@@ -82,7 +85,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         historyManager.addNewEdit(historyItem);
     }
 
-    public void addPoint(final Point2D point) {
+    public void addPoint(Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
         HistoryItem historyItem = new AddArcPathPoint<S,T>(arc, newPoint);
         historyItem.redo();

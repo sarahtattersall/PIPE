@@ -6,7 +6,7 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.parsers.FunctionalWeightParser;
-import pipe.parsers.TransitionWeightParser;
+import pipe.parsers.PetriNetWeightParser;
 import pipe.parsers.UnparsableException;
 
 import java.util.Map;
@@ -22,7 +22,7 @@ public class ExprEvaluator {
     }
 
     public Double parseAndEvalExprForTransition(String expr) throws FunctionalEvaluationException {
-        FunctionalWeightParser transitionWeightParser = new TransitionWeightParser(petriNet, expr);
+        FunctionalWeightParser<Double> transitionWeightParser = new PetriNetWeightParser(petriNet, expr);
         if (transitionWeightParser.containsErrors()) {
             throw new FunctionalEvaluationException(transitionWeightParser.getErrors());
         }

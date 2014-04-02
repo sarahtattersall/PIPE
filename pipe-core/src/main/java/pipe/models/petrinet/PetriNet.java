@@ -1,6 +1,5 @@
 package pipe.models.petrinet;
 
-import net.sourceforge.jeval.EvaluationException;
 import org.apache.commons.collections.CollectionUtils;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
@@ -18,7 +17,8 @@ import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.name.PetriNetName;
 import pipe.parsers.FunctionalWeightParser;
-import pipe.parsers.TransitionWeightParser;
+import pipe.parsers.PetriNetWeightParser;
+import pipe.parsers.UnparsableException;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
+
+import static java.lang.Math.floor;
 
 @XmlType(propOrder = {"tokens", "annotations", "rateParameters", "places", "transitions", "arcs"})
 public class PetriNet {
@@ -297,7 +299,7 @@ public class PetriNet {
      * @return false if the rate's expression is invalid
      */
     private boolean validRateParameterExpression(Rate rate) {
-        FunctionalWeightParser transitionWeightParser = new TransitionWeightParser(this, rate.getExpression());
+        FunctionalWeightParser transitionWeightParser = new PetriNetWeightParser(this, rate.getExpression());
         return transitionWeightParser.getErrors().isEmpty();
     }
 
@@ -655,7 +657,6 @@ public class PetriNet {
      * @param token calculates backwards incidence matrix for this token
      */
     public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
-        ExprEvaluator parser = new ExprEvaluator(this);
         IncidenceMatrix backwardsIncidenceMatrix = new IncidenceMatrix();
         for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
             Connectable target = arc.getTarget();
@@ -668,8 +669,9 @@ public class PetriNet {
 
 
                     String expression = arc.getWeightForToken(token);
-                    Integer weight = parser.parseAndEvalExpr(expression, token.getId());
+                    int weight = getEvaluatedExpressionAsInt(expression);
                     int totalWeight = transition.isInfiniteServer() ? weight * enablingDegree : weight;
+
                     backwardsIncidenceMatrix.put(place, transition, totalWeight);
                 }
             }
@@ -687,9 +689,7 @@ public class PetriNet {
      * @return the transitions enabling degree
      */
     public int getEnablingDegree(Transition transition) {
-        ExprEvaluator evaluator = new ExprEvaluator(this);
         int enablingDegree = Integer.MAX_VALUE;
-
 
         for (Arc<Place, Transition> arc : inboundArcs(transition)) {
             Place place = arc.getSource();
@@ -698,21 +698,31 @@ public class PetriNet {
                 Token arcToken = entry.getKey();
                 String arcTokenExpression = entry.getValue();
 
-                int placeTokenCount = place.getTokenCount(arcToken);
-                int requiredTokenCount = evaluator.parseAndEvalExpr(arcTokenExpression, arcToken.getId());
-
+                //TODO: SHOULD WE FLOOR?
+                int result = getEvaluatedExpressionAsInt(arcTokenExpression);
+                int requiredTokenCount = (int) floor(result);
                 if (requiredTokenCount == 0) {
                     enablingDegree = 0;
                 } else {
-                    int currentDegree = (int) Math.floor(placeTokenCount / requiredTokenCount);
+                    int placeTokenCount = place.getTokenCount(arcToken);
+                    int currentDegree = (int) floor(placeTokenCount / requiredTokenCount);
                     if (currentDegree < enablingDegree) {
                         enablingDegree = currentDegree;
                     }
-
                 }
             }
         }
         return enablingDegree;
+    }
+
+    //TODO: SHOULD WE BE CATCHING THE ERROR?
+    private int getEvaluatedExpressionAsInt(String expression) {
+        FunctionalWeightParser parser = new PetriNetWeightParser(this, expression);
+        try {
+            return (int) parser.evaluateExpression().doubleValue();
+        } catch (UnparsableException ignored) {
+            return -1;
+        }
     }
 
     /**
@@ -724,7 +734,6 @@ public class PetriNet {
      */
     public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
 
-        ExprEvaluator parser = new ExprEvaluator(this);
         IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
         for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
             Connectable target = arc.getTarget();
@@ -736,14 +745,11 @@ public class PetriNet {
                     Transition transition = (Transition) source;
 
                     String expression = arc.getWeightForToken(token);
-
-
-                    Integer weight = parser.parseAndEvalExpr(expression, token.getId());
+                    int weight = getEvaluatedExpressionAsInt(expression);
                     forwardsIncidenceMatrix.put(place, transition, weight);
                 }
             }
-        }
-        return forwardsIncidenceMatrix;
+        } return forwardsIncidenceMatrix;
     }
 
     /**

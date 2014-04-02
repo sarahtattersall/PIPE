@@ -10,17 +10,9 @@ import pipe.models.petrinet.PetriNet;
 
 import java.util.*;
 
-public class TransitionWeightParser implements FunctionalWeightParser {
+public class PetriNetWeightParser extends AbstractFunctionalWeightParser<Double> {
 
-    /**
-     * Parsed expression
-     */
-    private final ParseTree parseTree;
 
-    /**
-     * Errors occurred whilst parsing
-     */
-    private final List<String> errors = new LinkedList<>();
 
     private final PetriNet petriNet;
 
@@ -30,9 +22,9 @@ public class TransitionWeightParser implements FunctionalWeightParser {
      *
      * @param expression functional transition rate expression
      */
-    public TransitionWeightParser(PetriNet petriNet, String expression) {
+    public PetriNetWeightParser(PetriNet petriNet, String expression) {
+        super(expression);
         this.petriNet = petriNet;
-        parseTree = parse(expression);
 
         if (!allComponentsInPetriNet()) {
             errors.add("Not all referenced components exist in the Petri net!");
@@ -48,18 +40,7 @@ public class TransitionWeightParser implements FunctionalWeightParser {
         return listener.getComponentIds();
     }
 
-    private ParseTree parse(String expression) {
-        CharStream input = new ANTLRInputStream(expression);
-        RateGrammarLexer lexer = new RateGrammarLexer(input);
-        TokenStream tokens = new CommonTokenStream(lexer);
-        RateGrammarParser parser = new RateGrammarParser(tokens);
-        parser.removeErrorListeners();
 
-        ANTLRErrorListener errorListener = new RateGrammarErrorListener();
-
-        parser.addErrorListener(errorListener);
-        return parser.program();
-    }
 
     /**
      *
@@ -78,28 +59,10 @@ public class TransitionWeightParser implements FunctionalWeightParser {
         return true;
     }
 
-    @Override
-    public boolean containsErrors() {
-        return !errors.isEmpty();
-    }
-
-    @Override
-    public List<String> getErrors() {
-        return errors;
-    }
 
     @Override
     public Double evaluateExpression() throws UnparsableException {
         return getValue(new EvalVisitor(petriNet));
-    }
-
-
-    private Double getValue(ParseTreeVisitor<Double> evalVisitor) throws UnparsableException {
-        if (containsErrors()) {
-            throw new UnparsableException("There were errors in parsing the expression, cannot calculate value!");
-        } else {
-            return evalVisitor.visit(parseTree);
-        }
     }
 
     /**

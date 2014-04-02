@@ -160,7 +160,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     public void setWeight(Token defaultToken, String weight) {
-        Map<Token, String> old = new HashMap<Token, String>(tokenWeights);
+        Map<Token, String> old = new HashMap<>(tokenWeights);
         tokenWeights.put(defaultToken, weight);
         changeSupport.firePropertyChange(WEIGHT_CHANGE_MESSAGE, old, tokenWeights);
     }

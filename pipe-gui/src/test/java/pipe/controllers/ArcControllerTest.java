@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcPathPointType;
-import pipe.historyActions.ArcWeight;
+import pipe.historyActions.SetArcWeightAction;
 import pipe.historyActions.HistoryManager;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
@@ -43,8 +43,8 @@ public class ArcControllerTest {
         controller.setWeight(defaultToken, newWeight);
         verify(historyManager).newEdit();
 
-        ArcWeight<Place, Transition> weightAction =
-                new ArcWeight<Place, Transition>(mockArc, defaultToken, oldWeight, newWeight);
+        SetArcWeightAction<Place, Transition> weightAction =
+                new SetArcWeightAction<Place, Transition>(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 
@@ -73,7 +73,7 @@ public class ArcControllerTest {
         controller.setWeights(tokenWeights);
         verify(historyManager).newEdit();
 
-        ArcWeight weightAction = new ArcWeight(mockArc, defaultToken, oldWeight, newWeight);
+        SetArcWeightAction weightAction = new SetArcWeightAction(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 
