@@ -7,6 +7,7 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
+import pipe.parsers.UnparsableException;
 
 import javax.xml.bind.*;
 import java.awt.*;
@@ -52,7 +53,7 @@ public class PetriNetIOImpl implements PetriNetIO {
     }
 
     @Override
-    public PetriNet read(String path) {
+    public PetriNet read(String path) throws UnparsableException {
 
         try {
             Unmarshaller um = initialiseUnmarshaller();
@@ -67,13 +68,10 @@ public class PetriNetIOImpl implements PetriNetIO {
 
             return petriNet;
 
-        } catch (JAXBException e) {
+        } catch (JAXBException | FileNotFoundException e) {
             e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new UnparsableException("Could not read PetriNet file properly!");
         }
-        //TODO: THROW EXCEPTIONS?
-        return null;
     }
 
     private Token createDefaultToken() {

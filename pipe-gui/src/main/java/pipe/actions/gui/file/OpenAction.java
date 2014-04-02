@@ -2,6 +2,8 @@ package pipe.actions.gui.file;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PipeApplicationController;
+import pipe.parsers.UnparsableException;
+import pipe.utilities.gui.GuiUtils;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -31,7 +33,11 @@ public class OpenAction extends GuiAction {
         fileChooser.setVisible(true);
         for (File file : fileChooser.getFiles()) {
             if (file.exists() && file.isFile() && file.canRead()) {
-                applicationController.createNewTabFromFile(file, applicationView);
+                try {
+                    applicationController.createNewTabFromFile(file, applicationView);
+                } catch (UnparsableException e1) {
+                    GuiUtils.displayErrorMessage(applicationView, e1.getMessage());
+                }
             } else {
                 String message = "File \"" + file.getName() + "\" does not exist.";
                 JOptionPane.showMessageDialog(null, message, "Warning", JOptionPane.WARNING_MESSAGE);

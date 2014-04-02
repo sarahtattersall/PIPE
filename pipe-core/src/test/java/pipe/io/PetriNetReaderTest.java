@@ -11,6 +11,7 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
+import pipe.parsers.UnparsableException;
 import utils.FileUtils;
 
 import javax.xml.bind.JAXBException;
@@ -37,7 +38,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsDefaultTokenIfDoesNotExist() {
+    public void createsDefaultTokenIfDoesNotExist() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation("/xml/noTokenPlace.xml"));
         assertTrue("Petri net has no tokens registered to it", petriNet.getTokens().size() > 0);
         Token expectedToken = new Token("Default", true, 0, new Color(0, 0, 0));
@@ -45,7 +46,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsDefaultTokenIfDoesNotExistAndPlaceMatchesThisToken() {
+    public void createsDefaultTokenIfDoesNotExistAndPlaceMatchesThisToken() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation("/xml/noTokenPlace.xml"));
         assertThat(petriNet.getTokens()).isNotEmpty();
         assertThat(petriNet.getPlaces()).isNotEmpty();
@@ -57,21 +58,21 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void losesSourceAndTargetArcPath() {
+    public void losesSourceAndTargetArcPath() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         assertThat(petriNet.getArcs()).isNotEmpty();
         assertThat(petriNet.getArcs()).hasSize(1);
     }
 
     @Test
-    public void keepsIntermediatePoints() {
+    public void keepsIntermediatePoints() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         ArcPoint expected = new ArcPoint(new Point2D.Double(87, 36), true);
         assertThat(petriNet.getArcs()).extracting("intermediatePoints").containsExactly(Arrays.asList(expected));
     }
 
     @Test
-    public void createsPlace() {
+    public void createsPlace() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getSinglePlacePath()));
 
         assertThat(petriNet.getPlaces()).hasSize(1);
@@ -86,7 +87,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsMarkingCorrectlyWithTokenMap() {
+    public void createsMarkingCorrectlyWithTokenMap() throws UnparsableException {
 
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getSinglePlacePath()));
         assertThat(petriNet.getPlaces()).hasSize(1);
@@ -97,7 +98,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsMarkingIfNoTokensSet() {
+    public void createsMarkingIfNoTokensSet() throws UnparsableException {
 
         PetriNet petriNet = reader.read(FileUtils.fileLocation(getNoPlaceTokenPath()));
         assertThat(petriNet.getPlaces()).isNotEmpty();
@@ -110,7 +111,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsTransition() {
+    public void createsTransition() throws UnparsableException {
 
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTransitionFile()));
 
@@ -124,7 +125,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsArc() {
+    public void createsArc() throws UnparsableException {
 
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getArcNoWeightFile()));
         Place expectedSource = new Place("P0", "P0");
@@ -134,7 +135,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsCorrectMarkingIfWeightSpecified() {
+    public void createsCorrectMarkingIfWeightSpecified() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
 
@@ -147,7 +148,7 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsMarkingWithCorrectToken() {
+    public void createsMarkingWithCorrectToken() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
         Map<Token, String> weights = arc.getTokenWeights();
@@ -156,33 +157,33 @@ public class PetriNetReaderTest {
     }
 
     @Test
-    public void createsInhibitoryArc() {
+    public void createsInhibitoryArc() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getInhibitorArcFile()));
         assertThat(petriNet.getArcs()).extracting("type").containsExactly(ArcType.INHIBITOR);
     }
 
     @Test
-    public void createsRedToken() {
+    public void createsRedToken() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTokenFile()));
         Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
         assertThat(petriNet.getTokens()).containsExactly(redToken);
     }
 
     @Test
-    public void createsAnnotation() {
+    public void createsAnnotation() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getAnnotationFile()));
         assertThat(petriNet.getAnnotations()).extracting("text", "x", "y", "height", "width").containsExactly(
                 tuple("#P12s", 93, 145, 20, 48));
     }
 
     @Test
-    public void createsRateParameter() {
+    public void createsRateParameter() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getRateParameterFile()));
         assertThat(petriNet.getRateParameters()).extracting("id", "name", "expression").containsExactly(tuple("rate0", "rate0", "5.0"));
     }
 
     @Test
-    public void transitionReferencesRateParameter() {
+    public void transitionReferencesRateParameter() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTransitionRateParameterFile()));
         RateParameter rateParameter = petriNet.getRateParameters().iterator().next();
         Transition transition = petriNet.getTransitions().iterator().next();

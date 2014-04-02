@@ -21,6 +21,7 @@ import pipe.models.petrinet.name.NormalPetriNetName;
 import pipe.models.petrinet.name.PetriNetFileName;
 import pipe.models.petrinet.name.PetriNetName;
 import pipe.naming.PetriNetNamer;
+import pipe.parsers.UnparsableException;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
 import pipe.views.changeListener.TokenChangeListener;
@@ -201,7 +202,7 @@ public class PipeApplicationController {
         }
     }
 
-    public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView) {
+    public PetriNetTab createNewTabFromFile(File file, PipeApplicationView applicationView) throws UnparsableException {
         try {
             PetriNetReader petriNetIO = new PetriNetIOImpl();
             PetriNet net = petriNetIO.read(file.getAbsolutePath());
@@ -209,8 +210,8 @@ public class PipeApplicationController {
             return createNewTab(net, applicationView);
         } catch (JAXBException e) {
             e.printStackTrace();
+            throw new UnparsableException("Could not initialise Petri net reader!");
         }
-        return null;
     }
 
     //TODO: DELETE
