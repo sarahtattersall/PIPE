@@ -849,4 +849,7 @@ public class PetriNet {
         changeSupport.firePropertyChange(PETRI_NET_NAME_CHANGE_MESSAGE, old, name);
     }
 
+    public FunctionalResults<Double> parseExpression(String expr) {
+        return functionalWeightParser.evaluateExpression(expr);
+    }
 }

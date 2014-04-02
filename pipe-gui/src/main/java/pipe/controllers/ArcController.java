@@ -5,6 +5,8 @@ import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
+import pipe.parsers.FunctionalResults;
+import pipe.parsers.UnparsableException;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -15,11 +17,19 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     private final Arc<S, T> arc;
     private final HistoryManager historyManager;
 
-    ArcController(Arc<S, T> arc, HistoryManager historyManager) {
+    /**
+     * PetriNetController in order to determine if arc expressions are valid
+     */
+    //TODO: I cant at the moment think of a better way to do this since the arc model
+    //      does not know anything about the petri net in which it resides
+    private final PetriNetController petriNetController;
+
+    ArcController(Arc<S, T> arc, HistoryManager historyManager, PetriNetController petriNetController) {
 
         super(arc, historyManager);
         this.arc = arc;
         this.historyManager = historyManager;
+        this.petriNetController = petriNetController;
     }
 
     /**
@@ -27,9 +37,43 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      * @param token
      * @param expr
      */
-    public void setWeight(Token token, String expr) {
+    public void setWeight(Token token, String expr) throws UnparsableException {
+        throwExceptionIfWeightNotValid(expr);
         historyManager.newEdit();
         updateWeightForArc(token, expr);
+    }
+
+    /**
+     *
+     * @param expr weight expression
+     * @throws UnparsableException if the weight could not be parsed or is not an integer
+     */
+    private void throwExceptionIfWeightNotValid(String expr) throws UnparsableException {
+        FunctionalResults<Double> result = petriNetController.parseFunctionalExpression(expr);
+        if (result.hasErrors()) {
+            StringBuilder errorMessage = new StringBuilder();
+            for (String error : result.getErrors()) {
+                errorMessage.append(error).append("\n");
+            }
+            throw new UnparsableException(errorMessage.toString());
+        } else if (valueIsNotInteger(result.getResult())) {
+            throw new UnparsableException("Value is not an integer, please surround expression with floor or ceil");
+        }
+    }
+
+    /**
+     *
+     * @param value
+     * @return true if the value was an integer
+     */
+    private boolean valueIsNotInteger(double value) {
+        return value % 1 != 0;
+    }
+
+    private void throwExceptionIfWeightsNotValid(Map<Token, String> weights) throws UnparsableException {
+        for (Map.Entry<Token, String> entry : weights.entrySet()) {
+            throwExceptionIfWeightNotValid(entry.getValue());
+        }
     }
 
     /**
@@ -46,8 +90,8 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         historyManager.addEdit(weightAction);
     }
 
-    public void setWeights(Map<Token, String> newWeights) {
-        HashMap<Token, String> previousRates = new HashMap<>(arc.getTokenWeights());
+    public void setWeights(Map<Token, String> newWeights) throws UnparsableException {
+        throwExceptionIfWeightsNotValid(newWeights);
 
         historyManager.newEdit();
         for (Map.Entry<Token, String> entry : newWeights.entrySet()) {

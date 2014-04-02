@@ -8,6 +8,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
+import pipe.parsers.UnparsableException;
 import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
@@ -299,8 +300,12 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
                 return;
             }
         }
-        arcController.setWeights(newWeights);
-        exit();
+        try {
+            arcController.setWeights(newWeights);
+            exit();
+        } catch (UnparsableException e) {
+            GuiUtils.displayErrorMessage(null, e.getMessage());
+        }
     }
 
     private void cancelButtonHandler(java.awt.event.ActionEvent evt) {

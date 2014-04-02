@@ -22,6 +22,7 @@ import pipe.models.petrinet.PetriNet;
 import pipe.naming.UniqueNamer;
 import pipe.naming.PlaceNamer;
 import pipe.naming.TransitionNamer;
+import pipe.parsers.FunctionalResults;
 import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
@@ -305,7 +306,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
-        return new ArcController<S, T>(arc, historyManager);
+        return new ArcController<>(arc, historyManager, this);
     }
 
     public PlaceController getPlaceController(Place place) {
@@ -432,5 +433,9 @@ public class PetriNetController implements IController, Serializable {
 
     public void save() {
         lastSavedNet = ClonePetriNet.clone(petriNet);
+    }
+
+    public FunctionalResults<Double> parseFunctionalExpression(String expr) {
+        return petriNet.parseExpression(expr);
     }
 }

@@ -1,7 +1,12 @@
 package pipe.controllers;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.SetArcWeightAction;
@@ -11,29 +16,42 @@ import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.parsers.FunctionalResults;
+import pipe.parsers.UnparsableException;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ArcControllerTest {
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Mock
     HistoryManager historyManager;
+
+    @Mock
     Arc<Place, Transition> mockArc;
+
+    @Mock
+    PetriNetController mockPetriNetController;
+
     ArcController<Place, Transition> controller;
+
 
     @Before
     public void setUp() {
-        mockArc = mock(Arc.class);
-        historyManager = mock(HistoryManager.class);
+        controller = new ArcController<>(mockArc, historyManager, mockPetriNetController);
 
-        controller = new ArcController(mockArc, historyManager);
+        FunctionalResults<Double> results = new FunctionalResults<>(1.0, new HashSet<String>());
+        when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(results);
     }
 
     @Test
-    public void setWeightCreatesHistoryItem() {
+    public void setWeightCreatesHistoryItem() throws UnparsableException {
         Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
@@ -49,7 +67,7 @@ public class ArcControllerTest {
     }
 
     @Test
-    public void setWeightUpdatesArcWeight() {
+    public void setWeightUpdatesArcWeight() throws UnparsableException {
         Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
@@ -61,7 +79,7 @@ public class ArcControllerTest {
     }
 
     @Test
-    public void setWeightsCreatesHistoryItem() {
+    public void setWeightsCreatesHistoryItem() throws UnparsableException {
         Map<Token, String> tokenWeights = new HashMap<Token, String>();
         Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
@@ -73,13 +91,13 @@ public class ArcControllerTest {
         controller.setWeights(tokenWeights);
         verify(historyManager).newEdit();
 
-        SetArcWeightAction weightAction = new SetArcWeightAction(mockArc, defaultToken, oldWeight, newWeight);
+        SetArcWeightAction<Place, Transition> weightAction = new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 
     @Test
-    public void setWeightsUpdatesArc() {
-        Map<Token, String> tokenWeights = new HashMap<Token, String>();
+    public void setWeightsUpdatesArc() throws UnparsableException {
+        Map<Token, String> tokenWeights = new HashMap<>();
         Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
@@ -89,6 +107,63 @@ public class ArcControllerTest {
         tokenWeights.put(defaultToken, newWeight);
         controller.setWeights(tokenWeights);
         verify(mockArc).setWeight(defaultToken, newWeight);
+    }
+
+    @Test
+    public void throwsUnparsableExceptionForNonIntegerWeight() throws UnparsableException {
+        FunctionalResults<Double> result = new FunctionalResults<>(5.2, new HashSet<String>());
+        when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(result);
+        exception.expect(UnparsableException.class);
+        exception.expectMessage("Value is not an integer, please surround expression with floor or ceil");
+
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        controller.setWeight(defaultToken, "1.2");
+    }
+
+
+    @Test
+    public void throwsUnparsableExceptionForNonIntegerWeights() throws UnparsableException {
+
+        Map<Token, String> tokenWeights = new HashMap<>();
+        FunctionalResults<Double> result = new FunctionalResults<>(5.2, new HashSet<String>());
+        when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(result);
+        exception.expect(UnparsableException.class);
+        exception.expectMessage("Value is not an integer, please surround expression with floor or ceil");
+
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        tokenWeights.put(defaultToken, "5.2");
+        controller.setWeights(tokenWeights);
+    }
+
+    @Test
+    public void throwsUnparsableExceptionForErrorInWeights() throws UnparsableException {
+
+        Map<Token, String> tokenWeights = new HashMap<>();
+        List<String> errors = new LinkedList<>();
+        errors.add("test error");
+
+        FunctionalResults<Double> result = new FunctionalResults<>(5.0, errors, new HashSet<String>());
+        when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(result);
+        exception.expect(UnparsableException.class);
+        exception.expectMessage("test error");
+
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        tokenWeights.put(defaultToken, "5.2");
+        controller.setWeights(tokenWeights);
+    }
+
+    @Test
+    public void throwsUnparsableExceptionForErrorInWeight() throws UnparsableException {
+        List<String> errors = new LinkedList<>();
+        errors.add("test error");
+
+        FunctionalResults<Double> result = new FunctionalResults<>(5.0, errors, new HashSet<String>());
+        when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(result);
+        exception.expect(UnparsableException.class);
+        exception.expectMessage("test error");
+
+        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        controller.setWeight(defaultToken, "5.0");
     }
 
     @Test
@@ -136,7 +211,7 @@ public class ArcControllerTest {
 
         controller.splitArcPoint(splitPoint);
         ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), true);
-        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, expected);
+        AddArcPathPoint<Place, Transition> addArcPointAction = new AddArcPathPoint<>(mockArc, expected);
         verify(historyManager).addNewEdit(addArcPointAction);
     }
 
