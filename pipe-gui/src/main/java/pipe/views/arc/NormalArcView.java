@@ -238,13 +238,13 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        AffineTransform reset = g2.getTransform();
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2.translate(getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getX(),
                 getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
-        AffineTransform reset = g2.getTransform();
 
         if (isSelected() && !_ignoreSelection) {
             g2.setPaint(Constants.SELECTION_LINE_COLOUR);

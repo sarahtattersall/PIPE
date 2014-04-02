@@ -21,10 +21,6 @@ import java.io.Serializable;
 public class InhibitorArcView extends ArcView<Place, Transition> implements Serializable {
 
     private final static String type = "inhibitor";
-    private final static int OVAL_X = -4;
-    private final static int OVAL_Y = -8;
-    private final static int OVAL_WIDTH = 8;
-    private final static int OVAL_HEIGHT = 8;
 
     ArcHead arcHead = new InhibitorArcHead();
 
@@ -50,69 +46,23 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
 
 
 
-    public InhibitorArcView paste(double despX, double despY, boolean toAnotherView, PetriNetView model) {
-//        ConnectableView source = this.getSource().getLastCopy();
-//        ConnectableView target = this.getTarget().getLastCopy();
-//
-//        if (source == null && target == null) {
-//            // don't paste an arc with neither source nor target
-//            return null;
-//        }
-//
-//        if (source == null) {
-//            if (toAnotherView) {
-//                // if the source belongs to another Petri Net, the arc can't be
-//                // pasted
-//                return null;
-//            } else {
-//                source = this.getSource();
-//            }
-//        }
-//
-//        if (target == null) {
-//            if (toAnotherView) {
-//                // if the target belongs to another Petri Net, the arc can't be
-//                // pasted
-//                return null;
-//            } else {
-//                target = this.getTarget();
-//            }
-//        }
-//
-//        //TODO: NEEDS ACTUAL WEIGHTS
-//        InhibitorArc arc = new InhibitorArc(source.getModel(), target.getModel(), new HashMap<Token, String>());
-//        InhibitorArcView copy =
-//                new InhibitorArcView((double) 0, (double) 0, (double) 0, (double) 0, source, target, this.getWeight(),
-//                        source.getId() + " to " + target.getId(), arc, petriNetController);
-//
-//        copy.arcPath.delete();
-//        for (int i = 0; i <= this.arcPath.getEndIndex(); i++) {
-//            copy.arcPath.addIntermediatePoint(this.arcPath.getPoint(i).getX() + despX, this.arcPath.getPoint(i).getY() + despY,
-//                    this.arcPath.isCurved(i));
-//            //copy.arcPath.selectPoint(i);
-//        }
-//
-//        source.addOutbound(copy);
-//        target.addInbound(copy);
-//        return copy;
-        return null;
-    }
-
-
     public InhibitorArcView copy() {
         return null;
 //        return new InhibitorArcView(this);
     }
 
 
+    @Override
     public String getType() {
         return type;
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        AffineTransform reset = g2.getTransform();
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -129,9 +79,8 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
         g2.draw(arcPath);
 
 
-        Point2D endPoint = model.getEndPoint();
-        g2.translate(endPoint.getX(), endPoint.getY());
-        AffineTransform reset = g2.getTransform();
+        g2.translate(arcPath.getPoint(arcPath.getEndIndex()).getX(), arcPath.getPoint(arcPath.getEndIndex()).getY());
+        g2.rotate(model.getEndAngle());
 
         arcHead.draw(g2);
 
@@ -143,9 +92,4 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
 
         g2.setTransform(reset);
     }
-
-//    @Override
-//    public void update() {
-//        repaint();
-//    }
 }
