@@ -1,0 +1,27 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+
+#page-content {
+  float: left;
+  text-align: left; 
+}
+
+
+#content-container{
+
+  border-top: solid 1px #fff;
+  padding-top: 30px;
+}
+
+a.download-spacing {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 206px;
+    height: 46px;
+}
