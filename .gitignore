@@ -21,3 +21,6 @@ pipe-core/gen
 
 #PIPE
 PipeTestFile.xml
+
+#Pages
+_site
