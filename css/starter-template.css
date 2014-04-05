@@ -25,3 +25,6 @@ a.download-spacing {
     height: 46px;
 
 }
+.user-guide-sidebar .nav>li>a {
+  color: #999;
+}
