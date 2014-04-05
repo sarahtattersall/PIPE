@@ -7,7 +7,7 @@ post-id: edit
 A Petri net can be built up by selecting the appropriate icons along the task bar. 
 
 
-#### Adding a token ![New Token icon]({{ site.url }}/images/taskbar/SpecifyTokenClasses.png) 
+#### Adding a token ![New Token icon](images/taskbar/SpecifyTokenClasses.png) 
 
 In order to add a token click on the new token icon or press Ctrl-Shift-T. This will pop up the token editor window in which tokens can be added by giving them a name and a color.
 
