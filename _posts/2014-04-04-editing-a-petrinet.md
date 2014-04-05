@@ -4,48 +4,71 @@ title: Editing a Petri net
 post-id: edit
 ---
 
-A Petri net can be built up by selecting the appropriate the icons along the task bar. 
+A Petri net can be built up by selecting the appropriate icons along the task bar. 
 
 
-#### Adding a Token ####
-In order to add a token click on the new token icon. This will pop up the token editor window in which tokens can be added by giving them a name and a color.
+#### Adding a token ![New Token icon]({{ site.url }}/images/taskbar/SpecifyTokenClasses.png) 
+
+In order to add a token click on the new token icon or press Ctrl-Shift-T. This will pop up the token editor window in which tokens can be added by giving them a name and a color.
+
+
+
+![Add Token Window]({{ site.url }}/images/taskbar/add_token.png)
 
 The active token can be changed via the token drop down menu.
 
-#### Adding and editing a Place ####
-A place component can be added by clicking the icon with a round circle. 
-![Place icon]({{ site.url }}/images/taskbar/place.png)
-Once selected click anywhere on the canvas to create a new Place in this location. The Place will be automatically named for you.
+![Change active token]({{ site.url }}/images/taskbar/change_token.png)
 
-In order to edit place attributes, such as it's name and capacity, right click the place and enter the new details in the place editor.
+#### Adding and editing a place ![Place icon]({{ site.url }}/images/taskbar/place.png)
 
-Furthermore tokens can be added to or removed from Places by clicking on the relevant icons. In order to change which token is added, select the token you wish to place from the token drop down menu.
+The place component tool be selected by clicking the icon with a round circle.
+
+Once selected click anywhere on the canvas to create a new place in this location. The place will be automatically named for you.
 
 
-#### Adding and editing a Transition ####
+In order to edit place attributes, such as it's name and capacity, right click the place and click 'Edit Place'. The place editor window will then pop up where you can enter the new details for the Place.
+
+![Edit Place]({{ site.url }}/images/taskbar/edit_place.png)
+
+
+Furthermore tokens can be added to or removed from places by selecting the relevant icons next to the active token menu ![Place icon]({{ site.url }}/images/taskbar/AddToken.png) ![Place icon]({{ site.url }}/images/taskbar/DeleteToken.png). In order to change which token is added, select the token you wish to place from active token menu. Then click on the place to add tokens. Alternatively adding tokens can be done in the place editor window.
+
+
+#### Adding and editing a Transition ![Immediate transition icon]({{ site.url }}/images/taskbar/immediate_transition.png) ![Timed transition icon]({{ site.url }}/images/taskbar/timed_transition.png) 
 Similarly a new transition can be added by clicking either the black rectangle which represents an immediate transition, or the unfilled rectangle which represents a timed transition.
 
-The transition can then be placed anywhere on the canvas and is automatically named.
+The transition can then be placed anywhere on the canvas and is automatically named, just like when adding a place.
 
-Right clicking on a transition allows you to edit its name and other parameters associated with the transitions type.
+Right clicking on a transition and clicking 'Edit Transition' allows you to edit the transitions attributes and swap between a timed or immediate transition.
+
+![Edit Transitionn]({{ site.url }}/images/taskbar/edit_transition.png)
 
 A timed transitions rates may either be static or functional. 
 
-#### Adding and editing an Arc ####
-Click on either the normal arc, or the inhibitor arc icon and then select the components you wish to join.
+#### Adding and editing an Arc ![Normal Arc icon]({{ site.url }}/images/taskbar/arc.png) ![Inhibitor Arc icon]({{ site.url }}/images/taskbar/inhibitor_arc.png) 
+Click on either the normal arc (pointed arrow head), or the inhibitor arc (round arrow head) icon and then select the components you wish to join.
 
 A normal arc can join either a place to a transition or a transition to a place. An inhibitor arc can only join a place to a transition and will only fire if the place contains no tokens.
 
-When adding an arc clicking on free space within the canvas will add points along the arcs path, shift clicking will create curved points. 
+When adding an arc clicking on free space within the canvas will add points along the arcs path, shift clicking will create curved points. Pressing `Esc` whilst creating an arc will cancel it's creation.
 
-Again the number of tokens an arc requires can either be static or functional.
+![Created arcs]({{ site.url }}/images/taskbar/arcs.png) 
 
-#### Adding a Rate Parameter ####
-Rate parameters are useful because they allow you to create a shared rate for timed transitions. Modifying this rate will modify any transitions that reference this. Click on the rate parameter icon along the task bar and enter a name and value for this rate.
+
+Again the number of tokens an arc requires can either be static or functional. You can edit the arcs weight by right clicking on the arc and selecting 'Edit Weight'. This brings up the weight editor where a weight can be added for each token declared.
+
+![Edit Arc Weight]({{ site.url }}/images/taskbar/arc_weight_editor.png)
+
+#### Adding a Rate Parameter  ![Rate Parameter icon]({{ site.url }}/images/taskbar/rate_param.png) 
+Rate parameters are useful because they allow you to create a shared rate for timed transitions. Modifying this rate will effect any transitions that reference this rate. Click on the rate parameter icon along the task bar and enter a name and value for this rate.
+
+![Rate Parameter editor]({{ site.url }}/images/taskbar/rate_param_editor.png) 
 
 This rate can now be selected in the transitions editor window. 
 
-In a similar manner Rate Parameters can be deleted from the Petri net.
+![Specify transition rate parameter]({{ site.url }}/images/taskbar/transition_rate_parameter.png) 
+
+In a similar manner rate parameters can be deleted from the Petri net. Any transitions that make use of this rate parameter will have their rates set to the parameters value at the time of deletion.
 
 
 
