@@ -4,18 +4,17 @@ import pipe.actions.gui.GuiAction;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.TokenDialog;
 import pipe.gui.TokenPanel;
-import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class SpecifyTokenAction extends GuiAction {
-    private final PipeApplicationView pipeApplicationView;
-
     private final PipeApplicationController pipeApplicationController;
 
     private TokenPanel dialogContent;
@@ -24,11 +23,9 @@ public class SpecifyTokenAction extends GuiAction {
 
     private ActionEvent forcedAction;
 
-    public SpecifyTokenAction(PipeApplicationView applicationView,
-                              PipeApplicationController pipeApplicationController) {
+    public SpecifyTokenAction(PipeApplicationController pipeApplicationController) {
         super("SpecifyTokenClasses", "Specify tokens (ctrl-shift-T)", KeyEvent.VK_T,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_DOWN_MASK);
-        this.pipeApplicationView = applicationView;
         this.pipeApplicationController = pipeApplicationController;
     }
 
@@ -47,7 +44,7 @@ public class SpecifyTokenAction extends GuiAction {
 
     public void buildTokenGuiClasses() {
         dialogContent = new TokenPanel(pipeApplicationController.getActivePetriNetController());
-        guiDialog = new TokenDialog(pipeApplicationView, "Tokens", true, dialogContent);
+        guiDialog = new TokenDialog("Tokens", true, dialogContent);
     }
 
     public void finishBuildingGui() {

@@ -1,14 +1,12 @@
 package pipe.views;
 
-import pipe.actions.*;
+import pipe.actions.ZoomAction;
 import pipe.actions.gui.ExampleFileAction;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.UnfoldAction;
-import pipe.actions.gui.animate.*;
 import pipe.actions.gui.create.*;
 import pipe.actions.gui.file.*;
 import pipe.actions.gui.grid.GridAction;
-import pipe.actions.gui.create.SelectAction;
 import pipe.actions.gui.tokens.ChooseTokenClassAction;
 import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.actions.gui.window.ExitAction;
@@ -18,6 +16,7 @@ import pipe.actions.gui.zoom.ZoomOutAction;
 import pipe.actions.manager.AnimateActionManager;
 import pipe.actions.manager.ComponentCreatorManager;
 import pipe.actions.manager.ComponentEditorManager;
+import pipe.actions.manager.TokenActionManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.exceptions.PetriNetComponentNotFoundException;
@@ -31,8 +30,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -43,7 +48,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -57,6 +61,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final AnimateActionManager animateActionManager;
 
+    private final TokenActionManager tokenActionManager;
+
     public ComponentEditorManager getComponentEditorManager() {
         return componentEditorManager;
     }
@@ -64,7 +70,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final ComponentEditorManager componentEditorManager;
 
 
-    public final SpecifyTokenAction specifyTokenClasses;
 
     public final GuiAction selectAction;
 
@@ -99,9 +104,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction importAction = new ImportAction();
 
     public final ExitAction exitAction;
-    public CreateAction tokenAction = new AddTokenAction();
-
-    public CreateAction deleteTokenAction = new DeleteTokenAction();
 
     public GridAction toggleGrid = new GridAction(this);
 
@@ -134,9 +136,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel,
                                ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
-                               AnimateActionManager animateActionManager) {
+                               AnimateActionManager animateActionManager, TokenActionManager tokenActionManager) {
         this.componentCreatorManager = componentCreatorManager;
         this.animateActionManager = animateActionManager;
+        this.tokenActionManager = tokenActionManager;
         ApplicationSettings.register(this);
         this.componentEditorManager = componentManager;
 
@@ -148,10 +151,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         zoomInAction = new ZoomInAction(zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
 
-        specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
         specifyRateParameterAction = new SpecifyRateParameterAction(applicationController);
-        unfoldAction =
-                new UnfoldAction(this, applicationController);
+        unfoldAction = new UnfoldAction(this, applicationController);
 
         selectAction = new SelectAction(this, applicationController);
 
@@ -163,7 +164,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             }
         });
         saveAction = new SaveAction(this, applicationController, fileDialog);
-        saveAsAction= new SaveAsAction(this, applicationController, fileDialog);
+        saveAsAction = new SaveAsAction(this, applicationController, fileDialog);
 
         FileDialog loadFileDialog = new FileDialog(this, "Open Petri Net", FileDialog.LOAD);
         fileDialog.setFilenameFilter(new FilenameFilter() {
@@ -303,13 +304,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         for (GuiAction action : componentEditorManager.getActions()) {
             addMenuItem(editMenu, action);
         }
-//        addMenuItem(editMenu, undoAction);
-//        addMenuItem(editMenu, redoAction);
-//        editMenu.addSeparator();
-//        addMenuItem(editMenu, cutAction);
-//        addMenuItem(editMenu, copyAction);
-//        addMenuItem(editMenu, pasteAction);
-//        addMenuItem(editMenu, deleteAction);
 
         JMenu drawMenu = new JMenu("Draw");
         drawMenu.setMnemonic('D');
@@ -326,9 +320,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             addMenuItem(drawMenu, action);
         }
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, tokenAction);
-        addMenuItem(drawMenu, deleteTokenAction);
-        addMenuItem(drawMenu, specifyTokenClasses);
+        for (Action action : tokenActionManager.getActions()) {
+            addMenuItem(drawMenu, action);
+        }
         addMenuItem(drawMenu, unfoldAction);
         drawMenu.addSeparator();
         addMenuItem(drawMenu, specifyRateParameterAction);
@@ -410,8 +404,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     int index = 0;
                     for (JarEntry net : nets) {
                         if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu,
-                                    new ExampleFileAction(net, this));
+                            addMenuItem(exampleMenu, new ExampleFileAction(net, this));
                             index++;
                         }
                     }
@@ -528,10 +521,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             addButton(drawingToolBar, action);
         }
         drawingToolBar.addSeparator();
-        addButton(drawingToolBar, tokenAction);
-        addButton(drawingToolBar, deleteTokenAction);
+
+        for (GuiAction action : tokenActionManager.getActions()) {
+            addButton(drawingToolBar, action);
+        }
+
         addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
-        addButton(drawingToolBar, specifyTokenClasses);
         addButton(drawingToolBar, unfoldAction);
         drawingToolBar.addSeparator();
         addButton(drawingToolBar, specifyRateParameterAction);
@@ -774,18 +769,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             componentEditorManager.enableActions();
             componentCreatorManager.enableActions();
             animateActionManager.disableActions();
+            tokenActionManager.enableActions();
         } else {
             componentEditorManager.disableActions();
             componentCreatorManager.disableActions();
+            tokenActionManager.disableActions();
             animateActionManager.enableActions();
         }
 
         saveAction.setEnabled(editMode);
         saveAsAction.setEnabled(editMode);
 
-        tokenAction.setEnabled(editMode);
         selectAction.setEnabled(editMode);
-        deleteTokenAction.setEnabled(editMode);
         specifyRateParameterAction.setEnabled(editMode);
     }
 
@@ -823,14 +818,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         System.out.println("UPDATE APPLICATION VIEW");
         PetriNetTab currentTab = getCurrentTab();
         if ((applicationModel.getMode() != Constants.CREATING) && (!currentTab.isInAnimationMode())) {
-//            currentTab.setNetChanged(true);
+            //            currentTab.setNetChanged(true);
         }
     }
 
     /**
      * Adds the tab to the main application view in the tabbed view frame
+     *
      * @param name name of tab
-     * @param tab tab to add
+     * @param tab  tab to add
      */
     //TODO: ADD SCROLL PANE
     public void addNewTab(String name, PetriNetTab tab) {

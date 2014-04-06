@@ -16,8 +16,9 @@ public class TokenDialog extends JDialog implements ActionListener {
 
     private TokenPanel dialogContent;
 
-    public TokenDialog(Frame owner, String title, boolean modal, TokenPanel dialogContent){
-		super(owner, title, modal);
+    public TokenDialog(String title, boolean modal, TokenPanel dialogContent){
+        //TODO: Work out how to get View?
+		super(ApplicationSettings.getApplicationView(), title, modal);
         this.dialogContent = dialogContent;
     }
 

@@ -1,8 +1,8 @@
 import pipe.actions.manager.AnimateActionManager;
 import pipe.actions.manager.ComponentCreatorManager;
 import pipe.actions.manager.ComponentEditorManager;
+import pipe.actions.manager.TokenActionManager;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.CopyPasteManager;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
@@ -24,7 +24,9 @@ public class Pipe
         ComponentEditorManager componentManager = new ComponentEditorManager(applicationController);
         ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(applicationController);
         AnimateActionManager animateActionManager = new AnimateActionManager(applicationController);
-        applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager, componentCreatorManager, animateActionManager);
+        TokenActionManager tokenActionManager = new TokenActionManager(applicationController);
+        applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager, componentCreatorManager, animateActionManager,
+                tokenActionManager);
     }
     public static void main(String args[])
     {
