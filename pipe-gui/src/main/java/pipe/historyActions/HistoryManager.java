@@ -3,6 +3,7 @@
  */
 package pipe.historyActions;
 
+import pipe.actions.manager.ComponentEditorManager;
 import pipe.gui.Constants;
 import pipe.views.PipeApplicationView;
 
@@ -26,16 +27,16 @@ public class HistoryManager {
 
     private final ArrayList<List<HistoryItem>> edits = new ArrayList<List<HistoryItem>>(UNDO_BUFFER_CAPACITY);
 
-    private final PipeApplicationView applicationView;
+    private final ComponentEditorManager componentEditorManager;
 
 
     /**
      * Creates a new instance of HistoryManager
      */
-    public HistoryManager(PipeApplicationView applicationView) {
-        this.applicationView = applicationView;
-        applicationView.setUndoActionEnabled(false);
-        applicationView.setRedoActionEnabled(false);
+    public HistoryManager(ComponentEditorManager componentEditorManager) {
+        this.componentEditorManager = componentEditorManager;
+        componentEditorManager.setUndoActionEnabled(false);
+        componentEditorManager.setRedoActionEnabled(false);
         for (int i = 0; i < UNDO_BUFFER_CAPACITY; i++) {
             edits.add(null);
         }
@@ -56,9 +57,9 @@ public class HistoryManager {
             fillCount++;
             undoneEdits--;
             if (undoneEdits == 0) {
-                applicationView.setRedoActionEnabled(false);
+                componentEditorManager.setRedoActionEnabled(false);
             }
-            applicationView.setUndoActionEnabled(true);
+            componentEditorManager.setUndoActionEnabled(true);
         }
     }
 
@@ -81,9 +82,9 @@ public class HistoryManager {
             }
 
             if (fillCount == 0) {
-                applicationView.setUndoActionEnabled(false);
+                componentEditorManager.setUndoActionEnabled(false);
             }
-            applicationView.setRedoActionEnabled(true);
+            componentEditorManager.setRedoActionEnabled(true);
         }
     }
 
@@ -93,8 +94,8 @@ public class HistoryManager {
         fillCount = 0;
         startOfBuffer = 0;
         undoneEdits = 0;
-        applicationView.setUndoActionEnabled(false);
-        applicationView.setRedoActionEnabled(false);
+        componentEditorManager.setUndoActionEnabled(false);
+        componentEditorManager.setRedoActionEnabled(false);
     }
 
 
@@ -105,8 +106,8 @@ public class HistoryManager {
         }
 
         undoneEdits = 0;
-        applicationView.setUndoActionEnabled(true);
-        applicationView.setRedoActionEnabled(false);
+        componentEditorManager.setUndoActionEnabled(true);
+        componentEditorManager.setRedoActionEnabled(false);
 
         List<HistoryItem> compoundEdit = new ArrayList<HistoryItem>();
         edits.set(freePosition, compoundEdit);

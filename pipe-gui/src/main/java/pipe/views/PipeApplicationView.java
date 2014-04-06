@@ -17,6 +17,7 @@ import pipe.actions.gui.window.ExitAction;
 import pipe.actions.gui.zoom.SetZoomAction;
 import pipe.actions.gui.zoom.ZoomInAction;
 import pipe.actions.gui.zoom.ZoomOutAction;
+import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.InhibitorCreator;
@@ -54,13 +55,15 @@ import java.util.jar.JarFile;
 
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer, Serializable {
+
+
     public final StatusBar statusBar;
 
-    public final GuiAction copyAction;
+    public ComponentEditorManager getComponentEditorManager() {
+        return componentEditorManager;
+    }
 
-    public final GuiAction cutAction;
-
-    public final GuiAction pasteAction;
+    public final ComponentEditorManager componentEditorManager;
 
     public final CreateAction arcAction;
 
@@ -77,8 +80,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final AnimateAction randomAction;
 
     public final GuiAction selectAction;
-
-    public final DeleteAction deleteAction;
 
     final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
 
@@ -111,10 +112,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction importAction = new ImportAction();
 
     public final ExitAction exitAction;
-
-    public GuiAction undoAction = new UndoAction();
-
-    public GuiAction redoAction = new RedoAction();
 
     public CreateAction placeAction = new PlaceAction();
 
@@ -159,8 +156,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
-    public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
+    public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel,
+                               ComponentEditorManager componentManager) {
         ApplicationSettings.register(this);
+        this.componentEditorManager = componentManager;
+
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
 
@@ -177,9 +177,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         specifyTokenClasses = new SpecifyTokenAction(this, applicationController);
         specifyRateParameterAction = new SpecifyRateParameterAction(applicationController);
-        copyAction = new CopyAction(applicationController);
-        pasteAction = new PasteAction(applicationController);
-        cutAction = new CutAction(applicationController);
         unfoldAction =
                 new UnfoldAction(this, applicationController);
         toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this,
@@ -189,7 +186,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 new RandomAnimateAction("Random", "Randomly fire a transition", "5", this, applicationController);
         stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", this, applicationController);
         selectAction = new SelectAction(this, applicationController);
-        deleteAction = new DeleteAction(applicationController);
 
         FileDialog fileDialog = new FileDialog(this, "Save Petri Net", FileDialog.SAVE);
         fileDialog.setFilenameFilter(new FilenameFilter() {
@@ -335,13 +331,17 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
-        addMenuItem(editMenu, undoAction);
-        addMenuItem(editMenu, redoAction);
-        editMenu.addSeparator();
-        addMenuItem(editMenu, cutAction);
-        addMenuItem(editMenu, copyAction);
-        addMenuItem(editMenu, pasteAction);
-        addMenuItem(editMenu, deleteAction);
+
+        for (GuiAction action : componentEditorManager.getActions()) {
+            addMenuItem(editMenu, action);
+        }
+//        addMenuItem(editMenu, undoAction);
+//        addMenuItem(editMenu, redoAction);
+//        editMenu.addSeparator();
+//        addMenuItem(editMenu, cutAction);
+//        addMenuItem(editMenu, copyAction);
+//        addMenuItem(editMenu, pasteAction);
+//        addMenuItem(editMenu, deleteAction);
 
         JMenu drawMenu = new JMenu("Draw");
         drawMenu.setMnemonic('D');
@@ -541,12 +541,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         toolBar.addSeparator();
         addButton(toolBar, printAction);
         toolBar.addSeparator();
-        addButton(toolBar, cutAction);
-        addButton(toolBar, copyAction);
-        addButton(toolBar, pasteAction);
-        addButton(toolBar, deleteAction);
-        addButton(toolBar, undoAction);
-        addButton(toolBar, redoAction);
+        for (GuiAction action : componentEditorManager.getActions()) {
+            addButton(toolBar, action);
+        }
+//        addButton(toolBar, cutAction);
+//        addButton(toolBar, copyAction);
+//        addButton(toolBar, pasteAction);
+//        addButton(toolBar, deleteAction);
+//        addButton(toolBar, undoAction);
+//        addButton(toolBar, redoAction);
         toolBar.addSeparator();
 
         addButton(toolBar, zoomOutAction);
@@ -816,6 +819,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     private void enableActions(boolean editMode, boolean pasteEnabled) {
+        if (editMode) {
+            componentEditorManager.reEnableActions();
+        } else {
+            componentEditorManager.disableActions();
+        }
+
         saveAction.setEnabled(editMode);
         saveAsAction.setEnabled(editMode);
 
@@ -826,7 +835,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         transAction.setEnabled(editMode);
         timedtransAction.setEnabled(editMode);
         tokenAction.setEnabled(editMode);
-        deleteAction.setEnabled(editMode);
         selectAction.setEnabled(editMode);
         deleteTokenAction.setEnabled(editMode);
         specifyRateParameterAction.setEnabled(editMode);
@@ -837,17 +845,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             multipleRandomAction.setSelected(false);
             stepbackwardAction.setEnabled(false);
             stepforwardAction.setEnabled(false);
-            pasteAction.setEnabled(pasteEnabled);
+//            pasteAction.setEnabled(pasteEnabled);
+//            undoAction.setEnabled(false);
         } else {
-            pasteAction.setEnabled(true);
-            undoAction.setEnabled(true);
-            redoAction.setEnabled(true);
+//            pasteAction.setEnabled(false);
+//            undoAction.setEnabled(false);
+//            redoAction.setEnabled(false);
         }
         randomAction.setEnabled(!editMode);
         multipleRandomAction.setEnabled(!editMode);
-        copyAction.setEnabled(editMode);
-        cutAction.setEnabled(editMode);
-        deleteAction.setEnabled(editMode);
+//        copyAction.setEnabled(editMode);
+//        cutAction.setEnabled(editMode);
+//        deleteAction.setEnabled(editMode);
 
     }
 
@@ -919,14 +928,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void close() {
         exitAction.actionPerformed(null);
-    }
-
-    public void setUndoActionEnabled(boolean flag) {
-        undoAction.setEnabled(flag);
-    }
-
-    public void setRedoActionEnabled(boolean flag) {
-        redoAction.setEnabled(flag);
     }
 
     //TODO: DELETE!

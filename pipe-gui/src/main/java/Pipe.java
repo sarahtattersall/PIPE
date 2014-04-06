@@ -1,3 +1,4 @@
+import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.CopyPasteManager;
 import pipe.gui.model.PipeApplicationModel;
@@ -18,7 +19,8 @@ public class Pipe
     {
         applicationModel = new PipeApplicationModel(version);
         applicationController = new PipeApplicationController(applicationModel);
-        applicationView = new PipeApplicationView(applicationController, applicationModel);
+        ComponentEditorManager componentManager = new ComponentEditorManager(applicationController);
+        applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager);
     }
     public static void main(String args[])
     {

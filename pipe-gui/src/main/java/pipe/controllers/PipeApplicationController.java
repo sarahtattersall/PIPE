@@ -1,22 +1,21 @@
 package pipe.controllers;
 
-import org.apache.commons.io.FilenameUtils;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.historyActions.HistoryManager;
-import pipe.io.PetriNetReader;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.component.rate.RateParameter;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.*;
 import pipe.io.PetriNetIOImpl;
+import pipe.io.PetriNetReader;
+import pipe.models.component.Connectable;
+import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.petrinet.name.NormalPetriNetName;
 import pipe.models.petrinet.name.PetriNetFileName;
 import pipe.models.petrinet.name.PetriNetName;
@@ -30,15 +29,15 @@ import javax.swing.text.BadLocationException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.awt.*;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 public class PipeApplicationController {
 
@@ -66,6 +65,7 @@ public class PipeApplicationController {
     /**
      * Creates an empty petri net and default token
      * Registers the application view to listen on the default token
+     *
      * @param applicationView
      * @return new petri net
      */
@@ -77,7 +77,6 @@ public class PipeApplicationController {
     }
 
     /**
-     *
      * Names the petri net with a unique name
      * Adds petri net to the unique namer so not to produce the same name twice
      *
@@ -92,8 +91,9 @@ public class PipeApplicationController {
 
     /**
      * Names the petri net based on the file
+     *
      * @param petriNet petri net loaded from file
-     * @param file xml location
+     * @param file     xml location
      */
     private void namePetriNetFromFile(PetriNet petriNet, File file) {
         PetriNetName petriNetName = new PetriNetFileName(file);
@@ -134,8 +134,8 @@ public class PipeApplicationController {
         CopyPasteManager copyPasteManager = new CopyPasteManager(petriNetTab, net);
 
         PetriNetController petriNetController =
-                new PetriNetController(net, new HistoryManager(applicationView), animator, copyPasteManager,
-                        zoomController);
+                new PetriNetController(net, new HistoryManager(applicationView.getComponentEditorManager()), animator,
+                        copyPasteManager, zoomController);
 
 
         SelectionManager selectionManager = new SelectionManager(petriNetTab, petriNetController);
@@ -152,7 +152,8 @@ public class PipeApplicationController {
 
         petriNetTab.updatePreferredSize();
 
-        PropertyChangeListener changeListener = new PetriNetChangeListener(applicationView, petriNetTab, petriNetController);
+        PropertyChangeListener changeListener =
+                new PetriNetChangeListener(applicationView, petriNetTab, petriNetController);
         net.addPropertyChangeListener(changeListener);
 
         setActiveTab(petriNetTab);
@@ -165,24 +166,28 @@ public class PipeApplicationController {
     /**
      * This is a little hacky, I'm not sure how to make this better when it's so late
      * If a better implementation is clear please re-write
-     *
+     * <p/>
      * This method invokes the change listener which will create the view objects on the
      * petri net tab
+     *
      * @param propertyChangeListener
      */
     private void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {
         for (Token token : net.getTokens()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_TOKEN_CHANGE_MESSAGE, null, token);
+            PropertyChangeEvent changeEvent =
+                    new PropertyChangeEvent(net, PetriNet.NEW_TOKEN_CHANGE_MESSAGE, null, token);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (Place place : net.getPlaces()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_PLACE_CHANGE_MESSAGE, null, place);
+            PropertyChangeEvent changeEvent =
+                    new PropertyChangeEvent(net, PetriNet.NEW_PLACE_CHANGE_MESSAGE, null, place);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (Transition transition : net.getTransitions()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_TRANSITION_CHANGE_MESSAGE, null, transition);
+            PropertyChangeEvent changeEvent =
+                    new PropertyChangeEvent(net, PetriNet.NEW_TRANSITION_CHANGE_MESSAGE, null, transition);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
@@ -192,12 +197,14 @@ public class PipeApplicationController {
         }
 
         for (Annotation annotation : net.getAnnotations()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);
+            PropertyChangeEvent changeEvent =
+                    new PropertyChangeEvent(net, PetriNet.NEW_ANNOTATION_CHANGE_MESSAGE, null, annotation);
             propertyChangeListener.propertyChange(changeEvent);
         }
 
         for (RateParameter rateParameter : net.getRateParameters()) {
-            PropertyChangeEvent changeEvent = new PropertyChangeEvent(net, PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE, null, rateParameter);
+            PropertyChangeEvent changeEvent =
+                    new PropertyChangeEvent(net, PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE, null, rateParameter);
             propertyChangeListener.propertyChange(changeEvent);
         }
     }
@@ -251,14 +258,13 @@ public class PipeApplicationController {
     }
 
     /**
-     *
      * @return the names of the petri nets that have changed
      */
     //FIXME: THIS DOESNT WORK BECAUSE IT CHOOSES NEW NAMES FOR THE PETRI NET
     public List<String> getNetsChanged() {
         List<String> changed = new ArrayList<>();
         for (PetriNetController controller : netControllers.values()) {
-            if(controller.hasChanged()) {
+            if (controller.hasChanged()) {
                 changed.add(controller.getPetriNet().getNameValue());
             }
         }
