@@ -16,7 +16,7 @@ import java.util.Map;
  * These components are responsible for editing and managing items
  * on the petri net canvas when pressed
  */
-public class ComponentEditorManager {
+public class ComponentEditorManager implements ActionManager {
     /**
      * Action copies whatever is selected at the time
      */
@@ -69,6 +69,7 @@ public class ComponentEditorManager {
      *
      * @return inorder iterable of the actions this class is responsible for managing
      */
+    @Override
     public Iterable<GuiAction> getActions() {
         editEnabledStatus.keySet();
         return Arrays.asList(cutAction, copyAction, pasteAction, deleteAction, undoAction, redoAction);
@@ -78,6 +79,7 @@ public class ComponentEditorManager {
      * Disables actions and stores their current state
      * ready for re-enabling
      */
+    @Override
     public void disableActions() {
         storeEnabledStatus();
         for (GuiAction action : getActions()) {
@@ -88,7 +90,8 @@ public class ComponentEditorManager {
     /**
      * Restores actions to their previous states
      */
-    public void reEnableActions() {
+    @Override
+    public void enableActions() {
         for (GuiAction action : getActions()) {
             action.setEnabled(editEnabledStatus.get(action));
         }

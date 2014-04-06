@@ -35,8 +35,8 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
             animator.fireTransition(transition);
 
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            applicationView.setStepForward(animator.isStepForwardAllowed());
-            applicationView.setStepBackward(animator.isStepBackAllowed());
+            applicationView.getAnimateActionManager().setStepForward(animator.isStepForwardAllowed());
+            applicationView.getAnimateActionManager().setStepBackward(animator.isStepBackAllowed());
         }
     }
 

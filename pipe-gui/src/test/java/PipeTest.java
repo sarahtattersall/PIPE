@@ -171,13 +171,12 @@ public class PipeTest {
 
         menu = applicationView.getJMenuBar().getMenu(4);
         assertEquals("Animate", menu.getText());
-        assertEquals("expecting 6 Animate menu items, including separators", 6, menu.getItemCount());
+        assertEquals("expecting 5 Animate menu items, including separators", 5, menu.getItemCount());
         assertEquals("Animation mode", menu.getItem(0).getText());
-        assertNull("separator", menu.getItem(1));
-        assertEquals("Back", menu.getItem(2).getText());
-        assertEquals("Forward", menu.getItem(3).getText());
-        assertEquals("Random", menu.getItem(4).getText());
-        assertEquals("Animate", menu.getItem(5).getText());
+        assertEquals("Back", menu.getItem(1).getText());
+        assertEquals("Forward", menu.getItem(2).getText());
+        assertEquals("Random", menu.getItem(3).getText());
+        assertEquals("Animate", menu.getItem(4).getText());
 
         menu = applicationView.getJMenuBar().getMenu(5);
         assertEquals("Help", menu.getText());

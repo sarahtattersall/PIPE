@@ -23,12 +23,9 @@ public class NormalCreator implements ArcActionCreator {
 
     private final PipeApplicationController controller;
 
-    private final PipeApplicationView applicationView;
-
-    public NormalCreator(PipeApplicationController controller, PipeApplicationView applicationView) {
+    public NormalCreator(PipeApplicationController controller) {
 
         this.controller = controller;
-        this.applicationView = applicationView;
     }
 
     @Override

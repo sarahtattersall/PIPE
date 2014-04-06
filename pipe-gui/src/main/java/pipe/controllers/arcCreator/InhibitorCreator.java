@@ -5,15 +5,14 @@ import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AddPetriNetObject;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.HistoryManager;
-import pipe.models.component.arc.ArcType;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.*;
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.views.PipeApplicationView;
+import pipe.models.petrinet.PetriNet;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,12 +21,10 @@ public class InhibitorCreator implements ArcActionCreator {
 
     private final PipeApplicationController controller;
 
-    private final PipeApplicationView applicationView;
 
-    public InhibitorCreator(PipeApplicationController controller, PipeApplicationView applicationView) {
+    public InhibitorCreator(PipeApplicationController controller) {
 
         this.controller = controller;
-        this.applicationView = applicationView;
     }
 
     @Override
@@ -40,8 +37,8 @@ public class InhibitorCreator implements ArcActionCreator {
         if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
             Place place = (Place) source;
             Transition transition = (Transition) target;
-            Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, new HashMap<Token, String>(),
-                    ArcType.INHIBITOR);
+            Arc<Place, Transition> arc =
+                    new Arc<>(place, transition, new HashMap<Token, String>(), ArcType.INHIBITOR);
             PetriNet petriNet = petriNetController.getPetriNet();
             petriNet.addArc(arc);
             addToHistory(arc);
@@ -64,7 +61,7 @@ public class InhibitorCreator implements ArcActionCreator {
     }
 
 
-    private void addToHistory(Arc<? extends  Connectable, ? extends Connectable> arc) {
+    private void addToHistory(Arc<? extends Connectable, ? extends Connectable> arc) {
         PetriNetController netController = controller.getActivePetriNetController();
         PetriNet petriNet = netController.getPetriNet();
         HistoryItem item = new AddPetriNetObject(arc, petriNet);

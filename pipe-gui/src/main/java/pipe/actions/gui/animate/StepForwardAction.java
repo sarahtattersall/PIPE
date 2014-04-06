@@ -1,5 +1,6 @@
 package pipe.actions.gui.animate;
 
+import pipe.actions.manager.AnimateActionManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
@@ -11,15 +12,15 @@ import java.awt.event.ActionEvent;
  * Steps forward in the animation sequence, i.e. redoes the last transition fired when clicked
  */
 public class StepForwardAction extends AnimateAction {
-    private final PipeApplicationView applicationView;
-
     private final PipeApplicationController applicationController;
 
-    public StepForwardAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
-                             PipeApplicationController applicationController) {
+    private final AnimateActionManager animateActionManager;
+
+    public StepForwardAction(String name, String tooltip, String keystroke,
+                             PipeApplicationController applicationController, AnimateActionManager animateActionManager) {
         super(name, tooltip, keystroke);
-        this.applicationView = applicationView;
         this.applicationController = applicationController;
+        this.animateActionManager = animateActionManager;
     }
 
     @Override
@@ -29,7 +30,7 @@ public class StepForwardAction extends AnimateAction {
         Animator animator = petriNetController.getAnimator();
         animator.stepForward();
 
-        applicationView.setStepForward(animator.isStepForwardAllowed());
-        applicationView.setStepBackward(animator.isStepBackAllowed());
+        animateActionManager.setStepForward(animator.isStepForwardAllowed());
+        animateActionManager.setStepBackward(animator.isStepBackAllowed());
     }
 }

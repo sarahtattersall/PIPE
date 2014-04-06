@@ -54,7 +54,7 @@ public class NormalCreatorTest {
         when(mockPetriNetController.getHistoryManager()).thenReturn(mockHistoryManager);
 
 
-        creator = new NormalCreator(mockController, mockView);
+        creator = new NormalCreator(mockController);
     }
 
     @Test

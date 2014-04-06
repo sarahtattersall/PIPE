@@ -2,6 +2,9 @@ package pipe.actions.type;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.ArcAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
@@ -23,55 +26,53 @@ import java.awt.event.KeyEvent;
 
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ArcActionTest {
     private ArcAction action;
 
+    @Mock
     private PipeApplicationController mockApplicationController;
 
+    @Mock
     private PetriNetController mockController;
 
+    @Mock
     private PetriNet mockNet;
 
+    @Mock
     private HistoryManager mockHistory;
 
+    @Mock
     private PipeApplicationView mockApplicationView;
 
+    @Mock
     private PetriNetTab mockTab;
 
     private Token activeToken;
 
+    @Mock
     private ArcSourceVisitor mockSourceVisitor;
 
+    @Mock
     private ArcActionCreator mockCreatorVisitor;
 
     @Before
     public void setUp() {
-        mockSourceVisitor = mock(ArcSourceVisitor.class);
-        mockCreatorVisitor = mock(ArcActionCreator.class);
-        ;
-        mockController = mock(PetriNetController.class);
-        mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);
 
-        mockHistory = mock(HistoryManager.class);
         when(mockController.getHistoryManager()).thenReturn(mockHistory);
 
 
         activeToken = mock(Token.class);
-        mockApplicationView = mock(PipeApplicationView.class);
         when(mockApplicationView.getSelectedTokenName()).thenReturn("Default");
 
-        mockTab = mock(PetriNetTab.class);
-        when(mockApplicationView.getCurrentTab()).thenReturn(mockTab);
-
-
+        when(mockController.getPetriNetTab()).thenReturn(mockTab);
         when(mockController.getSelectedToken()).thenReturn(activeToken);
 
-        mockApplicationController = mock(PipeApplicationController.class);
         when(mockApplicationController.getActivePetriNetController()).thenReturn(mockController);
 
         action = new ArcAction("Inhibitor Arc", "Add an inhibitor arc", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
-                mockSourceVisitor, mockCreatorVisitor, mockApplicationController, mockApplicationView, new InhibitorArcHead());
+                mockSourceVisitor, mockCreatorVisitor, mockApplicationController, new InhibitorArcHead());
     }
 
     @Test

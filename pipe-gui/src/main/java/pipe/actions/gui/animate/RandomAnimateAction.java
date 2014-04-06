@@ -1,5 +1,6 @@
 package pipe.actions.gui.animate;
 
+import pipe.actions.manager.AnimateActionManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.Animator;
@@ -8,15 +9,17 @@ import pipe.views.PipeApplicationView;
 import java.awt.event.ActionEvent;
 
 public class RandomAnimateAction extends AnimateAction {
-    private final PipeApplicationView applicationView;
 
     private final PipeApplicationController applicationController;
 
-    public RandomAnimateAction(String name, String tooltip, String keystroke, PipeApplicationView applicationView,
-                               PipeApplicationController applicationController) {
+    private final AnimateActionManager animateActionManager;
+
+    public RandomAnimateAction(String name, String tooltip, String keystroke,
+                               PipeApplicationController applicationController,
+                               AnimateActionManager animateActionManager) {
         super(name, tooltip, keystroke);
-        this.applicationView = applicationView;
         this.applicationController = applicationController;
+        this.animateActionManager = animateActionManager;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class RandomAnimateAction extends AnimateAction {
         Animator animator = petriNetController.getAnimator();
         animator.doRandomFiring();
 
-        applicationView.setStepForward(animator.isStepForwardAllowed());
-        applicationView.setStepBackward(animator.isStepBackAllowed());
+        animateActionManager.setStepForward(animator.isStepForwardAllowed());
+        animateActionManager.setStepBackward(animator.isStepBackAllowed());
     }
 }

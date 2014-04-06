@@ -4,6 +4,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.exceptions.TokenLockedException;
@@ -31,6 +34,7 @@ import java.util.Collection;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PetriNetControllerTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -39,19 +43,23 @@ public class PetriNetControllerTest {
 
     private PetriNet net;
 
+    @Mock
     private HistoryManager mockHistoryManager;
 
+    @Mock
     private Animator mockAnimator;
+
+    @Mock
+    private PetriNetTab mocKTab;
 
     @Before
     public void setUp() {
         net = new PetriNet();
-        mockHistoryManager = mock(HistoryManager.class);
-        mockAnimator = mock(Animator.class);
         CopyPasteManager copyPasteManager = mock(CopyPasteManager.class);
         ZoomController zoomController = mock(ZoomController.class);
 
-        controller = new PetriNetController(net, mockHistoryManager, mockAnimator, copyPasteManager, zoomController);
+        controller = new PetriNetController(net, mockHistoryManager, mockAnimator, copyPasteManager, zoomController,
+                mocKTab);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.

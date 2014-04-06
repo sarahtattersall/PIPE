@@ -2,6 +2,9 @@ package pipe.controllers.arcCreator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
@@ -22,37 +25,36 @@ import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InhibitorCreatorTest {
 
+    @Mock
     PipeApplicationView mockView;
 
+    @Mock
     PipeApplicationController mockController;
 
+    @Mock
     PetriNetController mockPetriNetController;
 
+    @Mock
     HistoryManager mockHistoryManager;
 
+    @Mock
     PetriNet mockNet;
 
+    @Mock
     PetriNetTab mockTab;
 
     InhibitorCreator creator;
 
     @Before
     public void setUp() {
-        mockView = mock(PipeApplicationView.class);
-        mockController = mock(PipeApplicationController.class);
-        mockHistoryManager = mock(HistoryManager.class);
-
-        mockPetriNetController = mock(PetriNetController.class);
-        mockNet = mock(PetriNet.class);
-        mockTab = mock(PetriNetTab.class);
-
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
         when(mockPetriNetController.getPetriNet()).thenReturn(mockNet);
         when(mockPetriNetController.getHistoryManager()).thenReturn(mockHistoryManager);
         when(mockView.getCurrentTab()).thenReturn(mockTab);
-        creator = new InhibitorCreator(mockController, mockView);
+        creator = new InhibitorCreator(mockController);
     }
 
     @Test

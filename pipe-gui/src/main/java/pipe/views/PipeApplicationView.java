@@ -1,13 +1,11 @@
 package pipe.views;
 
 import pipe.actions.*;
-import pipe.actions.gui.DeleteAction;
 import pipe.actions.gui.ExampleFileAction;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.UnfoldAction;
 import pipe.actions.gui.animate.*;
 import pipe.actions.gui.create.*;
-import pipe.actions.gui.edit.*;
 import pipe.actions.gui.file.*;
 import pipe.actions.gui.grid.GridAction;
 import pipe.actions.gui.create.SelectAction;
@@ -17,21 +15,17 @@ import pipe.actions.gui.window.ExitAction;
 import pipe.actions.gui.zoom.SetZoomAction;
 import pipe.actions.gui.zoom.ZoomInAction;
 import pipe.actions.gui.zoom.ZoomOutAction;
+import pipe.actions.manager.AnimateActionManager;
+import pipe.actions.manager.ComponentCreatorManager;
 import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.controllers.arcCreator.InhibitorCreator;
-import pipe.controllers.arcCreator.NormalCreator;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.io.JarUtilities;
 import pipe.models.component.token.Token;
 import pipe.utilities.gui.GuiUtils;
-import pipe.views.arc.InhibitorArcHead;
-import pipe.views.arc.NormalHead;
-import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
-import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -59,25 +53,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final StatusBar statusBar;
 
+    private final ComponentCreatorManager componentCreatorManager;
+
+    private final AnimateActionManager animateActionManager;
+
     public ComponentEditorManager getComponentEditorManager() {
         return componentEditorManager;
     }
 
     public final ComponentEditorManager componentEditorManager;
 
-    public final CreateAction arcAction;
-
-    public final CreateAction inhibarcAction;
 
     public final SpecifyTokenAction specifyTokenClasses;
-
-    public final AnimateAction toggleAnimationAction;
-
-    public final AnimateAction stepbackwardAction;
-
-    public final AnimateAction stepforwardAction;
-
-    public final AnimateAction randomAction;
 
     public final GuiAction selectAction;
 
@@ -112,15 +99,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction importAction = new ImportAction();
 
     public final ExitAction exitAction;
-
-    public CreateAction placeAction = new PlaceAction();
-
-    public CreateAction transAction = new ImmediateTransitionAction();
-
-    public CreateAction timedtransAction = new TimedTransitionAction();
-
-    public CreateAction annotationAction = new AnnotationAction();
-
     public CreateAction tokenAction = new AddTokenAction();
 
     public CreateAction deleteTokenAction = new DeleteTokenAction();
@@ -133,8 +111,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public GuiAction zoomAction;
 
-    public AnimateAction multipleRandomAction =
-            new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
 
     public UnfoldAction unfoldAction;
 
@@ -157,20 +133,17 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel,
-                               ComponentEditorManager componentManager) {
+                               ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
+                               AnimateActionManager animateActionManager) {
+        this.componentCreatorManager = componentCreatorManager;
+        this.animateActionManager = animateActionManager;
         ApplicationSettings.register(this);
         this.componentEditorManager = componentManager;
 
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
 
-        inhibarcAction =
-                new ArcAction("Inhibitor Arc", "Add an inhibitor arc (alt-h)", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
-                        new InhibitorSourceVisitor(), new InhibitorCreator(applicationController, this),
-                        applicationController, this, new InhibitorArcHead());
-        arcAction = new ArcAction("Arc", "Add an arc (alt-a)", KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK,
-                new NormalArcSourceVisitor(), new NormalCreator(applicationController, this), applicationController,
-                this, new NormalHead());
+
         zoomOutAction = new ZoomOutAction(zoomUI);
         zoomInAction = new ZoomInAction(zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
@@ -179,12 +152,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         specifyRateParameterAction = new SpecifyRateParameterAction(applicationController);
         unfoldAction =
                 new UnfoldAction(this, applicationController);
-        toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A", this,
-                applicationController);
-        stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", this, applicationController);
-        randomAction =
-                new RandomAnimateAction("Random", "Randomly fire a transition", "5", this, applicationController);
-        stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", this, applicationController);
+
         selectAction = new SelectAction(this, applicationController);
 
         FileDialog fileDialog = new FileDialog(this, "Save Petri Net", FileDialog.SAVE);
@@ -354,12 +322,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         rootPane.getActionMap().put("ESCAPE", selectAction);
 
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, placeAction);
-        addMenuItem(drawMenu, transAction);
-        addMenuItem(drawMenu, timedtransAction);
-        addMenuItem(drawMenu, arcAction);
-        addMenuItem(drawMenu, inhibarcAction);
-        addMenuItem(drawMenu, annotationAction);
+        for (GuiAction action : componentCreatorManager.getActions()) {
+            addMenuItem(drawMenu, action);
+        }
         drawMenu.addSeparator();
         addMenuItem(drawMenu, tokenAction);
         addMenuItem(drawMenu, deleteTokenAction);
@@ -386,12 +351,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         JMenu animateMenu = new JMenu("Animate");
         animateMenu.setMnemonic('A');
-        addMenuItem(animateMenu, toggleAnimationAction);
-        animateMenu.addSeparator();
-        addMenuItem(animateMenu, stepbackwardAction);
-        addMenuItem(animateMenu, stepforwardAction);
-        addMenuItem(animateMenu, randomAction);
-        addMenuItem(animateMenu, multipleRandomAction);
+
+        for (GuiAction action : animateActionManager.getActions()) {
+            addMenuItem(animateMenu, action);
+        }
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -544,12 +507,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         for (GuiAction action : componentEditorManager.getActions()) {
             addButton(toolBar, action);
         }
-//        addButton(toolBar, cutAction);
-//        addButton(toolBar, copyAction);
-//        addButton(toolBar, pasteAction);
-//        addButton(toolBar, deleteAction);
-//        addButton(toolBar, undoAction);
-//        addButton(toolBar, redoAction);
         toolBar.addSeparator();
 
         addButton(toolBar, zoomOutAction);
@@ -557,7 +514,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addButton(toolBar, zoomInAction);
         toolBar.addSeparator();
         addButton(toolBar, toggleGrid);
-        addButton(toolBar, toggleAnimationAction);
+        for (GuiAction action : animateActionManager.getEditActions()) {
+            addButton(toolBar, action);
+        }
 
         drawingToolBar = new JToolBar();
         drawingToolBar.setFloatable(false);
@@ -565,12 +524,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         toolBar.addSeparator();
         addButton(drawingToolBar, selectAction);
         drawingToolBar.addSeparator();
-        addButton(drawingToolBar, placeAction);// Add Draw Menu Buttons
-        addButton(drawingToolBar, transAction);
-        addButton(drawingToolBar, timedtransAction);
-        addButton(drawingToolBar, arcAction);
-        addButton(drawingToolBar, inhibarcAction);
-        addButton(drawingToolBar, annotationAction);
+        for (GuiAction action : componentCreatorManager.getActions()) {
+            addButton(drawingToolBar, action);
+        }
         drawingToolBar.addSeparator();
         addButton(drawingToolBar, tokenAction);
         addButton(drawingToolBar, deleteTokenAction);
@@ -584,10 +540,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         animationToolBar = new JToolBar();
         animationToolBar.setFloatable(false);
-        addButton(animationToolBar, stepbackwardAction);
-        addButton(animationToolBar, stepforwardAction);
-        addButton(animationToolBar, randomAction);
-        addButton(animationToolBar, multipleRandomAction);
+
+        for (GuiAction action : animateActionManager.getAnimateActions()) {
+            addButton(animationToolBar, action);
+        }
 
         toolBar.add(animationToolBar);
         animationToolBar.setVisible(false);
@@ -682,11 +638,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void setAnimationMode(boolean animateMode) {
         enableActions(!animateMode);
-
-        stepforwardAction.setEnabled(false);
-        stepbackwardAction.setEnabled(false);
-        multipleRandomAction.setSelected(false);
-        toggleAnimationAction.setSelected(animateMode);
 
         PetriNetTab petriNetTab = getCurrentTab();
         petriNetTab.changeAnimationMode(animateMode);
@@ -820,44 +771,22 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private void enableActions(boolean editMode, boolean pasteEnabled) {
         if (editMode) {
-            componentEditorManager.reEnableActions();
+            componentEditorManager.enableActions();
+            componentCreatorManager.enableActions();
+            animateActionManager.disableActions();
         } else {
             componentEditorManager.disableActions();
+            componentCreatorManager.disableActions();
+            animateActionManager.enableActions();
         }
 
         saveAction.setEnabled(editMode);
         saveAsAction.setEnabled(editMode);
 
-        placeAction.setEnabled(editMode);
-        arcAction.setEnabled(editMode);
-        inhibarcAction.setEnabled(editMode);
-        annotationAction.setEnabled(editMode);
-        transAction.setEnabled(editMode);
-        timedtransAction.setEnabled(editMode);
         tokenAction.setEnabled(editMode);
         selectAction.setEnabled(editMode);
         deleteTokenAction.setEnabled(editMode);
         specifyRateParameterAction.setEnabled(editMode);
-        //toggleGrid.setEnabled(status);
-
-        if (editMode) {
-            toggleAnimationAction.setSelected(false);
-            multipleRandomAction.setSelected(false);
-            stepbackwardAction.setEnabled(false);
-            stepforwardAction.setEnabled(false);
-//            pasteAction.setEnabled(pasteEnabled);
-//            undoAction.setEnabled(false);
-        } else {
-//            pasteAction.setEnabled(false);
-//            undoAction.setEnabled(false);
-//            redoAction.setEnabled(false);
-        }
-        randomAction.setEnabled(!editMode);
-        multipleRandomAction.setEnabled(!editMode);
-//        copyAction.setEnabled(editMode);
-//        cutAction.setEnabled(editMode);
-//        deleteAction.setEnabled(editMode);
-
     }
 
     @Override
@@ -935,14 +864,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return null;
     }
 
-    public void setStepForward(boolean stepForwardAllowed) {
-        stepforwardAction.setEnabled(stepForwardAllowed);
-    }
-
-    public void setStepBackward(boolean stepBackwardAllowed) {
-        stepbackwardAction.setEnabled(stepBackwardAllowed);
-    }
-
     public void removeCurrentTab() {
         removeTab(frameForPetriNetTabs.getSelectedIndex());
     }
@@ -957,6 +878,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void updateSelectedTabName(String title) {
         int index = frameForPetriNetTabs.getSelectedIndex();
         frameForPetriNetTabs.setTitleAt(index, title);
+    }
+
+    public AnimateActionManager getAnimateActionManager() {
+        return animateActionManager;
     }
 }
 

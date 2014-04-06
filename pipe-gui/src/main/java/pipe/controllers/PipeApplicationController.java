@@ -135,7 +135,7 @@ public class PipeApplicationController {
 
         PetriNetController petriNetController =
                 new PetriNetController(net, new HistoryManager(applicationView.getComponentEditorManager()), animator,
-                        copyPasteManager, zoomController);
+                        copyPasteManager, zoomController, petriNetTab);
 
 
         SelectionManager selectionManager = new SelectionManager(petriNetTab, petriNetController);
