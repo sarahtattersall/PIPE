@@ -92,11 +92,11 @@
     <build>
         <pluginManagement>
             <plugins>
-                        <plugin>
-                            <groupId>org.antlr</groupId>
-                            <artifactId>antlr4-maven-plugin</artifactId>
-                            <version>4.2</version>
-                        </plugin>
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>4.2</version>
+                </plugin>
 
                 <plugin>
                     <groupId>org.assertj</groupId>
@@ -119,6 +119,28 @@
                         <target>1.7</target>
                     </configuration>
                 </plugin>
+
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                    <executions>
+                        <execution>
+                            <id>add-source</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>target/generated-sources</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
