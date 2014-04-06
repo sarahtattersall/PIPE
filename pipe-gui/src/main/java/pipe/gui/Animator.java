@@ -101,14 +101,6 @@ public class Animator {
      * the transitions.
      *
      * @param transition
-     * @author David Patterson renamed this method and changed the
-     * AnimationHandler to make it fire the transition before calling this method.
-     * This prevents double-firing a transition.
-     * @author Pere Bonet modified this method so that it now stores transitions
-     * that has just been fired in an array so that it can be accessed during
-     * backwards and stepping to fix the unexcepted behaviour observed during
-     * animation playback.
-     * The method is renamed back to fireTransition.
      */
     public void fireTransition(Transition transition) {
         animationHistory.clearStepsForward();

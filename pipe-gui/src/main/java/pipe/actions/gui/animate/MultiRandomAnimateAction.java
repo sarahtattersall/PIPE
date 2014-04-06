@@ -19,7 +19,6 @@ public class MultiRandomAnimateAction extends AnimateAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
 
         PetriNetController petriNetController = controller.getActivePetriNetController();

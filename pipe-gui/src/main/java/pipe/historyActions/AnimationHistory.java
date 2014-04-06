@@ -12,7 +12,7 @@ public class AnimationHistory extends Observable {
      * List to hold transitions fired in their order
      * Used for going back/forward in time
      */
-    private List<Transition> firingSequence = new ArrayList<Transition>();
+    private List<Transition> firingSequence = new ArrayList<>();
 
     /**
      * Current index of the firingSequence;
@@ -53,13 +53,14 @@ public class AnimationHistory extends Observable {
         }
     }
 
+    /**
+     * Remove all steps past the current step
+     */
     public void clearStepsForward() {
-        if (currentPosition > 0 && currentPosition + 1 < firingSequence.size()) {
-            Collection<Transition> remove = new LinkedList<Transition>();
-            for (int i = currentPosition + 1; i < firingSequence.size(); i++) {
-                remove.add(firingSequence.get(i));
+        if (currentPosition >= -1 && currentPosition + 1 < firingSequence.size()) {
+            while (firingSequence.size() > currentPosition + 1) {
+                firingSequence.remove(firingSequence.size() - 1);
             }
-            firingSequence.removeAll(remove);
         }
     }
 
