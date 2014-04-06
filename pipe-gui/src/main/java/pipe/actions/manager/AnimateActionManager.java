@@ -16,7 +16,7 @@ public class AnimateActionManager implements ActionManager {
     private final GuiAction randomAction;
 
     private final AnimateAction multipleRandomAction =
-            new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7");
+            new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", this);
 
     public AnimateActionManager(PipeApplicationController applicationController) {
         toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A",
