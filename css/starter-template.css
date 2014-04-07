@@ -6,6 +6,10 @@ body {
   text-align: center;
 }
 
+#pipe-img {
+  max-width: 70%;
+}
+
 
 #page-content {
   float: left;
