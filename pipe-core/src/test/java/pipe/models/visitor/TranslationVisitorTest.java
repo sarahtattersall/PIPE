@@ -45,7 +45,7 @@ public class TranslationVisitorTest {
         Point2D point = new Point2D.Double(10, 5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
-        when(arc.getIntermediatePoints()).thenReturn(points);
+        when(arc.getArcPoints()).thenReturn(points);
 
         selected.add(place);
         selected.add(transition);
@@ -70,7 +70,7 @@ public class TranslationVisitorTest {
         Point2D point = new Point2D.Double(10, 5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
-        when(arc.getIntermediatePoints()).thenReturn(points);
+        when(arc.getArcPoints()).thenReturn(points);
 
         selected.add(place);
 
@@ -94,7 +94,7 @@ public class TranslationVisitorTest {
         Point2D point = new Point2D.Double(10, 5);
         when(arcPoint.getPoint()).thenReturn(point);
         points.add(arcPoint);
-        when(arc.getIntermediatePoints()).thenReturn(points);
+        when(arc.getArcPoints()).thenReturn(points);
 
         selected.add(transition);
 

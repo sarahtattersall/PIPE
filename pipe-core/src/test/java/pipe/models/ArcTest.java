@@ -20,6 +20,7 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -43,13 +44,15 @@ public class ArcTest {
     public void setUp() {
         when(mockSource.getId()).thenReturn("source");
         when(mockTarget.getId()).thenReturn("target");
-        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
+        when(mockSource.getArcEdgePoint(anyDouble())).thenReturn(new Point2D.Double(0,0));
+        when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(new Point2D.Double(0,0));
     }
 
     @Test
     public void gettingStartReturnsEndPoint() {
         when(mockSource.getCentre()).thenReturn(new Point2D.Double(65,15));
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         arc.getStartPoint();
         verify(mockSource).getArcEdgePoint(Math.toRadians(0));
@@ -59,6 +62,7 @@ public class ArcTest {
     public void calculatesCorrectAngleTargetRightOfSource() {
         when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,15));
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(65,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(0));
@@ -69,6 +73,7 @@ public class ArcTest {
     public void calculatesCorrectAngleTargetLeftOfSource() {
         when(mockSource.getCentre()).thenReturn(new Point2D.Double(65,15));
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(180));
@@ -78,6 +83,7 @@ public class ArcTest {
     public void calculatesCorrectAngleTargetBelowSource() {
         when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,15));
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,65));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(90));
@@ -87,6 +93,7 @@ public class ArcTest {
     public void calculatesCorrectAngleTargetAboveSource() {
         when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         arc.getEndPoint();
         verify(mockTarget).getArcEdgePoint(Math.toRadians(-90));
@@ -96,6 +103,9 @@ public class ArcTest {
     public void returnsTokenWeightForToken() {
         Token defaultToken = TokenUtils.createDefaultToken();
         String weight = "cap(P0)";
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         arc.setWeight(defaultToken, weight);
         String actualWeight = arc.getWeightForToken(defaultToken);
@@ -104,6 +114,9 @@ public class ArcTest {
 
     @Test
     public void returnsZeroWeightForNonExistantToken() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         Token defaultToken = TokenUtils.createDefaultToken();
         String actualWeight = arc.getWeightForToken(defaultToken);
         assertEquals("0", actualWeight);
@@ -111,6 +124,9 @@ public class ArcTest {
 
     @Test
     public void returnTrueIfHasFunctionalWeight() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         Token defaultToken = TokenUtils.createDefaultToken();
         Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));
 
@@ -122,6 +138,9 @@ public class ArcTest {
 
     @Test
     public void returnFalseIfNoFunctionalWeight() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         Token defaultToken = TokenUtils.createDefaultToken();
         Token redToken = new Token("Red", true, 0, new Color(255, 0, 0));
 
@@ -133,6 +152,9 @@ public class ArcTest {
 
     @Test
     public void createsId() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         assertEquals("source TO target", arc.getId());
     }
 
@@ -145,6 +167,7 @@ public class ArcTest {
 
         Point2D.Double targetEnd = mock(Point2D.Double.class);
         when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         ArcPoint point = new ArcPoint(center, false);
         ArcPoint actualPoint = arc.getNextPoint(point);
@@ -156,6 +179,8 @@ public class ArcTest {
     public void sourceReturnsFirstIntermediatePoint() {
         Point2D.Double center = mock(Point2D.Double.class);
         when(mockSource.getCentre()).thenReturn(center);
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         ArcPoint point = new ArcPoint(center, false);
         ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 5), false);
@@ -168,6 +193,9 @@ public class ArcTest {
     public void intermediateReturnsNextIntermediatePoint() {
         Point2D.Double center = mock(Point2D.Double.class);
         when(mockSource.getCentre()).thenReturn(center);
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
+
 
         ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 5), false);
         ArcPoint intermediate2 = new ArcPoint(new Point2D.Double(5, 6), true);
@@ -183,6 +211,7 @@ public class ArcTest {
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
         Point2D.Double targetEnd = mock(Point2D.Double.class);
         when(mockTarget.getArcEdgePoint(anyDouble())).thenReturn(targetEnd);
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 1), false);
         arc.addIntermediatePoint(intermediate);
@@ -193,6 +222,9 @@ public class ArcTest {
 
     @Test
     public void deletesCorrectArcPoint() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
 
         ArcPoint intermediate = new ArcPoint(new Point2D.Double(1, 1), false);
         arc.addIntermediatePoint(intermediate);
@@ -200,13 +232,16 @@ public class ArcTest {
         arc.addIntermediatePoint(intermediate2);
 
         arc.removeIntermediatePoint(intermediate);
-        assertThat(arc.getIntermediatePoints()).doesNotContain(intermediate);
-        assertThat(arc.getIntermediatePoints()).contains(intermediate2);
+        assertThat(arc.getArcPoints()).doesNotContain(intermediate);
+        assertThat(arc.getArcPoints()).contains(intermediate2);
     }
 
 
     @Test
     public void throwsExceptionIfNoNextPoint() {
+        when(mockSource.getCentre()).thenReturn(new Point2D.Double(15,65));
+        when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
+        arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("No next point");
         ArcPoint point = new ArcPoint(new Point2D.Double(20, 15), false);

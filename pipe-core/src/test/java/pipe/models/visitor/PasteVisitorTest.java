@@ -164,8 +164,8 @@ public class PasteVisitorTest {
             pasteComponents.add(place);
 
             Transition transition = new Transition("id", "name");
-            Map<Token, String> weights = new HashMap<Token, String>();
-            Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+            Map<Token, String> weights = new HashMap<>();
+            Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
             ArcPoint arcPoint = new ArcPoint(new Point2D.Double(200, 100), true);
             arc.addIntermediatePoint(arcPoint);
 
@@ -188,12 +188,12 @@ public class PasteVisitorTest {
             public boolean matches(Object argument) {
 
                 Arc<? extends Connectable, ? extends Connectable> otherArc = (Arc<? extends Connectable, ? extends Connectable>) argument;
-                List<ArcPoint> arcPoints = arc.getIntermediatePoints();
-                List<ArcPoint> otherPoints = otherArc.getIntermediatePoints();
+                List<ArcPoint> arcPoints = arc.getArcPoints();
+                List<ArcPoint> otherPoints = otherArc.getArcPoints();
                 if (arcPoints.size() != otherPoints.size()) {
                     return false;
                 }
-                for (int index = 0; index < arcPoints.size(); index++) {
+                for (int index = 1; index < arcPoints.size() -1; index++) {
                     ArcPoint arcPoint = arcPoints.get(index);
                     ArcPoint otherArcPoint = otherPoints.get(index);
                     if (arcPoint == otherArcPoint || !arcPoint.equals(otherArcPoint)) {

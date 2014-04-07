@@ -70,8 +70,8 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         arcPath = new ArcPath(this, controller);
 
 
-        addPathSourceLocation();
-        addPathEndLocation();
+//        addPathSourceLocation();
+//        addPathEndLocation();
         updatePath();
         updateBounds();
         registerModelListeners();
@@ -94,7 +94,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             public void propertyChange(PropertyChangeEvent evt) {
                 String name = evt.getPropertyName();
                 if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-                    setSourceStartAndEnd();
+//                    setSourceStartAndEnd();
                     arcSpecificUpdate();
                 }
             }
@@ -144,7 +144,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     private void updateAllPoints() {
         updatePath();
-        setSourceStartAndEnd();
+//        setSourceStartAndEnd();
         arcSpecificUpdate();
         updateBounds();
     }
@@ -166,23 +166,13 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * exist
      */
     private void addIntermediatePoints() {
-        for (ArcPoint arcPoint : model.getIntermediatePoints()) {
+        int index = 0;
+        for (ArcPoint arcPoint : model.getArcPoints()) {
             if (!arcPath.contains(arcPoint)) {
-                arcPath.insertIntermediatePoint(arcPoint);
+                arcPath.insertIntermediatePoint(arcPoint, index);
             }
+            index++;
         }
-    }
-
-    private void addPathEndLocation() {
-        Point2D targetPoint = model.getEndPoint();
-        endPoint = new ArcPoint(targetPoint, false, false);
-        arcPath.addPoint(endPoint);
-    }
-
-    private void addPathSourceLocation() {
-        Point2D.Double startPoint = model.getStartPoint();
-        sourcePoint = new ArcPoint(startPoint, false, false);
-        arcPath.addPoint(sourcePoint);
     }
 
     /**
@@ -354,17 +344,9 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         removeFromContainer();
     }
 
-    public void addToView(PetriNetTab view) {
-        if (getParent() != null) {
-            arcSpecificUpdate();
-        }
-        arcPath.showPoints();
-        view.add(this);
-    }
-
     public void showEditor() {
         // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE", true);
 
         ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
                 petriNetController.getArcController(this.model));

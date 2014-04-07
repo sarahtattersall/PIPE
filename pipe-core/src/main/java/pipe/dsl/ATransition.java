@@ -28,6 +28,9 @@ public class ATransition implements DSLCreator<Transition> {
      */
     private String rateParameter = "";
 
+    private int x = 0;
+    private int y = 0;
+
     private ATransition(String id) {this.id = id;}
 
     public static ATransition withId(String id) {
@@ -41,6 +44,8 @@ public class ATransition implements DSLCreator<Transition> {
         transition.setPriority(priority);
         transition.setTimed(timed);
         transition.setInfiniteServer(infinite);
+        transition.setX(x);
+        transition.setY(y);
 
         if (!rate.isEmpty()) {
             transition.setRate(new NormalRate(rate));
@@ -92,6 +97,13 @@ public class ATransition implements DSLCreator<Transition> {
 
     public ATransition withRateParameter(String rateParameterName) {
         this.rateParameter = rateParameterName;
+        return this;
+    }
+
+
+    public ATransition locatedAt(int x, int y) {
+        this.x = x;
+        this.y = y;
         return this;
     }
 }

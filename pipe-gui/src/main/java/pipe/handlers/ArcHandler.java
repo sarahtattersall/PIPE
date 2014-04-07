@@ -41,7 +41,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e,
                 ApplicationSettings.getApplicationView().getCurrentTab());
         menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),
-                accurateEvent.getPoint()));
+                e.getPoint()));
         menuItem.setText("Split Arc Segment");
         popup.insert(menuItem, popupIndex++);
 

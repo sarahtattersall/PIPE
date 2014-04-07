@@ -38,18 +38,15 @@ public class ArcPath implements Shape, Cloneable {
 
     public final Point2D.Double midPoint = new Point2D.Double();
 
-    /**
-     * This is used for quick O(1) time in order to determine if a point
-     * is alread in the path.
-     */
-    private final Map<ArcPoint, ArcPathPoint> points = new HashMap<>();
-
     private final List<ArcPathPoint> pathPoints = new ArrayList<>();
 
     private final ArcView<? extends Connectable, ? extends Connectable> parent;
 
     private final PetriNetController petriNetController;
 
+    /**
+     * Graphical representation of the path
+     */
     private GeneralPath path = new GeneralPath();
 
     /**
@@ -318,7 +315,7 @@ public class ArcPath implements Shape, Cloneable {
 
     public void addPoint(ArcPoint arcPoint) {
         ArcPathPoint arcPathPoint = createPoint(arcPoint);
-        points.put(arcPoint, arcPathPoint);
+//        points.put(arcPoint, arcPathPoint);
         pathPoints.add(arcPathPoint);
     }
 
@@ -338,17 +335,33 @@ public class ArcPath implements Shape, Cloneable {
 
     }
 
+    /**
+     * Note: We cannot do this in O(1) time using a HashMap because ArcPoints are
+     * mutable objects, meaning that they could change whilst keys in the HashMap
+     *
+     * @param point
+     * @return true if the path contains the point
+     */
     public boolean contains(ArcPoint point) {
-        return points.get(point) != null;
+        for (ArcPathPoint p : pathPoints) {
+            if (p.getModel().equals(point)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
     public void deletePoint(ArcPoint point) {
-        ArcPathPoint pointView = points.get(point);
+        ArcPathPoint pointView = null;
+        for (ArcPathPoint p : pathPoints) {
+            if (p.getModel().equals(point)) {
+                pointView = p;
+            }
+        }
         if (pointView != null) {
             pointView.delete();
             pathPoints.remove(pointView);
-            points.remove(point);
         }
     }
 
@@ -558,7 +571,6 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
-        points.put(newpoint.getModel(), newpoint);
         addPointsToGui(parent.getTab());
     }
 
@@ -619,11 +631,13 @@ public class ArcPath implements Shape, Cloneable {
         return null;
     }
 
-    //TODO: MOVE THE LOGIC OUT OF THE VIEW
-    public void insertIntermediatePoint(ArcPoint point) {
-        int previousPoint = findPoint(point.getPoint());
-        insertPoint(previousPoint + 1, createPoint(point));
-
+    /**
+     *
+     * @param point point to add to path
+     * @param index position in the path
+     */
+    public void insertIntermediatePoint(ArcPoint point, int index) {
+        insertPoint(index, createPoint(point));
     }
 
     private int findPoint(Point2D mouseposition) {

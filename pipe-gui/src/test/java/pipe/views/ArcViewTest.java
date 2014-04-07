@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
 import pipe.views.arc.NormalArcView;
@@ -43,6 +45,7 @@ public class ArcViewTest {
         when(mockArc.getTarget()).thenReturn(target);
         when(mockArc.getStartPoint()).thenReturn(start);
         when(mockArc.getEndPoint()).thenReturn(end);
+        when(mockArc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));
         arcView = new NormalArcView<>(mockArc, mockController);
     }
 
@@ -52,61 +55,5 @@ public class ArcViewTest {
         assertEquals(2, path.getNumPoints());
         assertEquals(start, path.getPoint(0));
         assertEquals(end, path.getPoint(1));
-    }
-
-    @Test
-    public void arcListensToSourceXChanges() {
-        Point2D.Double newStartPoint = new Point2D.Double(10,20);
-        when(mockArc.getStartPoint()).thenReturn(newStartPoint);
-
-        Point2D.Double newEndPoint = new Point2D.Double(10,500);
-        when(mockArc.getEndPoint()).thenReturn(newEndPoint);
-
-        source.setX(newStartPoint.getX());
-
-        assertEquals(newStartPoint, arcView.getArcPath().getPoint(0));
-        assertEquals(newEndPoint, arcView.getArcPath().getPoint(arcView.getArcPath().getEndIndex()));
-    }
-
-    @Test
-    public void arcListensToSourceYChanges() {
-        Point2D.Double newStartPoint = new Point2D.Double(10,20);
-        when(mockArc.getStartPoint()).thenReturn(newStartPoint);
-
-        Point2D.Double newEndPoint = new Point2D.Double(10,500);
-        when(mockArc.getEndPoint()).thenReturn(newEndPoint);
-
-        source.setY(newStartPoint.getY());
-
-        assertEquals(newStartPoint, arcView.getArcPath().getPoint(0));
-        assertEquals(newEndPoint, arcView.getArcPath().getPoint(arcView.getArcPath().getEndIndex()));
-    }
-
-    @Test
-    public void arcListensToTargetXChanges() {
-        Point2D.Double newStartPoint = new Point2D.Double(50,20);
-        when(mockArc.getStartPoint()).thenReturn(newStartPoint);
-
-        Point2D.Double newEndPoint = new Point2D.Double(10,500);
-        when(mockArc.getEndPoint()).thenReturn(newEndPoint);
-
-        target.setY(newEndPoint.getX());
-
-        assertEquals(newStartPoint, arcView.getArcPath().getPoint(0));
-        assertEquals(newEndPoint, arcView.getArcPath().getPoint(arcView.getArcPath().getEndIndex()));
-    }
-
-    @Test
-    public void arcListensToTargetYChanges() {
-        Point2D.Double newStartPoint = new Point2D.Double(50,20);
-        when(mockArc.getStartPoint()).thenReturn(newStartPoint);
-
-        Point2D.Double newEndPoint = new Point2D.Double(10,500);
-        when(mockArc.getEndPoint()).thenReturn(newEndPoint);
-
-        target.setY(newEndPoint.getY());
-
-        assertEquals(newStartPoint, arcView.getArcPath().getPoint(0));
-        assertEquals(newEndPoint, arcView.getArcPath().getPoint(arcView.getArcPath().getEndIndex()));
     }
 }

@@ -1,6 +1,7 @@
 package pipe.dsl;
 
 import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
@@ -16,6 +17,9 @@ public class APlace implements DSLCreator<Place> {
     private String id;
     private int capacity;
     private Map<String, Integer> tokenCounts = new HashMap<>();
+
+    int x = 0;
+    int y = 0;
 
     private APlace(String id) { this.id = id; }
 
@@ -53,6 +57,9 @@ public class APlace implements DSLCreator<Place> {
     public Place create(Map<String, Token> tokens, Map<String, Connectable> connectables,
                         Map<String, RateParameter> rateParameters) {
         Place place = new Place(id, id);
+        place.setX(x);
+        place.setY(y);
+
         place.setCapacity(capacity);
 
         for (Map.Entry<String, Integer> entry : tokenCounts.entrySet()) {
@@ -74,6 +81,12 @@ public class APlace implements DSLCreator<Place> {
      */
     public APlace and(int count, String tokenName) {
         tokenCounts.put(tokenName, count);
+        return this;
+    }
+
+    public APlace locatedAt(int x, int y) {
+        this.x = x;
+        this.y = y;
         return this;
     }
 }

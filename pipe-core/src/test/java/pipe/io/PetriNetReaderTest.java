@@ -68,7 +68,8 @@ public class PetriNetReaderTest {
     public void keepsIntermediatePoints() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         ArcPoint expected = new ArcPoint(new Point2D.Double(87, 36), true);
-        assertThat(petriNet.getArcs()).extracting("intermediatePoints").containsExactly(Arrays.asList(expected));
+        Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
+        assertThat(arc.getArcPoints().contains(expected));
     }
 
     @Test

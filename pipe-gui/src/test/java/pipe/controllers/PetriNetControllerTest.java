@@ -16,6 +16,7 @@ import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
@@ -29,6 +30,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
@@ -189,10 +191,8 @@ public class PetriNetControllerTest {
     public void selectsArcIfIntersects() {
         Arc<? extends Connectable, ? extends Connectable> arc = mock(Arc.class);
         Point2D.Double start = new Point2D.Double(0, 0);
-        when(arc.getStartPoint()).thenReturn(start);
-
         Point2D.Double end = new Point2D.Double(10, 10);
-        when(arc.getEndPoint()).thenReturn(end);
+        when(arc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));
 
         net.addArc(arc);
 
@@ -205,10 +205,8 @@ public class PetriNetControllerTest {
     public void doesNotSelectArcIfDoesntIntersect() {
         Arc<? extends Connectable, ? extends Connectable> arc = mock(Arc.class);
         Point2D.Double start = new Point2D.Double(0, 0);
-        when(arc.getStartPoint()).thenReturn(start);
-
         Point2D.Double end = new Point2D.Double(10, 10);
-        when(arc.getEndPoint()).thenReturn(end);
+        when(arc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));
 
         net.addArc(arc);
 

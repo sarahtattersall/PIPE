@@ -2,6 +2,7 @@ package pipe.io;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.SAXException;
+import pipe.dsl.*;
 import pipe.exceptions.InvalidRateException;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
@@ -94,21 +95,8 @@ public class PetriNetWriterTest extends XMLTestCase {
     }
 
     public void testMarshalsArc() throws IOException, SAXException {
-        PetriNet petriNet = new PetriNet();
-
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        Place place = new Place("P0", "P0");
-        Transition transition = new Transition("T0", "T0");
-
-        Map<Token, String> weights = new HashMap<>();
-        weights.put(token, "4");
-        Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
-        arc.addIntermediatePoint(new ArcPoint(new Point2D.Double(87, 36), true));
-
-        petriNet.add(token);
-        petriNet.add(place);
-        petriNet.addTransition(transition);
-        petriNet.add(arc);
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0").locatedAt(0,0)).and(
+                ATransition.withId("T0").locatedAt(0,0)).andFinally(ANormalArc.withSource("P0").andTarget("T0").and("4", "Default").tokens());
 
 
         assertResultsEqual(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()), petriNet);

@@ -80,8 +80,9 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
      * @param newArc newly created arc
      */
     private  void copyIntermediatePoints(Arc<? extends Connectable, ? extends Connectable> arc, Arc<? extends Connectable, ? extends Connectable> newArc) {
-        for (ArcPoint arcPoint : arc.getIntermediatePoints()) {
-            ArcPoint newArcPoint = new ArcPoint(arcPoint);
+        List<ArcPoint> arcPoints = arc.getArcPoints();
+        for (int i = 1; i < arcPoints.size() -1; i++) {
+            ArcPoint newArcPoint = new ArcPoint(arcPoints.get(i));
             newArc.addIntermediatePoint(newArcPoint);
         }
     }

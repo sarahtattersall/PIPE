@@ -128,6 +128,7 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
             return;
         }
 
+        // Save intermediate points into model
         for (int i = 1; i < arcPoints.size() - 1; i++) {
             arc.addIntermediatePoint(arcPoints.get(i));
         }
@@ -160,11 +161,7 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
     private void setArcPoints(Arc<? extends Connectable, ? extends Connectable> arc, AdaptedArc adapted) {
 
         List<ArcPoint> arcPoints = adapted.getArcPoints();
-        ArcPoint source = new ArcPoint(arc.getStartPoint(), false, false);
-        arcPoints.add(source);
-        arcPoints.addAll(arc.getIntermediatePoints());
-        ArcPoint target = new ArcPoint(arc.getEndPoint(), false, false);
-        arcPoints.add(target);
+        arcPoints.addAll(arc.getArcPoints());
     }
 
 }

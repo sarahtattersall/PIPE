@@ -178,7 +178,7 @@ public class PetriNetController implements IController, Serializable {
         for (Arc<? extends Connectable, ? extends Connectable> arc : petriNet.getArcs()) {
             if (isArcSelected(arc, selectionRectangle)) {
                 select(arc);
-                for (ArcPoint arcPoint : arc.getIntermediatePoints()) {
+                for (ArcPoint arcPoint : arc.getArcPoints()) {
                     select(arcPoint);
                 }
             } else if (selectedComponents.contains(arc.getSource()) || selectedComponents.contains(arc.getTarget())) {
@@ -210,17 +210,22 @@ public class PetriNetController implements IController, Serializable {
      */
     private GeneralPath createStraightPath(Arc<? extends Connectable, ? extends Connectable> arc) {
         GeneralPath path = new GeneralPath();
-        Point2D start = arc.getStartPoint();
-        path.moveTo(start.getX(), start.getY());
 
-        Collection<ArcPoint> arcPoints = arc.getIntermediatePoints();
+        Collection<ArcPoint> arcPoints = arc.getArcPoints();
+        int index = 0;
         for (ArcPoint arcPoint : arcPoints) {
-            Point2D point = arcPoint.getPoint();
-            path.lineTo(point.getX(), point.getY());
+            if (index == 0) {
+                path.moveTo(arcPoint.getX(), arcPoint.getY());
+            } else {
+                Point2D point = arcPoint.getPoint();
+                path.lineTo(point.getX(), point.getY());
+
+            }
+            index++;
         }
 
-        Point2D end = arc.getEndPoint();
-        path.lineTo(end.getX(), end.getY());
+        //        Point2D end = arc.getEndPoint();
+        //        path.lineTo(end.getX(), end.getY());
         return path;
     }
 

@@ -1,12 +1,17 @@
 package pipe.dsl;
 
 import pipe.models.component.Connectable;
+import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
+import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class ANormalArc implements DSLCreator<Arc<? extends Connectable, ? extends Connectable>> {
@@ -15,6 +20,8 @@ public class ANormalArc implements DSLCreator<Arc<? extends Connectable, ? exten
     private String target;
 
     private Map<String, String> weights = new HashMap<>();
+
+    private List<ArcPoint> intermediatePoints = new LinkedList<>();
 
 
     private ANormalArc() {
@@ -62,7 +69,9 @@ public class ANormalArc implements DSLCreator<Arc<? extends Connectable, ? exten
             arcWeights.put(tokens.get(entry.getKey()), entry.getValue());
         }
 
-        return new Arc<>(connectables.get(source), connectables.get(target), arcWeights, ArcType.NORMAL);
+        Arc<? extends Connectable, ? extends Connectable> arc = new Arc<>(connectables.get(source), connectables.get(target), arcWeights, ArcType.NORMAL);
+        arc.addIntermediatePoints(intermediatePoints);
+        return arc;
     }
 
     public ANormalArc tokens() {
@@ -72,4 +81,16 @@ public class ANormalArc implements DSLCreator<Arc<? extends Connectable, ? exten
     public ANormalArc token() {
         return this;
     }
+
+    public ANormalArc andIntermediatePoint(int x, int y) {
+        intermediatePoints.add(new ArcPoint(new Point2D.Double(x, y), false));
+        return this;
+    }
+
+    public ANormalArc andACurvedIntermediatePoint(int x, int y) {
+        intermediatePoints.add(new ArcPoint(new Point2D.Double(x, y), true));
+        return this;
+    }
 }
+
+

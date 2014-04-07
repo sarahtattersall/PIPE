@@ -6,6 +6,8 @@ import pipe.models.component.token.Token;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,9 +57,9 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     private final ArcType type;
 
     /**
-     * Intermediate path intermediatePoints
+     * Intermediate path arcPoints
      */
-    private final List<ArcPoint> intermediatePoints = new LinkedList<ArcPoint>();
+    private final List<ArcPoint> arcPoints = new LinkedList<>();
 
     public Arc(S source, T target, Map<Token, String> tokenWeights, ArcType type) {
         this.source = source;
@@ -67,6 +69,37 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
         this.id = source.getId() + " TO " + target.getId();
         tagged = false;
+
+
+        final ArcPoint sourcePoint = new ArcPoint(getStartPoint(), false, false);
+        final ArcPoint endPoint = new ArcPoint(getEndPoint(), false, false);
+        arcPoints.add(sourcePoint);
+        arcPoints.add(endPoint);
+
+        source.addPropertyChangeListener(new PropertyChangeListener(){
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String name = evt.getPropertyName();
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
+                    sourcePoint.setPoint(getStartPoint());
+                    endPoint.setPoint(getEndPoint());
+                }
+            }
+        });
+        target.addPropertyChangeListener(new PropertyChangeListener(){
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String name = evt.getPropertyName();
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
+                    sourcePoint.setPoint(getStartPoint());
+                    endPoint.setPoint(getEndPoint());
+                }
+            }
+        });
+
+
     }
 
     public Map<Token, String> getTokenWeights() {
@@ -93,13 +126,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         changeSupport.firePropertyChange(TARGET_CHANGE_MESSAGE, old, target);
     }
 
-    /**
-     * @return The start coordinate of the arc
-     */
-    public Point2D.Double getStartPoint() {
-        double angle = getAngleBetweenTwoPoints(getSecondPoint(), source.getCentre());
-        return source.getArcEdgePoint(angle);
-    }
 
     /**
      * @return true - Arcs are always selectable
@@ -185,43 +211,48 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
     }
 
-    public void addIntermediatePoints(List<ArcPoint> points) {
+    public void addIntermediatePoints(Iterable<ArcPoint> points) {
         for (ArcPoint point : points) {
             addIntermediatePoint(point);
         }
     }
 
     public void addIntermediatePoint(ArcPoint point) {
-
-        intermediatePoints.add(point);
+        int penultimateIndex = arcPoints.size() - 1;
+        arcPoints.add(penultimateIndex, point);
         changeSupport.firePropertyChange(NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE, null, point);
     }
 
-    public List<ArcPoint> getIntermediatePoints() {
-        return intermediatePoints;
+    public List<ArcPoint> getArcPoints() {
+        return arcPoints;
     }
 
     public void removeIntermediatePoint(ArcPoint point) {
-        intermediatePoints.remove(point);
+        arcPoints.remove(point);
         changeSupport.firePropertyChange(DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE, point, null);
     }
 
     public ArcPoint getNextPoint(ArcPoint arcPoint) {
-        if (arcPoint.getPoint().equals(source.getCentre())) {
-            if (intermediatePoints.isEmpty()) {
-                return new ArcPoint(getEndPoint(), false, false);
-            }
-            return intermediatePoints.get(0);
-        }
-        int location = intermediatePoints.indexOf(arcPoint);
-        if (location == intermediatePoints.size() - 1 && !intermediatePoints.isEmpty()) {
-            return new ArcPoint(getEndPoint(), false, false);
-        }
-        if (location == -1 || location + 1 > intermediatePoints.size()) {
-
+        int index = arcPoints.indexOf(arcPoint);
+        if (index == arcPoints.size() - 1 || index < 0) {
             throw new RuntimeException("No next point");
         }
-        return intermediatePoints.get(location + 1);
+
+        return arcPoints.get(index + 1);
+    }
+
+
+    /**
+     * @return The start coordinate of the arc
+     */
+    public Point2D.Double getStartPoint() {
+        double angle;
+        if (arcPoints.size() > 1) {
+            angle = getAngleBetweenTwoPoints(arcPoints.get(1).getPoint(), source.getCentre());
+        } else {
+            angle = getAngleBetweenTwoPoints(target.getCentre(), source.getCentre());
+        }
+        return source.getArcEdgePoint(angle);
     }
 
     /**
@@ -232,7 +263,11 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     }
 
     public double getEndAngle() {
-        return getAngleBetweenTwoPoints(getPenultimatePoint(), target.getCentre());
+        if (arcPoints.size() > 1) {
+            return getAngleBetweenTwoPoints(arcPoints.get(arcPoints.size() - 2).getPoint(), target.getCentre());
+        } else {
+            return getAngleBetweenTwoPoints(source.getCentre(), target.getCentre());
+        }
     }
 
     /**
@@ -251,7 +286,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         result = 31 * result + id.hashCode();
         result = 31 * result + (tagged ? 1 : 0);
         result = 31 * result + tokenWeights.hashCode();
-        result = 31 * result + intermediatePoints.hashCode();
+        result = 31 * result + arcPoints.hashCode();
         return result;
     }
 
@@ -272,7 +307,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         if (!id.equals(arc.id)) {
             return false;
         }
-        if (!intermediatePoints.equals(arc.intermediatePoints)) {
+        if (!arcPoints.equals(arc.arcPoints)) {
             return false;
         }
         if (!source.equals(arc.source)) {
@@ -287,28 +322,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
         //        }
 
         return true;
-    }
-
-    /**
-     *
-     * @return last point before the target
-     */
-    private Point2D getPenultimatePoint() {
-        if (!intermediatePoints.isEmpty()) {
-            return intermediatePoints.get(intermediatePoints.size() - 1).getPoint();
-        }
-        return source.getCentre();
-    }
-
-    /**
-     *
-     * @return next point after the source
-     */
-    private Point2D getSecondPoint() {
-        if (!intermediatePoints.isEmpty()) {
-            return intermediatePoints.get(0).getPoint();
-        }
-        return target.getCentre();
     }
 
 }

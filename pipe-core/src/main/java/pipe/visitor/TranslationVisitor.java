@@ -34,7 +34,7 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
     @Override
     public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
         if (selected.contains(arc.getSource()) && selected.contains(arc.getTarget())) {
-            List<ArcPoint> points = arc.getIntermediatePoints();
+            List<ArcPoint> points = arc.getArcPoints();
             for (ArcPoint arcPoint : points) {
                 Point2D point = arcPoint.getPoint();
                 Point2D newPoint =

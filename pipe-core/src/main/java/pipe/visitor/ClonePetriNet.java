@@ -4,6 +4,7 @@ import pipe.exceptions.InvalidRateException;
 import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.rate.RateType;
@@ -12,6 +13,7 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClonePetriNet {
@@ -67,7 +69,10 @@ public class ClonePetriNet {
         Connectable source = connectables.get(arc.getSource().getId());
         Connectable target = connectables.get(arc.getTarget().getId());
         Arc<? extends Connectable, ? extends Connectable> newArc = new Arc<>(source, target, arc.getTokenWeights(), arc.getType());
-        newArc.addIntermediatePoints(arc.getIntermediatePoints());
+        List<ArcPoint> arcPoints = arc.getArcPoints();
+        for (int i = 1; i < arcPoints.size() -1; i++) {
+            newArc.addIntermediatePoint(arcPoints.get(i));
+        }
         newPetriNet.addArc(newArc);
     }
 
