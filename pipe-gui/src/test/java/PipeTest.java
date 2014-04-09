@@ -152,7 +152,7 @@ public class PipeTest {
 
         menu = applicationView.getJMenuBar().getMenu(3);
         assertEquals("Draw", menu.getText());
-        assertEquals("expecting 17 Edit menu items, including separators", 15, menu.getItemCount());
+        assertEquals("expecting 15 Edit menu items, including separators", 15, menu.getItemCount());
         assertEquals("Select", menu.getItem(0).getText());
         assertNull("separator", menu.getItem(1));
         assertEquals("Place", menu.getItem(2).getText());
@@ -161,13 +161,12 @@ public class PipeTest {
         assertEquals("Arc", menu.getItem(5).getText());
         assertEquals("Inhibitor Arc", menu.getItem(6).getText());
         assertEquals("Annotation", menu.getItem(7).getText());
-        assertNull("separator", menu.getItem(8));
-        assertEquals("Add token", menu.getItem(9).getText());
-        assertEquals("Delete token", menu.getItem(10).getText());
-        assertEquals("SpecifyTokenClasses", menu.getItem(11).getText());
-        assertEquals("unfoldAction", menu.getItem(12).getText());
-        assertNull("separator", menu.getItem(13));
-        assertEquals("Rate Parameter", menu.getItem(14).getText());
+        assertEquals("Rate Parameter", menu.getItem(8).getText());
+        assertEquals("Add token", menu.getItem(10).getText());
+        assertEquals("Delete token", menu.getItem(11).getText());
+        assertEquals("SpecifyTokenClasses", menu.getItem(12).getText());
+        assertEquals("unfoldAction", menu.getItem(13).getText());
+        assertNull("separator", menu.getItem(14));
 
         menu = applicationView.getJMenuBar().getMenu(4);
         assertEquals("Animate", menu.getText());
