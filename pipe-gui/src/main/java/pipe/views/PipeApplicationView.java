@@ -12,10 +12,7 @@ import pipe.actions.gui.window.ExitAction;
 import pipe.actions.gui.zoom.SetZoomAction;
 import pipe.actions.gui.zoom.ZoomInAction;
 import pipe.actions.gui.zoom.ZoomOutAction;
-import pipe.actions.manager.AnimateActionManager;
-import pipe.actions.manager.ComponentCreatorManager;
-import pipe.actions.manager.ComponentEditorManager;
-import pipe.actions.manager.TokenActionManager;
+import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.exceptions.PetriNetComponentNotFoundException;
@@ -60,6 +57,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final AnimateActionManager animateActionManager;
 
+    private final PetriNetEditorManager editorManager;
+
     private final TokenActionManager tokenActionManager;
 
     public ComponentEditorManager getComponentEditorManager() {
@@ -84,7 +83,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private final PipeApplicationModel applicationModel;
 
-    private final GuiAction openAction;
 
     public JComboBox<String> zoomComboBox;
 
@@ -121,14 +119,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private JScrollPane scroller;
 
-    private GuiAction createAction = new NewPetriNetAction(this);
-
-    private GuiAction closeAction = new CloseWindowAction(this);
-
-    private final GuiAction saveAction;
-
-    private final GuiAction saveAsAction;
-
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel,
@@ -139,6 +129,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.tokenActionManager = tokenActionManager;
         ApplicationSettings.register(this);
         this.componentEditorManager = componentManager;
+        this.editorManager = new PetriNetEditorManager(this, applicationController);
 
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
@@ -152,24 +143,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         selectAction = new SelectAction(this, applicationController);
 
-        FileDialog fileDialog = new FileDialog(this, "Save Petri Net", FileDialog.SAVE);
-        fileDialog.setFilenameFilter(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".xml");
-            }
-        });
-        saveAction = new SaveAction(this, applicationController, fileDialog);
-        saveAsAction = new SaveAsAction(this, applicationController, fileDialog);
 
-        FileDialog loadFileDialog = new FileDialog(this, "Open Petri Net", FileDialog.LOAD);
-        fileDialog.setFilenameFilter(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".xml");
-            }
-        });
-        openAction = new OpenAction(applicationController, this, loadFileDialog);
 
         exitAction = new ExitAction(this, applicationController);
 
@@ -262,12 +236,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
-        addMenuItem(fileMenu, createAction);
-        addMenuItem(fileMenu, openAction);
-        addMenuItem(fileMenu, closeAction);
-        fileMenu.addSeparator();
-        addMenuItem(fileMenu, saveAction);
-        addMenuItem(fileMenu, saveAsAction);
+        for (GuiAction action : editorManager.getActions()) {
+            addMenuItem(fileMenu, action);
+        }
 
         fileMenu.addSeparator();
         addMenuItem(fileMenu, importAction);
@@ -487,11 +458,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);// Inhibit toolbar floating
 
-        addButton(toolBar, createAction);
-        addButton(toolBar, openAction);
-        addButton(toolBar, saveAction);
-        addButton(toolBar, saveAsAction);
-        addButton(toolBar, closeAction);
+
+        for (GuiAction action : editorManager.getActions()) {
+            addButton(toolBar, action);
+        }
+
         toolBar.addSeparator();
         addButton(toolBar, printAction);
         toolBar.addSeparator();
@@ -764,17 +735,16 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         if (editMode) {
             componentEditorManager.enableActions();
             componentCreatorManager.enableActions();
-            animateActionManager.disableActions();
             tokenActionManager.enableActions();
+            editorManager.enableActions();
+            animateActionManager.disableActions();
         } else {
             componentEditorManager.disableActions();
             componentCreatorManager.disableActions();
             tokenActionManager.disableActions();
+            editorManager.disableActions();
             animateActionManager.enableActions();
         }
-
-        saveAction.setEnabled(editMode);
-        saveAsAction.setEnabled(editMode);
 
         selectAction.setEnabled(editMode);
     }

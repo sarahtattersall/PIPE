@@ -79,26 +79,24 @@ public class PipeTest {
         assertEquals("expecting 6 top-level menus", 6, applicationView.getJMenuBar().getMenuCount());
         menu = applicationView.getJMenuBar().getMenu(0);
         assertEquals("File", menu.getText());
-        assertEquals("expecting 15 File menu items, including separators", 15, menu.getItemCount());
+        assertEquals("expecting 14 File menu items, including separators", 14, menu.getItemCount());
         assertEquals("New", menu.getItem(0).getText());
         assertEquals("Open", menu.getItem(1).getText());
-        assertEquals("Close", menu.getItem(2).getText());
-        assertNull("separator", menu.getItem(3));
-        assertEquals("Save", menu.getItem(4).getText());
-        assertEquals("Save as", menu.getItem(5).getText());
-        assertNull("separator", menu.getItem(6));
-        assertEquals("Import", menu.getItem(7).getText());
-        assertEquals("Export", menu.getItem(8).getText());
-        subMenu = (JMenu) menu.getMenuComponent(8);
+        assertEquals("Save", menu.getItem(2).getText());
+        assertEquals("Save as", menu.getItem(3).getText());
+        assertEquals("Close", menu.getItem(4).getText());
+        assertNull("separator", menu.getItem(5));
+        assertEquals("Import", menu.getItem(6).getText());
+        assertEquals("Export", menu.getItem(7).getText());
+        subMenu = (JMenu) menu.getMenuComponent(7);
         assertEquals("expecting 3 Export submenu items", 3, subMenu.getItemCount());
         assertEquals("PNG", subMenu.getItem(0).getText());
         assertEquals("PostScript", subMenu.getItem(1).getText());
         assertEquals("eDSPN", subMenu.getItem(2).getText());
-        assertNull("separator", menu.getItem(9));
-        assertEquals("Print", menu.getItem(10).getText());
-        assertNull("separator", menu.getItem(11));
-        assertEquals("Examples", menu.getItem(12).getText());
-        subMenu = (JMenu) menu.getMenuComponent(12);
+        assertEquals("Print", menu.getItem(9).getText());
+        assertNull("separator", menu.getItem(10));
+        assertEquals("Examples", menu.getItem(11).getText());
+        subMenu = (JMenu) menu.getMenuComponent(11);
         assertEquals("expecting 15 examples", 15, subMenu.getItemCount());
         assertEquals("Accident & Emergency Unit (basic model).xml", subMenu.getItem(0).getText());
         assertEquals("Accident & Emergency Unit Coloured.xml", subMenu.getItem(1).getText());
@@ -115,8 +113,7 @@ public class PipeTest {
         assertEquals("gspn1.xml", subMenu.getItem(12).getText());
         assertEquals("gspn2.xml", subMenu.getItem(13).getText());
         assertEquals("gspn3.xml", subMenu.getItem(14).getText());
-        assertNull("separator", menu.getItem(13));
-        assertEquals("Exit", menu.getItem(14).getText());
+        assertEquals("Exit", menu.getItem(13).getText());
 
         menu = applicationView.getJMenuBar().getMenu(1);
         assertEquals("Edit", menu.getText());
@@ -187,7 +184,7 @@ public class PipeTest {
     @Test
     public void verifyExampleNetLoadsAndAnimates() {
         menu = applicationView.getJMenuBar().getMenu(0);
-        subMenu = (JMenu) menu.getMenuComponent(12);
+        subMenu = (JMenu) menu.getMenuComponent(11);
         selectMenuItem(subMenu, 0);
         Container c = applicationView.getContentPane();
         toolbar = (JToolBar) c.getComponent(1);
