@@ -75,14 +75,6 @@ public class SelectionManager extends javax.swing.JComponent
         g2d.draw(selectionRectangle);
     }
 
-    //    public void translateSelection(int transX, int transY) {
-    //        if (transX == 0 && transY == 0) {
-    //            return;
-    //        }
-    //        petriNetController.translateSelected(new Point2D.Double(transX, transY));
-    //        petriNetTab.updatePreferredSize();
-    //    }
-
     @Override
     public void mouseDragged(MouseEvent e) {
         if (isSelecting) {

@@ -12,13 +12,13 @@ public class DragManager {
 
     private PetriNetController petriNetController;
 
-    private Point dragStart = new Point(0, 0);
+    private Point2D.Double dragStart = new Point2D.Double(0, 0);
 
     public DragManager(PetriNetController petriNetController) {
         this.petriNetController = petriNetController;
     }
 
-    public void setDragStart(Point dragStart) {
+    public void setDragStart(Point2D.Double dragStart) {
         this.dragStart = dragStart;
     }
 
@@ -30,7 +30,7 @@ public class DragManager {
     public void drag(Point location) {
         int x = (int) (location.getX() - dragStart.getX());
         int y = (int) (location.getY() - dragStart.getY());
-        dragStart = location;
+        dragStart = new Point2D.Double(location.x, location.y);
         petriNetController.translateSelected(new Point2D.Double(x, y));
     }
 }

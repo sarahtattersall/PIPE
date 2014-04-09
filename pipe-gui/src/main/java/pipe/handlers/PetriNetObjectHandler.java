@@ -62,25 +62,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
         if (applicationModel.isEditionAllowed() && enablePopup) {
             checkForPopup(e);
         }
-
-        if (!SwingUtilities.isLeftMouseButton(e)) {
-            return;
-        }
-
-        if (applicationModel.getMode() == Constants.SELECT) {
-            if (!petriNetController.isSelected(component)) {
-                if (!e.isShiftDown()) {
-                    PipeApplicationController controller = ApplicationSettings.getApplicationController();
-                    SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
-                    selectionManager.clearSelection();
-                }
-                petriNetController.select(component);
-                justSelected = true;
-            }
-            if (!e.isConsumed()) {
-                dragManager.setDragStart(e.getPoint());
-            }
-        }
     }
 
     /**

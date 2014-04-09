@@ -2,6 +2,7 @@ package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.gui.DragManager;
 import pipe.gui.PetriNetTab;
 import pipe.gui.SelectionManager;
 import pipe.models.component.Connectable;
@@ -30,6 +31,13 @@ public class SelectAction extends CreateAction {
 
     @Override
     public <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController) {
+        if (!petriNetController.isSelected(connectable)) {
+            SelectionManager selectionManager = pipeApplicationController.getSelectionManager(pipeApplicationView.getCurrentTab());
+            selectionManager.clearSelection();
+        }
+        petriNetController.select(connectable);
+        DragManager dragManager = petriNetController.getDragManager();
+        dragManager.setDragStart(connectable.getCentre());
 
     }
 
