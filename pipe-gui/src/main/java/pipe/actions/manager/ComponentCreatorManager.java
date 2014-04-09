@@ -26,6 +26,8 @@ public class ComponentCreatorManager implements ActionManager {
 
     public final GuiAction inhibarcAction;
 
+    public final SpecifyRateParameterAction rateParameterAction;
+
 
     public GuiAction annotationAction = new AnnotationAction();
 
@@ -38,11 +40,13 @@ public class ComponentCreatorManager implements ActionManager {
         arcAction = new ArcAction("Arc", "Add an arc (alt-a)", KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK,
                 new NormalArcSourceVisitor(), new NormalCreator(applicationController), applicationController,
                 new NormalHead());
+
+        rateParameterAction = new SpecifyRateParameterAction(applicationController);
     }
 
     @Override
     public Iterable<GuiAction> getActions() {
-        return Arrays.asList(placeAction, transAction, timedtransAction, arcAction, inhibarcAction, annotationAction);
+        return Arrays.asList(placeAction, transAction, timedtransAction, arcAction, inhibarcAction, annotationAction, rateParameterAction);
     }
 
     @Override

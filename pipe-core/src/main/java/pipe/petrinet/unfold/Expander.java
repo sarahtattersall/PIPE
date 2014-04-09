@@ -114,7 +114,7 @@ public class Expander {
      */
     public PetriNet unfold() {
         unfoldTransitions();
-        return createPetriNetView();
+        return createPetriNet();
     }
 
     /**
@@ -224,20 +224,23 @@ public class Expander {
         }
 
         Place place = new Place(original);
-        for (Token token : place.getTokenCounts().keySet()) {
-            place.setTokenCount(token, 0);
+
+        Map<Token, Integer> newTokenCounts = new HashMap<>();
+        if (tokenCount > 0) {
+            newTokenCounts.put(unfoldToken, tokenCount);
         }
+
+        place.setTokenCounts(newTokenCounts);
         place.setName(id);
         place.setId(id);
         place.setX(newX);
         place.setY(newY);
-        place.setTokenCount(unfoldToken, tokenCount);
         newPlaces.put(place.getId(), place);
         return place;
 
     }
 
-    private PetriNet createPetriNetView() {
+    private PetriNet createPetriNet() {
         PetriNet petriNet = new PetriNet();
         petriNet.addToken(unfoldToken);
 

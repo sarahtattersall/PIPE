@@ -8,7 +8,6 @@ import pipe.actions.gui.create.*;
 import pipe.actions.gui.file.*;
 import pipe.actions.gui.grid.GridAction;
 import pipe.actions.gui.tokens.ChooseTokenClassAction;
-import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.actions.gui.window.ExitAction;
 import pipe.actions.gui.zoom.SetZoomAction;
 import pipe.actions.gui.zoom.ZoomInAction;
@@ -74,8 +73,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final GuiAction selectAction;
 
     final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
-
-    private final SpecifyRateParameterAction specifyRateParameterAction;
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -151,7 +148,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         zoomInAction = new ZoomInAction(zoomUI);
         zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
 
-        specifyRateParameterAction = new SpecifyRateParameterAction(applicationController);
         unfoldAction = new UnfoldAction(this, applicationController);
 
         selectAction = new SelectAction(this, applicationController);
@@ -325,7 +321,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         addMenuItem(drawMenu, unfoldAction);
         drawMenu.addSeparator();
-        addMenuItem(drawMenu, specifyRateParameterAction);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
@@ -484,6 +479,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
+    /**
+     * Builds the toolbar that holds actions for editin and creating Petri nets with PIPE
+     */
     private void buildToolbar() {
         // Create the toolbar
         JToolBar toolBar = new JToolBar();
@@ -529,7 +527,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
         addButton(drawingToolBar, unfoldAction);
         drawingToolBar.addSeparator();
-        addButton(drawingToolBar, specifyRateParameterAction);
 
         toolBar.add(drawingToolBar);
 
@@ -593,7 +590,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         tokenClassComboBox.setEditable(true);
         tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
         tokenClassComboBox.setMaximumRowCount(100);
-        tokenClassComboBox.setMaximumSize(new Dimension(125, 100));
+//        tokenClassComboBox.setMaximumSize(new Dimension(125, 100));
         tokenClassComboBox.setEditable(false);
         tokenClassComboBox.setAction(action);
         toolBar.add(tokenClassComboBox);
@@ -637,9 +634,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         PetriNetTab petriNetTab = getCurrentTab();
         petriNetTab.changeAnimationMode(animateMode);
 
-        PetriNetController petriNetController = applicationController.getActivePetriNetController();
         if (animateMode) {
-            enableActions(false, petriNetController.isPasteEnabled());// disables all non-animation buttons
+            enableActions(false);// disables all non-animation buttons
             applicationModel.setEditionAllowed(false);
             statusBar.changeText(statusBar.textforAnimation);
             createAnimationViewPane();
@@ -648,7 +644,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             applicationModel.setEditionAllowed(true);
             statusBar.changeText(statusBar.textforDrawing);
             removeAnimationViewPlane();
-            enableActions(true, petriNetController.isPasteEnabled()); // renables all non-animation buttons
+            enableActions(true); // renables all non-animation buttons
         }
     }
 
@@ -781,7 +777,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         saveAsAction.setEnabled(editMode);
 
         selectAction.setEnabled(editMode);
-        specifyRateParameterAction.setEnabled(editMode);
     }
 
     @Override

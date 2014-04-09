@@ -28,11 +28,19 @@ public class ExitAction extends GuiAction {
     }
 
     public void tryToExit() {
-        tryToExit(!pipeApplicationController.anyNetsChanged());
+        boolean safeToExit = !pipeApplicationController.anyNetsChanged();
+        tryToExit(safeToExit);
     }
 
-    public void tryToExit(boolean shouldExit) {
-        if (shouldExit) {
+    /**
+     * Tries to exit. If it is not safe to immediately exit then a warning comes up
+     * asking the user if they wish to exit. The result is then published and the relevant action
+     * is performed (e.g. exit or cancel).
+     *
+     * @param safeExit boolean determines if it safe to quit immediatly
+     */
+    private void tryToExit(boolean safeExit) {
+        if (safeExit) {
             view.dispose();
             System.exit(0);
         } else {

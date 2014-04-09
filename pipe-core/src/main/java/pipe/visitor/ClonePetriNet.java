@@ -21,6 +21,7 @@ public class ClonePetriNet {
     private final PetriNet newPetriNet;
     private final Map<String, RateParameter> rateParameters = new HashMap<>();
     private final Map<String, Connectable> connectables = new HashMap<>();
+    private final Map<String, Token> newTokens = new HashMap<>();
 
     private ClonePetriNet (PetriNet petriNet) {
         this.petriNet = petriNet;
@@ -73,11 +74,15 @@ public class ClonePetriNet {
         for (int i = 1; i < arcPoints.size() -1; i++) {
             newArc.addIntermediatePoint(arcPoints.get(i));
         }
+        newArc.setId(arc.getId());
         newPetriNet.addArc(newArc);
     }
 
     public void visit(Place place) {
         Place newPlace = new Place(place);
+        for (Map.Entry<Token, Integer> entry : place.getTokenCounts().entrySet()) {
+            newPlace.setTokenCount(newTokens.get(entry.getKey().getId()), entry.getValue());
+        }
         newPetriNet.addPlace(newPlace);
         connectables.put(place.getId(), place);
     }
@@ -94,6 +99,7 @@ public class ClonePetriNet {
 
     public void visit(Token token) {
         Token newToken = new Token(token);
+        newTokens.put(token.getId(), newToken);
         newPetriNet.addToken(newToken);
     }
 
@@ -104,5 +110,6 @@ public class ClonePetriNet {
             newTransition.setRate(rateParameters.get(rateParameter.getId()));
         }
         connectables.put(transition.getId(), transition);
+        newPetriNet.addTransition(transition);
     }
 }

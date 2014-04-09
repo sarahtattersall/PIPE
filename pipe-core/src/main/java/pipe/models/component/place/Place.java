@@ -108,7 +108,7 @@ public class Place extends Connectable {
                 throw new RuntimeException("Count of tokens exceeds capacity!");
             }
         }
-        Map<Token, Integer> old = new HashMap<Token, Integer>(this.tokenCounts);
+        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
         this.tokenCounts = tokenCounts;
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
@@ -235,10 +235,10 @@ public class Place extends Connectable {
         if (Double.compare(place.markingYOffset, markingYOffset) != 0) {
             return false;
         }
-        //TODO:
-        //        if (!tokenCounts.equals(place.tokenCounts)) {
-        //            return false;
-        //        }
+
+        if (!tokenCounts.equals(place.tokenCounts)) {
+            return false;
+        }
 
         return true;
     }

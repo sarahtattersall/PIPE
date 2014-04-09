@@ -3,6 +3,7 @@ package pipe.petrinet.unfold;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
+import pipe.dsl.*;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
@@ -90,27 +91,17 @@ public class ExpanderTest {
 
     @Test
     public void singleTokenPetriNetIsExpandedToItself() {
-        Token token = getDefaultToken();
-        petriNet.addToken(token);
-
-        Place place = new Place("P0", "P0");
-        petriNet.addPlace(place);
-        Transition transition = new Transition("T0", "T0");
-        petriNet.addTransition(transition);
-
-        Map<Token, String> weights = new HashMap<Token, String>();
-        weights.put(token, "2");
-
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
-        petriNet.addArc(arc);
+        petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0")).and(ATransition.withId("T0")).andFinally(
+                ANormalArc.withSource("P0").andTarget("T0").with("2", "Default").tokens());
 
         expander = new Expander(petriNet);
 
-        PetriNet expected = new PetriNet();
-        Place newPlace = new Place("P0_Default", "P0_Default");
-        expected.addPlace(newPlace);
-        expected.add(transition);
-        expected.add(new Arc<Place, Transition>(newPlace, transition, weights, ArcType.NORMAL));
+        PetriNet expected = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0_Default")).and(ATransition.withId("T0")).andFinally(
+                ANormalArc.withSource("P0_Default").andTarget("T0").with("2", "Default").tokens());
+//        Place newPlace = new Place("P0_Default", "P0_Default");
+//        expected.addPlace(newPlace);
+//        expected.add(transition);
+//        expected.add(new Arc<>(newPlace, transition, weights, ArcType.NORMAL));
 
         PetriNet unfolded = expander.unfold();
         checkPetriNetsEqual(expected, unfolded);
@@ -135,11 +126,11 @@ public class ExpanderTest {
         Transition transition = new Transition("T0", "T0");
         petriNet.addTransition(transition);
 
-        Map<Token, String> weights = new HashMap<Token, String>();
+        Map<Token, String> weights = new HashMap<>();
         weights.put(token, "1");
         weights.put(redToken, "2");
 
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+        Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
         petriNet.addArc(arc);
 
         expander = new Expander(petriNet);
@@ -150,7 +141,7 @@ public class ExpanderTest {
         Place newPlace = new Place("P0_Red_Default", "P0_Red_Default");
         expected.addPlace(newPlace);
         expected.add(transition);
-        expected.add(new Arc<Place, Transition>(newPlace, transition, weights, ArcType.NORMAL));
+        expected.add(new Arc<>(newPlace, transition, weights, ArcType.NORMAL));
 
         PetriNet unfolded = expander.unfold();
         checkPetriNetsEqual(expected, unfolded);

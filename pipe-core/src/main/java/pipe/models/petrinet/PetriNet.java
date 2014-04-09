@@ -192,6 +192,7 @@ public class PetriNet {
         if (!CollectionUtils.isEqualCollection(arcs, petriNet.arcs)) {
             return false;
         }
+
         if (!CollectionUtils.isEqualCollection(places, petriNet.places)) {
             return false;
         }
