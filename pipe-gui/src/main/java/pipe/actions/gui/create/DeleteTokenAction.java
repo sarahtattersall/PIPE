@@ -1,5 +1,6 @@
 package pipe.actions.gui.create;
 
+import pipe.controllers.PlaceController;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
@@ -14,11 +15,11 @@ public class DeleteTokenAction extends TokenAction {
     }
 
     @Override
-    protected void performTokenAction(Place place, Token token) {
+    protected void performTokenAction(PlaceController placeController, Token token) {
 
         Map<Token, Integer> tokenCount = new HashMap<>();
-        tokenCount.put(token, place.getTokenCount(token) - 1);
-        setTokenCounts(place, tokenCount);
+        tokenCount.put(token, placeController.getTokenCount(token) - 1);
+        setTokenCounts(placeController, tokenCount);
     }
 
 

@@ -2,11 +2,29 @@ package pipe.historyActions;
 
 import pipe.models.component.transition.Transition;
 
-public class TransitionPriority extends HistoryItem
-{
+import javax.swing.undo.AbstractUndoableEdit;
+
+public class TransitionPriority extends AbstractUndoableEdit {
     private final Transition transition;
+
     private final int oldPriority;
+
     private final int newPriority;
+
+    public TransitionPriority(final Transition transition, final int oldPriority, final int newPriority) {
+
+        this.transition = transition;
+        this.oldPriority = oldPriority;
+        this.newPriority = newPriority;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = transition.hashCode();
+        result = 31 * result + oldPriority;
+        result = 31 * result + newPriority;
+        return result;
+    }
 
     @Override
     public boolean equals(final Object o) {
@@ -33,28 +51,14 @@ public class TransitionPriority extends HistoryItem
     }
 
     @Override
-    public int hashCode() {
-        int result = transition.hashCode();
-        result = 31 * result + oldPriority;
-        result = 31 * result + newPriority;
-        return result;
-    }
-
-    public TransitionPriority(final Transition transition, final int oldPriority,
-                              final int newPriority) {
-
-        this.transition = transition;
-        this.oldPriority = oldPriority;
-        this.newPriority = newPriority;
-    }
-
-    public void undo()
-    {
+    public void undo() {
+        super.undo();
         transition.setPriority(oldPriority);
     }
 
-    public void redo()
-    {
+    @Override
+    public void redo() {
+        super.redo();
         transition.setPriority(newPriority);
     }
 

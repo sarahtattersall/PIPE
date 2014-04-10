@@ -7,6 +7,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.*;
 import pipe.models.component.transition.Transition;
+import pipe.utilities.transformers.Contains;
+
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
 
 import static org.mockito.Mockito.*;
 
@@ -16,21 +20,24 @@ public class TransitionControllerTest {
     @Mock
     Transition transition;
 
+    @Mock
+    UndoableEditListener listener;
+
+
     TransitionController controller;
+
 
     @Before
     public void setUp() {
-        transition = mock(Transition.class);
-
-        controller = new TransitionController(transition);
+        controller = new TransitionController(transition, listener);
     }
 
     @Test
     public void setInfiniteServerCreatesHistoryItem() {
         boolean isInfinite = true;
         controller.setInfiniteServer(isInfinite);
-
-        HistoryItem transitionInfiniteServer = new TransitionInfiniteServer(transition, isInfinite);
+        UndoableEdit transitionInfiniteServer = new TransitionInfiniteServer(transition, isInfinite);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(transitionInfiniteServer)));
     }
 
     @Test
@@ -45,7 +52,8 @@ public class TransitionControllerTest {
         boolean isTimed = true;
         controller.setTimed(isTimed);
 
-        HistoryItem transitionTimed = new TransitionTiming(transition, isTimed);
+        UndoableEdit transitionTimed = new TransitionTiming(transition, isTimed);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(transitionTimed)));
     }
 
     @Test
@@ -62,7 +70,8 @@ public class TransitionControllerTest {
         when(transition.getAngle()).thenReturn(oldAngle);
         controller.setAngle(newAngle);
 
-        HistoryItem angleItem = new TransitionRotation(transition, oldAngle, newAngle);
+        UndoableEdit angleItem = new TransitionRotation(transition, oldAngle, newAngle);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(angleItem)));
     }
 
     @Test
@@ -81,7 +90,8 @@ public class TransitionControllerTest {
         when(transition.getPriority()).thenReturn(oldPriority);
         controller.setPriority(newPriority);
 
-        HistoryItem priorityItem = new TransitionPriority(transition, oldPriority, newPriority);
+        UndoableEdit priorityItem = new TransitionPriority(transition, oldPriority, newPriority);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(priorityItem)));
     }
 
     @Test
@@ -92,5 +102,26 @@ public class TransitionControllerTest {
         controller.setPriority(newPriority);
         verify(transition).setPriority(newPriority);
     }
+
+    @Test
+    public void setNameChangesName() {
+        String newName = "newName";
+        controller.setName(newName);
+        verify(transition).setId(newName);
+        verify(transition).setName(newName);
+    }
+
+
+    @Test
+    public void setNameCreatesUndoItem() {
+        String oldName = "oldName";
+        String newName = "newName";
+        when(transition.getId()).thenReturn(oldName);
+        controller.setName(newName);
+
+        UndoableEdit nameEdit = new PetriNetObjectName(transition, oldName, newName);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
+    }
+
 
 }

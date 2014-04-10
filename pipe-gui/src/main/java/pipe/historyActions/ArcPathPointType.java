@@ -6,28 +6,16 @@ package pipe.historyActions;
 
 import pipe.models.component.arc.ArcPoint;
 
+import javax.swing.undo.AbstractUndoableEdit;
 
-public class ArcPathPointType
-        extends HistoryItem
-{
-   
-   private final ArcPoint arcPoint;
-  
-   
-   public ArcPathPointType(ArcPoint arcPoint) {
-      this.arcPoint = arcPoint;
-   }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+public class ArcPathPointType extends AbstractUndoableEdit {
 
-        final ArcPathPointType that = (ArcPathPointType) o;
+    private final ArcPoint arcPoint;
 
-        if (!arcPoint.equals(that.arcPoint)) return false;
 
-        return true;
+    public ArcPathPointType(ArcPoint arcPoint) {
+        this.arcPoint = arcPoint;
     }
 
     @Override
@@ -36,14 +24,34 @@ public class ArcPathPointType
     }
 
     @Override
-   public void undo() {
-      arcPoint.setCurved(!arcPoint.isCurved());
-   }
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-   
-   /** */
-   @Override
-   public void redo() {
-       arcPoint.setCurved(!arcPoint.isCurved());
-   }
+        final ArcPathPointType that = (ArcPathPointType) o;
+
+        if (!arcPoint.equals(that.arcPoint)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void undo() {
+        super.undo();
+        arcPoint.setCurved(!arcPoint.isCurved());
+    }
+
+
+    /** */
+    @Override
+    public void redo() {
+        super.redo();
+        arcPoint.setCurved(!arcPoint.isCurved());
+    }
 }

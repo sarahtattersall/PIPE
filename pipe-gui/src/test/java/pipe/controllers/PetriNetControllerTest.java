@@ -26,7 +26,7 @@ import pipe.views.PipeApplicationView;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
-import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -55,13 +55,16 @@ public class PetriNetControllerTest {
     @Mock
     private PetriNetTab mocKTab;
 
+    @Mock
+    UndoableEditListener undoListener;
+
     @Before
     public void setUp() {
         net = new PetriNet();
         CopyPasteManager copyPasteManager = mock(CopyPasteManager.class);
         ZoomController zoomController = mock(ZoomController.class);
 
-        controller = new PetriNetController(net, mockAnimator, copyPasteManager, zoomController, mocKTab);
+        controller = new PetriNetController(net, undoListener, mockAnimator, copyPasteManager, zoomController, mocKTab);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.

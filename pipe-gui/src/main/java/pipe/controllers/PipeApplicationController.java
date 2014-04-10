@@ -131,12 +131,11 @@ public class PipeApplicationController {
 
         PetriNetTab petriNetTab = new PetriNetTab(zoomController, animationHistoryView);
 
-        CopyPasteManager copyPasteManager =
-                new CopyPasteManager(new SimpleUndoListener(applicationView.getComponentEditorManager(), this),
-                        petriNetTab, net);
+        SimpleUndoListener undoListener = new SimpleUndoListener(applicationView.getComponentEditorManager(), this);
+        CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, petriNetTab, net);
 
         PetriNetController petriNetController =
-                new PetriNetController(net, animator, copyPasteManager, zoomController, petriNetTab);
+                new PetriNetController(net, undoListener, animator, copyPasteManager, zoomController, petriNetTab);
 
 
         SelectionManager selectionManager = new SelectionManager(petriNetTab, petriNetController);

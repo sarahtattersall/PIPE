@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
@@ -20,6 +21,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,37 +55,19 @@ public class NormalCreatorTest {
     }
 
     @Test
-    public void creatingArcAddsToPetriNet() {
+    public void createsCorrectArc() {
         Place source = new Place("", "");
         Transition transition = new Transition("", "");
         Token token = new Token("Default", true, 0, new Color(0, 0, 0));
         when(mockPetriNetController.getSelectedToken()).thenReturn(token);
-        creator.create(source, transition);
+        Arc<? extends Connectable, ? extends Connectable> actual = creator.create(source, transition);
 
 
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
 
         Arc<Place, Transition> expected = new Arc<Place, Transition>(source, transition, tokens, ArcType.NORMAL);
-        verify(mockNet).addArc(expected);
+        assertEquals(expected, actual);
     }
-
-    @Test
-    public void creatingArcCreatesHistoryItem() {
-        Place source = new Place("", "");
-        Transition transition = new Transition("", "");
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
-        when(mockPetriNetController.getSelectedToken()).thenReturn(token);
-        creator.create(source, transition);
-
-
-        Map<Token, String> tokens = new HashMap<Token, String>();
-        tokens.put(token, "1");
-
-        Arc<Place, Transition> expected = new Arc<Place, Transition>(source, transition, tokens, ArcType.NORMAL);
-        //        HistoryItem item = new AddPetriNetObject(expected, mockNet);
-        //        verify(mockHistoryManager).addNewEdit(item);
-    }
-
 
 }

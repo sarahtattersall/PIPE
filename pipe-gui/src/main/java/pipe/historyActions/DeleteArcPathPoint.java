@@ -4,14 +4,16 @@
 
 package pipe.historyActions;
 
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.Connectable;
+
+import javax.swing.undo.AbstractUndoableEdit;
 
 /**
  * @author Pere Bonet
  */
-public class DeleteArcPathPoint<S extends Connectable, T extends Connectable> extends HistoryItem {
+public class DeleteArcPathPoint<S extends Connectable, T extends Connectable> extends AbstractUndoableEdit {
 
 
     private final Arc<S, T> arc;
@@ -25,11 +27,13 @@ public class DeleteArcPathPoint<S extends Connectable, T extends Connectable> ex
 
     @Override
     public void undo() {
+        super.undo();
         arc.addIntermediatePoint(point);
     }
 
     @Override
     public void redo() {
+        super.redo();
         arc.removeIntermediatePoint(point);
     }
 }

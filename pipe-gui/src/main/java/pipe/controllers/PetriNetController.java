@@ -1,5 +1,6 @@
 package pipe.controllers;
 
+import pipe.actions.manager.SimpleUndoListener;
 import pipe.controllers.interfaces.IController;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
@@ -24,6 +25,7 @@ import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
+import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
@@ -41,17 +43,17 @@ public class PetriNetController implements IController, Serializable {
      */
     private final ZoomController zoomController;
 
-
     /**
      * Responsible for undo/redo
      */
-    //TODO: If this works delete historyManager
     private final UndoManager undoManager = new UndoManager();
 
     /**
      * Petri net being displayed
      */
     private final PetriNet petriNet;
+
+    private final UndoableEditListener undoListener;
 
     private final PetriNetTab petriNetTab;
 
@@ -106,10 +108,10 @@ public class PetriNetController implements IController, Serializable {
         return petriNetTab;
     }
 
-    public PetriNetController(PetriNet model, Animator animator,
-                              CopyPasteManager copyPasteManager, ZoomController zoomController,
-                              PetriNetTab petriNetTab) {
+    public PetriNetController(PetriNet model, UndoableEditListener undoListener, Animator animator,
+                              CopyPasteManager copyPasteManager, ZoomController zoomController, PetriNetTab petriNetTab) {
         petriNet = model;
+        this.undoListener = undoListener;
         this.petriNetTab = petriNetTab;
         lastSavedNet = ClonePetriNet.clone(model);
         this.zoomController = zoomController;
@@ -320,15 +322,15 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
-        return new ArcController<>(arc, this);
+        return new ArcController<>(arc, this, undoListener);
     }
 
     public PlaceController getPlaceController(Place place) {
-        return new PlaceController(place);
+        return new PlaceController(place, undoListener);
     }
 
     public TransitionController getTransitionController(final Transition transition) {
-        return new TransitionController(transition);
+        return new TransitionController(transition, undoListener);
     }
 
     public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {

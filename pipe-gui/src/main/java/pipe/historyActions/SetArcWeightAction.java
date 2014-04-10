@@ -8,10 +8,12 @@ import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
  * @author Alex Charalambous
  */
-public class SetArcWeightAction<S extends Connectable, T extends Connectable> extends HistoryItem {
+public class SetArcWeightAction<S extends Connectable, T extends Connectable> extends AbstractUndoableEdit {
 
     private final Arc<S,T> arc;
     private final Token token;
@@ -28,12 +30,14 @@ public class SetArcWeightAction<S extends Connectable, T extends Connectable> ex
 
     @Override
     public void undo() {
+        super.undo();
         arc.setWeight(token, oldWeight);
     }
 
     /** */
     @Override
     public void redo() {
+        super.redo();
         arc.setWeight(token, newWeight);
     }
 

@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
@@ -19,6 +20,7 @@ import pipe.views.PipeApplicationView;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,35 +48,20 @@ public class InhibitorCreatorTest {
     public void setUp() {
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
         when(mockPetriNetController.getPetriNet()).thenReturn(mockNet);
-        //        when(mockPetriNetController.getHistoryManager()).thenReturn(mockHistoryManager);
         when(mockView.getCurrentTab()).thenReturn(mockTab);
         creator = new InhibitorCreator(mockController);
     }
 
     @Test
-    public void creatingArcAddsToPetriNet() {
+    public void createsCorrectArc() {
         Place source = new Place("", "");
         Transition transition = new Transition("", "");
-        creator.create(source, transition);
+        Arc<? extends Connectable, ? extends Connectable> actual = creator.create(source, transition);
 
+        Map<Token, String> tokens = new HashMap<>();
 
-        Map<Token, String> tokens = new HashMap<Token, String>();
-
-        Arc<Place, Transition> expected = new Arc<Place, Transition>(source, transition, tokens, ArcType.INHIBITOR);
-        verify(mockNet).addArc(expected);
+        Arc<Place, Transition> expected = new Arc<>(source, transition, tokens, ArcType.INHIBITOR);
+        assertEquals(expected, actual);
     }
 
-    @Test
-    public void creatingArcCreatesHistoryItem() {
-        Place source = new Place("", "");
-        Transition transition = new Transition("", "");
-        creator.create(source, transition);
-
-
-        Map<Token, String> tokens = new HashMap<Token, String>();
-
-        Arc<Place, Transition> expected = new Arc<Place, Transition>(source, transition, tokens, ArcType.INHIBITOR);
-        //        HistoryItem item = new AddPetriNetObject(expected, mockNet);
-        //        verify(mockHistoryManager).addNewEdit(item);
-    }
 }

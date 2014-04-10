@@ -7,9 +7,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.historyActions.AddArcPathPoint;
-import pipe.historyActions.ArcPathPointType;
-import pipe.historyActions.SetArcWeightAction;
+import pipe.historyActions.*;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
@@ -17,7 +15,10 @@ import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.UnparsableException;
+import pipe.utilities.transformers.Contains;
 
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -37,10 +38,12 @@ public class ArcControllerTest {
 
     ArcController<Place, Transition> controller;
 
+    @Mock
+    UndoableEditListener listener;
 
     @Before
     public void setUp() {
-        controller = new ArcController<>(mockArc, mockPetriNetController);
+        controller = new ArcController<>(mockArc, mockPetriNetController, listener);
 
         FunctionalResults<Double> results = new FunctionalResults<>(1.0, new HashSet<String>());
         when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(results);
@@ -57,7 +60,9 @@ public class ArcControllerTest {
         controller.setWeight(defaultToken, newWeight);
 
         SetArcWeightAction<Place, Transition> weightAction =
-                new SetArcWeightAction<Place, Transition>(mockArc, defaultToken, oldWeight, newWeight);
+                new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
+
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(weightAction)));
     }
 
     @Test
@@ -84,8 +89,10 @@ public class ArcControllerTest {
         tokenWeights.put(defaultToken, newWeight);
         controller.setWeights(tokenWeights);
 
-        SetArcWeightAction<Place, Transition> weightAction =
-                new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
+        UndoableEdit weightAction = new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
+        UndoableEdit edit = new MultipleEdit(Arrays.asList(weightAction));
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(edit)));
+
     }
 
     @Test
@@ -204,14 +211,17 @@ public class ArcControllerTest {
 
         controller.splitArcPoint(splitPoint);
         ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), true);
-        AddArcPathPoint<Place, Transition> addArcPointAction = new AddArcPathPoint<>(mockArc, expected);
+        UndoableEdit addArcPointAction = new AddArcPathPoint<>(mockArc, expected);
+
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(addArcPointAction)));
     }
 
     @Test
     public void toggleCreatesHistoryItem() {
-        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
+        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), false);
         controller.toggleArcPointType(point);
         ArcPathPointType arcPathPointType = new ArcPathPointType(point);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(arcPathPointType)));
     }
 
     @Test
@@ -223,11 +233,32 @@ public class ArcControllerTest {
         verify(mockArc).addIntermediatePoint(expected);
     }
 
-    //    @Test
-    //    public void addPointCreatesHistoryItem() {
-    //        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
-    //        applicationController.addPoint(point.getPoint());
-    //        AddArcPathPoint addArcPointAction = new AddArcPathPoint(mockArc, point);
-    //        verify(historyManager).addNewEdit(addArcPointAction);
-    //    }
+    @Test
+    public void addPointCreatesHistoryItem() {
+        ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), false);
+        controller.addPoint(point.getPoint());
+        UndoableEdit addArcPointAction = new AddArcPathPoint<>(mockArc, point);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(addArcPointAction)));
+    }
+
+
+    @Test
+    public void setNameChangesName() {
+        String newName = "newName";
+        controller.setName(newName);
+        verify(mockArc).setId(newName);
+        verify(mockArc).setName(newName);
+    }
+
+
+    @Test
+    public void setNameCreatesUndoItem() {
+        String oldName = "oldName";
+        String newName = "newName";
+        when(mockArc.getId()).thenReturn(oldName);
+        controller.setName(newName);
+
+        UndoableEdit nameEdit = new PetriNetObjectName(mockArc, oldName, newName);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
+    }
 }

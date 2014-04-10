@@ -26,10 +26,10 @@ public abstract class TokenAction extends CreateAction {
 
     /**
      * Subclasses should perform their relevant action on the token e.g. add/delete
-     * @param place
+     * @param placeController
      * @param token
      */
-    protected abstract void performTokenAction(Place place, Token token);
+    protected abstract void performTokenAction(PlaceController placeController, Token token);
 
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
@@ -42,7 +42,7 @@ public abstract class TokenAction extends CreateAction {
         if (connectable instanceof Place) {
             Place place = (Place) connectable;
             Token token = petriNetController.getSelectedToken();
-            performTokenAction(place, token);
+            performTokenAction(petriNetController.getPlaceController(place), token);
         }
     }
 
@@ -52,23 +52,10 @@ public abstract class TokenAction extends CreateAction {
      *
      * Creates a new history edit
      *
-     * @param place
+     * @param placeController
      * @param counts
      */
-    protected void setTokenCounts(Place place, Map<Token, Integer> counts) {
-        List<UndoableEdit> undoableEditList = new LinkedList<>();
-        for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
-            Token token = entry.getKey();
-            Integer newTokenCount = entry.getValue();
-            int currentTokenCount = place.getTokenCount(token);
-
-            ChangePlaceTokens markingAction =
-                    new ChangePlaceTokens(place, token, currentTokenCount,
-                            newTokenCount);
-            undoableEditList.add(markingAction);
-            place.setTokenCount(token, newTokenCount);
-        }
-
-        registerUndoEvent(new MultipleEdit(undoableEditList));
+    protected void setTokenCounts(PlaceController placeController, Map<Token, Integer> counts) {
+        placeController.setTokenCounts(counts);
     }
 }

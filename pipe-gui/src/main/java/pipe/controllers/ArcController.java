@@ -8,8 +8,11 @@ import pipe.models.component.token.Token;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.UnparsableException;
 
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
 import java.awt.geom.Point2D;
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class ArcController<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponentController<Arc<S, T>>
@@ -23,9 +26,8 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     //      does not know anything about the petri net in which it resides
     private final PetriNetController petriNetController;
 
-    ArcController(Arc<S, T> arc, PetriNetController petriNetController) {
-
-        super(arc);
+    ArcController(Arc<S, T> arc, PetriNetController petriNetController, UndoableEditListener listener) {
+        super(arc, listener);
         this.arc = arc;
         this.petriNetController = petriNetController;
     }
@@ -37,8 +39,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      */
     public void setWeight(Token token, String expr) throws UnparsableException {
         throwExceptionIfWeightNotValid(expr);
-//        historyManager.newEdit();
-        updateWeightForArc(token, expr);
+        registerUndoableEdit(updateWeightForArc(token, expr));
     }
 
     /**
@@ -78,23 +79,23 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      * Creates a historyItem for updating weight and applies it
      * @param token token to associate the expression with
      * @param expr new weight expression for the arc
+     * @return the UndoableEdit associated with this action
      */
-    private void updateWeightForArc(Token token,
+    private UndoableEdit updateWeightForArc(Token token,
                                     String expr) {
         String oldWeight = arc.getWeightForToken(token);
         arc.setWeight(token, expr);
 
-        SetArcWeightAction<S,T> weightAction = new SetArcWeightAction<>(arc, token, oldWeight, expr);
-//        historyManager.addEdit(weightAction);
+        return new SetArcWeightAction<>(arc, token, oldWeight, expr);
     }
 
     public void setWeights(Map<Token, String> newWeights) throws UnparsableException {
         throwExceptionIfWeightsNotValid(newWeights);
-
-//        historyManager.newEdit();
+        List<UndoableEdit> edits = new LinkedList<>();
         for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
-            updateWeightForArc(entry.getKey(), entry.getValue());
+            edits.add(updateWeightForArc(entry.getKey(), entry.getValue()));
         }
+        registerUndoableEdit(new MultipleEdit(edits));
     }
 
     public String getWeightForToken(Token token) {
@@ -106,9 +107,8 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     }
 
     public void toggleArcPointType(ArcPoint arcPoint) {
-        HistoryItem historyItem = new ArcPathPointType(arcPoint);
-        historyItem.redo();
-//        historyManager.addNewEdit(historyItem);
+        arcPoint.setCurved(!arcPoint.isCurved());
+        registerUndoableEdit(new ArcPathPointType(arcPoint));
     }
 
     public void splitArcPoint(ArcPoint arcPoint) {
@@ -119,21 +119,19 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
         Point2D point = new Point2D.Double(x,y);
         ArcPoint newPoint = new ArcPoint(point, arcPoint.isCurved());
-        HistoryItem historyItem = new AddArcPathPoint<>(arc, newPoint);
-        historyItem.redo();
-//        historyManager.addNewEdit(historyItem);
+        arc.addIntermediatePoint(newPoint);
+        UndoableEdit splitEdit = new AddArcPathPoint<>(arc, newPoint);
+        registerUndoableEdit(splitEdit);
     }
 
     public void addPoint(Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
-        HistoryItem historyItem = new AddArcPathPoint<>(arc, newPoint);
-        historyItem.redo();
-//        historyManager.addNewEdit(historyItem);
+        arc.addIntermediatePoint(newPoint);
+        registerUndoableEdit(new AddArcPathPoint<>(arc, newPoint));
     }
 
-    public void deletePoint(ArcPoint component) {
-        HistoryItem historyItem = new DeleteArcPathPoint<>(arc, component);
-        historyItem.redo();
-//        historyManager.addNewEdit(historyItem);
+    public void deletePoint(ArcPoint point) {
+        arc.removeIntermediatePoint(point);
+        registerUndoableEdit(new DeleteArcPathPoint<>(arc, point));
     }
 }

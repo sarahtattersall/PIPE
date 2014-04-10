@@ -17,6 +17,8 @@ import pipe.utilities.transformers.Contains;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -45,7 +47,7 @@ public class DeleteTokenActionTest {
         action = new DeleteTokenAction();
         action.addUndoableEditListener(listener);
         when(mockPetriNetController.getPlaceController(place)).thenReturn(mockPlaceController);
-        when(place.getTokenCount(mockToken)).thenReturn(1);
+        when(mockPlaceController.getTokenCount(mockToken)).thenReturn(1);
     }
 
     @Test
@@ -53,16 +55,10 @@ public class DeleteTokenActionTest {
         when(mockPetriNetController.getSelectedToken()).thenReturn(mockToken);
 
         action.doConnectableAction(place, mockPetriNetController);
-        verify(place).setTokenCount(mockToken, 0);
+
+        Map<Token, Integer> counts = new HashMap<>();
+        counts.put(mockToken, 0);
+        verify(mockPlaceController).setTokenCounts(counts);
     }
 
-    @Test
-    public void createsUndo() {
-        when(mockPetriNetController.getSelectedToken()).thenReturn(mockToken);
-        action.doConnectableAction(place, mockPetriNetController);
-
-        UndoableEdit edit = new ChangePlaceTokens(place, mockToken, 1, 0);
-        MultipleEdit multipleEdit = new MultipleEdit(Arrays.asList(edit));
-        verify(listener).undoableEditHappened(argThat(Contains.thisAction(multipleEdit)));
-    }
 }

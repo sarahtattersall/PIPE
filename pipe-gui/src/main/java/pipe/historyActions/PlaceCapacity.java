@@ -6,16 +6,17 @@ package pipe.historyActions;
 
 import pipe.models.component.place.Place;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
- *
  * @author corveau
  */
-public class PlaceCapacity
-        extends HistoryItem
-{
+public class PlaceCapacity extends AbstractUndoableEdit {
 
     private final int newCapacity;
+
     private final int oldCapacity;
+
     private final Place place;
 
     @Override
@@ -63,14 +64,18 @@ public class PlaceCapacity
 
 
     /** */
-   public void undo() {
-      place.setCapacity(oldCapacity);
-   }
-   
+    @Override
+    public void undo() {
+        super.undo();
+        place.setCapacity(oldCapacity);
+    }
 
-   /** */
-   public void redo() {
-      place.setCapacity(newCapacity);
-   }
-   
+
+    /** */
+    @Override
+    public void redo() {
+        super.redo();
+        place.setCapacity(newCapacity);
+    }
+
 }

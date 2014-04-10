@@ -17,10 +17,10 @@ public class AddTokenAction extends TokenAction {
     }
 
     @Override
-    protected void performTokenAction(Place place, Token token) {
+    protected void performTokenAction(PlaceController placeController, Token token) {
         Map<Token, Integer> tokenCount = new HashMap<>();
-        tokenCount.put(token, place.getTokenCount(token) + 1);
-        setTokenCounts(place, tokenCount);
+        tokenCount.put(token, placeController.getTokenCount(token) + 1);
+        setTokenCounts(placeController, tokenCount);
     }
 
 }

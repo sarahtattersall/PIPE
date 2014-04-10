@@ -5,14 +5,15 @@ package pipe.historyActions;
 
 import pipe.models.component.transition.Transition;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
  * Controls if a transition is an infinite server
  */
-public class TransitionInfiniteServer
-        extends HistoryItem
-{
+public class TransitionInfiniteServer extends AbstractUndoableEdit {
 
     private final Transition transition;
+
     private final boolean value;
 
     @Override
@@ -29,8 +30,7 @@ public class TransitionInfiniteServer
         if (value != that.value) {
             return false;
         }
-        if (transition != null ? !transition.equals(that.transition) :
-                that.transition != null) {
+        if (transition != null ? !transition.equals(that.transition) : that.transition != null) {
             return false;
         }
 
@@ -44,22 +44,25 @@ public class TransitionInfiniteServer
         return result;
     }
 
-    public TransitionInfiniteServer(final Transition transition,
-                                    final boolean value) {
+    public TransitionInfiniteServer(final Transition transition, final boolean value) {
 
         this.transition = transition;
         this.value = value;
     }
 
     /** */
-   public void undo() {
-      transition.setInfiniteServer(!value);
-   }
+    @Override
+    public void undo() {
+        super.undo();
+        transition.setInfiniteServer(!value);
+    }
 
-   
-   /** */
-   public void redo() {
-       transition.setInfiniteServer(value);
-   }
-   
+
+    /** */
+    @Override
+    public void redo() {
+        super.redo();
+        transition.setInfiniteServer(value);
+    }
+
 }

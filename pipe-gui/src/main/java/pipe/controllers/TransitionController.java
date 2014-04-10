@@ -4,17 +4,18 @@ import pipe.historyActions.*;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.Rate;
-import pipe.models.component.rate.RateParameter;
 import pipe.models.component.transition.Transition;
 
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
 import java.util.Collection;
 import java.util.LinkedList;
 
 public class TransitionController extends AbstractPetriNetComponentController<Transition>
 {
 
-    protected TransitionController(Transition component) {
-        super(component);
+    protected TransitionController(Transition component, UndoableEditListener listener) {
+        super(component, listener);
     }
 
     public boolean isTimed() {
@@ -53,28 +54,28 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
 
     public void setInfiniteServer(boolean infiniteValue) {
         component.setInfiniteServer(infiniteValue);
-        TransitionInfiniteServer infiniteAction = new TransitionInfiniteServer(component, infiniteValue);
-//        historyManager.addNewEdit(infiniteAction);
+        UndoableEdit infiniteAction = new TransitionInfiniteServer(component, infiniteValue);
+        registerUndoableEdit(infiniteAction);
     }
 
     public void setTimed(boolean timedValue) {
         component.setTimed(timedValue);
         TransitionTiming timedAction = new TransitionTiming(component, timedValue);
-//        historyManager.addNewEdit(timedAction);
+        registerUndoableEdit(timedAction);
     }
 
     public void setPriority(int priorityValue) {
         int oldPriority = component.getPriority();
         component.setPriority(priorityValue);
         TransitionPriority priorityAction = new TransitionPriority(component, oldPriority, priorityValue);
-//        historyManager.addNewEdit(priorityAction);
+        registerUndoableEdit(priorityAction);
     }
 
     public void setAngle(int angle) {
         int oldAngle = component.getAngle();
         component.setAngle(angle);
         TransitionRotation angleAction = new TransitionRotation(component, oldAngle, angle);
-//        historyManager.addNewEdit(angleAction);
+        registerUndoableEdit(angleAction);
     }
 
     public Rate getRate() {
