@@ -55,11 +55,9 @@ public class ArcControllerTest {
 
         String newWeight = "51";
         controller.setWeight(defaultToken, newWeight);
-        verify(historyManager).newEdit();
 
         SetArcWeightAction<Place, Transition> weightAction =
                 new SetArcWeightAction<Place, Transition>(mockArc, defaultToken, oldWeight, newWeight);
-        verify(historyManager).addEdit(weightAction);
     }
 
     @Test
@@ -85,11 +83,9 @@ public class ArcControllerTest {
         String newWeight = "51";
         tokenWeights.put(defaultToken, newWeight);
         controller.setWeights(tokenWeights);
-        verify(historyManager).newEdit();
 
         SetArcWeightAction<Place, Transition> weightAction =
                 new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
-        verify(historyManager).addEdit(weightAction);
     }
 
     @Test
@@ -209,7 +205,6 @@ public class ArcControllerTest {
         controller.splitArcPoint(splitPoint);
         ArcPoint expected = new ArcPoint(new Point2D.Double(5, 5), true);
         AddArcPathPoint<Place, Transition> addArcPointAction = new AddArcPathPoint<>(mockArc, expected);
-        verify(historyManager).addNewEdit(addArcPointAction);
     }
 
     @Test
@@ -217,7 +212,6 @@ public class ArcControllerTest {
         ArcPoint point = new ArcPoint(new Point2D.Double(0, 0), true);
         controller.toggleArcPointType(point);
         ArcPathPointType arcPathPointType = new ArcPathPointType(point);
-        verify(historyManager).addNewEdit(arcPathPointType);
     }
 
     @Test
