@@ -526,6 +526,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private void okButtonHandler() {
         if (canSetName() && canSetInfiniteServer() && canSetRate() && canSetAngle() && (canSetTimed()
                 || canSetPriority())) {
+            transitionController.startMultipleEdits();
             setNameIfChanged();
             setInfiniteServerIfChanged();
             setRateIfChanged();
@@ -536,6 +537,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             if (canSetPriority()) {
                 setPriorityIfChanged();
             }
+            transitionController.finishMultipleEdits();
             exit();
         }
     }

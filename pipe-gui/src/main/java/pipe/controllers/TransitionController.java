@@ -80,7 +80,8 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
     }
 
     public void setRate(Rate rate) {
+        Rate oldRate = component.getRate();
         component.setRate(rate);
-        registerUndoableEdit(new SetRateParameter(component, component.getRate(), rate));
+        registerUndoableEdit(new SetRateParameter(component, oldRate, rate));
     }
 }

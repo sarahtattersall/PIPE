@@ -2,33 +2,50 @@ package pipe.gui.widgets;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.token.Token;
-import pipe.views.ArcView;
-import pipe.views.PetriNetView;
-import pipe.views.TransitionView;
+import pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author pere
  */
 public class PlaceEditorPanel extends javax.swing.JPanel {
     private final PetriNetController netController;
+
     private final PlaceController placeController;
+
     private final JRootPane rootPane;
 
+    private final ChangeListener changeListener = new javax.swing.event.ChangeListener() {
+        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+            JSpinner spinner = (JSpinner) evt.getSource();
+            JSpinner.NumberEditor numberEditor = ((JSpinner.NumberEditor) spinner.getEditor());
+            numberEditor.getTextField().setBackground(new Color(255, 255, 255));
+            spinner.removeChangeListener(this);
+        }
+    };
+
     private javax.swing.JLabel capacity0Label = new javax.swing.JLabel();
+
     private javax.swing.JSpinner capacitySpinner = new javax.swing.JSpinner();
+
     private javax.swing.JTextField nameTextField = new javax.swing.JTextField();
+
     private javax.swing.JButton okButton = new javax.swing.JButton();
-    private List<JSpinner> inputtedMarkings = new LinkedList<JSpinner>();
-    private List<String> inputtedTokenClassNames = new LinkedList<String>();
+
+    private List<JSpinner> inputtedMarkings = new LinkedList<>();
+
+    private List<String> inputtedTokenClassNames = new LinkedList<>();
+
 
     /**
      * Creates new form PlaceEditor
@@ -44,7 +61,6 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-
     private void initComponents() {
         setLayout(new java.awt.GridBagLayout());
         JPanel placeEditorPanel = createPlaceEditorPanel();
@@ -53,8 +69,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         int col = 0;
         int row = 2;
 
-        PetriNet net = ApplicationSettings.getApplicationController()
-                .getActivePetriNetController().getPetriNet();
+        PetriNet net = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
         for (Token token : net.getTokens()) {
             if (token.isEnabled()) {
                 JLabel tokenClassName = new JLabel();
@@ -63,36 +78,27 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
 
                 tokenClassName.setText(token.getId() + ": ");
                 inputtedTokenClassNames.add(token.getId());
-                GridBagConstraints tokenNameConstraints =
-                        new java.awt.GridBagConstraints();
+                GridBagConstraints tokenNameConstraints = new java.awt.GridBagConstraints();
                 tokenNameConstraints.gridx = 0;
                 tokenNameConstraints.gridy = row;
                 tokenNameConstraints.anchor = java.awt.GridBagConstraints.EAST;
                 tokenNameConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
                 placeEditorPanel.add(tokenClassName, tokenNameConstraints);
 
-                tokenClassMarking
-                        .setValue(placeController.getTokenCount(token));
-                tokenClassMarking
-                        .setMinimumSize(new java.awt.Dimension(50, 20));
-                tokenClassMarking
-                        .setPreferredSize(new java.awt.Dimension(50, 20));
-                tokenClassMarking.addChangeListener(
-                        new javax.swing.event.ChangeListener() {
-                            public void stateChanged(
-                                    javax.swing.event.ChangeEvent evt) {
-                                markingSpinnerStateChanged(evt,
-                                        inputtedMarkings.size() - 1);
-                            }
-                        });
+                tokenClassMarking.setValue(placeController.getTokenCount(token));
+                tokenClassMarking.setMinimumSize(new java.awt.Dimension(50, 20));
+                tokenClassMarking.setPreferredSize(new java.awt.Dimension(50, 20));
+                tokenClassMarking.addChangeListener(new javax.swing.event.ChangeListener() {
+                    public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                        markingSpinnerStateChanged(evt, inputtedMarkings.size() - 1);
+                    }
+                });
 
-                GridBagConstraints tokenValueConstraints =
-                        new java.awt.GridBagConstraints();
+                GridBagConstraints tokenValueConstraints = new java.awt.GridBagConstraints();
                 tokenValueConstraints.gridx = col + 1;
                 tokenValueConstraints.gridy = row;
                 tokenValueConstraints.gridwidth = 3;
-                tokenValueConstraints.fill =
-                        java.awt.GridBagConstraints.HORIZONTAL;
+                tokenValueConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 tokenValueConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
                 placeEditorPanel.add(tokenClassMarking, tokenValueConstraints);
                 row++;
@@ -127,8 +133,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     private void setCapacityVisible(double capacity) {
         if (capacity == 0) {
             capacity0Label.setVisible(true);
-        }
-        else {
+        } else {
             capacity0Label.setVisible(false);
         }
 
@@ -151,9 +156,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     }
 
     private void initializeCapacitySpinner(JPanel placeEditorPanel, int row) {
-        capacitySpinner.setModel(
-                new SpinnerNumberModel(placeController.getCapacity(), 0,
-                        Integer.MAX_VALUE, 1));
+        capacitySpinner.setModel(new SpinnerNumberModel(placeController.getCapacity(), 0, Integer.MAX_VALUE, 1));
         capacitySpinner.setMinimumSize(new Dimension(50, 20));
         capacitySpinner.setPreferredSize(new Dimension(50, 20));
         capacitySpinner.addChangeListener(new ChangeListener() {
@@ -175,8 +178,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         JPanel placeEditorPanel = new JPanel();
         placeEditorPanel.setLayout(new GridBagLayout());
 
-        placeEditorPanel
-                .setBorder(BorderFactory.createTitledBorder("Place Editor"));
+        placeEditorPanel.setBorder(BorderFactory.createTitledBorder("Place Editor"));
 
         JLabel nameLabel = new JLabel();
         nameLabel.setText("NameDetails:");
@@ -246,8 +248,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
             }
         });
 
-        GridBagConstraints gridBagConstraints =
-                new java.awt.GridBagConstraints();
+        GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.RELATIVE;
@@ -272,18 +273,6 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
       }*/
     }//GEN-LAST:event_markingSpinnerStateChanged
 
-    private final ChangeListener changeListener =
-            new javax.swing.event.ChangeListener() {
-                public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                    JSpinner spinner = (JSpinner) evt.getSource();
-                    JSpinner.NumberEditor numberEditor =
-                            ((JSpinner.NumberEditor) spinner.getEditor());
-                    numberEditor.getTextField()
-                            .setBackground(new Color(255, 255, 255));
-                    spinner.removeChangeListener(this);
-                }
-            };
-
     private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             doOK();
@@ -292,37 +281,21 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
 
     private void doOK() {
 
-        if (!setCapacity()) {
-            return;
-        }
+        Map<Token, Integer> newTokenValues = getNewTokenValues();
+        if (canSetCapacity() && canSetNameValue() && !newTokenValues.isEmpty()) {
 
-        boolean successfullySet = setTokenValues();
-        if (!successfullySet) {
-            return;
+            placeController.startMultipleEdits();
+            int newCapacity = (Integer) capacitySpinner.getValue();
+            placeController.setCapacity(newCapacity);
+            String newName = nameTextField.getText();
+            placeController.setName(newName);
+            placeController.setTokenCounts(newTokenValues);
+            placeController.finishMultipleEdits();
+            exit();
         }
-
-        boolean successfulName = setNameValue();
-        if (!successfulName) {
-            return;
-        }
-        exit();
     }
 
-    private boolean setCapacity() {
-        Integer newCapacity;
-
-        try {
-            newCapacity = (Integer) capacitySpinner.getValue();
-        } catch (Exception e) {
-            JSpinner.NumberEditor numberEditor =
-                    ((JSpinner.NumberEditor) capacitySpinner.getEditor());
-            numberEditor.getTextField().setBackground(Color.RED);
-            capacitySpinner.addChangeListener(changeListener);
-            capacitySpinner.requestFocusInWindow();
-            return false;
-        }
-
-        placeController.setCapacity(newCapacity);
+    private boolean canSetCapacity() {
         return true;
     }
 
@@ -333,18 +306,15 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     /**
      * @return return false if could not set name
      */
-    private boolean setNameValue() {
+    private boolean canSetNameValue() {
         String newName = nameTextField.getText();
-        if (!newName.equals(placeController.getName())) {
-            if (netController.isUniqueName(newName)) {
-                placeController.setName(newName);
-            }
-            else {
-                JOptionPane.showMessageDialog(null,
-                        "There is already a component named " + newName, "Error",
-                        JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
+        if (newName.equals(placeController.getName())) {
+            return true;
+        }
+        if (!netController.isUniqueName(newName)) {
+            JOptionPane.showMessageDialog(null, "There is already a component named " + newName, "Error",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
         }
         return true;
     }
@@ -352,28 +322,26 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     /**
      * Sets the token values on the place
      *
-     * @return true if it was able to set token values, false if not.
+     * @return new token counts, empty if could not change
      */
-    private boolean setTokenValues() {
+    private  Map<Token, Integer> getNewTokenValues() {
+        Map<Token, Integer> newTokenCounts = new HashMap<>();
         int totalCount = calculateTokenCount();
-        if (placeController.hasCapacityRestriction() &&
-                totalCount > getCapacitySpinnerValue()) {
+        if (placeController.hasCapacityRestriction() && totalCount > getCapacitySpinnerValue()) {
             JOptionPane.showMessageDialog(null,
                     "Token counts exceed the capacity of place. Please alter capacity or tokens");
-            return false;
+            return newTokenCounts;
         }
 
-        Map<Token, Integer> newTokenCounts = new HashMap<Token, Integer>();
-        for (int tokenIndex = 0; tokenIndex < inputtedMarkings.size();
-             tokenIndex++) {
+        for (int tokenIndex = 0; tokenIndex < inputtedMarkings.size(); tokenIndex++) {
             String tokenName = inputtedTokenClassNames.get(tokenIndex);
             int newTokenCount = (Integer) inputtedMarkings.get(tokenIndex).getValue();
 
             try {
                 if (newTokenCount < 0) {
-                    JOptionPane.showMessageDialog(null,
-                            "Marking cannot be less than 0. Please re-enter");
-                    return false;
+                    JOptionPane.showMessageDialog(null, "Marking cannot be less than 0. Please re-enter");
+                    newTokenCounts.clear();
+                    return newTokenCounts;
                 }
 
                 Token token = netController.getToken(tokenName);
@@ -382,21 +350,20 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                 }
 
             } catch (NumberFormatException ignored) {
-                JOptionPane.showMessageDialog(null,
-                        "Please enter a positive integer greater or equal to 0.",
+                JOptionPane.showMessageDialog(null, "Please enter a positive integer greater or equal to 0.",
                         "Invalid entry", JOptionPane.ERROR_MESSAGE);
-                return false;
-            } catch (Exception exc) {
-                exc.printStackTrace();
-                JOptionPane.showMessageDialog(null,
-                        "Please enter a positive integer greater or equal to 0.",
+                newTokenCounts.clear();
+                return newTokenCounts;
+            } catch (HeadlessException | PetriNetComponentNotFoundException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Please enter a positive integer greater or equal to 0.",
                         "Invalid entry", JOptionPane.ERROR_MESSAGE);
-                return false;
+                newTokenCounts.clear();
+                return newTokenCounts;
             }
         }
 
-        placeController.setTokenCounts(newTokenCounts);
-        return true;
+        return newTokenCounts;
     }
 
     /**
@@ -423,8 +390,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         exit();
     }
 
-    private void capacitySpinnerStateChanged(
-            javax.swing.event.ChangeEvent evt) {
+    private void capacitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {
         Double capacity = (Double) capacitySpinner.getValue();
         setCapacityVisible(capacity);
     }

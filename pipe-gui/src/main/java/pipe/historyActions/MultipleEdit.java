@@ -3,16 +3,17 @@ package pipe.historyActions;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoableEdit;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 public class MultipleEdit extends AbstractUndoableEdit {
 
-    private final List<UndoableEdit> multipleEdits;
+    private final Collection<UndoableEdit> multipleEdits = new LinkedList<>();
 
 
-    public MultipleEdit(List<UndoableEdit> multipleEdits) {
-        this.multipleEdits = multipleEdits;
+    public MultipleEdit(Collection<UndoableEdit> multipleEdits) {
+        this.multipleEdits.addAll(multipleEdits);
     }
 
     @Override
