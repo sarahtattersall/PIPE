@@ -354,49 +354,6 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void creatingRateParameterMakesHistoryItem() throws InvalidRateException {
-        controller.createNewRateParameter("rate", "5.0");
-        //        verify(mockHistoryManager).addNewEdit(any(AddPetriNetObject.class));
-    }
-
-    @Test
-    public void editingRateExpressionMakesHistoryItem()
-            throws PetriNetComponentNotFoundException, InvalidRateException {
-        net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
-
-        controller.updateRateParameter("rate", "rate", "6.0");
-        //        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterRate.class));
-    }
-
-    @Test
-    public void editingRateParameterIdMakesHistoryItem()
-            throws PetriNetComponentNotFoundException, InvalidRateException {
-        net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
-
-        controller.updateRateParameter("rate", "newRate", "5.0");
-        //        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterId.class));
-    }
-
-    @Test
-    public void editingRateParameterIdAndValueMakesHistoryItems()
-            throws PetriNetComponentNotFoundException, InvalidRateException {
-        net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
-
-        controller.updateRateParameter("rate", "newRate", "6.0");
-        //        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterId.class));
-        //        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterRate.class));
-    }
-
-
-    @Test
-    public void editingRateParameterThrowsErrorIfRateDoesNotExist() throws PetriNetComponentNotFoundException {
-        expectedEx.expect(PetriNetComponentNotFoundException.class);
-        expectedEx.expectMessage("No rate parameter rate exists in Petri net");
-        controller.updateRateParameter("rate", "newRate", "newExpression");
-    }
-
-
-    @Test
     public void createNewToken() {
         String name = "testToken";
         boolean enabled = true;

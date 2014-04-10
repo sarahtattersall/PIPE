@@ -1,27 +1,19 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.historyActions.DeletePetriNetObject;
-import pipe.historyActions.MovePetriNetObject;
-import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.models.component.annotation.Annotation;
-import pipe.models.component.annotation.AnnotationVisitor;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcPointVisitor;
-import pipe.models.component.arc.ArcVisitor;
 import pipe.models.component.place.Place;
-import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.models.component.transition.TransitionVisitor;
 import pipe.models.petrinet.PetriNet;
 import pipe.naming.PlaceNamer;
 import pipe.naming.TransitionNamer;
@@ -31,7 +23,6 @@ import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
-import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
@@ -168,6 +159,7 @@ public class PetriNetController implements IController, Serializable {
 
     /**
      * Translates any components that are selected using a {@link pipe.visitor.TranslationVisitor}
+     *
      * @param translation translation distance
      */
     public void translateSelected(Point translation) {
@@ -239,9 +231,6 @@ public class PetriNetController implements IController, Serializable {
             }
             index++;
         }
-
-        //        Point2D end = arc.getEndPoint();
-        //        path.lineTo(end.getX(), end.getY());
         return path;
     }
 
@@ -391,10 +380,6 @@ public class PetriNetController implements IController, Serializable {
         copyPasteManager.showPasteRectangle();
     }
 
-    public boolean isPasteEnabled() {
-        return copyPasteManager.pasteEnabled();
-    }
-
     public DragManager getDragManager() {
         return dragManager;
     }
@@ -403,52 +388,9 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getRateParameters();
     }
 
-    public void createNewRateParameter(String id, String expression) throws InvalidRateException {
-        RateParameter rateParameter = new RateParameter(expression, id, id);
-        //        HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
-        //        historyManager.addNewEdit(historyItem);
-        petriNet.addRateParameter(rateParameter);
-    }
-
-    /**
-     * Updates the rate parameter according to the id and expression
-     * If they are the same as the old values it will not update them
-     *
-     * @param oldId         registered id for the RateParameter in the petri net
-     * @param newId         new id to change the name to
-     * @param newExpression new Expression to change to
-     */
-    public void updateRateParameter(String oldId, String newId, String newExpression)
-            throws PetriNetComponentNotFoundException {
-        RateParameter rateParameter = petriNet.getRateParameter(oldId);
-
-        if (!oldId.equals(newId)) {
-            changeRateParameterId(rateParameter, oldId, newId);
-        }
-        if (!rateParameter.getExpression().equals(newExpression)) {
-            changeRateParameterRate(rateParameter, rateParameter.getExpression(), newExpression);
-        }
-    }
-
-    private void changeRateParameterId(RateParameter rateParameter, String oldId, String newId) {
-        //        HistoryItem historyItem = new ChangeRateParameterId(rateParameter, oldId, newId);
-        //        historyManager.addNewEdit(historyItem);
-
-        rateParameter.setId(newId);
-        rateParameter.setName(newId);
-    }
-
-    private void changeRateParameterRate(RateParameter rateParameter, String oldRate, String newRate) {
-
-        //        HistoryItem historyItem = new RateParameterValue(rateParameter, oldRate, newRate);
-        //        historyManager.addNewEdit(historyItem);
-        //        rateParameter.setExpression(newRate);
-    }
-
     public boolean isUniqueName(String newName) {
         return placeNamer.isUniqueName(newName) && transitionNamer.isUniqueName(newName);
     }
-
 
     public boolean hasChanged() {
         return !petriNet.equals(lastSavedNet);

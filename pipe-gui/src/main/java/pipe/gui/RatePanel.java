@@ -203,32 +203,6 @@ public class RatePanel extends JPanel {
             return modifiedData;
         }
 
-
-        /**
-         * @return changes to be applied to the actual model based on the Datum available in the table
-         */
-        private void updateFromTable() {
-            for (int row = 0; row < getRowCount(); row++) {
-                Datum modified = modifiedData.get(row);
-                if (isExistingRateParameter(modified)) {
-                    Datum initial = modified.initial;
-                    if (!modified.equals(initial) && modified.hasBeenSet()) {
-                        try {
-                            petriNetController.updateRateParameter(initial.id, modified.id, modified.expression);
-                        } catch (PetriNetComponentNotFoundException e) {
-                            GuiUtils.displayErrorMessage(null, e.getMessage());
-                        }
-                    }
-                } else if (modified.hasBeenSet()) {
-                    try {
-                        petriNetController.createNewRateParameter(modified.id, modified.expression);
-                    } catch (InvalidRateException e) {
-                        GuiUtils.displayErrorMessage(null, e.getMessage());
-                    }
-                }
-            }
-        }
-
         public void deleteRow(int row) {
             deletedData.add(modifiedData.get(row));
             modifiedData.remove(row);
