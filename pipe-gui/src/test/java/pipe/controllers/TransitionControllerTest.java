@@ -6,6 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.*;
+import pipe.models.component.rate.NormalRate;
+import pipe.models.component.rate.Rate;
+import pipe.models.component.rate.RateParameter;
 import pipe.models.component.transition.Transition;
 import pipe.utilities.transformers.Contains;
 
@@ -121,6 +124,43 @@ public class TransitionControllerTest {
 
         UndoableEdit nameEdit = new PetriNetObjectName(transition, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
+    }
+
+    @Test
+    public void setRateChangesNormalRate() {
+        Rate rate = new NormalRate("2");
+        controller.setRate(rate);
+        verify(transition).setRate(rate);
+    }
+
+
+    @Test
+    public void setRateCreatesRateUndoItemForNormalRate() {
+        Rate oldRate = new NormalRate("1");
+        when(transition.getRate()).thenReturn(oldRate);
+        Rate rate = new NormalRate("2");
+        controller.setRate(rate);
+        UndoableEdit rateEdit = new SetRateParameter(transition, oldRate, rate);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(rateEdit)));
+    }
+
+
+    @Test
+    public void setRateCreatesRateUndoItemForRateParameter() {
+        Rate oldRate = new NormalRate("1");
+        when(transition.getRate()).thenReturn(oldRate);
+        Rate rate = new RateParameter("2", "foo", "foo");
+        controller.setRate(rate);
+        UndoableEdit rateEdit = new SetRateParameter(transition, oldRate, rate);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(rateEdit)));
+    }
+
+
+    @Test
+    public void setRateChangesRateParameter() {
+        Rate rate = new RateParameter("2", "foo", "foo");
+        controller.setRate(rate);
+        verify(transition).setRate(rate);
     }
 
 

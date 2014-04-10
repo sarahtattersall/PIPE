@@ -60,22 +60,19 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
 
     public void setTimed(boolean timedValue) {
         component.setTimed(timedValue);
-        TransitionTiming timedAction = new TransitionTiming(component, timedValue);
-        registerUndoableEdit(timedAction);
+        registerUndoableEdit(new TransitionTiming(component, timedValue));
     }
 
     public void setPriority(int priorityValue) {
         int oldPriority = component.getPriority();
         component.setPriority(priorityValue);
-        TransitionPriority priorityAction = new TransitionPriority(component, oldPriority, priorityValue);
-        registerUndoableEdit(priorityAction);
+        registerUndoableEdit(new TransitionPriority(component, oldPriority, priorityValue));
     }
 
     public void setAngle(int angle) {
         int oldAngle = component.getAngle();
         component.setAngle(angle);
-        TransitionRotation angleAction = new TransitionRotation(component, oldAngle, angle);
-        registerUndoableEdit(angleAction);
+        registerUndoableEdit(new TransitionRotation(component, oldAngle, angle));
     }
 
     public Rate getRate() {
@@ -83,8 +80,7 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
     }
 
     public void setRate(Rate rate) {
-        SetRateParameter rateAction = new SetRateParameter(component, component.getRate(), rate);
         component.setRate(rate);
-//        historyManager.addNewEdit(rateAction);
+        registerUndoableEdit(new SetRateParameter(component, component.getRate(), rate));
     }
 }

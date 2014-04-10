@@ -7,11 +7,13 @@ package pipe.historyActions;
 import pipe.models.component.rate.Rate;
 import pipe.models.component.transition.Transition;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 
 /**
- * @author corveau
+ * Changes the rate parameter for a transition accordingly
  */
-public class SetRateParameter extends HistoryItem {
+public class SetRateParameter extends AbstractUndoableEdit {
 
     /**
      * Transition to change rate of
@@ -34,16 +36,47 @@ public class SetRateParameter extends HistoryItem {
         this.newRate = newRate;
     }
 
-    /** */
     @Override
     public void undo() {
+        super.undo();
         transition.setRate(oldRate);
     }
 
-    /** */
     @Override
     public void redo() {
+        super.redo();
         transition.setRate(newRate);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SetRateParameter)) {
+            return false;
+        }
+
+        SetRateParameter that = (SetRateParameter) o;
+
+        if (!newRate.equals(that.newRate)) {
+            return false;
+        }
+        if (!oldRate.equals(that.oldRate)) {
+            return false;
+        }
+        if (!transition.equals(that.transition)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = transition.hashCode();
+        result = 31 * result + oldRate.hashCode();
+        result = 31 * result + newRate.hashCode();
+        return result;
+    }
 }
