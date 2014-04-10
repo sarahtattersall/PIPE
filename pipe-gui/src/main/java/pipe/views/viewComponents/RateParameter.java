@@ -1,12 +1,10 @@
 package pipe.views.viewComponents;
 
 import pipe.gui.ApplicationSettings;
-import pipe.gui.Grid;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.ParameterPanel;
 import pipe.historyActions.HistoryItem;
 import pipe.historyActions.HistoryManager;
-import pipe.historyActions.RateParameterValue;
 import pipe.views.PetriNetView;
 import pipe.views.TransitionView;
 

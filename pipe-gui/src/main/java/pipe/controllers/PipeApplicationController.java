@@ -1,5 +1,6 @@
 package pipe.controllers;
 
+import pipe.actions.manager.SimpleUndoListener;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
@@ -131,7 +132,9 @@ public class PipeApplicationController {
 
         PetriNetTab petriNetTab = new PetriNetTab(zoomController, animationHistoryView);
 
-        CopyPasteManager copyPasteManager = new CopyPasteManager(petriNetTab, net);
+        CopyPasteManager copyPasteManager =
+                new CopyPasteManager(new SimpleUndoListener(applicationView.getComponentEditorManager(), this),
+                        petriNetTab, net);
 
         PetriNetController petriNetController =
                 new PetriNetController(net, new HistoryManager(applicationView.getComponentEditorManager()), animator,

@@ -2,10 +2,12 @@ package pipe.historyActions;
 
 import pipe.models.component.rate.RateParameter;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
  * Responsible for undo/redoing the change to the rateParameter id
  */
-public class RateParameterId extends HistoryItem {
+public class ChangeRateParameterId extends AbstractUndoableEdit {
     /**
      * Rate parameter whos id must change
      */
@@ -21,7 +23,7 @@ public class RateParameterId extends HistoryItem {
      */
     private final String newId;
 
-    public RateParameterId(RateParameter rateParameter, String oldId, String newId) {
+    public ChangeRateParameterId(RateParameter rateParameter, String oldId, String newId) {
         this.rateParameter = rateParameter;
         this.oldId = oldId;
         this.newId = newId;
@@ -29,12 +31,14 @@ public class RateParameterId extends HistoryItem {
 
     @Override
     public void undo() {
+        super.undo();
         rateParameter.setId(oldId);
         rateParameter.setName(oldId);
     }
 
     @Override
     public void redo() {
+        super.redo();
         rateParameter.setName(newId);
         rateParameter.setId(newId);
 

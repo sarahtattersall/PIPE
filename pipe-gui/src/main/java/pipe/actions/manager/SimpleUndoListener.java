@@ -6,6 +6,12 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 
+/**
+ * Simple undo listener that will register events with the active Petri nets undo manager
+ *
+ * It is mainly for use with {@link pipe.actions.gui.GuiAction} classes so that they can
+ * register undo events when performing their actions
+ */
 public class SimpleUndoListener implements UndoableEditListener {
 
     private ComponentEditorManager componentEditorManager;

@@ -5,6 +5,7 @@ import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.edit.*;
 import pipe.controllers.PipeApplicationController;
 
+import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,6 +64,13 @@ public class ComponentEditorManager implements ActionManager {
         deleteAction = new DeleteAction(controller);
         undoAction = new UndoAction(controller, this);
         redoAction = new RedoAction(controller, this);
+
+        UndoableEditListener listener = new SimpleUndoListener(this, controller);
+        deleteAction.addUndoableEditListener(listener);
+        copyAction.addUndoableEditListener(listener);
+        cutAction.addUndoableEditListener(listener);
+        pasteAction.addUndoableEditListener(listener);
+
         storeEnabledStatus();
     }
 

@@ -43,15 +43,23 @@ public class RatePanel extends JPanel {
         add(deleteButton);
     }
 
-    public void setChanges() {
-        model.setChanges();
+    public List<RateModel.Datum> getTableData() {
+        return model.getTableData();
     }
 
     public boolean isDataValid() {
         return model.isValid();
     }
 
-    private class RateModel extends AbstractTableModel {
+    public boolean isExistingRateParameter(RateModel.Datum datum) {
+        return model.isExistingRateParameter(datum);
+    }
+
+    public Iterable<RateModel.Datum> getDeletedData() {
+        return model.deletedData;
+    }
+
+    public class RateModel extends AbstractTableModel {
 
         /**
          * Names of columsn to appear in order
@@ -188,37 +196,16 @@ public class RatePanel extends JPanel {
          * @return true if the row being edited is an existing rate parameter in the Petri net
          */
         private boolean isExistingRateParameter(Datum datum) {
-//            Collection<RateParameter> rateParameters = petriNetController.getRateParameters();
-//            return row < rateParameters.size();
             return datum.initial != null;
         }
 
-        /**
-         * Applies the changes to the actual model
-         */
-        public void setChanges() {
-            updateFromTable();
-            removeDeletedData();
+        public List<Datum> getTableData() {
+            return modifiedData;
         }
 
-        /**
-         * Removes any data deleted from the table if it was in the Petri net
-         * when table loaded
-         */
-        private void removeDeletedData() {
-            for (Datum datum : deletedData) {
-                if (isExistingRateParameter(datum)) {
-                    try {
-                        petriNetController.deleteRateParameter(datum.initial.id);
-                    } catch (PetriNetComponentNotFoundException e) {
-                        showWarning(e.getMessage());
-                    }
-                }
-            }
-        }
 
         /**
-         * Applies changes to the actual model based on the Datum avaiable in the table
+         * @return changes to be applied to the actual model based on the Datum available in the table
          */
         private void updateFromTable() {
             for (int row = 0; row < getRowCount(); row++) {
@@ -251,7 +238,7 @@ public class RatePanel extends JPanel {
         /**
          * Holds rate parameter information in the table
          */
-        private class Datum {
+        public class Datum {
             public String id;
 
             public String expression;

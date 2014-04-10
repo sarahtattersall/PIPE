@@ -26,12 +26,15 @@ import pipe.views.PipeApplicationView;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
-import java.awt.*;
+import javax.swing.undo.AbstractUndoableEdit;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -103,17 +106,15 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void deletingSelectionAddsToHistoryManager() {
+    public void deletingSelectionReturnsListOfAbstractUndoEdits() {
         Place place = new Place("", "");
         net.addPlace(place);
 
         controller.select(place);
-        controller.deleteSelection();
-
+        List<AbstractUndoableEdit> edits = controller.deleteSelection();
         DeletePetriNetObject deleteAction = new DeletePetriNetObject(place, net);
-
-        verify(mockHistoryManager).newEdit();
-        verify(mockHistoryManager).addEdit(deleteAction);
+        assertEquals(1, edits.size());
+        assertTrue(edits.contains(deleteAction));
     }
 
     @Test
@@ -131,12 +132,10 @@ public class PetriNetControllerTest {
         Place place = new Place("", "");
         net.addPlace(place);
 
-        controller.delete(place);
+        AbstractUndoableEdit edit = controller.delete(place);
 
         DeletePetriNetObject deleteAction = new DeletePetriNetObject(place, net);
-
-        verify(mockHistoryManager).newEdit();
-        verify(mockHistoryManager).addEdit(deleteAction);
+        assertEquals(edit, deleteAction);
     }
 
     @Test
@@ -259,7 +258,7 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         when(token.isEnabled()).thenReturn(enabled);
 
-        Color color = new Color(255, 0, 0);
+        Color color = Color.RED;
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
@@ -365,7 +364,7 @@ public class PetriNetControllerTest {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "rate", "6.0");
-        verify(mockHistoryManager).addNewEdit(any(RateParameterValue.class));
+//        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterRate.class));
     }
 
     @Test
@@ -374,7 +373,7 @@ public class PetriNetControllerTest {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "newRate", "5.0");
-        verify(mockHistoryManager).addNewEdit(any(RateParameterId.class));
+//        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterId.class));
     }
 
     @Test
@@ -383,8 +382,8 @@ public class PetriNetControllerTest {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "newRate", "6.0");
-        verify(mockHistoryManager, times(2)).addNewEdit(any(RateParameterId.class));
-        verify(mockHistoryManager, times(2)).addNewEdit(any(RateParameterValue.class));
+//        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterId.class));
+//        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterRate.class));
     }
 
 

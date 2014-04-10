@@ -22,12 +22,10 @@ import java.util.Random;
 public class TokenPanel extends JPanel {
     private final TableModel model;
 
-    private JTable table;
-
 
     public TokenPanel(PetriNetController petriNetController) {
         model = new TableModel(petriNetController);
-        table = new JTable(model);
+        JTable table = new JTable(model);
 
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.setFillsViewportHeight(true);

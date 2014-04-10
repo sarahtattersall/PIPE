@@ -24,15 +24,14 @@ import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
+import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoManager;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PetriNetController implements IController, Serializable {
 
@@ -260,34 +259,35 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Deletes selection and adds to history manager
      */
-    public void deleteSelection() {
-        historyManager.newEdit();
-
+    public List<AbstractUndoableEdit> deleteSelection() {
+        List<AbstractUndoableEdit> edits = new LinkedList<>();
         for (PetriNetComponent component : selectedComponents) {
-            deleteComponent(component);
+            edits.add(deleteComponent(component));
         }
         selectedComponents.clear();
+        return edits;
     }
 
     /**
-     * Deletes a component adding it to the history managers current edit
+     * Deletes a component and returns the AbstractUndoableEdit in order
+     * to redo the action
      *
      * @param component
+     * @return AbstractUndoableEdit created for deleting the component
      */
-    private void deleteComponent(PetriNetComponent component) {
+    private AbstractUndoableEdit deleteComponent(PetriNetComponent component) {
         petriNet.remove(component);
-        DeletePetriNetObject deleteAction = new DeletePetriNetObject(component, petriNet);
-        historyManager.addEdit(deleteAction);
+        return new DeletePetriNetObject(component, petriNet);
     }
 
     /**
      * Deletes single component, starts a newEdit for history manager
      *
      * @param component to delete
+     * @return AbstractUndableEdit created
      */
-    public void delete(PetriNetComponent component) {
-        historyManager.newEdit();
-        deleteComponent(component);
+    public AbstractUndoableEdit delete(PetriNetComponent component) {
+        return deleteComponent(component);
     }
 
     /**
@@ -426,29 +426,24 @@ public class PetriNetController implements IController, Serializable {
     }
 
     private void changeRateParameterId(RateParameter rateParameter, String oldId, String newId) {
-        HistoryItem historyItem = new RateParameterId(rateParameter, oldId, newId);
-        historyManager.addNewEdit(historyItem);
+//        HistoryItem historyItem = new ChangeRateParameterId(rateParameter, oldId, newId);
+//        historyManager.addNewEdit(historyItem);
+
         rateParameter.setId(newId);
         rateParameter.setName(newId);
     }
 
     private void changeRateParameterRate(RateParameter rateParameter, String oldRate, String newRate) {
 
-        HistoryItem historyItem = new RateParameterValue(rateParameter, oldRate, newRate);
-        historyManager.addNewEdit(historyItem);
-        rateParameter.setExpression(newRate);
+//        HistoryItem historyItem = new RateParameterValue(rateParameter, oldRate, newRate);
+//        historyManager.addNewEdit(historyItem);
+//        rateParameter.setExpression(newRate);
     }
 
     public boolean isUniqueName(String newName) {
         return placeNamer.isUniqueName(newName) && transitionNamer.isUniqueName(newName);
     }
 
-    public void deleteRateParameter(String name) throws PetriNetComponentNotFoundException {
-        RateParameter rateParameter = petriNet.getRateParameter(name);
-        HistoryItem historyItem = new DeletePetriNetObject(rateParameter, petriNet);
-        historyManager.addNewEdit(historyItem);
-        petriNet.removeRateParameter(rateParameter);
-    }
 
     public boolean hasChanged() {
         return !petriNet.equals(lastSavedNet);

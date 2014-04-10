@@ -1,8 +1,7 @@
 package pipe.gui;
 
-import pipe.controllers.PetriNetController;
 import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
+import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
@@ -22,12 +21,16 @@ import pipe.views.PipeApplicationView;
 import pipe.visitor.PasteVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.AbstractUndoableEdit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -67,6 +70,8 @@ public class CopyPasteManager extends javax.swing.JComponent
      */
     private final Point rectangleOrigin = new Point();
 
+    private final UndoableEditListener listener;
+
     /**
      * pasteInProgres is true when pasteRectangle is visible (user is doing a
      * paste but still hasn't chosen the position where elements will be pasted).
@@ -83,13 +88,14 @@ public class CopyPasteManager extends javax.swing.JComponent
     private Collection<PetriNetComponent> pasteComponents = new ArrayList<>();
 
 
-    public CopyPasteManager(PetriNetTab petriNetTab, PetriNet net) {
+    public CopyPasteManager(UndoableEditListener listener, PetriNetTab petriNetTab, PetriNet net) {
         this.petriNetTab = petriNetTab;
         petriNet = net;
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
         zoom = petriNetTab.getZoom();
+        this.listener = listener;
 
     }
 
@@ -246,7 +252,7 @@ public class CopyPasteManager extends javax.swing.JComponent
         petriNetTab.updatePreferredSize();
         petriNetTab.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
         repaint();
-        if(pasteInProgress) {
+        if (pasteInProgress) {
             paste(petriNetTab);
         }
     }
@@ -289,18 +295,17 @@ public class CopyPasteManager extends javax.swing.JComponent
      * @param createdComponents new components that have been created
      */
     private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
-        PetriNetController controller = ApplicationSettings.getApplicationController().getActivePetriNetController();
-        HistoryManager historyManager = controller.getHistoryManager();
-        historyManager.newEdit();
-
+        List<AbstractUndoableEdit> undoableEditList = new LinkedList<>();
         for (PetriNetComponent component : createdComponents) {
             AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
-//            historyManager.addEdit(addAction);
+            undoableEditList.add(addAction);
         }
+
+        listener.undoableEditHappened(new UndoableEditEvent(this, new MultipleEdit(undoableEditList)));
     }
 
     private Collection<Connectable> getConnectablesToPaste() {
-        final Collection<Connectable> connectables = new LinkedList<Connectable>();
+        final Collection<Connectable> connectables = new LinkedList<>();
         PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
             @Override
             public void visit(Place place) {

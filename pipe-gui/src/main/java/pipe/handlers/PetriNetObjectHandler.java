@@ -1,6 +1,6 @@
 package pipe.handlers;
 
-import pipe.actions.petrinet.DeletePetriNetObjectAction;
+import pipe.actions.gui.DeletePetriNetComponentAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
@@ -86,7 +86,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
      */
     protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem = new JMenuItem(new DeletePetriNetObjectAction(component));
+        JMenuItem menuItem = new JMenuItem(new DeletePetriNetComponentAction(component));
         menuItem.setText("Delete");
         popup.add(menuItem);
         return popup;

@@ -7,11 +7,13 @@ package pipe.historyActions;
 
 import pipe.models.component.rate.RateParameter;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
  * HistoryItem responsible for undo/redoing a rate parameters
  * expression
  */
-public class RateParameterValue extends HistoryItem {
+public class ChangeRateParameterRate extends AbstractUndoableEdit {
 
     /**
      * Rate parameter whose expression has changed
@@ -28,7 +30,7 @@ public class RateParameterValue extends HistoryItem {
      */
     private final String newExpression;
 
-    public RateParameterValue(RateParameter rateParameter, String previousExpression, String newExpression) {
+    public ChangeRateParameterRate(RateParameter rateParameter, String previousExpression, String newExpression) {
         this.rateParameter = rateParameter;
         this.previousExpression = previousExpression;
         this.newExpression = newExpression;
@@ -36,12 +38,14 @@ public class RateParameterValue extends HistoryItem {
 
     @Override
     public void undo() {
+        super.undo();
         rateParameter.setExpression(previousExpression);
     }
 
     /** */
     @Override
     public void redo() {
+        super.redo();
         rateParameter.setExpression(newExpression);
     }
 

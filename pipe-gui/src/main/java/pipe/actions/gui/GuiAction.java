@@ -6,7 +6,9 @@ package pipe.actions.gui;
 import pipe.gui.ApplicationSettings;
 
 import javax.swing.*;
+import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.AbstractUndoableEdit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -25,6 +27,19 @@ import java.net.URL;
 public abstract class GuiAction
         extends AbstractAction
 {
+
+    protected UndoableEditListener listener;
+
+
+    // Set the UndoableEditListener.
+    public void addUndoableEditListener(UndoableEditListener l) {
+        listener = l; //TODO: Should ideally throw an exception if listener != null
+    }
+
+    // Remove the UndoableEditListener.
+    public void removeUndoableEditListener(UndoableEditListener l) {
+        listener = null;
+    }
 
     /**
      *
@@ -103,6 +118,13 @@ public abstract class GuiAction
         {
             putValue("selected", null);
             putValue("selected", Boolean.valueOf(selected));
+        }
+    }
+
+    protected void registerUndoEvent(AbstractUndoableEdit edit) {
+        if (listener != null) {
+            listener.undoableEditHappened(new UndoableEditEvent(this,
+                    edit));
         }
     }
 

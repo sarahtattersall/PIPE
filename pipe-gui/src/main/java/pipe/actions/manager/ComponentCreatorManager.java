@@ -51,6 +51,7 @@ public class ComponentCreatorManager implements ActionManager {
         arcAction.addUndoableEditListener(undoListener);
         inhibarcAction.addUndoableEditListener(undoListener);
         annotationAction.addUndoableEditListener(undoListener);
+        rateParameterAction.addUndoableEditListener(undoListener);
     }
 
     @Override

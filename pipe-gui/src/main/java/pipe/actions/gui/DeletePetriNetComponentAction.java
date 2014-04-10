@@ -3,23 +3,25 @@
  * Author is Michael Camacho
  *
  */
-package pipe.actions.petrinet;
+package pipe.actions.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
+import pipe.historyActions.MultipleEdit;
 import pipe.models.component.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 
-public class DeletePetriNetObjectAction extends AbstractAction {
+public class DeletePetriNetComponentAction extends GuiAction {
 
     private final PetriNetComponent component;
 
 
-    public DeletePetriNetObjectAction(PetriNetComponent component) {
+    public DeletePetriNetComponentAction(PetriNetComponent component) {
+        super("Delete Petri net component", "Delete this component");
         this.component = component;
     }
 
@@ -32,7 +34,7 @@ public class DeletePetriNetObjectAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();
-        petriNetController.delete(component);
+        registerUndoEvent(petriNetController.delete(component));
     }
 
 }

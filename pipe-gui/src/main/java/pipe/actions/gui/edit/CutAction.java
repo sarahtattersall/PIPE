@@ -3,6 +3,7 @@ package pipe.actions.gui.edit;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.historyActions.MultipleEdit;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,6 @@ public class CutAction extends GuiAction {
     public void actionPerformed(final ActionEvent actionEvent) {
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         petriNetController.copySelection();
-        petriNetController.deleteSelection();
+        registerUndoEvent(new MultipleEdit(petriNetController.deleteSelection()));
     }
 }
