@@ -330,6 +330,10 @@ public class PetriNetController implements IController, Serializable {
         return new PlaceController(place, undoListener);
     }
 
+    public AnnotationController getAnnotationController(Annotation annotation) {
+       return new AnnotationController(annotation, undoListener);
+    }
+
     public TransitionController getTransitionController(final Transition transition) {
         return new TransitionController(transition, undoListener);
     }

@@ -1,5 +1,6 @@
 package pipe.gui.widgets;
 
+import pipe.controllers.AnnotationController;
 import pipe.models.component.annotation.Annotation;
 
 import javax.swing.*;
@@ -7,19 +8,19 @@ import javax.swing.*;
 /**
  * Annotation panel used to change text of the annotation
  */
-public class AnnotationPanel extends javax.swing.JPanel {
+public class AnnotationEditorPanel extends javax.swing.JPanel {
 
-    private final Annotation annotation;
+    private final AnnotationController annotationController;
 
     private javax.swing.JTextArea textArea;
 
     /**
      * Creates new form ParameterPanel
      */
-    public AnnotationPanel(Annotation annotation) {
-        this.annotation = annotation;
+    public AnnotationEditorPanel(AnnotationController annotationController) {
+        this.annotationController = annotationController;
         initComponents();
-        textArea.setText(annotation.getText());
+        textArea.setText(annotationController.getText());
     }
 
     /**
@@ -96,7 +97,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
     }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        annotation.setText(textArea.getText());
+        annotationController.setText(textArea.getText());
         //TODO: USE ANNOTATION CONTROLLER INSTEAD AND AFF HISTORY ITEM
         exit();
     }

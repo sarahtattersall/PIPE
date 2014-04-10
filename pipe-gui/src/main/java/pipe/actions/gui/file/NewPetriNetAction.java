@@ -23,7 +23,7 @@ public class NewPetriNetAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PipeApplicationView view = (PipeApplicationView) SwingUtilities.getRoot((Component) e.getSource());
+        PipeApplicationView view = ApplicationSettings.getApplicationView();
         applicationController.createEmptyPetriNet(view);
     }
 }

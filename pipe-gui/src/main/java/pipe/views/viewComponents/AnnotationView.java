@@ -8,7 +8,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.widgets.AnnotationPanel;
+import pipe.gui.widgets.AnnotationEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.models.component.annotation.Annotation;
@@ -63,7 +63,7 @@ public class AnnotationView extends Note {
         // Build interface
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
 
-        guiDialog.add(new AnnotationPanel(model));
+        guiDialog.add(new AnnotationEditorPanel(petriNetController.getAnnotationController(model)));
 
         // Make window fit contents' preferred size
         guiDialog.pack();
