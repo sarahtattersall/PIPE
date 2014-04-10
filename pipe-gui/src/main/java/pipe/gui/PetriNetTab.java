@@ -220,14 +220,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
             public void propertyChange(PropertyChangeEvent evt) {
                 String name = evt.getPropertyName();
                 if (name.equals(Connectable.X_CHANGE_MESSAGE)) {
-                    double x = (double) evt.getNewValue();
+                    int x = (int) evt.getNewValue();
                     if (x > getWidth()) {
                         updatePreferredSize();
                     }
 
                 }
                 if (name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-                    double y = (double) evt.getNewValue();
+                    int y = (int) evt.getNewValue();
                     if (y > getHeight()) {
                         updatePreferredSize();
                     }

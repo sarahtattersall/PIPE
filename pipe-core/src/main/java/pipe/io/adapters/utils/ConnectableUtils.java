@@ -61,7 +61,7 @@ public final class ConnectableUtils {
      * @param adaptedConnectable
      */
     public static void setConnectablePosition(Connectable connectable, AdaptedConnectable adaptedConnectable) {
-        connectable.setX(adaptedConnectable.getGraphics().point.getX());
-        connectable.setY(adaptedConnectable.getGraphics().point.getY());
+        connectable.setX((int)adaptedConnectable.getGraphics().point.getX());
+        connectable.setY((int)adaptedConnectable.getGraphics().point.getY());
     }
 }

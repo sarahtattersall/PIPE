@@ -1,6 +1,7 @@
 package pipe.models.component.arc;
 
 import pipe.models.component.AbstractPetriNetComponent;
+import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
@@ -8,7 +9,7 @@ import java.awt.geom.Point2D;
 /**
  * Represents a point on the arc
  */
-public class ArcPoint extends AbstractPetriNetComponent {
+public class ArcPoint extends PlaceablePetriNetComponent {
 
     /**
      * Message fired when the curved attribute changes
@@ -20,9 +21,9 @@ public class ArcPoint extends AbstractPetriNetComponent {
      */
     public static final String UPDATE_LOCATION_CHANGE_MESSAGE = "updateLocation";
 
-    private double x;
+    private int x;
 
-    private double y;
+    private int y;
 
     /**
      * If curved is true it implies this point is a bezier curve
@@ -72,17 +73,38 @@ public class ArcPoint extends AbstractPetriNetComponent {
 
     public void setPoint(Point2D point) {
         Point2D old = new Point2D.Double(this.x, this.y);
-        this.x = point.getX();
-        this.y = point.getY();
+        this.x = (int) point.getX();
+        this.y = (int) point.getY();
         changeSupport.firePropertyChange(UPDATE_LOCATION_CHANGE_MESSAGE, old, point);
     }
 
-    public double getX() {
+    @Override
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
         return y;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
     }
 
     @Override

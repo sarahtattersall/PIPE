@@ -39,8 +39,8 @@ public abstract class TransitionAction extends CreateAction {
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
         String id = getNetTransitionName(petriNetController);
         Transition transition = new Transition(id, id);
-        transition.setX((double) point.x);
-        transition.setY((double) point.y);
+        transition.setX(point.x);
+        transition.setY(point.y);
         transition.setTimed(isTimed());
 
         PetriNet petriNet = petriNetController.getPetriNet();

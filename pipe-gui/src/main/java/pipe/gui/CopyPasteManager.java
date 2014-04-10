@@ -273,8 +273,8 @@ public class CopyPasteManager extends javax.swing.JComponent
             return;
         }
 
-        double despX = pasteRectangle.getX() - rectangleOrigin.getX();
-        double despY = pasteRectangle.getY() - rectangleOrigin.getY();
+        int despX = pasteRectangle.x - rectangleOrigin.x;
+        int despY = pasteRectangle.y - rectangleOrigin.y;
 
         MultipleNamer multipleNamer = new PetriNetComponentNamer(petriNet);
         PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);

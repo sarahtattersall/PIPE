@@ -16,10 +16,10 @@ public class TransitionTest {
         // No rotation
         transition.setAngle(0);
 
-        double sourceX = 0;
-        double sourceY = 50;
-        double targetX = 0;
-        double targetY = 0;
+        int sourceX = 0;
+        int sourceY = 50;
+        int targetX = 0;
+        int targetY = 0;
         double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
         transition.setX(targetX);
@@ -38,10 +38,10 @@ public class TransitionTest {
         // No rotation
         transition.setAngle(0);
 
-        double sourceX = 0;
-        double sourceY = 0;
-        double targetX = 50;
-        double targetY = 0;
+        int sourceX = 0;
+        int sourceY = 0;
+        int targetX = 50;
+        int targetY = 0;
         double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
         transition.setX(targetX);
@@ -59,10 +59,10 @@ public class TransitionTest {
         // No rotation
         transition.setAngle(0);
 
-        double sourceX = 50;
-        double sourceY = 0;
-        double targetX = 0;
-        double targetY = 0;
+        int sourceX = 50;
+        int sourceY = 0;
+        int targetX = 0;
+        int targetY = 0;
         double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
         transition.setX(targetX);
@@ -79,10 +79,10 @@ public class TransitionTest {
         Transition transition = new Transition("id", "name");
         transition.setAngle(180);
 
-        double x1 = 100;
-        double y1 = 100;
-        double x2 = 100;
-        double y2 = 200;
+        int x1 = 100;
+        int y1 = 100;
+        int x2 = 100;
+        int y2 = 200;
         double angle = getAngleBetweenObjects(x1, y1, x2, y2);
 
         transition.setX(x1);
@@ -98,10 +98,10 @@ public class TransitionTest {
         Transition transition = new Transition("id", "name");
         transition.setAngle(90);
 
-        double sourceX = 0;
-        double sourceY = 0;
-        double targetX = 0;
-        double targetY = 50;
+        int sourceX = 0;
+        int sourceY = 0;
+        int targetX = 0;
+        int targetY = 50;
         double angle = getAngleBetweenObjects(sourceX, sourceY, targetX, targetY);
 
         transition.setX(targetX);

@@ -42,8 +42,8 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyAbove() {
-        double x1 = 0;
-        double y1 = 0;
+        int x1 = 0;
+        int y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
@@ -57,8 +57,8 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyBelow() {
-        double x1 = 0;
-        double y1 = 0;
+        int x1 = 0;
+        int y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
@@ -77,8 +77,8 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyRight() {
-        double x1 = 0;
-        double y1 = 0;
+        int x1 = 0;
+        int y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
@@ -91,8 +91,8 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsDirectlyLeft() {
-        double x1 = 0;
-        double y1 = 0;
+        int x1 = 0;
+        int y1 = 0;
 
         place.setX(x1);
         place.setY(y1);
@@ -108,8 +108,8 @@ public class PlaceTest {
      */
     @Test
     public void calculatesCorrectArcAttachmentPointsAsSource() {
-        Point2D.Double source = new Point2D.Double(0, 0);
-        Point2D.Double target = new Point2D.Double(30, 30);
+        Point source = new Point(0, 0);
+        Point target = new Point(30, 30);
         double angle = getAngleBetweenObjects(source.x, source.y, target.x, target.y);
 
         place.setX(source.x);
@@ -125,8 +125,8 @@ public class PlaceTest {
 
     @Test
     public void calculatesCorrectArcAttachmentPointsAsTarget() {
-        Point2D.Double source = new Point2D.Double(0, 0);
-        Point2D.Double target = new Point2D.Double(30, 30);
+        Point source = new Point(0, 0);
+        Point target = new Point(30, 30);
         double angle = getAngleBetweenObjects(source.x, source.y, target.x, target.y);
 
         place.setX(target.x);

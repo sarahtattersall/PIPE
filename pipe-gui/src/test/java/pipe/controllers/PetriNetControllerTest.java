@@ -29,6 +29,7 @@ import pipe.visitor.component.PetriNetComponentVisitor;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -232,8 +233,8 @@ public class PetriNetControllerTest {
         when(transition.getX()).thenReturn(x_y_value);
         when(transition.getY()).thenReturn(x_y_value);
 
-        double translate_value = 50;
-        controller.translateSelected(new Point2D.Double(translate_value, translate_value));
+        int translate_value = 50;
+        controller.translateSelected(new Point(translate_value, translate_value));
 
         double expected_value = x_y_value + translate_value;
         verify(place).accept(any(TranslationVisitor.class));
@@ -245,7 +246,7 @@ public class PetriNetControllerTest {
         PetriNetComponent petriNetComponent = mock(PetriNetComponent.class);
         when(petriNetComponent.isDraggable()).thenReturn(false);
         controller.select(petriNetComponent);
-        controller.translateSelected(new Point2D.Double(23, 58));
+        controller.translateSelected(new Point(23, 58));
         verify(petriNetComponent, never()).accept(any(TranslationVisitor.class));
     }
 

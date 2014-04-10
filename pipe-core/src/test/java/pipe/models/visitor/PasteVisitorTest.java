@@ -16,6 +16,7 @@ import pipe.models.petrinet.PetriNet;
 import pipe.naming.MultipleNamer;
 import pipe.visitor.PasteVisitor;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.*;
 
@@ -71,8 +72,8 @@ public class PasteVisitorTest {
         Place place = new Place("id", "name");
         place.setCapacity(10);
         pasteComponents.add(place);
-        Point2D offset = new Point2D.Double(40, 20);
-        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer, offset.getX(), offset.getY());
+        Point offset = new Point(40, 20);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer, offset.x, offset.y);
 
         doPaste();
 
@@ -106,8 +107,8 @@ public class PasteVisitorTest {
         transition.setAngle(45);
         transition.setPriority(10);
         pasteComponents.add(transition);
-        Point2D offset = new Point2D.Double(40, 20);
-        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer, offset.getX(), offset.getY());
+        Point offset = new Point(40, 20);
+        visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer, offset.x, offset.y);
 
         doPaste();
 

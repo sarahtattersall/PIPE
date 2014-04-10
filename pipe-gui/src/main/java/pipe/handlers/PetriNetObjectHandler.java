@@ -98,6 +98,10 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
      */
     @Override
     public void mouseReleased(MouseEvent e) {
+        if (isDragging) {
+            dragManager.finishDrag();
+        }
+        isDragging = false;
         // Have to check for popup here as well as on pressed for crossplatform!!
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         if (applicationModel.isEditionAllowed() && enablePopup) {
@@ -138,6 +142,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
             if (component.isDraggable()) {
                 if (!isDragging) {
                     isDragging = true;
+                    dragManager.saveStartingDragCoordinates();
                 }
             }
             if (!e.isConsumed()) {

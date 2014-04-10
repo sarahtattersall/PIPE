@@ -36,15 +36,15 @@ public class PasteVisitor implements TransitionVisitor, ArcVisitor, PlaceVisitor
 
     private final Collection<PetriNetComponent> createdComponents = new LinkedList<PetriNetComponent>();
 
-    private final double xOffset;
+    private final int xOffset;
 
-    private final double yOffset;
+    private final int yOffset;
 
     public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components, MultipleNamer multipleNamer) {
         this(petriNet, components, multipleNamer, 0, 0);
     }
 
-    public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components, MultipleNamer multipleNamer, double xOffset, double yOffset) {
+    public PasteVisitor(PetriNet petriNet, Collection<PetriNetComponent> components, MultipleNamer multipleNamer, int xOffset, int yOffset) {
         this.petriNet = petriNet;
         this.multipleNamer = multipleNamer;
         this.components.addAll(components);

@@ -26,7 +26,9 @@ public abstract class PlaceablePetriNetComponent extends AbstractPetriNetCompone
     public static final String HEIGHT_CHANGE_MESSAGE = "height";
 
     public abstract int getX();
+    public abstract void setX(int x);
     public abstract int getY();
+    public abstract void setY(int y);
     public abstract int getHeight();
     public abstract int getWidth();
 }

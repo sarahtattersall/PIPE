@@ -10,6 +10,7 @@ import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
 import pipe.visitor.TranslationVisitor;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,14 +22,14 @@ import static org.mockito.Mockito.*;
 public class TranslationVisitorTest {
     private TranslationVisitor translationVisitor;
 
-    private Point2D translateAmount;
+    private Point translateAmount;
 
     private Collection<PetriNetComponent> selected;
 
     @Before
     public void setUp() {
-        translateAmount = new Point2D.Double(10, 60);
-        selected = new HashSet<PetriNetComponent>();
+        translateAmount = new Point(10, 60);
+        selected = new HashSet<>();
         translationVisitor = new TranslationVisitor(translateAmount, selected);
     }
 
@@ -114,8 +115,8 @@ public class TranslationVisitorTest {
 
         translationVisitor.visit(place);
 
-        double expectedXValue = x_y_value + translateAmount.getX();
-        double expectedYValue = x_y_value + translateAmount.getY();
+        int expectedXValue = x_y_value + translateAmount.x;
+        int expectedYValue = x_y_value + translateAmount.y;
         verify(place).setX(expectedXValue);
         verify(place).setY(expectedYValue);
     }
@@ -132,8 +133,8 @@ public class TranslationVisitorTest {
 
         translationVisitor.visit(transition);
 
-        double expectedXValue = x_y_value + translateAmount.getX();
-        double expectedYValue = x_y_value + translateAmount.getY();
+        int expectedXValue = x_y_value + translateAmount.x;
+        int expectedYValue = x_y_value + translateAmount.y;
         verify(transition).setX(expectedXValue);
         verify(transition).setY(expectedYValue);
     }

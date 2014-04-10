@@ -1,21 +1,27 @@
 package pipe.controllers;
 
-import pipe.actions.manager.SimpleUndoListener;
 import pipe.controllers.interfaces.IController;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
-import pipe.historyActions.*;
+import pipe.historyActions.DeletePetriNetObject;
+import pipe.historyActions.MovePetriNetObject;
+import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.models.component.annotation.Annotation;
+import pipe.models.component.annotation.AnnotationVisitor;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.ArcPointVisitor;
+import pipe.models.component.arc.ArcVisitor;
 import pipe.models.component.place.Place;
+import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.component.transition.TransitionVisitor;
 import pipe.models.petrinet.PetriNet;
 import pipe.naming.PlaceNamer;
 import pipe.naming.TransitionNamer;
@@ -25,11 +31,12 @@ import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
+import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -101,15 +108,9 @@ public class PetriNetController implements IController, Serializable {
 
     private PetriNet lastSavedNet;
 
-    /**
-     * @return Tab this controller is associated with
-     */
-    public PetriNetTab getPetriNetTab() {
-        return petriNetTab;
-    }
-
     public PetriNetController(PetriNet model, UndoableEditListener undoListener, Animator animator,
-                              CopyPasteManager copyPasteManager, ZoomController zoomController, PetriNetTab petriNetTab) {
+                              CopyPasteManager copyPasteManager, ZoomController zoomController,
+                              PetriNetTab petriNetTab) {
         petriNet = model;
         this.undoListener = undoListener;
         this.petriNetTab = petriNetTab;
@@ -122,6 +123,13 @@ public class PetriNetController implements IController, Serializable {
         }
         placeNamer = new PlaceNamer(model);
         transitionNamer = new TransitionNamer(model);
+    }
+
+    /**
+     * @return Tab this controller is associated with
+     */
+    public PetriNetTab getPetriNetTab() {
+        return petriNetTab;
     }
 
     /**
@@ -158,7 +166,11 @@ public class PetriNetController implements IController, Serializable {
         selectedComponents.clear();
     }
 
-    public void translateSelected(Point2D.Double translation) {
+    /**
+     * Translates any components that are selected using a {@link pipe.visitor.TranslationVisitor}
+     * @param translation translation distance
+     */
+    public void translateSelected(Point translation) {
         PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, selectedComponents);
         for (PetriNetComponent component : selectedComponents) {
             if (component.isDraggable()) {
@@ -393,8 +405,8 @@ public class PetriNetController implements IController, Serializable {
 
     public void createNewRateParameter(String id, String expression) throws InvalidRateException {
         RateParameter rateParameter = new RateParameter(expression, id, id);
-//        HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
-//        historyManager.addNewEdit(historyItem);
+        //        HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
+        //        historyManager.addNewEdit(historyItem);
         petriNet.addRateParameter(rateParameter);
     }
 
@@ -419,8 +431,8 @@ public class PetriNetController implements IController, Serializable {
     }
 
     private void changeRateParameterId(RateParameter rateParameter, String oldId, String newId) {
-//        HistoryItem historyItem = new ChangeRateParameterId(rateParameter, oldId, newId);
-//        historyManager.addNewEdit(historyItem);
+        //        HistoryItem historyItem = new ChangeRateParameterId(rateParameter, oldId, newId);
+        //        historyManager.addNewEdit(historyItem);
 
         rateParameter.setId(newId);
         rateParameter.setName(newId);
@@ -428,9 +440,9 @@ public class PetriNetController implements IController, Serializable {
 
     private void changeRateParameterRate(RateParameter rateParameter, String oldRate, String newRate) {
 
-//        HistoryItem historyItem = new RateParameterValue(rateParameter, oldRate, newRate);
-//        historyManager.addNewEdit(historyItem);
-//        rateParameter.setExpression(newRate);
+        //        HistoryItem historyItem = new RateParameterValue(rateParameter, oldRate, newRate);
+        //        historyManager.addNewEdit(historyItem);
+        //        rateParameter.setExpression(newRate);
     }
 
     public boolean isUniqueName(String newName) {
@@ -452,5 +464,14 @@ public class PetriNetController implements IController, Serializable {
 
     public UndoManager getUndoManager() {
         return undoManager;
+    }
+
+
+    public Set<PetriNetComponent> getSelectedComponents() {
+        return selectedComponents;
+    }
+
+    public UndoableEditListener getUndoListener() {
+        return undoListener;
     }
 }

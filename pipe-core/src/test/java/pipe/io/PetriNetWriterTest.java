@@ -37,8 +37,8 @@ public class PetriNetWriterTest extends XMLTestCase {
         PetriNet petriNet = new PetriNet();
         Token token = new Token("Default", true, 0, new Color(0, 0, 0));
         Place place = new Place("P0", "P0");
-        place.setX(255.0);
-        place.setY(240.0);
+        place.setX(255);
+        place.setY(240);
         place.setNameXOffset(5);
         place.setNameYOffset(26);
         place.setTokenCount(token, 1);
@@ -62,8 +62,8 @@ public class PetriNetWriterTest extends XMLTestCase {
     public void testMarshalsTransition() throws IOException, SAXException {
         PetriNet petriNet = new PetriNet();
         Transition transition = new Transition("T0", "T0");
-        transition.setX(375.0);
-        transition.setY(225.0);
+        transition.setX(375);
+        transition.setY(225);
         transition.setNameXOffset(-5.0);
         transition.setNameYOffset(35.0);
         transition.setRate(new NormalRate("1.0"));
@@ -80,7 +80,7 @@ public class PetriNetWriterTest extends XMLTestCase {
 
         Transition transition = new Transition("T0", "T0");
         transition.setX(435);
-        transition.setY(180.0);
+        transition.setY(180);
         transition.setNameXOffset(-5.0);
         transition.setNameYOffset(35.0);
         transition.setRate(rateParameter);

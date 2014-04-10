@@ -13,6 +13,7 @@ import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.List;
@@ -22,11 +23,11 @@ import java.util.List;
  */
 public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVisitor, TransitionVisitor,
         AnnotationVisitor {
-    private final Point2D translation;
+    private final Point translation;
 
     private final Collection<PetriNetComponent> selected;
 
-    public TranslationVisitor(Point2D translation, Collection<PetriNetComponent> selected) {
+    public TranslationVisitor(Point translation, Collection<PetriNetComponent> selected) {
         this.translation = translation;
         this.selected = selected;
     }
@@ -46,15 +47,15 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
 
     @Override
     public void visit(Place place) {
-        place.setX(place.getX() + translation.getX());
-        place.setY(place.getY() + translation.getY());
+        place.setX(place.getX() + translation.x);
+        place.setY(place.getY() + translation.y);
 
     }
 
     @Override
     public void visit(Transition transition) {
-        transition.setX(transition.getX() + translation.getX());
-        transition.setY(transition.getY() + translation.getY());
+        transition.setX(transition.getX() + translation.x);
+        transition.setY(transition.getY() + translation.y);
 
     }
 

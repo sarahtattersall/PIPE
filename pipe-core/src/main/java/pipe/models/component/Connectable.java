@@ -180,7 +180,8 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
         return (int)x;
     }
 
-    public void setX(double x) {
+    @Override
+    public void setX(int x) {
         double oldValue = this.x;
         this.x = x;
         changeSupport.firePropertyChange(X_CHANGE_MESSAGE, oldValue, x);
@@ -192,7 +193,8 @@ public abstract class Connectable extends PlaceablePetriNetComponent {
         return (int)y;
     }
 
-    public void setY(double y) {
+    @Override
+    public void setY(int y) {
         double oldValue = this.y;
         this.y = y;
         changeSupport.firePropertyChange(Y_CHANGE_MESSAGE, oldValue, y);
