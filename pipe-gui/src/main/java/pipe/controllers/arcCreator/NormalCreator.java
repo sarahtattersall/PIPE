@@ -29,16 +29,18 @@ public class NormalCreator implements ArcActionCreator {
     }
 
     @Override
-    public <S extends Connectable, T extends Connectable> void create(S source, T target) {
-        Arc<? extends Connectable, ? extends Connectable> arc = createArc(source, target);
-        addArcToPetriNet(arc);
+    public <S extends Connectable, T extends Connectable> Arc<S, T> create(S source, T target) {
+        Arc<S, T> arc = createArc(source, target);
+//        addArcToPetriNet(arc);
+        return arc;
     }
 
     @Override
-    public <S extends Connectable, T extends Connectable> void create(S source, T target, List<ArcPoint> arcPoints) {
-        Arc<? extends Connectable, ? extends Connectable> arc = createArc(source, target);
+    public <S extends Connectable, T extends Connectable> Arc<S, T> create(S source, T target, List<ArcPoint> arcPoints) {
+        Arc<S, T> arc = createArc(source, target);
         arc.addIntermediatePoints(arcPoints);
-        addArcToPetriNet(arc);
+//        addArcToPetriNet(arc);
+        return arc;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class NormalCreator implements ArcActionCreator {
         return !source.getClass().equals(target.getClass());
     }
 
-    private <S extends Connectable, T extends Connectable> Arc<? extends Connectable, ? extends Connectable> createArc(
+    private <S extends Connectable, T extends Connectable> Arc<S, T> createArc(
             S source, T target) {
         PetriNetController netController = controller.getActivePetriNetController();
         Token token = netController.getSelectedToken();
@@ -55,34 +57,34 @@ public class NormalCreator implements ArcActionCreator {
         Map<Token, String> tokens = new HashMap<Token, String>();
         tokens.put(token, "1");
 
-        Arc<? extends Connectable, ? extends Connectable> arc = null;
+        Arc<S, T> arc = null;
         if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
             Place place = (Place) source;
             Transition transition = (Transition) target;
-            arc = new Arc<Place, Transition>(place, transition, tokens, ArcType.NORMAL);
+            arc = new Arc<>((S)place, (T)transition, tokens, ArcType.NORMAL);
         } else if (source.getClass().equals(Transition.class) && target.getClass().equals(Place.class)) {
             Place place = (Place) target;
             Transition transition = (Transition) source;
-            arc = new Arc<Transition, Place>(transition, place, tokens, ArcType.NORMAL);
+            arc = new Arc<>((S)transition, (T)place, tokens, ArcType.NORMAL);
         }
 
         return arc;
     }
 
     private void addArcToPetriNet(Arc<? extends Connectable, ? extends Connectable> arc) {
-        PetriNetController netController = controller.getActivePetriNetController();
-        PetriNet petriNet = netController.getPetriNet();
-        petriNet.addArc(arc);
-        addToHistory(arc);
+//        PetriNetController netController = controller.getActivePetriNetController();
+//        PetriNet petriNet = netController.getPetriNet();
+//        petriNet.addArc(arc);
+//        addToHistory(arc);
 
     }
 
     private void addToHistory(Arc<? extends  Connectable, ? extends Connectable> arc) {
         PetriNetController netController = controller.getActivePetriNetController();
         PetriNet petriNet = netController.getPetriNet();
-        HistoryItem item = new AddPetriNetObject(arc, petriNet);
-        HistoryManager manager = netController.getHistoryManager();
-        manager.addNewEdit(item);
+//        HistoryItem item = new AddPetriNetObject(arc, petriNet);
+//        HistoryManager manager = netController.getHistoryManager();
+//        manager.addNewEdit(item);
     }
 
 }

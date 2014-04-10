@@ -9,6 +9,9 @@ import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Connectable;
 
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.AbstractUndoableEdit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -17,6 +20,20 @@ import java.awt.event.MouseEvent;
  * Petri net
  */
 public abstract class CreateAction extends GuiAction {
+    protected UndoableEditListener listener;
+
+
+    // Set the UndoableEditListener.
+    public void addUndoableEditListener(UndoableEditListener l) {
+        listener = l; // Should ideally throw an exception if listener != null
+    }
+
+    // Remove the UndoableEditListener.
+    public void removeUndoableEditListener(UndoableEditListener l) {
+        listener = null;
+    }
+
+
     public CreateAction(String name, String tooltip, int key, int modifiers) {
         super(name, tooltip, key, modifiers);
     }
@@ -59,6 +76,13 @@ public abstract class CreateAction extends GuiAction {
             PipeApplicationController controller = ApplicationSettings.getApplicationController();
             SelectionManager selectionManager = controller.getSelectionManager(petriNetTab);
             selectionManager.disableSelection();
+        }
+    }
+
+    protected void registerUndoEvent(AbstractUndoableEdit edit) {
+        if (listener != null) {
+            listener.undoableEditHappened(new UndoableEditEvent(this,
+                    edit));
         }
     }
 

@@ -10,29 +10,31 @@ import pipe.views.arc.NormalHead;
 import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
+import javax.swing.event.UndoableEditListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 public class ComponentCreatorManager implements ActionManager {
 
-    public GuiAction placeAction = new PlaceAction();
 
-    public GuiAction transAction = new ImmediateTransitionAction();
+    public CreateAction placeAction = new PlaceAction();
 
-    public GuiAction timedtransAction = new TimedTransitionAction();
+    public CreateAction transAction = new ImmediateTransitionAction();
 
-    public final GuiAction arcAction;
+    public CreateAction timedtransAction = new TimedTransitionAction();
 
-    public final GuiAction inhibarcAction;
+    public final CreateAction arcAction;
+
+    public final CreateAction inhibarcAction;
 
     public final SpecifyRateParameterAction rateParameterAction;
 
+    public CreateAction annotationAction = new AnnotationAction();
 
-    public GuiAction annotationAction = new AnnotationAction();
 
-
-    public ComponentCreatorManager(PipeApplicationController applicationController) {
+    public ComponentCreatorManager(UndoableEditListener undoListener,
+                                   PipeApplicationController applicationController) {
         inhibarcAction =
                 new ArcAction("Inhibitor Arc", "Add an inhibitor arc (alt-h)", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
                         new InhibitorSourceVisitor(), new InhibitorCreator(applicationController),
@@ -42,11 +44,19 @@ public class ComponentCreatorManager implements ActionManager {
                 new NormalHead());
 
         rateParameterAction = new SpecifyRateParameterAction(applicationController);
+
+        placeAction.addUndoableEditListener(undoListener);
+        transAction.addUndoableEditListener(undoListener);
+        timedtransAction.addUndoableEditListener(undoListener);
+        arcAction.addUndoableEditListener(undoListener);
+        inhibarcAction.addUndoableEditListener(undoListener);
+        annotationAction.addUndoableEditListener(undoListener);
     }
 
     @Override
     public Iterable<GuiAction> getActions() {
-        return Arrays.asList(placeAction, transAction, timedtransAction, arcAction, inhibarcAction, annotationAction, rateParameterAction);
+        return Arrays.asList(placeAction, transAction, timedtransAction, arcAction, inhibarcAction, annotationAction,
+                rateParameterAction);
     }
 
     @Override
@@ -62,4 +72,5 @@ public class ComponentCreatorManager implements ActionManager {
             action.setEnabled(false);
         }
     }
+
 }

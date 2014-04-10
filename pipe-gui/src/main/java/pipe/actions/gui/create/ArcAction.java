@@ -4,13 +4,17 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
+import pipe.historyActions.AddPetriNetObject;
 import pipe.models.component.Connectable;
+import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
+import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
 import pipe.views.arc.ArcHead;
 import pipe.views.arc.TemporaryArcView;
 import pipe.visitor.connectable.arc.ArcSourceVisitor;
 
+import javax.swing.event.UndoableEditEvent;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -81,8 +85,14 @@ public class ArcAction extends CreateAction {
 
     private <T extends Connectable> void createArc(T connectable, PetriNetTab tab) {
 
-        arcCreator.create(temporaryArcView.getSourceConnectable(), connectable,
+        Arc<Connectable, T> arc = arcCreator.create(temporaryArcView.getSourceConnectable(), connectable,
                 temporaryArcView.getIntermediatePoints());
+
+        PetriNetController petriNetController = controller.getActivePetriNetController();
+        PetriNet net = petriNetController.getPetriNet();
+        registerUndoEvent(new AddPetriNetObject(arc, net));
+        net.addArc(arc);
+
         tab.remove(temporaryArcView);
         tab.repaint();
         temporaryArcView = null;

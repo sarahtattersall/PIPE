@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.edit.UndoAction;
+import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
@@ -32,11 +33,13 @@ public class UndoActionTest {
     @Mock
     PetriNetController mockPetriNetController;
 
+    @Mock
+    ComponentEditorManager container;
+
     @Before
     public void setUp()
     {
-        undoAction = new UndoAction();
-        ApplicationSettings.register(mockController);
+        undoAction = new UndoAction(mockController, container);
     }
 
     @Test

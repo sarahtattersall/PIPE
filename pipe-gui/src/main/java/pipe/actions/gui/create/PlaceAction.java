@@ -2,10 +2,12 @@ package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
 import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.MultipleEdit;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 
+import javax.swing.event.UndoableEditEvent;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -27,7 +29,10 @@ public class PlaceAction extends CreateAction {
             Point point = event.getPoint();
             Place place = newPlace(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
-            petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(place, net));
+
+
+            registerUndoEvent(new AddPetriNetObject(place, net));
+
         }
 
     }

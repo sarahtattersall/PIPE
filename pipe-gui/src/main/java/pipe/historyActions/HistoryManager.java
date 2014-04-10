@@ -25,7 +25,7 @@ public class HistoryManager {
     private int startOfBuffer = 0; // index of the eldest element
     private int undoneEdits = 0;
 
-    private final ArrayList<List<HistoryItem>> edits = new ArrayList<List<HistoryItem>>(UNDO_BUFFER_CAPACITY);
+    private final ArrayList<List<HistoryItem>> edits = new ArrayList<>(UNDO_BUFFER_CAPACITY);
 
     private final ComponentEditorManager componentEditorManager;
 

@@ -1,8 +1,8 @@
 package pipe.controllers;
 
+import pipe.historyActions.ChangePlaceTokens;
 import pipe.historyActions.HistoryManager;
 import pipe.historyActions.PlaceCapacity;
-import pipe.historyActions.PlaceMarking;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
@@ -27,20 +27,20 @@ public class PlaceController
     }
 
     public void setTokenCounts(Map<Token, Integer> counts) {
-        historyManager.newEdit();
-        for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
-            Token token = entry.getKey();
-            Integer newTokenCount = entry.getValue();
-            int currentTokenCount = place.getTokenCount(token);
-
-            PlaceMarking markingAction =
-                    new PlaceMarking(place, token, currentTokenCount,
-                            newTokenCount);
-            markingAction.redo();
-
-            historyManager.addEdit(markingAction);
-
-        }
+//        historyManager.newEdit();
+//        for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
+//            Token token = entry.getKey();
+//            Integer newTokenCount = entry.getValue();
+//            int currentTokenCount = place.getTokenCount(token);
+//
+//            ChangePlaceTokens markingAction =
+//                    new ChangePlaceTokens(place, token, currentTokenCount,
+//                            newTokenCount);
+//            markingAction.redo();
+//
+//            historyManager.addEdit(markingAction);
+//
+//        }
 
     }
 
@@ -66,15 +66,15 @@ public class PlaceController
 
 
     public void addTokenToPlace(Token token) {
-        Map<Token, Integer> tokenCount = new HashMap<Token, Integer>();
-        tokenCount.put(token, place.getTokenCount(token) + 1);
-        this.setTokenCounts(tokenCount);
+//        Map<Token, Integer> tokenCount = new HashMap<>();
+//        tokenCount.put(token, place.getTokenCount(token) + 1);
+//        setTokenCounts(tokenCount);
     }
 
     public void deleteTokenInPlace(Token token) {
-        Map<Token, Integer> tokenCount = new HashMap<Token, Integer>();
-        tokenCount.put(token, place.getTokenCount(token) - 1);
-        this.setTokenCounts(tokenCount);
+//        Map<Token, Integer> tokenCount = new HashMap<>();
+//        tokenCount.put(token, place.getTokenCount(token) - 1);
+//        setTokenCounts(tokenCount);
     }
 
 }

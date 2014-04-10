@@ -4,12 +4,10 @@ import pipe.actions.gui.DeleteAction;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.edit.*;
 import pipe.controllers.PipeApplicationController;
-import pipe.views.PipeApplicationView;
 
-import javax.swing.*;
+import javax.swing.undo.UndoManager;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -42,31 +40,33 @@ public class ComponentEditorManager implements ActionManager {
      */
     private final UndoAction undoAction;
 
+
     /**
      * Action that redoes the previous undo
      */
     private final RedoAction redoAction;
 
+    private final PipeApplicationController controller;
+
     private Map<GuiAction, Boolean> editEnabledStatus = new HashMap<>();
 
     /**
-     *
      * Creates actions for editing the petri net
      *
      * @param controller PIPE application controller
      */
     public ComponentEditorManager(PipeApplicationController controller) {
+        this.controller = controller;
         copyAction = new CopyAction(controller);
         pasteAction = new PasteAction(controller);
         cutAction = new CutAction(controller);
         deleteAction = new DeleteAction(controller);
-        undoAction = new UndoAction();
-        redoAction = new RedoAction();
+        undoAction = new UndoAction(controller, this);
+        redoAction = new RedoAction(controller, this);
         storeEnabledStatus();
     }
 
     /**
-     *
      * @return inorder iterable of the actions this class is responsible for managing
      */
     @Override
@@ -112,5 +112,13 @@ public class ComponentEditorManager implements ActionManager {
 
     public void setRedoActionEnabled(boolean flag) {
         redoAction.setEnabled(flag);
+    }
+
+    public void updateButtons() {
+        System.out.println("UPDATE BUTTONS!");
+        UndoManager undoManager = controller.getActivePetriNetController().getUndoManager();
+
+        setRedoActionEnabled(undoManager.canRedo());
+        setUndoActionEnabled(undoManager.canUndo());
     }
 }

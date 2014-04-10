@@ -24,6 +24,7 @@ import pipe.visitor.ClonePetriNet;
 import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
+import javax.swing.undo.UndoManager;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
@@ -44,6 +45,13 @@ public class PetriNetController implements IController, Serializable {
      * Deals with undo/redo history of current Petri net
      */
     private final HistoryManager historyManager;
+
+
+    /**
+     * Responsible for undo/redo
+     */
+    //TODO: If this works delete historyManager
+    private final UndoManager undoManager = new UndoManager();
 
     /**
      * Petri net being displayed
@@ -392,8 +400,8 @@ public class PetriNetController implements IController, Serializable {
 
     public void createNewRateParameter(String id, String expression) throws InvalidRateException {
         RateParameter rateParameter = new RateParameter(expression, id, id);
-        HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
-        historyManager.addNewEdit(historyItem);
+//        HistoryItem historyItem = new AddPetriNetObject(rateParameter, petriNet);
+//        historyManager.addNewEdit(historyItem);
         petriNet.addRateParameter(rateParameter);
     }
 
@@ -452,5 +460,9 @@ public class PetriNetController implements IController, Serializable {
 
     public FunctionalResults<Double> parseFunctionalExpression(String expr) {
         return petriNet.parseExpression(expr);
+    }
+
+    public UndoManager getUndoManager() {
+        return undoManager;
     }
 }

@@ -1,6 +1,7 @@
 package pipe.actions.gui.edit;
 
 import pipe.actions.gui.GuiAction;
+import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
@@ -11,15 +12,21 @@ import java.awt.event.KeyEvent;
 
 public class RedoAction extends GuiAction {
 
-    public RedoAction() {
+    private final PipeApplicationController applicationController;
+
+    private final ComponentEditorManager container;
+
+    public RedoAction(PipeApplicationController applicationController, ComponentEditorManager container) {
         super("Redo", "Redo (Ctrl-Y)",  KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        this.applicationController = applicationController;
+        this.container = container;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        PipeApplicationController applicationController = ApplicationSettings
-                .getApplicationController();
         PetriNetController controller = applicationController.getActivePetriNetController();
-        controller.getHistoryManager().doRedo();
+        controller.getUndoManager().redo();
+        container.updateButtons();
     }
+
 }

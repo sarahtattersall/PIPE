@@ -1,7 +1,4 @@
-import pipe.actions.manager.AnimateActionManager;
-import pipe.actions.manager.ComponentCreatorManager;
-import pipe.actions.manager.ComponentEditorManager;
-import pipe.actions.manager.TokenActionManager;
+import pipe.actions.manager.*;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
@@ -22,9 +19,10 @@ public class Pipe
         applicationModel = new PipeApplicationModel(version);
         applicationController = new PipeApplicationController(applicationModel);
         ComponentEditorManager componentManager = new ComponentEditorManager(applicationController);
-        ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(applicationController);
+        SimpleUndoListener undoListener = new SimpleUndoListener(componentManager, applicationController);
+        ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, applicationController);
+        TokenActionManager tokenActionManager = new TokenActionManager(undoListener, applicationController);
         AnimateActionManager animateActionManager = new AnimateActionManager(applicationController);
-        TokenActionManager tokenActionManager = new TokenActionManager(applicationController);
         applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager, componentCreatorManager, animateActionManager,
                 tokenActionManager);
     }

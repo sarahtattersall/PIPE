@@ -6,6 +6,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
 
+import javax.swing.event.UndoableEditEvent;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -19,7 +20,8 @@ public class AnnotationAction extends CreateAction {
             Point point = event.getPoint();
             Annotation annotation = getAnnotation(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
-            petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(annotation, net));
+
+            registerUndoEvent(new AddPetriNetObject(annotation, net));
         }
     }
 

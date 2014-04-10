@@ -7,19 +7,22 @@ import pipe.actions.gui.create.DeleteTokenAction;
 import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.controllers.PipeApplicationController;
 
+import javax.swing.event.UndoableEditListener;
 import java.util.Arrays;
 
 public class TokenActionManager implements ActionManager {
 
 
-    public GuiAction tokenAction = new AddTokenAction();
+    public CreateAction tokenAction = new AddTokenAction();
 
-    public GuiAction deleteTokenAction = new DeleteTokenAction();
+    public CreateAction deleteTokenAction = new DeleteTokenAction();
 
     public final SpecifyTokenAction specifyTokenClasses;
 
-    public TokenActionManager(PipeApplicationController applicationController) {
+    public TokenActionManager(UndoableEditListener undoListener, PipeApplicationController applicationController) {
         specifyTokenClasses = new SpecifyTokenAction(applicationController);
+        tokenAction.addUndoableEditListener(undoListener);
+        deleteTokenAction.addUndoableEditListener(undoListener);
     }
 
     @Override

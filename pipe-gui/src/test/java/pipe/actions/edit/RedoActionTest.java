@@ -6,20 +6,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.edit.RedoAction;
+import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.historyActions.HistoryManager;
 
 import javax.swing.*;
-
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,16 +29,16 @@ public class RedoActionTest {
     @Mock
     PetriNetController mockPetriNetController;
 
+    @Mock
+    ComponentEditorManager container;
+
     @Before
-    public void setUp()
-    {
-        redoAction = new RedoAction();
-        ApplicationSettings.register(mockController);
+    public void setUp() {
+        redoAction = new RedoAction(mockController, container);
     }
 
     @Test
-    public void actionPerformed()
-    {
+    public void actionPerformed() {
         HistoryManager mockHistory = mock(HistoryManager.class);
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
         when(mockPetriNetController.getHistoryManager()).thenReturn(mockHistory);
@@ -50,15 +47,13 @@ public class RedoActionTest {
     }
 
     @Test
-    public void setShortDescription()
-    {
+    public void setShortDescription() {
         Object shortDescription = redoAction.getValue(Action.SHORT_DESCRIPTION);
         assertEquals("Redo (Ctrl-Y)", shortDescription);
     }
 
     @Test
-    public void setKeyboardShortcut()
-    {
+    public void setKeyboardShortcut() {
         Object acceleratorKey = redoAction.getValue(Action.ACCELERATOR_KEY);
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         assertEquals(stroke, acceleratorKey);

@@ -6,6 +6,7 @@ import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
 import pipe.models.component.transition.Transition;
 
+import javax.swing.event.UndoableEditEvent;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -24,7 +25,8 @@ public abstract class TransitionAction extends CreateAction {
             Point point = event.getPoint();
             Transition transition = newTransition(point, petriNetController);
             PetriNet net = petriNetController.getPetriNet();
-            petriNetController.getHistoryManager().addNewEdit(new AddPetriNetObject(transition, net));
+
+            registerUndoEvent(new AddPetriNetObject(transition, net));
         }
     }
 

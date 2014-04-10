@@ -6,6 +6,7 @@ package pipe.actions.gui;
 import pipe.gui.ApplicationSettings;
 
 import javax.swing.*;
+import javax.swing.event.UndoableEditListener;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.net.URL;

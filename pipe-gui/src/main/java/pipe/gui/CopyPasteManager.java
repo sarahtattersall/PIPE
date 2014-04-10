@@ -295,7 +295,7 @@ public class CopyPasteManager extends javax.swing.JComponent
 
         for (PetriNetComponent component : createdComponents) {
             AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
-            historyManager.addEdit(addAction);
+//            historyManager.addEdit(addAction);
         }
     }
 

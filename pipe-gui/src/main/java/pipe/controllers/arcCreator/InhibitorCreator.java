@@ -28,31 +28,32 @@ public class InhibitorCreator implements ArcActionCreator {
     }
 
     @Override
-    public <S extends Connectable, T extends Connectable> void create(S source, T target) {
-        createArc(source, target);
+    public <S extends Connectable, T extends Connectable> Arc<S, T> create(S source, T target) {
+        return createArc(source, target);
     }
 
-    private <S extends Connectable, T extends Connectable> Arc<Place, Transition> createArc(S source, T target) {
+    private <S extends Connectable, T extends Connectable> Arc<S, T> createArc(S source, T target) {
         PetriNetController petriNetController = controller.getActivePetriNetController();
         if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
             Place place = (Place) source;
             Transition transition = (Transition) target;
             Arc<Place, Transition> arc =
                     new Arc<>(place, transition, new HashMap<Token, String>(), ArcType.INHIBITOR);
-            PetriNet petriNet = petriNetController.getPetriNet();
-            petriNet.addArc(arc);
-            addToHistory(arc);
-            return arc;
+//            PetriNet petriNet = petriNetController.getPetriNet();
+//            petriNet.addArc(arc);
+//            addToHistory(arc);
+            return (Arc<S, T>) arc;
         }
         return null;
     }
 
     @Override
-    public <S extends Connectable, T extends Connectable> void create(S source, T target, List<ArcPoint> arcPoints) {
-        Arc<Place, Transition> arc = createArc(source, target);
+    public <S extends Connectable, T extends Connectable>  Arc<S, T>  create(S source, T target, List<ArcPoint> arcPoints) {
+        Arc<S, T> arc = createArc(source, target);
         if (arc != null) {
             arc.addIntermediatePoints(arcPoints);
         }
+        return arc;
     }
 
     @Override
@@ -64,8 +65,8 @@ public class InhibitorCreator implements ArcActionCreator {
     private void addToHistory(Arc<? extends Connectable, ? extends Connectable> arc) {
         PetriNetController netController = controller.getActivePetriNetController();
         PetriNet petriNet = netController.getPetriNet();
-        HistoryItem item = new AddPetriNetObject(arc, petriNet);
-        HistoryManager manager = netController.getHistoryManager();
-        manager.addNewEdit(item);
+//        HistoryItem item = new AddPetriNetObject(arc, petriNet);
+//        HistoryManager manager = netController.getHistoryManager();
+//        manager.addNewEdit(item);
     }
 }

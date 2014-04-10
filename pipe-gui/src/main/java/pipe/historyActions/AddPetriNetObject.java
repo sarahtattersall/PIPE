@@ -7,12 +7,14 @@ package pipe.historyActions;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.PetriNetComponent;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
  *
  * @author corveau
  */
 public class AddPetriNetObject
-        extends HistoryItem
+        extends AbstractUndoableEdit
 {
    
    private final PetriNetComponent component;
@@ -29,13 +31,17 @@ public class AddPetriNetObject
 
    
    /** */
+   @Override
    public void undo() {
+       super.undo();
       petriNet.remove(component);
    }
 
    
    /** */
+   @Override
    public void redo() {
+       super.redo();
        petriNet.add(component);
    }
    

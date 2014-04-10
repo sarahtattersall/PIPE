@@ -7,11 +7,13 @@ package pipe.historyActions;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
+import javax.swing.undo.AbstractUndoableEdit;
+
 /**
  * 
  * @author corveau
  */
-public class PlaceMarking extends HistoryItem
+public class ChangePlaceTokens extends AbstractUndoableEdit
 {
 
     private final Place place;
@@ -28,7 +30,7 @@ public class PlaceMarking extends HistoryItem
             return false;
         }
 
-        final PlaceMarking that = (PlaceMarking) o;
+        final ChangePlaceTokens that = (ChangePlaceTokens) o;
 
         if (newCount != that.newCount) {
             return false;
@@ -55,19 +57,23 @@ public class PlaceMarking extends HistoryItem
         return result;
     }
 
-    public PlaceMarking(Place place,Token token, int previousCount, int newCount) {
+    public ChangePlaceTokens(Place place, Token token, int previousCount, int newCount) {
 		this.place = place;
         this.token = token;
         this.previousCount = previousCount;
         this.newCount = newCount;
     }
 
-	public void undo() {
+	@Override
+    public void undo() {
+        super.undo();
         place.setTokenCount(token, previousCount);
 
 	}
 
-	public void redo() {
+	@Override
+    public void redo() {
+        super.redo();
         place.setTokenCount(token, newCount);
 
 	}
