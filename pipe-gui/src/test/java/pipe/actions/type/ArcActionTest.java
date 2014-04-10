@@ -10,7 +10,6 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.HistoryManager;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -40,9 +39,6 @@ public class ArcActionTest {
     private PetriNet mockNet;
 
     @Mock
-    private HistoryManager mockHistory;
-
-    @Mock
     private PipeApplicationView mockApplicationView;
 
     @Mock
@@ -60,7 +56,7 @@ public class ArcActionTest {
     public void setUp() {
         when(mockController.getPetriNet()).thenReturn(mockNet);
 
-        when(mockController.getHistoryManager()).thenReturn(mockHistory);
+        //        when(mockController.getHistoryManager()).thenReturn(mockHistory);
 
 
         activeToken = mock(Token.class);

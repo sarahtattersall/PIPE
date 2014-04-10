@@ -10,7 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.AddArcPathPoint;
 import pipe.historyActions.ArcPathPointType;
 import pipe.historyActions.SetArcWeightAction;
-import pipe.historyActions.HistoryManager;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
@@ -31,9 +30,6 @@ public class ArcControllerTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Mock
-    HistoryManager historyManager;
-
-    @Mock
     Arc<Place, Transition> mockArc;
 
     @Mock
@@ -44,7 +40,7 @@ public class ArcControllerTest {
 
     @Before
     public void setUp() {
-        controller = new ArcController<>(mockArc, historyManager, mockPetriNetController);
+        controller = new ArcController<>(mockArc, mockPetriNetController);
 
         FunctionalResults<Double> results = new FunctionalResults<>(1.0, new HashSet<String>());
         when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(results);
@@ -91,7 +87,8 @@ public class ArcControllerTest {
         controller.setWeights(tokenWeights);
         verify(historyManager).newEdit();
 
-        SetArcWeightAction<Place, Transition> weightAction = new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
+        SetArcWeightAction<Place, Transition> weightAction =
+                new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
         verify(historyManager).addEdit(weightAction);
     }
 

@@ -15,7 +15,6 @@ import java.util.Map;
 public class ArcController<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponentController<Arc<S, T>>
 {
     private final Arc<S, T> arc;
-    private final HistoryManager historyManager;
 
     /**
      * PetriNetController in order to determine if arc expressions are valid
@@ -24,11 +23,10 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     //      does not know anything about the petri net in which it resides
     private final PetriNetController petriNetController;
 
-    ArcController(Arc<S, T> arc, HistoryManager historyManager, PetriNetController petriNetController) {
+    ArcController(Arc<S, T> arc, PetriNetController petriNetController) {
 
-        super(arc, historyManager);
+        super(arc);
         this.arc = arc;
-        this.historyManager = historyManager;
         this.petriNetController = petriNetController;
     }
 
@@ -39,7 +37,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      */
     public void setWeight(Token token, String expr) throws UnparsableException {
         throwExceptionIfWeightNotValid(expr);
-        historyManager.newEdit();
+//        historyManager.newEdit();
         updateWeightForArc(token, expr);
     }
 
@@ -87,13 +85,13 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         arc.setWeight(token, expr);
 
         SetArcWeightAction<S,T> weightAction = new SetArcWeightAction<>(arc, token, oldWeight, expr);
-        historyManager.addEdit(weightAction);
+//        historyManager.addEdit(weightAction);
     }
 
     public void setWeights(Map<Token, String> newWeights) throws UnparsableException {
         throwExceptionIfWeightsNotValid(newWeights);
 
-        historyManager.newEdit();
+//        historyManager.newEdit();
         for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
             updateWeightForArc(entry.getKey(), entry.getValue());
         }
@@ -110,7 +108,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     public void toggleArcPointType(ArcPoint arcPoint) {
         HistoryItem historyItem = new ArcPathPointType(arcPoint);
         historyItem.redo();
-        historyManager.addNewEdit(historyItem);
+//        historyManager.addNewEdit(historyItem);
     }
 
     public void splitArcPoint(ArcPoint arcPoint) {
@@ -123,19 +121,19 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         ArcPoint newPoint = new ArcPoint(point, arcPoint.isCurved());
         HistoryItem historyItem = new AddArcPathPoint<>(arc, newPoint);
         historyItem.redo();
-        historyManager.addNewEdit(historyItem);
+//        historyManager.addNewEdit(historyItem);
     }
 
     public void addPoint(Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
         HistoryItem historyItem = new AddArcPathPoint<>(arc, newPoint);
         historyItem.redo();
-        historyManager.addNewEdit(historyItem);
+//        historyManager.addNewEdit(historyItem);
     }
 
     public void deletePoint(ArcPoint component) {
         HistoryItem historyItem = new DeleteArcPathPoint<>(arc, component);
         historyItem.redo();
-        historyManager.addNewEdit(historyItem);
+//        historyManager.addNewEdit(historyItem);
     }
 }

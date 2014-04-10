@@ -11,7 +11,7 @@ import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.*;
-import pipe.historyActions.*;
+import pipe.historyActions.DeletePetriNetObject;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
@@ -49,9 +49,6 @@ public class PetriNetControllerTest {
     private PetriNet net;
 
     @Mock
-    private HistoryManager mockHistoryManager;
-
-    @Mock
     private Animator mockAnimator;
 
     @Mock
@@ -63,8 +60,7 @@ public class PetriNetControllerTest {
         CopyPasteManager copyPasteManager = mock(CopyPasteManager.class);
         ZoomController zoomController = mock(ZoomController.class);
 
-        controller = new PetriNetController(net, mockHistoryManager, mockAnimator, copyPasteManager, zoomController,
-                mocKTab);
+        controller = new PetriNetController(net, mockAnimator, copyPasteManager, zoomController, mocKTab);
 
         //TODO: Remove this when you can get reid of ApplicationSettings
         // nasty staticness means that some views persist between tests.
@@ -355,25 +351,25 @@ public class PetriNetControllerTest {
     @Test
     public void creatingRateParameterMakesHistoryItem() throws InvalidRateException {
         controller.createNewRateParameter("rate", "5.0");
-//        verify(mockHistoryManager).addNewEdit(any(AddPetriNetObject.class));
+        //        verify(mockHistoryManager).addNewEdit(any(AddPetriNetObject.class));
     }
 
     @Test
-    public void editingRateExpressionMakesHistoryItem() throws PetriNetComponentNotFoundException,
-            InvalidRateException {
+    public void editingRateExpressionMakesHistoryItem()
+            throws PetriNetComponentNotFoundException, InvalidRateException {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "rate", "6.0");
-//        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterRate.class));
+        //        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterRate.class));
     }
 
     @Test
-    public void editingRateParameterIdMakesHistoryItem() throws PetriNetComponentNotFoundException,
-            InvalidRateException {
+    public void editingRateParameterIdMakesHistoryItem()
+            throws PetriNetComponentNotFoundException, InvalidRateException {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "newRate", "5.0");
-//        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterId.class));
+        //        verify(mockHistoryManager).addNewEdit(any(ChangeRateParameterId.class));
     }
 
     @Test
@@ -382,8 +378,8 @@ public class PetriNetControllerTest {
         net.addRateParameter(new RateParameter("5.0", "rate", "rate"));
 
         controller.updateRateParameter("rate", "newRate", "6.0");
-//        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterId.class));
-//        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterRate.class));
+        //        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterId.class));
+        //        verify(mockHistoryManager, times(2)).addNewEdit(any(ChangeRateParameterRate.class));
     }
 
 

@@ -9,7 +9,6 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.HistoryManager;
 import pipe.views.viewComponents.Parameter;
 import pipe.views.viewComponents.RateParameter;
 
@@ -18,8 +17,7 @@ import javax.swing.*;
 /**
  * @author Pere Bonet
  */
-public class ParameterPanel
-        extends javax.swing.JPanel {
+public class ParameterPanel extends javax.swing.JPanel {
 
     private final Parameter parameter;
 
@@ -195,7 +193,8 @@ public class ParameterPanel
         focusGained(labelTextField);
     }//GEN-LAST:event_labelTextFieldFocusGained
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+    private void cancelButtonActionPerformed(
+            java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         exit();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -213,13 +212,14 @@ public class ParameterPanel
         String newName = labelTextField.getText();
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();
-        HistoryManager historyManager = petriNetController.getHistoryManager();
-        historyManager.newEdit(); // new "transaction""
+        //        HistoryManager historyManager = petriNetController.getHistoryManager();
+        //        historyManager.newEdit(); // new "transaction""
         if (parameter instanceof RateParameter) {
             if (!oldName.equals(newName)) {
-                if (ApplicationSettings.getApplicationView().getCurrentPetriNetView().changeRateParameter(oldName, newName)) {
-                    historyManager.addEdit(
-                            parameter.setParameterName(newName));
+                if (ApplicationSettings.getApplicationView().getCurrentPetriNetView().changeRateParameter(oldName,
+                        newName)) {
+                    //                    historyManager.addEdit(
+                    //                            parameter.setParameterName(newName));
                     parameter.update();
                 } else {
                     return;
@@ -228,8 +228,8 @@ public class ParameterPanel
             try {
                 Double newValue = Double.parseDouble(valueTextField.getText());
                 if (!oldValue.equals(newValue)) {
-                    historyManager.addEdit(
-                            ((RateParameter) parameter).setValue(newValue));
+                    //                    historyManager.addEdit(
+                    //                            ((RateParameter) parameter).setValue(newValue));
                     parameter.update();
                 }
             } catch (java.lang.NumberFormatException nfe) {
@@ -247,7 +247,9 @@ public class ParameterPanel
 
 
     private javax.swing.JTextField labelTextField;
+
     private javax.swing.JButton okButton;
+
     private javax.swing.JTextField valueTextField;
     // End of variables declaration//GEN-END:variables
 

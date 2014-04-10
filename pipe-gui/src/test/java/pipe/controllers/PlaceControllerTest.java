@@ -2,29 +2,31 @@ package pipe.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.historyActions.ChangePlaceTokens;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.HistoryItem;
-import pipe.historyActions.HistoryManager;
 import pipe.historyActions.PlaceCapacity;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PlaceControllerTest {
+    @Mock
     Place place;
-    HistoryManager historyManager;
+
     PlaceController placeController;
 
     @Before
     public void setUp() {
-        place = mock(Place.class);
-        historyManager = mock(HistoryManager.class);
-        placeController = new PlaceController(place, historyManager);
+        placeController = new PlaceController(place);
     }
 
     @Test
@@ -35,9 +37,7 @@ public class PlaceControllerTest {
 
         placeController.setCapacity(newCapacity);
 
-        HistoryItem capacityItem =
-                new PlaceCapacity(place, oldCapacity, newCapacity);
-        verify(historyManager).addNewEdit(capacityItem);
+        HistoryItem capacityItem = new PlaceCapacity(place, oldCapacity, newCapacity);
     }
 
     @Test
@@ -50,23 +50,23 @@ public class PlaceControllerTest {
         verify(place).setCapacity(newCapacity);
     }
 
-//    @Test
-//    public void setTokenCountsCreatesHistoryItem() {
-//        Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
-//        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
-//        int oldCount = 7;
-//        int newCount = 5;
-//
-//        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-//        tokenCounts.put(defaultToken, newCount);
-//        placeController.setTokenCounts(tokenCounts);
-//
-//        verify(historyManager).newEdit();
-//
-//        HistoryItem placeMarking =
-//                new ChangePlaceTokens(place, defaultToken, oldCount, newCount);
-//        verify(historyManager).addEdit(placeMarking);
-//    }
+    //    @Test
+    //    public void setTokenCountsCreatesHistoryItem() {
+    //        Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+    //        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+    //        int oldCount = 7;
+    //        int newCount = 5;
+    //
+    //        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
+    //        tokenCounts.put(defaultToken, newCount);
+    //        placeController.setTokenCounts(tokenCounts);
+    //
+    //        verify(historyManager).newEdit();
+    //
+    //        HistoryItem placeMarking =
+    //                new ChangePlaceTokens(place, defaultToken, oldCount, newCount);
+    //        verify(historyManager).addEdit(placeMarking);
+    //    }
 
     @Test
     public void setTokenCountModifiesPlace() {
@@ -90,20 +90,20 @@ public class PlaceControllerTest {
         placeController.addTokenToPlace(token);
         verify(place).setTokenCount(token, count + 1);
     }
-//
-//    @Test
-//    public void incrementPlaceCounterCreatesHistoryItem() {
-//        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
-//        int oldCount = 7;
-//
-//        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-//        placeController.addTokenToPlace(defaultToken);
-//
-//        verify(historyManager).newEdit();
-//        HistoryItem placeMarking =
-//                new ChangePlaceTokens(place, defaultToken, oldCount, oldCount + 1);
-//        verify(historyManager).addEdit(placeMarking);
-//    }
+    //
+    //    @Test
+    //    public void incrementPlaceCounterCreatesHistoryItem() {
+    //        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+    //        int oldCount = 7;
+    //
+    //        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
+    //        placeController.addTokenToPlace(defaultToken);
+    //
+    //        verify(historyManager).newEdit();
+    //        HistoryItem placeMarking =
+    //                new ChangePlaceTokens(place, defaultToken, oldCount, oldCount + 1);
+    //        verify(historyManager).addEdit(placeMarking);
+    //    }
 
     @Test
     public void decrementsPlaceCounter() {
@@ -114,18 +114,18 @@ public class PlaceControllerTest {
         verify(place).setTokenCount(token, count - 1);
     }
 
-//    @Test
-//    public void decrementPlaceCounterCreatesHistoryItem() {
-//        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
-//        int oldCount = 7;
-//
-//        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-//        placeController.deleteTokenInPlace(defaultToken);
-//
-//        verify(historyManager).newEdit();
-//        HistoryItem placeMarking =
-//                new ChangePlaceTokens(place, defaultToken, oldCount, oldCount - 1);
-//        verify(historyManager).addEdit(placeMarking);
-//    }
+    //    @Test
+    //    public void decrementPlaceCounterCreatesHistoryItem() {
+    //        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+    //        int oldCount = 7;
+    //
+    //        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
+    //        placeController.deleteTokenInPlace(defaultToken);
+    //
+    //        verify(historyManager).newEdit();
+    //        HistoryItem placeMarking =
+    //                new ChangePlaceTokens(place, defaultToken, oldCount, oldCount - 1);
+    //        verify(historyManager).addEdit(placeMarking);
+    //    }
 
 }

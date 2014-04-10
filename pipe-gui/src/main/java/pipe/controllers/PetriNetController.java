@@ -40,11 +40,6 @@ public class PetriNetController implements IController, Serializable {
      */
     private final ZoomController zoomController;
 
-    /**
-     * Deals with undo/redo history of current Petri net
-     */
-    private final HistoryManager historyManager;
-
 
     /**
      * Responsible for undo/redo
@@ -110,7 +105,7 @@ public class PetriNetController implements IController, Serializable {
         return petriNetTab;
     }
 
-    public PetriNetController(PetriNet model, HistoryManager historyManager, Animator animator,
+    public PetriNetController(PetriNet model, Animator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController,
                               PetriNetTab petriNetTab) {
         petriNet = model;
@@ -122,7 +117,6 @@ public class PetriNetController implements IController, Serializable {
         if (model.getTokens().size() > 0) {
             selectedToken = model.getTokens().iterator().next();
         }
-        this.historyManager = historyManager;
         placeNamer = new PlaceNamer(model);
         transitionNamer = new TransitionNamer(model);
     }
@@ -320,24 +314,20 @@ public class PetriNetController implements IController, Serializable {
         }
     }
 
-    public HistoryManager getHistoryManager() {
-        return historyManager;
-    }
-
     public PetriNet getPetriNet() {
         return petriNet;
     }
 
     public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
-        return new ArcController<>(arc, historyManager, this);
+        return new ArcController<>(arc, this);
     }
 
     public PlaceController getPlaceController(Place place) {
-        return new PlaceController(place, historyManager);
+        return new PlaceController(place);
     }
 
     public TransitionController getTransitionController(final Transition transition) {
-        return new TransitionController(transition, historyManager);
+        return new TransitionController(transition);
     }
 
     public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {

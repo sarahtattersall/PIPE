@@ -7,22 +7,18 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.actions.gui.create.AnnotationAction;
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
 public class AnnotationActionTest {
     private PetriNetController mockController;
 
-    private HistoryManager mockHistory;
 
     private PetriNet mockNet;
 
@@ -34,9 +30,6 @@ public class AnnotationActionTest {
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);
-
-        mockHistory = mock(HistoryManager.class);
-        when(mockController.getHistoryManager()).thenReturn(mockHistory);
     }
 
     @Test
@@ -62,7 +55,7 @@ public class AnnotationActionTest {
 
         action.doAction(mockEvent, mockController);
 
-//        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
+        //        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }
 
 }

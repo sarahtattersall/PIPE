@@ -6,7 +6,6 @@ import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
-import pipe.historyActions.HistoryManager;
 import pipe.io.PetriNetIOImpl;
 import pipe.io.PetriNetReader;
 import pipe.models.component.Connectable;
@@ -137,8 +136,7 @@ public class PipeApplicationController {
                         petriNetTab, net);
 
         PetriNetController petriNetController =
-                new PetriNetController(net, new HistoryManager(applicationView.getComponentEditorManager()), animator,
-                        copyPasteManager, zoomController, petriNetTab);
+                new PetriNetController(net, animator, copyPasteManager, zoomController, petriNetTab);
 
 
         SelectionManager selectionManager = new SelectionManager(petriNetTab, petriNetController);

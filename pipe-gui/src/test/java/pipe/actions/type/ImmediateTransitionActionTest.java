@@ -8,28 +8,22 @@ import org.junit.Test;
 import pipe.actions.gui.create.ImmediateTransitionAction;
 import pipe.actions.gui.create.TransitionAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ImmediateTransitionActionTest {
 
     private TransitionAction action;
+
     private PetriNetController mockController;
+
     private PetriNet mockNet;
-    private HistoryManager mockHistory;
 
     @Before
     public void setUp() {
@@ -37,8 +31,6 @@ public class ImmediateTransitionActionTest {
         mockController = mock(PetriNetController.class);
         mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);
-        mockHistory = mock(HistoryManager.class);
-        when(mockController.getHistoryManager()).thenReturn(mockHistory);
     }
 
 
@@ -51,11 +43,8 @@ public class ImmediateTransitionActionTest {
 
         action.doAction(mockEvent, mockController);
 
-        verify(mockNet).addTransition(argThat(
-                new HasMultiple<Transition>(
-                        new HasXY(point.getX(), point.getY()),
-                        new HasTimed(false)))
-        );
+        verify(mockNet).addTransition(
+                argThat(new HasMultiple<Transition>(new HasXY(point.getX(), point.getY()), new HasTimed(false))));
     }
 
     @Test
@@ -67,6 +56,6 @@ public class ImmediateTransitionActionTest {
 
         action.doAction(mockEvent, mockController);
 
-//        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
+        //        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }
 }

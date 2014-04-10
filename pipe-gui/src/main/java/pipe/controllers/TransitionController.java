@@ -13,9 +13,8 @@ import java.util.LinkedList;
 public class TransitionController extends AbstractPetriNetComponentController<Transition>
 {
 
-    protected TransitionController(Transition component,
-                                   HistoryManager historyManager) {
-        super(component, historyManager);
+    protected TransitionController(Transition component) {
+        super(component);
     }
 
     public boolean isTimed() {
@@ -55,27 +54,27 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
     public void setInfiniteServer(boolean infiniteValue) {
         component.setInfiniteServer(infiniteValue);
         TransitionInfiniteServer infiniteAction = new TransitionInfiniteServer(component, infiniteValue);
-        historyManager.addNewEdit(infiniteAction);
+//        historyManager.addNewEdit(infiniteAction);
     }
 
     public void setTimed(boolean timedValue) {
         component.setTimed(timedValue);
         TransitionTiming timedAction = new TransitionTiming(component, timedValue);
-        historyManager.addNewEdit(timedAction);
+//        historyManager.addNewEdit(timedAction);
     }
 
     public void setPriority(int priorityValue) {
         int oldPriority = component.getPriority();
         component.setPriority(priorityValue);
         TransitionPriority priorityAction = new TransitionPriority(component, oldPriority, priorityValue);
-        historyManager.addNewEdit(priorityAction);
+//        historyManager.addNewEdit(priorityAction);
     }
 
     public void setAngle(int angle) {
         int oldAngle = component.getAngle();
         component.setAngle(angle);
         TransitionRotation angleAction = new TransitionRotation(component, oldAngle, angle);
-        historyManager.addNewEdit(angleAction);
+//        historyManager.addNewEdit(angleAction);
     }
 
     public Rate getRate() {
@@ -85,6 +84,6 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
     public void setRate(Rate rate) {
         SetRateParameter rateAction = new SetRateParameter(component, component.getRate(), rate);
         component.setRate(rate);
-        historyManager.addNewEdit(rateAction);
+//        historyManager.addNewEdit(rateAction);
     }
 }

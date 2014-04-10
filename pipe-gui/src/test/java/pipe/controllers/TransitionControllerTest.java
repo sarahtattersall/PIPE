@@ -2,25 +2,27 @@ package pipe.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.*;
 import pipe.models.component.transition.Transition;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TransitionControllerTest {
 
-    HistoryManager historyManager;
+    @Mock
     Transition transition;
+
     TransitionController controller;
 
     @Before
     public void setUp() {
-        historyManager = mock(HistoryManager.class);
         transition = mock(Transition.class);
 
-        controller = new TransitionController(transition, historyManager);
+        controller = new TransitionController(transition);
     }
 
     @Test
@@ -28,9 +30,7 @@ public class TransitionControllerTest {
         boolean isInfinite = true;
         controller.setInfiniteServer(isInfinite);
 
-        HistoryItem transitionInfiniteServer =
-                new TransitionInfiniteServer(transition, isInfinite);
-        verify(historyManager).addNewEdit(transitionInfiniteServer);
+        HistoryItem transitionInfiniteServer = new TransitionInfiniteServer(transition, isInfinite);
     }
 
     @Test
@@ -46,7 +46,6 @@ public class TransitionControllerTest {
         controller.setTimed(isTimed);
 
         HistoryItem transitionTimed = new TransitionTiming(transition, isTimed);
-        verify(historyManager).addNewEdit(transitionTimed);
     }
 
     @Test
@@ -63,9 +62,7 @@ public class TransitionControllerTest {
         when(transition.getAngle()).thenReturn(oldAngle);
         controller.setAngle(newAngle);
 
-        HistoryItem angleItem =
-                new TransitionRotation(transition, oldAngle, newAngle);
-        verify(historyManager).addNewEdit(angleItem);
+        HistoryItem angleItem = new TransitionRotation(transition, oldAngle, newAngle);
     }
 
     @Test
@@ -84,9 +81,7 @@ public class TransitionControllerTest {
         when(transition.getPriority()).thenReturn(oldPriority);
         controller.setPriority(newPriority);
 
-        HistoryItem priorityItem =
-                new TransitionPriority(transition, oldPriority, newPriority);
-        verify(historyManager).addNewEdit(priorityItem);
+        HistoryItem priorityItem = new TransitionPriority(transition, oldPriority, newPriority);
     }
 
     @Test

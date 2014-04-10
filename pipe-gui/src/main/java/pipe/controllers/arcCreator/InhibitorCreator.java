@@ -2,9 +2,6 @@ package pipe.controllers.arcCreator;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryItem;
-import pipe.historyActions.HistoryManager;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
@@ -37,18 +34,18 @@ public class InhibitorCreator implements ArcActionCreator {
         if (source.getClass().equals(Place.class) && target.getClass().equals(Transition.class)) {
             Place place = (Place) source;
             Transition transition = (Transition) target;
-            Arc<Place, Transition> arc =
-                    new Arc<>(place, transition, new HashMap<Token, String>(), ArcType.INHIBITOR);
-//            PetriNet petriNet = petriNetController.getPetriNet();
-//            petriNet.addArc(arc);
-//            addToHistory(arc);
+            Arc<Place, Transition> arc = new Arc<>(place, transition, new HashMap<Token, String>(), ArcType.INHIBITOR);
+            //            PetriNet petriNet = petriNetController.getPetriNet();
+            //            petriNet.addArc(arc);
+            //            addToHistory(arc);
             return (Arc<S, T>) arc;
         }
         return null;
     }
 
     @Override
-    public <S extends Connectable, T extends Connectable>  Arc<S, T>  create(S source, T target, List<ArcPoint> arcPoints) {
+    public <S extends Connectable, T extends Connectable> Arc<S, T> create(S source, T target,
+                                                                           List<ArcPoint> arcPoints) {
         Arc<S, T> arc = createArc(source, target);
         if (arc != null) {
             arc.addIntermediatePoints(arcPoints);
@@ -65,8 +62,8 @@ public class InhibitorCreator implements ArcActionCreator {
     private void addToHistory(Arc<? extends Connectable, ? extends Connectable> arc) {
         PetriNetController netController = controller.getActivePetriNetController();
         PetriNet petriNet = netController.getPetriNet();
-//        HistoryItem item = new AddPetriNetObject(arc, petriNet);
-//        HistoryManager manager = netController.getHistoryManager();
-//        manager.addNewEdit(item);
+        //        HistoryItem item = new AddPetriNetObject(arc, petriNet);
+        //        HistoryManager manager = netController.getHistoryManager();
+        //        manager.addNewEdit(item);
     }
 }

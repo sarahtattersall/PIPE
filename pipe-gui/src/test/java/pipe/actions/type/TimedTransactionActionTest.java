@@ -5,41 +5,36 @@ import matchers.component.HasTimed;
 import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.TimedTransitionAction;
 import pipe.actions.gui.create.TransitionAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.Grid;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TimedTransactionActionTest {
 
     private TransitionAction action;
+
+    @Mock
     private PetriNetController mockController;
+
+    @Mock
     private PetriNet mockNet;
-    private HistoryManager mockHistory;
 
     @Before
     public void setUp() {
         action = new TimedTransitionAction();
-        mockController = mock(PetriNetController.class);
-        mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);
-        mockHistory = mock(HistoryManager.class);
-        when(mockController.getHistoryManager()).thenReturn(mockHistory);
     }
 
 
@@ -52,11 +47,8 @@ public class TimedTransactionActionTest {
 
         action.doAction(mockEvent, mockController);
 
-        verify(mockNet).addTransition(argThat(
-                new HasMultiple<Transition>(
-                        new HasXY(point.getX(), point.getY()),
-                        new HasTimed(true)))
-        );
+        verify(mockNet).addTransition(
+                argThat(new HasMultiple<>(new HasXY(point.getX(), point.getY()), new HasTimed(true))));
     }
 
     @Test
@@ -68,6 +60,6 @@ public class TimedTransactionActionTest {
 
         action.doAction(mockEvent, mockController);
 
-//        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
+        //        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }
 }

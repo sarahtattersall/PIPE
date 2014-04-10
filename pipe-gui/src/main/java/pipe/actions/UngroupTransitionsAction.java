@@ -37,7 +37,7 @@ public class UngroupTransitionsAction extends GuiAction
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();
-        petriNetController.getHistoryManager().clear();
+//        petriNetController.getHistoryManager().clear();
 
         List<GroupTransitionView> transitionsToUngroup = new LinkedList<GroupTransitionView>();
         if(applicationView.getCurrentPetriNetView().getTokenViews().size() > 1)
@@ -56,8 +56,8 @@ public class UngroupTransitionsAction extends GuiAction
 
             for(GroupTransitionView groupTransitionView : transitionsToUngroup)
             {
-                HistoryItem edit = groupTransitionView.ungroupTransitions();
-                petriNetController.getHistoryManager().addNewEdit(edit);
+//                HistoryItem edit = groupTransitionView.ungroupTransitions();
+//                petriNetController.getHistoryManager().addNewEdit(edit);
                 groupTransitionView.deleteAssociatedArcs();
                 groupTransitionView.setVisible(false);
             }

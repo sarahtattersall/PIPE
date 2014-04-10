@@ -4,27 +4,27 @@ import matchers.component.HasMultiple;
 import matchers.component.HasXY;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.PlaceAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.HistoryManager;
 import pipe.models.component.place.Place;
 import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PlaceActionTest {
 
+    @Mock
     private PetriNetController mockController;
 
-    private HistoryManager mockHistory;
-
+    @Mock
     private PetriNet mockNet;
 
     private PlaceAction action;
@@ -32,12 +32,7 @@ public class PlaceActionTest {
     @Before
     public void setUp() {
         action = new PlaceAction();
-        mockController = mock(PetriNetController.class);
-        mockNet = mock(PetriNet.class);
         when(mockController.getPetriNet()).thenReturn(mockNet);
-
-        mockHistory = mock(HistoryManager.class);
-        when(mockController.getHistoryManager()).thenReturn(mockHistory);
     }
 
     @Test
@@ -62,6 +57,6 @@ public class PlaceActionTest {
 
         action.doAction(mockEvent, mockController);
 
-//        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
+        //        verify(mockHistory).addNewEdit(any(AddPetriNetObject.class));
     }
 }

@@ -4,7 +4,6 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.ParameterPanel;
 import pipe.historyActions.HistoryItem;
-import pipe.historyActions.HistoryManager;
 import pipe.views.PetriNetView;
 import pipe.views.TransitionView;
 
@@ -17,6 +16,7 @@ import java.util.Iterator;
  *
  * @author Pere Bonet
  */
+//TODO: DELETE THIS CLASS!
 public class RateParameter extends Parameter {
 
     // the value of the parameter
@@ -120,11 +120,11 @@ public class RateParameter extends Parameter {
         Object[] transitions = _transitionsHashSet.toArray();
         if (transitions.length > 0) {
             //TODO: PASS THIS IN!
-            HistoryManager historyManager =
-                    ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager();
-            for (Object transition : transitions) {
-                historyManager.addEdit(((TransitionView) transition).clearRateParameter());
-            }
+            //            HistoryManager historyManager =
+            //                    ApplicationSettings.getApplicationController().getActivePetriNetController().getHistoryManager();
+            //            for (Object transition : transitions) {
+            //                historyManager.addEdit(((TransitionView) transition).clearRateParameter());
+            //            }
         }
         super.delete();
     }
