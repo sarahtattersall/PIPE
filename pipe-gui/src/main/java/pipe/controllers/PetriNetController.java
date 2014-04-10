@@ -26,6 +26,7 @@ import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoManager;
+import javax.swing.undo.UndoableEdit;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
@@ -253,8 +254,8 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Deletes selection and adds to history manager
      */
-    public List<AbstractUndoableEdit> deleteSelection() {
-        List<AbstractUndoableEdit> edits = new LinkedList<>();
+    public List<UndoableEdit> deleteSelection() {
+        List<UndoableEdit> edits = new LinkedList<>();
         for (PetriNetComponent component : selectedComponents) {
             edits.add(deleteComponent(component));
         }
@@ -269,7 +270,7 @@ public class PetriNetController implements IController, Serializable {
      * @param component
      * @return AbstractUndoableEdit created for deleting the component
      */
-    private AbstractUndoableEdit deleteComponent(PetriNetComponent component) {
+    private UndoableEdit deleteComponent(PetriNetComponent component) {
         petriNet.remove(component);
         return new DeletePetriNetObject(component, petriNet);
     }
@@ -280,7 +281,7 @@ public class PetriNetController implements IController, Serializable {
      * @param component to delete
      * @return AbstractUndableEdit created
      */
-    public AbstractUndoableEdit delete(PetriNetComponent component) {
+    public UndoableEdit delete(PetriNetComponent component) {
         return deleteComponent(component);
     }
 

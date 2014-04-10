@@ -10,16 +10,20 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
+import pipe.historyActions.AddPetriNetObject;
+import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
+import pipe.utilities.transformers.Contains;
 import pipe.views.PipeApplicationView;
 import pipe.views.arc.InhibitorArcHead;
 import pipe.views.arc.TemporaryArcView;
 import pipe.visitor.connectable.arc.ArcSourceVisitor;
 
+import javax.swing.event.UndoableEditListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -44,6 +48,7 @@ public class ArcActionTest {
     @Mock
     private PetriNetTab mockTab;
 
+    @Mock
     private Token activeToken;
 
     @Mock
@@ -52,14 +57,13 @@ public class ArcActionTest {
     @Mock
     private ArcActionCreator mockCreatorVisitor;
 
+    @Mock
+    UndoableEditListener listener;
+
     @Before
     public void setUp() {
         when(mockController.getPetriNet()).thenReturn(mockNet);
 
-        //        when(mockController.getHistoryManager()).thenReturn(mockHistory);
-
-
-        activeToken = mock(Token.class);
         when(mockApplicationView.getSelectedTokenName()).thenReturn("Default");
 
         when(mockController.getPetriNetTab()).thenReturn(mockTab);
@@ -69,6 +73,7 @@ public class ArcActionTest {
 
         action = new ArcAction("Inhibitor Arc", "Add an inhibitor arc", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
                 mockSourceVisitor, mockCreatorVisitor, mockApplicationController, new InhibitorArcHead());
+        action.addUndoableEditListener(listener);
     }
 
     @Test
@@ -111,6 +116,26 @@ public class ArcActionTest {
     @Test
     public void updatesEndPointOnAction() {
         //TODO: WORK OUT HOW TO TEST SINCE TEMP ARC VIEW ISNT PUBLIC
+    }
+
+    @Test
+    public void createsUndoAction() {
+        Transition transition = new Transition("", "");
+        when(mockSourceVisitor.canStart(transition)).thenReturn(true);
+        action.doConnectableAction(transition, mockController);
+
+        Place place = new Place("", "");
+        when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
+
+        Arc<Transition, Place> mockArc = mock(Arc.class);
+        when(mockCreatorVisitor.create(any(Transition.class), any(Place.class), anyListOf(ArcPoint.class))).thenReturn(mockArc);
+
+
+        action.doConnectableAction(place, mockController);
+
+
+        AddPetriNetObject addAction = new AddPetriNetObject(mockArc, mockNet);
+        verify(listener).undoableEditHappened(argThat(Contains.thisAction(addAction)));
     }
 
 }

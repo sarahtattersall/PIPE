@@ -27,6 +27,7 @@ import pipe.visitor.TranslationVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoableEdit;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -107,7 +108,7 @@ public class PetriNetControllerTest {
         net.addPlace(place);
 
         controller.select(place);
-        List<AbstractUndoableEdit> edits = controller.deleteSelection();
+        List<UndoableEdit> edits = controller.deleteSelection();
         DeletePetriNetObject deleteAction = new DeletePetriNetObject(place, net);
         assertEquals(1, edits.size());
         assertTrue(edits.contains(deleteAction));
@@ -128,7 +129,7 @@ public class PetriNetControllerTest {
         Place place = new Place("", "");
         net.addPlace(place);
 
-        AbstractUndoableEdit edit = controller.delete(place);
+        UndoableEdit edit = controller.delete(place);
 
         DeletePetriNetObject deleteAction = new DeletePetriNetObject(place, net);
         assertEquals(edit, deleteAction);

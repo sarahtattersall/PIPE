@@ -23,7 +23,7 @@ import pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -295,7 +295,7 @@ public class CopyPasteManager extends javax.swing.JComponent
      * @param createdComponents new components that have been created
      */
     private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
-        List<AbstractUndoableEdit> undoableEditList = new LinkedList<>();
+        List<UndoableEdit> undoableEditList = new LinkedList<>();
         for (PetriNetComponent component : createdComponents) {
             AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
             undoableEditList.add(addAction);

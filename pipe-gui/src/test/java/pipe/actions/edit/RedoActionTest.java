@@ -11,10 +11,12 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 
 import javax.swing.*;
+import javax.swing.undo.UndoManager;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -31,6 +33,9 @@ public class RedoActionTest {
     @Mock
     ComponentEditorManager container;
 
+    @Mock
+    UndoManager mockUndoManager;
+
     @Before
     public void setUp() {
         redoAction = new RedoAction(mockController, container);
@@ -39,8 +44,9 @@ public class RedoActionTest {
     @Test
     public void actionPerformed() {
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
-        //        when(mockPetriNetController.getHistoryManager()).thenReturn(mockHistory);
+        when(mockPetriNetController.getUndoManager()).thenReturn(mockUndoManager);
         redoAction.actionPerformed(null);
+        verify(mockUndoManager).redo();
     }
 
     @Test

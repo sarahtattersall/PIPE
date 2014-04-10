@@ -12,6 +12,7 @@ import pipe.models.component.token.Token;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoManager;
+import javax.swing.undo.UndoableEdit;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +56,7 @@ public abstract class TokenAction extends CreateAction {
      * @param counts
      */
     protected void setTokenCounts(Place place, Map<Token, Integer> counts) {
-        List<AbstractUndoableEdit> undoableEditList = new LinkedList<>();
+        List<UndoableEdit> undoableEditList = new LinkedList<>();
         for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
             Token token = entry.getKey();
             Integer newTokenCount = entry.getValue();

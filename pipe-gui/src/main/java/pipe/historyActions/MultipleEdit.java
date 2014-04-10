@@ -1,23 +1,49 @@
 package pipe.historyActions;
 
 import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoableEdit;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MultipleEdit extends AbstractUndoableEdit {
 
-    private final List<AbstractUndoableEdit> multipleEdits;
+    private final List<UndoableEdit> multipleEdits;
 
 
-    public MultipleEdit(List<AbstractUndoableEdit> multipleEdits) {
+    public MultipleEdit(List<UndoableEdit> multipleEdits) {
         this.multipleEdits = multipleEdits;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MultipleEdit)) {
+            return false;
+        }
+
+        MultipleEdit that = (MultipleEdit) o;
+
+        if (!multipleEdits.equals(that.multipleEdits)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return multipleEdits.hashCode();
+    }
 
     /** */
     @Override
     public void undo() {
         super.undo();
-        for (AbstractUndoableEdit edit : multipleEdits) {
+
+        for (UndoableEdit edit : multipleEdits) {
             edit.undo();
         }
     }
@@ -27,7 +53,7 @@ public class MultipleEdit extends AbstractUndoableEdit {
     @Override
     public void redo() {
         super.redo();
-        for (AbstractUndoableEdit edit : multipleEdits) {
+        for (UndoableEdit edit : multipleEdits) {
             edit.redo();
         }
     }

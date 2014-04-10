@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -121,7 +122,7 @@ public abstract class GuiAction
         }
     }
 
-    protected void registerUndoEvent(AbstractUndoableEdit edit) {
+    protected void registerUndoEvent(UndoableEdit edit) {
         if (listener != null) {
             listener.undoableEditHappened(new UndoableEditEvent(this,
                     edit));

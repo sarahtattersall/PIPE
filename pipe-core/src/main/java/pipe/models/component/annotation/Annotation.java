@@ -57,7 +57,52 @@ public class Annotation extends PlaceablePetriNetComponent {
     @XmlAttribute
     private int height;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Annotation)) {
+            return false;
+        }
+
+        Annotation that = (Annotation) o;
+
+        if (border != that.border) {
+            return false;
+        }
+        if (height != that.height) {
+            return false;
+        }
+        if (width != that.width) {
+            return false;
+        }
+        if (x != that.x) {
+            return false;
+        }
+        if (y != that.y) {
+            return false;
+        }
+        if (!text.equals(that.text)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (border ? 1 : 0);
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + text.hashCode();
+        result = 31 * result + width;
+        result = 31 * result + height;
+        return result;
+    }
+
     /**
+
      * Copy constructor
      * @param annotation to copy
      */
