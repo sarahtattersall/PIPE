@@ -123,7 +123,6 @@ public class ComponentEditorManager implements ActionManager {
     }
 
     public void updateButtons() {
-        System.out.println("UPDATE BUTTONS!");
         UndoManager undoManager = controller.getActivePetriNetController().getUndoManager();
 
         setRedoActionEnabled(undoManager.canRedo());
