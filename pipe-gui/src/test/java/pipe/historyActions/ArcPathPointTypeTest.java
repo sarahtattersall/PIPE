@@ -7,20 +7,20 @@ import pipe.models.component.arc.ArcPoint;
 import static org.mockito.Mockito.*;
 
 public class ArcPathPointTypeTest {
-    ArcPathPointType historyItem;
+    ArcPathPointType item;
     ArcPoint mockPoint;
 
     @Before
     public void setUp() {
         mockPoint  = mock(ArcPoint.class);
-        historyItem = new ArcPathPointType(mockPoint);
+        item = new ArcPathPointType(mockPoint);
     }
 
     @Test
     public void togglesArcPointTypeToStraightOnUndo() {
         when(mockPoint.isCurved()).thenReturn(true);
 
-        historyItem.undo();
+        item.undo();
         verify(mockPoint).setCurved(false);
     }
 
@@ -28,24 +28,26 @@ public class ArcPathPointTypeTest {
     public void togglesArcPointTypeToCurvedOnUndo() {
         when(mockPoint.isCurved()).thenReturn(false);
 
-        historyItem.undo();
+        item.undo();
         verify(mockPoint).setCurved(true);
     }
 
     @Test
     public void togglesArcPointTypeToStraightOnRedo() {
+        item.undo();
         when(mockPoint.isCurved()).thenReturn(true);
 
-        historyItem.redo();
+        item.redo();
         verify(mockPoint).setCurved(false);
     }
 
     @Test
     public void togglesArcPointTypeToCurvedOnRedo() {
+        item.undo();
         when(mockPoint.isCurved()).thenReturn(false);
 
-        historyItem.redo();
-        verify(mockPoint).setCurved(true);
+        item.redo();
+        verify(mockPoint, times(2)).setCurved(true);
     }
 
 
