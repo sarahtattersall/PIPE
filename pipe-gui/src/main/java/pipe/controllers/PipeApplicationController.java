@@ -34,10 +34,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PipeApplicationController {
 
@@ -260,9 +257,8 @@ public class PipeApplicationController {
     /**
      * @return the names of the petri nets that have changed
      */
-    //FIXME: THIS DOESNT WORK BECAUSE IT CHOOSES NEW NAMES FOR THE PETRI NET
-    public List<String> getNetsChanged() {
-        List<String> changed = new ArrayList<>();
+    public Set<String> getNetsChanged() {
+        Set<String> changed = new HashSet<>();
         for (PetriNetController controller : netControllers.values()) {
             if (controller.hasChanged()) {
                 changed.add(controller.getPetriNet().getNameValue());
@@ -271,7 +267,20 @@ public class PipeApplicationController {
         return changed;
     }
 
+    /**
+     *
+     * @return true if the current petri net has changed
+     */
+    public boolean hasCurrentPetriNetChanged() {
+        PetriNetController activeController = getActivePetriNetController();
+        return activeController != null && activeController.hasChanged();
+    }
+
     public boolean anyNetsChanged() {
         return !getNetsChanged().isEmpty();
+    }
+
+    public void removeTab(PetriNetTab tab) {
+        netControllers.remove(tab);
     }
 }

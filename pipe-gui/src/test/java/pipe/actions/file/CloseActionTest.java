@@ -2,7 +2,12 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.file.CloseWindowAction;
+import pipe.controllers.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -10,15 +15,20 @@ import javax.swing.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CloseActionTest {
     CloseWindowAction closeWindowAction;
 
+    @Mock
     PipeApplicationView mockView;
+
+    @Mock
+    PipeApplicationController mockController;
 
     @Before
     public void setUp() {
         mockView = mock(PipeApplicationView.class);
-        closeWindowAction = new CloseWindowAction(mockView);
+        closeWindowAction = new CloseWindowAction(mockView, mockController);
     }
 
     @Test

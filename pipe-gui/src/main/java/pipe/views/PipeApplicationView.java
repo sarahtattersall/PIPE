@@ -4,7 +4,7 @@ import pipe.actions.ZoomAction;
 import pipe.actions.gui.ExampleFileAction;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.UnfoldAction;
-import pipe.actions.gui.create.*;
+import pipe.actions.gui.create.SelectAction;
 import pipe.actions.gui.file.*;
 import pipe.actions.gui.grid.GridAction;
 import pipe.actions.gui.tokens.ChooseTokenClassAction;
@@ -28,7 +28,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +36,6 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
@@ -53,6 +51,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final StatusBar statusBar;
 
+    public final ComponentEditorManager componentEditorManager;
+
+    public final GuiAction selectAction;
+
+    public final ExitAction exitAction;
+
+    final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
+
     private final ComponentCreatorManager componentCreatorManager;
 
     private final AnimateActionManager animateActionManager;
@@ -60,18 +66,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final PetriNetEditorManager editorManager;
 
     private final TokenActionManager tokenActionManager;
-
-    public ComponentEditorManager getComponentEditorManager() {
-        return componentEditorManager;
-    }
-
-    public final ComponentEditorManager componentEditorManager;
-
-
-
-    public final GuiAction selectAction;
-
-    final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -98,8 +92,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public GuiAction importAction = new ImportAction();
 
-    public final ExitAction exitAction;
-
     public GridAction toggleGrid = new GridAction(this);
 
     public GuiAction zoomOutAction;
@@ -107,7 +99,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public GuiAction zoomInAction;
 
     public GuiAction zoomAction;
-
 
     public UnfoldAction unfoldAction;
 
@@ -142,7 +133,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         unfoldAction = new UnfoldAction(this, applicationController);
 
         selectAction = new SelectAction(this, applicationController);
-
 
 
         exitAction = new ExitAction(this, applicationController);
@@ -561,7 +551,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         tokenClassComboBox.setEditable(true);
         tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
         tokenClassComboBox.setMaximumRowCount(100);
-//        tokenClassComboBox.setMaximumSize(new Dimension(125, 100));
+        //        tokenClassComboBox.setMaximumSize(new Dimension(125, 100));
         tokenClassComboBox.setEditable(false);
         tokenClassComboBox.setAction(action);
         toolBar.add(tokenClassComboBox);
@@ -573,16 +563,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         frameForPetriNetTabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                PetriNetController controller = applicationController.getActivePetriNetController();
-                if (controller.isCopyInProgress()) {
-                    controller.cancelPaste();
-                }
-
-
                 PetriNetTab petriNetTab = getCurrentTab();
                 applicationController.setActiveTab(petriNetTab);
 
-                if (frameForPetriNetTabs.getTabCount() > 0) {
+                if (areAnyTabsDisplayed()) {
+                    PetriNetController controller = applicationController.getActivePetriNetController();
+                    if (controller.isCopyInProgress()) {
+                        controller.cancelPaste();
+                    }
+
                     petriNetTab.setVisible(true);
                     petriNetTab.repaint();
                     updateZoomCombo();
@@ -669,6 +658,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     /**
+     * @return true if any tabs are displayed
+     */
+    public boolean areAnyTabsDisplayed() {
+        return applicationController.getActivePetriNetController() != null;
+    }
+
+    /**
      * Refreshes the combo box that presents the Tokens available for use.
      * If there are no Petri nets being displayed this clears it
      */
@@ -704,13 +700,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             return tokenClassChoices;
         }
         return new String[0];
-    }
-
-    /**
-     * @return true if any tabs are displayed
-     */
-    public boolean areAnyTabsDisplayed() {
-        return applicationController.getActivePetriNetController() != null;
     }
 
     public String getSelectedTokenName() {
@@ -753,6 +742,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public final void setTitle(String title) {
         String name = applicationModel.getName();
         super.setTitle((title == null) ? name : name + ": " + title);
+    }
+
+    public ComponentEditorManager getComponentEditorManager() {
+        return componentEditorManager;
     }
 
     public JTabbedPane getFrameForPetriNetTabs() {
@@ -831,6 +824,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void removeTab(int index) {
         if ((frameForPetriNetTabs.getTabCount() > 0)) {
+            PetriNetTab tab = petriNetTabs.get(index);
+            applicationController.removeTab(tab);
             petriNetTabs.remove(index);
             frameForPetriNetTabs.remove(index);
         }
