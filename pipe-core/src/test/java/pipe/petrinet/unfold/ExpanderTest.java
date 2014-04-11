@@ -4,6 +4,7 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.dsl.*;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
@@ -114,7 +115,7 @@ public class ExpanderTest {
     }
 
     @Test
-    public void simpleNetPetriNetIsExpandedToAddExtraPlaceTransition() {
+    public void simpleNetPetriNetIsExpandedToAddExtraPlaceTransition() throws PetriNetComponentException {
         Token token = getDefaultToken();
         Token redToken = getRedToken();
         petriNet.addToken(token);

@@ -2,6 +2,7 @@ package pipe.models.visitor;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.arc.ArcType;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.annotation.Annotation;
@@ -72,7 +73,7 @@ public class PetriNetComponentAddVisitorTest {
     //    }
 
     @Test
-    public void testAddsToken() {
+    public void testAddsToken() throws PetriNetComponentException {
         Token token = new Token("", new Color(0, 0, 0));
         token.accept(visitor);
         verify(mockNet).addToken(token);

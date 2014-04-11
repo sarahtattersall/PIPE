@@ -7,9 +7,11 @@ package pipe.actions.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.gui.ApplicationSettings;
 import pipe.historyActions.MultipleEdit;
 import pipe.models.component.PetriNetComponent;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -28,13 +30,17 @@ public class DeletePetriNetComponentAction extends GuiAction {
     /**
      * Deletes component from the petri net
      *
-     * @param e action event
+     * @param event action event
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
         PetriNetController petriNetController = controller.getActivePetriNetController();
-        registerUndoEvent(petriNetController.delete(component));
+        try {
+            registerUndoEvent(petriNetController.delete(component));
+        } catch (PetriNetComponentException e) {
+            GuiUtils.displayErrorMessage(null, e.getMessage());
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package pipe.dsl;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.rate.RateParameter;
@@ -86,7 +87,11 @@ public class APetriNet {
 
         PetriNet petriNet = new PetriNet();
         for (DSLCreator<? extends PetriNetComponent> creator : creators) {
-            petriNet.add(creator.create(tokens, connectables, rateParameters));
+            try {
+                petriNet.add(creator.create(tokens, connectables, rateParameters));
+            } catch (PetriNetComponentException e) {
+                e.printStackTrace();
+            }
         }
         return petriNet;
     }

@@ -1,7 +1,8 @@
 package pipe.gui;
 
-import pipe.historyActions.component.AddPetriNetObject;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.historyActions.MultipleEdit;
+import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
@@ -17,6 +18,7 @@ import pipe.models.component.transition.TransitionVisitor;
 import pipe.models.petrinet.PetriNet;
 import pipe.naming.MultipleNamer;
 import pipe.naming.PetriNetComponentNamer;
+import pipe.utilities.gui.GuiUtils;
 import pipe.views.PipeApplicationView;
 import pipe.visitor.PasteVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
@@ -136,7 +138,11 @@ public class CopyPasteManager extends javax.swing.JComponent
         };
 
         for (PetriNetComponent component : selectedComponents) {
-            component.accept(locationVisitor);
+            try {
+                component.accept(locationVisitor);
+            } catch (PetriNetComponentException e) {
+                GuiUtils.displayErrorMessage(null, e.getMessage());
+            }
         }
 
         pasteRectangle.setRect(location.left, location.top, location.right - location.left,
@@ -163,14 +169,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    private void updateBounds() {
-        if (pasteInProgress) {
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            setBounds(0, 0, applicationView.getCurrentTab().getWidth(),
-                    ApplicationSettings.getApplicationView().getCurrentTab().getHeight());
-        }
-    }
-
     private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
         ZoomController zoomController = petriNetTab.getZoomController();
         int realWidth = pasteRectangle.width;
@@ -178,6 +176,14 @@ public class CopyPasteManager extends javax.swing.JComponent
 
         pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
                 (int) (realHeight * zoomController.getScaleFactor()));
+    }
+
+    private void updateBounds() {
+        if (pasteInProgress) {
+            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+            setBounds(0, 0, applicationView.getCurrentTab().getWidth(),
+                    ApplicationSettings.getApplicationView().getCurrentTab().getHeight());
+        }
     }
 
     public boolean pasteEnabled() {
@@ -219,6 +225,17 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     /**
+     * Changes the rectangles location to point
+     *
+     * @param point new top left point for rectangle
+     */
+    private void updateRect(Point point) {
+        pasteRectangle.setLocation(point);
+        repaint();
+        updateBounds();
+    }
+
+    /**
      * Moving the mouse on the screen updates the location of the
      * paste rectangle
      *
@@ -229,17 +246,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         if (pasteInProgress) {
             updateRect(e.getPoint());
         }
-    }
-
-    /**
-     * Changes the rectangles location to point
-     *
-     * @param point new top left point for rectangle
-     */
-    private void updateRect(Point point) {
-        pasteRectangle.setLocation(point);
-        repaint();
-        updateBounds();
     }
 
     @Override
@@ -255,6 +261,21 @@ public class CopyPasteManager extends javax.swing.JComponent
         if (pasteInProgress) {
             paste(petriNetTab);
         }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // Not needed
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Not needed
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Not needed
     }
 
     /**
@@ -279,49 +300,19 @@ public class CopyPasteManager extends javax.swing.JComponent
         MultipleNamer multipleNamer = new PetriNetComponentNamer(petriNet);
         PasteVisitor pasteVisitor = new PasteVisitor(petriNet, pasteComponents, multipleNamer, despX, despY);
 
-        for (Connectable component : getConnectablesToPaste()) {
-            component.accept(pasteVisitor);
-        }
-        for (PetriNetComponent component : getNonConnectablesToPaste()) {
-            component.accept(pasteVisitor);
+        try {
+            for (Connectable component : getConnectablesToPaste()) {
+                component.accept(pasteVisitor);
+            }
+            for (PetriNetComponent component : getNonConnectablesToPaste()) {
+                component.accept(pasteVisitor);
+            }
+        } catch (PetriNetComponentException e) {
+
+            GuiUtils.displayErrorMessage(null, e.getMessage());
         }
 
         createPasteHistoryItem(pasteVisitor.getCreatedComponents());
-    }
-
-    /**
-     * Creates a history item for the new components added to the petrinet
-     *
-     * @param createdComponents new components that have been created
-     */
-    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
-        List<UndoableEdit> undoableEditList = new LinkedList<>();
-        for (PetriNetComponent component : createdComponents) {
-            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
-            undoableEditList.add(addAction);
-        }
-
-        listener.undoableEditHappened(new UndoableEditEvent(this, new MultipleEdit(undoableEditList)));
-    }
-
-    private Collection<Connectable> getConnectablesToPaste() {
-        final Collection<Connectable> connectables = new LinkedList<>();
-        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
-            @Override
-            public void visit(Place place) {
-                connectables.add(place);
-            }
-
-            @Override
-            public void visit(Transition transition) {
-                connectables.add(transition);
-            }
-        };
-
-        for (PetriNetComponent component : pasteComponents) {
-            component.accept(connectableVisitor);
-        }
-        return connectables;
     }
 
     /**
@@ -347,24 +338,52 @@ public class CopyPasteManager extends javax.swing.JComponent
         };
 
         for (PetriNetComponent component : pasteComponents) {
-            component.accept(componentVisitor);
+            try {
+                component.accept(componentVisitor);
+            } catch (PetriNetComponentException e) {
+                GuiUtils.displayErrorMessage(null, e.getMessage());
+            }
         }
         return components;
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // Not needed
+    private Collection<Connectable> getConnectablesToPaste() {
+        final Collection<Connectable> connectables = new LinkedList<>();
+        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
+            @Override
+            public void visit(Place place) {
+                connectables.add(place);
+            }
+
+            @Override
+            public void visit(Transition transition) {
+                connectables.add(transition);
+            }
+        };
+
+        for (PetriNetComponent component : pasteComponents) {
+            try {
+                component.accept(connectableVisitor);
+            } catch (PetriNetComponentException e) {
+                GuiUtils.displayErrorMessage(null, e.getMessage());
+            }
+        }
+        return connectables;
     }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // Not needed
-    }
+    /**
+     * Creates a history item for the new components added to the petrinet
+     *
+     * @param createdComponents new components that have been created
+     */
+    private void createPasteHistoryItem(Iterable<PetriNetComponent> createdComponents) {
+        List<UndoableEdit> undoableEditList = new LinkedList<>();
+        for (PetriNetComponent component : createdComponents) {
+            AddPetriNetObject addAction = new AddPetriNetObject(component, petriNet);
+            undoableEditList.add(addAction);
+        }
 
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // Not needed
+        listener.undoableEditHappened(new UndoableEditEvent(this, new MultipleEdit(undoableEditList)));
     }
 
     @Override

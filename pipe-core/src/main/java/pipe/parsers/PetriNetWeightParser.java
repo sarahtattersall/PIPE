@@ -98,11 +98,18 @@ public class PetriNetWeightParser implements FunctionalWeightParser<Double> {
 
         Set<String> componentIds = new HashSet<>();
 
+
         @Override
         public void exitToken_number(
                 @NotNull
                 RateGrammarParser.Token_numberContext ctx) {
             componentIds.add(ctx.ID().getText());
+        }
+
+        @Override
+        public void exitToken_color_number(RateGrammarParser.Token_color_numberContext ctx) {
+            componentIds.add(ctx.ID().get(0).getText());
+            componentIds.add(ctx.ID().get(1).getText());
         }
 
         public Set<String> getComponentIds() {

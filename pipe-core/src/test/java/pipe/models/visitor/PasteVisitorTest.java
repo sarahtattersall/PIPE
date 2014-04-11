@@ -4,6 +4,7 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
@@ -38,7 +39,7 @@ public class PasteVisitorTest {
 
     @Before
     public void setUp() {
-        pasteComponents = new LinkedList<PetriNetComponent>();
+        pasteComponents = new LinkedList<>();
         petriNet = mock(PetriNet.class);
         mockNamer = mock(MultipleNamer.class);
         when(mockNamer.getPlaceName()).thenReturn(PLACE_NAME);
@@ -46,7 +47,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingPlace() {
+    public void pastingPlace() throws PetriNetComponentException {
         Place place = new Place("id", "name");
         place.setCapacity(10);
         pasteComponents.add(place);
@@ -57,7 +58,7 @@ public class PasteVisitorTest {
         verify(petriNet).addPlace(argThat(matchesThisPlaceWithCopiedNameAndId(place)));
     }
 
-    private void doPaste() {
+    private void doPaste() throws PetriNetComponentException {
         for (PetriNetComponent component : pasteComponents) {
             component.accept(visitor);
         }
@@ -68,7 +69,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingPlaceWithOffset() {
+    public void pastingPlaceWithOffset() throws PetriNetComponentException {
         Place place = new Place("id", "name");
         place.setCapacity(10);
         pasteComponents.add(place);
@@ -85,7 +86,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingTransition() {
+    public void pastingTransition() throws PetriNetComponentException {
         Transition transition = new Transition("id", "name");
         transition.setAngle(45);
         transition.setPriority(10);
@@ -102,7 +103,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingTransitionWithOffset() {
+    public void pastingTransitionWithOffset() throws PetriNetComponentException {
         Transition transition = new Transition("id", "name");
         transition.setAngle(45);
         transition.setPriority(10);
@@ -121,7 +122,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingArcTransitionAndPlaceInSelected() {
+    public void pastingArcTransitionAndPlaceInSelected() throws PetriNetComponentException {
         Place place = new Place("id", "name");
         Transition transition = new Transition("id", "name");
         pasteComponents.add(place);
@@ -143,7 +144,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingArcSourceInSelected() {
+    public void pastingArcSourceInSelected() throws PetriNetComponentException {
         Place place = new Place("id", "name");
         pasteComponents.add(place);
 
@@ -159,7 +160,7 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingArcKeepsIntermediatePoints() {
+    public void pastingArcKeepsIntermediatePoints() throws PetriNetComponentException {
 
             Place place = new Place("id", "name");
             pasteComponents.add(place);
@@ -212,13 +213,13 @@ public class PasteVisitorTest {
     }
 
     @Test
-    public void pastingArcTargetInSelected() {
+    public void pastingArcTargetInSelected() throws PetriNetComponentException {
         Place place = new Place("id", "name");
         Transition transition = new Transition("id", "name");
         pasteComponents.add(transition);
 
-        Map<Token, String> weights = new HashMap<Token, String>();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+        Map<Token, String> weights = new HashMap<>();
+        Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 

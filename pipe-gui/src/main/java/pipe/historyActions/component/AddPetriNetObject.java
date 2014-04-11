@@ -4,6 +4,7 @@
 
 package pipe.historyActions.component;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.petrinet.PetriNet;
 
@@ -35,7 +36,11 @@ public class AddPetriNetObject extends AbstractUndoableEdit {
     @Override
     public void undo() {
         super.undo();
-        petriNet.remove(component);
+        try {
+            petriNet.remove(component);
+        } catch (PetriNetComponentException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -43,7 +48,11 @@ public class AddPetriNetObject extends AbstractUndoableEdit {
     @Override
     public void redo() {
         super.redo();
-        petriNet.add(component);
+        try {
+            petriNet.add(component);
+        } catch (PetriNetComponentException e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.historyActions.component.DeletePetriNetObject;
@@ -162,7 +163,7 @@ public class PetriNetController implements IController, Serializable {
      *
      * @param translation translation distance
      */
-    public void translateSelected(Point translation) {
+    public void translateSelected(Point translation) throws PetriNetComponentException {
         PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, selectedComponents);
         for (PetriNetComponent component : selectedComponents) {
             if (component.isDraggable()) {
@@ -257,7 +258,7 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Deletes selection and adds to history manager
      */
-    public List<UndoableEdit> deleteSelection() {
+    public List<UndoableEdit> deleteSelection() throws PetriNetComponentException {
         List<UndoableEdit> edits = new LinkedList<>();
         for (PetriNetComponent component : selectedComponents) {
             edits.add(deleteComponent(component));
@@ -273,7 +274,7 @@ public class PetriNetController implements IController, Serializable {
      * @param component
      * @return AbstractUndoableEdit created for deleting the component
      */
-    private UndoableEdit deleteComponent(PetriNetComponent component) {
+    private UndoableEdit deleteComponent(PetriNetComponent component) throws PetriNetComponentException {
         petriNet.remove(component);
         return new DeletePetriNetObject(component, petriNet);
     }
@@ -284,7 +285,7 @@ public class PetriNetController implements IController, Serializable {
      * @param component to delete
      * @return AbstractUndableEdit created
      */
-    public UndoableEdit delete(PetriNetComponent component) {
+    public UndoableEdit delete(PetriNetComponent component) throws PetriNetComponentException {
         return deleteComponent(component);
     }
 

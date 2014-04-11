@@ -70,5 +70,27 @@ public class PetriNetWeightParserTest {
         assertEquals(new Double(10), result.getResult());
     }
 
+    @Test
+    public void returnsCorrectComponentsForTotalTokens() {
+
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).andFinally(APlace.withId("P0").containing(10, "Default").tokens());
+
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet);
+        FunctionalResults<Double> result = parser.evaluateExpression("#(P0)");
+        assertTrue(result.getComponents().contains("P0"));
+    }
+
+
+    @Test
+    public void returnsCorrectComponentsForSpecificTokens() {
+
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).andFinally(APlace.withId("P0").containing(10, "Default").tokens());
+
+        FunctionalWeightParser<Double> parser = new PetriNetWeightParser(petriNet);
+        FunctionalResults<Double> result = parser.evaluateExpression("#(P0, Default)");
+        assertTrue(result.getComponents().contains("P0"));
+        assertTrue(result.getComponents().contains("Default"));
+    }
+
 
 }

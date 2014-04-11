@@ -1,5 +1,6 @@
 package pipe.models.component;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.beans.PropertyChangeListener;
@@ -17,7 +18,7 @@ public interface PetriNetComponent {
      *
      * @param visitor
      */
-    void accept(PetriNetComponentVisitor visitor);
+    void accept(PetriNetComponentVisitor visitor) throws PetriNetComponentException;
 
     /**
      * @return objectId

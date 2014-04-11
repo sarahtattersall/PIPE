@@ -3,6 +3,7 @@ package pipe.actions.gui.create;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.AbstractDatum;
 import pipe.gui.RateEditorPanel;
@@ -149,8 +150,12 @@ public class SpecifyRateParameterAction extends GuiAction {
                     }
                 } else if (modified.hasBeenSet()) {
                     RateParameter rateParameter = new RateParameter(modified.expression, modified.id, modified.id);
-                    petriNetController.getPetriNet().add(rateParameter);
-                    undoableEdits.add(new AddPetriNetObject(rateParameter, petriNetController.getPetriNet()));
+                    try {
+                        petriNetController.getPetriNet().add(rateParameter);
+                        undoableEdits.add(new AddPetriNetObject(rateParameter, petriNetController.getPetriNet()));
+                    } catch (PetriNetComponentException e) {
+                        GuiUtils.displayErrorMessage(null, e.getMessage());
+                    }
                 }
             }
             if (undoableEdits.size() > 0) {

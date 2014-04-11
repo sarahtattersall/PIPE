@@ -3,14 +3,15 @@ package pipe.actions.gui.tokens;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.AbstractDatum;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenEditorPanel;
+import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.component.DeletePetriNetObject;
-import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.token.ChangeTokenColor;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.token.Token;
@@ -57,11 +58,6 @@ public class SpecifyTokenAction extends GuiAction {
         }
     }
 
-    public void buildTokenGuiClasses() {
-        tokenEditorPanel = new TokenEditorPanel(pipeApplicationController.getActivePetriNetController());
-        guiDialog = new TokenDialog("Tokens", true, tokenEditorPanel);
-    }
-
     public void finishBuildingGui() {
         guiDialog.setSize(600, 200);
         guiDialog.setLocationRelativeTo(null);
@@ -96,29 +92,34 @@ public class SpecifyTokenAction extends GuiAction {
         forcedAction = null;
     }
 
+    public void buildTokenGuiClasses() {
+        tokenEditorPanel = new TokenEditorPanel(pipeApplicationController.getActivePetriNetController());
+        guiDialog = new TokenDialog("Tokens", true, tokenEditorPanel);
+    }
+
     /**
      * @author Alex Charalambous, June 2010: ColorDrawer, ColorPicker,
-     * TokenPanel and TokenDialog are four classes used
-     * to display the Token Classes dialog (accessible through the button
-     * toolbar).
+     *         TokenPanel and TokenDialog are four classes used
+     *         to display the Token Classes dialog (accessible through the button
+     *         toolbar).
      */
 
     public class TokenDialog<T extends PetriNetComponent> extends JDialog implements ActionListener {
 
-        private TokenEditorPanel dialogContent;
+        private TokenEditorPanel tokenEditorPanel;
 
-        public TokenDialog(String title, boolean modal, TokenEditorPanel dialogContent){
+        public TokenDialog(String title, boolean modal, TokenEditorPanel tokenEditorPanel) {
             //TODO: Work out how to get View?
             super(ApplicationSettings.getApplicationView(), title, modal);
-            this.dialogContent = dialogContent;
+            this.tokenEditorPanel = tokenEditorPanel;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand().equals("OK")){
-                if (dialogContent.isDataValid()) {
-                    updateFromTable(dialogContent.getTableData());
-                    removeDeletedData(dialogContent.getDeletedData());
+            if (e.getActionCommand().equals("OK")) {
+                if (tokenEditorPanel.isDataValid()) {
+                    updateFromTable(tokenEditorPanel.getTableData());
+                    removeDeletedData(tokenEditorPanel.getDeletedData());
                     setVisible(false);
                 }
             } else if (e.getActionCommand().equals("Cancel")) {
@@ -128,18 +129,35 @@ public class SpecifyTokenAction extends GuiAction {
 
         //TODO: ONCE PETRINET CAN GET COMPONENT BY ID YOU CAN MAKE THIS WHOLE CLASS ABSTRACT
         //      AND SHARE IT WITH RATE EDITOR
+
+        /**
+         * Removes tokens from the Petri net.
+         *
+         * Creates error message if a token cannot be removed for some reason, for
+         * example if places still contain tokens of its type. It will apply all other
+         * changes.
+         *
+         * @param deletedData contains Datum items that were deleted from the table
+         */
         private void removeDeletedData(Iterable<TokenEditorPanel.Datum> deletedData) {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
             PetriNet petriNet = petriNetController.getPetriNet();
             List<UndoableEdit> undoableEdits = new LinkedList<>();
             for (TokenEditorPanel.Datum datum : deletedData) {
-                if (dialogContent.isExistingDatum(datum)) {
+                if (tokenEditorPanel.isExistingDatum(datum)) {
                     try {
                         Token token = petriNet.getToken(datum.id);
+                        petriNet.removeToken(token);
                         UndoableEdit historyItem = new DeletePetriNetObject(token, petriNet);
                         undoableEdits.add(historyItem);
-                        petriNet.remove(token);
-                    } catch (PetriNetComponentNotFoundException ignored) {
+                    } catch (PetriNetComponentException e) {
+                        StringBuilder messageBuilder = new StringBuilder();
+                        messageBuilder.append(e.getMessage());
+                        messageBuilder.append("\n");
+                        messageBuilder.append("All other changes will be applied but this token will not be deleted!");
+                        GuiUtils.displayErrorMessage(null, messageBuilder.toString());
+                    } catch (PetriNetComponentNotFoundException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -152,7 +170,7 @@ public class SpecifyTokenAction extends GuiAction {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
             List<UndoableEdit> undoableEdits = new LinkedList<>();
             for (TokenEditorPanel.Datum modified : data) {
-                if (dialogContent.isExistingDatum(modified)) {
+                if (tokenEditorPanel.isExistingDatum(modified)) {
                     AbstractDatum initial = modified.initial;
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {

@@ -2,6 +2,7 @@ package pipe.models.visitor;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcType;
@@ -71,7 +72,7 @@ public class PetriNetComponentRemovalVisitorTest {
     }
 
     @Test
-    public void testDeletesToken() {
+    public void testDeletesToken() throws PetriNetComponentException {
         Token token = new Token("", new Color(0, 0, 0));
         token.accept(visitor);
         verify(mockNet).removeToken(token);

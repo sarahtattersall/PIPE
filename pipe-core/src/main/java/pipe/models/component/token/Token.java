@@ -1,5 +1,6 @@
 package pipe.models.component.token;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
@@ -56,7 +57,7 @@ public class Token extends AbstractPetriNetComponent {
     }
 
     @Override
-    public void accept(PetriNetComponentVisitor visitor) {
+    public void accept(PetriNetComponentVisitor visitor) throws PetriNetComponentException {
         if (visitor instanceof TokenVisitor) {
             ((TokenVisitor) visitor).visit(this);
         }

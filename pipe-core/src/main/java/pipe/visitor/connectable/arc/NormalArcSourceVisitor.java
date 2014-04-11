@@ -1,5 +1,6 @@
 package pipe.visitor.connectable.arc;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
@@ -23,7 +24,12 @@ public class NormalArcSourceVisitor implements ArcSourceVisitor {
      */
     @Override
     public boolean canStart(Connectable connectable) {
-        connectable.accept(this);
+        try {
+            connectable.accept(this);
+        } catch (PetriNetComponentException e) {
+            e.printStackTrace();
+            return false;
+        }
         return canCreate;
     }
 

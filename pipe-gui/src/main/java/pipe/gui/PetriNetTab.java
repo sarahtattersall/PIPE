@@ -1,5 +1,6 @@
 package pipe.gui;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.place.Place;
@@ -89,7 +90,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     public void add(AbstractPetriNetViewComponent<?> component) {
-        registerForLocationChange(component.getModel());
+        registerLocationChangeListener(component.getModel());
 
         setLayer(component, DEFAULT_LAYER + component.getLayerOffset());
         super.add(component);
@@ -123,10 +124,21 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
-    private void registerForLocationChange(PetriNetComponent component) {
+    /**
+     *
+     * Registeres a location listener on the Petri net component
+     *
+     * @param component
+     */
+    private void registerLocationChangeListener(PetriNetComponent component) {
 
         PetriNetComponentVisitor changeListener = new ChangeListener();
-        component.accept(changeListener);
+        try {
+            component.accept(changeListener);
+        } catch (PetriNetComponentException e) {
+            System.err.println("Could not register listener in Petri net tab");
+            e.printStackTrace();
+        }
     }
 
     public int getZoom() {

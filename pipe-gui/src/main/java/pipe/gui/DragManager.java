@@ -1,6 +1,7 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.historyActions.component.MovePetriNetObject;
 import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
@@ -16,6 +17,7 @@ import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.UndoableEdit;
@@ -58,7 +60,11 @@ public class DragManager {
         int x = (int) (location.getX() - dragStart.getX());
         int y = (int) (location.getY() - dragStart.getY());
         dragStart = new Point2D.Double(location.x, location.y);
-        petriNetController.translateSelected(new Point(x, y));
+        try {
+            petriNetController.translateSelected(new Point(x, y));
+        } catch (PetriNetComponentException e) {
+            GuiUtils.displayErrorMessage(null, e.getMessage());
+        }
     }
 
     public void saveStartingDragCoordinates() {
@@ -108,7 +114,11 @@ public class DragManager {
         CoordinateSaver saver = new CoordinateSaver();
         for (PetriNetComponent component : petriNetController.getSelectedComponents()) {
             if (component.isDraggable()) {
-                component.accept(saver);
+                try {
+                    component.accept(saver);
+                } catch (PetriNetComponentException e) {
+                    GuiUtils.displayErrorMessage(null, e.getMessage());
+                }
             }
         }
         return saver.savedCoordinates;

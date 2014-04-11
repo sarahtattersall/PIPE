@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.dsl.*;
 import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PetriNetTest {
     @Rule
-    public ExpectedException exception = ExpectedException.none();
+    public ExpectedException expectedException = ExpectedException.none();
 
     private PetriNet net;
 
@@ -139,6 +140,31 @@ public class PetriNetTest {
     }
 
     @Test
+    public void cannotRemoveTokenIfPlaceDependsOnIt() throws PetriNetComponentException {
+        expectedException.expect(PetriNetComponentException.class);
+        expectedException.expectMessage("Cannot remove Default token places: P0 contain it");
+        Token token = new Token("Default", Color.BLACK);
+        Place place = new Place("P0", "P0");
+        place.setTokenCount(token, 2);
+        net.addPlace(place);
+
+        net.removeToken(token);
+    }
+
+    @Test
+    public void cannotRemoveTokenIfTransitionReferencesIt() throws PetriNetComponentException {
+        expectedException.expect(PetriNetComponentException.class);
+        expectedException.expectMessage("Cannot remove Default token transitions: T0 reference it\n");
+        Token token = new Token("Default", Color.BLACK);
+        Transition transition = new Transition("T0", "T0");
+        transition.setRate(new NormalRate("#(P0, Default)"));
+        net.addTransition(transition);
+        net.removeToken(token);
+    }
+
+
+
+    @Test
     public void addingAnnotationNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
         Annotation annotation = new Annotation(10, 10, "", 10, 10, false);
@@ -192,7 +218,7 @@ public class PetriNetTest {
     }
 
     @Test
-    public void genericRemoveMethodRemovesPlace() {
+    public void genericRemoveMethodRemovesPlace() throws PetriNetComponentException {
         Place place = new Place("", "");
         net.addPlace(place);
 
@@ -202,7 +228,7 @@ public class PetriNetTest {
     }
 
     @Test
-    public void genericRemoveMethodRemovesArc() {
+    public void genericRemoveMethodRemovesArc() throws PetriNetComponentException {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
         Map<Token, String> weights = new HashMap<Token, String>();
@@ -225,8 +251,8 @@ public class PetriNetTest {
 
     @Test
     public void throwsErrorIfNoTokenExists() throws PetriNetComponentNotFoundException {
-        exception.expect(PetriNetComponentNotFoundException.class);
-        exception.expectMessage("No token foo exists in Petri net");
+        expectedException.expect(PetriNetComponentNotFoundException.class);
+        expectedException.expectMessage("No token foo exists in Petri net");
         net.getToken("foo");
     }
 
@@ -252,15 +278,15 @@ public class PetriNetTest {
 
     @Test
     public void throwsExceptionIfNoRateParameterExists() throws PetriNetComponentNotFoundException {
-        exception.expect(PetriNetComponentNotFoundException.class);
-        exception.expectMessage("No rate parameter foo exists in Petri net");
+        expectedException.expect(PetriNetComponentNotFoundException.class);
+        expectedException.expectMessage("No rate parameter foo exists in Petri net");
         net.getRateParameter("foo");
     }
 
     @Test
     public void throwsExceptionIfRateParameterIsNotValid() throws InvalidRateException {
-        exception.expect(InvalidRateException.class);
-        exception.expectMessage("Rate of hsfg is invalid");
+        expectedException.expect(InvalidRateException.class);
+        expectedException.expectMessage("Rate of hsfg is invalid");
         RateParameter rateParameter = new RateParameter("hsfg", "id", "name");
         net.addRateParameter(rateParameter);
     }

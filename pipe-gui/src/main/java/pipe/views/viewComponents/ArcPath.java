@@ -5,6 +5,7 @@ package pipe.views.viewComponents;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.ArcPathPointHandler;
@@ -15,6 +16,7 @@ import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.transition.Transition;
 import pipe.models.component.transition.TransitionVisitor;
+import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
 
@@ -310,13 +312,11 @@ public class ArcPath implements Shape, Cloneable {
         };
 
         Connectable source = getArc().getModel().getSource();
-        source.accept(endPointVisitor);
-    }
-
-    public void addPoint(ArcPoint arcPoint) {
-        ArcPathPoint arcPathPoint = createPoint(arcPoint);
-//        points.put(arcPoint, arcPathPoint);
-        pathPoints.add(arcPathPoint);
+        try {
+            source.accept(endPointVisitor);
+        } catch (PetriNetComponentException e) {
+            GuiUtils.displayErrorMessage(null, e.getMessage());
+        }
     }
 
     private ArcPathPoint createPoint(ArcPoint point) {

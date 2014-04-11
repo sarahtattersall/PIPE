@@ -7,6 +7,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.historyActions.component.DeletePetriNetObject;
@@ -94,7 +95,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void deletesSelectedRemovesFromNet() {
+    public void deletesSelectedRemovesFromNet() throws PetriNetComponentException {
         Place place = new Place("", "");
         net.addPlace(place);
 
@@ -104,7 +105,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void deletingSelectionReturnsListOfAbstractUndoEdits() {
+    public void deletingSelectionReturnsListOfAbstractUndoEdits() throws PetriNetComponentException {
         Place place = new Place("", "");
         net.addPlace(place);
 
@@ -116,7 +117,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void deleteComponentRemovesFromPetriNet() {
+    public void deleteComponentRemovesFromPetriNet() throws PetriNetComponentException {
         Place place = new Place("", "");
         net.addPlace(place);
 
@@ -126,7 +127,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void deletingComponentAddsToHistoryManager() {
+    public void deletingComponentAddsToHistoryManager() throws PetriNetComponentException {
         Place place = new Place("", "");
         net.addPlace(place);
 
@@ -137,7 +138,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void deletesSelectedNotifiesObserver() {
+    public void deletesSelectedNotifiesObserver() throws PetriNetComponentException {
         Place place = new Place("", "");
         net.addPlace(place);
 
@@ -213,7 +214,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void translatesSelectedItemsCorrectly() {
+    public void translatesSelectedItemsCorrectly() throws PetriNetComponentException {
         Transition transition = mock(Transition.class);
         when(transition.isDraggable()).thenReturn(true);
         Place place = mock(Place.class);
@@ -239,7 +240,7 @@ public class PetriNetControllerTest {
     }
 
     @Test
-    public void doesNotTranslateNonDraggableItems() {
+    public void doesNotTranslateNonDraggableItems() throws PetriNetComponentException {
         PetriNetComponent petriNetComponent = mock(PetriNetComponent.class);
         when(petriNetComponent.isDraggable()).thenReturn(false);
         controller.select(petriNetComponent);

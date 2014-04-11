@@ -2,6 +2,7 @@ package pipe.models.petrinet;
 
 import org.apache.commons.collections.CollectionUtils;
 import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.io.adapters.modelAdapter.*;
 import pipe.models.component.Connectable;
@@ -395,13 +396,62 @@ public class PetriNet {
         return outbound;
     }
 
-    public void remove(PetriNetComponent component) {
+    public void remove(PetriNetComponent component) throws PetriNetComponentException {
         component.accept(deleteVisitor);
     }
 
-    public void removeToken(Token token) {
-        tokens.remove(token);
-        changeSupport.firePropertyChange(DELETE_TOKEN_CHANGE_MESSAGE, token, null);
+    /**
+     * Tries to remove the token
+     * @param token token to remove
+     * @throws PetriNetComponentException if places or transitions reference this token!
+     */
+    public void removeToken(Token token) throws PetriNetComponentException {
+        Collection<Place> referencedPlaces = getPlacesContainingToken(token);
+        Collection<Transition> referencedTransitions = getTransitionsReferencingToken(token);
+        if (referencedPlaces.isEmpty() && referencedTransitions.isEmpty()) {
+            tokens.remove(token);
+            changeSupport.firePropertyChange(DELETE_TOKEN_CHANGE_MESSAGE, token, null);
+            return;
+        }
+        StringBuilder message = new StringBuilder();
+        message.append("Cannot remove Default token");
+        if (!referencedPlaces.isEmpty()) {
+            message.append(" places: ");
+            for (Place place : referencedPlaces) {
+                message.append(place.getId());
+            }
+            message.append(" contain it\n");
+        }
+        if (!referencedTransitions.isEmpty()) {
+            message.append(" transitions: ");
+            for (Transition transition : referencedTransitions) {
+                message.append(transition.getId());
+            }
+            message.append(" reference it\n");
+        }
+
+        throw new PetriNetComponentException(message.toString());
+    }
+
+    private Collection<Transition> getTransitionsReferencingToken(Token token) {
+        Collection<Transition> result = new LinkedList<>();
+        for (Transition transition : transitions) {
+            FunctionalResults<Double> results = functionalWeightParser.evaluateExpression(transition.getRateExpr());
+            if (results.getComponents().contains(token.getId())) {
+                result.add(transition);
+            }
+        }
+        return result;
+    }
+
+    private Collection<Place> getPlacesContainingToken(Token token) {
+        List<Place> result = new LinkedList<>();
+        for (Place place : places) {
+            if (place.getTokenCount(token) > 0) {
+                result.add(place);
+            }
+        }
+        return result;
     }
 
     public void removeRateParameter(RateParameter parameter) {
@@ -474,7 +524,7 @@ public class PetriNet {
         throw new PetriNetComponentNotFoundException("No rate parameter " + rateParameterId + " exists in Petri net.");
     }
 
-    public void add(PetriNetComponent component) {
+    public void add(PetriNetComponent component) throws PetriNetComponentException {
         component.accept(addVisitor);
     }
 

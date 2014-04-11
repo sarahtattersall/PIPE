@@ -1,6 +1,7 @@
 package pipe.models.petrinet;
 
 import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
@@ -42,7 +43,7 @@ public class PetriNetComponentRemovalVisitor
     }
 
     @Override
-    public void visit(Token token) {
+    public void visit(Token token) throws PetriNetComponentException {
         net.removeToken(token);
     }
 

@@ -4,6 +4,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.SAXException;
 import pipe.dsl.*;
 import pipe.exceptions.InvalidRateException;
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
@@ -103,7 +104,7 @@ public class PetriNetWriterTest extends XMLTestCase {
     }
 
 
-    public void testMarshalsToken() throws IOException, SAXException {
+    public void testMarshalsToken() throws IOException, SAXException, PetriNetComponentException {
         PetriNet petriNet = new PetriNet();
         Token token = new Token("red", new Color(255, 0, 0));
         petriNet.add(token);

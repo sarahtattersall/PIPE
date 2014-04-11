@@ -3,6 +3,7 @@
  */
 package pipe.historyActions.component;
 
+import pipe.exceptions.PetriNetComponentException;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.PetriNetComponent;
 
@@ -33,7 +34,11 @@ public class DeletePetriNetObject
     @Override
     public void redo() {
         super.redo();
-        petriNet.remove(component);
+        try {
+            petriNet.remove(component);
+        } catch (PetriNetComponentException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -41,7 +46,11 @@ public class DeletePetriNetObject
     @Override
     public void undo() {
         super.undo();
-        petriNet.add(component);
+        try {
+            petriNet.add(component);
+        } catch (PetriNetComponentException e) {
+            e.printStackTrace();
+        }
     }
 
 
