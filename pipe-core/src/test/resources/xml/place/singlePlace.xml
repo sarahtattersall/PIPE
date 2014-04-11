@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pnml>
     <net>
-        <token id="Default" enabled="true" red="0" green="0" blue="0"/>
+        <token id="Default" red="0" green="0" blue="0"/>
         <place id="P0">
             <graphics>
                 <position x="255.0" y="240.0"/>

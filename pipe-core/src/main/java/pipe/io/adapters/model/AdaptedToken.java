@@ -10,9 +10,6 @@ public class AdaptedToken {
     private String id;
 
     @XmlAttribute
-    private boolean enabled;
-
-    @XmlAttribute
     private int red;
 
     @XmlAttribute
@@ -27,14 +24,6 @@ public class AdaptedToken {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public int getRed() {

@@ -215,8 +215,8 @@ public class TokenView extends Observable implements Serializable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("TokenView: Enabled=");
-        builder.append(", Id=");
+        builder.append("TokenView:");
+        builder.append(" Id=");
         builder.append(_model.getId());
         builder.append(", Color=");
         builder.append(_model.getColor());

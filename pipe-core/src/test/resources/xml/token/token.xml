@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pnml>
     <net>
-        <token id="red" enabled="true" red="255" green="0" blue="0"/>
+        <token id="red" red="255" green="0" blue="0"/>
     </net>
 </pnml>

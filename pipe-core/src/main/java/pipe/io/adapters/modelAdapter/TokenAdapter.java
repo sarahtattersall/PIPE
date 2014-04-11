@@ -16,7 +16,7 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
      * use these fields it's ok to initialise them as empty/null.
      */
     public TokenAdapter() {
-        tokens = new HashMap<String, Token>();
+        tokens = new HashMap<>();
     }
 
     public TokenAdapter(Map<String, Token> tokens) {
