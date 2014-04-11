@@ -36,7 +36,7 @@ public class APetriNetTest {
                                      .andFinally(ANormalArc.withSource("P0").andTarget("T0").with("5", "Default").tokens());
 
         PetriNet expected = new PetriNet();
-        Token token = new Token("Default", true, 0, Color.RED);
+        Token token = new Token("Default", Color.RED);
         expected.addToken(token);
         Place place = new Place("P0", "P0");
         expected.addPlace(place);
@@ -67,10 +67,10 @@ public class APetriNetTest {
                         ANormalArc.withSource("P0").andTarget("T0").with("5", "Red").tokens().and("1", "Blue").token());
 
         PetriNet expected = new PetriNet();
-        Token red = new Token("Red", true, 0, Color.RED);
+        Token red = new Token("Red",Color.RED);
         expected.addToken(red);
 
-        Token blue = new Token("Blue", true, 0, Color.BLUE);
+        Token blue = new Token("Blue", Color.BLUE);
         expected.addToken(blue);
 
         RateParameter rateParameter = new RateParameter("10", "Foo", "Foo");

@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.historyActions.ChangePlaceTokens;
+import pipe.historyActions.component.ChangePetriNetComponentName;
+import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.MultipleEdit;
-import pipe.historyActions.PetriNetObjectName;
-import pipe.historyActions.PlaceCapacity;
+import pipe.historyActions.place.PlaceCapacity;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.utilities.transformers.Contains;
@@ -65,7 +65,7 @@ public class PlaceControllerTest {
     @Test
     public void setTokenCountModifiesPlace() {
         Map<Token, Integer> tokenCounts = new HashMap<>();
-        Token defaultToken = new Token("Default", true, 0, Color.BLACK);
+        Token defaultToken = new Token("Default", Color.BLACK);
         int oldCount = 7;
         int newCount = 5;
 
@@ -79,7 +79,7 @@ public class PlaceControllerTest {
     @Test
     public void setTokenCountCreatesUndoItem() {
         Map<Token, Integer> tokenCounts = new HashMap<>();
-        Token defaultToken = new Token("Default", true, 0, Color.BLACK);
+        Token defaultToken = new Token("Default", Color.BLACK);
         int oldCount = 7;
         int newCount = 5;
 
@@ -95,7 +95,7 @@ public class PlaceControllerTest {
     @Test
     public void incrementsPlaceCounter() {
         int count = 1;
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token token = new Token("Default", new Color(0, 0, 0));
         when(place.getTokenCount(token)).thenReturn(count);
         placeController.addTokenToPlace(token);
         verify(place).setTokenCount(token, count + 1);
@@ -103,7 +103,7 @@ public class PlaceControllerTest {
 
     @Test
     public void incrementPlaceCounterCreatesHistoryItem() {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         int oldCount = 7;
 
         when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
@@ -117,7 +117,7 @@ public class PlaceControllerTest {
     @Test
     public void decrementsPlaceCounter() {
         int count = 1;
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token token = new Token("Default", new Color(0, 0, 0));
         when(place.getTokenCount(token)).thenReturn(count);
         placeController.deleteTokenInPlace(token);
         verify(place).setTokenCount(token, count - 1);
@@ -125,7 +125,7 @@ public class PlaceControllerTest {
 
     @Test
     public void decrementPlaceCounterCreatesHistoryItem() {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         int oldCount = 7;
 
         when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
@@ -152,7 +152,7 @@ public class PlaceControllerTest {
         when(place.getId()).thenReturn(oldName);
         placeController.setName(newName);
 
-        UndoableEdit nameEdit = new PetriNetObjectName(place, oldName, newName);
+        UndoableEdit nameEdit = new ChangePetriNetComponentName(place, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
     }
 

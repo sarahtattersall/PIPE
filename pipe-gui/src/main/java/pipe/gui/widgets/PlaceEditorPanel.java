@@ -71,7 +71,6 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
 
         PetriNet net = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
         for (Token token : net.getTokens()) {
-            if (token.isEnabled()) {
                 JLabel tokenClassName = new JLabel();
                 JSpinner tokenClassMarking = new JSpinner();
                 inputtedMarkings.add(tokenClassMarking);
@@ -103,7 +102,6 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                 placeEditorPanel.add(tokenClassMarking, tokenValueConstraints);
                 row++;
             }
-        }
 
         initializeCapacityLabel(placeEditorPanel, row);
         initializeCapacitySpinner(placeEditorPanel, row);

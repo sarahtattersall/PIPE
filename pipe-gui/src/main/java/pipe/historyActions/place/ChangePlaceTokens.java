@@ -2,7 +2,7 @@
  * PlaceMarkingEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.place;
 
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;

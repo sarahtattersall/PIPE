@@ -1,7 +1,7 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.MovePetriNetObject;
+import pipe.historyActions.component.MovePetriNetObject;
 import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
@@ -80,7 +80,7 @@ public class DragManager {
 
     /**
      * Loops through each PlaceablePetriNetComponents start and ending coordinates (i.e. before and after translation)
-     * and creates a {@link pipe.historyActions.MovePetriNetObject} undoEdit for each event
+     * and creates a {@link pipe.historyActions.component.MovePetriNetObject} undoEdit for each event
      *
      * It then creates an {@link pipe.historyActions.MultipleEdit} with all these undoEdits in and
      * registers this with the undoListener.

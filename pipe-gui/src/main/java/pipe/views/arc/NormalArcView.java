@@ -4,6 +4,8 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.*;
+import pipe.historyActions.arc.JoinInverseArc;
+import pipe.historyActions.arc.SetInverseArc;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;

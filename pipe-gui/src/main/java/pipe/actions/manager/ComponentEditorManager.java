@@ -64,6 +64,8 @@ public class ComponentEditorManager implements ActionManager {
         deleteAction = new DeleteAction(controller);
         undoAction = new UndoAction(controller, this);
         redoAction = new RedoAction(controller, this);
+        undoAction.setEnabled(false);
+        redoAction.setEnabled(false);
 
         UndoableEditListener listener = new SimpleUndoListener(this, controller);
         deleteAction.addUndoableEditListener(listener);

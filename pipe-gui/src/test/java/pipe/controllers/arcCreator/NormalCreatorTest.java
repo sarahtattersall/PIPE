@@ -58,15 +58,15 @@ public class NormalCreatorTest {
     public void createsCorrectArc() {
         Place source = new Place("", "");
         Transition transition = new Transition("", "");
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token token = new Token("Default", new Color(0, 0, 0));
         when(mockPetriNetController.getSelectedToken()).thenReturn(token);
         Arc<? extends Connectable, ? extends Connectable> actual = creator.create(source, transition);
 
 
-        Map<Token, String> tokens = new HashMap<Token, String>();
+        Map<Token, String> tokens = new HashMap<>();
         tokens.put(token, "1");
 
-        Arc<Place, Transition> expected = new Arc<Place, Transition>(source, transition, tokens, ArcType.NORMAL);
+        Arc<Place, Transition> expected = new Arc<>(source, transition, tokens, ArcType.NORMAL);
         assertEquals(expected, actual);
     }
 

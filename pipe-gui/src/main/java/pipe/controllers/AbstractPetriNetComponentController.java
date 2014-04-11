@@ -1,7 +1,7 @@
 package pipe.controllers;
 
+import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.MultipleEdit;
-import pipe.historyActions.PetriNetObjectName;
 import pipe.models.component.PetriNetComponent;
 
 import javax.swing.event.UndoableEditEvent;
@@ -34,7 +34,7 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
         String oldName = component.getId();
         component.setName(newName);
         component.setId(newName);
-        registerUndoableEdit(new PetriNetObjectName(component, oldName, newName));
+        registerUndoableEdit(new ChangePetriNetComponentName(component, oldName, newName));
     }
 
     /**

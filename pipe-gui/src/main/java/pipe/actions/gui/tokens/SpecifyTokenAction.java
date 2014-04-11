@@ -1,11 +1,24 @@
 package pipe.actions.gui.tokens;
 
 import pipe.actions.gui.GuiAction;
+import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.TokenDialog;
-import pipe.gui.TokenPanel;
+import pipe.exceptions.PetriNetComponentNotFoundException;
+import pipe.gui.AbstractDatum;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.TokenEditorPanel;
+import pipe.historyActions.component.AddPetriNetObject;
+import pipe.historyActions.component.ChangePetriNetComponentName;
+import pipe.historyActions.component.DeletePetriNetObject;
+import pipe.historyActions.MultipleEdit;
+import pipe.historyActions.token.ChangeTokenColor;
+import pipe.models.component.PetriNetComponent;
+import pipe.models.component.token.Token;
+import pipe.models.petrinet.PetriNet;
+import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
+import javax.swing.undo.UndoableEdit;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -13,11 +26,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SpecifyTokenAction extends GuiAction {
     private final PipeApplicationController pipeApplicationController;
 
-    private TokenPanel dialogContent;
+    private TokenEditorPanel tokenEditorPanel;
 
     private JDialog guiDialog;
 
@@ -43,15 +58,15 @@ public class SpecifyTokenAction extends GuiAction {
     }
 
     public void buildTokenGuiClasses() {
-        dialogContent = new TokenPanel(pipeApplicationController.getActivePetriNetController());
-        guiDialog = new TokenDialog("Tokens", true, dialogContent);
+        tokenEditorPanel = new TokenEditorPanel(pipeApplicationController.getActivePetriNetController());
+        guiDialog = new TokenDialog("Tokens", true, tokenEditorPanel);
     }
 
     public void finishBuildingGui() {
         guiDialog.setSize(600, 200);
         guiDialog.setLocationRelativeTo(null);
-        dialogContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        dialogContent.setOpaque(true);
+        tokenEditorPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        tokenEditorPanel.setOpaque(true);
 
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -65,9 +80,9 @@ public class SpecifyTokenAction extends GuiAction {
         cancel.addActionListener((ActionListener) guiDialog);
         buttonPane.add(cancel);
 
-        guiDialog.add(dialogContent, BorderLayout.CENTER);
+        guiDialog.add(tokenEditorPanel, BorderLayout.CENTER);
         guiDialog.add(buttonPane, BorderLayout.PAGE_END);
-        dialogContent.setVisible(true);
+        tokenEditorPanel.setVisible(true);
 
         if (forcedAction != null) {
             forceContinue();
@@ -79,5 +94,92 @@ public class SpecifyTokenAction extends GuiAction {
     private void forceContinue() {
         ((TokenDialog) guiDialog).actionPerformed(forcedAction);
         forcedAction = null;
+    }
+
+    /**
+     * @author Alex Charalambous, June 2010: ColorDrawer, ColorPicker,
+     * TokenPanel and TokenDialog are four classes used
+     * to display the Token Classes dialog (accessible through the button
+     * toolbar).
+     */
+
+    public class TokenDialog<T extends PetriNetComponent> extends JDialog implements ActionListener {
+
+        private TokenEditorPanel dialogContent;
+
+        public TokenDialog(String title, boolean modal, TokenEditorPanel dialogContent){
+            //TODO: Work out how to get View?
+            super(ApplicationSettings.getApplicationView(), title, modal);
+            this.dialogContent = dialogContent;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getActionCommand().equals("OK")){
+                if (dialogContent.isDataValid()) {
+                    updateFromTable(dialogContent.getTableData());
+                    removeDeletedData(dialogContent.getDeletedData());
+                    setVisible(false);
+                }
+            } else if (e.getActionCommand().equals("Cancel")) {
+                setVisible(false);
+            }
+        }
+
+        //TODO: ONCE PETRINET CAN GET COMPONENT BY ID YOU CAN MAKE THIS WHOLE CLASS ABSTRACT
+        //      AND SHARE IT WITH RATE EDITOR
+        private void removeDeletedData(Iterable<TokenEditorPanel.Datum> deletedData) {
+            PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
+            PetriNet petriNet = petriNetController.getPetriNet();
+            List<UndoableEdit> undoableEdits = new LinkedList<>();
+            for (TokenEditorPanel.Datum datum : deletedData) {
+                if (dialogContent.isExistingDatum(datum)) {
+                    try {
+                        Token token = petriNet.getToken(datum.id);
+                        UndoableEdit historyItem = new DeletePetriNetObject(token, petriNet);
+                        undoableEdits.add(historyItem);
+                        petriNet.remove(token);
+                    } catch (PetriNetComponentNotFoundException ignored) {
+                    }
+                }
+            }
+            if (undoableEdits.size() > 0) {
+                registerUndoEvent(new MultipleEdit(undoableEdits));
+            }
+        }
+
+        private void updateFromTable(Iterable<TokenEditorPanel.Datum> data) {
+            PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
+            List<UndoableEdit> undoableEdits = new LinkedList<>();
+            for (TokenEditorPanel.Datum modified : data) {
+                if (dialogContent.isExistingDatum(modified)) {
+                    AbstractDatum initial = modified.initial;
+                    if (!modified.equals(initial) && modified.hasBeenSet()) {
+                        try {
+                            Token token = petriNetController.getToken(initial.id);
+                            undoableEdits.add(new ChangePetriNetComponentName(token, initial.id, modified.id));
+                            undoableEdits.add(new ChangeTokenColor(token, token.getColor(), modified.color));
+                            petriNetController.updateToken(initial.id, modified.id, modified.color);
+                        } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                            GuiUtils.displayErrorMessage(null, petriNetComponentNotFoundException.getMessage());
+                        }
+                    }
+                } else if (modified.hasBeenSet()) {
+                    petriNetController.createNewToken(modified.id, modified.color);
+                    try {
+                        Token token = petriNetController.getToken(modified.id);
+                        undoableEdits.add(new AddPetriNetObject(token, petriNetController.getPetriNet()));
+                    } catch (PetriNetComponentNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            if (undoableEdits.size() > 0) {
+                registerUndoEvent(new MultipleEdit(undoableEdits));
+            }
+        }
+
+
     }
 }

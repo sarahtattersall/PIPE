@@ -1,4 +1,4 @@
-package pipe.historyActions;
+package pipe.historyActions.arc;
 
 
 import pipe.models.component.Connectable;

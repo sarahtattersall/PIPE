@@ -1,6 +1,6 @@
 package pipe.controllers;
 
-import pipe.historyActions.*;
+import pipe.historyActions.transition.*;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.Rate;

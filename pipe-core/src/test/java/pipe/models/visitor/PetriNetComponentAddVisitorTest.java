@@ -73,7 +73,7 @@ public class PetriNetComponentAddVisitorTest {
 
     @Test
     public void testAddsToken() {
-        Token token = new Token("", false, 0, new Color(0, 0, 0));
+        Token token = new Token("", new Color(0, 0, 0));
         token.accept(visitor);
         verify(mockNet).addToken(token);
     }

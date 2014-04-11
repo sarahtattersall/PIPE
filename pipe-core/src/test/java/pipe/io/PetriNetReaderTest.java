@@ -15,20 +15,17 @@ import pipe.parsers.UnparsableException;
 import utils.FileUtils;
 
 import javax.xml.bind.JAXBException;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.Arrays;
 import java.util.Map;
 
-import static com.google.common.collect.Lists.newLinkedList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertNotNull;
 
 public class PetriNetReaderTest {
 
-    private static final Token DEFAULT_TOKEN = new Token("Default", true, 0, new Color(0, 0, 0));
+    private static final Token DEFAULT_TOKEN = new Token("Default", new Color(0, 0, 0));
 
     PetriNetReader reader;
 
@@ -41,7 +38,7 @@ public class PetriNetReaderTest {
     public void createsDefaultTokenIfDoesNotExist() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation("/xml/noTokenPlace.xml"));
         assertTrue("Petri net has no tokens registered to it", petriNet.getTokens().size() > 0);
-        Token expectedToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token expectedToken = new Token("Default", new Color(0, 0, 0));
         assertThat(petriNet.getTokens()).contains(expectedToken);
     }
 
@@ -51,7 +48,7 @@ public class PetriNetReaderTest {
         assertThat(petriNet.getTokens()).isNotEmpty();
         assertThat(petriNet.getPlaces()).isNotEmpty();
 
-        Token expectedToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token expectedToken = new Token("Default", new Color(0, 0, 0));
 
         Place place = petriNet.getPlaces().iterator().next();
         assertThat(place.getTokenCounts()).containsKey(expectedToken);
@@ -121,7 +118,8 @@ public class PetriNetReaderTest {
         assertThat(petriNet.getTransitions()).extracting("rate.expression").containsExactly("1.0");
         assertThat(petriNet.getTransitions()).extractingResultOf("isTimed").containsExactly(false);
         assertThat(petriNet.getTransitions()).extractingResultOf("isInfiniteServer").containsExactly(false);
-        assertThat(petriNet.getTransitions()).extracting("nameXOffset", "nameYOffset").containsExactly(tuple(-5.0, 35.0));
+        assertThat(petriNet.getTransitions()).extracting("nameXOffset", "nameYOffset").containsExactly(
+                tuple(-5.0, 35.0));
         assertThat(petriNet.getTransitions()).extracting("priority").containsExactly(1);
     }
 
@@ -166,7 +164,7 @@ public class PetriNetReaderTest {
     @Test
     public void createsRedToken() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getTokenFile()));
-        Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
+        Token redToken = new Token("red", new Color(255, 0, 0));
         assertThat(petriNet.getTokens()).containsExactly(redToken);
     }
 
@@ -180,7 +178,8 @@ public class PetriNetReaderTest {
     @Test
     public void createsRateParameter() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getRateParameterFile()));
-        assertThat(petriNet.getRateParameters()).extracting("id", "name", "expression").containsExactly(tuple("rate0", "rate0", "5.0"));
+        assertThat(petriNet.getRateParameters()).extracting("id", "name", "expression").containsExactly(
+                tuple("rate0", "rate0", "5.0"));
     }
 
     @Test

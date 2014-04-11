@@ -2,7 +2,7 @@
  * AddPetriNetObjectEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.component;
 
 import pipe.models.component.PetriNetComponent;
 import pipe.models.petrinet.PetriNet;

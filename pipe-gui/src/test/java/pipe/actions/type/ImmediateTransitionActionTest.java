@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.ImmediateTransitionAction;
 import pipe.actions.gui.create.TransitionAction;
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.utilities.transformers.Contains;

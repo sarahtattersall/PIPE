@@ -2,7 +2,7 @@
  * RateParameterValueEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.rateparameter;
 
 
 import pipe.models.component.rate.RateParameter;

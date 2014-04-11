@@ -2,23 +2,18 @@ package pipe.actions.type;
 
 import matchers.component.HasMultiple;
 import matchers.component.HasXY;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.create.PlaceAction;
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.place.Place;
 import pipe.models.petrinet.PetriNet;
 import pipe.utilities.transformers.Contains;
-import sun.net.www.content.text.plain;
 
-import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
 import java.awt.Point;

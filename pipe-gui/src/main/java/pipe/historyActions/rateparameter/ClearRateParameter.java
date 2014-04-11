@@ -2,8 +2,9 @@
  * ClearRateParameterEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.rateparameter;
 
+import pipe.historyActions.HistoryItem;
 import pipe.views.TransitionView;
 import pipe.views.viewComponents.RateParameter;
 

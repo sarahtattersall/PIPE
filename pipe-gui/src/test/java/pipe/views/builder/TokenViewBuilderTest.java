@@ -16,7 +16,7 @@ public class TokenViewBuilderTest {
     @Before
     public void setUp()
     {
-        token = new Token("id", true, 10, new Color(1,1,1));
+        token = new Token("id", Color.BLACK);
         builder = new TokenViewBuilder(token);
     }
 

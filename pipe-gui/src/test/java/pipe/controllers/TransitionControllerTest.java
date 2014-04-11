@@ -5,7 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.historyActions.*;
+import pipe.historyActions.component.ChangePetriNetComponentName;
+import pipe.historyActions.transition.*;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.Rate;
 import pipe.models.component.rate.RateParameter;
@@ -122,7 +123,7 @@ public class TransitionControllerTest {
         when(transition.getId()).thenReturn(oldName);
         controller.setName(newName);
 
-        UndoableEdit nameEdit = new PetriNetObjectName(transition, oldName, newName);
+        UndoableEdit nameEdit = new ChangePetriNetComponentName(transition, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
     }
 

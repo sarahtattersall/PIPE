@@ -17,12 +17,12 @@ import java.util.List;
 /**
  * This is a panel for modifying and creating rate parameters
  */
-public class RatePanel extends JPanel {
+public class RateEditorPanel extends JPanel {
     private final JTable table;
 
     private final RateModel model;
 
-    public RatePanel(PetriNetController petriNetController) {
+    public RateEditorPanel(PetriNetController petriNetController) {
         model = new RateModel(petriNetController);
         table = new JTable(model);
 
@@ -52,67 +52,31 @@ public class RatePanel extends JPanel {
     }
 
     public boolean isExistingRateParameter(RateModel.Datum datum) {
-        return model.isExistingRateParameter(datum);
+        return model.isExistingDatum(datum);
     }
 
     public Iterable<RateModel.Datum> getDeletedData() {
         return model.deletedData;
     }
 
-    public class RateModel extends AbstractTableModel {
+    public class RateModel extends AbstractComponentTableModel<RateModel.Datum> {
 
-        /**
-         * Names of columsn to appear in order
-         */
-        private final String[] COLUMN_NAMES = {"Name", "Value"};
-
-        /**
-         * Maximum number of items to be shown
-         */
-        private final int DATA_SIZE = 100;
-
-        /**
-         * Data in the table once it has been modified.
-         */
-        private final List<Datum> modifiedData = new ArrayList<>();
-
-        /**
-         * Data that has been deleted from the table
-         */
-        private final Collection<Datum> deletedData = new HashSet<>();
 
         private final int ID_COL = 0;
 
         private final int VALUE_COL = 1;
 
-        private final PetriNetController petriNetController;
 
         public RateModel(PetriNetController petriNetController) {
-            this.petriNetController = petriNetController;
-
+            COLUMN_NAMES = new String[]{"Name", "Value"};
             for (RateParameter rateParameter : petriNetController.getRateParameters()) {
                 Datum initial = new Datum(rateParameter.getId(), rateParameter.getExpression());
                 modifiedData.add(new Datum(initial, rateParameter.getId(), rateParameter.getExpression()));
+                count++;
             }
             for (int index = modifiedData.size(); index < DATA_SIZE; index++) {
                 modifiedData.add(new Datum("", ""));
             }
-        }
-
-        @Override
-        public String getColumnName(int col) {
-            return COLUMN_NAMES[col];
-        }
-
-        /**
-         *
-         * @param row
-         * @param col
-         * @return true for all cells
-         */
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return true;
         }
 
         /**
@@ -122,7 +86,8 @@ public class RatePanel extends JPanel {
          * @param colIndex index of column changed
          */
         @Override
-        public void setValueAt(Object value, int rowIndex, int colIndex) {
+        public void updateTableAt(Object value, int rowIndex, int colIndex) {
+
             String id = modifiedData.get(rowIndex).id;
             String expression = modifiedData.get(rowIndex).expression;
 
@@ -134,8 +99,6 @@ public class RatePanel extends JPanel {
 
             modifiedData.get(rowIndex).id = id;
             modifiedData.get(rowIndex).expression = expression;
-
-            fireTableCellUpdated(rowIndex, colIndex);
         }
 
         /**
@@ -174,16 +137,6 @@ public class RatePanel extends JPanel {
         }
 
         @Override
-        public int getRowCount() {
-            return modifiedData.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return COLUMN_NAMES.length;
-        }
-
-        @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (columnIndex == ID_COL) {
                 return modifiedData.get(rowIndex).id;
@@ -192,50 +145,19 @@ public class RatePanel extends JPanel {
         }
 
         /**
-         * @param datum
-         * @return true if the row being edited is an existing rate parameter in the Petri net
-         */
-        private boolean isExistingRateParameter(Datum datum) {
-            return datum.initial != null;
-        }
-
-        public List<Datum> getTableData() {
-            return modifiedData;
-        }
-
-        public void deleteRow(int row) {
-            deletedData.add(modifiedData.get(row));
-            modifiedData.remove(row);
-            fireTableRowsDeleted(row, row);
-        }
-
-        /**
          * Holds rate parameter information in the table
          */
-        public class Datum {
-            public String id;
-
+        public class Datum extends AbstractDatum {
             public String expression;
 
-            /**
-             * Mapping to an initial datum item
-             * This may be null if the Datum was not originally a rate parameter in the Petri net
-             * <p/>
-             * It will contain a value if the data is a modified datum
-             * and it maps directly to some initial datum
-             */
-            public Datum initial = null;
-
-
             private Datum(String id, String expression) {
-                this.id = id;
+                super(id);
                 this.expression = expression;
             }
 
             private Datum(Datum initial, String id, String expression) {
-                this.id = id;
+                super(initial, id);
                 this.expression = expression;
-                this.initial = initial;
             }
 
             public boolean hasBeenSet() {

@@ -27,7 +27,7 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
     @Override
     public Token unmarshal(AdaptedToken adaptedToken) {
         Color color = new Color(adaptedToken.getRed(), adaptedToken.getGreen(), adaptedToken.getBlue());
-        Token token = new Token(adaptedToken.getId(), adaptedToken.isEnabled(), 0, color);
+        Token token = new Token(adaptedToken.getId(), color);
         tokens.put(token.getId(), token);
         return token;
     }
@@ -36,7 +36,6 @@ public class TokenAdapter extends XmlAdapter<AdaptedToken, Token> {
     public AdaptedToken marshal(Token token) {
         AdaptedToken adapted = new AdaptedToken();
         adapted.setId(token.getId());
-        adapted.setEnabled(token.isEnabled());
         Color color = token.getColor();
         adapted.setRed(color.getRed());
         adapted.setGreen(color.getGreen());

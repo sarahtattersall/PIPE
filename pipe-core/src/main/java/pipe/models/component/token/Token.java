@@ -19,27 +19,20 @@ public class Token extends AbstractPetriNetComponent {
 
     private String id;
 
-    private boolean enabled;
-
-    private int currentMarking;
-
     private Color color;
 
     public Token() {
-        this("", false, 0, Color.BLACK);
+        this("", Color.BLACK);
     }
 
-    public Token(String id, boolean enabled, int currentMarking, Color color) {
+    public Token(String id, Color color) {
         this.id = id;
-        this.enabled = enabled;
-        this.currentMarking = currentMarking;
         this.color = color;
     }
 
     public Token(Token token) {
         this.id = token.getId();
         this.color = token.getColor();
-        this.enabled = token.isEnabled();
     }
 
     public Color getColor() {
@@ -50,27 +43,6 @@ public class Token extends AbstractPetriNetComponent {
         Color old = this.color;
         this.color = color;
         changeSupport.firePropertyChange(COLOR_CHANGE_MESSAGE, old, color);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * @param enabled new value for enabled
-     */
-    public void setEnabled(boolean enabled) {
-        boolean old = this.enabled;
-        this.enabled = enabled;
-        changeSupport.firePropertyChange(TOKEN_ENABLED_CHANGE_MESSAGE, old, enabled);
-    }
-
-    public int getCurrentMarking() {
-        return currentMarking;
-    }
-
-    public void setCurrentMarking(int currentMarking) {
-        this.currentMarking = currentMarking;
     }
 
     @Override

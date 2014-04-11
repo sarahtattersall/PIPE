@@ -23,9 +23,9 @@ public class PipeApplicationViewTest
 	public void setUp() throws Exception
 	{
 		petriNetView = new PetriNetView(null, new PetriNet());
-		tokenViews = new LinkedList<TokenView>(); 
-		oneTokenView = new TokenView(true, "Alpha", Color.black); 
-		twoTokenView = new TokenView(true, "Beta", Color.blue);
+		tokenViews = new LinkedList<>();
+		oneTokenView = new TokenView("Alpha", Color.black);
+		twoTokenView = new TokenView("Beta", Color.blue);
 		tokenViews.add(oneTokenView);
 		tokenViews.add(twoTokenView);
 	}

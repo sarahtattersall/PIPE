@@ -2,7 +2,7 @@
  * ArcPathPointTypeEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.arc;
 
 import pipe.models.component.arc.ArcPoint;
 

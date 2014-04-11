@@ -31,8 +31,8 @@ public class TokenTest {
     public void tokenEquality() {
         String tokenName = "Default";
         Color sameColor = new Color(0, 0, 0);
-        Token token1 = new Token(tokenName, false, 0, sameColor);
-        Token token2 = new Token(tokenName, true, 1, sameColor);
+        Token token1 = new Token(tokenName, sameColor);
+        Token token2 = new Token(tokenName, sameColor);
 
         assertEquals(token1, token2);
     }
@@ -41,8 +41,8 @@ public class TokenTest {
     public void tokenNameInequality() {
         String tokenName = "Default";
         Color sameColor = new Color(0, 0, 0);
-        Token token1 = new Token(tokenName, false, 0, sameColor);
-        Token token2 = new Token(tokenName + "different", true, 1, sameColor);
+        Token token1 = new Token(tokenName, sameColor);
+        Token token2 = new Token(tokenName + "different", sameColor);
 
         assertThat(token1, is(not(equalTo((token2)))));
     }
@@ -52,9 +52,9 @@ public class TokenTest {
     public void tokenColorInequality() {
         String tokenName = "Default";
         Color color1 = new Color(0, 0, 0);
-        Token token1 = new Token(tokenName, false, 0, color1);
+        Token token1 = new Token(tokenName, color1);
         Color color2 = new Color(255, 255, 1);
-        Token token2 = new Token(tokenName, true, 1, color2);
+        Token token2 = new Token(tokenName, color2);
 
         assertThat(token1, is(not(equalTo((token2)))));
     }

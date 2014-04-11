@@ -8,6 +8,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.*;
+import pipe.historyActions.arc.AddArcPathPoint;
+import pipe.historyActions.arc.ArcPathPointType;
+import pipe.historyActions.arc.SetArcWeightAction;
+import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
@@ -51,7 +55,7 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightCreatesHistoryItem() throws UnparsableException {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -67,7 +71,7 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightUpdatesArcWeight() throws UnparsableException {
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -79,8 +83,8 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightsCreatesHistoryItem() throws UnparsableException {
-        Map<Token, String> tokenWeights = new HashMap<Token, String>();
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Map<Token, String> tokenWeights = new HashMap<>();
+        Token defaultToken = new Token("Default",  new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -98,7 +102,7 @@ public class ArcControllerTest {
     @Test
     public void setWeightsUpdatesArc() throws UnparsableException {
         Map<Token, String> tokenWeights = new HashMap<>();
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         String oldWeight = "5";
         when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
 
@@ -116,7 +120,7 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("Value is not an integer, please surround expression with floor or ceil");
 
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default",new Color(0, 0, 0));
         controller.setWeight(defaultToken, "1.2");
     }
 
@@ -130,7 +134,7 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("Value is not an integer, please surround expression with floor or ceil");
 
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         tokenWeights.put(defaultToken, "5.2");
         controller.setWeights(tokenWeights);
     }
@@ -147,7 +151,7 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("test error");
 
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         tokenWeights.put(defaultToken, "5.2");
         controller.setWeights(tokenWeights);
     }
@@ -162,7 +166,7 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("test error");
 
-        Token defaultToken = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         controller.setWeight(defaultToken, "5.0");
     }
 
@@ -258,7 +262,7 @@ public class ArcControllerTest {
         when(mockArc.getId()).thenReturn(oldName);
         controller.setName(newName);
 
-        UndoableEdit nameEdit = new PetriNetObjectName(mockArc, oldName, newName);
+        UndoableEdit nameEdit = new ChangePetriNetComponentName(mockArc, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
     }
 }

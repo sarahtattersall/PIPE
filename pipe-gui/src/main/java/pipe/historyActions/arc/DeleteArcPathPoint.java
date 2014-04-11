@@ -2,7 +2,7 @@
  * DeleteArcPathPointEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.arc;
 
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;

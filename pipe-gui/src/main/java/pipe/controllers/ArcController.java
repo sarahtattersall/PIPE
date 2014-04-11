@@ -1,6 +1,10 @@
 package pipe.controllers;
 
 import pipe.historyActions.*;
+import pipe.historyActions.arc.AddArcPathPoint;
+import pipe.historyActions.arc.ArcPathPointType;
+import pipe.historyActions.arc.DeleteArcPathPoint;
+import pipe.historyActions.arc.SetArcWeightAction;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.Connectable;

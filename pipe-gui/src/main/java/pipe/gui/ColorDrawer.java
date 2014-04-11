@@ -25,7 +25,8 @@ public class ColorDrawer extends JLabel implements TableCellRenderer {
 		setOpaque(true);
 	}
 
-	public Component getTableCellRendererComponent(JTable table, Object color,
+	@Override
+    public Component getTableCellRendererComponent(JTable table, Object color,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 		Color newColor = (Color) color;
 		setBackground(newColor);

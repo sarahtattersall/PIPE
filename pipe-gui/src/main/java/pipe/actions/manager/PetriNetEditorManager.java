@@ -26,7 +26,7 @@ public class PetriNetEditorManager implements ActionManager {
 
     public PetriNetEditorManager(PipeApplicationView view, PipeApplicationController applicationController) {
         newPetriNetAction = new NewPetriNetAction(applicationController);
-        closeAction = new CloseWindowAction(view);
+        closeAction = new CloseWindowAction(view, applicationController);
 
         FileDialog fileDialog = new FileDialog(view, "Save Petri Net", FileDialog.SAVE);
         fileDialog.setFilenameFilter(new FilenameFilter() {

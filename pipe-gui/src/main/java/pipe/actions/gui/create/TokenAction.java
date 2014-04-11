@@ -2,20 +2,11 @@ package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.historyActions.AddPetriNetObject;
-import pipe.historyActions.ChangePlaceTokens;
-import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.UndoManager;
-import javax.swing.undo.UndoableEdit;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public abstract class TokenAction extends CreateAction {

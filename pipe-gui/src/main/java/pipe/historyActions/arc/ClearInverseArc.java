@@ -1,9 +1,10 @@
 /*
  * ClearInverseArcEdit.java
  */
-package pipe.historyActions;
+package pipe.historyActions.arc;
 
 
+import pipe.historyActions.HistoryItem;
 import pipe.views.ArcView;
 
 /**

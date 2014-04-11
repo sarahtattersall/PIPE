@@ -47,15 +47,15 @@ public class ExpanderTest {
     }
 
     private Token getRedToken() {
-        return new Token("Red", true, 0, new Color(255, 0, 0));
+        return new Token("Red", new Color(255, 0, 0));
     }
 
     private Token getBlackToken() {
-        return new Token("Black", true, 0, new Color(0, 0, 0));
+        return new Token("Black", new Color(0, 0, 0));
     }
 
     private Token getDefaultToken() {
-        return new Token("Default", true, 0, new Color(0, 0, 0));
+        return new Token("Default", new Color(0, 0, 0));
     }
 
     @Test

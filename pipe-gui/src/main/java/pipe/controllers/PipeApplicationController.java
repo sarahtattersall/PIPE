@@ -99,7 +99,7 @@ public class PipeApplicationController {
     }
 
     private Token createDefaultToken(PipeApplicationView applicationView) {
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token token = new Token("Default", Color.BLACK);
         token.addPropertyChangeListener(new TokenChangeListener(applicationView));
         return token;
     }

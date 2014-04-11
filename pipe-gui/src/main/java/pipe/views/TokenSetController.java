@@ -60,7 +60,7 @@ public class TokenSetController extends Observable {
     }
 
     private void addDefaultTokenViewToMaps() {
-        TokenView defaultTokenView = new TokenView(true, "Default", Color.BLACK);
+        TokenView defaultTokenView = new TokenView("Default", Color.BLACK);
         buildCurrentId(defaultTokenView);
         try {
             addOrUpdateMapsAndLists(defaultTokenView);

@@ -2,7 +2,7 @@
  * AnnotationTextEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.annotation;
 
 import pipe.models.component.annotation.Annotation;
 

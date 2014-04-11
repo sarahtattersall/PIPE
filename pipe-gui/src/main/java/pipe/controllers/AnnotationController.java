@@ -1,6 +1,6 @@
 package pipe.controllers;
 
-import pipe.historyActions.ChangeAnnotationText;
+import pipe.historyActions.annotation.ChangeAnnotationText;
 import pipe.models.component.annotation.Annotation;
 
 import javax.swing.event.UndoableEditListener;

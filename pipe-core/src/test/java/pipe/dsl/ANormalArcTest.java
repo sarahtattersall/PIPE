@@ -45,7 +45,7 @@ public class ANormalArcTest {
 
     @Test
     public void createsArcSingleToken() {
-        tokens.put("Red", new Token("Red", true, 0, Color.RED));
+        tokens.put("Red", new Token("Red", Color.RED));
         connectables.put("P0", new Place("P0", "P0"));
         connectables.put("T1", new Transition("T1", "T1"));
         Arc<? extends Connectable, ? extends Connectable> arc =
@@ -62,8 +62,8 @@ public class ANormalArcTest {
 
     @Test
     public void createsArcWithMultipleTokens() {
-        tokens.put("Red", new Token("Red", true, 0, Color.RED));
-        tokens.put("Default", new Token("Default", true, 0, Color.BLACK));
+        tokens.put("Red", new Token("Red", Color.RED));
+        tokens.put("Default", new Token("Default", Color.BLACK));
         connectables.put("P0", new Place("P0", "P0"));
         connectables.put("T1", new Transition("T1", "T1"));
         Arc<? extends Connectable, ? extends Connectable> arc =

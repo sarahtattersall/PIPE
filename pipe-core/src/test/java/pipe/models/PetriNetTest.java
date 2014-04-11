@@ -217,9 +217,8 @@ public class PetriNetTest {
     @Test
     public void returnsCorrectToken() throws PetriNetComponentNotFoundException {
         String id = "Token1";
-        boolean enabled = true;
         Color color = new Color(132, 16, 130);
-        Token token = new Token(id, enabled, 0, color);
+        Token token = new Token(id, color);
         net.addToken(token);
         assertEquals(token, net.getToken(id));
     }
@@ -376,7 +375,7 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNet petriNet = createSimplePetriNet(tokenWeight);
 
-        Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
+        Token redToken = new Token("red", new Color(255, 0, 0));
         petriNet.addToken(redToken);
 
         Arc<? extends Connectable, ? extends Connectable> arc = getComponent("P1 TO T1", petriNet.getArcs());
@@ -391,7 +390,7 @@ public class PetriNetTest {
         int tokenWeight = 1;
         PetriNet petriNet = createSimplePetriNet(tokenWeight);
 
-        Token redToken = new Token("red", true, 0, new Color(255, 0, 0));
+        Token redToken = new Token("red", new Color(255, 0, 0));
         petriNet.addToken(redToken);
         Arc<? extends Connectable, ? extends Connectable> arc = getComponent("P1 TO T1", petriNet.getArcs());
         arc.getTokenWeights().put(redToken, "1");

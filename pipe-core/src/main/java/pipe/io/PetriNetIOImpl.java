@@ -75,7 +75,7 @@ public class PetriNetIOImpl implements PetriNetIO {
     }
 
     private Token createDefaultToken() {
-        return new Token("Default", true, 0, new Color(0, 0, 0));
+        return new Token("Default", new Color(0, 0, 0));
     }
 
     private Unmarshaller initialiseUnmarshaller() throws JAXBException {

@@ -30,14 +30,14 @@ public class ATokenTest {
     @Test
     public void createsTokenWithNameAndDefaultColorBlack() {
         Token token = AToken.called("Default").create(tokens, connectables, rateParameters);
-        Token expected = new Token("Default", true, 0, Color.BLACK);
+        Token expected = new Token("Default", Color.BLACK);
         assertEquals(expected, token);
     }
 
     @Test
     public void createsTokenWithSpecifiedColor() {
         Token token = AToken.called("Red").withColor(Color.RED).create(tokens, connectables, rateParameters);
-        Token expected = new Token("Red", true, 0, Color.RED);
+        Token expected = new Token("Red", Color.RED);
         assertEquals(expected, token);
     }
 

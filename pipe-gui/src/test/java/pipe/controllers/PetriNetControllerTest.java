@@ -7,18 +7,15 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.exceptions.TokenLockedException;
 import pipe.gui.*;
-import pipe.historyActions.DeletePetriNetObject;
+import pipe.historyActions.component.DeletePetriNetObject;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
-import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
@@ -257,13 +254,12 @@ public class PetriNetControllerTest {
         when(token.getId()).thenReturn(id);
 
         boolean enabled = true;
-        when(token.isEnabled()).thenReturn(enabled);
 
         Color color = Color.RED;
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
-        controller.updateToken(id, "new", enabled, color);
+        controller.updateToken(id, "new", color);
         verify(token).setId("new");
     }
 
@@ -274,48 +270,13 @@ public class PetriNetControllerTest {
         when(token.getId()).thenReturn(id);
 
         boolean enabled = true;
-        when(token.isEnabled()).thenReturn(enabled);
 
         Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
-        controller.updateToken(id, id, enabled, color);
+        controller.updateToken(id, id, color);
         verify(token, never()).setId(anyString());
-    }
-
-    @Test
-    public void updateEnabledIfChanged() throws TokenLockedException, PetriNetComponentNotFoundException {
-        Token token = mock(Token.class);
-        String id = "id";
-        when(token.getId()).thenReturn(id);
-
-        boolean enabled = true;
-        when(token.isEnabled()).thenReturn(enabled);
-
-        Color color = new Color(255, 0, 0);
-        when(token.getColor()).thenReturn(color);
-        net.addToken(token);
-
-        controller.updateToken(id, id, !enabled, color);
-        verify(token).setEnabled(!enabled);
-    }
-
-    @Test
-    public void doesNotUpdateEnabledIfNotChanged() throws TokenLockedException, PetriNetComponentNotFoundException {
-        Token token = mock(Token.class);
-        String id = "id";
-        when(token.getId()).thenReturn(id);
-
-        boolean enabled = true;
-        when(token.isEnabled()).thenReturn(enabled);
-
-        Color color = new Color(255, 0, 0);
-        when(token.getColor()).thenReturn(color);
-        net.addToken(token);
-
-        controller.updateToken(id, id, enabled, color);
-        verify(token, never()).setEnabled(anyBoolean());
     }
 
     @Test
@@ -325,14 +286,13 @@ public class PetriNetControllerTest {
         when(token.getId()).thenReturn(id);
 
         boolean enabled = true;
-        when(token.isEnabled()).thenReturn(enabled);
 
         Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
         Color newColor = new Color(0, 0, 0);
-        controller.updateToken(id, id, enabled, newColor);
+        controller.updateToken(id, id, newColor);
         verify(token).setColor(newColor);
     }
 
@@ -343,13 +303,12 @@ public class PetriNetControllerTest {
         when(token.getId()).thenReturn(id);
 
         boolean enabled = true;
-        when(token.isEnabled()).thenReturn(enabled);
 
         Color color = new Color(255, 0, 0);
         when(token.getColor()).thenReturn(color);
         net.addToken(token);
 
-        controller.updateToken(id, id, enabled, color);
+        controller.updateToken(id, id, color);
         verify(token, never()).setColor(any(Color.class));
     }
 
@@ -359,12 +318,11 @@ public class PetriNetControllerTest {
         boolean enabled = true;
         Color color = new Color(160, 92, 240);
 
-        controller.createNewToken(name, enabled, color);
+        controller.createNewToken(name, color);
         Collection<Token> tokens = net.getTokens();
         assertEquals(1, tokens.size());
         Token token = tokens.iterator().next();
         assertEquals(name, token.getId());
-        assertEquals(enabled, token.isEnabled());
         assertEquals(color, token.getColor());
     }
 

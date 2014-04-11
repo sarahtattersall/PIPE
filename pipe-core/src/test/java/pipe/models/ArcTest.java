@@ -128,7 +128,7 @@ public class ArcTest {
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
         arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         Token defaultToken = TokenUtils.createDefaultToken();
-        Token redToken = new Token("Default", true, 0, new Color(255, 0, 0));
+        Token redToken = new Token("Default",new Color(255, 0, 0));
 
         arc.setWeight(defaultToken, "2");
         arc.setWeight(redToken, "cap(P0)");
@@ -142,7 +142,7 @@ public class ArcTest {
         when(mockTarget.getCentre()).thenReturn(new Point2D.Double(15,15));
         arc = new Arc<>(mockSource, mockTarget, new HashMap<Token, String>(), ArcType.NORMAL);
         Token defaultToken = TokenUtils.createDefaultToken();
-        Token redToken = new Token("Red", true, 0, new Color(255, 0, 0));
+        Token redToken = new Token("Red", new Color(255, 0, 0));
 
         arc.setWeight(defaultToken, "2");
         arc.setWeight(redToken, "4");

@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.AnnotationAction;
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
 import pipe.utilities.transformers.Contains;

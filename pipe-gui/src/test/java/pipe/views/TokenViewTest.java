@@ -25,43 +25,43 @@ public class TokenViewTest implements Observer
 	private boolean newTokenViewShouldBeNull;
 
 	@Before
-	public void setUp() throws Exception
+	public void setUp()
 	{
-		tokenView = new TokenView(true, "Default", Color.black); 
+		tokenView = new TokenView("Default", Color.black);
 		called = false; 
 		newTokenViewShouldBeNull = false; 
 	}
 	@Test
-	public void verifyPrintsSummaryInfo() throws Exception
+	public void verifyPrintsSummaryInfo()
 	{
-		assertEquals("TokenView: Enabled=true, Id=Default, Color=java.awt.Color[r=0,g=0,b=0]", tokenView.toString());
+		assertEquals("TokenView: Id=Default, Color=java.awt.Color[r=0,g=0,b=0]", tokenView.toString());
 	}
 	@Test
-	public void verifyIdIsNormalizedToTrimmedNotNullLowerCase() throws Exception
+	public void verifyIdIsNormalizedToTrimmedNotNullLowerCase()
 	{
-		tokenView = new TokenView(true, "Default ", Color.black); 
+		tokenView = new TokenView("Default ", Color.black);
 		assertEquals("Default ",tokenView.getID()); 
 		assertEquals("default",tokenView.getNormalizedID()); 
-		tokenView = new TokenView(true, null, Color.black); 
+		tokenView = new TokenView( null, Color.black);
 		assertEquals(null,tokenView.getID()); 
 		assertEquals("avoid NPE, although this is not a valid ID; should we throw?", 
 				"",tokenView.getNormalizedID()); 
 	}
 	@Test
-	public void verifyValidTokenViewHasNonBlankNonNullIdAndIsEnabled() throws Exception
+	public void verifyValidTokenViewHasNonBlankNonNullIdAndIsEnabled()
 	{
 		assertTrue(tokenView.isValid()); 
-		tokenView = new TokenView(true,  "", Color.black); 
+		tokenView = new TokenView( "", Color.black);
 		assertTrue(tokenView.isValid()); 
-		tokenView = new TokenView(false,  "", Color.black); 
+		tokenView = new TokenView("", Color.black);
 		assertFalse(tokenView.isValid()); 
 	}
 
 	@Test
-	public void verifyTokenViewTellsObserversToDeleteSelfIfUpdatedTokenViewIsDisabled() throws Exception
-	{
+	public void verifyTokenViewTellsObserversToDeleteSelfIfUpdatedTokenViewIsDisabled()
+            throws TokenLockedException, InterruptedException {
 		tokenView.addObserver(this); 
-		newTokenView = new TokenView(false, "Fred", Color.black); 
+		newTokenView = new TokenView("Fred", Color.black);
 		newTokenViewShouldBeNull = true; 
 		newTokenView.updateModelFromPrevious(tokenView); 
 		assertEquals("Fred",newTokenView.getID()); 
@@ -71,8 +71,8 @@ public class TokenViewTest implements Observer
 		}	
 	}
 	@Test
-	public void verifyTokenViewTellsObserversToDeleteSelfIfIsSetDisabled() throws Exception
-	{
+	public void verifyTokenViewTellsObserversToDeleteSelfIfIsSetDisabled()
+            throws TokenLockedException, InterruptedException {
 		tokenView.addObserver(this); 
 		newTokenViewShouldBeNull = true; 
 		tokenView.disableAndNotifyObservers(); 

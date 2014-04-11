@@ -52,8 +52,8 @@ public class APlaceTest {
 
     @Test
     public void createsPlaceWithMultipleTokens() {
-        tokens.put("Default", new Token("Default", true, 0, Color.BLACK));
-        tokens.put("Red", new Token("Red", true, 0, Color.RED));
+        tokens.put("Default", new Token("Default", Color.BLACK));
+        tokens.put("Red", new Token("Red", Color.RED));
 
         Place place = APlace.withId("P0").containing(5, "Red").tokens().and(1, "Default").token().create(tokens,
                 connectables, rateParameters);

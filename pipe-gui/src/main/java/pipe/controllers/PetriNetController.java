@@ -3,7 +3,7 @@ package pipe.controllers;
 import pipe.controllers.interfaces.IController;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
-import pipe.historyActions.DeletePetriNetObject;
+import pipe.historyActions.component.DeletePetriNetObject;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.PlaceablePetriNetComponent;
@@ -292,11 +292,10 @@ public class PetriNetController implements IController, Serializable {
      * Adds a new token to the petrinet
      *
      * @param name
-     * @param enabled
      * @param color
      */
-    public void createNewToken(String name, boolean enabled, Color color) {
-        Token token = new Token(name, enabled, 0, color);
+    public void createNewToken(String name, Color color) {
+        Token token = new Token(name, color);
         petriNet.addToken(token);
     }
 
@@ -304,14 +303,11 @@ public class PetriNetController implements IController, Serializable {
         return petriNet.getTokens();
     }
 
-    public void updateToken(String currentTokenName, String name, boolean enabled, Color color)
+    public void updateToken(String currentTokenName, String name, Color color)
             throws PetriNetComponentNotFoundException {
         Token token = petriNet.getToken(currentTokenName);
         if (!token.getId().equals(name)) {
             token.setId(name);
-        }
-        if (token.isEnabled() != enabled) {
-            token.setEnabled(enabled);
         }
         if (!token.getColor().equals(color)) {
             token.setColor(color);

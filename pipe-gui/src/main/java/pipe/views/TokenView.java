@@ -28,8 +28,8 @@ public class TokenView extends Observable implements Serializable {
     }
 
     //TODO: DELETE
-    public TokenView(boolean enabled, String id, Color color) {
-        _model = new Token(id, enabled, 0, color);
+    public TokenView(String id, Color color) {
+        _model = new Token(id, color);
     }
 
     public void update(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
@@ -109,12 +109,14 @@ public class TokenView extends Observable implements Serializable {
         return _model;
     }
 
+
+    //TODO: DELETE
     public int getCurrentMarking() {
-        return _model.getCurrentMarking();
+        return 0;
     }
 
+    //TODO: DELETE
     public void setCurrentMarking(int marking) {
-        _model.setCurrentMarking(marking);
     }
 
     public String getID() {
@@ -167,8 +169,9 @@ public class TokenView extends Observable implements Serializable {
         }
     }
 
+    //TODO: DELETE
     public boolean isEnabled() {
-        return _model.isEnabled();
+        return true;
     }
 
     /**
@@ -177,8 +180,8 @@ public class TokenView extends Observable implements Serializable {
      * @param enabled
      * @throws TokenLockedException
      */
+    //TODO: DELETE
     protected void setEnabled(boolean enabled) throws TokenLockedException {
-        _model.setEnabled(enabled);
     }
 
     /**
@@ -213,7 +216,6 @@ public class TokenView extends Observable implements Serializable {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("TokenView: Enabled=");
-        builder.append(_model.isEnabled());
         builder.append(", Id=");
         builder.append(_model.getId());
         builder.append(", Color=");

@@ -10,7 +10,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;

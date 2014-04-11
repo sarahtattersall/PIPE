@@ -1,6 +1,6 @@
 package pipe.gui;
 
-import pipe.historyActions.AddPetriNetObject;
+import pipe.historyActions.component.AddPetriNetObject;
 import pipe.historyActions.MultipleEdit;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;

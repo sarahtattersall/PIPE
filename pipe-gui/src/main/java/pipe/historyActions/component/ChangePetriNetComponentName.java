@@ -1,7 +1,7 @@
 /*
  * PetriNetObjectNameEdit.java
  */
-package pipe.historyActions;
+package pipe.historyActions.component;
 
 import pipe.models.component.PetriNetComponent;
 
@@ -10,7 +10,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 /**
  * @author corveau
  */
-public class PetriNetObjectName extends AbstractUndoableEdit {
+public class ChangePetriNetComponentName extends AbstractUndoableEdit {
 
     private final String oldName;
 
@@ -19,7 +19,7 @@ public class PetriNetObjectName extends AbstractUndoableEdit {
     private final PetriNetComponent component;
 
 
-    public PetriNetObjectName(PetriNetComponent component, String oldName, String newName) {
+    public ChangePetriNetComponentName(PetriNetComponent component, String oldName, String newName) {
         this.component = component;
         this.oldName = oldName;
         this.newName = newName;
@@ -38,11 +38,11 @@ public class PetriNetObjectName extends AbstractUndoableEdit {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof PetriNetObjectName)) {
+        if (!(o instanceof ChangePetriNetComponentName)) {
             return false;
         }
 
-        PetriNetObjectName that = (PetriNetObjectName) o;
+        ChangePetriNetComponentName that = (ChangePetriNetComponentName) o;
 
         if (!component.equals(that.component)) {
             return false;

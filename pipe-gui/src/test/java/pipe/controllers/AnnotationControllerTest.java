@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.historyActions.ChangeAnnotationText;
+import pipe.historyActions.annotation.ChangeAnnotationText;
 import pipe.models.component.annotation.Annotation;
 import pipe.utilities.transformers.Contains;
 

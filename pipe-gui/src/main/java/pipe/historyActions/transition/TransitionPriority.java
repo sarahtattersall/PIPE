@@ -1,4 +1,4 @@
-package pipe.historyActions;
+package pipe.historyActions.transition;
 
 import pipe.models.component.transition.Transition;
 

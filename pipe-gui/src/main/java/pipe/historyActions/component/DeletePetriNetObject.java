@@ -1,7 +1,7 @@
 /*
  * DeletePetriNetObjectEdit.java
  */
-package pipe.historyActions;
+package pipe.historyActions.component;
 
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.PetriNetComponent;

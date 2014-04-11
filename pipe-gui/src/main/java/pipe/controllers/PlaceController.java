@@ -1,8 +1,8 @@
 package pipe.controllers;
 
-import pipe.historyActions.ChangePlaceTokens;
+import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.MultipleEdit;
-import pipe.historyActions.PlaceCapacity;
+import pipe.historyActions.place.PlaceCapacity;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 

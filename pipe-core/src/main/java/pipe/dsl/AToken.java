@@ -25,7 +25,7 @@ public class AToken implements DSLCreator<Token> {
     @Override
     public Token create(Map<String, Token> tokens, Map<String, Connectable> connectables,
                         Map<String, RateParameter> rateParameters) {
-        Token token = new Token(name, true, 0, color);
+        Token token = new Token(name, color);
         tokens.put(name, token);
         return token;
     }

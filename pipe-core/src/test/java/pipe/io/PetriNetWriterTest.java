@@ -35,7 +35,7 @@ public class PetriNetWriterTest extends XMLTestCase {
 
     public void testMarshalsPlace() throws IOException, SAXException {
         PetriNet petriNet = new PetriNet();
-        Token token = new Token("Default", true, 0, new Color(0, 0, 0));
+        Token token = new Token("Default", new Color(0, 0, 0));
         Place place = new Place("P0", "P0");
         place.setX(255);
         place.setY(240);
@@ -105,7 +105,7 @@ public class PetriNetWriterTest extends XMLTestCase {
 
     public void testMarshalsToken() throws IOException, SAXException {
         PetriNet petriNet = new PetriNet();
-        Token token = new Token("red", true, 0, new Color(255, 0, 0));
+        Token token = new Token("red", new Color(255, 0, 0));
         petriNet.add(token);
         assertResultsEqual(FileUtils.fileLocation(XMLUtils.getTokenFile()), petriNet);
     }

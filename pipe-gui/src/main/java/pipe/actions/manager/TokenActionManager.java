@@ -23,6 +23,7 @@ public class TokenActionManager implements ActionManager {
         specifyTokenClasses = new SpecifyTokenAction(applicationController);
         tokenAction.addUndoableEditListener(undoListener);
         deleteTokenAction.addUndoableEditListener(undoListener);
+        specifyTokenClasses.addUndoableEditListener(undoListener);
     }
 
     @Override

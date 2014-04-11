@@ -2,7 +2,7 @@
  * PlaceCapacityEdit.java
  */
 
-package pipe.historyActions;
+package pipe.historyActions.place;
 
 import pipe.models.component.place.Place;
 

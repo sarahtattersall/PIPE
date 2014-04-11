@@ -43,48 +43,48 @@ public class TokenSetControllerTest implements Observer
 	public void verifyBlankTokenViewIdOrNullTokenViewIsNotAdded() throws Exception
 	{
 		assertFalse(set.updateOrAddTokenView(null));
-		assertFalse(set.updateOrAddTokenView(new TokenView(true, null, Color.black)));
-		assertFalse(set.updateOrAddTokenView(new TokenView(true, " ", Color.black)));
+		assertFalse(set.updateOrAddTokenView(new TokenView( null, Color.black)));
+		assertFalse(set.updateOrAddTokenView(new TokenView(" ", Color.black)));
 	}
 	@Test
  	public void verifyTwoTokensCannotBeAddedWithTheSameIdAndTheSameColor() throws Exception
 	{
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "Fred", Color.red))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView( "Fred", Color.red)));
 		assertEquals("default deleted",1, set.getTokenViews().size()); 
 		assertFalse("same ID and color can't be added twice",
-				set.updateOrAddTokenView(new TokenView(true, "Fred", Color.red))); 
+				set.updateOrAddTokenView(new TokenView( "Fred", Color.red)));
 	}
 	@Test
  	public void verifyTokenCannotBeAddedWithTheSameColorAsOneTokenAndSameIdAsAnother() throws Exception
 	{
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "Mary", Color.black))); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "Fred", Color.red))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView( "Mary", Color.black)));
+		assertTrue(set.updateOrAddTokenView(new TokenView( "Fred", Color.red)));
 		assertEquals(2, set.getTokenViews().size()); 
 		assertFalse("can't reuse Color of a previous token (Mary) with same ID as Fred",
-				set.updateOrAddTokenView(new TokenView(true, "Fred", Color.black))); 
+				set.updateOrAddTokenView(new TokenView( "Fred", Color.black)));
 		assertEquals(2, set.getTokenViews().size()); 
 		assertFalse("can't reuse Id of a previous token (Mary) with same color as Fred",
-				set.updateOrAddTokenView(new TokenView(true, "Mary", Color.red))); 
+				set.updateOrAddTokenView(new TokenView( "Mary", Color.red)));
 		assertEquals(2, set.getTokenViews().size()); 
 	}
  	@Test
  	public void verifyFirstTokenViewAddedReplacesOrUpdatesExistingTokenViewAndSubsequentTokenViewsAreAdded() throws Exception
 	{
 		TokenView defaultTokenView = set.getTokenViews().get(0); 
-		set.updateOrAddTokenView(new TokenView(true, "Default1", Color.black)); 
+		set.updateOrAddTokenView(new TokenView("Default1", Color.black));
 		assertEquals("initial TokenView is always replaced or updated if new one is enabled",
 				1, set.getTokenViews().size()); 
 		assertEquals(defaultTokenView,set.getTokenViews().get(0));
-		set.updateOrAddTokenView(new TokenView(true, "red", Color.red)); 
+		set.updateOrAddTokenView(new TokenView("red", Color.red));
 		assertEquals(2, set.getTokenViews().size()); 
 	}
  	@Test
  	public void verifyExistingTokenViewCanBeRenamedWithNewIdKeepingSameColor() throws Exception
 	{
-		TokenView maryTokenView = new TokenView(true, "Mary", Color.blue); 
+		TokenView maryTokenView = new TokenView( "Mary", Color.blue);
 		set.updateOrAddTokenView(maryTokenView); 
 		assertEquals(1, set.getTokenViews().size()); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "MaryTwo", Color.blue))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView("MaryTwo", Color.blue)));
 		assertEquals(1, set.getTokenViews().size()); 
 		assertEquals("MaryTwo",set.getTokenViews().get(0).getID()); 
 		assertEquals(maryTokenView, set.getTokenViews().get(0)); 
@@ -92,9 +92,9 @@ public class TokenSetControllerTest implements Observer
 	@Test
  	public void verifyExistingTokenViewCanChangeColorKeepingSameId() throws Exception
 	{
-		TokenView blueTokenView = new TokenView(true, "Mary", Color.blue); 
+		TokenView blueTokenView = new TokenView("Mary", Color.blue);
 		set.updateOrAddTokenView(blueTokenView); 
-		TokenView redTokenView = new TokenView(true, "Mary", Color.red); 
+		TokenView redTokenView = new TokenView("Mary", Color.red);
 		assertTrue(set.updateOrAddTokenView(redTokenView)); 
 		assertEquals(blueTokenView, set.getTokenViews().get(0)); 
 		assertEquals("same token view, different color",Color.red, blueTokenView.getColor()); 
@@ -103,7 +103,7 @@ public class TokenSetControllerTest implements Observer
 	@Test
  	public void verifyDefaultReplacedIfMismatchesColorAndId() throws Exception
 	{
-		TokenView newTokenView = new TokenView(true, "Mary", Color.blue); 
+		TokenView newTokenView = new TokenView( "Mary", Color.blue);
 		assertTrue(set.updateOrAddTokenView(newTokenView)); 
 		assertEquals(1, set.getTokenViews().size()); 
 		assertEquals(newTokenView,set.getTokenViews().get(0));
@@ -112,7 +112,7 @@ public class TokenSetControllerTest implements Observer
  	public void verifyDefaultUpdatedIfOnlyMismatchesColor() throws Exception
 	{
 		TokenView defaultTokenView = set.getTokenViews().get(0); 
-		TokenView newTokenView = new TokenView(true, "Default", Color.blue); 
+		TokenView newTokenView = new TokenView("Default", Color.blue);
 		assertTrue(set.updateOrAddTokenView(newTokenView)); 
 		assertEquals(1, set.getTokenViews().size()); 
 		assertEquals(defaultTokenView,set.getTokenViews().get(0));
@@ -122,7 +122,7 @@ public class TokenSetControllerTest implements Observer
  	public void verifyDefaultUpdatedIfOnlyMismatchesId() throws Exception
 	{
 		TokenView defaultTokenView = set.getTokenViews().get(0); 
-		TokenView newTokenView = new TokenView(true, "Newname", Color.black); 
+		TokenView newTokenView = new TokenView("Newname", Color.black);
 		assertTrue(set.updateOrAddTokenView(newTokenView)); 
 		assertEquals(1, set.getTokenViews().size()); 
 		assertEquals(defaultTokenView,set.getTokenViews().get(0));
@@ -132,7 +132,7 @@ public class TokenSetControllerTest implements Observer
  	public void verifyIfFirstAddedTokenHasDefaultIdAndColorItWillNotReplaceOriginalDefaultEvenThoughDuplicateName() throws Exception
 	{
 		TokenView defaultTokenView = set.getTokenViews().get(0); 
-		TokenView firstAddedTokenView = new TokenView(true, "Default", Color.black); 
+		TokenView firstAddedTokenView = new TokenView("Default", Color.black);
 		assertFalse("duplicate so doesn't replace",
 				set.updateOrAddTokenView(firstAddedTokenView)); 
 		assertEquals(1, set.getTokenViews().size()); 
@@ -141,15 +141,15 @@ public class TokenSetControllerTest implements Observer
 	@Test
 	public void verifyDisabledTokenCanBeEnabled() throws Exception
 	{
-		oneTokenView = new TokenView(true, "red", Color.red);
+		oneTokenView = new TokenView( "red", Color.red);
 		set.updateOrAddTokenView(oneTokenView); 
 		assertEquals(1, set.getAllTokenViews().size()); 
 		assertEquals(oneTokenView, set.getActiveTokenView()); 
-		twoTokenView = new TokenView(false, "blue", Color.blue);
+		twoTokenView = new TokenView( "blue", Color.blue);
 		set.updateOrAddTokenView(twoTokenView); 
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(1, set.getTokenViews().size()); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "blue", Color.blue))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView("blue", Color.blue)));
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(2, set.getTokenViews().size()); 
 		assertEquals(twoTokenView, set.getTokenViews().get(1)); 
@@ -158,15 +158,15 @@ public class TokenSetControllerTest implements Observer
 	@Test
 	public void verifyEnabledTokenCanBeDisabledIfNotYetLocked() throws Exception
 	{
-		oneTokenView = new TokenView(true, "red", Color.red);
+		oneTokenView = new TokenView("red", Color.red);
 		set.updateOrAddTokenView(oneTokenView); 
 		assertEquals(1, set.getAllTokenViews().size()); 
 		assertEquals(oneTokenView, set.getActiveTokenView()); 
-		twoTokenView = new TokenView(true, "blue", Color.blue);
+		twoTokenView = new TokenView("blue", Color.blue);
 		set.updateOrAddTokenView(twoTokenView); 
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(2, set.getTokenViews().size()); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(false, "blue", Color.blue))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView("blue", Color.blue)));
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals("dropped from enabled token views",1, set.getTokenViews().size()); 
 		assertEquals("in all token views",twoTokenView, set.getAllTokenViews().get(1)); 
@@ -176,15 +176,15 @@ public class TokenSetControllerTest implements Observer
 	@Test
 	public void verifyIdCanChangeWhileTokenViewIsGoingEnabled() throws Exception
 	{
-		oneTokenView = new TokenView(true, "red", Color.red);
+		oneTokenView = new TokenView("red", Color.red);
 		set.updateOrAddTokenView(oneTokenView); 
 		assertEquals(1, set.getAllTokenViews().size()); 
 		assertEquals(oneTokenView, set.getActiveTokenView()); 
-		twoTokenView = new TokenView(false, "blue", Color.blue);
-		set.updateOrAddTokenView(twoTokenView); 
+		twoTokenView = new TokenView("blue", Color.blue);
+		set.updateOrAddTokenView(twoTokenView);
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(1, set.getTokenViews().size()); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "newblueId", Color.blue))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView("newblueId", Color.blue)));
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(2, set.getTokenViews().size()); 
 		assertEquals(twoTokenView, set.getTokenViews().get(1)); 
@@ -194,15 +194,15 @@ public class TokenSetControllerTest implements Observer
 	@Test
 	public void verifyColorCanChangeWhileTokenViewIsGoingEnabled() throws Exception
 	{
-		oneTokenView = new TokenView(true, "red", Color.red);
+		oneTokenView = new TokenView("red", Color.red);
 		set.updateOrAddTokenView(oneTokenView); 
 		assertEquals(1, set.getAllTokenViews().size()); 
 		assertEquals(oneTokenView, set.getActiveTokenView()); 
-		twoTokenView = new TokenView(false, "blue", Color.blue);
+		twoTokenView = new TokenView("blue", Color.blue);
 		set.updateOrAddTokenView(twoTokenView); 
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(1, set.getTokenViews().size()); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "blue", Color.green))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView("blue", Color.green)));
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals(2, set.getTokenViews().size()); 
 		assertEquals(twoTokenView, set.getTokenViews().get(1)); 
@@ -212,9 +212,9 @@ public class TokenSetControllerTest implements Observer
 	@Test
  	public void verifyTokenViewsReturnsOnlyEnabledTokenViewsUnlessAllRequested() throws Exception
 	{
-		set.updateOrAddTokenView(new TokenView(true, "red", Color.red)); 
-		set.updateOrAddTokenView(new TokenView(false, "blue", Color.blue)); 
-		set.updateOrAddTokenView(new TokenView(false, "black", Color.black)); 
+		set.updateOrAddTokenView(new TokenView("red", Color.red));
+		set.updateOrAddTokenView(new TokenView( "blue", Color.blue));
+		set.updateOrAddTokenView(new TokenView("black", Color.black));
 		assertEquals(1, set.getTokenViews().size()); 
 		assertEquals(3, set.getAllTokenViews().size()); 
 	}
@@ -222,12 +222,12 @@ public class TokenSetControllerTest implements Observer
  	public void verifyDefaultTokenViewIsOnlyReplacedOnceAnEnabledTokenViewIsAdded() throws Exception
 	{
 		TokenView defaultTokenView = set.getTokenViews().get(0); 
-		set.updateOrAddTokenView(new TokenView(false, "blue", Color.blue)); 
+		set.updateOrAddTokenView(new TokenView("blue", Color.blue));
 		assertEquals(1, set.getTokenViews().size()); 
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals("not replaced, because added TokenView is not enabled",
 				defaultTokenView,set.getTokenViews().get(0));
-		set.updateOrAddTokenView(new TokenView(true, "Default", Color.red)); 
+		set.updateOrAddTokenView(new TokenView("Default", Color.red));
 		assertEquals("default has been dropped in favor of enabled ; no net change",1, set.getTokenViews().size()); 
 		assertEquals(2, set.getAllTokenViews().size()); 
 		assertEquals("default now replaced",
@@ -239,14 +239,14 @@ public class TokenSetControllerTest implements Observer
 	{
 		set.addObserver(this); 
 		assertEquals("Default",set.getActiveTokenView().getID());
-		TokenView fredTokenView = new TokenView(true, "Fred", Color.black); 
+		TokenView fredTokenView = new TokenView("Fred", Color.black);
 		activeTokenView = null;  
 		set.updateOrAddTokenView(fredTokenView); 
 		assertEquals("not the same as fredTokenView, because first added tokenView causes a rename, not a replacement",
 				set.getTokenView("Fred"), set.getActiveTokenView()); 
 		assertEquals("when initial default is replaced, the replacement automatically becomes active",
 				"Fred",set.getActiveTokenView().getID());
-		TokenView maryTokenView = new TokenView(true, "Mary", Color.blue); 
+		TokenView maryTokenView = new TokenView("Mary", Color.blue);
 		set.updateOrAddTokenView(maryTokenView); 
 		assertEquals("Fred still active","Fred",set.getActiveTokenView().getID());
 		activeTokenView = maryTokenView; 
@@ -256,7 +256,7 @@ public class TokenSetControllerTest implements Observer
 		assertEquals("If identified with blanks or different case, original will still be returned",
 				"Mary",set.getActiveTokenView().getID());
 		activeTokenView = set.getTokenView("Fred"); 
-		set.updateOrAddTokenView(new TokenView(false, "Mary", Color.blue)); 
+		set.updateOrAddTokenView(new TokenView("Mary", Color.blue));
 		assertEquals("When active becomes disabled, active shifts to first remaining active TV",
 				"Fred",set.getActiveTokenView().getID());
 
@@ -271,10 +271,10 @@ public class TokenSetControllerTest implements Observer
 	// FIXME
 	public void verifyThrowsIfReplacementListOfTokenViewsCantBeReconciledWithAnyExistingEntry() throws Exception
 	{
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "Mary", Color.blue))); 
+		assertTrue(set.updateOrAddTokenView(new TokenView("Mary", Color.blue)));
 		assertEquals(1,set.getAllTokenViews().size());
-		tokenViewList = buildTokenViewList(new TokenView(false, "Fred", Color.yellow), 
-				new TokenView(true, "Sam", Color.red), new TokenView(false, "Frank", Color.green) ); 
+		tokenViewList = buildTokenViewList(new TokenView("Fred", Color.yellow),
+				new TokenView("Sam", Color.red), new TokenView("Frank", Color.green) );
 		try 
 		{
 			set.updateOrReplaceTokenViews(tokenViewList); 
@@ -288,10 +288,10 @@ public class TokenSetControllerTest implements Observer
 	@Test
 	public void verifyListOfTokenViewsIsKeptFirstInFirstOut() throws Exception
 	{
-		set.updateOrAddTokenView(new TokenView(true, "Mary", Color.blue)); 
-		set.updateOrAddTokenView(new TokenView(false, "Sam", Color.red)); 
-		set.updateOrAddTokenView(new TokenView(true, "Frank", Color.green)); 
-		set.updateOrAddTokenView(new TokenView(true, "Louise", Color.yellow)); 
+		set.updateOrAddTokenView(new TokenView("Mary", Color.blue));
+		set.updateOrAddTokenView(new TokenView("Sam", Color.red));
+		set.updateOrAddTokenView(new TokenView("Frank", Color.green));
+		set.updateOrAddTokenView(new TokenView("Louise", Color.yellow));
 		checkListPosition(0, 0, "Mary"); 
 		checkListPosition(1, -1, "Sam"); 
 		checkListPosition(2, 1, "Frank"); 
@@ -308,8 +308,8 @@ public class TokenSetControllerTest implements Observer
 	public void verifyThrowsAndOriginalListStaysIntactIfInvalidEntriesInReplacementList() throws Exception
 	{
 		TokenView defaultTokenView = set.getTokenViews().get(0); 
-		tokenViewList = buildTokenViewList(new TokenView(true, "", Color.black), 
-				new TokenView(true, "Sam", Color.black), null ); 
+		tokenViewList = buildTokenViewList(new TokenView("", Color.black),
+				new TokenView("Sam", Color.black), null );
 		try 
 		{
 				set.updateOrReplaceTokenViews(tokenViewList); 
@@ -326,15 +326,15 @@ public class TokenSetControllerTest implements Observer
 	public void verifyAllMembersOfListCanChangeBothIdAndColorRetainingOriginalTokenViewsIfDoneInSteps() throws Exception
 	{
 		TokenView oneTokenView = set.getTokenViews().get(0); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "Alpha", Color.black)));
+		assertTrue(set.updateOrAddTokenView(new TokenView("Alpha", Color.black)));
 		assertEquals(oneTokenView, set.getTokenViews().get(0)); 
 		assertEquals("Alpha", set.getTokenViews().get(0).getID()); 
-		TokenView twoTokenView = new TokenView(true, "Beta", Color.blue);
+		TokenView twoTokenView = new TokenView("Beta", Color.blue);
 		assertTrue(set.updateOrAddTokenView(twoTokenView));
 		assertEquals(2,set.getTokenViews().size());
 		
-		tokenViewList = buildTokenViewList(new TokenView(true, "Alpha", Color.green), 
-				new TokenView(true, "Delta", Color.blue)); 
+		tokenViewList = buildTokenViewList(new TokenView("Alpha", Color.green),
+				new TokenView("Delta", Color.blue));
 		assertTrue("changes should have been made retaining original token views",
 				set.updateOrReplaceTokenViews(tokenViewList)); 
 		assertEquals(oneTokenView, set.getTokenViews().get(0)); 
@@ -343,8 +343,8 @@ public class TokenSetControllerTest implements Observer
 		assertEquals("Delta", set.getTokenViews().get(1).getID()); 
 
 		tokenViewList = buildTokenViewList(
-				new TokenView(true, "Charlie", Color.green), 
-				new TokenView(true, "Delta", Color.black)
+				new TokenView("Charlie", Color.green),
+				new TokenView("Delta", Color.black)
 				);  // order in the list does not matter, as long as changes are unambiguous (one element at a time)
 		assertTrue("changes should have been made retaining original token views",
 				set.updateOrReplaceTokenViews(tokenViewList)); 
@@ -356,8 +356,8 @@ public class TokenSetControllerTest implements Observer
 		assertEquals("Delta", set.getTokenViews().get(1).getID()); 
 		
 		tokenViewList = buildTokenViewList(
-				new TokenView(true, "Delta", Color.black), 
-				new TokenView(true, "Charlie", Color.blue) 
+				new TokenView("Delta", Color.black),
+				new TokenView("Charlie", Color.blue)
 				);  // order in the list does not matter, as long as changes are unambiguous (one element at a time)
 		assertTrue("changes should have been made retaining original token views",
 				set.updateOrReplaceTokenViews(tokenViewList)); 
@@ -377,8 +377,8 @@ public class TokenSetControllerTest implements Observer
 		buildTwoTokenViewsForUpdateOrReplacement();
 
 		tokenViewList = buildTokenViewList(
-				new TokenView(true, "Delta", Color.black),
-				new TokenView(true, "Charlie", Color.blue)
+				new TokenView("Delta", Color.black),
+				new TokenView("Charlie", Color.blue)
 		);  // order in the list does not matter, as long as changes are unambiguous (one element at a time)
 		assertTrue("original token views updated",
 				set.updateOrReplaceTokenViews(tokenViewList)); 
@@ -392,10 +392,10 @@ public class TokenSetControllerTest implements Observer
 	protected void buildTwoTokenViewsForUpdateOrReplacement() throws Exception
 	{
 		oneTokenView = set.getTokenViews().get(0); 
-		assertTrue(set.updateOrAddTokenView(new TokenView(true, "Alpha", Color.black)));
+		assertTrue(set.updateOrAddTokenView(new TokenView("Alpha", Color.black)));
 		assertEquals(oneTokenView, set.getTokenViews().get(0)); 
 		assertEquals("Alpha", set.getTokenViews().get(0).getID()); 
-		twoTokenView = new TokenView(true, "Beta", Color.blue);
+		twoTokenView = new TokenView("Beta", Color.blue);
 		assertTrue(set.updateOrAddTokenView(twoTokenView));
 		assertEquals(2,set.getTokenViews().size());
 	}
@@ -405,8 +405,8 @@ public class TokenSetControllerTest implements Observer
 		buildTwoTokenViewsForUpdateOrReplacement();
 		
 		tokenViewList = buildTokenViewList(
-				new TokenView(true, "Delta", Color.green),
-				new TokenView(true, "Charlie", Color.red)
+				new TokenView("Delta", Color.green),
+				new TokenView("Charlie", Color.red)
 				); 
 		try
 		{
@@ -424,7 +424,7 @@ public class TokenSetControllerTest implements Observer
 		buildTwoTokenViewsForUpdateOrReplacement();
 		MarkingView oneMarkingView = new MarkingView(oneTokenView, 1); 
 		MarkingView twoMarkingView = new MarkingView(twoTokenView, 1); 
-		TokenView newTwoTokenView = new TokenView(false, "Beta", Color.blue); 
+		TokenView newTwoTokenView = new TokenView("Beta", Color.blue);
 		tokenViewList = buildTokenViewList(newTwoTokenView); 
 		assertTrue("second token views replaced with null",
 				set.updateOrReplaceTokenViews(tokenViewList)); 

@@ -4,14 +4,18 @@ import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.gui.RatePanel;
+import pipe.gui.AbstractDatum;
+import pipe.gui.RateEditorPanel;
 import pipe.historyActions.*;
+import pipe.historyActions.component.AddPetriNetObject;
+import pipe.historyActions.component.ChangePetriNetComponentName;
+import pipe.historyActions.component.DeletePetriNetObject;
+import pipe.historyActions.rateparameter.ChangeRateParameterRate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.petrinet.PetriNet;
 import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
-import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoableEdit;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,7 +29,7 @@ import java.util.List;
 public class SpecifyRateParameterAction extends GuiAction {
     private final PipeApplicationController pipeApplicationController;
 
-    private RatePanel ratePanel;
+    private RateEditorPanel rateEditorPanel;
 
     private JDialog guiDialog;
 
@@ -49,7 +53,7 @@ public class SpecifyRateParameterAction extends GuiAction {
     }
 
     private void buildGuiClasses() {
-        ratePanel = new RatePanel(pipeApplicationController.getActivePetriNetController());
+        rateEditorPanel = new RateEditorPanel(pipeApplicationController.getActivePetriNetController());
         guiDialog = new RateDialog();
 
     }
@@ -57,8 +61,8 @@ public class SpecifyRateParameterAction extends GuiAction {
     private void showGui() {
         guiDialog.setSize(600, 200);
         guiDialog.setLocationRelativeTo(null);
-        ratePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        ratePanel.setOpaque(true);
+        rateEditorPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        rateEditorPanel.setOpaque(true);
 
 
         JPanel buttonPane = new JPanel();
@@ -73,9 +77,9 @@ public class SpecifyRateParameterAction extends GuiAction {
         cancel.addActionListener((ActionListener) guiDialog);
         buttonPane.add(cancel);
 
-        guiDialog.add(ratePanel, BorderLayout.CENTER);
+        guiDialog.add(rateEditorPanel, BorderLayout.CENTER);
         guiDialog.add(buttonPane, BorderLayout.PAGE_END);
-        ratePanel.setVisible(true);
+        rateEditorPanel.setVisible(true);
 
         guiDialog.setVisible(true);
     }
@@ -85,9 +89,9 @@ public class SpecifyRateParameterAction extends GuiAction {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals("OK")) {
-                if (ratePanel.isDataValid()) {
-                    updateFromTable(ratePanel.getTableData());
-                    removeDeletedData(ratePanel.getDeletedData());
+                if (rateEditorPanel.isDataValid()) {
+                    updateFromTable(rateEditorPanel.getTableData());
+                    removeDeletedData(rateEditorPanel.getDeletedData());
                     setVisible(false);
                 }
             } else if (e.getActionCommand().equals("Cancel")) {
@@ -98,15 +102,15 @@ public class SpecifyRateParameterAction extends GuiAction {
          * Removes any data deleted from the table if it was in the Petri net
          * when table loaded
          */
-        private void removeDeletedData(Iterable<RatePanel.RateModel.Datum> deletedData) {
+        private void removeDeletedData(Iterable<RateEditorPanel.RateModel.Datum> deletedData) {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
             PetriNet petriNet = petriNetController.getPetriNet();
             List<UndoableEdit> undoableEdits = new LinkedList<>();
-            for (RatePanel.RateModel.Datum datum : deletedData) {
-                if (ratePanel.isExistingRateParameter(datum)) {
+            for (RateEditorPanel.RateModel.Datum datum : deletedData) {
+                if (rateEditorPanel.isExistingRateParameter(datum)) {
                     try {
                         RateParameter rateParameter = petriNet.getRateParameter(datum.id);
-                        AbstractUndoableEdit historyItem = new DeletePetriNetObject(rateParameter, petriNet);
+                        UndoableEdit historyItem = new DeletePetriNetObject(rateParameter, petriNet);
                         undoableEdits.add(historyItem);
                         petriNet.removeRateParameter(rateParameter);
                     } catch (PetriNetComponentNotFoundException ignored) {
@@ -122,17 +126,17 @@ public class SpecifyRateParameterAction extends GuiAction {
         /**
          * @return changes to be applied to the actual model based on the Datum available in the table
          */
-        private void updateFromTable(Iterable<RatePanel.RateModel.Datum> data) {
+        private void updateFromTable(Iterable<RateEditorPanel.RateModel.Datum> data) {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
             List<UndoableEdit> undoableEdits = new LinkedList<>();
-            for (RatePanel.RateModel.Datum modified : data) {
-                if (ratePanel.isExistingRateParameter(modified)) {
-                    RatePanel.RateModel.Datum initial = modified.initial;
+            for (RateEditorPanel.RateModel.Datum modified : data) {
+                if (rateEditorPanel.isExistingRateParameter(modified)) {
+                    AbstractDatum initial = modified.initial;
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {
                             RateParameter rateParameter = petriNetController.getPetriNet().getRateParameter(initial.id);
                             UndoableEdit idEdit =
-                                    new ChangeRateParameterId(rateParameter, initial.id, modified.id);
+                                    new ChangePetriNetComponentName(rateParameter, initial.id, modified.id);
                             undoableEdits.add(idEdit);
 
                             UndoableEdit expressionEdit = new ChangeRateParameterRate(rateParameter, rateParameter.getExpression(), modified.expression);

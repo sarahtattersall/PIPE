@@ -4,17 +4,16 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.ExprEvaluator;
 import pipe.parsers.UnparsableException;
 import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class deals with editing the weight of an arc
@@ -71,65 +70,63 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         int y = 0;
 
         for (final Token token : petriNetController.getNetTokens()) {
-            if (token.isEnabled()) {
-                gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints = new java.awt.GridBagConstraints();
 
-                JLabel tokenClassName = new JLabel();
-                final JTextField tokenClassWeight = new JTextField();
-                tokenClassWeight.setEditable(true);
-                tokenClassWeight.setName(token.getId());
+            JLabel tokenClassName = new JLabel();
+            final JTextField tokenClassWeight = new JTextField();
+            tokenClassWeight.setEditable(true);
+            tokenClassWeight.setName(token.getId());
 
-                tokenClassWeight.setText(arcController.getWeightForToken(token));
-                inputtedWeights.add(tokenClassWeight);
+            tokenClassWeight.setText(arcController.getWeightForToken(token));
+            inputtedWeights.add(tokenClassWeight);
 
-                tokenClassName.setText(token.getId() + ": ");
-                inputtedTokenClassNames.add(token.getId());
+            tokenClassName.setText(token.getId() + ": ");
+            inputtedTokenClassNames.add(token.getId());
 
-                gridBagConstraints.gridx = x;
-                gridBagConstraints.gridy = y;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-                arcEditorPanel.add(tokenClassName, gridBagConstraints);
+            gridBagConstraints.gridx = x;
+            gridBagConstraints.gridy = y;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+            gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+            arcEditorPanel.add(tokenClassName, gridBagConstraints);
 
-                tokenClassWeight.setPreferredSize(d);
+            tokenClassWeight.setPreferredSize(d);
 
-                tokenClassWeight.addFocusListener(new java.awt.event.FocusAdapter() {
-                    public void focusGained(java.awt.event.FocusEvent evt) {
-                        nameTextFieldFocusGained(evt);
-                    }
+            tokenClassWeight.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent evt) {
+                    nameTextFieldFocusGained(evt);
+                }
 
-                    public void focusLost(java.awt.event.FocusEvent evt) {
-                        nameTextFieldFocusLost(evt);
-                    }
-                });
-                tokenClassWeight.setEnabled(true);
+                public void focusLost(java.awt.event.FocusEvent evt) {
+                    nameTextFieldFocusLost(evt);
+                }
+            });
+            tokenClassWeight.setEnabled(true);
 
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = x + 3;
-                gridBagConstraints.gridy = y;
-                gridBagConstraints.gridwidth = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-                arcEditorPanel.add(tokenClassWeight, gridBagConstraints);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = x + 3;
+            gridBagConstraints.gridy = y;
+            gridBagConstraints.gridwidth = 3;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+            arcEditorPanel.add(tokenClassWeight, gridBagConstraints);
 
-                final JButton fweditor = new JButton("Weight expression editor");
-                fweditor.setEnabled(true);
-                gridBagConstraints.gridx = x + 3;
-                gridBagConstraints.gridy = y + 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-                arcEditorPanel.add(fweditor, gridBagConstraints);
+            final JButton fweditor = new JButton("Weight expression editor");
+            fweditor.setEnabled(true);
+            gridBagConstraints.gridx = x + 3;
+            gridBagConstraints.gridy = y + 1;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+            gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+            arcEditorPanel.add(fweditor, gridBagConstraints);
 
-                fweditor.addActionListener(new java.awt.event.ActionListener() {
+            fweditor.addActionListener(new java.awt.event.ActionListener() {
 
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        createEditorWindow(token);
-                    }
-                });
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    createEditorWindow(token);
+                }
+            });
 
-                y += 2;
-            }
+            y += 2;
         }
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -180,29 +177,13 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         add(buttonPanel, gridBagConstraints);
     }
 
-    public void createEditorWindow(Token token) {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        ArcFunctionEditor feditor =
-                new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
-        guiDialog.add(feditor);
-        guiDialog.setSize(270, 230);
-        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
-        guiDialog.setVisible(true);
-        guiDialog.dispose();
+    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
+        // Provisional!
+        exit();
     }
 
-    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
-        // focusLost(nameTextField);
-    }
-
-    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
-        // focusGained(nameTextField);
-    }
-
-    private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
-        }
+    private void exit() {
+        rootPane.getParent().setVisible(false);
     }
 
     /**
@@ -213,13 +194,13 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     private void okButtonHandler(java.awt.event.ActionEvent evt) {
         for (JTextField inputtedWeight : inputtedWeights) {
             String expr = inputtedWeight.getText();
-                if (expr.isEmpty()) {
-                    System.err.println("Error in functional rates expression.");
-                    String message = " Expression is invalid. Please check your function.";
-                    String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+            if (expr.isEmpty()) {
+                System.err.println("Error in functional rates expression.");
+                String message = " Expression is invalid. Please check your function.";
+                String title = "Error";
+                JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
+                return;
+            }
         }
 
         Map<Token, String> newWeights = new HashMap<>();
@@ -243,13 +224,29 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         }
     }
 
-    private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
-        // Provisional!
-        exit();
+    private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+            okButtonHandler(new java.awt.event.ActionEvent(this, 0, ""));
+        }
     }
 
-    private void exit() {
-        rootPane.getParent().setVisible(false);
+    private void nameTextFieldFocusGained(java.awt.event.FocusEvent evt) {
+        // focusGained(nameTextField);
+    }
+
+    private void nameTextFieldFocusLost(java.awt.event.FocusEvent evt) {
+        // focusLost(nameTextField);
+    }
+
+    public void createEditorWindow(Token token) {
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        ArcFunctionEditor feditor =
+                new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
+        guiDialog.add(feditor);
+        guiDialog.setSize(270, 230);
+        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
+        guiDialog.setVisible(true);
+        guiDialog.dispose();
     }
 
     public void setWeight(String func, String id) {

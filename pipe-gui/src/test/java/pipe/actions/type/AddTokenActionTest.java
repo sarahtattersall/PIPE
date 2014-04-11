@@ -8,17 +8,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.AddTokenAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.historyActions.ChangePlaceTokens;
-import pipe.historyActions.MultipleEdit;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
-import pipe.utilities.transformers.Contains;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoableEdit;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
