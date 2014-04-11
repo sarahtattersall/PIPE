@@ -4,12 +4,12 @@ title: Editing a Petri net
 post-id: edit
 ---
 
-A Petri net can be built up by selecting the appropriate icons along the task bar. 
+A Petri net can be built up by using the appropriate icons along the task bar. 
 
 
 #### Adding a token ![New Token icon](images/taskbar/SpecifyTokenClasses.png) 
 
-In order to add a token click on the new token icon or press Ctrl-Shift-T. This will pop up the token editor window in which tokens can be added by giving them a name and a color.
+In order to add a token to the Petri net click on the new token icon or press Ctrl-Shift-T. This will pop up the token editor window in which tokens can be added by giving them a name and a color.
 
 
 
@@ -31,19 +31,17 @@ In order to edit place attributes, such as it's name and capacity, right click t
 ![Edit Place](images/taskbar/edit_place.png)
 
 
-Furthermore tokens can be added to or removed from places by selecting the relevant icons next to the active token menu ![Place icon](images/taskbar/AddToken.png) ![Place icon](images/taskbar/DeleteToken.png). In order to change which token is added, select the token you wish to place from active token menu. Then click on the place to add tokens. Alternatively adding tokens can be done in the place editor window.
+The active token can be added to or removed from places by selecting the relevant icons next to the active token menu ![Place icon](images/taskbar/AddToken.png) ![Place icon](images/taskbar/DeleteToken.png). In order to change which token is added, select the token you wish to place from the menu, then click on the place to add tokens. Alternatively adding tokens can be done in the place editor window as seen above.
 
 
 #### Adding and editing a Transition ![Immediate transition icon](images/taskbar/immediate_transition.png) ![Timed transition icon](images/taskbar/timed_transition.png) 
-Similarly a new transition can be added by clicking either the black rectangle which represents an immediate transition, or the unfilled rectangle which represents a timed transition.
-
-The transition can then be placed anywhere on the canvas and is automatically named, just like when adding a place.
-
+Similarly a new transition can be added by clicking either the black rectangle which represents an immediate transition, or the unfilled rectangle which represents a timed transition. The transition can then be created anywhere by clicking on the canvas. It is automatically named, just like when adding a place.
+ 
 Right clicking on a transition and clicking 'Edit Transition' allows you to edit the transitions attributes and swap between a timed or immediate transition.
 
 ![Edit Transitionn](images/taskbar/edit_transition.png)
 
-A timed transitions rates may either be static or functional. 
+A timed transitions rates may either be static or <a href="#functional">functional</a>. 
 
 #### Adding and editing an Arc ![Normal Arc icon](images/taskbar/arc.png) ![Inhibitor Arc icon](images/taskbar/inhibitor_arc.png) 
 Click on either the normal arc (pointed arrow head), or the inhibitor arc (round arrow head) icon and then select the components you wish to join.

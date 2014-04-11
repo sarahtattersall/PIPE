@@ -12,7 +12,7 @@
 <div class="col-md-3">
    <div class="user-guide-sidebar hiden-print affix" role="complimentary">
     <ul class="nav user-guide-sidenav">
-      {% for post in site.posts %}
+      {% for post in site.posts reversed %}
         <li>
           <a href="#{{post.post-id}}"> {{post.title}}</a>
         </li>

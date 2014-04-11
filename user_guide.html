@@ -8,7 +8,7 @@ Below find step by step instructions for using PIPE. Click on the navigator to t
 
 
 
-{% for post in site.posts %}
+{% for post in site.posts reversed %}
 <div class="row-fluid">
     <h2 id="{{post.post-id}}">{{post.title}}</h2>
     <div class="span12">

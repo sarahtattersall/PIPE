@@ -36,3 +36,13 @@ a.download-spacing {
 .user-guide-sidebar .nav>li>a {
   color: #999;
 }
+
+
+table   { 
+  border: 1px solid black; 
+  width: 500px;
+}
+td,th   { 
+  border: 1px solid black; 
+}
+/*th      { width: 270px; }*/
