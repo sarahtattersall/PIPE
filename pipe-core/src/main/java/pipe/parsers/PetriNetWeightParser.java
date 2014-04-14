@@ -51,9 +51,7 @@ public class PetriNetWeightParser implements FunctionalWeightParser<Double> {
      */
     private boolean allComponentsInPetriNet(Set<String> components) {
         for (String id : components) {
-            try {
-                petriNet.getPlace(id);
-            } catch (PetriNetComponentNotFoundException ignored) {
+            if (!petriNet.containsComponent(id)) {
                 return false;
             }
         }

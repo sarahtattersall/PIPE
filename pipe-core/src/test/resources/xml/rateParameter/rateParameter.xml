@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <pnml>
     <net id="Net-One" type="P/T net">
         <definition name="rate0" id="rate0" defType="real" type="text" expression="5.0">

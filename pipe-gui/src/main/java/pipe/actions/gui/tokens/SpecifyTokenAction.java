@@ -146,7 +146,7 @@ public class SpecifyTokenAction extends GuiAction {
             for (TokenEditorPanel.Datum datum : deletedData) {
                 if (tokenEditorPanel.isExistingDatum(datum)) {
                     try {
-                        Token token = petriNet.getToken(datum.id);
+                        Token token = petriNet.getComponent(datum.id, Token.class);
                         petriNet.removeToken(token);
                         UndoableEdit historyItem = new DeletePetriNetObject(token, petriNet);
                         undoableEdits.add(historyItem);

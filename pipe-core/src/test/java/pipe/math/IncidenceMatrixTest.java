@@ -23,7 +23,7 @@ public class IncidenceMatrixTest {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
         int value = incidenceMatrix.get(place, transition);
-        assertEquals("Does not behave like matrix for values not put in matrix", 0, value);
+        assertEquals("Does not behave like matrix for tokens not put in matrix", 0, value);
     }
 
 
@@ -34,7 +34,7 @@ public class IncidenceMatrixTest {
         int expected = 4;
         incidenceMatrix.put(place, transition, expected);
         int actual = incidenceMatrix.get(place, transition);
-        assertEquals("Does not behave like matrix for values not put in matrix", expected, actual);
+        assertEquals("Does not behave like matrix for tokens not put in matrix", expected, actual);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class IncidenceMatrixTest {
         int secondValue = 5;
         incidenceMatrix.put(place, transition, secondValue);
         int actual = incidenceMatrix.get(place, transition);
-        assertEquals("Did not override values correctly", secondValue, actual);
+        assertEquals("Did not override tokens correctly", secondValue, actual);
     }
 
 }

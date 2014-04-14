@@ -5,10 +5,8 @@ import org.xml.sax.SAXException;
 import pipe.dsl.*;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentException;
+import pipe.models.PetriNetHolder;
 import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.RateParameter;
@@ -17,14 +15,12 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import utils.FileUtils;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import java.awt.*;
-import java.awt.geom.Point2D;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PetriNetWriterTest extends XMLTestCase {
     PetriNetWriter writer;
@@ -34,9 +30,16 @@ public class PetriNetWriterTest extends XMLTestCase {
         writer = new PetriNetIOImpl();
     }
 
+    public void testUsesMoxyProvider() throws JAXBException {
+        assertEquals("class org.eclipse.persistence.jaxb.JAXBContext",
+                (JAXBContext.newInstance(PetriNetHolder.class).getClass()).toString());
+        assertEquals("class org.eclipse.persistence.jaxb.JAXBContext",
+                (JAXBContext.newInstance(PetriNet.class).getClass()).toString());
+    }
+
     public void testMarshalsPlace() throws IOException, SAXException {
         PetriNet petriNet = new PetriNet();
-        Token token = new Token("Default", new Color(0, 0, 0));
+        Token token = new Token("Red", new Color(255, 0, 0));
         Place place = new Place("P0", "P0");
         place.setX(255);
         place.setY(240);
@@ -56,7 +59,10 @@ public class PetriNetWriterTest extends XMLTestCase {
         String expected = XMLUtils.readFile(expectedPath, Charset.defaultCharset());
 
         String actual = stringWriter.toString();
+        System.out.println("ACTUAL:");
         System.out.println(actual);
+        System.out.println("EXPECTED:");
+        System.out.println(expected);
         assertXMLEqual(expected, actual);
     }
 
@@ -96,8 +102,9 @@ public class PetriNetWriterTest extends XMLTestCase {
     }
 
     public void testMarshalsArc() throws IOException, SAXException {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0").locatedAt(0,0)).and(
-                ATransition.withId("T0").locatedAt(0,0)).andFinally(ANormalArc.withSource("P0").andTarget("T0").and("4", "Default").tokens());
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P0").locatedAt(0, 0)).and(ATransition.withId("T0").locatedAt(0, 0)).andFinally(
+                ANormalArc.withSource("P0").andTarget("T0").and("4", "Default").tokens());
 
 
         assertResultsEqual(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()), petriNet);

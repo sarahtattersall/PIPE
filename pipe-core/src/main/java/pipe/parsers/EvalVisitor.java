@@ -92,7 +92,7 @@ public class EvalVisitor extends RateGrammarBaseVisitor<Double> {
 
 
     public Place getPlace(String name) throws PetriNetComponentNotFoundException {
-        return petriNet.getPlace(name);
+        return petriNet.getComponent(name, Place.class);
     }
 
 }

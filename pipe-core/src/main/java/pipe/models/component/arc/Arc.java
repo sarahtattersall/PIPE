@@ -156,7 +156,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     public void setId(String id) {
         String old = this.id;
         this.id = id;
-        changeSupport.firePropertyChange(ID_CHANGE_MESSAGE, old, old);
+        changeSupport.firePropertyChange(ID_CHANGE_MESSAGE, old, id);
     }
 
     @Override

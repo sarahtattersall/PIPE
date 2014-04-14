@@ -33,11 +33,11 @@ public class UnfoldAction extends GuiAction {
         //TODO: SHOW MESSAGES
         //        if(controller.getNetTokens().size() > 1 && controller.hasFunctionalRatesOrWeights()){
         //        	JOptionPane.showMessageDialog(null, "This is CGSPN. The analysis will only apply to default color (black). \r\n"+"This net contains functional rates or weights. The unfolder will replace these rates or weights with " +
-        //        			"their current constant values.",
+        //        			"their current constant tokens.",
         //					"Information", JOptionPane.INFORMATION_MESSAGE);
         //        }else if(!(pipeApplicationView.getCurrentPetriNetView().getEnabledTokenClassNumber()>1) && pipeApplicationView.getCurrentPetriNetView().hasFunctionalRatesOrWeights()){
         //        	JOptionPane.showMessageDialog(null, "This net contains functional rates or weights. The unfolder will replace these rates or weights with " +
-        //        			"their current constant values.",
+        //        			"their current constant tokens.",
         //					"Information", JOptionPane.INFORMATION_MESSAGE);
         //        }else if((pipeApplicationView.getCurrentPetriNetView().getEnabledTokenClassNumber()>1) && !pipeApplicationView.getCurrentPetriNetView().hasFunctionalRatesOrWeights()){
         //        	JOptionPane.showMessageDialog(null, "This is CGSPN. The analysis will only apply to default color (black). ",

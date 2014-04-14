@@ -306,7 +306,7 @@ public class PetriNetController implements IController, Serializable {
 
     public void updateToken(String currentTokenName, String name, Color color)
             throws PetriNetComponentNotFoundException {
-        Token token = petriNet.getToken(currentTokenName);
+        Token token = petriNet.getComponent(currentTokenName, Token.class);
         if (!token.getId().equals(name)) {
             token.setId(name);
         }
@@ -345,7 +345,7 @@ public class PetriNetController implements IController, Serializable {
      * @throw RuntimeException if the token does not exist
      */
     public Token getToken(String name) throws PetriNetComponentNotFoundException {
-        return petriNet.getToken(name);
+        return petriNet.getComponent(name, Token.class);
     }
 
     //TODO: Should this be in the model???

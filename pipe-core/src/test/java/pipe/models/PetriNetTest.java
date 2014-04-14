@@ -246,14 +246,14 @@ public class PetriNetTest {
         Color color = new Color(132, 16, 130);
         Token token = new Token(id, color);
         net.addToken(token);
-        assertEquals(token, net.getToken(id));
+        assertEquals(token, net.getComponent(id, Token.class));
     }
 
     @Test
     public void throwsErrorIfNoTokenExists() throws PetriNetComponentNotFoundException {
         expectedException.expect(PetriNetComponentNotFoundException.class);
-        expectedException.expectMessage("No token foo exists in Petri net");
-        net.getToken("foo");
+        expectedException.expectMessage("No component foo exists in Petri net");
+        net.getComponent("foo", Token.class);
     }
 
     @Test
@@ -441,7 +441,7 @@ public class PetriNetTest {
         PetriNet net = new PetriNet();
         Transition t1 = new Transition("1", "1");
         t1.setPriority(10);
-        Transition t2 = new Transition("1", "1");
+        Transition t2 = new Transition("2", "2");
         t2.setPriority(1);
         net.addTransition(t1);
         net.addTransition(t2);
@@ -476,7 +476,7 @@ public class PetriNetTest {
     public void correctlyMarksEnabledTransitionIfSelfLoop() throws PetriNetComponentNotFoundException {
         PetriNet petriNet = createSelfLoopPetriNet(1);
         Place place = petriNet.getPlaces().iterator().next();
-        Token token = petriNet.getToken("Default");
+        Token token = petriNet.getComponent("Default", Token.class);
         place.setTokenCount(token, 1);
         place.setCapacity(1);
         petriNet.markEnabledTransitions();
@@ -682,8 +682,95 @@ public class PetriNetTest {
         PetriNet net1 = createSimplePetriNet(1);
         PetriNet net2 = createSimplePetriNet(5);
         assertFalse(net1.equals(net2));
-        assertNotEquals(net1.hashCode(), net2.hashCode());
     }
+
+
+
+    @Test
+    public void canGetTokenById() throws PetriNetComponentNotFoundException {
+        Token t = new Token("Default", Color.BLACK);
+        net.addToken(t);
+        assertEquals(t, net.getComponent(t.getId(), Token.class));
+    }
+
+    @Test
+    public void canGetTokenByIdAfterNameChange() throws PetriNetComponentNotFoundException {
+        Token t = new Token("Default", Color.BLACK);
+        net.addToken(t);
+        t.setId("Red");
+        assertEquals(t, net.getComponent(t.getId(), Token.class));
+    }
+
+
+    @Test
+    public void canGetPlaceById() throws PetriNetComponentNotFoundException {
+        Place p = new Place("P0", "P0");
+        net.addPlace(p);
+        assertEquals(p, net.getComponent(p.getId(), Place.class));
+    }
+
+    @Test
+    public void canGetPlaceByIdAfterIdChange() throws PetriNetComponentNotFoundException {
+        Place p = new Place("P0", "P0");
+        net.addPlace(p);
+        p.setId("P1");
+        assertEquals(p, net.getComponent(p.getId(), Place.class));
+    }
+
+
+    @Test
+    public void canGetRateParameterById() throws PetriNetComponentNotFoundException, InvalidRateException {
+        RateParameter r = new RateParameter("2", "R0", "R0");
+        net.addRateParameter(r);
+        assertEquals(r, net.getComponent(r.getId(), RateParameter.class));
+    }
+
+    @Test
+    public void canGetRateParameterByIdAfterIdChange() throws PetriNetComponentNotFoundException, InvalidRateException {
+        RateParameter r = new RateParameter("2", "R0", "R0");
+        net.addRateParameter(r);
+        r.setId("R1");
+        assertEquals(r, net.getComponent(r.getId(), RateParameter.class));
+    }
+
+
+    @Test
+    public void canGetTransitionById() throws PetriNetComponentNotFoundException {
+        Transition t = new Transition("T0", "T0");
+        net.addTransition(t);
+        assertEquals(t, net.getComponent(t.getId(), Transition.class));
+    }
+
+    @Test
+    public void canGetTransitionByIdAfterNameChange() throws PetriNetComponentNotFoundException {
+        Transition t = new Transition("T0", "T0");
+        net.addTransition(t);
+        t.setId("T2");
+        assertEquals(t, net.getComponent(t.getId(), Transition.class));
+    }
+
+    @Test
+    public void canGetArcById() throws PetriNetComponentNotFoundException {
+        Place p = new Place("P0", "P0");
+        Transition t = new Transition("T0", "T0");
+        Arc<Place, Transition> a = new Arc<>(p, t, new HashMap<Token, String>(), ArcType.NORMAL);
+        net.addArc(a);
+        assertEquals(a, net.getComponent(a.getId(), Arc.class));
+    }
+
+    @Test
+    public void canGetArcByIdAfterNameChange() throws PetriNetComponentNotFoundException {
+        Place p = new Place("P0", "P0");
+        Transition t = new Transition("T0", "T0");
+        Arc<Place, Transition> a = new Arc<>(p, t, new HashMap<Token, String>(), ArcType.NORMAL);
+        net.addArc(a);
+        a.setId("A1");
+        assertEquals(a, net.getComponent(a.getId(), Arc.class));
+    }
+
+
+
+
 
     private <T extends PetriNetComponent> T getComponent(String id, Iterable<T> components) {
         for (T component : components) {

@@ -2,10 +2,14 @@ package pipe.models.component.rate;
 
 import pipe.exceptions.InvalidRateException;
 import pipe.models.component.AbstractPetriNetComponent;
-import pipe.models.component.place.PlaceVisitor;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 public class RateParameter extends AbstractPetriNetComponent implements Rate {
+
+    /**
+     * Message fired when the places tokens change in any way
+     */
+    public final static String EXPRESSION_CHANGE_MESSAGE = "expression";
 
     private String expression;
 
@@ -15,6 +19,7 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
     /**
      * Copy constructor
+     *
      * @param rateParameter
      */
     public RateParameter(RateParameter rateParameter) {
@@ -38,7 +43,9 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
     }
 
     public void setExpression(String expression) {
+        String old = this.expression;
         this.expression = expression;
+        changeSupport.firePropertyChange(EXPRESSION_CHANGE_MESSAGE, old, expression);
     }
 
     public String getName() {
@@ -47,7 +54,10 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
 
     @Override
     public void setName(String name) {
-       this.name = name;
+
+        String old = this.name;
+        this.name = name;
+        changeSupport.firePropertyChange(NAME_CHANGE_MESSAGE, old, name);
     }
 
     @Override
@@ -78,6 +88,21 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
     }
 
     @Override
+    public void setId(String id) {
+        String old = this.id;
+        this.id = id;
+        changeSupport.firePropertyChange(ID_CHANGE_MESSAGE, old, id);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = expression.hashCode();
+        result = 31 * result + id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -99,19 +124,6 @@ public class RateParameter extends AbstractPetriNetComponent implements Rate {
         }
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = expression.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override

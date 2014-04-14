@@ -48,7 +48,7 @@ public class ExprEvaluator {
 
         Token token = null;
         try {
-            token = petriNet.getToken(tokenId);
+            token = petriNet.getComponent(tokenId, Token.class);
         } catch (PetriNetComponentNotFoundException e) {
             e.printStackTrace();
             return -1;

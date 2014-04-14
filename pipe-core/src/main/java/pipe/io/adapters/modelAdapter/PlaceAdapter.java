@@ -21,8 +21,8 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
      * use these fields it's ok to initialise them as empty/null.
      */
     public PlaceAdapter() {
-        places = new HashMap<String, Place>();
-        tokens = new HashMap<String, Token>();
+        places = new HashMap<>();
+        tokens = new HashMap<>();
     }
 
     public PlaceAdapter(Map<String, Place> places, Map<String, Token> tokens) {

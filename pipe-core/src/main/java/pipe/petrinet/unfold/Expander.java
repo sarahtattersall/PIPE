@@ -103,7 +103,7 @@ public class Expander {
      */
     private Token getDefaultToken() {
         try {
-            return petriNet.getToken("Default");
+            return petriNet.getComponent("Default", Token.class);
         } catch (PetriNetComponentNotFoundException ignored) {
             return null;
         }

@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.*;
 public class PetriNetReaderTest {
 
     private static final Token DEFAULT_TOKEN = new Token("Default", new Color(0, 0, 0));
+    private static final Token RED_TOKEN = new Token("Red", Color.RED);
 
     PetriNetReader reader;
 
@@ -92,7 +93,7 @@ public class PetriNetReaderTest {
         Place place = petriNet.getPlaces().iterator().next();
 
         Map<Token, Integer> counts = place.getTokenCounts();
-        assertThat(counts).containsEntry(DEFAULT_TOKEN, 1);
+        assertThat(counts).containsEntry(RED_TOKEN, 1);
     }
 
     @Test

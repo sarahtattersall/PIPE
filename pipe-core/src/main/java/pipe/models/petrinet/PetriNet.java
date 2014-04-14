@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.io.adapters.modelAdapter.*;
+import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
@@ -22,17 +22,14 @@ import pipe.parsers.FunctionalWeightParser;
 import pipe.parsers.PetriNetWeightParser;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 import static java.lang.Math.floor;
 
-@XmlType(propOrder = {"tokens", "annotations", "rateParameters", "places", "transitions", "arcs"})
 public class PetriNet {
     public static final String PETRI_NET_NAME_CHANGE_MESSAGE = "nameChange";
 
@@ -106,62 +103,64 @@ public class PetriNet {
     //TODO: CYCLIC DEPENDENCY BETWEEN CREATING THIS AND PETRINET/
     private final PetriNetComponentVisitor deleteVisitor = new PetriNetComponentRemovalVisitor(this);
 
-    @XmlElement(name = "transition")
-    @XmlJavaTypeAdapter(TransitionAdapter.class)
-    private final Set<Transition> transitions = new HashSet<>();
+    private final Map<String, Transition> transitions = new HashMap<>();
 
-    @XmlElement(name = "place")
-    @XmlJavaTypeAdapter(PlaceAdapter.class)
-    private final Set<Place> places = new HashSet<>();
+    private final Map<String, Place> places = new HashMap<>();
 
-    @XmlElement(name = "token")
-    @XmlJavaTypeAdapter(TokenAdapter.class)
-    private final Set<Token> tokens = new HashSet<>();
+    private final Map<String, Token> tokens = new HashMap<>();
 
-    @XmlElement(name = "arc")
-    @XmlJavaTypeAdapter(ArcAdapter.class)
-    private final Set<Arc<? extends Connectable, ? extends Connectable>> arcs =
-            new HashSet<Arc<? extends Connectable, ? extends Connectable>>();
+    private final Map<String, Arc<? extends Connectable, ? extends Connectable>> arcs = new HashMap<>();
 
-    @XmlElement(name = "labels")
-    @XmlJavaTypeAdapter(AnnotationAdapter.class)
-    private final Set<Annotation> annotations = new HashSet<>();
+    private final Map<String, RateParameter> rateParameters = new HashMap<>();
 
-    @XmlElement(name = "definition")
-    @XmlJavaTypeAdapter(RateParameterAdapter.class)
-    private final Set<RateParameter> rateParameters = new HashSet<>();
-
-    @XmlTransient
-    private PetriNetName petriNetName;
+    /**
+     * A tokens that will contain the maps specified above.
+     * It's ID is the class type to tokens
+     * Sadly need to cast to get the exact tokens back out of it. If you know of a better way to
+     * do this then please change it. It is used to easily get a Petrinet component of type T
+     * by id.
+     */
+    private final Map<Class<? extends PetriNetComponent>, Map<String, ? extends PetriNetComponent>> componentMaps =
+            new HashMap<>();
 
     /**
      * Houses the backwards strategies for arcs place -> transition
      * There can be two kinds, normal and inhibitor
      */
-    private final Map<ArcType, ArcStrategy<Place, Transition>> backwardsStrategies =
-            new HashMap<ArcType, ArcStrategy<Place, Transition>>();
+    private final Map<ArcType, ArcStrategy<Place, Transition>> backwardsStrategies = new HashMap<>();
 
-    private final Map<ArcType, ArcStrategy<Transition, Place>> forwardStrategies =
-            new HashMap<ArcType, ArcStrategy<Transition, Place>>();
+    private final Map<ArcType, ArcStrategy<Transition, Place>> forwardStrategies = new HashMap<>();
 
     private final PetriNetComponentVisitor addVisitor = new PetriNetComponentAddVisitor(this);
 
-    @XmlTransient
     public String pnmlName = "";
 
-    @XmlTransient
+    Collection<Annotation> annotations = new HashSet<>();
+
+    private PetriNetName petriNetName;
+
     private boolean validated = false;
+
+
+    public PetriNet(PetriNetName name) {
+        this();
+        this.petriNetName = name;
+    }
 
     //TODO: INITIALSE NAME?
     public PetriNet() {
         backwardsStrategies.put(ArcType.NORMAL, new BackwardsNormalStrategy());
         backwardsStrategies.put(ArcType.INHIBITOR, new InhibitorStrategy());
         forwardStrategies.put(ArcType.NORMAL, new ForwardsNormalStrategy());
+        initialiseIdMap();
     }
 
-    public PetriNet(PetriNetName name) {
-        this();
-        this.petriNetName = name;
+    private void initialiseIdMap() {
+        componentMaps.put(Place.class, places);
+        componentMaps.put(Transition.class, transitions);
+        componentMaps.put(Arc.class, arcs);
+        componentMaps.put(Token.class, tokens);
+        componentMaps.put(RateParameter.class, rateParameters);
     }
 
     @Override
@@ -172,6 +171,7 @@ public class PetriNet {
         result = 31 * result + arcs.hashCode();
         result = 31 * result + annotations.hashCode();
         result = 31 * result + rateParameters.hashCode();
+        result = 31 * result + (petriNetName != null ? petriNetName.hashCode() : 0);
         return result;
     }
 
@@ -180,7 +180,7 @@ public class PetriNet {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PetriNet)) {
             return false;
         }
 
@@ -190,20 +190,22 @@ public class PetriNet {
         if (!CollectionUtils.isEqualCollection(annotations, petriNet.annotations)) {
             return false;
         }
-        if (!CollectionUtils.isEqualCollection(arcs, petriNet.arcs)) {
+        if (!CollectionUtils.isEqualCollection(arcs.values(), petriNet.arcs.values())) {
             return false;
         }
-
-        if (!CollectionUtils.isEqualCollection(places, petriNet.places)) {
+        if (petriNetName != null ? !petriNetName.equals(petriNet.petriNetName) : petriNet.petriNetName != null) {
             return false;
         }
-        if (!CollectionUtils.isEqualCollection(rateParameters, petriNet.rateParameters)) {
+        if (!CollectionUtils.isEqualCollection(places.values(), petriNet.places.values())) {
             return false;
         }
-        if (!CollectionUtils.isEqualCollection(tokens, petriNet.tokens)) {
+        if (!CollectionUtils.isEqualCollection(rateParameters.values(), petriNet.rateParameters.values())) {
             return false;
         }
-        if (!CollectionUtils.isEqualCollection(transitions, petriNet.transitions)) {
+        if (!CollectionUtils.isEqualCollection(tokens.values(), petriNet.tokens.values())) {
+            return false;
+        }
+        if (!CollectionUtils.isEqualCollection(transitions.values(), petriNet.transitions.values())) {
             return false;
         }
 
@@ -241,35 +243,39 @@ public class PetriNet {
     }
 
     public void addPlace(Place place) {
-        if (!places.contains(place)) {
-            places.add(place);
+        if (!places.containsValue(place)) {
+            places.put(place.getId(), place);
+            place.addPropertyChangeListener(new NameChangeListener<>(place, places));
             changeSupport.firePropertyChange(NEW_PLACE_CHANGE_MESSAGE, null, place);
         }
     }
 
     public void addTransition(Transition transition) {
-        if (!transitions.contains(transition)) {
-            transitions.add(transition);
+        if (!transitions.containsValue(transition)) {
+            transitions.put(transition.getId(), transition);
+            transition.addPropertyChangeListener(new NameChangeListener<>(transition, transitions));
             changeSupport.firePropertyChange(NEW_TRANSITION_CHANGE_MESSAGE, null, transition);
         }
     }
 
     public void addArc(Arc<? extends Connectable, ? extends Connectable> arc) {
-        if (!arcs.contains(arc)) {
-            arcs.add(arc);
+        if (!arcs.containsValue(arc)) {
+            arcs.put(arc.getId(), arc);
+            arc.addPropertyChangeListener(new NameChangeListener<>(arc, arcs));
             changeSupport.firePropertyChange(NEW_ARC_CHANGE_MESSAGE, null, arc);
         }
     }
 
     public void addToken(Token token) {
-        if (!tokens.contains(token)) {
-            tokens.add(token);
+        if (!tokens.containsValue(token)) {
+            tokens.put(token.getId(), token);
+            token.addPropertyChangeListener(new NameChangeListener<>(token, tokens));
             changeSupport.firePropertyChange(NEW_TOKEN_CHANGE_MESSAGE, null, token);
         }
     }
 
     public Collection<Place> getPlaces() {
-        return places;
+        return places.values();
     }
 
     public void addAnnotation(Annotation annotation) {
@@ -281,7 +287,8 @@ public class PetriNet {
 
     /**
      * Adds the RateParameter to the Petri Net
-     * @param rateParameter
+     *
+     * @param rateParameter to add to Petri net
      * @throws InvalidRateException if the rate is not parseable
      */
     public void addRateParameter(RateParameter rateParameter) throws InvalidRateException {
@@ -289,8 +296,9 @@ public class PetriNet {
             throw new InvalidRateException(rateParameter.getExpression());
         }
 
-        if (!rateParameters.contains(rateParameter)) {
-            rateParameters.add(rateParameter);
+        if (!rateParameters.containsValue(rateParameter)) {
+            rateParameters.put(rateParameter.getId(), rateParameter);
+            rateParameter.addPropertyChangeListener(new NameChangeListener<>(rateParameter, rateParameters));
             changeSupport.firePropertyChange(NEW_RATE_PARAMETER_CHANGE_MESSAGE, null, rateParameter);
         }
     }
@@ -312,19 +320,20 @@ public class PetriNet {
     }
 
     /**
-     *
      * @return Petri net's collection of arcs
      */
+
     public Collection<Arc<? extends Connectable, ? extends Connectable>> getArcs() {
 
-        return arcs;
+        return arcs.values();
     }
 
     /**
      * @return Petri net's list of tokens
      */
+
     public Collection<Token> getTokens() {
-        return tokens;
+        return tokens.values();
     }
 
     /**
@@ -334,7 +343,7 @@ public class PetriNet {
      * @param place to remove from Petri net
      */
     public void removePlace(Place place) {
-        this.places.remove(place);
+        this.places.remove(place.getId());
         for (Arc<Place, Transition> arc : outboundArcs(place)) {
             removeArc(arc);
         }
@@ -347,7 +356,7 @@ public class PetriNet {
      * @param arc to remove from the Petri net
      */
     public void removeArc(Arc<? extends Connectable, ? extends Connectable> arc) {
-        this.arcs.remove(arc);
+        this.arcs.remove(arc.getId());
         changeSupport.firePropertyChange(DELETE_ARC_CHANGE_MESSAGE, arc, null);
     }
 
@@ -357,7 +366,7 @@ public class PetriNet {
      */
     public Collection<Arc<Place, Transition>> outboundArcs(Place place) {
         Collection<Arc<Place, Transition>> outbound = new LinkedList<>();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs.values()) {
             if (arc.getSource().equals(place)) {
                 outbound.add((Arc<Place, Transition>) arc);
             }
@@ -372,7 +381,7 @@ public class PetriNet {
      * @param transition to remove
      */
     public void removeTransition(Transition transition) {
-        this.transitions.remove(transition);
+        this.transitions.remove(transition.getId());
         for (Arc<Transition, Place> arc : outboundArcs(transition)) {
             removeArc(arc);
         }
@@ -388,7 +397,7 @@ public class PetriNet {
      */
     public Collection<Arc<Transition, Place>> outboundArcs(Transition transition) {
         Collection<Arc<Transition, Place>> outbound = new LinkedList<Arc<Transition, Place>>();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs.values()) {
             if (arc.getSource().equals(transition)) {
                 outbound.add((Arc<Transition, Place>) arc);
             }
@@ -402,6 +411,7 @@ public class PetriNet {
 
     /**
      * Tries to remove the token
+     *
      * @param token token to remove
      * @throws PetriNetComponentException if places or transitions reference this token!
      */
@@ -409,7 +419,7 @@ public class PetriNet {
         Collection<Place> referencedPlaces = getPlacesContainingToken(token);
         Collection<Transition> referencedTransitions = getTransitionsReferencingToken(token);
         if (referencedPlaces.isEmpty() && referencedTransitions.isEmpty()) {
-            tokens.remove(token);
+            tokens.remove(token.getId());
             changeSupport.firePropertyChange(DELETE_TOKEN_CHANGE_MESSAGE, token, null);
             return;
         }
@@ -435,7 +445,7 @@ public class PetriNet {
 
     private Collection<Transition> getTransitionsReferencingToken(Token token) {
         Collection<Transition> result = new LinkedList<>();
-        for (Transition transition : transitions) {
+        for (Transition transition : transitions.values()) {
             FunctionalResults<Double> results = functionalWeightParser.evaluateExpression(transition.getRateExpr());
             if (results.getComponents().contains(token.getId())) {
                 result.add(transition);
@@ -445,8 +455,8 @@ public class PetriNet {
     }
 
     private Collection<Place> getPlacesContainingToken(Token token) {
-        List<Place> result = new LinkedList<>();
-        for (Place place : places) {
+        Collection<Place> result = new LinkedList<>();
+        for (Place place : places.values()) {
             if (place.getTokenCount(token) > 0) {
                 result.add(place);
             }
@@ -456,7 +466,7 @@ public class PetriNet {
 
     public void removeRateParameter(RateParameter parameter) {
         removeRateParameterFromTransitions(parameter);
-        rateParameters.remove(parameter);
+        rateParameters.remove(parameter.getId());
         changeSupport.firePropertyChange(DELETE_RATE_PARAMETER_CHANGE_MESSAGE, parameter, null);
     }
 
@@ -468,7 +478,7 @@ public class PetriNet {
      * @param parameter to remove
      */
     private void removeRateParameterFromTransitions(RateParameter parameter) {
-        for (Transition transition : transitions) {
+        for (Transition transition : transitions.values()) {
             if (transition.getRate().equals(parameter)) {
                 Rate rate = new NormalRate(parameter.getExpression());
                 transition.setRate(rate);
@@ -481,42 +491,51 @@ public class PetriNet {
     //    }
 
     public void removeAnnotaiton(Annotation annotation) {
-        annotations.remove(annotation);
+        annotations.remove(annotation.getId());
         changeSupport.firePropertyChange(DELETE_ANNOTATION_CHANGE_MESSAGE, annotation, null);
     }
 
     public boolean containsDefaultToken() {
-        for (Token token : tokens) {
-            if (token.getId().equals("Default")) {
+        return tokens.containsKey("Default");
+    }
+
+
+    /**
+     * @param id
+     * @return true if any component in the Petri net has this id
+     */
+    public boolean containsComponent(String id) {
+        for (Map<String, ? extends PetriNetComponent> map : componentMaps.values()) {
+            if (map.containsKey(id)) {
                 return true;
             }
         }
         return false;
     }
 
-    public Token getToken(String tokenId) throws PetriNetComponentNotFoundException {
-        //TODO: Find an O(1) name to do this, perhaps Map?
-        for (Token token : tokens) {
-            if (token.getId().equals(tokenId)) {
-                return token;
-            }
+    /**
+     * @param id    component name
+     * @param clazz PetriNetComponent class
+     * @param <T>   type of Petri net component required
+     * @return component with the specified id if it exists in the Petri net
+     * @throws PetriNetComponentNotFoundException if component does not exist in Petri net
+     */
+    public <T extends PetriNetComponent> T getComponent(String id, Class<T> clazz)
+            throws PetriNetComponentNotFoundException {
+        Map<String, T> map = getMapForClass(clazz);
+        if (map.containsKey(id)) {
+            return map.get(id);
         }
-        throw new PetriNetComponentNotFoundException("No token " + tokenId + " exists in Petri net.");
+        throw new PetriNetComponentNotFoundException("No component " + id + " exists in Petri net.");
     }
 
-
-    public Place getPlace(String id) throws PetriNetComponentNotFoundException {
-        //TODO: Find an O(1) name to do this, perhaps Map?
-        for (Place place : places) {
-            if (place.getId().equals(id)) {
-                return place;
-            }
-        }
-        throw new PetriNetComponentNotFoundException("No place " + id + " exists in Petri net.");
+    private <T extends PetriNetComponent> Map<String, T> getMapForClass(Class<T> clazz) {
+        return (Map<String, T>) componentMaps.get(clazz);
     }
 
+    //TODO: REplace with getComponent
     public RateParameter getRateParameter(String rateParameterId) throws PetriNetComponentNotFoundException {
-        for (RateParameter rateParameter : rateParameters) {
+        for (RateParameter rateParameter : rateParameters.values()) {
             if (rateParameter.getId().equals(rateParameterId)) {
                 return rateParameter;
             }
@@ -624,7 +643,7 @@ public class PetriNet {
      */
     private Set<Transition> findEnabledTransitions() {
 
-        Set<Transition> enabledTransitions = new HashSet<Transition>();
+        Set<Transition> enabledTransitions = new HashSet<>();
         for (Transition transition : getTransitions()) {
             if (isEnabled(transition)) {
                 enabledTransitions.add(transition);
@@ -634,7 +653,7 @@ public class PetriNet {
     }
 
     public Collection<Transition> getTransitions() {
-        return transitions;
+        return transitions.values();
     }
 
     /**
@@ -664,8 +683,8 @@ public class PetriNet {
      * @return arcs that are inbound to transition, that is arcs that come into the transition
      */
     public Collection<Arc<Place, Transition>> inboundArcs(Transition transition) {
-        Collection<Arc<Place, Transition>> outbound = new LinkedList<Arc<Place, Transition>>();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+        Collection<Arc<Place, Transition>> outbound = new LinkedList<>();
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs.values()) {
             if (arc.getTarget().equals(transition)) {
                 outbound.add((Arc<Place, Transition>) arc);
             }
@@ -742,7 +761,7 @@ public class PetriNet {
      */
     public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
         IncidenceMatrix backwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs.values()) {
             Connectable target = arc.getTarget();
             Connectable source = arc.getSource();
             if (target instanceof Transition) {
@@ -815,7 +834,7 @@ public class PetriNet {
     public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
 
         IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
-        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs) {
+        for (Arc<? extends Connectable, ? extends Connectable> arc : arcs.values()) {
             Connectable target = arc.getTarget();
             Connectable source = arc.getSource();
 
@@ -838,7 +857,7 @@ public class PetriNet {
      */
     public void markEnabledTransitions() {
         Set<Transition> enabledTransitions = getEnabledTransitions();
-        for (Transition transition : transitions) {
+        for (Transition transition : transitions.values()) {
             if (enabledTransitions.contains(transition)) {
                 transition.enable();
             } else {
@@ -881,17 +900,13 @@ public class PetriNet {
         markEnabledTransitions();
     }
 
-    public Set<RateParameter> getRateParameters() {
-        return rateParameters;
+    public Collection<RateParameter> getRateParameters() {
+        return rateParameters.values();
     }
 
     @XmlTransient
     public PetriNetName getName() {
         return petriNetName;
-    }
-
-    public String getNameValue() {
-        return petriNetName.getName();
     }
 
     public void setName(PetriNetName name) {
@@ -900,7 +915,34 @@ public class PetriNet {
         changeSupport.firePropertyChange(PETRI_NET_NAME_CHANGE_MESSAGE, old, name);
     }
 
+    public String getNameValue() {
+        return petriNetName.getName();
+    }
+
     public FunctionalResults<Double> parseExpression(String expr) {
         return functionalWeightParser.evaluateExpression(expr);
+    }
+
+    private class NameChangeListener<T extends PetriNetComponent> implements PropertyChangeListener {
+        private final T component;
+
+        private final Map<String, T> componentMap;
+
+        public NameChangeListener(T component, Map<String, T> componentMap) {
+
+            this.component = component;
+            this.componentMap = componentMap;
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(AbstractPetriNetComponent.ID_CHANGE_MESSAGE)) {
+                String oldId = (String) evt.getOldValue();
+                String newId = (String) evt.getNewValue();
+                componentMap.remove(oldId);
+                componentMap.put(newId, component);
+            }
+
+        }
     }
 }
