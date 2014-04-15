@@ -67,8 +67,9 @@ public class PetriNetManagerImpl implements PetriNetManager {
     @Override
     public void createFromFile(File file) throws JAXBException, UnparsableException {
         PetriNetReader petriNetIO = new PetriNetIOImpl();
-        PetriNet net = petriNetIO.read(file.getAbsolutePath());
-        namePetriNetFromFile(net, file);
+        PetriNet petriNet = petriNetIO.read(file.getAbsolutePath());
+        namePetriNetFromFile(petriNet, file);
+        changeSupport.firePropertyChange(NEW_PETRI_NET_MESSAGE, null, petriNet);
     }
 
     @Override
