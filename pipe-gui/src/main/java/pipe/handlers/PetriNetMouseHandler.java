@@ -26,7 +26,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     private PetriNetController petriNetController;
 
-    public PetriNetMouseHandler(MouseUtilities mouseUtilities, PetriNetController controller, PetriNet net,
+    public PetriNetMouseHandler(MouseUtilities mouseUtilities, PetriNetController controller,
                                 PetriNetTab petriNetTab) {
         super();
         this.petriNetTab = petriNetTab;
@@ -51,7 +51,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
         PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         CreateAction action = applicationModel.getSelectedAction();
-        if (action != null && !petriNetTab.isInAnimationMode()) {
+        if (action != null && !petriNetController.isInAnimationMode()) {
             action.doAction(event, petriNetController);
         }
     }

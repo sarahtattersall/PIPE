@@ -43,7 +43,7 @@ public class PetriNetController implements IController, Serializable {
     private final ZoomController zoomController;
 
     /**
-     * Responsible for undo/redo
+     * Responsible for handling undo/redo
      */
     private final UndoManager undoManager = new UndoManager();
 
@@ -99,6 +99,11 @@ public class PetriNetController implements IController, Serializable {
     private String fileName = "";
 
     private PetriNet lastSavedNet;
+
+    /**
+     * Set to true if the Petri net is in animation mode
+     */
+    private boolean animateMode = false;
 
     public PetriNetController(PetriNet model, UndoableEditListener undoListener, Animator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController,
@@ -416,5 +421,19 @@ public class PetriNetController implements IController, Serializable {
 
     public UndoableEditListener getUndoListener() {
         return undoListener;
+    }
+
+    /**
+     *
+     * Toggles aniamtion from false -> true or true -> false
+     * @return new mode
+     */
+    public boolean toggleAnimation() {
+        animateMode = !animateMode;
+        return animateMode;
+    }
+
+    public boolean isInAnimationMode() {
+        return animateMode;
     }
 }

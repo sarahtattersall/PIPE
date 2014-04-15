@@ -19,21 +19,22 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
 
     private final Transition transition;
 
-    private final PetriNetTab petriNetTab;
+    private final PetriNetController petriNetController;
 
-    public TransitionAnimationHandler(Transition transition, PetriNetTab petriNetTab) {
+    public TransitionAnimationHandler(Transition transition, PetriNetController petriNetController) {
         this.transition = transition;
-        this.petriNetTab = petriNetTab;
+        this.petriNetController = petriNetController;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (petriNetTab.isInAnimationMode() && SwingUtilities.isLeftMouseButton(e) && (transition.isEnabled())) {
+        if (petriNetController.isInAnimationMode() && SwingUtilities.isLeftMouseButton(e) && (transition.isEnabled())) {
             PipeApplicationController controller = ApplicationSettings.getApplicationController();
             PetriNetController petriNetController = controller.getActivePetriNetController();
             Animator animator = petriNetController.getAnimator();
             animator.fireTransition(transition);
 
+            //TODO: REMOVE APPLICATION SETTINGS.....
             PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
             applicationView.getAnimateActionManager().setStepForward(animator.isStepForwardAllowed());
             applicationView.getAnimateActionManager().setStepBackward(animator.isStepBackAllowed());

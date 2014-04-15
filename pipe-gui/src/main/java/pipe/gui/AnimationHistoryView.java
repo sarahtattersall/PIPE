@@ -18,35 +18,31 @@ public class AnimationHistoryView
 
     private final String initText;
     private final Document doc;
-    private final AnimationHistory history;
     private Style emph;
     private Style bold;
     private Style regular;
 
 
-    public AnimationHistoryView(AnimationHistory history, String text) throws
+    public AnimationHistoryView(String text) throws
             javax.swing.text.BadLocationException {
-        this.history = history;
         initText = text;
         initStyles();
         doc = getDocument();
         doc.insertString(doc.getLength(), text, bold);
-        updateText();
     }
 
     /**
      * Method reinserts the text highlighting the currentItem
      */
-    private void updateText() {
+    private void updateText(int historyPosition, Iterable<Transition> firingSequence) {
         int count = 0;
         try {
             doc.remove(initText.length(), doc.getLength() - initText.length());
 
-            int currentPosition = history.getCurrentPosition();
-            for (Transition transition : history.getFiringSequence()) {
+            for (Transition transition : firingSequence) {
                 String id = transition.getId();
                 doc.insertString(doc.getLength(), "\n" + id,
-                        (count == currentPosition) ? emph : regular);
+                        (count == historyPosition) ? emph : regular);
                 count++;
             }
         } catch (BadLocationException b) {
@@ -69,6 +65,9 @@ public class AnimationHistoryView
 
     @Override
     public void update(Observable observable, Object o) {
-        updateText();
+        if (Observable.class.equals(AnimationHistory.class)) {
+            AnimationHistory history = (AnimationHistory) observable;
+            updateText(history.getCurrentPosition(), history.getFiringSequence());
+        }
     }
 }

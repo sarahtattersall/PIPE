@@ -10,10 +10,9 @@ import java.awt.event.KeyEvent;
 
 public class SaveAsAction extends AbstractSaveAction {
 
-    public SaveAsAction(PipeApplicationView pipeApplicationView, PipeApplicationController pipeApplicationController,
-                        FileDialog fileChooser) {
+    public SaveAsAction(PipeApplicationController pipeApplicationController, FileDialog fileChooser) {
         super("Save as", "Save as...", KeyEvent.VK_S, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK,
-                pipeApplicationView, pipeApplicationController, fileChooser);
+                pipeApplicationController, fileChooser);
     }
 
     @Override

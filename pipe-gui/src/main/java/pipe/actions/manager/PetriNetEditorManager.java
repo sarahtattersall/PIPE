@@ -26,7 +26,7 @@ public class PetriNetEditorManager implements ActionManager {
 
     public PetriNetEditorManager(PipeApplicationView view, PipeApplicationController applicationController) {
         newPetriNetAction = new NewPetriNetAction(applicationController);
-        closeAction = new CloseWindowAction(view, applicationController);
+        closeAction = new CloseWindowAction(applicationController);
 
         FileDialog fileDialog = new FileDialog(view, "Save Petri Net", FileDialog.SAVE);
         fileDialog.setFilenameFilter(new FilenameFilter() {
@@ -43,9 +43,9 @@ public class PetriNetEditorManager implements ActionManager {
                 return name.endsWith(".xml");
             }
         });
-        saveAction = new SaveAction(view, applicationController, fileDialog);
-        saveAsAction = new SaveAsAction(view, applicationController, fileDialog);
-        openAction = new OpenAction(applicationController, view, loadFileDialog);
+        saveAction = new SaveAction(applicationController, fileDialog);
+        saveAsAction = new SaveAsAction(applicationController, fileDialog);
+        openAction = new OpenAction(applicationController, loadFileDialog);
     }
 
     @Override

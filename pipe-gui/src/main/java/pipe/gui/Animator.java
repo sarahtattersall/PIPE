@@ -1,5 +1,7 @@
 package pipe.gui;
 
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -30,7 +32,7 @@ public class Animator {
      * Map of place id -> token count
      * used to restore tokens at end of animation
      */
-    private final Map<String, Map<Token, Integer>> placeTokens = new HashMap<String, Map<Token, Integer>>();
+    private final Map<String, Map<Token, Integer>> placeTokens = new HashMap<>();
 
     private int numberSequences = 0;
 
@@ -163,8 +165,9 @@ public class Animator {
     private class TimedTransitionActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            if ((getNumberSequences() < 1) || !applicationView.getCurrentTab().isInAnimationMode()) {
+            PipeApplicationController applicationController = ApplicationSettings.getApplicationController();
+            PetriNetController controller = applicationController.getActivePetriNetController();
+            if ((getNumberSequences() < 1) || !controller.isInAnimationMode()) {
                 timer.stop();
                 return;
             }

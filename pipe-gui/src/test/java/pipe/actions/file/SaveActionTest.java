@@ -46,7 +46,7 @@ public class SaveActionTest {
 
     @Before
     public void setUp() {
-        saveAction = new SaveAction(mockView, mockController, mockFileChooser);
+        saveAction = new SaveAction(mockController, mockFileChooser);
         when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
         when(mockPetriNetController.getPetriNet()).thenReturn(mockPetriNet);
     }

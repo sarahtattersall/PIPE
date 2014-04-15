@@ -190,7 +190,6 @@ public class PipeTest {
         toolbar = (JToolBar) c.getComponent(1);
         AbstractButton animateButton = ((AbstractButton) toolbar.getComponent(20));
         animateButton.getAction().actionPerformed(null);
-        assertTrue(applicationView.getCurrentTab().isInAnimationMode());
         selectMenuItem(menu, 2);
     }
 

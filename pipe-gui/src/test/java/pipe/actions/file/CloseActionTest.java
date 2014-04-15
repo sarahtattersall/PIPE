@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.file.CloseWindowAction;
 import pipe.controllers.PipeApplicationController;
 import pipe.views.PipeApplicationView;
@@ -28,7 +27,7 @@ public class CloseActionTest {
     @Before
     public void setUp() {
         mockView = mock(PipeApplicationView.class);
-        closeWindowAction = new CloseWindowAction(mockView, mockController);
+        closeWindowAction = new CloseWindowAction(mockController);
     }
 
     @Test

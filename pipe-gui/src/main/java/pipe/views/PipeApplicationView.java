@@ -20,12 +20,15 @@ import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.io.JarUtilities;
 import pipe.models.component.token.Token;
+import pipe.models.petrinet.PetriNet;
 import pipe.utilities.gui.GuiUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -115,6 +118,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel,
                                ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
                                AnimateActionManager animateActionManager, TokenActionManager tokenActionManager) {
+
+        applicationController.register(this);
         this.componentCreatorManager = componentCreatorManager;
         this.animateActionManager = animateActionManager;
         this.tokenActionManager = tokenActionManager;
@@ -183,38 +188,315 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         selectAction.actionPerformed(null);
 
 
-        applicationController.createEmptyPetriNet(this);
+        applicationController.createEmptyPetriNet();
 
         setTabChangeListener();
 
         setZoomChangeListener();
     }
 
+    @Override
+    public final void setTitle(String title) {
+        String name = applicationModel.getName();
+        super.setTitle((title == null) ? name : name + ": " + title);
+    }
+
+    // set tabbed pane properties and add change listener that updates tab with
+    // linked model and view
+    private void setTabChangeListener() {
+        frameForPetriNetTabs.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                PetriNetTab petriNetTab = getCurrentTab();
+                applicationController.setActiveTab(petriNetTab);
+
+                if (areAnyTabsDisplayed()) {
+                    PetriNetController controller = applicationController.getActivePetriNetController();
+                    if (controller.isCopyInProgress()) {
+                        controller.cancelPaste();
+                    }
+
+                    petriNetTab.setVisible(true);
+                    petriNetTab.repaint();
+                    updateZoomCombo();
+
+                    enableActions(!controller.isInAnimationMode(), applicationController.isPasteEnabled());
+
+                    setTitle(petriNetTab.getName());
+
+                    setAnimationMode(controller.isInAnimationMode());
+                }
+
+                refreshTokenClassChoices();
+            }
+        });
+    }
+
+    private void enableActions(boolean editMode, boolean pasteEnabled) {
+        if (editMode) {
+            componentEditorManager.enableActions();
+            componentCreatorManager.enableActions();
+            tokenActionManager.enableActions();
+            editorManager.enableActions();
+            animateActionManager.disableActions();
+        } else {
+            componentEditorManager.disableActions();
+            componentCreatorManager.disableActions();
+            tokenActionManager.disableActions();
+            editorManager.disableActions();
+            animateActionManager.enableActions();
+        }
+
+        selectAction.setEnabled(editMode);
+    }
+
+    public PetriNetTab getCurrentTab() {
+        int index = frameForPetriNetTabs.getSelectedIndex();
+        return getTab(index);
+    }
+
+    PetriNetTab getTab(int index) {
+        if (index < 0 || index >= petriNetTabs.size()) {
+            return null;
+        }
+        return petriNetTabs.get(index);
+    }
+
     /**
-     * Sets the default behaviour for exit for both Windows/Linux/Mac OS X
+     * Refreshes the combo box that presents the Tokens available for use.
+     * If there are no Petri nets being displayed this clears it
      */
-    private void setExitAction() {
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                exitAction.tryToExit();
+    public void refreshTokenClassChoices() {
+        if (areAnyTabsDisplayed()) {
+            String[] tokenClassChoices = buildTokenClassChoices();
+            ComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
+            tokenClassComboBox.setModel(model);
+
+            if (tokenClassChoices.length > 0) {
+                try {
+                    PetriNetController controller = applicationController.getActivePetriNetController();
+                    controller.selectToken(getSelectedTokenName());
+                } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
+                    GuiUtils.displayErrorMessage(this, petriNetComponentNotFoundException.getMessage());
+                }
             }
-        });
+        } else {
+            tokenClassComboBox.setModel(new DefaultComboBoxModel<String>());
+        }
     }
 
-    private void setZoomChangeListener() {
-        zoomUI.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                getTabComponent().repaint();
-                updateZoomCombo();
-            }
-        });
+    public String getSelectedTokenName() {
+        ComboBoxModel<String> model = tokenClassComboBox.getModel();
+        Object selected = model.getSelectedItem();
+        return selected.toString();
     }
 
-    private JComponent getTabComponent() {
-        return wrappedPetrinetTabs.get(frameForPetriNetTabs.getSelectedIndex());
+    /**
+     * @return names of Tokens for the combo box
+     */
+    protected String[] buildTokenClassChoices() {
+        if (areAnyTabsDisplayed()) {
+            PetriNetController petriNetController = applicationController.getActivePetriNetController();
+            Collection<Token> tokens = petriNetController.getNetTokens();
+            String[] tokenClassChoices = new String[tokens.size()];
+            int index = 0;
+            for (Token token : tokens) {
+                tokenClassChoices[index] = token.getId();
+                index++;
+            }
+            return tokenClassChoices;
+        }
+        return new String[0];
+    }
+
+    /**
+     * @return true if any tabs are displayed
+     */
+    public boolean areAnyTabsDisplayed() {
+        return applicationController.getActivePetriNetController() != null;
+    }
+
+    /**
+     * Remove the listener from the zoomComboBox, so that when
+     * the box's selected item is updated to keep track of ZoomActions
+     * called from other sources, a duplicate ZoomAction is not called
+     */
+    public void updateZoomCombo() {
+        ActionListener zoomComboListener = (zoomComboBox.getActionListeners())[0];
+        zoomComboBox.removeActionListener(zoomComboListener);
+
+        String zoomPercentage = zoomUI.getPercentageZoom() + "%";
+        zoomComboBox.setSelectedItem(zoomPercentage);
+        zoomComboBox.addActionListener(zoomComboListener);
+    }
+
+    public void setAnimationMode(boolean animateMode) {
+        enableActions(!animateMode);
+
+        if (animateMode) {
+            enableActions(false);// disables all non-animation buttons
+            applicationModel.setEditionAllowed(false);
+            statusBar.changeText(statusBar.textforAnimation);
+            createAnimationViewPane();
+
+        } else {
+            applicationModel.setEditionAllowed(true);
+            statusBar.changeText(statusBar.textforDrawing);
+            removeAnimationViewPlane();
+            enableActions(true); // renables all non-animation buttons
+        }
+    }
+
+    void removeAnimationViewPlane() {
+        if (scroller != null) {
+            moduleAndAnimationHistoryFrame.remove(scroller);
+            moduleAndAnimationHistoryFrame.setDividerLocation(0);
+            moduleAndAnimationHistoryFrame.setDividerSize(0);
+        }
+    }
+
+    /**
+     * Creates a new currentAnimationView text area, and returns a reference to it
+     */
+    private void createAnimationViewPane() {
+        AnimationHistoryView animationHistoryView = histories.get(getCurrentTab());
+        scroller = new JScrollPane(animationHistoryView);
+        scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
+
+        moduleAndAnimationHistoryFrame.setBottomComponent(scroller);
+
+        moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
+        moduleAndAnimationHistoryFrame.setDividerSize(8);
+    }
+
+    /* sets all buttons to enabled or disabled according to status. */
+    public void enableActions(boolean status) {
+        if (status) {
+            drawingToolBar.setVisible(true);
+            animationToolBar.setVisible(false);
+        }
+
+        if (!status) {
+            drawingToolBar.setVisible(false);
+            animationToolBar.setVisible(true);
+        }
+    }
+
+    /**
+     * Builds the toolbar that holds actions for editin and creating Petri nets with PIPE
+     */
+    private void buildToolbar() {
+        // Create the toolbar
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);// Inhibit toolbar floating
+
+
+        for (GuiAction action : editorManager.getActions()) {
+            addButton(toolBar, action);
+        }
+
+        toolBar.addSeparator();
+        addButton(toolBar, printAction);
+        toolBar.addSeparator();
+        for (GuiAction action : componentEditorManager.getActions()) {
+            addButton(toolBar, action);
+        }
+        toolBar.addSeparator();
+
+        addButton(toolBar, zoomOutAction);
+        addZoomComboBox(toolBar, zoomAction);
+        addButton(toolBar, zoomInAction);
+        toolBar.addSeparator();
+        addButton(toolBar, toggleGrid);
+        for (GuiAction action : animateActionManager.getEditActions()) {
+            addButton(toolBar, action);
+        }
+
+        drawingToolBar = new JToolBar();
+        drawingToolBar.setFloatable(false);
+
+        toolBar.addSeparator();
+        addButton(drawingToolBar, selectAction);
+        drawingToolBar.addSeparator();
+        for (GuiAction action : componentCreatorManager.getActions()) {
+            addButton(drawingToolBar, action);
+        }
+        drawingToolBar.addSeparator();
+
+        for (GuiAction action : tokenActionManager.getActions()) {
+            addButton(drawingToolBar, action);
+        }
+
+        addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
+        addButton(drawingToolBar, unfoldAction);
+        drawingToolBar.addSeparator();
+
+        toolBar.add(drawingToolBar);
+
+        animationToolBar = new JToolBar();
+        animationToolBar.setFloatable(false);
+
+        for (GuiAction action : animateActionManager.getAnimateActions()) {
+            addButton(animationToolBar, action);
+        }
+
+        toolBar.add(animationToolBar);
+        animationToolBar.setVisible(false);
+
+        toolBar.addSeparator();
+        addButton(toolBar, helpAction);
+
+        for (int i = 0; i < toolBar.getComponentCount(); i++) {
+            toolBar.getComponent(i).setFocusable(false);
+        }
+
+        getContentPane().add(toolBar, BorderLayout.PAGE_START);
+    }
+
+    /**
+     * Creates and adds the token view combo box to the view
+     *
+     * @param toolBar the JToolBar to add the combo box to
+     * @param action  the action that the tokenClassComboBox performs when selected
+     */
+    protected void addTokenClassComboBox(JToolBar toolBar, Action action) {
+        String[] tokenClassChoices = new String[]{"Default"};
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
+        tokenClassComboBox = new JComboBox<>(model);
+        tokenClassComboBox.setEditable(true);
+        tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
+        tokenClassComboBox.setMaximumRowCount(100);
+        //        tokenClassComboBox.setMaximumSize(new Dimension(125, 100));
+        tokenClassComboBox.setEditable(false);
+        tokenClassComboBox.setAction(action);
+        toolBar.add(tokenClassComboBox);
+    }
+
+    /**
+     * @param toolBar the JToolBar to add the button to
+     * @param action  the action that the ZoomComboBox performs
+     */
+    private void addZoomComboBox(JToolBar toolBar, Action action) {
+        Dimension zoomComboBoxDimension = new Dimension(65, 28);
+        String[] zoomExamples = applicationModel.getZoomExamples();
+        zoomComboBox = new JComboBox<>(zoomExamples);
+        zoomComboBox.setEditable(true);
+        zoomComboBox.setSelectedItem("100%");
+        zoomComboBox.setMaximumRowCount(zoomExamples.length);
+        zoomComboBox.setMaximumSize(zoomComboBoxDimension);
+        zoomComboBox.setMinimumSize(zoomComboBoxDimension);
+        zoomComboBox.setPreferredSize(zoomComboBoxDimension);
+        zoomComboBox.setAction(action);
+        toolBar.add(zoomComboBox);
+    }
+
+    private void addButton(JToolBar toolBar, GuiAction action) {
+
+        if (action.getValue("selected") != null) {
+            toolBar.add(new ToggleButton(action));
+        } else {
+            toolBar.add(action);
+        }
     }
 
     /**
@@ -331,6 +613,25 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     }
 
+    private void addMenuItem(JMenu menu, Action action) {
+        JMenuItem item = menu.add(action);
+        KeyStroke keystroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
+
+        if (keystroke != null) {
+            item.setAccelerator(keystroke);
+        }
+    }
+
+    /**
+     * @param zoomMenu to add to the applications menu bar
+     */
+    private void addZoomMenuItems(JMenu zoomMenu) {
+        for (ZoomAction zoomAction : applicationModel.getZoomActions()) {
+            JMenuItem newItem = new JMenuItem(zoomAction);
+            zoomMenu.add(newItem);
+        }
+    }
+
     /**
      * Creates an example file menu based on examples in resources/extras/examples
      */
@@ -421,327 +722,31 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
     }
 
-    /**
-     * @param zoomMenu to add to the applications menu bar
-     */
-    private void addZoomMenuItems(JMenu zoomMenu) {
-        for (ZoomAction zoomAction : applicationModel.getZoomActions()) {
-            JMenuItem newItem = new JMenuItem(zoomAction);
-            zoomMenu.add(newItem);
-        }
-    }
-
-    private void addMenuItem(JMenu menu, Action action) {
-        JMenuItem item = menu.add(action);
-        KeyStroke keystroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-
-        if (keystroke != null) {
-            item.setAccelerator(keystroke);
-        }
-    }
-
-    /**
-     * Builds the toolbar that holds actions for editin and creating Petri nets with PIPE
-     */
-    private void buildToolbar() {
-        // Create the toolbar
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);// Inhibit toolbar floating
-
-
-        for (GuiAction action : editorManager.getActions()) {
-            addButton(toolBar, action);
-        }
-
-        toolBar.addSeparator();
-        addButton(toolBar, printAction);
-        toolBar.addSeparator();
-        for (GuiAction action : componentEditorManager.getActions()) {
-            addButton(toolBar, action);
-        }
-        toolBar.addSeparator();
-
-        addButton(toolBar, zoomOutAction);
-        addZoomComboBox(toolBar, zoomAction);
-        addButton(toolBar, zoomInAction);
-        toolBar.addSeparator();
-        addButton(toolBar, toggleGrid);
-        for (GuiAction action : animateActionManager.getEditActions()) {
-            addButton(toolBar, action);
-        }
-
-        drawingToolBar = new JToolBar();
-        drawingToolBar.setFloatable(false);
-
-        toolBar.addSeparator();
-        addButton(drawingToolBar, selectAction);
-        drawingToolBar.addSeparator();
-        for (GuiAction action : componentCreatorManager.getActions()) {
-            addButton(drawingToolBar, action);
-        }
-        drawingToolBar.addSeparator();
-
-        for (GuiAction action : tokenActionManager.getActions()) {
-            addButton(drawingToolBar, action);
-        }
-
-        addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
-        addButton(drawingToolBar, unfoldAction);
-        drawingToolBar.addSeparator();
-
-        toolBar.add(drawingToolBar);
-
-        animationToolBar = new JToolBar();
-        animationToolBar.setFloatable(false);
-
-        for (GuiAction action : animateActionManager.getAnimateActions()) {
-            addButton(animationToolBar, action);
-        }
-
-        toolBar.add(animationToolBar);
-        animationToolBar.setVisible(false);
-
-        toolBar.addSeparator();
-        addButton(toolBar, helpAction);
-
-        for (int i = 0; i < toolBar.getComponentCount(); i++) {
-            toolBar.getComponent(i).setFocusable(false);
-        }
-
-        getContentPane().add(toolBar, BorderLayout.PAGE_START);
-    }
-
-    private void addButton(JToolBar toolBar, GuiAction action) {
-
-        if (action.getValue("selected") != null) {
-            toolBar.add(new ToggleButton(action));
-        } else {
-            toolBar.add(action);
-        }
-    }
-
-    /**
-     * @param toolBar the JToolBar to add the button to
-     * @param action  the action that the ZoomComboBox performs
-     */
-    private void addZoomComboBox(JToolBar toolBar, Action action) {
-        Dimension zoomComboBoxDimension = new Dimension(65, 28);
-        String[] zoomExamples = applicationModel.getZoomExamples();
-        zoomComboBox = new JComboBox<>(zoomExamples);
-        zoomComboBox.setEditable(true);
-        zoomComboBox.setSelectedItem("100%");
-        zoomComboBox.setMaximumRowCount(zoomExamples.length);
-        zoomComboBox.setMaximumSize(zoomComboBoxDimension);
-        zoomComboBox.setMinimumSize(zoomComboBoxDimension);
-        zoomComboBox.setPreferredSize(zoomComboBoxDimension);
-        zoomComboBox.setAction(action);
-        toolBar.add(zoomComboBox);
-    }
-
-    /**
-     * Creates and adds the token view combo box to the view
-     *
-     * @param toolBar the JToolBar to add the combo box to
-     * @param action  the action that the tokenClassComboBox performs when selected
-     */
-    protected void addTokenClassComboBox(JToolBar toolBar, Action action) {
-        String[] tokenClassChoices = new String[]{"Default"};
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
-        tokenClassComboBox = new JComboBox<>(model);
-        tokenClassComboBox.setEditable(true);
-        tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
-        tokenClassComboBox.setMaximumRowCount(100);
-        //        tokenClassComboBox.setMaximumSize(new Dimension(125, 100));
-        tokenClassComboBox.setEditable(false);
-        tokenClassComboBox.setAction(action);
-        toolBar.add(tokenClassComboBox);
-    }
-
-    // set tabbed pane properties and add change listener that updates tab with
-    // linked model and view
-    private void setTabChangeListener() {
-        frameForPetriNetTabs.addChangeListener(new ChangeListener() {
+    private void setZoomChangeListener() {
+        zoomUI.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
-                PetriNetTab petriNetTab = getCurrentTab();
-                applicationController.setActiveTab(petriNetTab);
-
-                if (areAnyTabsDisplayed()) {
-                    PetriNetController controller = applicationController.getActivePetriNetController();
-                    if (controller.isCopyInProgress()) {
-                        controller.cancelPaste();
-                    }
-
-                    petriNetTab.setVisible(true);
-                    petriNetTab.repaint();
-                    updateZoomCombo();
-
-                    enableActions(!petriNetTab.isInAnimationMode(), applicationController.isPasteEnabled());
-
-                    setTitle(petriNetTab.getName());
-
-                    setAnimationMode(petriNetTab.isInAnimationMode());
-                }
-
-                refreshTokenClassChoices();
+            public void propertyChange(PropertyChangeEvent evt) {
+                getTabComponent().repaint();
+                updateZoomCombo();
             }
         });
     }
 
-    public void setAnimationMode(boolean animateMode) {
-        enableActions(!animateMode);
-
-        PetriNetTab petriNetTab = getCurrentTab();
-        petriNetTab.changeAnimationMode(animateMode);
-
-        if (animateMode) {
-            enableActions(false);// disables all non-animation buttons
-            applicationModel.setEditionAllowed(false);
-            statusBar.changeText(statusBar.textforAnimation);
-            createAnimationViewPane();
-
-        } else {
-            applicationModel.setEditionAllowed(true);
-            statusBar.changeText(statusBar.textforDrawing);
-            removeAnimationViewPlane();
-            enableActions(true); // renables all non-animation buttons
-        }
-    }
-
-    /* sets all buttons to enabled or disabled according to status. */
-    public void enableActions(boolean status) {
-        if (status) {
-            drawingToolBar.setVisible(true);
-            animationToolBar.setVisible(false);
-        }
-
-        if (!status) {
-            drawingToolBar.setVisible(false);
-            animationToolBar.setVisible(true);
-        }
+    private JComponent getTabComponent() {
+        return wrappedPetrinetTabs.get(frameForPetriNetTabs.getSelectedIndex());
     }
 
     /**
-     * Creates a new currentAnimationView text area, and returns a reference to it
+     * Sets the default behaviour for exit for both Windows/Linux/Mac OS X
      */
-    private void createAnimationViewPane() {
-        AnimationHistoryView animationHistoryView = getCurrentTab().getAnimationView();
-        scroller = new JScrollPane(animationHistoryView);
-        scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
-
-        moduleAndAnimationHistoryFrame.setBottomComponent(scroller);
-
-        moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
-        moduleAndAnimationHistoryFrame.setDividerSize(8);
-    }
-
-    void removeAnimationViewPlane() {
-        if (scroller != null) {
-            moduleAndAnimationHistoryFrame.remove(scroller);
-            moduleAndAnimationHistoryFrame.setDividerLocation(0);
-            moduleAndAnimationHistoryFrame.setDividerSize(0);
-        }
-    }
-
-    /**
-     * Remove the listener from the zoomComboBox, so that when
-     * the box's selected item is updated to keep track of ZoomActions
-     * called from other sources, a duplicate ZoomAction is not called
-     */
-    public void updateZoomCombo() {
-        ActionListener zoomComboListener = (zoomComboBox.getActionListeners())[0];
-        zoomComboBox.removeActionListener(zoomComboListener);
-
-        String zoomPercentage = zoomUI.getPercentageZoom() + "%";
-        zoomComboBox.setSelectedItem(zoomPercentage);
-        zoomComboBox.addActionListener(zoomComboListener);
-    }
-
-    /**
-     * @return true if any tabs are displayed
-     */
-    public boolean areAnyTabsDisplayed() {
-        return applicationController.getActivePetriNetController() != null;
-    }
-
-    /**
-     * Refreshes the combo box that presents the Tokens available for use.
-     * If there are no Petri nets being displayed this clears it
-     */
-    public void refreshTokenClassChoices() {
-        if (areAnyTabsDisplayed()) {
-            String[] tokenClassChoices = buildTokenClassChoices();
-            ComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
-            tokenClassComboBox.setModel(model);
-            PetriNetController controller = applicationController.getActivePetriNetController();
-            try {
-                controller.selectToken(getSelectedTokenName());
-            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
-                GuiUtils.displayErrorMessage(this, petriNetComponentNotFoundException.getMessage());
+    private void setExitAction() {
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exitAction.tryToExit();
             }
-        } else {
-            tokenClassComboBox.setModel(new DefaultComboBoxModel<String>());
-        }
-    }
-
-    /**
-     * @return names of Tokens for the combo box
-     */
-    protected String[] buildTokenClassChoices() {
-        if (areAnyTabsDisplayed()) {
-            PetriNetController petriNetController = applicationController.getActivePetriNetController();
-            Collection<Token> tokens = petriNetController.getNetTokens();
-            String[] tokenClassChoices = new String[tokens.size()];
-            int index = 0;
-            for (Token token : tokens) {
-                tokenClassChoices[index] = token.getId();
-                index++;
-            }
-            return tokenClassChoices;
-        }
-        return new String[0];
-    }
-
-    public String getSelectedTokenName() {
-        ComboBoxModel<String> model = tokenClassComboBox.getModel();
-        Object selected = model.getSelectedItem();
-        return selected.toString();
-    }
-
-    public PetriNetTab getCurrentTab() {
-        int index = frameForPetriNetTabs.getSelectedIndex();
-        return getTab(index);
-    }
-
-    PetriNetTab getTab(int index) {
-        if (index < 0 || index >= petriNetTabs.size()) {
-            return null;
-        }
-        return petriNetTabs.get(index);
-    }
-
-    private void enableActions(boolean editMode, boolean pasteEnabled) {
-        if (editMode) {
-            componentEditorManager.enableActions();
-            componentCreatorManager.enableActions();
-            tokenActionManager.enableActions();
-            editorManager.enableActions();
-            animateActionManager.disableActions();
-        } else {
-            componentEditorManager.disableActions();
-            componentCreatorManager.disableActions();
-            tokenActionManager.disableActions();
-            editorManager.disableActions();
-            animateActionManager.enableActions();
-        }
-
-        selectAction.setEnabled(editMode);
-    }
-
-    @Override
-    public final void setTitle(String title) {
-        String name = applicationModel.getName();
-        super.setTitle((title == null) ? name : name + ": " + title);
+        });
     }
 
     public ComponentEditorManager getComponentEditorManager() {
@@ -773,11 +778,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     //TODO: Find out if this actually ever gets called
     @Override
     public void update(Observable o, Object obj) {
-        System.out.println("UPDATE APPLICATION VIEW");
-        PetriNetTab currentTab = getCurrentTab();
-        if ((applicationModel.getMode() != Constants.CREATING) && (!currentTab.isInAnimationMode())) {
-            //            currentTab.setNetChanged(true);
-        }
     }
 
     /**
@@ -825,7 +825,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void removeTab(int index) {
         if ((frameForPetriNetTabs.getTabCount() > 0)) {
             PetriNetTab tab = petriNetTabs.get(index);
-            applicationController.removeTab(tab);
             petriNetTabs.remove(index);
             frameForPetriNetTabs.remove(index);
         }
@@ -839,5 +838,30 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public AnimateActionManager getAnimateActionManager() {
         return animateActionManager;
     }
+
+    public void registerNewPetriNet(PetriNet petriNet) {
+        PropertyChangeListener zoomListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                updateZoomCombo();
+            }
+        };
+
+        AnimationHistoryView animationHistoryView;
+        try {
+            animationHistoryView = new AnimationHistoryView("Animation History");
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        PetriNetTab petriNetTab = new PetriNetTab(this);
+        histories.put(petriNetTab, animationHistoryView);
+        UndoableEditListener undoListener = new SimpleUndoListener(componentEditorManager, applicationController);
+
+        applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
+        addNewTab(petriNet.getNameValue(), petriNetTab);
+    }
+
+    private Map<PetriNetTab, AnimationHistoryView> histories = new HashMap<>();
 }
 

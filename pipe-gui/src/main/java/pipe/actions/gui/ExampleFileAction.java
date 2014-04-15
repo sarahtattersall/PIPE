@@ -1,6 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.gui.ApplicationSettings;
 import pipe.io.JarUtilities;
 import pipe.parsers.UnparsableException;
@@ -38,7 +37,7 @@ public class ExampleFileAction extends GuiAction
     {
         try {
             ApplicationSettings.getApplicationController().createNewTabFromFile(
-                    filename, applicationView);
+                    filename);
         } catch (UnparsableException e1) {
             GuiUtils.displayErrorMessage(applicationView, e1.getMessage());
         }

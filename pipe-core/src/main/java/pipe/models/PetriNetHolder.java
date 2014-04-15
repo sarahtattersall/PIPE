@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class just holds a petri net and forms the base level of PNML
+ * This class just holds all petri nets and forms the base level of PNML
  */
 @XmlRootElement(name = "pnml")
 public class PetriNetHolder {
@@ -25,5 +25,21 @@ public class PetriNetHolder {
 
     public PetriNet getNet(int index) {
         return nets.get(index);
+    }
+
+    /**
+     *
+     * @return the number of Petri nets stored in this holder
+     */
+    public int size() {
+        return nets.size();
+    }
+
+    public boolean isEmpty() {
+        return nets.isEmpty();
+    }
+
+    public void remove(PetriNet petriNet) {
+        nets.remove(petriNet);
     }
 }

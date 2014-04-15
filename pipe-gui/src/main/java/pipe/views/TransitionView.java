@@ -265,11 +265,7 @@ public class TransitionView extends ConnectableView<Transition> {
      * @return true if in animate mode and the model is enabled
      */
     private boolean highlightView() {
-        //TODO: GET THIS IN A BETTER WAY
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        PetriNetTab tab = view.getCurrentTab();
-
-        return model.isEnabled() && tab.isInAnimationMode();
+        return model.isEnabled() && petriNetController.isInAnimationMode();
     }
 
     @Override
@@ -281,7 +277,7 @@ public class TransitionView extends ConnectableView<Transition> {
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);
 
-        MouseListener transitionAnimationHandler = new TransitionAnimationHandler(this.model, tab);
+        MouseListener transitionAnimationHandler = new TransitionAnimationHandler(this.model, petriNetController);
         addMouseListener(transitionAnimationHandler);
     }
 

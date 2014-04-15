@@ -33,16 +33,18 @@ public class ToggleAnimateAction extends AnimateAction {
     @Override
     public void actionPerformed(ActionEvent event) {
         PetriNetTab currentTab = applicationController.getActivePetriNetController().getPetriNetTab();
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        boolean animated = petriNetController.toggleAnimation();
 
-        boolean isTabAnimated = currentTab.isInAnimationMode();
+
+        //TODO: Remove call to Application settings
         PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-        applicationView.setAnimationMode(!isTabAnimated);
+        applicationView.setAnimationMode(animated);
 
         noopAction.actionPerformed(null);
 
-        PetriNetController petriNetController = applicationController.getActivePetriNetController();
         Animator animator = petriNetController.getAnimator();
-        if (!isTabAnimated) {
+        if (!animated) {
             animator.startAnimation();
             AbstractPetriNetViewComponent.ignoreSelection(false);
         } else {

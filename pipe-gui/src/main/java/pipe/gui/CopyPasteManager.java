@@ -96,7 +96,7 @@ public class CopyPasteManager extends javax.swing.JComponent
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
-        zoom = petriNetTab.getZoom();
+//        zoom = petriNetTab.getZoom();
         this.listener = listener;
 
     }
@@ -157,10 +157,10 @@ public class CopyPasteManager extends javax.swing.JComponent
         if (!pasteInProgress) {
             petriNetTab.add(this);
             requestFocusInWindow();
-            if (zoom != petriNetTab.getZoom()) {
-                updateSize(pasteRectangle, zoom, petriNetTab.getZoom());
-                zoom = petriNetTab.getZoom();
-            }
+//            if (zoom != petriNetTab.getZoom()) {
+//                updateSize(pasteRectangle, zoom, petriNetTab.getZoom());
+//                zoom = petriNetTab.getZoom();
+//            }
 
             petriNetTab.setLayer(this, Constants.SELECTION_LAYER_OFFSET);
             repaint();
@@ -170,12 +170,12 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
-        ZoomController zoomController = petriNetTab.getZoomController();
+//        ZoomController zoomController = petriNetTab.getZoomController();
         int realWidth = pasteRectangle.width;
         int realHeight = pasteRectangle.height;
 
-        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
-                (int) (realHeight * zoomController.getScaleFactor()));
+//        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
+//                (int) (realHeight * zoomController.getScaleFactor()));
     }
 
     private void updateBounds() {
