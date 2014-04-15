@@ -65,7 +65,7 @@ public class AnimationHistoryView
 
     @Override
     public void update(Observable observable, Object o) {
-        if (Observable.class.equals(AnimationHistory.class)) {
+        if (observable.getClass().equals(AnimationHistory.class)) {
             AnimationHistory history = (AnimationHistory) observable;
             updateText(history.getCurrentPosition(), history.getFiringSequence());
         }

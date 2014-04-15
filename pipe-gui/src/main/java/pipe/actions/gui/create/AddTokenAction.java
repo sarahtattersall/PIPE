@@ -1,8 +1,7 @@
 package pipe.actions.gui.create;
 
-import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.models.component.place.Place;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.token.Token;
 
 import java.awt.event.InputEvent;
@@ -12,8 +11,8 @@ import java.util.Map;
 
 public class AddTokenAction extends TokenAction {
 
-    public AddTokenAction() {
-        super("Add token", "Add a token (alt-t)", KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK);
+    public AddTokenAction(PipeApplicationModel applicationModel) {
+        super("Add token", "Add a token (alt-t)", KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK, applicationModel);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.PlaceAction;
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.place.Place;
 import pipe.models.petrinet.PetriNet;
@@ -36,9 +37,12 @@ public class PlaceActionTest {
     @Mock
     UndoableEditListener listener;
 
+    @Mock
+    PipeApplicationModel applicationModel;
+
     @Before
     public void setUp() {
-        action = new PlaceAction();
+        action = new PlaceAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockController.getPetriNet()).thenReturn(mockNet);
         when(mockController.getUniquePlaceName()).thenReturn("P0");

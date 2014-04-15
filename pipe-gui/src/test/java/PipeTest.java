@@ -190,7 +190,7 @@ public class PipeTest {
         toolbar = (JToolBar) c.getComponent(1);
         AbstractButton animateButton = ((AbstractButton) toolbar.getComponent(20));
         animateButton.getAction().actionPerformed(null);
-        selectMenuItem(menu, 2);
+//        selectMenuItem(menu, 2);
     }
 
     private Action selectMenuItem(JMenu menu, int selection) {

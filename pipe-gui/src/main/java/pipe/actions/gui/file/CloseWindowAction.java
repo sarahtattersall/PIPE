@@ -22,7 +22,6 @@ public class CloseWindowAction extends GuiAction {
     public void actionPerformed(ActionEvent e) {
         if (!applicationController.hasCurrentPetriNetChanged()) {
             applicationController.removeActiveTab();
-//            pipeApplicationView.removeCurrentTab();
         } else {
             int result = JOptionPane.showConfirmDialog(null,  "Do you really want to close this Petri net? It has unsaved changes.",
                     "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);

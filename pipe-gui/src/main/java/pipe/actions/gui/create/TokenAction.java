@@ -2,6 +2,7 @@ package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -11,8 +12,8 @@ import java.util.Map;
 
 public abstract class TokenAction extends CreateAction {
 
-    public TokenAction(String name, String tooltip, int key, int modifiers) {
-        super(name, tooltip, key, modifiers);
+    public TokenAction(String name, String tooltip, int key, int modifiers, PipeApplicationModel applicationModel) {
+        super(name, tooltip, key, modifiers, applicationModel);
     }
 
     /**

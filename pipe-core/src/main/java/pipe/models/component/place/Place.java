@@ -25,22 +25,22 @@ public class Place extends Connectable {
     /**
      * Marking x offset relative to the place x coordinate
      */
-    double markingXOffset = 0;
+    private double markingXOffset = 0;
 
     /**
      * Marking y offset relative to the place y coordinate
      */
-    double markingYOffset = 0;
+    private double markingYOffset = 0;
 
     /**
      * Place capacity
      */
-    int capacity = 0;
+    private int capacity = 0;
 
     /**
      * Place tokens
      */
-    Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+    private Map<Token, Integer> tokenCounts = new HashMap<>();
 
     public Place(String id, String name) {
         super(id, name);
@@ -113,6 +113,11 @@ public class Place extends Connectable {
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
+    /**
+     *
+     * @param tokens map of tokens to their counts
+     * @return total number of tokens stored in the map
+     */
     private int getNumberOfTokensStored(Map<Token, Integer> tokens) {
         int sum = 0;
         for (Integer value : tokens.values()) {

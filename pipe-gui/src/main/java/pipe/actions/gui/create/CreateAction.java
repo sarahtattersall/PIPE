@@ -21,12 +21,11 @@ import java.awt.event.MouseEvent;
  */
 public abstract class CreateAction extends GuiAction {
 
-    public CreateAction(String name, String tooltip, int key, int modifiers) {
-        super(name, tooltip, key, modifiers);
-    }
+    private final PipeApplicationModel applicationModel;
 
-    public CreateAction(String name, String tooltip, String keystroke, boolean toggleable) {
-        super(name, tooltip, keystroke, toggleable);
+    public CreateAction(String name, String tooltip, int key, int modifiers, PipeApplicationModel applicationModel) {
+        super(name, tooltip, key, modifiers);
+        this.applicationModel = applicationModel;
     }
 
     //TODO: Eventually a handler can tell the GUI Action to do its thing
@@ -53,17 +52,7 @@ public abstract class CreateAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PipeApplicationModel model = ApplicationSettings.getApplicationModel();
-        model.selectTypeAction(this);
-
-
-        PetriNetTab petriNetTab = ApplicationSettings.getApplicationView().getCurrentTab();
-        if (petriNetTab != null) {
-            petriNetTab.setCursorType("crosshair");
-            PipeApplicationController controller = ApplicationSettings.getApplicationController();
-            SelectionManager selectionManager = controller.getSelectionManager(petriNetTab);
-            selectionManager.disableSelection();
-        }
+        applicationModel.selectTypeAction(this);
     }
 
 

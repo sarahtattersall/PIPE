@@ -19,26 +19,18 @@ public class CloseActionTest {
     CloseWindowAction closeWindowAction;
 
     @Mock
-    PipeApplicationView mockView;
-
-    @Mock
     PipeApplicationController mockController;
 
     @Before
     public void setUp() {
-        mockView = mock(PipeApplicationView.class);
         closeWindowAction = new CloseWindowAction(mockController);
+        when(mockController.hasCurrentPetriNetChanged()).thenReturn(false);
     }
 
     @Test
     public void actionPerformed() {
-        int selectedIndex = 20;
-        JTabbedPane mockpane = mock(JTabbedPane.class);
-        when(mockpane.getTabCount()).thenReturn(1);
-        when(mockpane.getSelectedIndex()).thenReturn(selectedIndex);
-        when(mockView.getFrameForPetriNetTabs()).thenReturn(mockpane);
         closeWindowAction.actionPerformed(null);
-        verify(mockView).removeCurrentTab();
+        verify(mockController).removeActiveTab();
     }
 
     @Test

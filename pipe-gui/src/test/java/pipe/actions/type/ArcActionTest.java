@@ -10,6 +10,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
@@ -31,6 +32,12 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcActionTest {
+    @Mock
+    UndoableEditListener listener;
+
+    @Mock
+    PipeApplicationModel applicationModel;
+
     private ArcAction action;
 
     @Mock
@@ -57,9 +64,6 @@ public class ArcActionTest {
     @Mock
     private ArcActionCreator mockCreatorVisitor;
 
-    @Mock
-    UndoableEditListener listener;
-
     @Before
     public void setUp() {
         when(mockController.getPetriNet()).thenReturn(mockNet);
@@ -72,7 +76,8 @@ public class ArcActionTest {
         when(mockApplicationController.getActivePetriNetController()).thenReturn(mockController);
 
         action = new ArcAction("Inhibitor Arc", "Add an inhibitor arc", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
-                mockSourceVisitor, mockCreatorVisitor, mockApplicationController, new InhibitorArcHead());
+                mockSourceVisitor, mockCreatorVisitor, applicationModel, mockApplicationController,
+                new InhibitorArcHead());
         action.addUndoableEditListener(listener);
     }
 
@@ -128,7 +133,8 @@ public class ArcActionTest {
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         Arc<Transition, Place> mockArc = mock(Arc.class);
-        when(mockCreatorVisitor.create(any(Transition.class), any(Place.class), anyListOf(ArcPoint.class))).thenReturn(mockArc);
+        when(mockCreatorVisitor.create(any(Transition.class), any(Place.class), anyListOf(ArcPoint.class))).thenReturn(
+                mockArc);
 
 
         action.doConnectableAction(place, mockController);

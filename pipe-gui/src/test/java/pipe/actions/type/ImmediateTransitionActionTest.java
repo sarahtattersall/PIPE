@@ -11,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.ImmediateTransitionAction;
 import pipe.actions.gui.create.TransitionAction;
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
@@ -27,6 +28,12 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ImmediateTransitionActionTest {
 
+    @Mock
+    UndoableEditListener listener;
+
+    @Mock
+    PipeApplicationModel applicationModel;
+
     private TransitionAction action;
 
     @Mock
@@ -35,12 +42,9 @@ public class ImmediateTransitionActionTest {
     @Mock
     private PetriNet mockNet;
 
-    @Mock
-    UndoableEditListener listener;
-
     @Before
     public void setUp() {
-        action = new ImmediateTransitionAction();
+        action = new ImmediateTransitionAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockController.getPetriNet()).thenReturn(mockNet);
         when(mockController.getUniqueTransitionName()).thenReturn("T0");

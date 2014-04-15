@@ -1,6 +1,6 @@
 package pipe.views;
 
-import matchers.component.PropertyChangeWithValues;
+import matchers.component.PropertyChangeUtils;
 import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
@@ -116,7 +116,7 @@ public class ZoomUITest {
         ZoomUI zoomUI = new ZoomUI(1, ZOOM_INCREMENT, MAX_ZOOM, MIN_ZOOM, null);
         zoomUI.addPropertyChangeListener(listener);
         zoomUI.zoomIn();
-        verify(listener).propertyChange(argThat(new PropertyChangeWithValues(ZoomUI.ZOOM_IN_CHANGE_MESSAGE, 1.0, 1.1)));
+        verify(listener).propertyChange(argThat(PropertyChangeUtils.hasValues(ZoomUI.ZOOM_IN_CHANGE_MESSAGE, 1.0, 1.1)));
     }
 
     @Test
@@ -125,6 +125,6 @@ public class ZoomUITest {
         ZoomUI zoomUI = new ZoomUI(1, ZOOM_INCREMENT, MAX_ZOOM, MIN_ZOOM, null);
         zoomUI.addPropertyChangeListener(listener);
         zoomUI.zoomOut();
-        verify(listener).propertyChange(argThat(new PropertyChangeWithValues(ZoomUI.ZOOM_OUT_CHANGE_MESSAGE, 1.0, 0.9)));
+        verify(listener).propertyChange(argThat(PropertyChangeUtils.hasValues(ZoomUI.ZOOM_OUT_CHANGE_MESSAGE, 1.0, 0.9)));
     }
 }

@@ -1,6 +1,7 @@
 package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
@@ -17,8 +18,8 @@ import java.awt.event.MouseEvent;
 public class PlaceAction extends CreateAction {
 
 
-    public PlaceAction() {
-        super("Place", "Add a place", KeyEvent.VK_P, InputEvent.ALT_DOWN_MASK);
+    public PlaceAction(PipeApplicationModel applicationModel) {
+        super("Place", "Add a place", KeyEvent.VK_P, InputEvent.ALT_DOWN_MASK, applicationModel);
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.AddTokenAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.views.PipeApplicationView;
@@ -41,10 +42,12 @@ public class AddTokenActionTest {
     @Mock
     UndoableEditListener listener;
 
+    @Mock
+    PipeApplicationModel applicationModel;
 
     @Before
     public void setUp() {
-        action = new AddTokenAction();
+        action = new AddTokenAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockPetriNetController.getPlaceController(place)).thenReturn(mockPlaceController);
         when(mockPlaceController.getTokenCount(mockToken)).thenReturn(1);

@@ -20,9 +20,10 @@ public class Pipe
         applicationController = new PipeApplicationController(applicationModel);
         ComponentEditorManager componentManager = new ComponentEditorManager(applicationController);
         SimpleUndoListener undoListener = new SimpleUndoListener(componentManager, applicationController);
-        ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, applicationController);
-        TokenActionManager tokenActionManager = new TokenActionManager(undoListener, applicationController);
-        AnimateActionManager animateActionManager = new AnimateActionManager(applicationController);
+        ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, applicationModel, applicationController);
+        TokenActionManager tokenActionManager = new TokenActionManager(undoListener, applicationModel,
+                applicationController);
+        AnimateActionManager animateActionManager = new AnimateActionManager(applicationModel, applicationController);
         applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager, componentCreatorManager, animateActionManager,
                 tokenActionManager);
     }

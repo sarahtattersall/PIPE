@@ -115,11 +115,32 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
-    public PipeApplicationView(PipeApplicationController applicationController, PipeApplicationModel applicationModel,
+    public PipeApplicationView(final PipeApplicationController applicationController, PipeApplicationModel applicationModel,
                                ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
                                AnimateActionManager animateActionManager, TokenActionManager tokenActionManager) {
 
         applicationController.register(this);
+        applicationModel.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(PipeApplicationModel.TOGGLE_ANIMATION_MODE)) {
+                    boolean oldMode = (boolean) evt.getOldValue();
+                    boolean newMode = (boolean) evt.getNewValue();
+                    if (oldMode != newMode) {
+                        setAnimationMode(newMode);
+                    }
+                } else if (evt.getPropertyName().equals(PipeApplicationModel.TYPE_ACTION_CHANGE_MESSAGE)) {
+                    PetriNetTab petriNetTab = getCurrentTab();
+                    if (petriNetTab != null) {
+                        petriNetTab.setCursorType("crosshair");
+                        SelectionManager selectionManager = applicationController.getSelectionManager(petriNetTab);
+                        selectionManager.disableSelection();
+                    }
+                }
+
+
+            }
+        });
         this.componentCreatorManager = componentCreatorManager;
         this.animateActionManager = animateActionManager;
         this.tokenActionManager = tokenActionManager;
@@ -137,7 +158,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         unfoldAction = new UnfoldAction(this, applicationController);
 
-        selectAction = new SelectAction(this, applicationController);
+        selectAction = new SelectAction(applicationModel, this, applicationController);
 
 
         exitAction = new ExitAction(this, applicationController);
@@ -224,7 +245,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
                     setTitle(petriNetTab.getName());
 
-                    setAnimationMode(controller.isInAnimationMode());
+                    applicationModel.setInAnimationMode(controller.isInAnimationMode());
                 }
 
                 refreshTokenClassChoices();

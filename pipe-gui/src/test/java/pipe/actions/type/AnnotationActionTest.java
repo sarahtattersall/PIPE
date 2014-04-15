@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.AnnotationAction;
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.petrinet.PetriNet;
@@ -35,9 +36,13 @@ public class AnnotationActionTest {
 
     private AnnotationAction action;
 
+
+    @Mock
+    PipeApplicationModel applicationModel;
+
     @Before
     public void setUp() {
-        action = new AnnotationAction();
+        action = new AnnotationAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockController.getPetriNet()).thenReturn(mockNet);
     }

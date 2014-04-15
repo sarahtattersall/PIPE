@@ -3,6 +3,7 @@ package pipe.actions.manager;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.animate.*;
 import pipe.controllers.PipeApplicationController;
+import pipe.gui.model.PipeApplicationModel;
 
 import java.util.Arrays;
 
@@ -18,9 +19,9 @@ public class AnimateActionManager implements ActionManager {
     private final AnimateAction multipleRandomAction =
             new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", this);
 
-    public AnimateActionManager(PipeApplicationController applicationController) {
+    public AnimateActionManager(PipeApplicationModel applicationModel, PipeApplicationController applicationController) {
         toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A",
-                applicationController);
+                applicationModel, applicationController);
         stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", applicationController, this);
         randomAction =
                 new RandomAnimateAction("Random", "Randomly fire a transition", "5", applicationController, this);

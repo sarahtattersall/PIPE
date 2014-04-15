@@ -4,6 +4,8 @@ import pipe.actions.*;
 import pipe.actions.gui.create.CreateAction;
 import pipe.gui.ApplicationSettings;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +13,43 @@ import java.util.List;
 public class PipeApplicationModel implements Serializable {
 
 
+    public static final String TOGGLE_ANIMATION_MODE = "Toggle animation";
+
+    public static final String TYPE_ACTION_CHANGE_MESSAGE = "Type action change";
+
     private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%", "120%", "140%", "160%", "180%", "200%", "300%"};
     private List<ZoomAction> zoomActions = new ArrayList<>();
     private final String _name;
     private boolean editionAllowed = true;
     private int mode;
     private int old_mode;
+
+    protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
+    }
+
+    public boolean isInAnimationMode() {
+        return inAnimationMode;
+    }
+
+    public void setInAnimationMode(boolean inAnimationMode) {
+        boolean old = this.inAnimationMode;
+        this.inAnimationMode = inAnimationMode;
+        if (old != inAnimationMode) {
+            changeSupport.firePropertyChange(TOGGLE_ANIMATION_MODE, old, inAnimationMode);
+        }
+    }
+
+    /**
+     * Determines if PIPE is viewing in animation mode or not
+     */
+    private boolean inAnimationMode;
 
     /**
      * Type that is currently selected on the petrinet
@@ -79,7 +112,9 @@ public class PipeApplicationModel implements Serializable {
 
 
     public void selectTypeAction(CreateAction action) {
+        CreateAction old = this.selectedType;
         selectedType = action;
+        changeSupport.firePropertyChange(TYPE_ACTION_CHANGE_MESSAGE, old, selectedType);
     }
 
     public CreateAction getSelectedAction() {

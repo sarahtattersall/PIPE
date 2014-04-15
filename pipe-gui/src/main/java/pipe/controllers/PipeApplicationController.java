@@ -56,6 +56,8 @@ public class PipeApplicationController {
      */
     private final PetriNetNamer petriNetNamer = new PetriNetNamer();
 
+    private final PipeApplicationModel applicationModel;
+
     /**
      * The current tab displayed in the view
      */
@@ -67,6 +69,7 @@ public class PipeApplicationController {
     private final PetriNetManager manager = new PetriNetManagerImpl();
 
     public PipeApplicationController(PipeApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
         ApplicationSettings.register(this);
     }
 
@@ -122,7 +125,7 @@ public class PipeApplicationController {
         netControllers.put(tab, petriNetController);
 
         PetriNetMouseHandler handler =
-                new PetriNetMouseHandler(new SwingMouseUtilities(), petriNetController, tab);
+                new PetriNetMouseHandler(applicationModel, new SwingMouseUtilities(), petriNetController, tab);
         tab.addMouseListener(handler);
         tab.addMouseMotionListener(handler);
         tab.addMouseWheelListener(handler);
