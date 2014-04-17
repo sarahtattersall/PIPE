@@ -1,19 +1,16 @@
 package pipe.parsers;
 
-import pipe.models.petrinet.PetriNet;
-
-import java.util.List;
-import java.util.Set;
-
 public interface FunctionalWeightParser<T extends Number> {
     /**
      *
-     * Evaluates the functional expression
+     * Evaluates the functional expression to calculate a numerical
+     * result for it based on components in the Petri net
      *
-     * @param expression to evaluates
-     * @return evaluated expression
+     * @param expression to evaluate
+     * @return evaluated expression which will contain the result (if obtained) and information
+     *         about any errors if it could not be parsed
      */
-    public FunctionalResults<T> evaluateExpression(String expression);
+    FunctionalResults<T> evaluateExpression(String expression);
 
 
 }

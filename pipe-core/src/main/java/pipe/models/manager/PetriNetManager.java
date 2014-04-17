@@ -15,15 +15,15 @@ import java.io.File;
 public interface PetriNetManager {
 
     /**
-     * Creates a new Petri net and stores it for retrieval
+     * Creates a new Petri net and stores it for retrieval later
      */
-    public void createNewPetriNet();
+    void createNewPetriNet();
 
     /**
      * Registers a listener for petri net change events
      * @param listener notify this listener on any changes
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener);
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Removes a listener, after this call it will no longer be called
@@ -31,10 +31,11 @@ public interface PetriNetManager {
      * @param listener registered listener that no longer wishes to be notified
      *                 on change
      */
-    public void removePropertyChangeListener(PropertyChangeListener listener);
+    void removePropertyChangeListener(PropertyChangeListener listener);
 
     /**
-     * Returns the last net that it holds
+     * Returns the last Petri net that it holds, this will be the most recently created
+     * Petri net (that has not been deleted)
      */
     PetriNet getLastNet();
 
@@ -54,5 +55,9 @@ public interface PetriNetManager {
     //TODO: SHOULD REALLY TELL IT TO SAVE ONE OF ITS OWN PETRI NETS RAHTER THAN PASSING IT IN
     void savePetriNet(PetriNet petriNet, File outFile) throws JAXBException;
 
+    /**
+     * Remove this Petri net from storage
+     * @param petriNet
+     */
     void remove(PetriNet petriNet);
 }
