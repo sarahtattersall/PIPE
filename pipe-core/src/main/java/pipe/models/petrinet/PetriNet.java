@@ -923,7 +923,7 @@ public class PetriNet {
         return functionalWeightParser.evaluateExpression(expr);
     }
 
-    private class NameChangeListener<T extends PetriNetComponent> implements PropertyChangeListener {
+    private static class NameChangeListener<T extends PetriNetComponent> implements PropertyChangeListener {
         private final T component;
 
         private final Map<String, T> componentMap;
