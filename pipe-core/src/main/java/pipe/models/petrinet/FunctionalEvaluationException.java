@@ -3,7 +3,7 @@ package pipe.models.petrinet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FunctionalEvaluationException extends Throwable {
+public class FunctionalEvaluationException extends Exception {
     private final List<String> errors;
 
     public FunctionalEvaluationException(List<String> errors) {
