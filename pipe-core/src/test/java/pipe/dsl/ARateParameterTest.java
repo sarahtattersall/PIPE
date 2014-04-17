@@ -1,6 +1,5 @@
 package pipe.dsl;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.Connectable;
@@ -10,8 +9,8 @@ import pipe.models.component.token.Token;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class ARateParameterTest {
     private Map<String, Token> tokens;

@@ -1,15 +1,8 @@
 package exceptions;
 
-import net.sourceforge.jeval.EvaluationException;
 import org.junit.Before;
-import org.junit.Test;
 import pipe.models.petrinet.ExprEvaluator;
 import pipe.models.petrinet.PetriNet;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
-import utils.TokenUtils;
-
-import static org.junit.Assert.assertTrue;
 
 public class ExprEvaluatorTest {
 

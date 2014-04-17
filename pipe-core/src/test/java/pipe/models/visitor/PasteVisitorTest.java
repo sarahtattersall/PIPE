@@ -21,11 +21,8 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.*;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PasteVisitorTest {
     PasteVisitor visitor;

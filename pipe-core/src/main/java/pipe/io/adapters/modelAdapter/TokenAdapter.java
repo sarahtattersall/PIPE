@@ -4,7 +4,7 @@ import pipe.io.adapters.model.AdaptedToken;
 import pipe.models.component.token.Token;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 

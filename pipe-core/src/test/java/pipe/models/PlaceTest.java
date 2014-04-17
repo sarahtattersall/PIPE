@@ -8,7 +8,8 @@ import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import utils.TokenUtils;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

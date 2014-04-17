@@ -1,9 +1,5 @@
 package pipe.naming;
 
-import pipe.models.component.PetriNetComponent;
-import pipe.models.petrinet.PetriNet;
-
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.HashSet;

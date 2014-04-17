@@ -3,16 +3,16 @@ package pipe.models.visitor;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.exceptions.PetriNetComponentException;
-import pipe.models.component.arc.ArcType;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 import pipe.models.petrinet.PetriNetComponentAddVisitor;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 

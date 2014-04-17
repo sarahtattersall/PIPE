@@ -4,7 +4,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Map;
 
 public class AToken implements DSLCreator<Token> {

@@ -1,14 +1,14 @@
 package pipe.parsers;
 
-import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.petrinet.PetriNet;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class PetriNetWeightParser implements FunctionalWeightParser<Double> {
 

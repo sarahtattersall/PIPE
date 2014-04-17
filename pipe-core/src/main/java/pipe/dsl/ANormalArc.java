@@ -1,7 +1,6 @@
 package pipe.dsl;
 
 import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.ArcType;

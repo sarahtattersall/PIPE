@@ -2,7 +2,7 @@ package utils;
 
 import pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Static class for useful token utilities

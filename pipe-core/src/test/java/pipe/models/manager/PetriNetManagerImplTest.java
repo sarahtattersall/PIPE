@@ -5,7 +5,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.exceptions.PetriNetComponentNotFoundException;
@@ -13,7 +12,6 @@ import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import utils.PropertyChangeUtils;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import static org.junit.Assert.assertNotNull;

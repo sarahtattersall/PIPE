@@ -1,6 +1,5 @@
 package pipe.parsers;
 
-import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class NonIntegerValueWalker {

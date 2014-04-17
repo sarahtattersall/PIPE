@@ -24,7 +24,7 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
