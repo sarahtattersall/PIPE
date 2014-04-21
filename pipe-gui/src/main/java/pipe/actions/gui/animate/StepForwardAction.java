@@ -3,8 +3,7 @@ package pipe.actions.gui.animate;
 import pipe.actions.manager.AnimateActionManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.Animator;
-import pipe.views.PipeApplicationView;
+import pipe.gui.GUIAnimator;
 
 import java.awt.event.ActionEvent;
 
@@ -27,7 +26,7 @@ public class StepForwardAction extends AnimateAction {
     public void actionPerformed(ActionEvent event) {
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
 
-        Animator animator = petriNetController.getAnimator();
+        GUIAnimator animator = petriNetController.getAnimator();
         animator.stepForward();
 
         animateActionManager.setStepForward(animator.isStepForwardAllowed());

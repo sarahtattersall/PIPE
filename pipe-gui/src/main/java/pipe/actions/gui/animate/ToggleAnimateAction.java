@@ -3,7 +3,7 @@ package pipe.actions.gui.animate;
 import pipe.actions.gui.create.NoopAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.Animator;
+import pipe.gui.GUIAnimator;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.AbstractPetriNetViewComponent;
 
@@ -41,7 +41,7 @@ public class ToggleAnimateAction extends AnimateAction {
 
         noopAction.actionPerformed(null);
 
-        Animator animator = petriNetController.getAnimator();
+        GUIAnimator animator = petriNetController.getAnimator();
         if (animated) {
             animator.startAnimation();
             AbstractPetriNetViewComponent.ignoreSelection(false);

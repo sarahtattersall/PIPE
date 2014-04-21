@@ -1,13 +1,11 @@
 package pipe.controllers;
 
-import pipe.actions.manager.SimpleUndoListener;
+import pipe.animation.PetriNetAnimator;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
-import pipe.io.PetriNetIOImpl;
-import pipe.io.PetriNetReader;
 import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
@@ -18,21 +16,17 @@ import pipe.models.component.transition.Transition;
 import pipe.models.manager.PetriNetManager;
 import pipe.models.manager.PetriNetManagerImpl;
 import pipe.models.petrinet.PetriNet;
-import pipe.models.petrinet.name.NormalPetriNetName;
 import pipe.models.petrinet.name.PetriNetFileName;
 import pipe.models.petrinet.name.PetriNetName;
 import pipe.naming.PetriNetNamer;
 import pipe.parsers.UnparsableException;
 import pipe.views.PipeApplicationView;
 import pipe.views.changeListener.PetriNetChangeListener;
-import pipe.views.changeListener.TokenChangeListener;
 
 import javax.swing.event.UndoableEditListener;
-import javax.swing.text.BadLocationException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -112,7 +106,7 @@ public class PipeApplicationController {
     public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener, PropertyChangeListener zoomListener) {
         AnimationHistory animationHistory = new AnimationHistory();
         animationHistory.addObserver(historyObserver);
-        Animator animator = new Animator(net, animationHistory);
+        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory);
 
         CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net);
 

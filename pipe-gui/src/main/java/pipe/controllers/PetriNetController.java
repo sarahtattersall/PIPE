@@ -84,7 +84,7 @@ public class PetriNetController implements IController, Serializable {
     /**
      * Animator class for animating tokens in the petri net
      */
-    private Animator animator;
+    private GUIAnimator animator;
 
 
     /**
@@ -105,7 +105,7 @@ public class PetriNetController implements IController, Serializable {
      */
     private boolean animateMode = false;
 
-    public PetriNetController(PetriNet model, UndoableEditListener undoListener, Animator animator,
+    public PetriNetController(PetriNet model, UndoableEditListener undoListener, GUIAnimator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController,
                               PetriNetTab petriNetTab) {
         petriNet = model;
@@ -374,7 +374,7 @@ public class PetriNetController implements IController, Serializable {
         return selectedToken;
     }
 
-    public Animator getAnimator() {
+    public GUIAnimator getAnimator() {
         return animator;
     }
 

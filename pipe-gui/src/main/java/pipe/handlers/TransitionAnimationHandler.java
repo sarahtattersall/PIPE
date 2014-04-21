@@ -2,9 +2,8 @@ package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.Animator;
+import pipe.gui.GUIAnimator;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
 import pipe.models.component.transition.Transition;
 import pipe.views.PipeApplicationView;
 
@@ -31,7 +30,7 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
         if (petriNetController.isInAnimationMode() && SwingUtilities.isLeftMouseButton(e) && (transition.isEnabled())) {
             PipeApplicationController controller = ApplicationSettings.getApplicationController();
             PetriNetController petriNetController = controller.getActivePetriNetController();
-            Animator animator = petriNetController.getAnimator();
+            GUIAnimator animator = petriNetController.getAnimator();
             animator.fireTransition(transition);
 
             //TODO: REMOVE APPLICATION SETTINGS.....

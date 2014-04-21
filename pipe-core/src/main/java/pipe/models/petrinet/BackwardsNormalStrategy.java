@@ -9,7 +9,7 @@ import pipe.models.component.transition.Transition;
 /**
  * Backwards strategy is for normal arcs that map Places -> Transitions
  */
-class BackwardsNormalStrategy implements ArcStrategy<Place, Transition> {
+public class BackwardsNormalStrategy implements ArcStrategy<Place, Transition> {
 
 
     @Override

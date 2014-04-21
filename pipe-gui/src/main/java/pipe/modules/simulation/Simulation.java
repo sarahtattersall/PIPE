@@ -245,7 +245,8 @@ public class Simulation extends SwingWorker
             {
                 System.out.println("Firing " + j + " now");
                 //Fire a random transition
-                Transition fired = petriNetView.getModel().getRandomTransition();
+//                Transition fired = petriNetView.getModel().getRandomTransition();
+                Transition fired = null;
                 if(fired == null)
                 {
                     ApplicationSettings.getApplicationView().getStatusBar().changeText(
@@ -255,7 +256,7 @@ public class Simulation extends SwingWorker
                 else
                 {
                     //data.createCurrentMarkingVector();
-                    petriNetView.getModel().fireTransition(fired); //NOU-PERE
+//                    petriNetView.getModel().fireTransition(fired); //NOU-PERE
                     //Get the new marking from the _dataLayer object
                     markings = petriNetView.getCurrentMarkingVector();
                     marking = new int[length];

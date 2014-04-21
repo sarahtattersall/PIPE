@@ -1,43 +1,32 @@
 package pipe.gui;
 
+import pipe.animation.Animator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.PetriNet;
-import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
  * This class is used to process clicks by the user to manually step
  * through enabled transitions in the net.
  */
-public class Animator {
+public class GUIAnimator {
 
     private final Timer timer = new Timer(0, new TimedTransitionActionListener());
 
-    private final PetriNet petriNet;
+    private final Animator animator;
 
     private final AnimationHistory animationHistory;
 
-    /**
-     * Map of place id -> token count
-     * used to restore tokens at end of animation
-     */
-    private final Map<String, Map<Token, Integer>> placeTokens = new HashMap<>();
-
     private int numberSequences = 0;
 
-    public Animator(PetriNet petriNet, AnimationHistory animationHistory) {
-        this.petriNet = petriNet;
+    public GUIAnimator(Animator animator, AnimationHistory animationHistory) {
+        this.animator = animator;
         this.animationHistory = animationHistory;
     }
 
@@ -50,17 +39,13 @@ public class Animator {
      */
     public void startAnimation() {
         saveCurrentTokenState();
-        petriNet.markEnabledTransitions();
     }
 
     /**
      * Saves the current tokens in places
      */
     private void saveCurrentTokenState() {
-        for (Place place : petriNet.getPlaces()) {
-            Map<Token, Integer> savedTokenCounts = new HashMap<Token, Integer>(place.getTokenCounts());
-            placeTokens.put(place.getId(), savedTokenCounts);
-        }
+        animator.saveState();
     }
 
     public void startRandomFiring() {
@@ -93,7 +78,7 @@ public class Animator {
      * Randomly fires one of the enabled transitions.
      */
     public void doRandomFiring() {
-        Transition transition = petriNet.getRandomTransition();
+        Transition transition = animator.getRandomEnabledTransition();
         fireTransition(transition);
     }
 
@@ -107,7 +92,7 @@ public class Animator {
     public void fireTransition(Transition transition) {
         animationHistory.clearStepsForward();
         animationHistory.addHistoryItem(transition);
-        petriNet.fireTransition(transition);
+        animator.fireTransition(transition);
     }
 
     /**
@@ -117,7 +102,7 @@ public class Animator {
         if (animationHistory.isStepBackAllowed()) {
             Transition transition = animationHistory.getCurrentTransition();
             animationHistory.stepBackwards();
-            petriNet.fireTransitionBackwards(transition);
+            animator.fireTransitionBackwards(transition);
 
         }
     }
@@ -129,7 +114,7 @@ public class Animator {
         if (isStepForwardAllowed()) {
             int nextPosition = animationHistory.getCurrentPosition() + 1;
             Transition transition = animationHistory.getTransition(nextPosition);
-            petriNet.fireTransition(transition);
+            animator.fireTransition(transition);
             animationHistory.stepForward();
         }
     }
@@ -149,17 +134,13 @@ public class Animator {
     public void finish() {
         restoreModel();
         animationHistory.clear();
-        placeTokens.clear();
     }
 
     /**
      * Restores all places to their original token counts.
      */
     private void restoreModel() {
-        for (Place place : petriNet.getPlaces()) {
-            Map<Token, Integer> originalTokens = placeTokens.get(place.getId());
-            place.setTokenCounts(originalTokens);
-        }
+        animator.reset();
     }
 
     private class TimedTransitionActionListener implements ActionListener {

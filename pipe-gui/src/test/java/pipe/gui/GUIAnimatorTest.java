@@ -2,33 +2,30 @@ package pipe.gui;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import pipe.animation.Animator;
 import pipe.historyActions.AnimationHistory;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.PetriNet;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
-public class AnimatorTest {
+@RunWith(MockitoJUnitRunner.class)
+public class GUIAnimatorTest {
 
-    private Animator animator;
+    private GUIAnimator animator;
 
+    @Mock
     private AnimationHistory mockHistory;
 
-    private PetriNet mockPetriNet;
+    @Mock
+    private Animator mockAnimator;
 
     @Before
     public void setUp() {
-        mockHistory = mock(AnimationHistory.class);
-        mockPetriNet = mock(PetriNet.class);
-        animator = new Animator(mockPetriNet, mockHistory);
+        animator = new GUIAnimator(mockAnimator, mockHistory);
     }
 
     @Test
@@ -39,7 +36,7 @@ public class AnimatorTest {
         InOrder inOrder = inOrder(mockHistory);
         inOrder.verify(mockHistory, times(1)).clearStepsForward();
         inOrder.verify(mockHistory, times(1)).addHistoryItem(transition);
-        verify(mockPetriNet).fireTransition(transition);
+        verify(mockAnimator).fireTransition(transition);
     }
 
     @Test
@@ -50,7 +47,7 @@ public class AnimatorTest {
         when(mockHistory.getTransition(2)).thenReturn(transition);
 
         animator.stepForward();
-        verify(mockPetriNet).fireTransition(transition);
+        verify(mockAnimator).fireTransition(transition);
         verify(mockHistory).stepForward();
     }
 
@@ -62,7 +59,7 @@ public class AnimatorTest {
         when(mockHistory.getTransition(2)).thenReturn(transition);
 
         animator.stepForward();
-        verify(mockPetriNet, never()).fireTransition(transition);
+        verify(mockAnimator, never()).fireTransition(transition);
         verify(mockHistory, never()).stepForward();
     }
 
@@ -73,7 +70,7 @@ public class AnimatorTest {
         when(mockHistory.getCurrentTransition()).thenReturn(transition);
 
         animator.stepBack();
-        verify(mockPetriNet).fireTransitionBackwards(transition);
+        verify(mockAnimator).fireTransitionBackwards(transition);
         verify(mockHistory).stepBackwards();
     }
 
@@ -84,14 +81,14 @@ public class AnimatorTest {
         when(mockHistory.getCurrentTransition()).thenReturn(transition);
 
         animator.stepForward();
-        verify(mockPetriNet, never()).fireTransitionBackwards(transition);
+        verify(mockAnimator, never()).fireTransitionBackwards(transition);
         verify(mockHistory, never()).stepBackwards();
     }
 
     @Test
     public void doRandomFiringClearsForwardsThenAddsToHistory() {
         Transition transition = mock(Transition.class);
-        when(mockPetriNet.getRandomTransition()).thenReturn(transition);
+        when(mockAnimator.getRandomEnabledTransition()).thenReturn(transition);
         animator.doRandomFiring();
         InOrder inOrder = inOrder(mockHistory);
         inOrder.verify(mockHistory, times(1)).clearStepsForward();
@@ -101,27 +98,16 @@ public class AnimatorTest {
     @Test
     public void doRandomFiringFiresPetriNet() {
         Transition transition = mock(Transition.class);
-        when(mockPetriNet.getRandomTransition()).thenReturn(transition);
+        when(mockAnimator.getRandomEnabledTransition()).thenReturn(transition);
         animator.doRandomFiring();
-        verify(mockPetriNet).fireTransition(transition);
+        verify(mockAnimator).fireTransition(transition);
     }
 
     @Test
     public void restoresOriginalTokensWhenFinished() {
-        Place mockPlace = mock(Place.class);
-        Collection<Place> places = new LinkedList<Place>();
-        places.add(mockPlace);
-
-        Token token = mock(Token.class);
-        Map<Token, Integer> tokens = new HashMap<Token, Integer>();
-        tokens.put(token, 5);
-
-        when(mockPlace.getTokenCounts()).thenReturn(tokens);
-        when(mockPetriNet.getPlaces()).thenReturn(places);
-
         animator.startAnimation();
         animator.finish();
 
-        verify(mockPlace).setTokenCounts(tokens);
+        verify(mockAnimator).reset();
     }
 }

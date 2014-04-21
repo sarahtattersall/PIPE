@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.Animator;
+import pipe.gui.GUIAnimator;
 import pipe.gui.model.PipeApplicationModel;
 
 import static org.mockito.Mockito.verify;
@@ -29,7 +29,7 @@ public class ToggleAnimateActionTest {
     private PipeApplicationModel model;
 
     @Mock
-    private Animator animator;
+    private GUIAnimator animator;
 
     @Before
     public void setUp() {
