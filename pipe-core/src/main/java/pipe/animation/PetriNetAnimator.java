@@ -192,11 +192,21 @@ public class PetriNetAnimator implements Animator {
 
     /**
      *
+     * Creates a map of new values for Places whose token counts change by first
+     * calculating the decremented token counts and then calculating the incremented
+     * token counts.
+     *
+     * We cannot set the token counts in the decrement phase incase an incrememnt
+     * depends on this value.
+     *
+     * E.g. if P0 -> T0 -> P1 and T0 -> P1 has a weight of #(P0) then we expect
+     * #(P0) to refer to the number of tokens before firing.
+     *
+     *
      * @param transition
-     * @param initialState
      * @return Map of places whose token counts differ from those in the initial state
      */
-    public Map<Place, Map<Token, Integer>> getFiredState(Transition transition, Map<Place, Map<Token, Integer>> initialState) {
+    private Map<Place, Map<Token, Integer>> getFiredState(Transition transition) {
         Map<Place, Map<Token, Integer>> placeTokenCounts = new HashMap<>();
         Set<Transition> enabled = getEnabledTransitions();
         if (enabled.contains(transition)) {
@@ -207,7 +217,7 @@ public class PetriNetAnimator implements Animator {
                 placeTokenCounts.put(place, tokenCounts);
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = petriNet.getBackwardsIncidenceMatrix(token);
-                    int currentCount = getTokenCount(initialState, place, token);
+                    int currentCount = place.getTokenCount(token);
                     int newCount = currentCount - matrix.get(place, transition);
                     tokenCounts.put(token, newCount);
                 }
@@ -216,11 +226,21 @@ public class PetriNetAnimator implements Animator {
             //Increment new places
             for (Arc<Transition, Place> arc : petriNet.outboundArcs(transition)) {
                 Place place = arc.getTarget();
-                Map<Token, Integer> tokenCounts = new HashMap<>();
-                placeTokenCounts.put(place, tokenCounts);
+                Map<Token, Integer> tokenCounts;
+                if (placeTokenCounts.containsKey(place)) {
+                    tokenCounts = placeTokenCounts.get(place);
+                } else {
+                    tokenCounts = new HashMap<>();
+                    placeTokenCounts.put(place, tokenCounts);
+                }
                 for (Token token : arc.getTokenWeights().keySet()) {
                     IncidenceMatrix matrix = petriNet.getForwardsIncidenceMatrix(token);
-                    int currentCount = getTokenCount(initialState, place, token);
+                    int currentCount;
+                    if (tokenCounts.containsKey(token)) {
+                        currentCount = tokenCounts.get(token);
+                    } else {
+                        currentCount = place.getTokenCount(token);
+                    }
                     int newCount = currentCount + matrix.get(place, transition);
                     tokenCounts.put(token, newCount);
                 }
@@ -229,34 +249,9 @@ public class PetriNetAnimator implements Animator {
         return placeTokenCounts;
     }
 
-    /**
-     * Auxillary method used to extract token counts from a map
-     *
-     * If a Place does not have any tokens of a particular type in it then the entry
-     * will not be in the map. Therefore this method returns 0 for the token count
-     * if it is not contained in the map
-     *
-     * @param placeTokens
-     * @param place
-     * @param token
-     * @return
-     */
-    private int getTokenCount(Map<Place, Map<Token, Integer>> placeTokens, Place place, Token token) {
-        if (placeTokens.get(place).containsKey(token)){
-            return placeTokens.get(place).get(token);
-        }
-        return 0;
-    }
-
-
     @Override
     public void fireTransition(Transition transition) {
-
-        Map<Place, Map<Token, Integer>> initialTokenCounts = new HashMap<>();
-        for (Place place : petriNet.getPlaces()) {
-            initialTokenCounts.put(place, new HashMap<>(place.getTokenCounts()));
-        }
-        Map<Place, Map<Token, Integer>> updatedPlaces = getFiredState(transition, initialTokenCounts);
+        Map<Place, Map<Token, Integer>> updatedPlaces = getFiredState(transition);
 
         //Set all counts
         for (Map.Entry<Place, Map<Token, Integer>> entry : updatedPlaces.entrySet()) {

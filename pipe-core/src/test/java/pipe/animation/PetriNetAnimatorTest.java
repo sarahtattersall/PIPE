@@ -192,7 +192,7 @@ public class PetriNetAnimatorTest {
 
     @Test
     public void correctlyEnablesTransitionIfSelfLoop() throws PetriNetComponentNotFoundException {
-        PetriNet petriNet = createSelfLoopPetriNet(1);
+        PetriNet petriNet = createSelfLoopPetriNet("1");
         Place place = petriNet.getComponent("P0", Place.class);
         Token token = petriNet.getComponent("Default", Token.class);
         place.setTokenCount(token, 1);
@@ -202,6 +202,20 @@ public class PetriNetAnimatorTest {
         Transition transition = petriNet.getComponent("T1", Transition.class);
         Collection<Transition> enabled = animator.getEnabledTransitions();
         assertThat(enabled).containsExactly(transition);
+    }
+
+    @Test
+    public void correctlyIncrementsTokenCountInSelfLoop() throws PetriNetComponentNotFoundException {
+        PetriNet petriNet = createSelfLoopPetriNet("1");
+        Place place = petriNet.getComponent("P0", Place.class);
+        Token token = petriNet.getComponent("Default", Token.class);
+        place.setTokenCount(token, 1);
+        place.setCapacity(1);
+
+        Animator animator = new PetriNetAnimator(petriNet);
+        Transition transition = petriNet.getComponent("T1", Transition.class);
+        animator.fireTransition(transition);
+        assertEquals(1, place.getTokenCount(token));
     }
 
 
@@ -282,12 +296,11 @@ public class PetriNetAnimatorTest {
 
 
 
-    private PetriNet createSelfLoopPetriNet(int tokenWeight) {
+    private PetriNet createSelfLoopPetriNet(String tokenWeight) {
         return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0")).and(
                 ATransition.withId("T1")).and(
-                ANormalArc.withSource("T1").andTarget("P0").with(Integer.toString(tokenWeight),
-                        "Default").tokens()).andFinally(
-                ANormalArc.withSource("P0").andTarget("T1").with(Integer.toString(tokenWeight), "Default").tokens());
+                ANormalArc.withSource("T1").andTarget("P0").with(tokenWeight, "Default").tokens()).andFinally(
+                ANormalArc.withSource("P0").andTarget("T1").with(tokenWeight, "Default").tokens());
     }
 
     @Test
