@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pnml>
+   <net>
+      <token id="Red" red="255" green="0" blue="0"/>
+      <place id="P0">
+         <graphics>
+            <position x="255.0" y="240.0"/>
+         </graphics>
+         <name>
+            <value>P0</value>
+            <graphics>
+               <offset x="5.0" y="26.0"/>
+            </graphics>
+         </name>
+         <capacity>
+            <value>0</value>
+         </capacity>
+         <initialMarking>
+            <graphics>
+               <offset x="0.0" y="0.0"/>
+            </graphics>
+            <value>Red,1</value>
+         </initialMarking>
+      </place>
+   </net>
+</pnml>
+

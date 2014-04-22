@@ -1,6 +1,7 @@
-# PIPE 2 #
+# PIPE 2  [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=master)](https://travis-ci.org/sarahtattersall/PIPE)
 
-A tool for creating and analysing Petri nets, migrated from http://pipe2.sourceforge.net/about.html
+
+A tool for creating and analysing Petri nets, migrated from [Sourceforge](http://pipe2.sourceforge.net/about.html). A user-guide can be found [here](http://sarahtattersall.github.io/PIPE/) for how to use PIPE's features.
 
 ## About ##
 PIPE2 is an open source, platform independent tool for creating and analysing Petri nets including 
@@ -23,40 +24,6 @@ code efficiency improvements and added zoom to the GUI and reachability graph ge
 
 
 ## Installation ##
-### Once only ###
-PIPEv4.3.0 makes use of Maven as a dependency manager and build system. Currently it makes use of a few
-internal libraries located in ```src/libs```. To install these for use with Maven there is a Python script 
-```mvn_libs/add_maven_dependencies.py``` to install these to your Maven local repository. It takes one command line
-argument which is the path to the ```jar``` files.
-It makes use of the libs declared in ```mvn_libs/internal_libs.json``` which is a JSON object of the format:
-
-    {
-        ...
-    	<jar_basename> : {
-    		"artifactId" : <artifact_name>,
-    		"version" : <version_number>
-    	},
-    	...
-    }
-
-For example
-
-    {
-    	"Jama-1.0.2" : {
-    		"artifactId" : "jama",
-    		"version" : "1.0.2"
-    	},
-    	...
-    }
-    
-If you add any other internal ```jar``` files. Make sure they follow the same format as this.
-To run this script execute the following:
-
-    $ cd mvn_libs
-    $ python add_maven_dependencies.py  ../src/lib/
-    
-
-    
 ### Build jar ###
 To build the ```jar``` library execute the following from within the PIPE root directory:
 
@@ -66,7 +33,28 @@ Once finished you should see the file ```target/PIPE-4.3.0.jar```.
 
 
 ### Execution ###
-In order to run PIPE tool execute the following from within the PIPE root directory:
+In order to run the PIPE GUI execute the following commands from within the PIPE root directory:
+   
+    $ mvn install
+    $ mvn exec:exec -pl pipe-gui
+    
+### Note: local libs ###
+There are some internal libraries, which need to be found for maven. For the mean time they are located in the project under ``src/local-libs`` and this directory is treated as a local library. When installing expect the following warning:
 
-    $ mvn exec:java
+	[WARNING] The POM for internal:XXX is missing, no dependency information available
+	
+The original method for these local libraries required running a Python script to install the local libraries using ``mvn install``, however this new method removes the need for a pre-install stp).
 
+If you know of a better way to do this, please raise it in the issues section.
+
+
+## Contributing ##
+
+Just follow the following recommended process:
+
+- Fork it
+- Create your feature branch (`git checkout -b my-new-feature`)
+- Ensure your new code is tested thoroughly
+- Commit your changes (`git commit -am 'Add some feature'`)
+- Push to the branch (`git push origin my-new-feature`)
+- Create new Pull Request

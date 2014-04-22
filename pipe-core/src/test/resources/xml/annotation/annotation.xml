@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pnml>
+   <net>
+      <labels border="false" x="93" y="145" width="48" height="20">
+         <text>#P12s</text>
+      </labels>
+   </net>
+</pnml>

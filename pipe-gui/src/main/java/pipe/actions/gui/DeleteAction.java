@@ -1,0 +1,34 @@
+package pipe.actions.gui;
+
+import pipe.actions.gui.GuiAction;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.PipeApplicationController;
+import pipe.exceptions.PetriNetComponentException;
+import pipe.historyActions.MultipleEdit;
+import pipe.utilities.gui.GuiUtils;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+public class DeleteAction extends GuiAction
+{
+
+    private final PipeApplicationController pipeApplicationController;
+
+    public DeleteAction(PipeApplicationController pipeApplicationController)
+    {
+        super("Delete", "Delete selection (delete)", KeyEvent.VK_DELETE, 0);
+        this.pipeApplicationController = pipeApplicationController;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event)
+    {
+        PetriNetController petriNetController =  pipeApplicationController.getActivePetriNetController();
+        try {
+            registerUndoEvent(new MultipleEdit(petriNetController.deleteSelection()));
+        } catch (PetriNetComponentException e) {
+            GuiUtils.displayErrorMessage(null, e.getMessage());
+        }
+    }
+}

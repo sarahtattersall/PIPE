@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<pnml>
+    <net id="Net-One" type="P/T net">
+        <stategroup id="SG0">
+            <name>
+                <value>SG0Name</value>
+            </name>
+            <statecondition>
+                <value>P0 > 4</value>
+            </statecondition>
+        </stategroup>
+    </net>
+</pnml>
