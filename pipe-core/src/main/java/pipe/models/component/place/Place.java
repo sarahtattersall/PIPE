@@ -109,7 +109,7 @@ public class Place extends Connectable {
             }
         }
         Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
-        this.tokenCounts = tokenCounts;
+        this.tokenCounts = new HashMap<>(tokenCounts);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 

@@ -206,6 +206,7 @@ public class PetriNetAnimator implements Animator {
      * @param transition
      * @return Map of places whose token counts differ from those in the initial state
      */
+    //TODO: This method is a bit too long
     private Map<Place, Map<Token, Integer>> getFiredState(Transition transition) {
         Map<Place, Map<Token, Integer>> placeTokenCounts = new HashMap<>();
         Set<Transition> enabled = getEnabledTransitions();
