@@ -22,6 +22,14 @@ public class HashedState implements State {
         return tokenCounts.get(id);
     }
 
+    /**
+     *
+     * Creates a string representation of the state. It is in the format:
+     * {P0: 1, P1: 2, P3: 1, P4: 5}
+     * and represents the number of tokens stored in the state
+     *
+     * @return String representation of the state.
+     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

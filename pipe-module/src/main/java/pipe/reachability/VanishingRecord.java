@@ -3,13 +3,20 @@ package pipe.reachability;
 import java.util.Map;
 
 /**
- * Wraps {@link pipe.reachability.HashedState} providing additional
- * functionality to provide vanishing state rates
+ * Record containing a vanishing state and the rate into it.
+ * USed for the Reachability algorithm to perform on the fly
+ * elimination of vanishing states.
  */
 public class VanishingRecord {
 
+    /**
+     * Vanishing state
+     */
     private final State state;
 
+    /**
+     * Rate into the state
+     */
     private final double rate;
 
     public VanishingRecord(Map<String, Integer> tokens, double rate) {
@@ -21,10 +28,18 @@ public class VanishingRecord {
         this.rate = rate;
     }
 
+    /**
+     *
+     * @return rate into the vanishing state
+     */
     public double getRate() {
         return rate;
     }
 
+    /**
+     *
+     * @return vanishing state rate
+     */
     public State getState() {
         return state;
     }

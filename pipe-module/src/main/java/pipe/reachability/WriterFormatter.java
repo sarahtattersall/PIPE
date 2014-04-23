@@ -16,6 +16,12 @@ public interface WriterFormatter {
      */
     String format(State state, State successor, double rate);
 
+
+    /**
+     * Read the line from file (which was generated using the method format) into a Record
+     * @param line
+     * @return Record of state transition. I.e. from state to successor with a given rate
+     */
     Record read(String line);
 
 
