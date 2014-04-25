@@ -280,7 +280,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     private void doOK() {
 
         Map<Token, Integer> newTokenValues = getNewTokenValues();
-        if (canSetCapacity() && canSetNameValue() && !newTokenValues.isEmpty()) {
+        if (canSetCapacity() && canSetNameValue()) {
 
             placeController.startMultipleEdits();
             int newCapacity = (Integer) capacitySpinner.getValue();
