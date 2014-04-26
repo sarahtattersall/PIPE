@@ -13,7 +13,7 @@ import pipe.parsers.PetriNetWeightParser;
 import pipe.visitor.ClonePetriNet;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -23,11 +23,10 @@ import java.util.*;
  * A tangible state is one in which:
  * a) Has no enabled transitions
  * b) Has entirely timed transitions leaving it
- *
+ * <p/>
  * A vanishing state is therefore one where there are immediate enabled transitions out of it. It can be eliminated
  * because no amount time is spent in this state (since there is an immediate transition out of it). This optimisation
  * reduces the memory needed to store the state space.
- *
  */
 public class Reachability {
 
@@ -63,6 +62,8 @@ public class Reachability {
      */
     private final Animator animator;
 
+    Queue<State> tangibleQueue = new ArrayDeque<>();
+
     private Set<State> explored = new HashSet<>();
 
 
@@ -80,34 +81,35 @@ public class Reachability {
      *
      * @param writer writer in which to write the output to
      */
-    public void generate(Writer writer) {
+    public void generate(OutputStream writer) {
+        tangibleQueue.clear();
+        explored.clear();
         State initialState = createState();
-        Deque<State> tangibleStack = new ArrayDeque<>();
-        exploreInitialState(initialState, tangibleStack);
-        stateSpaceExploration(tangibleStack, writer);
+        exploreInitialState(initialState);
+        stateSpaceExploration(writer);
     }
 
     /**
-     * Performs state space exploration of the tangibleStack
+     * Performs state space exploration of the tangibleQueue
      * popping a state off the stack and exploring all its successors.
      * <p/>
      * It records the reachability graph into the writer
      *
-     * @param tangibleStack stack containing tangible states to explore
      * @param writer        in which to record the reachability graph
      */
-    private void stateSpaceExploration(Deque<State> tangibleStack, Writer writer) {
-        while (!tangibleStack.isEmpty()) {
-            State state = tangibleStack.pop();
+    private void stateSpaceExploration(OutputStream writer) {
+        while (!tangibleQueue.isEmpty()) {
+            State state = tangibleQueue.poll();
             for (State successor : getSuccessors(state)) {
+                double rate = rate(state, successor);
                 if (isTangible(successor)) {
-                    transition(state, successor, rate(state, successor), writer);
+                    transition(state, successor, rate , writer);
                     if (!explored.contains(successor)) {
-                        tangibleStack.push(successor);
+                        tangibleQueue.add(successor);
                         markAsExplored(successor);
                     }
                 } else {
-                    exploreVanishingStates(successor, tangibleStack, true, null);
+                    exploreVanishingStates(successor, rate, new SaveStateTangibleAction(writer, state));
                 }
             }
         }
@@ -118,8 +120,8 @@ public class Reachability {
      * It does this by calculating the transitions that are enabled at the given state,
      * the transitions that can be reached from that state and performs the intersection of the two.
      * <p/>
-     * It then sums the firing rates of this interesection and divides by the sum of the firing rates
-     * of the enabeld transition
+     * It then sums the firing rates of this intersection and divides by the sum of the firing rates
+     * of the enabled transition
      */
     private double rate(State state, State successor) {
         Collection<Transition> transitionsToSuccessor = getTransitions(state, successor);
@@ -127,22 +129,21 @@ public class Reachability {
     }
 
     /**
-     * Populates tangibleStack with all starting tangible states.
+     * Populates tangibleQueue with all starting tangible states.
      * <p/>
      * In the case that initialState is tangible then this is just
      * added to the queue.
      * <p/>
      * Otherwise it must sort through vanishing states
      *
-     * @param initialState  starting state of the algorithm
-     * @param tangibleStack queue to populate with tangible states
+     * @param initialState starting state of the algorithm
      */
-    private void exploreInitialState(State initialState, Deque<State> tangibleStack) {
+    private void exploreInitialState(State initialState) {
         if (isTangible(initialState)) {
-            tangibleStack.push(initialState);
+            tangibleQueue.add(initialState);
             markAsExplored(initialState);
         } else {
-            exploreVanishingStates(initialState, tangibleStack, false, null);
+            exploreVanishingStates(initialState, 1.0, new PerformInitialTangibleAction());
         }
 
     }
@@ -162,28 +163,20 @@ public class Reachability {
      * been made to eliminate a cluster of states/
      *
      * @param state              state to explore from
-     * @param tangibleStack      queue of states to add found tangible states to
-     * @param registerTransition if this is set to true, state transitions are registered
-     * @param writer
+     * @param rate
+     * @param performTangibleAction action performed when finding a tangible state
      */
     //TODO: TIMELESS TRAP ELIMINATION
-    private void exploreVanishingStates(State state, Deque<State> tangibleStack, boolean registerTransition,
-                                        Writer writer) {
+    private void exploreVanishingStates(State state, double rate, PerformTangibleAction performTangibleAction) {
         Deque<VanishingRecord> vanishingStack = new ArrayDeque<>();
-        vanishingStack.push(new VanishingRecord(state, 1.0));
+        vanishingStack.push(new VanishingRecord(state, rate));
         int iterations = 0;
         while (!vanishingStack.isEmpty() && iterations < ALLOWED_ITERATIONS) {
             VanishingRecord record = vanishingStack.pop();
             for (State successor : getSuccessors(record.getState())) {
                 double successorRate = record.getRate() * probability(record.getState(), successor);
                 if (isTangible(successor)) {
-                    if (!explored.contains(successor)) {
-                        tangibleStack.push(successor);
-                        markAsExplored(successor);
-                    }
-                    if (registerTransition) {
-                        transition(state, successor, successorRate, writer);
-                    }
+                    performTangibleAction.performAction(successor, successorRate);
                 } else {
                     if (successorRate > EPSILON) {
                         vanishingStack.push(new VanishingRecord(successor, successorRate));
@@ -198,9 +191,9 @@ public class Reachability {
         }
     }
 
-    private void transition(State state, State successor, double successorRate, Writer writer) {
+    private void transition(State state, State successor, double successorRate, OutputStream writer) {
         try {
-            writer.write(formatter.format(state, successor, successorRate));
+            formatter.write(state, successor, successorRate, writer);
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -241,30 +234,27 @@ public class Reachability {
     }
 
     /**
-     *
      * Calculates the set of transitions that will take you from one state to the successor.
-     *
+     * <p/>
      * To perform this calculation the petri net is adjusted to match that of the given state.
      * All enabled transitions are then explored in the following manner:
      * 1) Assume the transition is part of the result
      * 2) Explore all outgoing arcs from, looking at the place they connect to.
      * 3) If at any point the place does not contain the same number of tokens as the successor state
-     *    then remove it from the result
+     * then remove it from the result
      * 4) Only the transitions that lead to the successor state will remain in the result
-     *
+     * <p/>
      * This could benefit from memoization.
      *
-     *
-     * @param state initial state
+     * @param state     initial state
      * @param successor successor state, must be directly reachable from the state
      * @return enabled transitions that take you from state to successor, if it is not directly reachable then
-     *         an empty Collection will be returned
+     * an empty Collection will be returned
      */
     private Collection<Transition> getTransitions(State state, State successor) {
         setState(state);
 
-        IncidenceMatrix forwardsIncidenceMatrix =
-                petriNet.getForwardsIncidenceMatrix(token);
+        IncidenceMatrix forwardsIncidenceMatrix = petriNet.getForwardsIncidenceMatrix(token);
         IncidenceMatrix backwardsIncidenceMatrix = petriNet.getBackwardsIncidenceMatrix(token);
 
         Collection<Transition> stateEnabledTransitions = animator.getEnabledTransitions();
@@ -290,7 +280,6 @@ public class Reachability {
 
 
     /**
-     *
      * Calculates successor states of the given state
      *
      * @param state current state
@@ -366,6 +355,59 @@ public class Reachability {
             }
         }
         return enabledTransitions.isEmpty() || (anyTimed && !anyImmediate);
+    }
+
+    /**
+     * Performs action on finding that a successor state is tangible
+     */
+    private static interface PerformTangibleAction {
+        void performAction(State successor, double successorRate);
+    }
+
+    /**
+     * Adds the successor to the tangible queue for exploration
+     */
+    private class PerformInitialTangibleAction implements PerformTangibleAction {
+
+        @Override
+        public void performAction(State successor, double successorRate) {
+            if (!explored.contains(successor)) {
+                tangibleQueue.add(successor);
+                markAsExplored(successor);
+            }
+        }
+    }
+
+    /**
+     * Wraps {@link pipe.reachability.Reachability.PerformInitialTangibleAction} saving the state out
+     * to a writer
+     */
+    private class SaveStateTangibleAction implements PerformTangibleAction {
+        /**
+         * Writer to write results to
+         */
+        private final OutputStream writer;
+
+        /**
+         * Tangible state that a transition occurs from
+         */
+        private final State state;
+
+        /**
+         * Wraps the initial action
+         */
+        PerformInitialTangibleAction action = new PerformInitialTangibleAction();
+
+        private SaveStateTangibleAction(OutputStream writer, State state) {
+            this.writer = writer;
+            this.state = state;
+        }
+
+        @Override
+        public void performAction(State successor, double successorRate) {
+            action.performAction(successor, successorRate);
+            transition(state, successor, successorRate, writer);
+        }
     }
 
 

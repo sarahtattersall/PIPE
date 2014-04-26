@@ -1,5 +1,7 @@
 package pipe.reachability;
 
+import java.io.Serializable;
+
 /**
  * Represents a state of the Petri net in a reachability graph
  * For each place it will contain the number of tokens stored
@@ -14,7 +16,7 @@ package pipe.reachability;
  * Then the state will be as follows:
  * (1, 2, 3, 1, 0)
  */
-public interface State {
+public interface State extends Serializable {
     /**
      *
      * @param id Place id

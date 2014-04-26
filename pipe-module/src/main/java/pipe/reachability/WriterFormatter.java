@@ -1,6 +1,8 @@
 package pipe.reachability;
 
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Contains the format in which to write States out to a file
@@ -8,34 +10,33 @@ import java.util.Map;
 public interface WriterFormatter {
 
     /**
-     *
-     * @param state
-     * @param successor
-     * @param rate
-     * @return formatted expression
-     */
-    String format(State state, State successor, double rate);
-
-
-    /**
-     * Read the line from file (which was generated using the method format) into a Record
-     * @param line
+     * Read the a record from file (which was generated using the method write) into a Record
      * @return Record of state transition. I.e. from state to successor with a given rate
      */
-    Record read(String line);
+    Record read(InputStream stream) throws IOException;
+
+    /**
+     *
+     * @param state starting state
+     * @param successor state that is transitioned to
+     * @param successorRate rate at which state transitions to successor
+     * @param writer output stream writer
+     * @throws IOException
+     */
+    void write(State state, State successor, double successorRate, OutputStream writer) throws IOException;
 
 
     /**
-     * Record of Reachability graph states
+     * Record of state space exploration
      * Contains state to successor with rate
      */
     class Record {
 
-        public final Map<String, Integer> state;
-        public final Map<String, Integer> successor;
+        public final State state;
+        public final State successor;
         public final double rate;
 
-        public Record(Map<String, Integer> state, Map<String, Integer> successor, double rate) {
+        public Record(State state, State successor, double rate) {
             this.state = state;
             this.successor = successor;
             this.rate = rate;
