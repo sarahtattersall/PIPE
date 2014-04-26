@@ -12,6 +12,12 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
+import pipe.reachability.State.HashedState;
+import pipe.reachability.State.Record;
+import pipe.reachability.State.State;
+import pipe.reachability.algorithm.Reachability;
+import pipe.reachability.formatter.ByteWriterFormatter;
+import pipe.reachability.formatter.WriterFormatter;
 import utils.Utils;
 
 import javax.xml.bind.JAXBException;

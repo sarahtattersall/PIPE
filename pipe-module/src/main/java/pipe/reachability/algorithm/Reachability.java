@@ -1,4 +1,4 @@
-package pipe.reachability;
+package pipe.reachability.algorithm;
 
 import pipe.animation.Animator;
 import pipe.animation.PetriNetAnimator;
@@ -10,6 +10,9 @@ import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.PetriNetWeightParser;
+import pipe.reachability.State.HashedState;
+import pipe.reachability.State.State;
+import pipe.reachability.formatter.WriterFormatter;
 import pipe.visitor.ClonePetriNet;
 
 import java.io.IOException;
@@ -379,7 +382,7 @@ public class Reachability {
     }
 
     /**
-     * Wraps {@link pipe.reachability.Reachability.PerformInitialTangibleAction} saving the state out
+     * Wraps {@link Reachability.PerformInitialTangibleAction} saving the state out
      * to a writer
      */
     private class SaveStateTangibleAction implements PerformTangibleAction {

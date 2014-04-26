@@ -1,4 +1,4 @@
-package pipe.reachability;
+package pipe.reachability.State;
 
 import java.util.HashMap;
 import java.util.Map;

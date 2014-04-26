@@ -1,4 +1,4 @@
-package pipe.reachability;
+package pipe.reachability.State;
 
 /**
  * Record of state space exploration

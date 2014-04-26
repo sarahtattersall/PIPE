@@ -1,4 +1,7 @@
-package pipe.reachability;
+package pipe.reachability.algorithm;
+
+import pipe.reachability.State.HashedState;
+import pipe.reachability.State.State;
 
 import java.util.Map;
 
