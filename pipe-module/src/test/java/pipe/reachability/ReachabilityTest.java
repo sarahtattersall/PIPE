@@ -12,12 +12,14 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
-import pipe.reachability.State.HashedState;
-import pipe.reachability.State.Record;
-import pipe.reachability.State.State;
 import pipe.reachability.algorithm.Reachability;
-import pipe.reachability.formatter.ByteWriterFormatter;
-import pipe.reachability.formatter.WriterFormatter;
+import pipe.reachability.io.ByteWriterFormatter;
+import pipe.reachability.io.MultiTransitionReachabilityReader;
+import pipe.reachability.io.StateTransition;
+import pipe.reachability.io.WriterFormatter;
+import pipe.reachability.state.HashedState;
+import pipe.reachability.state.Record;
+import pipe.reachability.state.State;
 import utils.Utils;
 
 import javax.xml.bind.JAXBException;
@@ -97,8 +99,8 @@ public class ReachabilityTest {
     }
 
     public void verifyOutput(InputStream inputStream, Record... records) throws IOException {
-
-        Map<StateTransition, Double> actualRecords = getTotalRates(inputStream);
+        MultiTransitionReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
+        Map<StateTransition, Double> actualRecords = reader.getTotalRates(inputStream);
         assertEquals(records.length, actualRecords.size());
         for (Record expected : records) {
             Double rate = actualRecords.get(new StateTransition(expected.state, expected.successor));
@@ -119,58 +121,7 @@ public class ReachabilityTest {
         return new Record(state, successor, rate);
     }
 
-    private Map<StateTransition, Double> getTotalRates(InputStream inputStream) throws IOException {
-        Map<StateTransition, Double> result = new HashMap<>();
-        while(inputStream.available() > 0) {
-            Record record = formatter.read(inputStream);
-            StateTransition transition = new StateTransition(record.state, record.successor);
 
-            if (!result.containsKey(transition)) {
-                result.put(transition, .0);
-            }
-            result.put(transition, result.get(transition) + record.rate);
-        }
-        inputStream.close();
-        return result;
-    }
 
-    private class StateTransition {
-        private final State state;
 
-        private StateTransition(State state, State successor) {
-            this.state = state;
-            this.successor = successor;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof StateTransition)) {
-                return false;
-            }
-
-            StateTransition that = (StateTransition) o;
-
-            if (!state.equals(that.state)) {
-                return false;
-            }
-            if (!successor.equals(that.successor)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = state.hashCode();
-            result = 31 * result + successor.hashCode();
-            return result;
-        }
-
-        private final State successor;
-
-    }
 }

@@ -1,7 +1,7 @@
-package pipe.reachability.formatter;
+package pipe.reachability.io;
 
-import pipe.reachability.State.Record;
-import pipe.reachability.State.State;
+import pipe.reachability.state.Record;
+import pipe.reachability.state.State;
 
 import java.io.IOException;
 import java.io.InputStream;

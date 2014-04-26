@@ -2,10 +2,10 @@ package pipe.reachability;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.reachability.State.HashedState;
-import pipe.reachability.State.Record;
-import pipe.reachability.State.State;
-import pipe.reachability.formatter.ByteWriterFormatter;
+import pipe.reachability.state.HashedState;
+import pipe.reachability.state.Record;
+import pipe.reachability.state.State;
+import pipe.reachability.io.ByteWriterFormatter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

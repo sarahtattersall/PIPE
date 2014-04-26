@@ -10,9 +10,9 @@ import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.PetriNetWeightParser;
-import pipe.reachability.State.HashedState;
-import pipe.reachability.State.State;
-import pipe.reachability.formatter.WriterFormatter;
+import pipe.reachability.state.HashedState;
+import pipe.reachability.state.State;
+import pipe.reachability.io.WriterFormatter;
 import pipe.visitor.ClonePetriNet;
 
 import java.io.IOException;
