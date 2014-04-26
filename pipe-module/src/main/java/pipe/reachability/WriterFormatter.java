@@ -26,20 +26,4 @@ public interface WriterFormatter {
     void write(State state, State successor, double successorRate, OutputStream writer) throws IOException;
 
 
-    /**
-     * Record of state space exploration
-     * Contains state to successor with rate
-     */
-    class Record {
-
-        public final State state;
-        public final State successor;
-        public final double rate;
-
-        public Record(State state, State successor, double rate) {
-            this.state = state;
-            this.successor = successor;
-            this.rate = rate;
-        }
-    }
 }

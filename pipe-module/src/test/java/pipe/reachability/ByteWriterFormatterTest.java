@@ -41,7 +41,7 @@ public class ByteWriterFormatterTest {
     public void correctlySerializesAndDeserializes() throws IOException {
         formatter.write(state, successor, rate, stream);
         stream.close();
-        WriterFormatter.Record record = formatter.read(new ByteArrayInputStream(stream.toByteArray()));
+        Record record = formatter.read(new ByteArrayInputStream(stream.toByteArray()));
         assertEquals(state, record.state);
         assertEquals(successor, record.successor);
         assertEquals(rate, record.rate, 0.0001);

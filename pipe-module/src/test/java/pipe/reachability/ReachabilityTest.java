@@ -1,5 +1,7 @@
 package pipe.reachability;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +15,14 @@ import utils.Utils;
 
 import javax.xml.bind.JAXBException;
 import java.awt.Color;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReachabilityTest {
@@ -25,7 +31,7 @@ public class ReachabilityTest {
 
     @Before
     public void setUp() {
-        formatter = new PrettyWriterFormatter();
+        formatter = new ByteWriterFormatter();
         outputStream = new ByteArrayOutputStream();
     }
 
@@ -42,8 +48,8 @@ public class ReachabilityTest {
 
         Reachability reachability = new Reachability(petriNet, token, formatter);
         reachability.generate(outputStream);
-        verifyOutput(outputToInputStream(outputStream), "{P1: 0, P0: 1} to {P1: 1, P0: 0} with rate 1.000000",
-                                                        "{P1: 1, P0: 0} to {P1: 0, P0: 1} with rate 1.000000");
+        verifyOutput(outputToInputStream(outputStream), createRecord("{\"P1\": 0, \"P0\": 1}", "{\"P1\": 1, \"P0\": 0}", 1.0),
+                                                        createRecord("{\"P1\": 1, \"P0\": 0}", "{\"P1\": 0, \"P0\": 1}", 1.0));
     }
 
     @Test
@@ -54,24 +60,33 @@ public class ReachabilityTest {
         Reachability reachability = new Reachability(petriNet, token, formatter);
         reachability.generate(outputStream);
         verifyOutput(outputToInputStream(outputStream),
-                "{3: 0, 2: 0, 1: 1, 7: 0, 6: 0, 5: 0, 4: 0, 8: 0} to {3: 0, 2: 0, 1: 0, 7: 0, 6: 1, 5: 0, 4: 0, 8: 0} with rate 3.000000",
-                "{3: 0, 2: 0, 1: 1, 7: 0, 6: 0, 5: 0, 4: 0, 8: 0} to {3: 0, 2: 0, 1: 0, 7: 0, 6: 0, 5: 1, 4: 0, 8: 0} with rate 3.750000",
-                "{3: 0, 2: 0, 1: 1, 7: 0, 6: 0, 5: 0, 4: 0, 8: 0} to {3: 0, 2: 0, 1: 0, 7: 1, 6: 0, 5: 0, 4: 0, 8: 0} with rate 0.750000",
-                "{3: 0, 2: 0, 1: 1, 7: 0, 6: 0, 5: 0, 4: 0, 8: 0} to {3: 0, 2: 0, 1: 0, 7: 0, 6: 0, 5: 0, 4: 0, 8: 1} with rate 0.500000");
+                createRecord("{\"3\": 0, \"2\": 0, \"1\": 1, \"7\": 0, \"6\": 0, \"5\": 0, \"4\": 0, \"8\": 0}", "{\"3\": 0, \"2\": 0, \"1\": 0, \"7\": 0, \"6\": 1, \"5\": 0, \"4\": 0, \"8\": 0}", 3.00),
+                createRecord("{\"3\": 0, \"2\": 0, \"1\": 1, \"7\": 0, \"6\": 0, \"5\": 0, \"4\": 0, \"8\": 0}", "{\"3\": 0, \"2\": 0, \"1\": 0, \"7\": 0, \"6\": 0, \"5\": 1, \"4\": 0, \"8\": 0}", 3.75),
+                createRecord("{\"3\": 0, \"2\": 0, \"1\": 1, \"7\": 0, \"6\": 0, \"5\": 0, \"4\": 0, \"8\": 0}", "{\"3\": 0, \"2\": 0, \"1\": 0, \"7\": 1, \"6\": 0, \"5\": 0, \"4\": 0, \"8\": 0}", 0.75),
+                createRecord("{\"3\": 0, \"2\": 0, \"1\": 1, \"7\": 0, \"6\": 0, \"5\": 0, \"4\": 0, \"8\": 0}", "{\"3\": 0, \"2\": 0, \"1\": 0, \"7\": 0, \"6\": 0, \"5\": 0, \"4\": 0, \"8\": 1}", 0.50));
     }
 
     public InputStream outputToInputStream(ByteArrayOutputStream stream) {
         return new ByteArrayInputStream(stream.toByteArray());
     }
 
-    public void verifyOutput(InputStream inputStream, String... values) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        for (String value : values) {
-            line = in.readLine();
-            assertNotNull(line);
-            assertEquals(value, line);
+    public void verifyOutput(InputStream inputStream, Record... records) throws IOException {
+        for (Record expected : records) {
+            Record actual = formatter.read(inputStream);
+            assertEquals(expected, actual);
         }
+    }
+
+    private Map<String, Integer> toMap(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, new TypeReference<HashMap<String, Integer>>(){});
+    }
+
+    private Record createRecord(String jsonState, String jsonSuccessor, double rate)
+            throws IOException {
+        State state = new HashedState(toMap(jsonState));
+        State successor = new HashedState(toMap(jsonSuccessor));
+        return new Record(state, successor, rate);
     }
 
 }
