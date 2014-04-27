@@ -400,4 +400,49 @@ public class PetriNetAnimatorTest {
         assertEquals(copy, petriNet);
     }
 
+    @Test
+    public void multiColorArcsCanFire() throws PetriNetComponentNotFoundException {
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
+                                     .and(AToken.called("Red").withColor(Color.RED))
+                                     .and(APlace.withId("P0").containing(1, "Default").token().and(1, "Red").token())
+                                     .and(APlace.withId("P1"))
+                                     .and(ATransition.withId("T0"))
+                                     .and(ATransition.withId("T1"))
+                                     .and(ANormalArc.withSource("P0").andTarget("T0").with("1", "Default").token())
+                                     .and(ANormalArc.withSource("P0").andTarget("T1").with("1", "Red").token())
+                                     .and(ANormalArc.withSource("T0").andTarget("P1").with("1", "Default").token())
+                                     .andFinally(ANormalArc.withSource("T1").andTarget("P1").with("1", "Red").token());
+
+        Transition t0 = petriNet.getComponent("T0", Transition.class);
+        Transition t1 = petriNet.getComponent("T1", Transition.class);
+
+        Animator animator = new PetriNetAnimator(petriNet);
+        Collection<Transition> transitions = animator.getEnabledTransitions();
+        assertEquals("Both transitions were not enabled", 2, transitions.size());
+        assertThat(transitions).contains(t0, t1);
+    }
+
+
+    @Test
+    public void multiColorArcsCanFireWithZeroWeighting() throws PetriNetComponentNotFoundException {
+        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK))
+                .and(AToken.called("Red").withColor(Color.RED))
+                .and(APlace.withId("P0").containing(1, "Default").token().and(1, "Red").token())
+                .and(APlace.withId("P1"))
+                .and(ATransition.withId("T0"))
+                .and(ATransition.withId("T1"))
+                .and(ANormalArc.withSource("P0").andTarget("T0").with("1", "Default").token().and("0", "Red").tokens())
+                .and(ANormalArc.withSource("P0").andTarget("T1").with("0", "Default").tokens().and("1", "Red").token())
+                .and(ANormalArc.withSource("T0").andTarget("P1").with("1", "Default").token().and("0", "Red").tokens())
+                .andFinally(ANormalArc.withSource("T1").andTarget("P1").with("0", "Default").tokens().and("1", "Red").token());
+
+        Transition t0 = petriNet.getComponent("T0", Transition.class);
+        Transition t1 = petriNet.getComponent("T1", Transition.class);
+
+        Animator animator = new PetriNetAnimator(petriNet);
+        Collection<Transition> transitions = animator.getEnabledTransitions();
+        assertEquals("Both transitions were not enabled", 2, transitions.size());
+        assertThat(transitions).contains(t0, t1);
+    }
+
 }
