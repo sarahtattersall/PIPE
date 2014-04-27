@@ -1,9 +1,6 @@
 package pipe.reachability.algorithm;
 
-import pipe.reachability.state.HashedState;
 import pipe.reachability.state.State;
-
-import java.util.Map;
 
 /**
  * Record containing a vanishing state and the rate into it.
@@ -21,10 +18,6 @@ public class VanishingRecord {
      * Rate into the state
      */
     private final double rate;
-
-    public VanishingRecord(Map<String, Integer> tokens, double rate) {
-        this(new HashedState(tokens), rate);
-    }
 
     public VanishingRecord(State state, double rate) {
         this.state = state;

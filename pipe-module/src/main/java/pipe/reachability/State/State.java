@@ -1,6 +1,9 @@
 package pipe.reachability.state;
 
+import pipe.models.component.token.Token;
+
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Represents a state of the Petri net in a reachability graph
@@ -22,5 +25,5 @@ public interface State extends Serializable {
      * @param id Place id
      * @return number of tokens for the place with the given id
      */
-    int getTokens(String id);
+    Map<Token, Integer> getTokens(String id);
 }

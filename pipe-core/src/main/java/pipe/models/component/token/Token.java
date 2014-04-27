@@ -5,8 +5,9 @@ import pipe.models.component.AbstractPetriNetComponent;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.Color;
+import java.io.Serializable;
 
-public class Token extends AbstractPetriNetComponent {
+public class Token extends AbstractPetriNetComponent implements Serializable {
 
     /**
      * Message fired when the token is enabled/disabled

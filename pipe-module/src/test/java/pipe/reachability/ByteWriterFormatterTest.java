@@ -2,11 +2,13 @@ package pipe.reachability;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.models.component.token.Token;
 import pipe.reachability.state.HashedState;
 import pipe.reachability.state.Record;
 import pipe.reachability.state.State;
 import pipe.reachability.io.ByteWriterFormatter;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,15 +29,20 @@ public class ByteWriterFormatterTest {
         formatter = new ByteWriterFormatter();
         stream = new ByteArrayOutputStream();
 
-        Map<String, Integer> stateTokens = new HashMap<>();
-        stateTokens.put("P1", 1);
-        stateTokens.put("P2", 2);
+        Map<String, Map<Token, Integer>> stateTokens = new HashMap<>();
+        Token defaultToken = new Token("Default", Color.BLACK);
+        stateTokens.put("P1", new HashMap<Token, Integer>());
+        stateTokens.get("P1").put(defaultToken, 1);
+        stateTokens.put("P2", new HashMap<Token, Integer>());
+        stateTokens.get("P2").put(defaultToken, 2);
         state = new HashedState(stateTokens);
 
 
-        Map<String, Integer> successorTokens = new HashMap<>();
-        successorTokens.put("P1", 0);
-        successorTokens.put("P2", 3);
+        Map<String, Map<Token, Integer>> successorTokens = new HashMap<>();
+        successorTokens.put("P1", new HashMap<Token, Integer>());
+        successorTokens.get("P1").put(defaultToken, 0);
+        successorTokens.put("P2", new HashMap<Token, Integer>());
+        successorTokens.get("P2").put(defaultToken, 3);
         successor = new HashedState(successorTokens);
 
         rate = 4.5;

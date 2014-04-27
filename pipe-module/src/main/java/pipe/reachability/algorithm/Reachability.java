@@ -50,11 +50,6 @@ public class Reachability {
     private final PetriNet petriNet;
 
     /**
-     * Token to perform reachability graph on
-     */
-    private final Token token;
-
-    /**
      * Form in which to write transitions out to a Writer
      */
     private final WriterFormatter formatter;
@@ -81,8 +76,7 @@ public class Reachability {
     private Map<State, Map<State, Collection<Transition>>> cachedSuccessors = new HashMap<>();
 
 
-    public Reachability(PetriNet petriNet, Token token, WriterFormatter formatter) {
-        this.token = token;
+    public Reachability(PetriNet petriNet, WriterFormatter formatter) {
         this.formatter = formatter;
         this.petriNet = ClonePetriNet.clone(petriNet);
         animator = new PetriNetAnimator(this.petriNet);
@@ -329,9 +323,13 @@ public class Reachability {
      * @return current state of the Petri net
      */
     private State createState() {
-        Map<String, Integer> tokenCounts = new HashMap<>();
+        Map<String, Map<Token, Integer>> tokenCounts = new HashMap<>();
         for (Place place : petriNet.getPlaces()) {
-            tokenCounts.put(place.getId(), place.getTokenCount(token));
+            Map<Token, Integer> counts = new HashMap<>();
+            for (Token token : petriNet.getTokens()) {
+                counts.put(token, place.getTokenCount(token));
+            }
+            tokenCounts.put(place.getId(), counts);
         }
         return new HashedState(tokenCounts);
     }
@@ -343,7 +341,7 @@ public class Reachability {
      */
     private void setState(State state) {
         for (Place place : petriNet.getPlaces()) {
-            place.setTokenCount(token, state.getTokens(place.getId()));
+            place.setTokenCounts(state.getTokens(place.getId()));
         }
     }
 
