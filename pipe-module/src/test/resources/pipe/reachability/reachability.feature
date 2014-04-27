@@ -159,11 +159,16 @@ Scenario: Parsing a cyclic vanishing Petri net file
     """
     And rate 3.875
 
-  Scenario: Parsing a timeless trap Petri net file
+Scenario: Parsing a timeless trap Petri net file
     Given I use the Petri net located at /timeless_trap.xml
     When I generate the exploration graph
     Then I expect to see 0 state transitions
     And have thrown a TimelessTrapException
+
+Scenario: Parsing all immedaite transitions
+  Given I use the Petri net located at /all_immediate.xml
+  When I generate the exploration graph
+  Then I expect to see 0 state transitions
 
 
 
