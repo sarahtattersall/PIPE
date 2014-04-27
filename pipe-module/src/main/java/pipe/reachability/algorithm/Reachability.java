@@ -2,17 +2,15 @@ package pipe.reachability.algorithm;
 
 import pipe.animation.Animator;
 import pipe.animation.PetriNetAnimator;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.PetriNetWeightParser;
+import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.HashedState;
 import pipe.reachability.state.State;
-import pipe.reachability.io.WriterFormatter;
 import pipe.visitor.ClonePetriNet;
 
 import java.io.IOException;
@@ -40,9 +38,11 @@ public class Reachability {
     private static final double EPSILON = 0.0000001;
 
     /**
-     * The number of times that vanishing states
+     * The number of times that cyclic vanishing states are allowed to be explored before a
+     * {@link pipe.reachability.algorithm.TimelessTrapException} is thrown
      */
-    private static final int ALLOWED_ITERATIONS = 100000;
+    //TODO AS WILL FOR THE SIZE?
+    private static final int ALLOWED_ITERATIONS = 10000;
 
     /**
      * PetriNet to generate reachability graph for
@@ -67,7 +67,18 @@ public class Reachability {
 
     Queue<State> tangibleQueue = new ArrayDeque<>();
 
+    /**
+     * Contains tangilble states that have already been explored.
+     */
     private Set<State> explored = new HashSet<>();
+
+    /**
+     * Cached successors is used when exploring states to quickly determine
+     * a states successors it has already seen before.
+     * <p/>
+     * It will be most useful when exploring cyclic transitions
+     */
+    private Map<State, Map<State, Collection<Transition>>> cachedSuccessors = new HashMap<>();
 
 
     public Reachability(PetriNet petriNet, Token token, WriterFormatter formatter) {
@@ -84,12 +95,20 @@ public class Reachability {
      *
      * @param writer writer in which to write the output to
      */
-    public void generate(OutputStream writer) {
-        tangibleQueue.clear();
-        explored.clear();
+    public void generate(OutputStream writer) throws TimelessTrapException {
+        clearDataStructures();
         State initialState = createState();
         exploreInitialState(initialState);
         stateSpaceExploration(writer);
+    }
+
+    /**
+     * Clears any persistent data structures
+     */
+    private void clearDataStructures() {
+        tangibleQueue.clear();
+        explored.clear();
+        cachedSuccessors.clear();
     }
 
     /**
@@ -98,15 +117,15 @@ public class Reachability {
      * <p/>
      * It records the reachability graph into the writer
      *
-     * @param writer        in which to record the reachability graph
+     * @param writer in which to record the reachability graph
      */
-    private void stateSpaceExploration(OutputStream writer) {
+    private void stateSpaceExploration(OutputStream writer) throws TimelessTrapException {
         while (!tangibleQueue.isEmpty()) {
             State state = tangibleQueue.poll();
-            for (State successor : getSuccessors(state)) {
+            for (State successor : getSuccessors(state).keySet()) {
                 double rate = rate(state, successor);
                 if (isTangible(successor)) {
-                    transition(state, successor, rate , writer);
+                    transition(state, successor, rate, writer);
                     if (!explored.contains(successor)) {
                         tangibleQueue.add(successor);
                         markAsExplored(successor);
@@ -141,7 +160,7 @@ public class Reachability {
      *
      * @param initialState starting state of the algorithm
      */
-    private void exploreInitialState(State initialState) {
+    private void exploreInitialState(State initialState) throws TimelessTrapException {
         if (isTangible(initialState)) {
             tangibleQueue.add(initialState);
             markAsExplored(initialState);
@@ -157,7 +176,7 @@ public class Reachability {
      * <p/>
      * Cycles of vanishing states can be a problem since there is no explored table
      * for vanishing states. In order to ensure there is no infinite loop of exploration
-     * states whose propogated effective entry rate falls below a certain threshold (EPSILON)
+     * states whose propagated effective entry rate falls below a certain threshold (EPSILON)
      * is dropped.
      * <p/>
      * Finally strongly connected components of vanishing states are known as timeless traps
@@ -165,18 +184,18 @@ public class Reachability {
      * an elimination timeout is applied which will expire after a number of attempts have
      * been made to eliminate a cluster of states/
      *
-     * @param state              state to explore from
+     * @param state                 state to explore from
      * @param rate
      * @param performTangibleAction action performed when finding a tangible state
      */
-    //TODO: TIMELESS TRAP ELIMINATION
-    private void exploreVanishingStates(State state, double rate, PerformTangibleAction performTangibleAction) {
+    private void exploreVanishingStates(State state, double rate, PerformTangibleAction performTangibleAction)
+            throws TimelessTrapException {
         Deque<VanishingRecord> vanishingStack = new ArrayDeque<>();
         vanishingStack.push(new VanishingRecord(state, rate));
         int iterations = 0;
         while (!vanishingStack.isEmpty() && iterations < ALLOWED_ITERATIONS) {
             VanishingRecord record = vanishingStack.pop();
-            for (State successor : getSuccessors(record.getState())) {
+            for (State successor : getSuccessors(record.getState()).keySet()) {
                 double successorRate = record.getRate() * probability(record.getState(), successor);
                 if (isTangible(successor)) {
                     performTangibleAction.performAction(successor, successorRate);
@@ -190,10 +209,18 @@ public class Reachability {
             iterations++;
         }
         if (iterations == ALLOWED_ITERATIONS) {
-            // TODO: Throw timeless trap
+            throw new TimelessTrapException();
         }
     }
 
+    /**
+     * Saves out a transition from state to successor to the writer
+     *
+     * @param state
+     * @param successor
+     * @param successorRate
+     * @param writer
+     */
     private void transition(State state, State successor, double successorRate, OutputStream writer) {
         try {
             formatter.write(state, successor, successorRate, writer);
@@ -211,13 +238,13 @@ public class Reachability {
      * @param successor next state
      * @return the probability of transitioning to the successor state from state
      */
-    //TODO: CHECK WITH WILL?
     private double probability(State state, State successor) {
         Collection<Transition> marked = getTransitions(state, successor);
         if (marked.isEmpty()) {
             return 0;
         }
         double toSuccessorWeight = getWeightOfTransitions(marked);
+        setState(state);
         double totalWeight = getWeightOfTransitions(animator.getEnabledTransitions());
         return toSuccessorWeight / totalWeight;
     }
@@ -238,16 +265,6 @@ public class Reachability {
 
     /**
      * Calculates the set of transitions that will take you from one state to the successor.
-     * <p/>
-     * To perform this calculation the petri net is adjusted to match that of the given state.
-     * All enabled transitions are then explored in the following manner:
-     * 1) Assume the transition is part of the result
-     * 2) Explore all outgoing arcs from, looking at the place they connect to.
-     * 3) If at any point the place does not contain the same number of tokens as the successor state
-     * then remove it from the result
-     * 4) Only the transitions that lead to the successor state will remain in the result
-     * <p/>
-     * This could benefit from memoization.
      *
      * @param state     initial state
      * @param successor successor state, must be directly reachable from the state
@@ -255,49 +272,42 @@ public class Reachability {
      * an empty Collection will be returned
      */
     private Collection<Transition> getTransitions(State state, State successor) {
-        setState(state);
-
-        IncidenceMatrix forwardsIncidenceMatrix = petriNet.getForwardsIncidenceMatrix(token);
-        IncidenceMatrix backwardsIncidenceMatrix = petriNet.getBackwardsIncidenceMatrix(token);
-
-        Collection<Transition> stateEnabledTransitions = animator.getEnabledTransitions();
-        Collection<Transition> result = new HashSet<>();
-
-        //TODO: Memoization
-        for (Transition transition : stateEnabledTransitions) {
-            result.add(transition);
-            Collection<Arc<Transition, Place>> outboundArcs = petriNet.outboundArcs(transition);
-            for (Arc<Transition, Place> arc : outboundArcs) {
-                Place place = arc.getTarget();
-                String id = place.getId();
-                int newTokenCount = state.getTokens(id) + forwardsIncidenceMatrix.get(place, transition)
-                        - backwardsIncidenceMatrix.get(place, transition);
-                if (newTokenCount != successor.getTokens(id)) {
-                    result.remove(transition);
-                    break;
-                }
-            }
+        Map<State, Collection<Transition>> stateTransitions = getSuccessors(state);
+        if (stateTransitions.containsKey(successor)) {
+            return stateTransitions.get(successor);
         }
-        return result;
+        return new LinkedList<>();
     }
 
 
     /**
-     * Calculates successor states of the given state
+     * Calculates successor states of the given state. Uses memoization to avoid calculating successors twice
+     * however this is at the expense of extra memory
      *
      * @param state current state
-     * @return Set of successor states
+     * @return Map of successor states to the transition that caused them
      */
-    private Iterable<State> getSuccessors(State state) {
+    private Map<State, Collection<Transition>> getSuccessors(State state) {
+
+        if (cachedSuccessors.containsKey(state)) {
+            return cachedSuccessors.get(state);
+        }
+
         setState(state);
         Collection<Transition> enabled = animator.getEnabledTransitions();
-        Collection<State> successors = new HashSet<>();
+        Map<State, Collection<Transition>> successors = new HashMap<>();
         for (Transition transition : enabled) {
             setState(state);
             animator.fireTransition(transition);
             State successor = createState();
-            successors.add(successor);
+
+
+            if (!successors.containsKey(successor)) {
+                successors.put(successor, new LinkedList<Transition>());
+            }
+            successors.get(successor).add(transition);
         }
+        cachedSuccessors.put(state, successors);
         return successors;
     }
 

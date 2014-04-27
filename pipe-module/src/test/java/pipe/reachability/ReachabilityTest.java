@@ -4,7 +4,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.dsl.*;
@@ -13,6 +15,7 @@ import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
 import pipe.reachability.algorithm.Reachability;
+import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
 import pipe.reachability.io.StateTransition;
@@ -36,8 +39,13 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReachabilityTest {
-    WriterFormatter formatter;
-    ByteArrayOutputStream outputStream;
+
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    private WriterFormatter formatter;
+    private ByteArrayOutputStream outputStream;
 
     @Before
     public void setUp() {
@@ -51,7 +59,7 @@ public class ReachabilityTest {
     }
 
     @Test
-    public void simpleCyclic() throws PetriNetComponentNotFoundException, IOException {
+    public void simpleCyclic() throws PetriNetComponentNotFoundException, IOException, TimelessTrapException {
         PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
                 APlace.withId("P0").and(1, "Default").token()).and(APlace.withId("P1")).and(
                 ATransition.withId("T0").whichIsTimed()).and(ATransition.withId("T1").whichIsTimed())
@@ -69,7 +77,8 @@ public class ReachabilityTest {
 
     @Test
     public void simpleVanishingState()
-            throws JAXBException, UnparsableException, PetriNetComponentNotFoundException, IOException {
+            throws JAXBException, UnparsableException, PetriNetComponentNotFoundException, IOException,
+            TimelessTrapException {
         PetriNet petriNet = Utils.readPetriNet("/simple_vanishing.xml");
         Token token = petriNet.getComponent("Default", Token.class);
         Reachability reachability = new Reachability(petriNet, token, formatter);
@@ -83,7 +92,8 @@ public class ReachabilityTest {
 
     @Test
     public void cyclicVanishingState()
-            throws JAXBException, UnparsableException, PetriNetComponentNotFoundException, IOException {
+            throws JAXBException, UnparsableException, PetriNetComponentNotFoundException, IOException,
+            TimelessTrapException {
         PetriNet petriNet = Utils.readPetriNet("/cyclic_vanishing.xml");
         Token token = petriNet.getComponent("Default", Token.class);
         Reachability reachability = new Reachability(petriNet, token, formatter);
@@ -92,6 +102,16 @@ public class ReachabilityTest {
                 createRecord("{\"1\": 1, \"2\": 0, \"3\": 0, \"4\": 0, \"5\": 0, \"6\": 0, \"7\": 0, \"8\": 0}", "{\"1\": 0, \"2\": 0, \"3\": 0, \"4\": 0, \"5\": 0, \"6\": 0, \"7\": 1, \"8\": 0}", 2.325),
                 createRecord("{\"1\": 1, \"2\": 0, \"3\": 0, \"4\": 0, \"5\": 0, \"6\": 0, \"7\": 0, \"8\": 0}", "{\"1\": 0, \"2\": 0, \"3\": 0, \"4\": 0, \"5\": 0, \"6\": 0, \"7\": 0, \"8\": 1}", 3.875),
                 createRecord("{\"1\": 1, \"2\": 0, \"3\": 0, \"4\": 0, \"5\": 0, \"6\": 0, \"7\": 0, \"8\": 0}", "{\"1\": 0, \"2\": 0, \"3\": 0, \"4\": 0, \"5\": 0, \"6\": 1, \"7\": 0, \"8\": 0}", 1.8));
+    }
+
+    @Test
+    public void timelessTrapException()
+            throws JAXBException, UnparsableException, PetriNetComponentNotFoundException, TimelessTrapException {
+        PetriNet petriNet = Utils.readPetriNet("/timeless_trap.xml");
+        Token token = petriNet.getComponent("Default", Token.class);
+        Reachability reachability = new Reachability(petriNet, token, formatter);
+        expectedException.expect(TimelessTrapException.class);
+        reachability.generate(outputStream);
     }
 
     public InputStream outputToInputStream(ByteArrayOutputStream stream) {
@@ -120,8 +140,4 @@ public class ReachabilityTest {
         State successor = new HashedState(toMap(jsonSuccessor));
         return new Record(state, successor, rate);
     }
-
-
-
-
 }
