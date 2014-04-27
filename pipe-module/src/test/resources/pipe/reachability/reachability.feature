@@ -165,10 +165,130 @@ Scenario: Parsing a timeless trap Petri net file
     Then I expect to see 0 state transitions
     And have thrown a TimelessTrapException
 
-Scenario: Parsing all immedaite transitions
+Scenario: Parsing all immediate transitions
   Given I use the Petri net located at /all_immediate.xml
   When I generate the exploration graph
   Then I expect to see 0 state transitions
+
+
+Scenario: Parsing simple coloured Petri net
+    Given I use the Petri net located at /simple_color.xml
+    When I generate the exploration graph
+    Then I expect to see 2 state transitions
+    And I expect a record with state
+      """
+       {"P0" : { "Default" : 1, "Red" : 1 }, "P1" : { "Default" : 0, "Red" : 0 } }
+      """
+    And successor
+    """
+       {"P0" : { "Default" : 0, "Red" : 0 }, "P1" : { "Default" : 1, "Red" : 1 } }
+    """
+    And rate 1.0
+    And I expect a record with state
+    """
+       {"P0" : { "Default" : 0, "Red" : 0 }, "P1" : { "Default" : 1, "Red" : 1 } }
+    """
+    And successor
+    """
+       {"P0" : { "Default" : 1, "Red" : 1 }, "P1" : { "Default" : 0, "Red" : 0 } }
+    """
+    And rate 1.0
+
+
+Scenario: Parsing individual arc coloured Petri net
+    Given I use the Petri net located at /complex_color.xml
+    When I generate the exploration graph
+    Then I expect to see 8 state transitions
+    And I expect a record with state
+    """
+         {"P0" : { "Default" : 1, "Red" : 1 }, "P1" : { "Default" : 0, "Red" : 0 } }
+        """
+    And successor
+    """
+         {"P0" : { "Default" : 0, "Red" : 1 }, "P1" : { "Default" : 1, "Red" : 0 } }
+      """
+    And rate 1.0
+
+    And I expect a record with state
+    """
+         {"P0" : { "Default" : 1, "Red" : 1 }, "P1" : { "Default" : 0, "Red" : 0 } }
+        """
+    And successor
+    """
+         {"P0" : { "Default" : 1, "Red" : 0 }, "P1" : { "Default" : 0, "Red" : 1 } }
+      """
+     And rate 1.0
+
+
+
+  And I expect a record with state
+  """
+         {"P0" : { "Default" : 0, "Red" : 1 }, "P1" : { "Default" : 1, "Red" : 0 } }
+        """
+  And successor
+  """
+         {"P0" : { "Default" : 0, "Red" : 0 }, "P1" : { "Default" : 1, "Red" : 1 } }
+      """
+  And rate 1.0
+
+
+  And I expect a record with state
+  """
+         {"P0" : { "Default" : 1, "Red" : 0 }, "P1" : { "Default" : 0, "Red" : 1 } }
+        """
+  And successor
+  """
+         {"P0" : { "Default" : 0, "Red" : 0 }, "P1" : { "Default" : 1, "Red" : 1 } }
+      """
+  And rate 1.0
+
+
+
+  And I expect a record with state
+  """
+         {"P0" : { "Default" : 0, "Red" : 1 }, "P1" : { "Default" : 1, "Red" : 0 } }
+        """
+  And successor
+  """
+         {"P0" : { "Default" : 1, "Red" : 1 }, "P1" : { "Default" : 0, "Red" : 0 } }
+      """
+  And rate 1.0
+
+
+  And I expect a record with state
+  """
+         {"P0" : { "Default" : 1, "Red" : 0 }, "P1" : { "Default" : 0, "Red" : 1 } }
+        """
+  And successor
+  """
+         {"P0" : { "Default" : 1, "Red" : 1 }, "P1" : { "Default" : 0, "Red" : 0 } }
+      """
+  And rate 1.0
+
+
+
+  And I expect a record with state
+  """
+         {"P0" : { "Default" : 0, "Red" : 0 }, "P1" : { "Default" : 1, "Red" : 1 } }
+        """
+  And successor
+  """
+         {"P0" : { "Default" : 0, "Red" : 1 }, "P1" : { "Default" : 1, "Red" : 0 } }
+      """
+  And rate 1.0
+
+
+
+  And I expect a record with state
+  """
+         {"P0" : { "Default" : 0, "Red" : 0 }, "P1" : { "Default" : 1, "Red" : 1 } }
+        """
+  And successor
+  """
+         {"P0" : { "Default" : 1, "Red" : 0 }, "P1" : { "Default" : 0, "Red" : 1 } }
+      """
+  And rate 1.0
+
 
 
 
