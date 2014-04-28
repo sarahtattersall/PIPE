@@ -9,14 +9,11 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
-import pipe.historyActions.rateparameter.ClearRateParameter;
-import pipe.historyActions.GroupTransition;
 import pipe.historyActions.HistoryItem;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.ExprEvaluator;
 import pipe.models.petrinet.FunctionalEvaluationException;
 import pipe.models.petrinet.PetriNet;
-import pipe.views.viewComponents.RateParameter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,17 +21,12 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 
 
 public class TransitionView extends ConnectableView<Transition> {
     public boolean _highlighted;
 
     private boolean _enabled;
-
-    private RateParameter _rateParameter;
-
-    private GroupTransitionView _groupTransitionView;
 
     public TransitionView(Transition model, PetriNetController controller) {
         super(model.getId(), model, controller, new Rectangle2D.Double(0, 0, model.getWidth(),
@@ -85,9 +77,7 @@ public class TransitionView extends ConnectableView<Transition> {
         if (_enabled && !status) {
 //            _delayValid = false;
         }
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setEnabled(status);
-        }
+
         _enabled = status;
 
     }
@@ -100,15 +90,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     public void update() {
         this.repaint();
-    }
-
-    @Override
-    public void delete() {
-        if (_rateParameter != null) {
-            _rateParameter.remove(this);
-            _rateParameter = null;
-        }
-        super.delete();
     }
 
     @Override
@@ -237,10 +218,6 @@ public class TransitionView extends ConnectableView<Transition> {
         return model.isInfiniteServer();
     }
 
-    public String getRateExpr() {
-        return model.getRateExpr();
-    }
-
     public boolean isTimed() {
         return model.isTimed();
     }
@@ -270,21 +247,6 @@ public class TransitionView extends ConnectableView<Transition> {
         addMouseListener(transitionAnimationHandler);
     }
 
-    public boolean isEnabled(boolean animationStatus) {
-        if (_groupTransitionView != null) {
-            _groupTransitionView.isEnabled(animationStatus);
-        }
-        if (animationStatus) {
-            if (_enabled) {
-                _highlighted = true;
-                return true;
-            } else {
-                _highlighted = false;
-            }
-        }
-        return false;
-    }
-
     public int getAngle() {
         return model.getAngle();
     }
@@ -294,37 +256,8 @@ public class TransitionView extends ConnectableView<Transition> {
         return shape.contains(x,y);
     }
 
-    public RateParameter getRateParameter() {
-        return _rateParameter;
-    }
-
-    //TODO: DELETE
-    public HistoryItem setRateParameter(RateParameter rateParameter) {
-        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
-    }
-
-    public HistoryItem clearRateParameter() {
-        RateParameter oldRateParameter = _rateParameter;
-        _rateParameter.remove(this);
-        _rateParameter = null;
-        update();
-        return new ClearRateParameter(this, oldRateParameter);
-    }
-
     public void setModel(Transition model) {
         this.model = model;
-    }
-
-    public boolean isGrouped() {
-        return _groupTransitionView != null;
-    }
-
-    public GroupTransitionView getGroup() {
-        return _groupTransitionView;
-    }
-
-    public void ungroupTransition() {
-        _groupTransitionView = null;
     }
 
     private int showWithTimeout(JOptionPane pane, Component parent, String title) {
@@ -356,35 +289,9 @@ public class TransitionView extends ConnectableView<Transition> {
         return result;
     }
 
-    public HistoryItem groupTransitions() {
-        ArrayList<TransitionView> transitionsToHide = groupTransitionsValidation();
-        GroupTransitionView newGroupTransitionView = new GroupTransitionView(this, model.getX(), model.getY());
-        groupTransitionsHelper(transitionsToHide, newGroupTransitionView);
-        return new GroupTransition(newGroupTransitionView);
-    }
-
-    public void groupTransitionsHelper(ArrayList<TransitionView> transitionsToHide,
-                                       GroupTransitionView newGroupTransitionView) {
-    }
-
-    private ArrayList<TransitionView> groupTransitionsValidation() {
-        ArrayList<TransitionView> transitionsToHide = new ArrayList<TransitionView>();
-        return transitionsToHide;
-    }
-
-    public void unhideFromCanvas() {
-        this.setVisible(true);
-    }
-
-    public void showAssociatedArcs() {
-    }
-
     //TODO: DELETE
-    public HistoryItem setRate(double rate) {
-        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
-        //        String oldRate = model.getRateExpr();
-        //        model.setRateExpr(rate + "");
-        //        repaint();
-        //        return new TransitionRate(this, oldRate, model.getRateExpr());
+    public HistoryItem groupTransitions() {
+        return null;
     }
+
 }
