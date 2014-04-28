@@ -1,5 +1,6 @@
 package pipe.gui;
 
+import com.google.common.collect.Sets;
 import pipe.animation.Animator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
@@ -9,6 +10,8 @@ import pipe.models.component.transition.Transition;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -39,6 +42,21 @@ public class GUIAnimator {
      */
     public void startAnimation() {
         saveCurrentTokenState();
+        markEnabledTransitions(new HashSet<Transition>(), animator.getEnabledTransitions());
+    }
+
+    /**
+     * Computes transitions which need to be disabled because they are no longer enabled and
+     * those that need to be enabled because they have been newly enabled.
+     */
+    private void markEnabledTransitions(Set<Transition> previouslyEnabled, Set<Transition> enabled) {
+        for (Transition transition : Sets.difference(previouslyEnabled, enabled)) {
+            transition.disable();
+        }
+
+        for (Transition transition : Sets.difference(enabled, previouslyEnabled)) {
+            transition.enable();
+        }
     }
 
     /**
@@ -90,9 +108,14 @@ public class GUIAnimator {
      * @param transition
      */
     public void fireTransition(Transition transition) {
+        Set<Transition> previouslyEnabled = animator.getEnabledTransitions();
         animationHistory.clearStepsForward();
         animationHistory.addHistoryItem(transition);
         animator.fireTransition(transition);
+
+        Set<Transition> enabled = animator.getEnabledTransitions();
+        markEnabledTransitions(previouslyEnabled, enabled);
+
     }
 
     /**
@@ -138,9 +161,13 @@ public class GUIAnimator {
 
     /**
      * Restores all places to their original token counts.
+     * Disables all transitions
      */
     private void restoreModel() {
         animator.reset();
+        for (Transition transition : animator.getEnabledTransitions()) {
+            transition.disable();
+        }
     }
 
     private class TimedTransitionActionListener implements ActionListener {
