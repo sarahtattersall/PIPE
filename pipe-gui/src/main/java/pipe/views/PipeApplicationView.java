@@ -241,7 +241,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     petriNetTab.repaint();
                     updateZoomCombo();
 
-                    enableActions(!controller.isInAnimationMode(), applicationController.isPasteEnabled());
+                    enableActions(!controller.isInAnimationMode());
 
                     setTitle(petriNetTab.getName());
 
@@ -253,14 +253,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         });
     }
 
-    private void enableActions(boolean editMode, boolean pasteEnabled) {
+    private void enableActions(boolean editMode) {
         if (editMode) {
+            drawingToolBar.setVisible(true);
+            animationToolBar.setVisible(false);
             componentEditorManager.enableActions();
             componentCreatorManager.enableActions();
             tokenActionManager.enableActions();
             editorManager.enableActions();
             animateActionManager.disableActions();
         } else {
+            drawingToolBar.setVisible(false);
+            animationToolBar.setVisible(true);
             componentEditorManager.disableActions();
             componentCreatorManager.disableActions();
             tokenActionManager.disableActions();
@@ -388,19 +392,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         moduleAndAnimationHistoryFrame.setDividerLocation(0.5);
         moduleAndAnimationHistoryFrame.setDividerSize(8);
-    }
-
-    /* sets all buttons to enabled or disabled according to status. */
-    public void enableActions(boolean status) {
-        if (status) {
-            drawingToolBar.setVisible(true);
-            animationToolBar.setVisible(false);
-        }
-
-        if (!status) {
-            drawingToolBar.setVisible(false);
-            animationToolBar.setVisible(true);
-        }
     }
 
     /**
