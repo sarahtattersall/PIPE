@@ -49,7 +49,6 @@ public class PipeTest {
 
     private MarkingView markingView;
 
-    private PetriNetView petriNetView;
 
     private TokenView defaultTokenView;
 

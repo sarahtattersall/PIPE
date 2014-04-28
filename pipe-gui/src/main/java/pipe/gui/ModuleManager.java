@@ -213,14 +213,14 @@ public class ModuleManager
             /*
              * temporarily get rid of the modules that needs web servers for calculation
              */
-            try {
-				names.remove(Class.forName("pipe.modules.steadyStateCloud.SteadyState"));
-				names.remove(Class.forName("pipe.modules.passage.Passage"));
-				names.remove(Class.forName("pipe.modules.passageTimeForTaggedNet.Passage"));
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//            try {
+//				names.remove(Class.forName("pipe.modules.steadyStateCloud.SteadyState"));
+//				names.remove(Class.forName("pipe.modules.passage.Passage"));
+//				names.remove(Class.forName("pipe.modules.passageTimeForTaggedNet.Passage"));
+//			} catch (ClassNotFoundException e) {
+//				TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
             classes.addAll(names);
         }
 
@@ -376,10 +376,10 @@ public class ModuleManager
                 {
                     if(nodeObj instanceof ModuleMethod)
                     {
-                        if(ApplicationSettings.getApplicationView().getCurrentPetriNetView() != null)
-                        {
-                            ((ModuleMethod) nodeObj).execute();
-                        }
+//                        if(ApplicationSettings.getApplicationView().getCurrentPetriNetView() != null)
+//                        {
+//                            ((ModuleMethod) nodeObj).execute();
+//                        }
                     }
                     else if(nodeObj == loadNodeString)
                     {

@@ -825,11 +825,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         exitAction.actionPerformed(null);
     }
 
-    //TODO: DELETE!
-    public PetriNetView getCurrentPetriNetView() {
-        return null;
-    }
-
     public void removeCurrentTab() {
         removeTab(frameForPetriNetTabs.getSelectedIndex());
     }
