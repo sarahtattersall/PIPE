@@ -86,7 +86,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
      */
     protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popup = new JPopupMenu();
-        JMenuItem menuItem = new JMenuItem(new DeletePetriNetComponentAction(component));
+        JMenuItem menuItem = new JMenuItem(new DeletePetriNetComponentAction(component, petriNetController));
         menuItem.setText("Delete");
         popup.add(menuItem);
         return popup;
