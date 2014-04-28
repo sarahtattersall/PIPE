@@ -23,6 +23,28 @@ Scenario: Parsing a simple Petri net file
     """
   And rate 1.0
 
+Scenario: Parsing a simple differently rated Petri net file
+  Given I use the Petri net located at /simple_rated.xml
+  When I generate the exploration graph
+  Then I expect to see 2 state transitions
+  And I expect a record with state
+  """
+       {"P0" : { "Default" : 1 }, "P1" : { "Default" : 0 } }
+    """
+  And successor
+  """
+       {"P0" : { "Default" : 0 }, "P1" : { "Default" : 1 } }
+    """
+  And rate 1.0
+  And I expect a record with state
+  """
+       {"P0" : { "Default" : 0 }, "P1" : { "Default" : 1 } }
+    """
+  And successor
+  """
+       {"P0" : { "Default" : 1 }, "P1" : { "Default" : 0 } }
+    """
+  And rate 5.0
 
 
 Scenario: Parsing a simple vanishing Petri net file
