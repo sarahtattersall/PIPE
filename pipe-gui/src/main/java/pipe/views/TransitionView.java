@@ -32,12 +32,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     private boolean _enabled;
 
-    private boolean _enabledBackwards;
-
-    private double _delay;
-
-    private boolean _delayValid;
-
     private RateParameter _rateParameter;
 
     private GroupTransitionView _groupTransitionView;
@@ -49,7 +43,6 @@ public class TransitionView extends ConnectableView<Transition> {
         setChangeListener();
 
         _enabled = false;
-        _enabledBackwards = false;
         _highlighted = false;
 
         rotate(model.getAngle());
@@ -57,10 +50,6 @@ public class TransitionView extends ConnectableView<Transition> {
         //        changeToolTipText();
 
     }
-
-//    private void constructTransition() {
-//        shape.append(), false);
-//    }
 
     public void rotate(int angleInc) {
         ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(), new Double(model.getCentre().getY()).floatValue());
@@ -94,7 +83,7 @@ public class TransitionView extends ConnectableView<Transition> {
     @Override
     public void setEnabled(boolean status) {
         if (_enabled && !status) {
-            _delayValid = false;
+//            _delayValid = false;
         }
         if (_groupTransitionView != null) {
             _groupTransitionView.setEnabled(status);
@@ -296,61 +285,8 @@ public class TransitionView extends ConnectableView<Transition> {
         return false;
     }
 
-    public boolean isEnabledBackwards() {
-        return _enabledBackwards;
-    }
-
-    public void setEnabledBackwards(boolean status) {
-        _enabledBackwards = status;
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setEnabledBackwards(status);
-        }
-    }
-
-    public void setHighlighted(boolean status) {
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setHighlighted(status);
-        }
-        _highlighted = status;
-    }
-
-    //TODO: RE-IMPLEMENT
-    public HistoryItem setInfiniteServer(boolean status) {
-        throw new RuntimeException("THIS SHOULD BE IMPLEMENTED IN CONTROLLER");
-        //        _infiniteServer = status;
-        //        repaint();
-        //        return new TransitionInfiniteServer(this);
-    }
-
-    public void setEnabledFalse() {
-        _enabled = false;
-        _highlighted = false;
-        if (_groupTransitionView != null) {
-            _groupTransitionView.setEnabled(false);
-        }
-    }
-
     public int getAngle() {
         return model.getAngle();
-    }
-
-    public HistoryItem setPriority(int newPriority) {
-        //        int oldPriority = getPriority();
-        //
-        //        model.setPriority(newPriority);
-        //        _nameLabel.setText(getAttributes());
-        //        repaint();
-        //        return new TransitionPriority(this, oldPriority, model.getPriority());
-        return null;
-    }
-
-    public double getDelay() {
-        return _delay;
-    }
-
-    public void setDelay(double _delay) {
-        this._delay = _delay;
-        _delayValid = true;
     }
 
     @Override
@@ -375,24 +311,8 @@ public class TransitionView extends ConnectableView<Transition> {
         return new ClearRateParameter(this, oldRateParameter);
     }
 
-    //TODO: DELETE
-    public HistoryItem changeRateParameter(RateParameter rateParameter) {
-        throw new RuntimeException("SHOULD NOT BE HERE DELETE THIS CODE");
-        //        RateParameter oldRateParameter = this._rateParameter;
-        //        this._rateParameter.remove(this);
-        //        this._rateParameter = rateParameter;
-        //        this._rateParameter.add(this);
-        //        model.setRateExpr(rateParameter.getValue());
-        //        update();
-        //        return new ChangeRateParameter(this, oldRateParameter, this._rateParameter);
-    }
-
     public void setModel(Transition model) {
         this.model = model;
-    }
-
-    public void bindToGroup(GroupTransitionView groupTransitionView) {
-        this._groupTransitionView = groupTransitionView;
     }
 
     public boolean isGrouped() {
@@ -405,11 +325,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     public void ungroupTransition() {
         _groupTransitionView = null;
-    }
-
-    public int confirmOrTimeout(String message, String title) throws HeadlessException {
-        JOptionPane pane = new JOptionPane(message, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_CANCEL_OPTION);
-        return showWithTimeout(pane, null, title);
     }
 
     private int showWithTimeout(JOptionPane pane, Component parent, String title) {
@@ -457,15 +372,8 @@ public class TransitionView extends ConnectableView<Transition> {
         return transitionsToHide;
     }
 
-    public void hideFromCanvas() {
-        this.setVisible(false);
-    }
-
     public void unhideFromCanvas() {
         this.setVisible(true);
-    }
-
-    public void hideAssociatedArcs() {
     }
 
     public void showAssociatedArcs() {
