@@ -21,16 +21,11 @@ import pipe.reachability.state.State;
 import utils.Utils;
 
 import javax.xml.bind.JAXBException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ReachabilityStepDefinitions {
     private PetriNet petriNet;
@@ -54,10 +49,13 @@ public class ReachabilityStepDefinitions {
     public void I_generate_the_exploration_graph() throws IOException {
 
         WriterFormatter formatter = new ByteWriterFormatter();
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+             ObjectOutputStream outputStream = new ObjectOutputStream(byteStream)) {
             Reachability reachability = new Reachability(petriNet, formatter);
             reachability.generate(outputStream);
-            try (InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+
+            try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
+                 ObjectInputStream inputStream = new ObjectInputStream(byteInputStream)) {
                 MultiTransitionReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
                 results.putAll(reader.getTotalRates(inputStream));
             }
@@ -106,6 +104,6 @@ public class ReachabilityStepDefinitions {
             }
             stateMap.put(entry.getKey(), tokenCounts);
         }
-        return new HashedState(stateMap);
+        return HashedState.tangibleState(stateMap);
     }
 }

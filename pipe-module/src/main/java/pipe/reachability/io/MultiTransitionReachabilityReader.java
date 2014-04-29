@@ -2,8 +2,9 @@ package pipe.reachability.io;
 
 import pipe.reachability.state.Record;
 
+import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +27,6 @@ public class MultiTransitionReachabilityReader implements ReachabilityReader {
     private final WriterFormatter formatter;
 
     public MultiTransitionReachabilityReader(WriterFormatter formatter) {
-
         this.formatter = formatter;
     }
     /**
@@ -37,9 +37,8 @@ public class MultiTransitionReachabilityReader implements ReachabilityReader {
      * @return Collection of state to successor state with rate
      */
     @Override
-    public Collection<Record> getRecords(InputStream stream) throws IOException {
+    public Collection<Record> getRecords(ObjectInputStream stream) throws IOException {
         Map<StateTransition, Double> totalRates = getTotalRates(stream);
-
         Collection<Record> result = new HashSet<>();
         for (Map.Entry<StateTransition, Double> entry : totalRates.entrySet()) {
             StateTransition transition = entry.getKey();
@@ -58,19 +57,23 @@ public class MultiTransitionReachabilityReader implements ReachabilityReader {
      * @return
      * @throws IOException
      */
-    public Map<StateTransition, Double> getTotalRates(InputStream inputStream) throws IOException {
+    //TODO: This is awful but I cant find a way to prepend the input stream with the number
+    //      of elements
+    public Map<StateTransition, Double> getTotalRates(ObjectInputStream inputStream) throws IOException {
         Map<StateTransition, Double> result = new HashMap<>();
-        while(inputStream.available() > 0) {
-            Record record = formatter.read(inputStream);
-            StateTransition transition = new StateTransition(record.state, record.successor);
+        while(true) {
+            try {
+                Record record = formatter.read(inputStream);
+                StateTransition transition = new StateTransition(record.state, record.successor);
 
-            if (!result.containsKey(transition)) {
-                result.put(transition, .0);
+                if (!result.containsKey(transition)) {
+                    result.put(transition, .0);
+                }
+                result.put(transition, result.get(transition) + record.rate);
+            } catch (EOFException ignored) {
+                return result;
             }
-            result.put(transition, result.get(transition) + record.rate);
         }
-        inputStream.close();
-        return result;
     }
 
 

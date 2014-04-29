@@ -4,6 +4,7 @@ import pipe.reachability.state.Record;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Collection;
 
 public interface ReachabilityReader {
@@ -13,5 +14,5 @@ public interface ReachabilityReader {
      * @param stream input stream
      * @return Collection of all state transitions with rates
      */
-    Collection<Record> getRecords(InputStream stream) throws IOException;
+    Collection<Record> getRecords(ObjectInputStream stream) throws IOException;
 }

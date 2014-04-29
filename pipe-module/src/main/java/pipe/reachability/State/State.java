@@ -26,4 +26,6 @@ public interface State extends Serializable {
      * @return number of tokens for the place with the given id
      */
     Map<Token, Integer> getTokens(String id);
+
+    boolean isTangible();
 }

@@ -10,8 +10,8 @@ import java.io.*;
  */
 public class ByteWriterFormatter implements WriterFormatter {
     @Override
-    public Record read(InputStream stream) throws IOException {
-        try (ObjectInputStream inputStream = new ObjectInputStream(stream)) {
+    public Record read(ObjectInputStream inputStream) throws IOException {
+        try  {
             State state = (State) inputStream.readObject();
             State successor = (State) inputStream.readObject();
             double rate = inputStream.readDouble();
@@ -24,11 +24,27 @@ public class ByteWriterFormatter implements WriterFormatter {
     }
 
     @Override
-    public void write(State state, State successor, double successorRate, OutputStream writer) throws IOException {
-        try (ObjectOutputStream stream = new ObjectOutputStream(writer)) {
+    public void write(State state, State successor, double successorRate, ObjectOutputStream stream) throws IOException {
             stream.writeObject(state);
             stream.writeObject(successor);
             stream.writeDouble(successorRate);
+            stream.flush();
+    }
+
+
+    private static class AppendingObjectOutputStream extends ObjectOutputStream {
+
+        public AppendingObjectOutputStream(OutputStream out) throws IOException {
+            super(out);
         }
+
+        @Override
+        protected void writeStreamHeader() throws IOException {
+            // do not write a header, but reset:
+            // this line added after another question
+            // showed a problem with the original
+            reset();
+        }
+
     }
 }

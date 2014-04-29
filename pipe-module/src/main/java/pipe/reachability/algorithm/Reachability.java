@@ -14,7 +14,7 @@ import pipe.reachability.state.State;
 import pipe.visitor.ClonePetriNet;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 /**
@@ -89,7 +89,7 @@ public class Reachability {
      *
      * @param writer writer in which to write the output to
      */
-    public void generate(OutputStream writer) throws TimelessTrapException {
+    public void generate(ObjectOutputStream writer) throws TimelessTrapException {
         clearDataStructures();
         State initialState = createState();
         exploreInitialState(initialState);
@@ -113,7 +113,7 @@ public class Reachability {
      *
      * @param writer in which to record the reachability graph
      */
-    private void stateSpaceExploration(OutputStream writer) throws TimelessTrapException {
+    private void stateSpaceExploration(ObjectOutputStream writer) throws TimelessTrapException {
         while (!tangibleQueue.isEmpty()) {
             State state = tangibleQueue.poll();
             for (State successor : getSuccessors(state).keySet()) {
@@ -215,10 +215,9 @@ public class Reachability {
      * @param successorRate
      * @param writer
      */
-    private void transition(State state, State successor, double successorRate, OutputStream writer) {
+    private void transition(State state, State successor, double successorRate, ObjectOutputStream writer) {
         try {
             formatter.write(state, successor, successorRate, writer);
-            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -331,7 +330,7 @@ public class Reachability {
             }
             tokenCounts.put(place.getId(), counts);
         }
-        return new HashedState(tokenCounts);
+        return HashedState.tangibleState(tokenCounts);
     }
 
     /**
@@ -397,7 +396,7 @@ public class Reachability {
         /**
          * Writer to write results to
          */
-        private final OutputStream writer;
+        private final ObjectOutputStream writer;
 
         /**
          * Tangible state that a transition occurs from
@@ -409,7 +408,7 @@ public class Reachability {
          */
         PerformInitialTangibleAction action = new PerformInitialTangibleAction();
 
-        private SaveStateTangibleAction(OutputStream writer, State state) {
+        private SaveStateTangibleAction(ObjectOutputStream writer, State state) {
             this.writer = writer;
             this.state = state;
         }
