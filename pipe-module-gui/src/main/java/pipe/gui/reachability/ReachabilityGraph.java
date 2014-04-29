@@ -120,15 +120,12 @@ public class ReachabilityGraph {
                      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
                     ReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
                     Collection<Record> records = reader.getRecords(objectInputStream);
-                    System.out.println("STATE SIZE " + records.size());
                     updateGraph(records);
                 }
             }
         } catch (TimelessTrapException | IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("HERE :)");
     }
 
     public static void main(String[] args) {
