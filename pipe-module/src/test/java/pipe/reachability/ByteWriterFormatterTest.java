@@ -3,15 +3,13 @@ package pipe.reachability;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.token.Token;
+import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.state.HashedState;
 import pipe.reachability.state.Record;
 import pipe.reachability.state.State;
-import pipe.reachability.io.ByteWriterFormatter;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,15 +17,16 @@ import static org.junit.Assert.assertEquals;
 
 public class ByteWriterFormatterTest {
     ByteWriterFormatter formatter;
-    ByteArrayOutputStream stream;
+
     State state;
+
     State successor;
+
     double rate;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         formatter = new ByteWriterFormatter();
-        stream = new ByteArrayOutputStream();
 
         Map<String, Map<Token, Integer>> stateTokens = new HashMap<>();
         Token defaultToken = new Token("Default", Color.BLACK);
@@ -35,7 +34,7 @@ public class ByteWriterFormatterTest {
         stateTokens.get("P1").put(defaultToken, 1);
         stateTokens.put("P2", new HashMap<Token, Integer>());
         stateTokens.get("P2").put(defaultToken, 2);
-        state = new HashedState(stateTokens);
+        state = HashedState.tangibleState(stateTokens);
 
 
         Map<String, Map<Token, Integer>> successorTokens = new HashMap<>();
@@ -43,18 +42,45 @@ public class ByteWriterFormatterTest {
         successorTokens.get("P1").put(defaultToken, 0);
         successorTokens.put("P2", new HashMap<Token, Integer>());
         successorTokens.get("P2").put(defaultToken, 3);
-        successor = new HashedState(successorTokens);
+        successor = HashedState.vanishingState(successorTokens);
 
         rate = 4.5;
     }
 
     @Test
     public void correctlySerializesAndDeserializes() throws IOException {
-        formatter.write(state, successor, rate, stream);
-        stream.close();
-        Record record = formatter.read(new ByteArrayInputStream(stream.toByteArray()));
-        assertEquals(state, record.state);
-        assertEquals(successor, record.successor);
-        assertEquals(rate, record.rate, 0.0001);
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+             ObjectOutputStream outputStream = new ObjectOutputStream(stream)) {
+            formatter.write(state, successor, rate, outputStream);
+
+
+            try (ByteArrayInputStream s = new ByteArrayInputStream(stream.toByteArray());
+                 ObjectInputStream inputStream = new ObjectInputStream(s)) {
+                Record record = formatter.read(inputStream);
+                assertEquals(state, record.state);
+                assertEquals(successor, record.successor);
+                assertEquals(rate, record.rate, 0.0001);
+            }
+        }
+    }
+
+    @Test
+    public void correctlySerializesAndDeserializesTwoObjects() throws IOException {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+             ObjectOutputStream outputStream = new ObjectOutputStream(stream)) {
+            formatter.write(state, successor, rate, outputStream);
+            formatter.write(state, successor, rate, outputStream);
+
+
+            try (ByteArrayInputStream s = new ByteArrayInputStream(stream.toByteArray());
+                 ObjectInputStream inputStream = new ObjectInputStream(s)) {
+                for (int i = 0; i < 1; i++) {
+                    Record record = formatter.read(inputStream);
+                    assertEquals(state, record.state);
+                    assertEquals(successor, record.successor);
+                    assertEquals(rate, record.rate, 0.0001);
+                }
+            }
+        }
     }
 }
