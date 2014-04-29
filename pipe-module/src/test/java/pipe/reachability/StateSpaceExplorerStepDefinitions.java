@@ -10,7 +10,7 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
-import pipe.reachability.algorithm.Reachability;
+import pipe.reachability.algorithm.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class ReachabilityStepDefinitions {
+public class StateSpaceExplorerStepDefinitions {
     private PetriNet petriNet;
 
     private Map<StateTransition, Double> results = new HashMap<>();
@@ -51,8 +51,8 @@ public class ReachabilityStepDefinitions {
         WriterFormatter formatter = new ByteWriterFormatter();
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
              ObjectOutputStream outputStream = new ObjectOutputStream(byteStream)) {
-            Reachability reachability = new Reachability(petriNet, formatter);
-            reachability.generate(outputStream);
+            StateSpaceExplorer stateSpaceExplorer = new StateSpaceExplorer(petriNet, formatter);
+            stateSpaceExplorer.generate(outputStream);
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
                  ObjectInputStream inputStream = new ObjectInputStream(byteInputStream)) {

@@ -10,7 +10,7 @@ import pipe.io.PetriNetIOImpl;
 import pipe.io.PetriNetReader;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
-import pipe.reachability.algorithm.Reachability;
+import pipe.reachability.algorithm.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
@@ -110,12 +110,12 @@ public class ReachabilityGraph {
         try {
             PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
             ByteWriterFormatter formatter = new ByteWriterFormatter();
-            Reachability reachability = new Reachability(petriNet, formatter);
+            StateSpaceExplorer stateSpaceExplorer = new StateSpaceExplorer(petriNet, formatter);
 
             Path temporary = Files.createTempFile("rea", ".tmp");
             try (OutputStream stream = Files.newOutputStream(temporary);
                  ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
-                reachability.generate(objectOutputStream);
+                stateSpaceExplorer.generate(objectOutputStream);
                 try (InputStream inputStream = Files.newInputStream(temporary);
                      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
                     ReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);

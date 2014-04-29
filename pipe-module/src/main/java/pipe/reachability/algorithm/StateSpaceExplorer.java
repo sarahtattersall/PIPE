@@ -29,7 +29,7 @@ import java.util.*;
  * because no amount time is spent in this state (since there is an immediate transition out of it). This optimisation
  * reduces the memory needed to store the state space.
  */
-public class Reachability {
+public class StateSpaceExplorer {
 
     /**
      * Value used to eliminate a vanishing state. We do not explore a state if the rate into it is
@@ -76,7 +76,7 @@ public class Reachability {
     private Map<State, Map<State, Collection<Transition>>> cachedSuccessors = new HashMap<>();
 
 
-    public Reachability(PetriNet petriNet, WriterFormatter formatter) {
+    public StateSpaceExplorer(PetriNet petriNet, WriterFormatter formatter) {
         this.formatter = formatter;
         this.petriNet = ClonePetriNet.clone(petriNet);
         animator = new PetriNetAnimator(this.petriNet);
@@ -389,7 +389,7 @@ public class Reachability {
     }
 
     /**
-     * Wraps {@link Reachability.PerformInitialTangibleAction} saving the state out
+     * Wraps {@link StateSpaceExplorer.PerformInitialTangibleAction} saving the state out
      * to a writer
      */
     private class SaveStateTangibleAction implements PerformTangibleAction {
