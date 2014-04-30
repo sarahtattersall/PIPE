@@ -15,6 +15,7 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.sequential.SavingStateExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
+import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
 import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
 import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
@@ -55,6 +56,8 @@ public class ReachabilityGraph {
     private JButton loadButton;
 
     private JPanel resultsPanel;
+
+    private JCheckBox includeVanishingStatesCheckBox;
 
     private final mxGraph graph = new mxGraph();
 
@@ -123,7 +126,7 @@ public class ReachabilityGraph {
                  ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
                 StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, objectOutputStream);
                 ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
-                VanishingExplorer vanishingExplorer = new SimpleVanishingExplorer();
+                VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
                 StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilites);
                 stateSpaceExplorer.generate(objectOutputStream);
                 try (InputStream inputStream = Files.newInputStream(temporary);
@@ -146,6 +149,19 @@ public class ReachabilityGraph {
         frame.pack();
         frame.setVisible(true);
 
+    }
+
+    /**
+     * Vanishing explorer is either a {@link pipe.reachability.algorithm.state.SimpleVanishingExplorer} if
+     * vanishing states are to be included in the graph, else it is {@link pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer}
+     *
+     * @param explorerUtilities
+     */
+    private VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities) {
+       if (includeVanishingStatesCheckBox.isSelected()) {
+           return new SimpleVanishingExplorer();
+       }
+        return new OnTheFlyVanishingExplorer(explorerUtilities);
     }
 
     private void createUIComponents() {}
