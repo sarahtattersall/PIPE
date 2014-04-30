@@ -93,7 +93,7 @@ public class StateSpaceExplorerStepDefinitions {
 
             StateSpaceExplorer stateSpaceExplorer =
                     new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilities);
-            stateSpaceExplorer.generate(outputStream);
+            stateSpaceExplorer.generate();
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
                  ObjectInputStream inputStream = new ObjectInputStream(byteInputStream)) {
