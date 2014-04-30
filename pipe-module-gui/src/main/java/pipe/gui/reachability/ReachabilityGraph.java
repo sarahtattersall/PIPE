@@ -1,7 +1,7 @@
 package pipe.gui.reachability;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
@@ -12,6 +12,7 @@ import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
 import pipe.reachability.algorithm.CachingExplorerUtilities;
 import pipe.reachability.algorithm.ExplorerUtilities;
+import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.sequential.SavingStateExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
@@ -19,10 +20,10 @@ import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
 import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
 import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
-import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
 import pipe.reachability.io.ReachabilityReader;
+import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.Record;
 import pipe.reachability.state.State;
 
@@ -43,7 +44,15 @@ import java.util.Map;
 
 public class ReachabilityGraph {
 
+    /**
+     * For loading Petri nets to explore
+     */
     private final FileDialog fileDialog;
+
+    /**
+     * Graphical representation of reachability
+     */
+    private final mxGraph graph = new mxGraph();
 
     private JPanel panel1;
 
@@ -59,16 +68,14 @@ public class ReachabilityGraph {
 
     private JCheckBox includeVanishingStatesCheckBox;
 
-    private final mxGraph graph = new mxGraph();
-
     /**
-     * Last loaded Petri net
+     * Last loaded Petri net via the load dialog
      */
     private PetriNet lastLoadedPetriNet;
 
     public ReachabilityGraph(FileDialog fileDialog) {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension(500,500));
+        graphComponent.setPreferredSize(new Dimension(500, 500));
         resultsPanel.add(graphComponent);
 
         goButton.addActionListener(new ActionListener() {
@@ -97,6 +104,36 @@ public class ReachabilityGraph {
         });
     }
 
+    /**
+     * Calculates the steady state exploration of a Petri net and stores its results
+     * in a temporary file.
+     * <p/>
+     * These results are then read in and turned into a graphical representation using mxGraph
+     * which is displayed to the user
+     */
+    private void calculateResults() {
+        try {
+            WriterFormatter formatter = new ByteWriterFormatter();
+            Path temporary = Files.createTempFile("rea", ".tmp");
+            try (OutputStream stream = Files.newOutputStream(temporary);
+                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
+                writeStateSpace(formatter, objectOutputStream);
+
+                try (InputStream inputStream = Files.newInputStream(temporary);
+                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                    Collection<Record> records = readResults(formatter, objectInputStream);
+                    updateGraph(records);
+                }
+            }
+        } catch (TimelessTrapException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Opens the file dialog and saves the selected Petri net into lastLoadedPetriNet
+     * for use when calculating the state space exploration
+     */
     private void loadPetriNet() {
         fileDialog.setVisible(true);
 
@@ -116,66 +153,53 @@ public class ReachabilityGraph {
         }
     }
 
-    private void calculateResults() {
-        try {
-            PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
-            ByteWriterFormatter formatter = new ByteWriterFormatter();
-
-            Path temporary = Files.createTempFile("rea", ".tmp");
-            try (OutputStream stream = Files.newOutputStream(temporary);
-                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
-                StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, objectOutputStream);
-                ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
-                VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
-                StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilites);
-                stateSpaceExplorer.generate(objectOutputStream);
-                try (InputStream inputStream = Files.newInputStream(temporary);
-                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-                    ReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
-                    Collection<Record> records = reader.getRecords(objectInputStream);
-                    updateGraph(records);
-                }
-            }
-        } catch (TimelessTrapException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("ReachabilityGraph");
-        FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
-        frame.setContentPane(new ReachabilityGraph(selector).panel1);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-
+    /**
+     * Writes the petriNet state space out to a temporary file which is referenced by the objectOutputStream
+     *
+     * @param formatter          format in which to write the results to
+     * @param objectOutputStream stream to write state space to
+     * @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
+     */
+    private void writeStateSpace(WriterFormatter formatter, ObjectOutputStream objectOutputStream)
+            throws TimelessTrapException {
+        PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
+        StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, objectOutputStream);
+        ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
+        VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
+        StateSpaceExplorer stateSpaceExplorer =
+                new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilites);
+        stateSpaceExplorer.generate(objectOutputStream);
     }
 
     /**
-     * Vanishing explorer is either a {@link pipe.reachability.algorithm.state.SimpleVanishingExplorer} if
-     * vanishing states are to be included in the graph, else it is {@link pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer}
+     * Reads results of steady state exploration into a collection of records
      *
-     * @param explorerUtilities
+     * @param formatter
+     * @param objectInputStream
+     * @return state transitions with rates
+     * @throws IOException
      */
-    private VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities) {
-       if (includeVanishingStatesCheckBox.isSelected()) {
-           return new SimpleVanishingExplorer();
-       }
-        return new OnTheFlyVanishingExplorer(explorerUtilities);
+    private Collection<Record> readResults(WriterFormatter formatter, ObjectInputStream objectInputStream)
+            throws IOException {
+        ReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
+        return reader.getRecords(objectInputStream);
     }
 
-    private void createUIComponents() {}
-
-    private void updateGraph(Collection<Record> records) {
+    /**
+     *
+     * Updates the mxGraph to display the records
+     *
+     * @param records state transitions from a processed Petri net
+     */
+    private void updateGraph(Iterable<Record> records) {
         graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
-        mxGraphLayout layout = new mxHierarchicalLayout(graph);
+        mxIGraphLayout layout = new mxHierarchicalLayout(graph);
 
         Object parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
         mxStylesheet stylesheet = graph.getStylesheet();
         Map<String, Object> vertexStyles = stylesheet.getDefaultVertexStyle();
         vertexStyles.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-
 
 
         Map<State, Object> verticies = new HashMap<>();
@@ -190,6 +214,19 @@ public class ReachabilityGraph {
             graph.getModel().endUpdate();
         }
         layout.execute(graph.getDefaultParent());
+    }
+
+    /**
+     * Vanishing explorer is either a {@link pipe.reachability.algorithm.state.SimpleVanishingExplorer} if
+     * vanishing states are to be included in the graph, else it is {@link pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer}
+     *
+     * @param explorerUtilities
+     */
+    private VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities) {
+        if (includeVanishingStatesCheckBox.isSelected()) {
+            return new SimpleVanishingExplorer();
+        }
+        return new OnTheFlyVanishingExplorer(explorerUtilities);
     }
 
     /**
@@ -212,10 +249,10 @@ public class ReachabilityGraph {
     }
 
     /**
-     *
      * Return settings string for inserting a vertex into a graph.
-     *
+     * <p/>
      * Tangible states are blue whilst vanishing states are red.
+     *
      * @param state
      * @return settings string
      */
@@ -224,5 +261,18 @@ public class ReachabilityGraph {
             return "fillColor=#99CCFF";
         }
         return "fillColor=#FF8566";
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("ReachabilityGraph");
+        FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
+        frame.setContentPane(new ReachabilityGraph(selector).panel1);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+
+    }
+
+    private void createUIComponents() {
     }
 }
