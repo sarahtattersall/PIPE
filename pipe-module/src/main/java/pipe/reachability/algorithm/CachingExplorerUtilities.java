@@ -20,7 +20,14 @@ import java.util.*;
  * Performs caching of frequent computations
  */
 public class CachingExplorerUtilities implements ExplorerUtilities {
+    /**
+     *
+     */
     private final PetriNet petriNet;
+
+    /**
+     * Animator for the Petri net
+     */
     private final Animator animator;
 
     /**
@@ -31,20 +38,45 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      */
     private Map<State, Map<State, Collection<Transition>>> cachedSuccessors = new HashMap<>();
 
+    /**
+     *
+     * Takes a copy of the Petri net to use for state space exploration so
+     * not to affect the reference
+     *
+     * @param petriNet petri net to use for state space exploration
+     */
     public CachingExplorerUtilities(PetriNet petriNet) {
         this.petriNet = ClonePetriNet.clone(petriNet);
         animator = new PetriNetAnimator(this.petriNet);
     }
 
+    /**
+     *
+     * Finds successors of the given state. A successor is a state that occurs
+     * when one of the enabled transitions in the current state is fired.
+     *
+     * Performs caching of the successors to speed up computation time
+     * when a state is queried more than once. This is particularly useful
+     * if on the fly vanishing state exploration is used
+     *
+     * @param state
+     * @return map of successor states to the transitions that caused them
+     */
     @Override
     public Map<State, Collection<Transition>> getSuccessors(State state) {
+
+        if (cachedSuccessors.containsKey(state)) {
+            return cachedSuccessors.get(state);
+        }
+
+
         setState(petriNet, state);
         Collection<Transition> enabled = animator.getEnabledTransitions();
         Map<State, Collection<Transition>> successors = new HashMap<>();
         for (Transition transition : enabled) {
             setState(petriNet, state);
             animator.fireTransition(transition);
-            State successor = createState();
+            State successor = getCurrentState();
 
 
             if (!successors.containsKey(successor)) {
@@ -52,6 +84,9 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
             }
             successors.get(successor).add(transition);
         }
+
+        cachedSuccessors.put(state, successors);
+
         return successors;
     }
 
@@ -63,7 +98,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * @return current state of the Petri net
      */
     @Override
-    public State createState() {
+    public State getCurrentState() {
         Map<String, Map<Token, Integer>> tokenCounts = new HashMap<>();
         for (Place place : petriNet.getPlaces()) {
             Map<Token, Integer> counts = new HashMap<>();
@@ -132,6 +167,9 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     /**
      * Calculates the set of transitions that will take you from one state to the successor.
      *
+     * Uses the current underlying cached methods so that duplicate calls to this method
+     * will not result in another computation
+     *
      * @param state     initial state
      * @param successor successor state, must be directly reachable from the state
      * @return enabled transitions that take you from state to successor, if it is not directly reachable then
@@ -147,6 +185,13 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     }
 
 
+    /**
+     *
+     * Sums up the weights of the transitions. Transitions may have functional rates
+     *
+     * @param transitions
+     * @return summed up the weight of the transitions specified
+     */
     @Override
     public double getWeightOfTransitions(Iterable<Transition> transitions) {
         double weight = 0;
@@ -162,6 +207,11 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
         return weight;
     }
 
+    /**
+     *
+     * @param state
+     * @return all enabled transitions for the specified state
+     */
     @Override
     public Collection<Transition> getAllEnabledTransitions(State state) {
         Collection<Transition> results = new LinkedList<>();

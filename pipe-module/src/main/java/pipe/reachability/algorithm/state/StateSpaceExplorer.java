@@ -2,8 +2,6 @@ package pipe.reachability.algorithm.state;
 
 import pipe.reachability.algorithm.TimelessTrapException;
 
-import java.io.ObjectOutputStream;
-
 /**
  * Performs state space exploration searching for the states that can be
  * reached from the given Petri net set up.
@@ -18,10 +16,9 @@ import java.io.ObjectOutputStream;
 public interface StateSpaceExplorer {
 
     /**
-     * Writes out the state space exploration transitions to the writer
+     * Performs steady state exploration
      *
-     * @param writer for writing serialised states
      * @throws pipe.reachability.algorithm.TimelessTrapException
      */
-    void generate(ObjectOutputStream writer) throws TimelessTrapException;
+    void generate() throws TimelessTrapException;
 }

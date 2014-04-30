@@ -1,6 +1,5 @@
-package pipe.reachability.algorithm.sequential;
+package pipe.reachability.algorithm.state;
 
-import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.State;
 
@@ -8,11 +7,9 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- * Saves the state transition out to the writer
+ * Saves the state transition out to the writer as a serialized state
  */
-public class SavingStateExplorer implements StateExplorer {
-
-
+public class SeralizingStateWriter implements StateWriter {
     /**
      * Form in which to write transitions out to a Writer
      */
@@ -23,7 +20,7 @@ public class SavingStateExplorer implements StateExplorer {
      */
     private final ObjectOutputStream writer;
 
-    public SavingStateExplorer(WriterFormatter formatter, ObjectOutputStream writer) {
+    public SeralizingStateWriter(WriterFormatter formatter, ObjectOutputStream writer) {
         this.formatter = formatter;
         this.writer = writer;
     }
@@ -39,7 +36,7 @@ public class SavingStateExplorer implements StateExplorer {
      * @param rate  rate at which the state is entered
      */
     @Override
-    public void explore(State previous, State state, double rate) {
+    public void transition(State previous, State state, double rate) {
         if (previous != null) {
             try {
                 formatter.write(previous, state, rate, writer);

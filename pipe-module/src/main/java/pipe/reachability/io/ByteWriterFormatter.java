@@ -9,6 +9,12 @@ import java.io.*;
  * Writes the state space exploration transitions into a binary stream
  */
 public class ByteWriterFormatter implements WriterFormatter {
+    /**
+     * Reads in a serialized state, successor and rate
+     * @param inputStream
+     * @return record of state transition with rate
+     * @throws IOException
+     */
     @Override
     public Record read(ObjectInputStream inputStream) throws IOException {
         try  {
@@ -23,6 +29,16 @@ public class ByteWriterFormatter implements WriterFormatter {
         }
     }
 
+    /**
+     *
+     * Writes serialized state, successor and rates to the stream
+     *
+     * @param state starting state
+     * @param successor state that is transitioned to
+     * @param successorRate rate at which state transitions to successor
+     * @param stream
+     * @throws IOException
+     */
     @Override
     public void write(State state, State successor, double successorRate, ObjectOutputStream stream) throws IOException {
             stream.writeObject(state);
@@ -32,19 +48,4 @@ public class ByteWriterFormatter implements WriterFormatter {
     }
 
 
-    private static class AppendingObjectOutputStream extends ObjectOutputStream {
-
-        public AppendingObjectOutputStream(OutputStream out) throws IOException {
-            super(out);
-        }
-
-        @Override
-        protected void writeStreamHeader() throws IOException {
-            // do not write a header, but reset:
-            // this line added after another question
-            // showed a problem with the original
-            reset();
-        }
-
-    }
 }
