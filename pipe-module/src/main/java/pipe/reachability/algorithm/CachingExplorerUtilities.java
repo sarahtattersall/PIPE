@@ -19,7 +19,7 @@ import java.util.*;
  *
  * Performs caching of frequent computations
  */
-public class CachingExplorerUtilities implements ExplorerUtilites {
+public class CachingExplorerUtilities implements ExplorerUtilities {
     private final PetriNet petriNet;
     private final Animator animator;
 

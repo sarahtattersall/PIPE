@@ -1,9 +1,9 @@
-package pipe.reachability.algorithm;
+package pipe.reachability.algorithm.state;
 
 import pipe.reachability.state.State;
 
 /**
- * This class is used in conjunction with the {@link pipe.reachability.algorithm.StateSpaceExplorer}
+ * This class is used in conjunction with the {@link StateSpaceExplorer}
  * and should provide the code for exploring each different type of state.
  */
 public interface StateExplorer {

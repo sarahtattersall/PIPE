@@ -1,6 +1,10 @@
-package pipe.reachability.algorithm;
+package pipe.reachability.algorithm.state;
 
 import pipe.models.component.transition.Transition;
+import pipe.reachability.algorithm.ExplorerUtilities;
+import pipe.reachability.algorithm.TimelessTrapException;
+import pipe.reachability.algorithm.VanishingExplorer;
+import pipe.reachability.algorithm.VanishingRecord;
 import pipe.reachability.state.State;
 
 import java.util.ArrayDeque;
@@ -22,7 +26,7 @@ public abstract class AbstractVanishingExplorer implements VanishingExplorer {
      * {@link pipe.reachability.algorithm.TimelessTrapException} is thrown
      */
     //TODO ASK WILL FOR THE SIZE?
-    private static final int ALLOWED_ITERATIONS = 10000;
+    private static final int ALLOWED_ITERATIONS = 1000;
 
     /**
      * Value used to eliminate a vanishing state. We do not explore a state if the rate into it is
@@ -38,16 +42,17 @@ public abstract class AbstractVanishingExplorer implements VanishingExplorer {
     /**
      * Explorer utilities useful for state manipulations
      */
-    private final ExplorerUtilites explorerUtilities;
+    private final ExplorerUtilities explorerUtilities;
 
 
-    protected AbstractVanishingExplorer(StateExplorer vanishingExplorer, ExplorerUtilites explorerUtilities) {
+    protected AbstractVanishingExplorer(StateExplorer vanishingExplorer, ExplorerUtilities explorerUtilities) {
         this.vanishingExplorer = vanishingExplorer;
         this.explorerUtilities = explorerUtilities;
     }
 
     @Override
-    public Collection<State> explore(State lastTangible, State vanishingState, double rate) throws TimelessTrapException {
+    public Collection<State> explore(State lastTangible, State vanishingState, double rate) throws
+            TimelessTrapException {
         Deque<VanishingRecord> vanishingStack = new ArrayDeque<>();
         vanishingStack.push(new VanishingRecord(vanishingState, rate));
         int iterations = 0;

@@ -1,5 +1,6 @@
-Feature: state space exploration
+Feature: state space exploration of tangible states only
 
+@tangibleOnly
 Scenario: Parsing a simple Petri net file
   Given I use the Petri net located at /simple.xml
   When I generate the exploration graph
@@ -23,6 +24,7 @@ Scenario: Parsing a simple Petri net file
     """
   And rate 1.0
 
+@tangibleOnly
 Scenario: Parsing a simple differently rated Petri net file
   Given I use the Petri net located at /simple_rated.xml
   When I generate the exploration graph
@@ -47,6 +49,7 @@ Scenario: Parsing a simple differently rated Petri net file
   And rate 5.0
 
 
+@tangibleOnly
 Scenario: Parsing a simple vanishing Petri net file
     Given I use the Petri net located at /simple_vanishing.xml
     When I generate the exploration graph
@@ -123,6 +126,8 @@ Scenario: Parsing a simple vanishing Petri net file
     """
   And rate 0.5
 
+
+@tangibleOnly
 Scenario: Parsing a cyclic vanishing Petri net file
     Given I use the Petri net located at /cyclic_vanishing.xml
     When I generate the exploration graph
@@ -181,18 +186,22 @@ Scenario: Parsing a cyclic vanishing Petri net file
     """
     And rate 3.875
 
+
+@tangibleOnly
 Scenario: Parsing a timeless trap Petri net file
     Given I use the Petri net located at /timeless_trap.xml
     When I generate the exploration graph
     Then I expect to see 0 state transitions
     And have thrown a TimelessTrapException
 
+
+@tangibleOnly
 Scenario: Parsing all immediate transitions
   Given I use the Petri net located at /all_immediate.xml
   When I generate the exploration graph
   Then I expect to see 0 state transitions
 
-
+@tangibleOnly
 Scenario: Parsing simple coloured Petri net
     Given I use the Petri net located at /simple_color.xml
     When I generate the exploration graph
@@ -216,7 +225,7 @@ Scenario: Parsing simple coloured Petri net
     """
     And rate 1.0
 
-
+@tangibleOnly
 Scenario: Parsing individual arc coloured Petri net
     Given I use the Petri net located at /complex_color.xml
     When I generate the exploration graph

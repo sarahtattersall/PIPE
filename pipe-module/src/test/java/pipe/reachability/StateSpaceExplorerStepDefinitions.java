@@ -1,5 +1,6 @@
 package pipe.reachability;
 
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -11,9 +12,9 @@ import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
 import pipe.reachability.algorithm.*;
-import pipe.reachability.algorithm.sequential.NonSavingStateExplorer;
-import pipe.reachability.algorithm.sequential.SavingStateExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
+import pipe.reachability.algorithm.state.StateExplorer;
+import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
 import pipe.reachability.io.StateTransition;
@@ -30,8 +31,14 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class StateSpaceExplorerStepDefinitions {
+    /**
+     * Petri net to perform exploration on
+     */
     private PetriNet petriNet;
 
+    /**
+     * State space exploration results
+     */
     private Map<StateTransition, Double> results = new HashMap<>();
 
     /**
@@ -39,8 +46,29 @@ public class StateSpaceExplorerStepDefinitions {
      */
     private boolean timelessTrap = false;
 
+    /**
+     * Auxillary state for registering with expected records
+     */
     private State state;
+
+    /**
+     * Auxillary state for registering with expected records
+     */
     private State successor;
+
+    private StateExplorerUtils utils;
+
+    @Before("@tangibleOnly")
+    public void beforeTangibleScenario() {
+        utils = new TangibleOnlyUtils();
+    }
+
+    @Before("@tangibleAndVanishing")
+    public void beforeTanigbleAndVanishingScenario() {
+       utils = new TangibleAndVanishingUtils();
+    }
+
+
 
     @Given("^I use the Petri net located at (/[\\w/]+.xml)$")
     public void I_Use_the_Petri_net_located_at(String path) throws JAXBException, UnparsableException {
@@ -54,13 +82,15 @@ public class StateSpaceExplorerStepDefinitions {
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
              ObjectOutputStream outputStream = new ObjectOutputStream(byteStream)) {
 
-            StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, outputStream);
-            StateExplorer vanishingStateExplorer = new NonSavingStateExplorer();
-            ExplorerUtilites explorerUtilites = new CachingExplorerUtilities(petriNet);
-            VanishingExplorer vanishingExplorer = new TangibleTransitionVanishingExplorer(tangibleExplorer,
-                    vanishingStateExplorer, explorerUtilites);
+
+            StateExplorer tangibleExplorer = utils.getTangibleStateExplorer(formatter, outputStream);
+            StateExplorer vanishingStateExplorer = utils.getVanishingStateExplorer(formatter, outputStream);
+            ExplorerUtilities explorerUtilities = new CachingExplorerUtilities(petriNet);
+            VanishingExplorer vanishingExplorer = utils.getVanishingExplorer(tangibleExplorer, vanishingStateExplorer,
+                    explorerUtilities);
+
             StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer,
-                    vanishingExplorer, explorerUtilites);
+                    vanishingExplorer, explorerUtilities);
             stateSpaceExplorer.generate(outputStream);
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());

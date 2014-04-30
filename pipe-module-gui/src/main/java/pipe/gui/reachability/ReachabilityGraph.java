@@ -11,7 +11,7 @@ import pipe.io.PetriNetReader;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.algorithm.StateSpaceExplorer;
+import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
