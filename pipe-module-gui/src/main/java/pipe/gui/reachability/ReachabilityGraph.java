@@ -10,6 +10,7 @@ import pipe.io.PetriNetIOImpl;
 import pipe.io.PetriNetReader;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
+import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.algorithm.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
@@ -110,7 +111,8 @@ public class ReachabilityGraph {
         try {
             PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
             ByteWriterFormatter formatter = new ByteWriterFormatter();
-            StateSpaceExplorer stateSpaceExplorer = new StateSpaceExplorer(petriNet, formatter);
+            StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer,
+                    vanishingExplorer, explorerUtilites);
 
             Path temporary = Files.createTempFile("rea", ".tmp");
             try (OutputStream stream = Files.newOutputStream(temporary);

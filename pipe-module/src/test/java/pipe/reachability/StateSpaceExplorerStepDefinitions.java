@@ -10,8 +10,10 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
-import pipe.reachability.algorithm.StateSpaceExplorer;
-import pipe.reachability.algorithm.TimelessTrapException;
+import pipe.reachability.algorithm.*;
+import pipe.reachability.algorithm.sequential.NonSavingStateExplorer;
+import pipe.reachability.algorithm.sequential.SavingStateExplorer;
+import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.MultiTransitionReachabilityReader;
 import pipe.reachability.io.StateTransition;
@@ -51,7 +53,14 @@ public class StateSpaceExplorerStepDefinitions {
         WriterFormatter formatter = new ByteWriterFormatter();
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
              ObjectOutputStream outputStream = new ObjectOutputStream(byteStream)) {
-            StateSpaceExplorer stateSpaceExplorer = new StateSpaceExplorer(petriNet, formatter);
+
+            StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, outputStream);
+            StateExplorer vanishingStateExplorer = new NonSavingStateExplorer();
+            ExplorerUtilites explorerUtilites = new CachingExplorerUtilities(petriNet);
+            VanishingExplorer vanishingExplorer = new TangibleTransitionVanishingExplorer(tangibleExplorer,
+                    vanishingStateExplorer, explorerUtilites);
+            StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer,
+                    vanishingExplorer, explorerUtilites);
             stateSpaceExplorer.generate(outputStream);
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
