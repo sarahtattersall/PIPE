@@ -59,7 +59,7 @@ public interface Animator {
      *
      * @param transition transition to fire backwards
      */
-    //TODO: NOT SURE IF BETTER TO JUST HAVE UNDO/REDO IN ANIMATION HISTORY? HAVE TO STORE ENTIRE PETRI
-    //      NET STATES SO MAYBE NOT?
+    // TODO: NOT SURE IF BETTER TO JUST HAVE UNDO/REDO IN ANIMATION HISTORY? HAVE TO STORE ENTIRE PETRI
+    //       NET STATES SO MAYBE NOT?
     void fireTransitionBackwards(Transition transition);
 }

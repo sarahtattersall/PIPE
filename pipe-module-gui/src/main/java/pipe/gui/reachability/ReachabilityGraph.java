@@ -10,7 +10,13 @@ import pipe.io.PetriNetIOImpl;
 import pipe.io.PetriNetReader;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
+import pipe.reachability.algorithm.CachingExplorerUtilities;
+import pipe.reachability.algorithm.ExplorerUtilities;
+import pipe.reachability.algorithm.VanishingExplorer;
+import pipe.reachability.algorithm.sequential.SavingStateExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
+import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
+import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.io.ByteWriterFormatter;
@@ -111,12 +117,14 @@ public class ReachabilityGraph {
         try {
             PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
             ByteWriterFormatter formatter = new ByteWriterFormatter();
-            StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer,
-                    vanishingExplorer, explorerUtilites);
 
             Path temporary = Files.createTempFile("rea", ".tmp");
             try (OutputStream stream = Files.newOutputStream(temporary);
                  ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
+                StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, objectOutputStream);
+                ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
+                VanishingExplorer vanishingExplorer = new SimpleVanishingExplorer();
+                StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilites);
                 stateSpaceExplorer.generate(objectOutputStream);
                 try (InputStream inputStream = Files.newInputStream(temporary);
                      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {

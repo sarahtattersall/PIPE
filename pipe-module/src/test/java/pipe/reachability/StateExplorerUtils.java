@@ -15,7 +15,6 @@ import java.io.ObjectOutputStream;
 public interface StateExplorerUtils {
 
     StateExplorer getTangibleStateExplorer(WriterFormatter formatter, ObjectOutputStream outputStream);
-    StateExplorer getVanishingStateExplorer(WriterFormatter formatter, ObjectOutputStream outputStream);
-    VanishingExplorer getVanishingExplorer(StateExplorer tangible, StateExplorer vanishing , ExplorerUtilities explorerUtilities);
+    VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities);
 
 }

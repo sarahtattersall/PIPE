@@ -11,7 +11,10 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
-import pipe.reachability.algorithm.*;
+import pipe.reachability.algorithm.CachingExplorerUtilities;
+import pipe.reachability.algorithm.ExplorerUtilities;
+import pipe.reachability.algorithm.TimelessTrapException;
+import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
@@ -31,6 +34,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class StateSpaceExplorerStepDefinitions {
+    VanishingExplorer vanishingExplorer;
+
     /**
      * Petri net to perform exploration on
      */
@@ -65,9 +70,8 @@ public class StateSpaceExplorerStepDefinitions {
 
     @Before("@tangibleAndVanishing")
     public void beforeTanigbleAndVanishingScenario() {
-       utils = new TangibleAndVanishingUtils();
+        utils = new TangibleAndVanishingUtils();
     }
-
 
 
     @Given("^I use the Petri net located at (/[\\w/]+.xml)$")
@@ -84,13 +88,11 @@ public class StateSpaceExplorerStepDefinitions {
 
 
             StateExplorer tangibleExplorer = utils.getTangibleStateExplorer(formatter, outputStream);
-            StateExplorer vanishingStateExplorer = utils.getVanishingStateExplorer(formatter, outputStream);
             ExplorerUtilities explorerUtilities = new CachingExplorerUtilities(petriNet);
-            VanishingExplorer vanishingExplorer = utils.getVanishingExplorer(tangibleExplorer, vanishingStateExplorer,
-                    explorerUtilities);
+            VanishingExplorer vanishingExplorer = utils.getVanishingExplorer(explorerUtilities);
 
-            StateSpaceExplorer stateSpaceExplorer = new SequentialStateSpaceExplorer(tangibleExplorer,
-                    vanishingExplorer, explorerUtilities);
+            StateSpaceExplorer stateSpaceExplorer =
+                    new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilities);
             stateSpaceExplorer.generate(outputStream);
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
@@ -113,6 +115,21 @@ public class StateSpaceExplorerStepDefinitions {
         state = toState(jsonState);
     }
 
+    private State toState(String json) throws IOException, PetriNetComponentNotFoundException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, HashMap<String, Integer>> map =
+                mapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, Integer>>>() {
+                });
+        Map<String, Map<Token, Integer>> stateMap = new HashMap<>();
+        for (Map.Entry<String, HashMap<String, Integer>> entry : map.entrySet()) {
+            Map<Token, Integer> tokenCounts = new HashMap<>();
+            for (Map.Entry<String, Integer> tokenEntry : entry.getValue().entrySet()) {
+                tokenCounts.put(petriNet.getComponent(tokenEntry.getKey(), Token.class), tokenEntry.getValue());
+            }
+            stateMap.put(entry.getKey(), tokenCounts);
+        }
+        return HashedState.tangibleState(stateMap);
+    }
 
     @And("^successor")
     public void successor(String jsonState) throws IOException, PetriNetComponentNotFoundException {
@@ -130,19 +147,5 @@ public class StateSpaceExplorerStepDefinitions {
     @And("^have thrown a TimelessTrapException$")
     public void have_thrown_a_TimelessTrapException() {
         assertTrue(timelessTrap);
-    }
-
-    private State toState(String json) throws IOException, PetriNetComponentNotFoundException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, HashMap<String, Integer>> map = mapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, Integer>>>(){});
-        Map<String, Map<Token, Integer>> stateMap = new HashMap<>();
-        for (Map.Entry<String, HashMap<String, Integer>> entry : map.entrySet()) {
-            Map<Token, Integer> tokenCounts = new HashMap<>();
-            for (Map.Entry<String, Integer> tokenEntry : entry.getValue().entrySet()) {
-                tokenCounts.put(petriNet.getComponent(tokenEntry.getKey(), Token.class), tokenEntry.getValue());
-            }
-            stateMap.put(entry.getKey(), tokenCounts);
-        }
-        return HashedState.tangibleState(stateMap);
     }
 }
