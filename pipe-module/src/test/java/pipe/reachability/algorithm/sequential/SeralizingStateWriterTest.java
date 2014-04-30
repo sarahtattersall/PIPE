@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.reachability.algorithm.state.StateExplorer;
+import pipe.reachability.algorithm.state.SeralizingStateWriter;
 import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.State;
 
@@ -14,14 +14,12 @@ import java.io.ObjectOutputStream;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SavingStateExplorerTest {
+public class SeralizingStateWriterTest {
 
-    private SavingStateExplorer explorer;
+    private SeralizingStateWriter explorer;
 
     @Mock
     WriterFormatter formatter;
@@ -37,26 +35,25 @@ public class SavingStateExplorerTest {
 
     @Before
     public void setUp() {
-        explorer = new SavingStateExplorer(formatter, writer);
+        explorer = new SeralizingStateWriter(formatter, writer);
     }
 
     @Test
     public void doesNotWriteIfPreviousIsNull() throws IOException {
-        explorer.explore(null, state, 1.0);
+        explorer.transition(null, state, 1.0);
         verify(formatter, never()).write(any(State.class), any(State.class), anyDouble(), any(ObjectOutputStream.class));
     }
 
     @Test
     public void writesToWriterIfPreviousNotNull() throws IOException {
-        explorer.explore(previous, state, 1.0);
+        explorer.transition(previous, state, 1.0);
         verify(formatter).write(previous, state, 1.0, writer);
     }
 
 
     @Test
     public void noInteractionsWithMocks() {
-        StateExplorer explorer = new NonSavingStateExplorer();
-        explorer.explore(previous, state, 1.0);
+        explorer.transition(previous, state, 1.0);
         verifyNoMoreInteractions(previous, state);
     }
 

@@ -19,14 +19,14 @@ import java.util.Map;
  * of the same state transitions with a different rate. This indicates another loop around the cycle with the
  * new rate. In this case the appropriate action is to sum all these rates.
  */
-public class MultiTransitionReachabilityReader implements ReachabilityReader {
+public class MultiTransitionStateSpaceExplorationReader implements StateSpaceExplorationReader {
 
     /**
      * Formatter that was used to write the original results
      */
     private final WriterFormatter formatter;
 
-    public MultiTransitionReachabilityReader(WriterFormatter formatter) {
+    public MultiTransitionStateSpaceExplorationReader(WriterFormatter formatter) {
         this.formatter = formatter;
     }
     /**

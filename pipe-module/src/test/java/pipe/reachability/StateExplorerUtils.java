@@ -1,7 +1,7 @@
 package pipe.reachability;
 
 import pipe.reachability.algorithm.ExplorerUtilities;
-import pipe.reachability.algorithm.state.StateExplorer;
+import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.io.WriterFormatter;
 
@@ -14,7 +14,7 @@ import java.io.ObjectOutputStream;
  */
 public interface StateExplorerUtils {
 
-    StateExplorer getTangibleStateExplorer(WriterFormatter formatter, ObjectOutputStream outputStream);
+    StateWriter getTangibleStateExplorer(WriterFormatter formatter, ObjectOutputStream outputStream);
     VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities);
 
 }

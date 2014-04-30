@@ -14,16 +14,15 @@ import pipe.reachability.algorithm.CachingExplorerUtilities;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.algorithm.sequential.SavingStateExplorer;
+import pipe.reachability.algorithm.state.SeralizingStateWriter;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
 import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
-import pipe.reachability.algorithm.state.StateExplorer;
+import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
-import pipe.reachability.io.ByteWriterFormatter;
-import pipe.reachability.io.MultiTransitionReachabilityReader;
-import pipe.reachability.io.ReachabilityReader;
-import pipe.reachability.io.WriterFormatter;
+import pipe.reachability.io.*;
+import pipe.reachability.io.MultiTransitionStateSpaceExplorationReader;
+import pipe.reachability.io.StateSpaceExplorationReader;
 import pipe.reachability.state.Record;
 import pipe.reachability.state.State;
 
@@ -163,7 +162,7 @@ public class ReachabilityGraph {
     private void writeStateSpace(WriterFormatter formatter, ObjectOutputStream objectOutputStream)
             throws TimelessTrapException {
         PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
-        StateExplorer tangibleExplorer = new SavingStateExplorer(formatter, objectOutputStream);
+        StateWriter tangibleExplorer = new SeralizingStateWriter(formatter, objectOutputStream);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
@@ -181,7 +180,7 @@ public class ReachabilityGraph {
      */
     private Collection<Record> readResults(WriterFormatter formatter, ObjectInputStream objectInputStream)
             throws IOException {
-        ReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
+        StateSpaceExplorationReader reader = new MultiTransitionStateSpaceExplorationReader(formatter);
         return reader.getRecords(objectInputStream);
     }
 

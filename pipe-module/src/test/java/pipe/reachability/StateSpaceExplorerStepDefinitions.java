@@ -16,10 +16,10 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.algorithm.state.StateExplorer;
+import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.io.ByteWriterFormatter;
-import pipe.reachability.io.MultiTransitionReachabilityReader;
+import pipe.reachability.io.MultiTransitionStateSpaceExplorationReader;
 import pipe.reachability.io.StateTransition;
 import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.HashedState;
@@ -87,7 +87,7 @@ public class StateSpaceExplorerStepDefinitions {
              ObjectOutputStream outputStream = new ObjectOutputStream(byteStream)) {
 
 
-            StateExplorer tangibleExplorer = utils.getTangibleStateExplorer(formatter, outputStream);
+            StateWriter tangibleExplorer = utils.getTangibleStateExplorer(formatter, outputStream);
             ExplorerUtilities explorerUtilities = new CachingExplorerUtilities(petriNet);
             VanishingExplorer vanishingExplorer = utils.getVanishingExplorer(explorerUtilities);
 
@@ -97,7 +97,7 @@ public class StateSpaceExplorerStepDefinitions {
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
                  ObjectInputStream inputStream = new ObjectInputStream(byteInputStream)) {
-                MultiTransitionReachabilityReader reader = new MultiTransitionReachabilityReader(formatter);
+                MultiTransitionStateSpaceExplorationReader reader = new MultiTransitionStateSpaceExplorationReader(formatter);
                 results.putAll(reader.getTotalRates(inputStream));
             }
         } catch (TimelessTrapException ignored) {

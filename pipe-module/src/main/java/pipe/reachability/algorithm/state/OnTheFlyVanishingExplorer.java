@@ -15,6 +15,13 @@ import java.util.LinkedList;
 /**
  * Abstract class that contains the shared code for vanishing explorers
  *
+ *  * <p/>
+ * It performs on the fly vanishing state elimination, producing the reachability graph for tangible states.
+ * A tangible state is one in which:
+ * a) Has no enabled transitions
+ * b) Has entirely timed transitions leaving it
+ * <p/>
+ *
  * The difference between the explorers is what happens when a tangible state is found
  * The recorded state is either the last tanigble or the parent vanishin state.
  *
