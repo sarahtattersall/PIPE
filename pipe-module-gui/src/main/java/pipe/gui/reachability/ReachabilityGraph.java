@@ -167,7 +167,7 @@ public class ReachabilityGraph {
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
                 new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilites);
-        stateSpaceExplorer.generate(objectOutputStream);
+        stateSpaceExplorer.generate();
     }
 
     /**
