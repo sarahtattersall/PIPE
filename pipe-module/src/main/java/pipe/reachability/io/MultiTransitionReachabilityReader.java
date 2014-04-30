@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * Class that handles duplicate state transitions in the input stream.
  *
- * Due to the nature of {@link pipe.reachability.algorithm.StateSpaceExplorer} logging all transitions
+ * Due to the nature of {@link pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer} logging all transitions
  * without prior processing it is possible due to cyclic vanishing states to have a log
  * of the same state transitions with a different rate. This indicates another loop around the cycle with the
  * new rate. In this case the appropriate action is to sum all these rates.
