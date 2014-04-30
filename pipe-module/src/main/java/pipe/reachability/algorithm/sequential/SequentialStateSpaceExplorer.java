@@ -81,21 +81,22 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
             for (State successor : explorerUtilities.getSuccessors(state).keySet()) {
                 double rate = rate(state, successor);
                 if (successor.isTangible()) {
-                    tangibleExplorer.explore(state, successor, rate);
-                    if (!explored.contains(successor)) {
-                        tangibleQueue.add(successor);
-                        markAsExplored(successor);
-                    }
+                    exploreState(state, successor, rate);
                 } else {
-                    Collection<State> tangibleStates = vanishingExplorer.explore(state, successor, rate);
-                    for (State tangible : tangibleStates) {
-                        if (!explored.contains(tangible)) {
-                            tangibleQueue.add(tangible);
-                            markAsExplored(tangible);
-                        }
+                    Collection<StateRateRecord> explorableStates = vanishingExplorer.explore(successor, rate);
+                    for (StateRateRecord record : explorableStates) {
+                        exploreState(state, record.getState(), record.getRate());
                     }
                 }
             }
+        }
+    }
+
+    private void exploreState(State state, State successor, double rate) {
+        tangibleExplorer.explore(state, successor, rate);
+        if (!explored.contains(successor)) {
+            tangibleQueue.add(successor);
+            markAsExplored(successor);
         }
     }
 
@@ -127,12 +128,13 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
             tangibleQueue.add(initialState);
             markAsExplored(initialState);
         } else {
-            vanishingExplorer.explore(null, initialState, 1.0);
+            Collection<StateRateRecord> explorableStates = vanishingExplorer.explore(initialState, 1.0);
+            for (StateRateRecord record : explorableStates) {
+                exploreState(null, record.getState(), record.getRate());
+            }
         }
 
     }
-
-
 
     /**
      * Adds a compressed version of a tangible state to exploredStates

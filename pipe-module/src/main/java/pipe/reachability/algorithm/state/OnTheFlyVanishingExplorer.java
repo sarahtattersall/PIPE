@@ -2,9 +2,9 @@ package pipe.reachability.algorithm.state;
 
 import pipe.models.component.transition.Transition;
 import pipe.reachability.algorithm.ExplorerUtilities;
+import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.algorithm.VanishingRecord;
 import pipe.reachability.state.State;
 
 import java.util.ArrayDeque;
@@ -20,7 +20,7 @@ import java.util.LinkedList;
  *
  * Differing implementations can choose which state to explore
  */
-public abstract class AbstractVanishingExplorer implements VanishingExplorer {
+public class OnTheFlyVanishingExplorer implements VanishingExplorer {
     /**
      * The number of times that cyclic vanishing states are allowed to be explored before a
      * {@link pipe.reachability.algorithm.TimelessTrapException} is thrown
@@ -35,42 +35,33 @@ public abstract class AbstractVanishingExplorer implements VanishingExplorer {
     private static final double EPSILON = 0.0000001;
 
     /**
-     * Explores a vanishing state
-     */
-    private final StateExplorer vanishingExplorer;
-
-    /**
      * Explorer utilities useful for state manipulations
      */
     private final ExplorerUtilities explorerUtilities;
 
 
-    protected AbstractVanishingExplorer(StateExplorer vanishingExplorer, ExplorerUtilities explorerUtilities) {
-        this.vanishingExplorer = vanishingExplorer;
+    public OnTheFlyVanishingExplorer(ExplorerUtilities explorerUtilities) {
         this.explorerUtilities = explorerUtilities;
     }
 
     @Override
-    public Collection<State> explore(State lastTangible, State vanishingState, double rate) throws
-            TimelessTrapException {
-        Deque<VanishingRecord> vanishingStack = new ArrayDeque<>();
-        vanishingStack.push(new VanishingRecord(vanishingState, rate));
+    public Collection<StateRateRecord> explore(State vanishingState, double rate)
+            throws TimelessTrapException {
+        Deque<StateRateRecord> vanishingStack = new ArrayDeque<>();
+        vanishingStack.push(new StateRateRecord(vanishingState, rate));
         int iterations = 0;
-        Collection<State> tangibleStatesFound = new LinkedList<>();
+        Collection<StateRateRecord> tangibleStatesFound = new LinkedList<>();
         while (!vanishingStack.isEmpty() && iterations < ALLOWED_ITERATIONS) {
-            VanishingRecord record = vanishingStack.pop();
+            StateRateRecord record = vanishingStack.pop();
             State previous = record.getState();
             for (State successor : explorerUtilities.getSuccessors(previous).keySet()) {
                 double successorRate = record.getRate() * probability(previous, successor);
                 if (successor.isTangible()) {
-                    tangibleStatesFound.add(successor);
-                    registerTangible(lastTangible, previous, successor, successorRate);
+                    tangibleStatesFound.add(new StateRateRecord(successor, successorRate));
                 } else {
-                    vanishingExplorer.explore(previous, successor, rate);
                     if (successorRate > EPSILON) {
-                        vanishingStack.push(new VanishingRecord(successor, successorRate));
+                        vanishingStack.push(new StateRateRecord(successor, successorRate));
                     }
-
                 }
             }
             iterations++;
@@ -101,15 +92,4 @@ public abstract class AbstractVanishingExplorer implements VanishingExplorer {
         return toSuccessorWeight / totalWeight;
     }
 
-
-    /**
-     *
-     * Registers the tangible state
-     *
-     * @param lastTangible
-     * @param previous
-     * @param successor
-     * @param rate
-     */
-    protected abstract void registerTangible(State lastTangible, State previous, State successor, double rate);
 }

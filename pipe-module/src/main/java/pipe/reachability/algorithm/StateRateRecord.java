@@ -3,14 +3,14 @@ package pipe.reachability.algorithm;
 import pipe.reachability.state.State;
 
 /**
- * Record containing a vanishing state and the rate into it.
+ * Record containing a  state and the rate into it.
  * USed for the Reachability algorithm to perform on the fly
  * elimination of vanishing states.
  */
-public class VanishingRecord {
+public class StateRateRecord {
 
     /**
-     * Vanishing state
+     * State
      */
     private final State state;
 
@@ -19,7 +19,7 @@ public class VanishingRecord {
      */
     private final double rate;
 
-    public VanishingRecord(State state, double rate) {
+    public StateRateRecord(State state, double rate) {
         this.state = state;
         this.rate = rate;
     }

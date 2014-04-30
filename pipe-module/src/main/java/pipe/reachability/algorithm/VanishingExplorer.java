@@ -5,18 +5,19 @@ import pipe.reachability.state.State;
 import java.util.Collection;
 
 /**
- * Interface used to explore all vanishing states and eliminate them from the
- * steady state exploration
+ * Interface used to explore all vanishing states.
+ *
+ * Further implementations can choose to eliminate them from the steady state exploration
+ * or incorporate them into the exploration
  */
 public interface VanishingExplorer {
 
     /**
      *
-     * @param lastTangible last known tangible state
-     * @param vanishingState vanishing state to explore. It should be a successor of lastTangible
-     * @param rate rate at which vanishingState is entered from lastTangible
-     * @return Collection of tangible states found whilst exploring
+     * @param vanishingState vanishing state to explore.
+     * @param rate rate at which vanishingState is entered from the previous state
+     * @return Collection of states found to explore whilst processing the vanishing state
      * @throws TimelessTrapException
      */
-    Collection<State> explore(State lastTangible, State vanishingState, double rate) throws TimelessTrapException;
+    Collection<StateRateRecord> explore(State vanishingState, double rate) throws TimelessTrapException;
 }
