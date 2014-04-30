@@ -1,6 +1,6 @@
 package pipe.reachability.algorithm.sequential;
 
-import pipe.reachability.algorithm.StateExplorer;
+import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.state.State;
 
 /**

@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.reachability.algorithm.StateExplorer;
+import pipe.reachability.algorithm.state.StateExplorer;
 import pipe.reachability.state.State;
 
 import static org.mockito.Mockito.verifyNoMoreInteractions;

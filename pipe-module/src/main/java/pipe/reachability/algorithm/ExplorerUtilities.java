@@ -7,7 +7,7 @@ import pipe.reachability.state.State;
 import java.util.Collection;
 import java.util.Map;
 
-public interface ExplorerUtilites {
+public interface ExplorerUtilities {
     Map<State, Collection<Transition>> getSuccessors(State state);
 
     State createState();

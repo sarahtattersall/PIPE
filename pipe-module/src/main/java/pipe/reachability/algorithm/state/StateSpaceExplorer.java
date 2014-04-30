@@ -1,4 +1,6 @@
-package pipe.reachability.algorithm;
+package pipe.reachability.algorithm.state;
+
+import pipe.reachability.algorithm.TimelessTrapException;
 
 import java.io.ObjectOutputStream;
 
@@ -19,7 +21,7 @@ public interface StateSpaceExplorer {
      * Writes out the state space exploration transitions to the writer
      *
      * @param writer for writing serialised states
-     * @throws TimelessTrapException
+     * @throws pipe.reachability.algorithm.TimelessTrapException
      */
     void generate(ObjectOutputStream writer) throws TimelessTrapException;
 }

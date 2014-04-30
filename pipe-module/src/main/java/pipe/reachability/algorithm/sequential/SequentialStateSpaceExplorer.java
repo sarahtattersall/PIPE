@@ -2,6 +2,8 @@ package pipe.reachability.algorithm.sequential;
 
 import pipe.models.component.transition.Transition;
 import pipe.reachability.algorithm.*;
+import pipe.reachability.algorithm.state.StateExplorer;
+import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.state.State;
 
 import java.io.ObjectOutputStream;
@@ -33,14 +35,14 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
 
     private final StateExplorer tangibleExplorer;
     private final VanishingExplorer vanishingExplorer;
-    private final ExplorerUtilites explorerUtilites;
+    private final ExplorerUtilities explorerUtilities;
 
 
     public SequentialStateSpaceExplorer(StateExplorer tangibleExplorer, VanishingExplorer vanishingExplorer,
-                                        ExplorerUtilites explorerUtilites) {
+                                        ExplorerUtilities explorerUtilities) {
         this.tangibleExplorer = tangibleExplorer;
         this.vanishingExplorer = vanishingExplorer;
-        this.explorerUtilites = explorerUtilites;
+        this.explorerUtilities = explorerUtilities;
     }
 
 
@@ -53,7 +55,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
     @Override
     public void generate(ObjectOutputStream writer) throws TimelessTrapException {
         clearDataStructures();
-        State initialState = explorerUtilites.createState();
+        State initialState = explorerUtilities.createState();
         exploreInitialState(initialState);
         stateSpaceExploration();
     }
@@ -76,7 +78,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
     private void stateSpaceExploration() throws TimelessTrapException {
         while (!tangibleQueue.isEmpty()) {
             State state = tangibleQueue.poll();
-            for (State successor : explorerUtilites.getSuccessors(state).keySet()) {
+            for (State successor : explorerUtilities.getSuccessors(state).keySet()) {
                 double rate = rate(state, successor);
                 if (successor.isTangible()) {
                     tangibleExplorer.explore(state, successor, rate);
@@ -106,8 +108,8 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      * of the enabled transition
      */
     private double rate(State state, State successor) {
-        Collection<Transition> transitionsToSuccessor = explorerUtilites.getTransitions(state, successor);
-        return explorerUtilites.getWeightOfTransitions(transitionsToSuccessor);
+        Collection<Transition> transitionsToSuccessor = explorerUtilities.getTransitions(state, successor);
+        return explorerUtilities.getWeightOfTransitions(transitionsToSuccessor);
     }
 
     /**
