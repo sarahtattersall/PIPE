@@ -39,6 +39,7 @@ public class SerializingStateWriter implements StateWriter {
     public void transition(State previous, State state, double rate) {
         if (previous != null) {
             try {
+//                System.out.println("TRANSITION FROM " + previous + " TO " + state + " WITH RATE " + rate);
                 formatter.write(previous, state, rate, writer);
             } catch (IOException e) {
                 e.printStackTrace();
