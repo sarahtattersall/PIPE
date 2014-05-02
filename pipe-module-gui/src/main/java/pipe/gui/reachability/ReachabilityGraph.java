@@ -14,12 +14,9 @@ import pipe.reachability.algorithm.CachingExplorerUtilities;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.algorithm.state.SeralizingStateWriter;
+import pipe.reachability.algorithm.state.*;
+import pipe.reachability.algorithm.state.SerializingStateWriter;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
-import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
-import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.io.*;
 import pipe.reachability.io.MultiTransitionStateSpaceExplorationReader;
 import pipe.reachability.io.StateSpaceExplorationReader;
@@ -162,7 +159,7 @@ public class ReachabilityGraph {
     private void writeStateSpace(WriterFormatter formatter, ObjectOutputStream objectOutputStream)
             throws TimelessTrapException {
         PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
-        StateWriter tangibleExplorer = new SeralizingStateWriter(formatter, objectOutputStream);
+        StateWriter tangibleExplorer = new SerializingStateWriter(formatter, objectOutputStream);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
