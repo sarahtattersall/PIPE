@@ -17,7 +17,7 @@ public class StateRateRecord {
     /**
      * Rate into the state
      */
-    private final double rate;
+    private double rate;
 
     public StateRateRecord(State state, double rate) {
         this.state = state;
@@ -38,5 +38,9 @@ public class StateRateRecord {
      */
     public State getState() {
         return state;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 }

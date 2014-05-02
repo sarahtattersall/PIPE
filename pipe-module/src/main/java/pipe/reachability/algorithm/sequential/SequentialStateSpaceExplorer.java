@@ -43,6 +43,18 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      */
     private final ExplorerUtilities explorerUtilities;
 
+    /**
+     * Map to register successor states to their rate when exploring a state.
+     *
+     * When processing a tangible state it is possible that via multiple vanishing states
+     * the same tangible state is the successor. In this case the rates must be summed.
+     *
+     * This map is therefore used to write transitions to temporarily whilst processing
+     * all successors of a state. It is then used to write the records to the stateWriter
+     * only once all successors have been processed.
+     */
+    private final Map<State, Double> successorRates = new HashMap<>();
+
 
     public SequentialStateSpaceExplorer(StateWriter stateWriter, VanishingExplorer vanishingExplorer,
                                         ExplorerUtilities explorerUtilities) {
@@ -83,6 +95,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
     private void stateSpaceExploration() throws TimelessTrapException {
         while (!explorationQueue.isEmpty()) {
             State state = explorationQueue.poll();
+            successorRates.clear();
             for (State successor : explorerUtilities.getSuccessors(state).keySet()) {
                 double rate = rate(state, successor);
                 if (successor.isTangible()) {
@@ -94,25 +107,62 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
                     }
                 }
             }
+            writeStateTransitions(state);
         }
     }
 
     /**
-     * Registers a transition from state to successor with rate
+     * This method writes all state transitions in the map stateTransitions out to the
+     * state writer.
      *
-     * Writes out the result.
+     * It is assumed that no duplicate transitions exist by this point and that their rates
+     * have been summed up. If this is not the case then multiple transitions will be written to
+     * disk and must be dealt with accordingly.
      *
-     * @param state this field can be null to represent that successor is the root of the tree
-     * @param successor
+     * @param state the current state that successors belong to
+     */
+    private void writeStateTransitions(State state) {
+        for (Map.Entry<State, Double> entry : successorRates.entrySet()) {
+            State successor = entry.getKey();
+            double rate = entry.getValue();
+            stateWriter.transition(state, successor, rate);
+        }
+    }
+
+    /**
+     * registers a transition to the successor in stateRecords and
+     * adds the successor to the exploredQueue if it is not already contained in it.
+     *
+     *
+     * @param state current state
+     * @param successor state that is possible via an enabled transition from state
      * @param rate rate at which state transitions to successor
      */
     private void registerStateTransition(State state, State successor, double rate) {
-        stateWriter.transition(state, successor, rate);
+        registerStateRate(successor, rate);
         if (!explored.contains(successor)) {
             explorationQueue.add(successor);
             markAsExplored(successor);
         }
     }
+
+    /**
+     * Register the successor into successorRates map
+     *
+     * If successor already exists then the rate is summed, if not it
+     * is added as a new entry
+     * @param successor key to successor rates
+     * @param rate rate at which successor is entered via some transition
+     */
+    private void registerStateRate(State successor, double rate) {
+        if (successorRates.containsKey(successor)) {
+            double previousRate = successorRates.get(successor);
+            successorRates.put(successor, previousRate + rate);
+        } else {
+            successorRates.put(successor, rate);
+        }
+    }
+
 
     /**
      * Calculates the rate of a  transition from a tangible state to the successor state.
