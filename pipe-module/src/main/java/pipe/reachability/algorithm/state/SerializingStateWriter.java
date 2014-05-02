@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 /**
  * Saves the state transition out to the writer as a serialized state
  */
-public class SeralizingStateWriter implements StateWriter {
+public class SerializingStateWriter implements StateWriter {
     /**
      * Form in which to write transitions out to a Writer
      */
@@ -20,7 +20,7 @@ public class SeralizingStateWriter implements StateWriter {
      */
     private final ObjectOutputStream writer;
 
-    public SeralizingStateWriter(WriterFormatter formatter, ObjectOutputStream writer) {
+    public SerializingStateWriter(WriterFormatter formatter, ObjectOutputStream writer) {
         this.formatter = formatter;
         this.writer = writer;
     }

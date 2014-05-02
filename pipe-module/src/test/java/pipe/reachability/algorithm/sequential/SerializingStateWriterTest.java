@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.reachability.algorithm.state.SeralizingStateWriter;
+import pipe.reachability.algorithm.state.SerializingStateWriter;
 import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.State;
 
@@ -17,9 +17,9 @@ import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SeralizingStateWriterTest {
+public class SerializingStateWriterTest {
 
-    private SeralizingStateWriter explorer;
+    private SerializingStateWriter explorer;
 
     @Mock
     WriterFormatter formatter;
@@ -35,7 +35,7 @@ public class SeralizingStateWriterTest {
 
     @Before
     public void setUp() {
-        explorer = new SeralizingStateWriter(formatter, writer);
+        explorer = new SerializingStateWriter(formatter, writer);
     }
 
     @Test
