@@ -19,7 +19,7 @@ import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.io.ByteWriterFormatter;
-import pipe.reachability.io.MultiTransitionStateSpaceExplorationReader;
+import pipe.reachability.io.SerializedStateSpaceExplorationReader;
 import pipe.reachability.io.StateTransition;
 import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.HashedState;
@@ -97,7 +97,7 @@ public class StateSpaceExplorerStepDefinitions {
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());
                  ObjectInputStream inputStream = new ObjectInputStream(byteInputStream)) {
-                MultiTransitionStateSpaceExplorationReader reader = new MultiTransitionStateSpaceExplorationReader(formatter);
+                SerializedStateSpaceExplorationReader reader = new SerializedStateSpaceExplorationReader(formatter);
                 results.putAll(reader.getTotalRates(inputStream));
             }
         } catch (TimelessTrapException ignored) {

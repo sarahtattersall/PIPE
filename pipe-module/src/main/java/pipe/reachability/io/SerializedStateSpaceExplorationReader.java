@@ -12,21 +12,19 @@ import java.util.Map;
 
 /**
  *
- * Class that handles duplicate state transitions in the input stream.
+ * Class that reads state transitions in from the input stream.
  *
- * Due to the nature of {@link pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer} logging all transitions
- * without prior processing it is possible due to cyclic vanishing states to have a log
- * of the same state transitions with a different rate. This indicates another loop around the cycle with the
- * new rate. In this case the appropriate action is to sum all these rates.
+ * It assumes they have been written in the order state, successor record
+ *
  */
-public class MultiTransitionStateSpaceExplorationReader implements StateSpaceExplorationReader {
+public class SerializedStateSpaceExplorationReader implements StateSpaceExplorationReader {
 
     /**
      * Formatter that was used to write the original results
      */
     private final WriterFormatter formatter;
 
-    public MultiTransitionStateSpaceExplorationReader(WriterFormatter formatter) {
+    public SerializedStateSpaceExplorationReader(WriterFormatter formatter) {
         this.formatter = formatter;
     }
     /**
@@ -65,11 +63,7 @@ public class MultiTransitionStateSpaceExplorationReader implements StateSpaceExp
             try {
                 Record record = formatter.read(inputStream);
                 StateTransition transition = new StateTransition(record.state, record.successor);
-
-                if (!result.containsKey(transition)) {
-                    result.put(transition, .0);
-                }
-                result.put(transition, result.get(transition) + record.rate);
+                result.put(transition, record.rate);
             } catch (EOFException ignored) {
                 return result;
             }
