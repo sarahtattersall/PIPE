@@ -18,7 +18,7 @@ import pipe.reachability.algorithm.state.*;
 import pipe.reachability.algorithm.state.SerializingStateWriter;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.io.*;
-import pipe.reachability.io.MultiTransitionStateSpaceExplorationReader;
+import pipe.reachability.io.SerializedStateSpaceExplorationReader;
 import pipe.reachability.io.StateSpaceExplorationReader;
 import pipe.reachability.state.Record;
 import pipe.reachability.state.State;
@@ -177,7 +177,7 @@ public class ReachabilityGraph {
      */
     private Collection<Record> readResults(WriterFormatter formatter, ObjectInputStream objectInputStream)
             throws IOException {
-        StateSpaceExplorationReader reader = new MultiTransitionStateSpaceExplorationReader(formatter);
+        StateSpaceExplorationReader reader = new SerializedStateSpaceExplorationReader(formatter);
         return reader.getRecords(objectInputStream);
     }
 
