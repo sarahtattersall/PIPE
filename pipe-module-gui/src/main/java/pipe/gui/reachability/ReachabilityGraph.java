@@ -1,7 +1,6 @@
 package pipe.gui.reachability;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxStylesheet;
@@ -72,6 +71,10 @@ public class ReachabilityGraph {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         graphComponent.setPreferredSize(new Dimension(500, 500));
         graphComponent.setToolTips(true);
+        graphComponent.setDragEnabled(false);
+
+        setupGraph();
+
         resultsPanel.add(graphComponent);
 
         goButton.addActionListener(new ActionListener() {
@@ -98,6 +101,14 @@ public class ReachabilityGraph {
                 }
             }
         });
+    }
+
+    /**
+     * Sets up the graph so that components are not editable
+     */
+    private void setupGraph() {
+        graph.setCellsLocked(true);
+        graph.setEdgeLabelsMovable(false);
     }
 
     /**
@@ -190,7 +201,6 @@ public class ReachabilityGraph {
     private void updateGraph(Iterable<Record> records) {
 
         removeCurrentContent();
-        mxIGraphLayout layout = new mxHierarchicalLayout(graph);
 
         Object parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
@@ -198,21 +208,28 @@ public class ReachabilityGraph {
         Map<String, Object> vertexStyles = stylesheet.getDefaultVertexStyle();
         vertexStyles.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
 
-
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+        layout.setInterHierarchySpacing(20);
+        layout.setInterRankCellSpacing(50);
         Map<State, Object> verticies = new HashMap<>();
         try {
             graph.clearSelection();
             for (Record record : records) {
                 Object state = getInsertedState(verticies, record.state, graph);
                 Object successor = getInsertedState(verticies, record.successor, graph);
-                graph.insertEdge(parent, null, "", state, successor);
+                addEdge(parent, state, successor, record.rate);
             }
         } finally {
             graph.getModel().endUpdate();
         }
+
         layout.execute(graph.getDefaultParent());
 
+    }
 
+    private Object addEdge(Object parent, Object state, Object successor, double rate) {
+
+        return graph.insertEdge(parent, null, String.format("%.2f", rate), state, successor);
     }
 
     private void removeCurrentContent() {
@@ -249,8 +266,6 @@ public class ReachabilityGraph {
         Object vertexState = graph.insertVertex(parent, null, verticies.size(), 0, 0, 30, 30, getColor(state));
         graph.setTooltipText(vertexState, state.toString());
         verticies.put(state, vertexState);
-
-//        graph.getToolTipForCell(vertexState);
         return vertexState;
     }
 
