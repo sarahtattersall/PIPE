@@ -4,7 +4,6 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import pipe.io.PetriNetIOImpl;
 import pipe.io.PetriNetReader;
@@ -14,12 +13,12 @@ import pipe.reachability.algorithm.CachingExplorerUtilities;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.algorithm.state.*;
-import pipe.reachability.algorithm.state.SerializingStateWriter;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.io.*;
+import pipe.reachability.algorithm.state.*;
+import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.SerializedStateSpaceExplorationReader;
 import pipe.reachability.io.StateSpaceExplorationReader;
+import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.Record;
 import pipe.reachability.state.State;
 
@@ -48,7 +47,7 @@ public class ReachabilityGraph {
     /**
      * Graphical representation of reachability
      */
-    private final mxGraph graph = new mxGraph();
+    private final TooltipMXGraph graph = new TooltipMXGraph();
 
     private JPanel panel1;
 
@@ -72,6 +71,7 @@ public class ReachabilityGraph {
     public ReachabilityGraph(FileDialog fileDialog) {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         graphComponent.setPreferredSize(new Dimension(500, 500));
+        graphComponent.setToolTips(true);
         resultsPanel.add(graphComponent);
 
         goButton.addActionListener(new ActionListener() {
@@ -188,7 +188,8 @@ public class ReachabilityGraph {
      * @param records state transitions from a processed Petri net
      */
     private void updateGraph(Iterable<Record> records) {
-        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+
+        removeCurrentContent();
         mxIGraphLayout layout = new mxHierarchicalLayout(graph);
 
         Object parent = graph.getDefaultParent();
@@ -210,6 +211,12 @@ public class ReachabilityGraph {
             graph.getModel().endUpdate();
         }
         layout.execute(graph.getDefaultParent());
+
+
+    }
+
+    private void removeCurrentContent() {
+        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
     }
 
     /**
@@ -234,13 +241,16 @@ public class ReachabilityGraph {
      * @param state     state to represent graphically
      * @return graphical vertex representation for the State
      */
-    private Object getInsertedState(Map<State, Object> verticies, State state, mxGraph graph) {
+    private Object getInsertedState(Map<State, Object> verticies, State state, TooltipMXGraph graph) {
         if (verticies.containsKey(state)) {
             return verticies.get(state);
         }
         Object parent = graph.getDefaultParent();
         Object vertexState = graph.insertVertex(parent, null, verticies.size(), 0, 0, 30, 30, getColor(state));
+        graph.setTooltipText(vertexState, state.toString());
         verticies.put(state, vertexState);
+
+//        graph.getToolTipForCell(vertexState);
         return vertexState;
     }
 
