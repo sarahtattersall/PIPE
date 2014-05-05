@@ -18,7 +18,30 @@ public interface ExplorerUtilities {
      * @param state state in the Petri net to find successors of
      * @return map of successor states to the transitions that caused them
      */
-    Map<State, Collection<Transition>> getSuccessors(State state);
+    Map<State, Collection<Transition>> getSuccessorsWithTransitions(State state);
+
+
+    /**
+     *
+     * Finds successors of the given state. A successor is a state that occurs
+     * when one of the enabled transitions in the current state is fired.
+     *
+     * @param state state in the Petri net to find successors of
+     * @return map of successor states to the transitions that caused them
+     */
+    Collection<State> getSuccessors(State state);
+
+
+
+    /**
+     * Calculates the rate of a  transition from a tangible state to the successor state.
+     * It does this by calculating the transitions that are enabled at the given state,
+     * the transitions that can be reached from that state and performs the intersection of the two.
+     * <p/>
+     * It then sums the firing rates of this intersection and divides by the sum of the firing rates
+     * of the enabled transition
+     */
+    double rate(State state, State successor);
 
     /**
      *

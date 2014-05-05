@@ -1,6 +1,5 @@
 package pipe.reachability.algorithm.sequential;
 
-import pipe.models.component.transition.Transition;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
@@ -96,8 +95,8 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
         while (!explorationQueue.isEmpty()) {
             State state = explorationQueue.poll();
             successorRates.clear();
-            for (State successor : explorerUtilities.getSuccessors(state).keySet()) {
-                double rate = rate(state, successor);
+            for (State successor : explorerUtilities.getSuccessors(state)) {
+                double rate = explorerUtilities.rate(state, successor);
                 if (successor.isTangible()) {
                     registerStateTransition(state, successor, rate);
                 } else {
@@ -161,20 +160,6 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
         } else {
             successorRates.put(successor, rate);
         }
-    }
-
-
-    /**
-     * Calculates the rate of a  transition from a tangible state to the successor state.
-     * It does this by calculating the transitions that are enabled at the given state,
-     * the transitions that can be reached from that state and performs the intersection of the two.
-     * <p/>
-     * It then sums the firing rates of this intersection and divides by the sum of the firing rates
-     * of the enabled transition
-     */
-    private double rate(State state, State successor) {
-        Collection<Transition> transitionsToSuccessor = explorerUtilities.getTransitions(state, successor);
-        return explorerUtilities.getWeightOfTransitions(transitionsToSuccessor);
     }
 
     /**

@@ -30,6 +30,7 @@ import javax.xml.bind.JAXBException;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
 
@@ -80,7 +81,7 @@ public class StateSpaceExplorerStepDefinitions {
     }
 
     @When("^I generate the exploration graph$")
-    public void I_generate_the_exploration_graph() throws IOException {
+    public void I_generate_the_exploration_graph() throws IOException, ExecutionException, InterruptedException {
 
         WriterFormatter formatter = new ByteWriterFormatter();
         try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
