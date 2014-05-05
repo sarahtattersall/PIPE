@@ -1,7 +1,7 @@
 package pipe.reachability.io;
 
+import pipe.reachability.state.ExplorerState;
 import pipe.reachability.state.Record;
-import pipe.reachability.state.State;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,7 +26,7 @@ public interface WriterFormatter {
      * @param writer output stream writer
      * @throws IOException
      */
-    void write(State state, State successor, double successorRate, ObjectOutputStream writer) throws IOException;
+    void write(ExplorerState state, ExplorerState successor, double successorRate, ObjectOutputStream writer) throws IOException;
 
 
 }

@@ -1,7 +1,7 @@
 package pipe.reachability.algorithm.state;
 
 import pipe.reachability.io.WriterFormatter;
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -36,10 +36,9 @@ public class SerializingStateWriter implements StateWriter {
      * @param rate  rate at which the state is entered
      */
     @Override
-    public void transition(State previous, State state, double rate) {
+    public void transition(ExplorerState previous, ExplorerState state, double rate) {
         if (previous != null) {
             try {
-//                System.out.println("TRANSITION FROM " + previous + " TO " + state + " WITH RATE " + rate);
                 formatter.write(previous, state, rate, writer);
             } catch (IOException e) {
                 e.printStackTrace();

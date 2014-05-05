@@ -1,5 +1,6 @@
 package pipe.models.component.arc;
 
+import pipe.animation.State;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -25,8 +26,8 @@ public class InboundInhibitorArc extends InboundArc {
      * @return true if the arc can fire
      */
     @Override
-    public boolean canFire(PetriNet petriNet, Map<String, Map<String, Integer>> state) {
-        Map<String, Integer> tokens = state.get(getSource().getId());
+    public boolean canFire(PetriNet petriNet, State state) {
+        Map<String, Integer> tokens = state.getTokens(getSource().getId());
         for (Map.Entry<String, Integer> entry : tokens.entrySet()) {
             if (entry.getValue() != 0) {
                 return false;

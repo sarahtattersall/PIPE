@@ -1,6 +1,6 @@
 package pipe.reachability.algorithm;
 
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 /**
  * Record containing a  state and the rate into it.
@@ -12,14 +12,14 @@ public class StateRateRecord {
     /**
      * State
      */
-    private final State state;
+    private final ExplorerState state;
 
     /**
      * Rate into the state
      */
     private double rate;
 
-    public StateRateRecord(State state, double rate) {
+    public StateRateRecord(ExplorerState state, double rate) {
         this.state = state;
         this.rate = rate;
     }
@@ -36,7 +36,7 @@ public class StateRateRecord {
      *
      * @return vanishing state rate
      */
-    public State getState() {
+    public ExplorerState getState() {
         return state;
     }
 

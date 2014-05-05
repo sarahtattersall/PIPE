@@ -18,8 +18,8 @@ import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.SerializedStateSpaceExplorationReader;
 import pipe.reachability.io.StateSpaceExplorationReader;
 import pipe.reachability.io.WriterFormatter;
+import pipe.reachability.state.ExplorerState;
 import pipe.reachability.state.Record;
-import pipe.reachability.state.State;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
@@ -214,7 +214,7 @@ public class ReachabilityGraph {
         mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
         layout.setInterHierarchySpacing(20);
         layout.setInterRankCellSpacing(50);
-        Map<State, Object> verticies = new HashMap<>();
+        Map<ExplorerState, Object> verticies = new HashMap<>();
         try {
             graph.clearSelection();
             for (Record record : records) {
@@ -261,7 +261,7 @@ public class ReachabilityGraph {
      * @param state     state to represent graphically
      * @return graphical vertex representation for the State
      */
-    private Object getInsertedState(Map<State, Object> verticies, State state, TooltipMXGraph graph) {
+    private Object getInsertedState(Map<ExplorerState, Object> verticies, ExplorerState state, TooltipMXGraph graph) {
         if (verticies.containsKey(state)) {
             return verticies.get(state);
         }
@@ -280,7 +280,7 @@ public class ReachabilityGraph {
      * @param state
      * @return settings string
      */
-    private String getColor(State state) {
+    private String getColor(ExplorerState state) {
         if (state.isTangible()) {
             return "fillColor=#99CCFF";
         }

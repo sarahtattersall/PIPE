@@ -5,7 +5,7 @@ import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -31,12 +31,12 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Queue for states yet to be explored
      */
-    Queue<State> explorationQueue = new ArrayDeque<>();
+    Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
 
     /**
      * Contains states that have already been explored.
      */
-    private Set<State> explored = new HashSet<>();
+    private Set<ExplorerState> explored = new HashSet<>();
 
     public ParallelStateSpaceExplorer(StateWriter stateWriter, VanishingExplorer vanishingExplorer,
                                       ExplorerUtilities explorerUtilities) {
@@ -57,20 +57,20 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
         int elemsAtCurrentLevel = explorationQueue.size();
         int elemsAtNextLevel = 0;
         while (!explorationQueue.isEmpty()) {
-            Map<State, Future<Map<State, Double>>> successorFutures = new HashMap<>();
+            Map<ExplorerState, Future<Map<ExplorerState, Double>>> successorFutures = new HashMap<>();
             CountDownLatch latch = new CountDownLatch(elemsAtCurrentLevel);
             for (int i = 0; i < elemsAtCurrentLevel; i++) {
-                State state = explorationQueue.poll();
+                ExplorerState state = explorationQueue.poll();
                 successorFutures.put(state, executorService.submit(
                         new ParallelStateExplorer(latch, state, explorerUtilities, vanishingExplorer)));
             }
 
             latch.await();
-            for (Map.Entry<State, Future<Map<State, Double>>> entry : successorFutures.entrySet()) {
-                Future<Map<State, Double>> future = entry.getValue();
-                State state = entry.getKey();
-                for (Map.Entry<State, Double> successorEntry : future.get().entrySet()) {
-                    State successor = successorEntry.getKey();
+            for (Map.Entry<ExplorerState, Future<Map<ExplorerState, Double>>> entry : successorFutures.entrySet()) {
+                Future<Map<ExplorerState, Double>> future = entry.getValue();
+                ExplorerState state = entry.getKey();
+                for (Map.Entry<ExplorerState, Double> successorEntry : future.get().entrySet()) {
+                    ExplorerState successor = successorEntry.getKey();
                     double rate = successorEntry.getValue();
                     stateWriter.transition(state, successor, rate);
                     if (!explorationQueue.contains(successor)) {
