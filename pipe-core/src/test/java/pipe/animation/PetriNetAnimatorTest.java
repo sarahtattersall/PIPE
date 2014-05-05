@@ -3,8 +3,7 @@ package pipe.animation;
 import org.junit.Test;
 import pipe.dsl.*;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.InboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -109,7 +108,7 @@ public class PetriNetAnimatorTest {
         Token redToken = new Token("red", new Color(255, 0, 0));
         petriNet.addToken(redToken);
 
-        Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getComponent("P1 TO T1", Arc.class);
+        InboundArc arc = petriNet.getComponent("P1 TO T1", InboundArc.class);
         arc.getTokenWeights().put(redToken, "1");
         Transition transition = petriNet.getComponent("T1", Transition.class);
 
@@ -125,7 +124,7 @@ public class PetriNetAnimatorTest {
 
         Token redToken = new Token("red", new Color(255, 0, 0));
         petriNet.addToken(redToken);
-        Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getComponent("P1 TO T1", Arc.class);
+        InboundArc arc = petriNet.getComponent("P1 TO T1", InboundArc.class);
         arc.getTokenWeights().put(redToken, "1");
 
         Place place = petriNet.getComponent("P1", Place.class);

@@ -7,9 +7,7 @@ import org.mockito.ArgumentMatcher;
 import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -126,7 +124,7 @@ public class PasteVisitorTest {
         pasteComponents.add(transition);
 
         Map<Token, String> weights = new HashMap<Token, String>();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+        InboundArc arc = new InboundNormalArc(place, transition, weights);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
@@ -135,8 +133,8 @@ public class PasteVisitorTest {
         verify(petriNet).addArc(argThat(hasCopiedIdAndNameAndBothComponentsAreCopied(arc)));
     }
 
-    private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndBothComponentsAreCopied(
-            Arc<? extends Connectable, ? extends Connectable> arc) {
+    private Matcher<InboundArc> hasCopiedIdAndNameAndBothComponentsAreCopied(
+            InboundArc arc) {
         return new CopiedArc(arc, PLACE_NAME, TRANSITION_NAME);
     }
 
@@ -147,7 +145,7 @@ public class PasteVisitorTest {
 
         Transition transition = new Transition("id", "name");
         Map<Token, String> weights = new HashMap<Token, String>();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+        InboundArc arc = new InboundNormalArc(place, transition, weights);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
@@ -164,7 +162,7 @@ public class PasteVisitorTest {
 
             Transition transition = new Transition("id", "name");
             Map<Token, String> weights = new HashMap<>();
-            Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
+        InboundArc arc = new InboundNormalArc(place, transition, weights);
             ArcPoint arcPoint = new ArcPoint(new Point2D.Double(200, 100), true);
             arc.addIntermediatePoint(arcPoint);
 
@@ -181,12 +179,12 @@ public class PasteVisitorTest {
      * @param arc
      * @return
      */
-    private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIntermediatePoints(final Arc<Place, Transition> arc) {
-        return new ArgumentMatcher<Arc<? extends Connectable, ? extends Connectable>>() {
+    private Matcher<InboundArc> hasCopiedIntermediatePoints(final Arc<Place, Transition> arc) {
+        return new ArgumentMatcher<InboundArc>() {
             @Override
             public boolean matches(Object argument) {
 
-                Arc<? extends Connectable, ? extends Connectable> otherArc = (Arc<? extends Connectable, ? extends Connectable>) argument;
+                InboundArc otherArc = (InboundArc) argument;
                 List<ArcPoint> arcPoints = arc.getArcPoints();
                 List<ArcPoint> otherPoints = otherArc.getArcPoints();
                 if (arcPoints.size() != otherPoints.size()) {
@@ -204,9 +202,9 @@ public class PasteVisitorTest {
         };
     }
 
-    private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndSourceCopied(
+    private Matcher<InboundArc> hasCopiedIdAndNameAndSourceCopied(
             Arc<? extends Connectable, ? extends Connectable> arc) {
-        return new CopiedArc(arc, PLACE_NAME, arc.getTarget().getName());
+        return new CopiedArc<InboundArc>(arc, PLACE_NAME, arc.getTarget().getName());
     }
 
     @Test
@@ -216,7 +214,7 @@ public class PasteVisitorTest {
         pasteComponents.add(transition);
 
         Map<Token, String> weights = new HashMap<>();
-        Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
+        InboundArc arc = new InboundNormalArc(place, transition, weights);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
 
@@ -225,9 +223,9 @@ public class PasteVisitorTest {
         verify(petriNet).addArc(argThat(hasCopiedIdAndNameAndTargetCopied(arc)));
     }
 
-    private Matcher<Arc<? extends Connectable, ? extends Connectable>> hasCopiedIdAndNameAndTargetCopied(
+    private Matcher<InboundArc> hasCopiedIdAndNameAndTargetCopied(
             Arc<? extends Connectable, ? extends Connectable> arc) {
-        return new CopiedArc(arc, arc.getSource().getName(), TRANSITION_NAME);
+        return new CopiedArc<>(arc, arc.getSource().getName(), TRANSITION_NAME);
     }
 
     /**
@@ -309,7 +307,7 @@ public class PasteVisitorTest {
         }
     }
 
-    private static class CopiedArc extends ArgumentMatcher<Arc<? extends Connectable, ? extends Connectable>> {
+    private static class CopiedArc <T> extends ArgumentMatcher<T> {
 
         private final Arc<? extends Connectable, ? extends Connectable> arc;
 

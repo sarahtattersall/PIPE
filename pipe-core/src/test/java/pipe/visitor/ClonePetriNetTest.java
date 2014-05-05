@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.dsl.*;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.InboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
@@ -31,7 +31,7 @@ public class ClonePetriNetTest {
 
     @Test
     public void clonesArcWithNewSourceAndTarget() throws PetriNetComponentNotFoundException {
-        Arc<Place, Transition> arc = clonedPetriNet.getComponent("P0 TO T0", Arc.class);
+        InboundArc arc = clonedPetriNet.getComponent("P0 TO T0", InboundArc.class);
         Place clonedP0 = clonedPetriNet.getComponent("P0", Place.class);
         Transition clonedT0 = clonedPetriNet.getComponent("T0", Transition.class);
         assertTrue(arc.getSource() == clonedP0);

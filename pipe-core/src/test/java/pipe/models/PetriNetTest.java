@@ -11,11 +11,10 @@ import pipe.dsl.*;
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentException;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.InboundNormalArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.RateParameter;
@@ -81,7 +80,7 @@ public class PetriNetTest {
     @Test
     public void addingArcNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
+        InboundArc mockArc = mock(InboundArc.class);
         net.addArc(mockArc);
 
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
@@ -89,7 +88,7 @@ public class PetriNetTest {
 
     @Test
     public void addingDuplicateArcDoesNotNotifyObservers() {
-        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
+        InboundArc mockArc = mock(InboundArc.class);
         net.addArc(mockArc);
         net.addPropertyChangeListener(mockListener);
         net.addArc(mockArc);
@@ -100,10 +99,11 @@ public class PetriNetTest {
     @Test
     public void removingArcNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
-        Connectable connectable = mock(Connectable.class);
-        when(mockArc.getTarget()).thenReturn(connectable);
-        when(mockArc.getSource()).thenReturn(connectable);
+        InboundArc mockArc = mock(InboundArc.class);
+        Place place = mock(Place.class);
+        Transition transition = mock(Transition.class);
+        when(mockArc.getTarget()).thenReturn(transition);
+        when(mockArc.getSource()).thenReturn(place);
         net.addArc(mockArc);
         net.removeArc(mockArc);
 
@@ -159,7 +159,6 @@ public class PetriNetTest {
         net.addTransition(transition);
         net.removeToken(token);
     }
-
 
 
     @Test
@@ -219,8 +218,8 @@ public class PetriNetTest {
     public void genericRemoveMethodRemovesArc() throws PetriNetComponentException {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
-        Map<Token, String> weights = new HashMap<Token, String>();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+        Map<Token, String> weights = new HashMap<>();
+        InboundNormalArc arc = new InboundNormalArc(place, transition, weights);
         net.addArc(arc);
 
         assertEquals(1, net.getArcs().size());
@@ -264,6 +263,15 @@ public class PetriNetTest {
         assertEquals(4, forwardMatrix.get(p2, transition));
     }
 
+    private <T extends PetriNetComponent> T getComponent(String id, Iterable<T> components) {
+        for (T component : components) {
+            if (component.getId().equals(id)) {
+                return component;
+            }
+        }
+        return null;
+    }
+
     @Test
     public void throwsExceptionIfNoRateParameterExists() throws PetriNetComponentNotFoundException {
         expectedException.expect(PetriNetComponentNotFoundException.class);
@@ -277,23 +285,6 @@ public class PetriNetTest {
         expectedException.expectMessage("Rate of hsfg is invalid");
         RateParameter rateParameter = new RateParameter("hsfg", "id", "name");
         net.addRateParameter(rateParameter);
-    }
-
-
-    /**
-     * Create simple petrinet with P1 -> T1 -> P2
-     * Initialises a token in P1 and gives arcs A1 and A2 a weight of tokenWeight to a default token
-     *
-     * @param tokenWeight
-     * @return
-     */
-    public PetriNet createSimplePetriNet(int tokenWeight) {
-        String arcWeight = Integer.toString(tokenWeight);
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
-                APlace.withId("P1").containing(1, "Default").token()).and(APlace.withId("P2")).and(
-                ATransition.withId("T1")).and(
-                ANormalArc.withSource("P1").andTarget("T1").with(arcWeight, "Default").tokens()).andFinally(
-                ANormalArc.withSource("T1").andTarget("P2").with(arcWeight, "Default").tokens());
     }
 
     @Test
@@ -312,7 +303,21 @@ public class PetriNetTest {
         assertEquals(0, backwardIncidence.get(p2, transition));
     }
 
-
+    /**
+     * Create simple petrinet with P1 -> T1 -> P2
+     * Initialises a token in P1 and gives arcs A1 and A2 a weight of tokenWeight to a default token
+     *
+     * @param tokenWeight
+     * @return
+     */
+    public PetriNet createSimplePetriNet(int tokenWeight) {
+        String arcWeight = Integer.toString(tokenWeight);
+        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P1").containing(1, "Default").token()).and(APlace.withId("P2")).and(
+                ATransition.withId("T1")).and(
+                ANormalArc.withSource("P1").andTarget("T1").with(arcWeight, "Default").tokens()).andFinally(
+                ANormalArc.withSource("T1").andTarget("P2").with(arcWeight, "Default").tokens());
+    }
 
     /**
      * Create simple petrinet with P1 -> T1 and P2 -> T1
@@ -328,7 +333,6 @@ public class PetriNetTest {
                 ANormalArc.withSource("P1").andTarget("T1").with(weight, "Default").tokens()).andFinally(
                 ANormalArc.withSource("P2").andTarget("T1").with(weight, "Default").tokens());
     }
-
 
     @Test
     public void deletingRateParameterRemovesItFromTransition() throws InvalidRateException {
@@ -346,14 +350,12 @@ public class PetriNetTest {
                 transition.getRate() instanceof NormalRate);
     }
 
-
     @Test
     public void testEqualityEqualPetriNets() {
         PetriNet net1 = createSimplePetriNet(1);
         PetriNet net2 = createSimplePetriNet(1);
         assertTrue(net1.equals(net2));
     }
-
 
     @Test
     public void testEqualityNotEqualPetriNets() {
@@ -377,8 +379,6 @@ public class PetriNetTest {
         assertFalse(net1.equals(net2));
     }
 
-
-
     @Test
     public void canGetTokenById() throws PetriNetComponentNotFoundException {
         Token t = new Token("Default", Color.BLACK);
@@ -393,7 +393,6 @@ public class PetriNetTest {
         t.setId("Red");
         assertEquals(t, net.getComponent(t.getId(), Token.class));
     }
-
 
     @Test
     public void canGetPlaceById() throws PetriNetComponentNotFoundException {
@@ -410,7 +409,6 @@ public class PetriNetTest {
         assertEquals(p, net.getComponent(p.getId(), Place.class));
     }
 
-
     @Test
     public void canGetRateParameterById() throws PetriNetComponentNotFoundException, InvalidRateException {
         RateParameter r = new RateParameter("2", "R0", "R0");
@@ -425,7 +423,6 @@ public class PetriNetTest {
         r.setId("R1");
         assertEquals(r, net.getComponent(r.getId(), RateParameter.class));
     }
-
 
     @Test
     public void canGetTransitionById() throws PetriNetComponentNotFoundException {
@@ -446,31 +443,18 @@ public class PetriNetTest {
     public void canGetArcById() throws PetriNetComponentNotFoundException {
         Place p = new Place("P0", "P0");
         Transition t = new Transition("T0", "T0");
-        Arc<Place, Transition> a = new Arc<>(p, t, new HashMap<Token, String>(), ArcType.NORMAL);
+        InboundArc a = new InboundNormalArc(p, t, new HashMap<Token, String>());
         net.addArc(a);
-        assertEquals(a, net.getComponent(a.getId(), Arc.class));
+        assertEquals(a, net.getComponent(a.getId(), InboundArc.class));
     }
 
     @Test
     public void canGetArcByIdAfterNameChange() throws PetriNetComponentNotFoundException {
         Place p = new Place("P0", "P0");
         Transition t = new Transition("T0", "T0");
-        Arc<Place, Transition> a = new Arc<>(p, t, new HashMap<Token, String>(), ArcType.NORMAL);
+        InboundArc a = new InboundNormalArc(p, t, new HashMap<Token, String>());
         net.addArc(a);
         a.setId("A1");
-        assertEquals(a, net.getComponent(a.getId(), Arc.class));
-    }
-
-
-
-
-
-    private <T extends PetriNetComponent> T getComponent(String id, Iterable<T> components) {
-        for (T component : components) {
-            if (component.getId().equals(id)) {
-                return component;
-            }
-        }
-        return null;
+        assertEquals(a, net.getComponent(a.getId(), InboundArc.class));
     }
 }

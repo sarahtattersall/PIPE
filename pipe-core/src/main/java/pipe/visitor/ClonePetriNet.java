@@ -1,10 +1,8 @@
 package pipe.visitor;
 
 import pipe.exceptions.InvalidRateException;
-import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.rate.RateType;
@@ -20,7 +18,8 @@ public class ClonePetriNet {
     private final PetriNet petriNet;
     private final PetriNet newPetriNet;
     private final Map<String, RateParameter> rateParameters = new HashMap<>();
-    private final Map<String, Connectable> connectables = new HashMap<>();
+    private final Map<String, Place> places = new HashMap<>();
+    private final Map<String, Transition> transitions = new HashMap<>();
     private final Map<String, Token> newTokens = new HashMap<>();
 
     private ClonePetriNet (PetriNet petriNet) {
@@ -49,7 +48,13 @@ public class ClonePetriNet {
             visit(transition);
         }
 
-        for (Arc<? extends Connectable, ? extends Connectable> arc : petriNet.getArcs()) {
+        for (InboundArc arc : petriNet.getInboundArcs()) {
+            visit(arc);
+        }
+
+
+
+        for (OutboundArc arc : petriNet.getOutboundArcs()) {
             visit(arc);
         }
         return newPetriNet;
@@ -66,10 +71,30 @@ public class ClonePetriNet {
 
     }
 
-    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
-        Connectable source = connectables.get(arc.getSource().getId());
-        Connectable target = connectables.get(arc.getTarget().getId());
-        Arc<? extends Connectable, ? extends Connectable> newArc = new Arc<>(source, target, arc.getTokenWeights(), arc.getType());
+    public void visit(InboundArc arc) {
+        Place source = places.get(arc.getSource().getId());
+        Transition target = transitions.get(arc.getTarget().getId());
+        InboundArc newArc;
+        switch (arc.getType()) {
+            case INHIBITOR:
+                newArc = new InboundInhibitorArc(source, target);
+            default:
+                newArc = new InboundNormalArc(source, target, arc.getTokenWeights());
+        }
+        List<ArcPoint> arcPoints = arc.getArcPoints();
+        for (int i = 1; i < arcPoints.size() -1; i++) {
+            newArc.addIntermediatePoint(arcPoints.get(i));
+        }
+        newArc.setId(arc.getId());
+        newPetriNet.addArc(newArc);
+    }
+
+
+    public void visit(OutboundArc arc) {
+        Place target = places.get(arc.getTarget().getId());
+        Transition source = transitions.get(arc.getSource().getId());
+
+        OutboundArc newArc = new OutboundNormalArc(source, target, arc.getTokenWeights());
         List<ArcPoint> arcPoints = arc.getArcPoints();
         for (int i = 1; i < arcPoints.size() -1; i++) {
             newArc.addIntermediatePoint(arcPoints.get(i));
@@ -84,7 +109,7 @@ public class ClonePetriNet {
             newPlace.setTokenCount(newTokens.get(entry.getKey().getId()), entry.getValue());
         }
         newPetriNet.addPlace(newPlace);
-        connectables.put(place.getId(), newPlace);
+        places.put(place.getId(), newPlace);
     }
 
     public void visit(RateParameter rate) {
@@ -109,7 +134,7 @@ public class ClonePetriNet {
             RateParameter rateParameter = (RateParameter) transition.getRate();
             newTransition.setRate(rateParameters.get(rateParameter.getId()));
         }
-        connectables.put(transition.getId(), newTransition);
+        transitions.put(transition.getId(), newTransition);
         newPetriNet.addTransition(newTransition);
     }
 }

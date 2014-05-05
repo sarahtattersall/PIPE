@@ -12,10 +12,9 @@ import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.historyActions.component.DeletePetriNetObject;
 import pipe.models.component.AbstractPetriNetComponent;
-import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.InboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -187,7 +186,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void selectsArcIfIntersects() {
-        Arc<? extends Connectable, ? extends Connectable> arc = mock(Arc.class);
+        InboundArc arc = mock(InboundArc.class);
         Point2D.Double start = new Point2D.Double(0, 0);
         Point2D.Double end = new Point2D.Double(10, 10);
         when(arc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));
@@ -201,7 +200,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void doesNotSelectArcIfDoesntIntersect() {
-        Arc<? extends Connectable, ? extends Connectable> arc = mock(Arc.class);
+        InboundArc arc = mock(InboundArc.class);
         Point2D.Double start = new Point2D.Double(0, 0);
         Point2D.Double end = new Point2D.Double(10, 10);
         when(arc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));

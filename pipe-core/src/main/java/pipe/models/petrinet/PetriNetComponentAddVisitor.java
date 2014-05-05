@@ -6,6 +6,8 @@ import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.OutboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.rate.RateParameter;
@@ -21,12 +23,6 @@ public class PetriNetComponentAddVisitor
 
     public PetriNetComponentAddVisitor(PetriNet petriNet) {
         this.petriNet = petriNet;
-    }
-
-
-    @Override
-    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
-        petriNet.addArc(arc);
     }
 
     @Override
@@ -52,5 +48,15 @@ public class PetriNetComponentAddVisitor
     @Override
     public void visit(RateParameter rate) throws InvalidRateException {
         petriNet.addRateParameter(rate);
+    }
+
+    @Override
+    public void visit(InboundArc inboundArc) {
+        petriNet.addArc(inboundArc);
+    }
+
+    @Override
+    public void visit(OutboundArc outboundArc) {
+        petriNet.addArc(outboundArc);
     }
 }

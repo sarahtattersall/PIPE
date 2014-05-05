@@ -1,9 +1,9 @@
 package pipe.dsl;
 
-import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,8 +53,7 @@ public class APlace implements DSLCreator<Place> {
     }
 
     @Override
-    public Place create(Map<String, Token> tokens, Map<String, Connectable> connectables,
-                        Map<String, RateParameter> rateParameters) {
+    public Place create(Map<String, Token> tokens, Map<String, Place> places, Map<String, Transition> transitions, Map<String, RateParameter> rateParameters) {
         Place place = new Place(id, id);
         place.setX(x);
         place.setY(y);
@@ -65,7 +64,7 @@ public class APlace implements DSLCreator<Place> {
             place.setTokenCount(tokens.get(entry.getKey()), entry.getValue());
         }
 
-        connectables.put(id, place);
+        places.put(id, place);
         return place;
     }
 
