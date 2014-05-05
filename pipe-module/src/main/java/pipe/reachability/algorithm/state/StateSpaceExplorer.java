@@ -2,6 +2,8 @@ package pipe.reachability.algorithm.state;
 
 import pipe.reachability.algorithm.TimelessTrapException;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * Performs state space exploration searching for the states that can be
  * reached from the given Petri net set up.
@@ -20,5 +22,5 @@ public interface StateSpaceExplorer {
      *
      * @throws pipe.reachability.algorithm.TimelessTrapException
      */
-    void generate() throws TimelessTrapException;
+    void generate() throws TimelessTrapException, InterruptedException, ExecutionException;
 }

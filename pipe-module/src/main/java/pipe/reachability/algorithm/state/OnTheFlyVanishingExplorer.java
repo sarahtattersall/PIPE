@@ -61,7 +61,7 @@ public class OnTheFlyVanishingExplorer implements VanishingExplorer {
         while (!vanishingStack.isEmpty() && iterations < ALLOWED_ITERATIONS) {
             StateRateRecord record = vanishingStack.pop();
             State previous = record.getState();
-            for (State successor : explorerUtilities.getSuccessors(previous).keySet()) {
+            for (State successor : explorerUtilities.getSuccessorsWithTransitions(previous).keySet()) {
                 double successorRate = record.getRate() * probability(previous, successor);
                 if (successor.isTangible()) {
                     tangibleStatesFound.add(new StateRateRecord(successor, successorRate));

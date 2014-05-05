@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class ReachabilityGraph {
 
@@ -131,6 +132,8 @@ public class ReachabilityGraph {
                     Collection<Record> records = readResults(formatter, objectInputStream);
                     updateGraph(records);
                 }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         } catch (TimelessTrapException | IOException e) {
             e.printStackTrace();
@@ -168,7 +171,7 @@ public class ReachabilityGraph {
      * @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
      */
     private void writeStateSpace(WriterFormatter formatter, ObjectOutputStream objectOutputStream)
-            throws TimelessTrapException {
+            throws TimelessTrapException, ExecutionException, InterruptedException {
         PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
         StateWriter tangibleExplorer = new SerializingStateWriter(formatter, objectOutputStream);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);

@@ -63,7 +63,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * @return map of successor states to the transitions that caused them
      */
     @Override
-    public Map<State, Collection<Transition>> getSuccessors(State state) {
+    public Map<State, Collection<Transition>> getSuccessorsWithTransitions(State state) {
 
         if (cachedSuccessors.containsKey(state)) {
             return cachedSuccessors.get(state);
@@ -88,6 +88,17 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
         cachedSuccessors.put(state, successors);
 
         return successors;
+    }
+
+    @Override
+    public Collection<State> getSuccessors(State state) {
+        return getSuccessorsWithTransitions(state).keySet();
+    }
+
+    @Override
+    public double rate(State state, State successor) {
+        Collection<Transition> transitionsToSuccessor = getTransitions(state, successor);
+        return getWeightOfTransitions(transitionsToSuccessor);
     }
 
 
@@ -177,7 +188,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      */
     @Override
     public Collection<Transition> getTransitions(State state, State successor) {
-        Map<State, Collection<Transition>> stateTransitions = getSuccessors(state);
+        Map<State, Collection<Transition>> stateTransitions = getSuccessorsWithTransitions(state);
         if (stateTransitions.containsKey(successor)) {
             return stateTransitions.get(successor);
         }
@@ -215,7 +226,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     @Override
     public Collection<Transition> getAllEnabledTransitions(State state) {
         Collection<Transition> results = new LinkedList<>();
-        for (Collection<Transition> transitions : getSuccessors(state).values()) {
+        for (Collection<Transition> transitions : getSuccessorsWithTransitions(state).values()) {
             results.addAll(transitions);
         }
         return results;
