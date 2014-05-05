@@ -4,14 +4,13 @@ import pipe.common.dataLayer.StateGroup;
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.TokenLockedException;
 import pipe.gui.Constants;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.*;
+import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.petrinet.transformer.PNMLTransformer;
+import pipe.models.petrinet.PetriNet;
 import pipe.utilities.Copier;
 import pipe.views.arc.InhibitorArcView;
 import pipe.views.arc.NormalArcView;
@@ -26,54 +25,79 @@ import java.util.*;
 
 
 /**
- * 	@Deprecated This class no longer should be used. Use {@link pipe.models.petrinet.PetriNet}
- * 	and general model structure
+ * @Deprecated This class no longer should be used. Use {@link pipe.models.petrinet.PetriNet}
+ * and general model structure
  */
 @Deprecated
 public class PetriNetView extends Observable implements Cloneable, Serializable, Observer {
     private static boolean _currentMarkingVectorChanged = true;
+
     private final HashSet _rateParameterHashSet = new HashSet();
+
     private final PetriNetController petriNetController;
+
     protected Map<Place, PlaceView> _placeViews = new HashMap<Place, PlaceView>();
+
     private Map<Transition, TransitionView> _transitionViews = new HashMap<Transition, TransitionView>();
+
     private Map<Arc, ArcView> _arcViews = new HashMap<Arc, ArcView>();
+
     private Map<Arc, InhibitorArcView> _inhibitorViews = new HashMap<Arc, InhibitorArcView>();
+
     private Map<Annotation, AnnotationView> _labels = new HashMap<Annotation, AnnotationView>();
+
     private Set<RateParameter> _rateParameters = new HashSet<RateParameter>();
+
     private Vector<Vector<String>> functionRelatedPlaces;
+
     private List<MarkingView>[] _initialMarkingVector;
+
     private List<MarkingView>[] _currentMarkingVector;
+
     private int[] _capacityMatrix;
+
     private int[] _priorityMatrix;
+
     private boolean[] _timedMatrix;
+
     private List<MarkingView>[] _markingVectorAnimationStorage;
+
     private Hashtable _arcsMap = new Hashtable();
+
     private Hashtable _inhibitorsMap = new Hashtable();
+
     private ArrayList<StateGroup> _stateGroups = new ArrayList<StateGroup>();
+
     private PetriNet _model;
+
     private TokenSetController _tokenSetController = new TokenSetController();
 
 
     public PetriNetView(String pnmlFileName) {
         _model = new PetriNet();
-        PNMLTransformer transform = new PNMLTransformer();
         File temp = new File(pnmlFileName);
         _model.setPnmlName(temp.getName());
-//        createFromPNML(transform.transformPNML(pnmlFileName));
+        //        createFromPNML(transform.transformPNML(pnmlFileName));
         petriNetController = null;
+    }
+
+    public PetriNetView(PetriNetController petriNetController, PetriNet model) {
+        _tokenSetController.addObserver(this);
+        _model = model;
+        this.petriNetController = petriNetController;
     }
 
     /**
      * Updates view by displaying relevant information
      */
     public void update() {
-//        removeAllDeletedModels();
-//        displayPlaces(_model.getPlaces());
-//        displayTokens(_model.getTokens());
-//        displayTransitions(_model.getTransitions());
-//        displayArcs(_model.getArcs());
-//                displayRateParameters(_model.getRateParameters());
-//        displayAnnotations(_model.getAnnotations());
+        //        removeAllDeletedModels();
+        //        displayPlaces(_model.getPlaces());
+        //        displayTokens(_model.getTokens());
+        //        displayTransitions(_model.getTransitions());
+        //        displayArcs(_model.getArcs());
+        //                displayRateParameters(_model.getRateParameters());
+        //        displayAnnotations(_model.getAnnotations());
         //        displayStateGroups(_model.getStateGroups());
     }
 
@@ -98,8 +122,8 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
             } else {
                 String id = null;
                 //                	if(_tokenViews != null && _tokenViews.size() > 0)
-                if (_tokenSetController.getAllTokenViews() != null &&
-                        _tokenSetController.getAllTokenViews().size() > 0) {
+                if (_tokenSetController.getAllTokenViews() != null
+                        && _tokenSetController.getAllTokenViews().size() > 0) {
                     //                    int no = _tokenViews.size();
                     int no = _tokenSetController.getAllTokenViews().size();
                     do {
@@ -136,7 +160,6 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         }
     }
 
-
     /**
      * Removes any models that have been deleted from the petrinet
      */
@@ -154,8 +177,8 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
      * Removes a component view if it is no longer in components.
      * That is if it has been deleted from the model.
      */
-    private <M extends PetriNetComponent, V extends AbstractPetriNetViewComponent<M>>
-    void removeNoLongerThereComponents(Map<M, V> componentsToViews, Collection<M> components) {
+    private <M extends PetriNetComponent, V extends AbstractPetriNetViewComponent<M>> void removeNoLongerThereComponents(
+            Map<M, V> componentsToViews, Collection<M> components) {
         final Iterator<Map.Entry<M, V>> itr = componentsToViews.entrySet().iterator();
         while (itr.hasNext()) {
             Map.Entry<M, V> entry = itr.next();
@@ -169,12 +192,6 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
                 itr.remove();
             }
         }
-    }
-
-    public PetriNetView(PetriNetController petriNetController, PetriNet model) {
-        _tokenSetController.addObserver(this);
-        _model = model;
-        this.petriNetController = petriNetController;
     }
 
     private void displayRateParameters(Collection<RateParameter> rateParameters) {
@@ -289,7 +306,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
 
     protected void updatePlaceViewsWithActiveToken(TokenView tc) {
         for (PlaceView p : _placeViews.values()) {
-//            p.setActiveTokenView(tc);
+            //            p.setActiveTokenView(tc);
         }
     }
 
@@ -327,135 +344,56 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         }
     }
 
-    private void addPlace(PlaceView placeView) {
-        boolean unique = true;
+    private void addInhibitorArcToInhibitorsMap(InhibitorArcView inhibitorArcViewInput) {
+        ConnectableView source = inhibitorArcViewInput.getSource();
+        ConnectableView target = inhibitorArcViewInput.getTarget();
+        ArrayList newList;
 
-        if (placeView != null) {
-            if (placeView.getId() != null && placeView.getId().length() > 0) {
-                for (PlaceView _placeView : _placeViews.values()) {
-                    if (placeView.getId().equals(_placeView.getId())) {
-                        unique = false;
-                    }
-                }
+        if (source != null) {
+            if (_inhibitorsMap.get(source) != null) {
+                ((ArrayList) _inhibitorsMap.get(source)).add(inhibitorArcViewInput);
             } else {
-                String id = null;
-                if (_placeViews != null && _placeViews.size() > 0) {
-                    int no = _placeViews.size();
-                    do {
-                        for (PlaceView _placeView : _placeViews.values()) {
-                            id = "P" + no;
-                            if (_placeView != null) {
-                                if (id.equals(_placeView.getId())) {
-                                    unique = false;
-                                    no++;
-                                } else {
-                                    unique = true;
-                                }
-                            }
-                        }
-                    } while (!unique);
-                } else {
-                    id = "P0";
-                }
-
-                if (id != null) {
-                    placeView.setId(id);
-                } else {
-                    placeView.setId("error");
-                }
+                newList = new ArrayList();
+                newList.add(inhibitorArcViewInput);
+                _inhibitorsMap.put(source, newList);
             }
-//            placeView.setActiveTokenView(_tokenSetController.getActiveTokenView());
-            //            placeView.setActiveTokenView(_activeTokenView); // SJD
-            //            _placeViews.add(placeView);
-            setChanged();
-            notifyObservers(placeView);
+        }
+
+        if (target != null) {
+            if (_inhibitorsMap.get(target) != null) {
+                ((ArrayList) _inhibitorsMap.get(target)).add(inhibitorArcViewInput);
+            } else {
+                newList = new ArrayList();
+                newList.add(inhibitorArcViewInput);
+                _inhibitorsMap.put(target, newList);
+            }
         }
     }
 
-    private void addTransition(TransitionView transitionViewInput) {
-        boolean unique = true;
+    private void addArcToArcsMap(NormalArcView arcViewInput) {
+        ConnectableView source = arcViewInput.getSource();
+        ConnectableView target = arcViewInput.getTarget();
+        ArrayList newList;
 
-        if (transitionViewInput != null) {
-            if (transitionViewInput.getId() != null && transitionViewInput.getId().length() > 0) {
-                for (TransitionView _transitionView : _transitionViews.values()) {
-                    if (transitionViewInput.getId().equals(_transitionView.getId())) {
-                        unique = false;
-                    }
-                }
+        if (source != null) {
+            if (_arcsMap.get(source) != null) {
+                ((ArrayList) _arcsMap.get(source)).add(arcViewInput);
             } else {
-                String id = null;
-                if (_transitionViews != null && _transitionViews.size() > 0) {
-                    int no = _transitionViews.size();
-                    do {
-                        for (TransitionView _transitionView : _transitionViews.values()) {
-                            id = "T" + no;
-                            if (_transitionView != null) {
-                                if (id.equals(_transitionView.getId())) {
-                                    unique = false;
-                                    no++;
-                                } else {
-                                    unique = true;
-                                }
-                            }
-                        }
-                    } while (!unique);
-                } else {
-                    id = "T0";
-                }
+                newList = new ArrayList();
+                newList.add(arcViewInput);
 
-                if (id != null) {
-                    transitionViewInput.setId(id);
-                } else {
-                    transitionViewInput.setId("error");
-                }
+                _arcsMap.put(source, newList);
             }
-            //            _transitionViews.add(transitionViewInput);
-            setChanged();
-            notifyObservers(transitionViewInput);
         }
-    }
 
-    public void addArc(NormalArcView arcViewInput) {
-        boolean unique = true;
-
-        if (arcViewInput != null) {
-            if (arcViewInput.getId() != null && arcViewInput.getId().length() > 0) {
-                for (ArcView _arcView : _arcViews.values()) {
-                    if (arcViewInput.getId().equals(_arcView.getId())) {
-                        unique = false;
-                    }
-                }
+        if (target != null) {
+            if (_arcsMap.get(target) != null) {
+                ((ArrayList) _arcsMap.get(target)).add(arcViewInput);
             } else {
-                String id = null;
-                if (_arcViews != null && _arcViews.size() > 0) {
-                    int no = _arcViews.size();
-                    do {
-                        for (ArcView _arcView : _arcViews.values()) {
-                            id = "A" + no;
-                            if (_arcView != null) {
-                                if (id.equals(_arcView.getId())) {
-                                    unique = false;
-                                    no++;
-                                } else {
-                                    unique = true;
-                                }
-                            }
-                        }
-                    } while (!unique);
-                } else {
-                    id = "A0";
-                }
-                if (id != null) {
-                    arcViewInput.setId(id);
-                } else {
-                    arcViewInput.setId("error");
-                }
+                newList = new ArrayList();
+                newList.add(arcViewInput);
+                _arcsMap.put(target, newList);
             }
-            //            _arcViews.add(arcViewInput);
-            addArcToArcsMap(arcViewInput);
-
-            setChanged();
-            notifyObservers(arcViewInput);
         }
     }
 
@@ -504,56 +442,135 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         }
     }
 
-    private void addArcToArcsMap(NormalArcView arcViewInput) {
-        ConnectableView source = arcViewInput.getSource();
-        ConnectableView target = arcViewInput.getTarget();
-        ArrayList newList;
+    public void addArc(NormalArcView arcViewInput) {
+        boolean unique = true;
 
-        if (source != null) {
-            if (_arcsMap.get(source) != null) {
-                ((ArrayList) _arcsMap.get(source)).add(arcViewInput);
+        if (arcViewInput != null) {
+            if (arcViewInput.getId() != null && arcViewInput.getId().length() > 0) {
+                for (ArcView _arcView : _arcViews.values()) {
+                    if (arcViewInput.getId().equals(_arcView.getId())) {
+                        unique = false;
+                    }
+                }
             } else {
-                newList = new ArrayList();
-                newList.add(arcViewInput);
-
-                _arcsMap.put(source, newList);
+                String id = null;
+                if (_arcViews != null && _arcViews.size() > 0) {
+                    int no = _arcViews.size();
+                    do {
+                        for (ArcView _arcView : _arcViews.values()) {
+                            id = "A" + no;
+                            if (_arcView != null) {
+                                if (id.equals(_arcView.getId())) {
+                                    unique = false;
+                                    no++;
+                                } else {
+                                    unique = true;
+                                }
+                            }
+                        }
+                    } while (!unique);
+                } else {
+                    id = "A0";
+                }
+                if (id != null) {
+                    arcViewInput.setId(id);
+                } else {
+                    arcViewInput.setId("error");
+                }
             }
-        }
+            //            _arcViews.add(arcViewInput);
+            addArcToArcsMap(arcViewInput);
 
-        if (target != null) {
-            if (_arcsMap.get(target) != null) {
-                ((ArrayList) _arcsMap.get(target)).add(arcViewInput);
-            } else {
-                newList = new ArrayList();
-                newList.add(arcViewInput);
-                _arcsMap.put(target, newList);
-            }
+            setChanged();
+            notifyObservers(arcViewInput);
         }
     }
 
-    private void addInhibitorArcToInhibitorsMap(InhibitorArcView inhibitorArcViewInput) {
-        ConnectableView source = inhibitorArcViewInput.getSource();
-        ConnectableView target = inhibitorArcViewInput.getTarget();
-        ArrayList newList;
+    private void addTransition(TransitionView transitionViewInput) {
+        boolean unique = true;
 
-        if (source != null) {
-            if (_inhibitorsMap.get(source) != null) {
-                ((ArrayList) _inhibitorsMap.get(source)).add(inhibitorArcViewInput);
+        if (transitionViewInput != null) {
+            if (transitionViewInput.getId() != null && transitionViewInput.getId().length() > 0) {
+                for (TransitionView _transitionView : _transitionViews.values()) {
+                    if (transitionViewInput.getId().equals(_transitionView.getId())) {
+                        unique = false;
+                    }
+                }
             } else {
-                newList = new ArrayList();
-                newList.add(inhibitorArcViewInput);
-                _inhibitorsMap.put(source, newList);
+                String id = null;
+                if (_transitionViews != null && _transitionViews.size() > 0) {
+                    int no = _transitionViews.size();
+                    do {
+                        for (TransitionView _transitionView : _transitionViews.values()) {
+                            id = "T" + no;
+                            if (_transitionView != null) {
+                                if (id.equals(_transitionView.getId())) {
+                                    unique = false;
+                                    no++;
+                                } else {
+                                    unique = true;
+                                }
+                            }
+                        }
+                    } while (!unique);
+                } else {
+                    id = "T0";
+                }
+
+                if (id != null) {
+                    transitionViewInput.setId(id);
+                } else {
+                    transitionViewInput.setId("error");
+                }
             }
+            //            _transitionViews.add(transitionViewInput);
+            setChanged();
+            notifyObservers(transitionViewInput);
         }
+    }
 
-        if (target != null) {
-            if (_inhibitorsMap.get(target) != null) {
-                ((ArrayList) _inhibitorsMap.get(target)).add(inhibitorArcViewInput);
+    private void addPlace(PlaceView placeView) {
+        boolean unique = true;
+
+        if (placeView != null) {
+            if (placeView.getId() != null && placeView.getId().length() > 0) {
+                for (PlaceView _placeView : _placeViews.values()) {
+                    if (placeView.getId().equals(_placeView.getId())) {
+                        unique = false;
+                    }
+                }
             } else {
-                newList = new ArrayList();
-                newList.add(inhibitorArcViewInput);
-                _inhibitorsMap.put(target, newList);
+                String id = null;
+                if (_placeViews != null && _placeViews.size() > 0) {
+                    int no = _placeViews.size();
+                    do {
+                        for (PlaceView _placeView : _placeViews.values()) {
+                            id = "P" + no;
+                            if (_placeView != null) {
+                                if (id.equals(_placeView.getId())) {
+                                    unique = false;
+                                    no++;
+                                } else {
+                                    unique = true;
+                                }
+                            }
+                        }
+                    } while (!unique);
+                } else {
+                    id = "P0";
+                }
+
+                if (id != null) {
+                    placeView.setId(id);
+                } else {
+                    placeView.setId("error");
+                }
             }
+            //            placeView.setActiveTokenView(_tokenSetController.getActiveTokenView());
+            //            placeView.setActiveTokenView(_activeTokenView); // SJD
+            //            _placeViews.add(placeView);
+            setChanged();
+            notifyObservers(placeView);
         }
     }
 
@@ -782,7 +799,7 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         int placeSize = _placeViews.size();
         _initialMarkingVector = new LinkedList[placeSize];
         for (int placeNo = 0; placeNo < placeSize; placeNo++) {
-//            _initialMarkingVector[placeNo] = _placeViews.get(placeNo).getInitialMarkingView();
+            //            _initialMarkingVector[placeNo] = _placeViews.get(placeNo).getInitialMarkingView();
         }
     }
 
@@ -795,6 +812,14 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         return _currentMarkingVector;
     }
 
+    public void setCurrentMarkingVector(int[] is) {
+        int placeSize = _placeViews.size();
+
+        for (int placeNo = 0; placeNo < placeSize; placeNo++) {
+            _placeViews.get(placeNo).getCurrentMarkingView().get(0).setCurrentMarking(is[placeNo]);
+        }
+    }
+
     /**
      * Creates Current Marking Vector from current Petri-Net
      */
@@ -804,14 +829,6 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         _currentMarkingVector = new LinkedList[placeSize];
         for (int placeNo = 0; placeNo < placeSize; placeNo++) {
             _currentMarkingVector[placeNo] = _placeViews.get(placeNo).getCurrentMarkingView();
-        }
-    }
-
-    public void setCurrentMarkingVector(int[] is) {
-        int placeSize = _placeViews.size();
-
-        for (int placeNo = 0; placeNo < placeSize; placeNo++) {
-            _placeViews.get(placeNo).getCurrentMarkingView().get(0).setCurrentMarking(is[placeNo]);
         }
     }
 
@@ -1243,21 +1260,6 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         return null;
     }
 
-    public TransitionView getTransitionById(String transitionID) {
-        TransitionView returnTransitionView = null;
-
-        if (_transitionViews != null) {
-            if (transitionID != null) {
-                for (TransitionView _transitionView : _transitionViews.values()) {
-                    if (transitionID.equalsIgnoreCase(_transitionView.getId())) {
-                        returnTransitionView = _transitionView;
-                    }
-                }
-            }
-        }
-        return returnTransitionView;
-    }
-
     /* (non-Javadoc)
       * @see pipe.interfaces.IPetriNet#getPlaceById(java.lang.String)
       */
@@ -1276,6 +1278,21 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
         return returnPlaceView;
     }
 
+    public TransitionView getTransitionById(String transitionID) {
+        TransitionView returnTransitionView = null;
+
+        if (_transitionViews != null) {
+            if (transitionID != null) {
+                for (TransitionView _transitionView : _transitionViews.values()) {
+                    if (transitionID.equalsIgnoreCase(_transitionView.getId())) {
+                        returnTransitionView = _transitionView;
+                    }
+                }
+            }
+        }
+        return returnTransitionView;
+    }
+
     public String getPNMLName() {
         return _model.getPnmlName();
     }
@@ -1286,13 +1303,13 @@ public class PetriNetView extends Observable implements Cloneable, Serializable,
      */
     public void backUpPlaceViewsMarking() {
         for (PlaceView place : _placeViews.values()) {
-//            place.backUpMarking();
+            //            place.backUpMarking();
         }
     }
 
     public void restorePlaceViewsMarking() {
         for (PlaceView place : _placeViews.values()) {
-//            place.restoreMarking();
+            //            place.restoreMarking();
         }
         for (ArcView arc : _arcViews.values()) {
             //arc.updateArcWeight();

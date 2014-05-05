@@ -13,7 +13,7 @@ import pipe.dsl.AToken;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Color;
 
 import static org.junit.Assert.assertEquals;
 

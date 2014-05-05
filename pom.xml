@@ -22,6 +22,7 @@
     <modules>
         <module>pipe-gui</module>
         <module>pipe-core</module>
+        <module>pipe-module</module>
     </modules>
 
     <build>

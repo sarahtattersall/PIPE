@@ -16,15 +16,12 @@ public class OpenAction extends GuiAction {
 
     private final PipeApplicationController applicationController;
 
-    private final PipeApplicationView applicationView;
 
     private final FileDialog fileChooser;
 
-    public OpenAction(PipeApplicationController applicationController, PipeApplicationView applicationView,
-                      FileDialog fileChooser) {
+    public OpenAction(PipeApplicationController applicationController, FileDialog fileChooser) {
         super("Open", "Open", KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
-        this.applicationView = applicationView;
         this.fileChooser = fileChooser;
     }
 
@@ -34,9 +31,9 @@ public class OpenAction extends GuiAction {
         for (File file : fileChooser.getFiles()) {
             if (file.exists() && file.isFile() && file.canRead()) {
                 try {
-                    applicationController.createNewTabFromFile(file, applicationView);
+                    applicationController.createNewTabFromFile(file);
                 } catch (UnparsableException e1) {
-                    GuiUtils.displayErrorMessage(applicationView, e1.getMessage());
+                    GuiUtils.displayErrorMessage(null, e1.getMessage());
                 }
             } else {
                 String message = "File \"" + file.getName() + "\" does not exist.";

@@ -1,6 +1,7 @@
 package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.petrinet.PetriNet;
 import pipe.models.component.Connectable;
@@ -14,8 +15,8 @@ import java.awt.event.MouseEvent;
  */
 public abstract class TransitionAction extends CreateAction {
 
-    public TransitionAction(String name, String tooltip, int key, int modifiers) {
-        super(name,  tooltip, key, modifiers);
+    public TransitionAction(String name, String tooltip, int key, int modifiers, PipeApplicationModel applicationModel) {
+        super(name,  tooltip, key, modifiers, applicationModel);
     }
 
     @Override

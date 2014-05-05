@@ -5,6 +5,7 @@ import pipe.actions.gui.create.*;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.InhibitorCreator;
 import pipe.controllers.arcCreator.NormalCreator;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.views.arc.InhibitorArcHead;
 import pipe.views.arc.NormalHead;
 import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
@@ -18,11 +19,11 @@ import java.util.Arrays;
 public class ComponentCreatorManager implements ActionManager {
 
 
-    public CreateAction placeAction = new PlaceAction();
+    public CreateAction placeAction;
 
-    public CreateAction transAction = new ImmediateTransitionAction();
+    public CreateAction transAction;
 
-    public CreateAction timedtransAction = new TimedTransitionAction();
+    public CreateAction timedtransAction;
 
     public final CreateAction arcAction;
 
@@ -30,17 +31,26 @@ public class ComponentCreatorManager implements ActionManager {
 
     public final SpecifyRateParameterAction rateParameterAction;
 
-    public CreateAction annotationAction = new AnnotationAction();
+    public CreateAction annotationAction;
 
 
-    public ComponentCreatorManager(UndoableEditListener undoListener,
+    public ComponentCreatorManager(UndoableEditListener undoListener, PipeApplicationModel applicationModel,
                                    PipeApplicationController applicationController) {
+        placeAction = new PlaceAction(applicationModel);
+
+        transAction = new ImmediateTransitionAction(applicationModel);
+
+        timedtransAction = new TimedTransitionAction(applicationModel);
+
+        annotationAction = new AnnotationAction(applicationModel);
+
         inhibarcAction =
                 new ArcAction("Inhibitor Arc", "Add an inhibitor arc (alt-h)", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
-                        new InhibitorSourceVisitor(), new InhibitorCreator(applicationController),
+                        new InhibitorSourceVisitor(), new InhibitorCreator(applicationController), applicationModel,
                         applicationController, new InhibitorArcHead());
         arcAction = new ArcAction("Arc", "Add an arc (alt-a)", KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK,
-                new NormalArcSourceVisitor(), new NormalCreator(applicationController), applicationController,
+                new NormalArcSourceVisitor(), new NormalCreator(applicationController), applicationModel,
+                applicationController,
                 new NormalHead());
 
         rateParameterAction = new SpecifyRateParameterAction(applicationController);

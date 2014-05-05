@@ -8,7 +8,7 @@ import pipe.dsl.APlace;
 import pipe.dsl.AToken;
 import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Color;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;

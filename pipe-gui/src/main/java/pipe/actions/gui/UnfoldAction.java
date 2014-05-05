@@ -47,6 +47,7 @@ public class UnfoldAction extends GuiAction {
         PetriNet petriNet = controller.getPetriNet();
         Expander expander = new Expander(petriNet);
         PetriNet unfolded = expander.unfold();
-        pipeApplicationController.createNewTab(unfolded, pipeApplicationView);
+        //TODO: REIMPLEMENT
+//        pipeApplicationController.createNewTab(unfolded, pipeApplicationView);
     }
 }

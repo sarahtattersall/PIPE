@@ -2,7 +2,7 @@ package pipe.io.adapters.utils;
 
 import pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Map;
 
 public final class TokenUtils {

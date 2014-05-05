@@ -8,7 +8,6 @@ import pipe.models.component.token.Token;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.FunctionalWeightParser;
 import pipe.parsers.PetriNetWeightParser;
-import pipe.parsers.UnparsableException;
 
 import java.util.Map;
 import java.util.regex.Matcher;

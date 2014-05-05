@@ -7,7 +7,10 @@ import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 
 // Create:

@@ -7,13 +7,12 @@ import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-
-import static org.assertj.core.api.Assertions.*;
 
 public class APlaceTest {
 

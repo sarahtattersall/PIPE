@@ -20,15 +20,10 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class AbstractSaveAction extends GuiAction {
     protected final PipeApplicationController pipeApplicationController;
 
-    private final PipeApplicationView pipeApplicationView;
-
     private final FileDialog fileDialog;
 
-    public AbstractSaveAction(String name, String tooltip, int key, int modifiers,
-                              PipeApplicationView pipeApplicationView,
-                              PipeApplicationController pipeApplicationController, FileDialog fileDialog) {
+    public AbstractSaveAction(String name, String tooltip, int key, int modifiers, PipeApplicationController pipeApplicationController, FileDialog fileDialog) {
         super(name, tooltip, key, modifiers);
-        this.pipeApplicationView = pipeApplicationView;
         this.pipeApplicationController = pipeApplicationController;
         this.fileDialog = fileDialog;
     }

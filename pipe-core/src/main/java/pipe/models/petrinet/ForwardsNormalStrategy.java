@@ -9,7 +9,7 @@ import pipe.models.component.transition.Transition;
 /**
  * Forward strategy is for normal arcs that map Transitions -> Places
  */
-class ForwardsNormalStrategy implements ArcStrategy<Transition, Place> {
+public class ForwardsNormalStrategy implements ArcStrategy<Transition, Place> {
 
     @Override
     public boolean canFire(PetriNet petriNet, Arc<Transition, Place> arc) {

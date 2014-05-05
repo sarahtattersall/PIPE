@@ -198,7 +198,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         Point2D.Double point = new Point2D.Double(x + arcPath.getBounds().getX() - getComponentDrawOffset() -
                 ZOOM_GROW, y + arcPath.getBounds().getY() - getComponentDrawOffset() -
                 ZOOM_GROW);
-        if (!ApplicationSettings.getApplicationView().getCurrentTab().isInAnimationMode()) {
+        if (!petriNetController.isInAnimationMode()) {
             if (arcPath.proximityContains(point) || isSelected()) {
                 // show also if Arc itself selected
                 arcPath.showPoints();

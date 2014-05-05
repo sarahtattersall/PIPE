@@ -18,6 +18,8 @@ import java.awt.event.MouseWheelEvent;
  * It works out what action is selected (e.g. create new place) and makes this happen.
  */
 public class PetriNetMouseHandler extends MouseInputAdapter {
+    private final PipeApplicationModel applicationModel;
+
     private final PetriNetTab petriNetTab;
 
     private final MouseUtilities mouseUtilities;
@@ -26,9 +28,10 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     private PetriNetController petriNetController;
 
-    public PetriNetMouseHandler(MouseUtilities mouseUtilities, PetriNetController controller, PetriNet net,
+    public PetriNetMouseHandler(PipeApplicationModel applicationModel, MouseUtilities mouseUtilities, PetriNetController controller,
                                 PetriNetTab petriNetTab) {
         super();
+        this.applicationModel = applicationModel;
         this.petriNetTab = petriNetTab;
         this.petriNetController = controller;
         this.mouseUtilities = mouseUtilities;
@@ -49,9 +52,8 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
      */
     private void doAction(MouseEvent event) {
 
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         CreateAction action = applicationModel.getSelectedAction();
-        if (action != null && !petriNetTab.isInAnimationMode()) {
+        if (action != null && !petriNetController.isInAnimationMode()) {
             action.doAction(event, petriNetController);
         }
     }

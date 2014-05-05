@@ -5,8 +5,6 @@ import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
-import javax.swing.*;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -23,7 +21,6 @@ public class NewPetriNetAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        applicationController.createEmptyPetriNet(view);
+        applicationController.createEmptyPetriNet();
     }
 }

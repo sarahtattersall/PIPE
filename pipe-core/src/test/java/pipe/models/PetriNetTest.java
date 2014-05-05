@@ -24,14 +24,12 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -102,7 +100,7 @@ public class PetriNetTest {
     @Test
     public void removingArcNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
+        Arc<Connectable, Connectable> mockArc = mock(Arc.class);
         Connectable connectable = mock(Connectable.class);
         when(mockArc.getTarget()).thenReturn(connectable);
         when(mockArc.getSource()).thenReturn(connectable);
@@ -182,16 +180,15 @@ public class PetriNetTest {
     }
 
     @Test
-    public void addingRateParameterNotifiesObservers() {
-        //        net.addPropertyChangeListener(mockListener);
-        //        RateParameter rateParameter = new RateParameter("", 0., 0, 0);
-        //        net.addRate(rateParameter);
-        //        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
+    public void addingRateParameterNotifiesObservers() throws InvalidRateException {
+        net.addPropertyChangeListener(mockListener);
+        RateParameter rateParameter = new RateParameter("5", "id", "name");
+        net.addRateParameter(rateParameter);
+        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
     public void addingTokenNotifiesObservers() {
-
         net.addPropertyChangeListener(mockListener);
         Token token = new Token();
         net.addToken(token);
@@ -206,15 +203,6 @@ public class PetriNetTest {
         net.addPropertyChangeListener(mockListener);
         net.addToken(token);
         verify(mockListener, never()).propertyChange(any(PropertyChangeEvent.class));
-    }
-
-    @Test
-    public void addingStateGroupNotifiesObservers() {
-
-        //        net.addPropertyChangeListener(mockListener);
-        //        StateGroup group = new StateGroup();
-        //        net.addStateGroup(group);
-        //        verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
@@ -324,62 +312,7 @@ public class PetriNetTest {
         assertEquals(0, backwardIncidence.get(p2, transition));
     }
 
-    @Test
-    public void correctlyIdentifiesEnabledTransition() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
 
-        Collection<Transition> enabled = petriNet.getEnabledTransitions();
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(transition));
-    }
-
-    @Test
-    public void correctlyIdentifiesEnabledWithNoSecondColourToken() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
-                AToken.called("Red").withColor(Color.RED)).and(
-                APlace.withId("P1").containing(1, "Red").token().and(1, "Default").token()).and(
-                APlace.withId("P2")).and(ATransition.withId("T1")).andFinally(
-                ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token().and("0", "Red").tokens());
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-
-        Collection<Transition> enabled = petriNet.getEnabledTransitions();
-        assertTrue("Petri net did not put transition in enabled collection", enabled.contains(transition));
-    }
-
-    @Test
-    public void correctlyIdentifiesNotEnabledTransitionDueToEmptyPlace() {
-        int tokenWeight = 4;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-        Token token = getComponent("Default", petriNet.getTokens());
-        Place place = getComponent("P1", petriNet.getPlaces());
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        place.decrementTokenCount(token);
-
-        Collection<Transition> enabled = petriNet.getEnabledTransitions();
-        assertThat(enabled).doesNotContain(transition);
-    }
-
-    @Test
-    public void correctlyIdentifiesNotEnabledTransitionDueToNotEnoughTokens() {
-        int tokenWeight = 4;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-
-        Collection<Transition> enabled = petriNet.getEnabledTransitions();
-        assertThat(enabled).doesNotContain(transition);
-    }
-
-    @Test
-    public void correctlyIdentifiesNotEnabledTransitionDueToOnePlaceNotEnoughTokens() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNetTwoPlacesToTransition(tokenWeight);
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-
-        Collection<Transition> enabled = petriNet.getEnabledTransitions();
-        assertFalse("Petri net put transition in enabled collection", enabled.contains(transition));
-    }
 
     /**
      * Create simple petrinet with P1 -> T1 and P2 -> T1
@@ -396,234 +329,6 @@ public class PetriNetTest {
                 ANormalArc.withSource("P2").andTarget("T1").with(weight, "Default").tokens());
     }
 
-    @Test
-    public void correctlyIdentifiesNotEnabledTransitionDueToArcNeedingTwoDifferentTokens() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-
-        Token redToken = new Token("red", new Color(255, 0, 0));
-        petriNet.addToken(redToken);
-
-        Arc<? extends Connectable, ? extends Connectable> arc = getComponent("P1 TO T1", petriNet.getArcs());
-        arc.getTokenWeights().put(redToken, "1");
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-
-        assertThat(petriNet.getEnabledTransitions()).doesNotContain(transition);
-    }
-
-    @Test
-    public void correctlyIdentifiesEnabledTransitionRequiringTwoTokens() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-
-        Token redToken = new Token("red", new Color(255, 0, 0));
-        petriNet.addToken(redToken);
-        Arc<? extends Connectable, ? extends Connectable> arc = getComponent("P1 TO T1", petriNet.getArcs());
-        arc.getTokenWeights().put(redToken, "1");
-
-        Place place = getComponent("P1", petriNet.getPlaces());
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        place.incrementTokenCount(redToken);
-
-        assertThat(petriNet.getEnabledTransitions()).contains(transition);
-    }
-
-    @Test
-    public void correctlyMarksEnabledTransitions() {
-        PetriNet petriNet = createSimplePetriNet(1);
-        petriNet.markEnabledTransitions();
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        assertTrue("Did not enable transition", transition.isEnabled());
-    }
-
-    @Test
-    public void onlyEnablesHigherPriorityTransition() {
-        PetriNet net = new PetriNet();
-        Transition t1 = new Transition("1", "1");
-        t1.setPriority(10);
-        Transition t2 = new Transition("2", "2");
-        t2.setPriority(1);
-        net.addTransition(t1);
-        net.addTransition(t2);
-        net.markEnabledTransitions();
-
-        assertTrue(t1.isEnabled());
-        assertFalse(t2.isEnabled());
-    }
-
-    @Test
-    public void correctlyDoesNotMarkNotEnabledTransitions() {
-        PetriNet petriNet = createSimplePetriNet(2);
-        petriNet.markEnabledTransitions();
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        assertFalse("Enabled transition when it cannot fire", transition.isEnabled());
-    }
-
-    @Test
-    public void correctlyDoesNotMarkNotEnabledTransitionsIfPlaceCapacityIsFull() {
-        PetriNet petriNet = createSimplePetriNet(2);
-        Token token = getComponent("Default", petriNet.getTokens());
-        Place p1 = getComponent("P1", petriNet.getPlaces());
-        Place p2 = getComponent("P2", petriNet.getPlaces());
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        p1.setTokenCount(token, 2);
-        p2.setCapacity(1);
-        petriNet.markEnabledTransitions();
-        assertFalse("Enabled transition when it cannot fire", transition.isEnabled());
-    }
-
-    @Test
-    public void correctlyMarksEnabledTransitionIfSelfLoop() throws PetriNetComponentNotFoundException {
-        PetriNet petriNet = createSelfLoopPetriNet(1);
-        Place place = petriNet.getPlaces().iterator().next();
-        Token token = petriNet.getComponent("Default", Token.class);
-        place.setTokenCount(token, 1);
-        place.setCapacity(1);
-        petriNet.markEnabledTransitions();
-
-
-        Transition transition = petriNet.getTransitions().iterator().next();
-        assertTrue("Did not enable transition when it can fire", transition.isEnabled());
-    }
-
-    private PetriNet createSelfLoopPetriNet(int tokenWeight) {
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0")).and(
-                ATransition.withId("T1")).and(
-                ANormalArc.withSource("T1").andTarget("P0").with(Integer.toString(tokenWeight),
-                        "Default").tokens()).andFinally(
-                ANormalArc.withSource("P0").andTarget("T1").with(Integer.toString(tokenWeight), "Default").tokens());
-    }
-
-    @Test
-    public void correctlyMarksInhibitorArcEnabledTransition() {
-        PetriNet petriNet = createSimpleInhibitorPetriNet(1);
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.markEnabledTransitions();
-        assertTrue("Did not enable transition when it can fire", transition.isEnabled());
-    }
-
-    /**
-     * Create simple petrinet with P1 -o T1 -> P2
-     * Initialises a token in P1 and gives arcs A1 and A2 a weight of tokenWeight to a default token
-     *
-     * @param tokenWeight
-     * @return
-     */
-    public PetriNet createSimpleInhibitorPetriNet(int tokenWeight) {
-        return APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P1")).and(
-                APlace.withId("P2")).and(ATransition.withId("T1")).and(
-                AnInhibitorArc.withSource("P1").andTarget("T1")).andFinally(
-                ANormalArc.withSource("T1").andTarget("P2").with(Integer.toString(tokenWeight), "Default").tokens());
-    }
-
-    @Test
-    public void correctlyMarksInhibitorArcEnabledTransitionEvenAfterFiring() {
-        PetriNet petriNet = createSimpleInhibitorPetriNet(1);
-        petriNet.markEnabledTransitions();
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransition(transition);
-        assertTrue("Did not enable transition when it can fire", transition.isEnabled());
-    }
-
-    @Test
-    public void firingTransitionMovesToken() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-
-        petriNet.markEnabledTransitions();
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransition(transition);
-
-        Token token = getComponent("Default", petriNet.getTokens());
-        Place p1 = getComponent("P1", petriNet.getPlaces());
-        Place p2 = getComponent("P2", petriNet.getPlaces());
-        assertEquals(0, p1.getTokenCount(token));
-        assertEquals(1, p2.getTokenCount(token));
-    }
-
-    @Test
-    public void firingFunctionalTransitionMovesTokens() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Red").withColor(Color.RED)).and(
-                AToken.called("Default").withColor(Color.BLACK)).and(
-                APlace.withId("P0").containing(5, "Default").tokens()).and(APlace.withId("P1")).and(
-                ATransition.withId("T1")).and(
-                ANormalArc.withSource("P0").andTarget("T1").with("#(P0)", "Default").tokens()).andFinally(
-                ANormalArc.withSource("T1").andTarget("P1").with("#(P0)*2", "Red").tokens());
-
-        petriNet.markEnabledTransitions();
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransition(transition);
-
-        Token token = getComponent("Default", petriNet.getTokens());
-        Token redToken = getComponent("Red", petriNet.getTokens());
-        Place p1 = getComponent("P0", petriNet.getPlaces());
-        Place p2 = getComponent("P1", petriNet.getPlaces());
-        assertEquals(0, p1.getTokenCount(token));
-        assertEquals(10, p2.getTokenCount(redToken));
-    }
-
-    @Test
-    public void firingTransitionDisablesTransition() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-
-        petriNet.markEnabledTransitions();
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransition(transition);
-
-        assertFalse("Transition was not disabled", transition.isEnabled());
-    }
-
-    @Test
-    public void firingTransitionDoesNotDisableTransition() {
-        int tokenWeight = 1;
-        PetriNet petriNet = createSimplePetriNet(tokenWeight);
-        Place place = getComponent("P1", petriNet.getPlaces());
-        Token token = getComponent("Default", petriNet.getTokens());
-        place.setTokenCount(token, 2);
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransition(transition);
-
-        assertTrue("Transition was disabled when it could have fired again", transition.isEnabled());
-    }
-
-    @Test
-    public void firingTransitionEnablesNextTransition() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
-                APlace.withId("P1").containing(1, "Default").token()).and(APlace.withId("P2")).and(
-                ATransition.withId("T1")).and(ATransition.withId("T2")).and(
-                ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token()).and(
-                ANormalArc.withSource("T1").andTarget("P2").with("1", "Default").token()).andFinally(
-                ANormalArc.withSource("P2").andTarget("T2").with("1", "Default").token());
-
-        petriNet.markEnabledTransitions();
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransition(transition);
-
-        Transition transition2 = getComponent("T2", petriNet.getTransitions());
-
-        assertTrue("Next transition was enabled", transition2.isEnabled());
-    }
-
-    @Test
-    public void firingTransitionBackwardMovesTokensBack() {
-        PetriNet petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
-                APlace.withId("P1").containing(0, "Default").token()).and(ATransition.withId("T1")).andFinally(
-                ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
-
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransitionBackwards(transition);
-
-        Place p1 = getComponent("P1", petriNet.getPlaces());
-        Token token = getComponent("Default", petriNet.getTokens());
-
-        assertThat(p1.getTokenCount(token)).isEqualTo(1);
-    }
 
     @Test
     public void deletingRateParameterRemovesItFromTransition() throws InvalidRateException {
@@ -641,18 +346,6 @@ public class PetriNetTest {
                 transition.getRate() instanceof NormalRate);
     }
 
-    @Test
-    public void firingTransitionBackwardEnablesTransition() {
-        PetriNet petriNet =
-                APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P1")).and(
-                        APlace.withId("P2").containing(1, "Default").token()).and(ATransition.withId("T1")).andFinally(
-                        ANormalArc.withSource("P1").andTarget("T1").with("1", "Default").token());
-
-        Transition transition = getComponent("T1", petriNet.getTransitions());
-        petriNet.fireTransitionBackwards(transition);
-
-        assertTrue("Transition was not enabled", transition.isEnabled());
-    }
 
     @Test
     public void testEqualityEqualPetriNets() {

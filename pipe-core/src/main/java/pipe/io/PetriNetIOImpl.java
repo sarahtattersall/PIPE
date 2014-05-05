@@ -9,8 +9,11 @@ import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
 
-import javax.xml.bind.*;
-import java.awt.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;

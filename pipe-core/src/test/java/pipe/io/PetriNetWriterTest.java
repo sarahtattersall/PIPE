@@ -59,10 +59,10 @@ public class PetriNetWriterTest extends XMLTestCase {
         String expected = XMLUtils.readFile(expectedPath, Charset.defaultCharset());
 
         String actual = stringWriter.toString();
-        System.out.println("ACTUAL:");
-        System.out.println(actual);
-        System.out.println("EXPECTED:");
-        System.out.println(expected);
+//        System.out.println("ACTUAL:");  // sjd -- less clutter on System.out
+//        System.out.println(actual);
+//        System.out.println("EXPECTED:");
+//        System.out.println(expected);
         assertXMLEqual(expected, actual);
     }
 

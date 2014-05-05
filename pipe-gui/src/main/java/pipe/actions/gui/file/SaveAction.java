@@ -13,9 +13,8 @@ import java.io.File;
 
 public class SaveAction extends AbstractSaveAction {
 
-    public SaveAction(PipeApplicationView pipeApplicationView, PipeApplicationController pipeApplicationController,
-                      FileDialog fileChooser) {
-        super("Save", "Save", KeyEvent.VK_S, InputEvent.META_DOWN_MASK, pipeApplicationView, pipeApplicationController,
+    public SaveAction(PipeApplicationController pipeApplicationController, FileDialog fileChooser) {
+        super("Save", "Save", KeyEvent.VK_S, InputEvent.META_DOWN_MASK, pipeApplicationController,
                 fileChooser);
     }
 

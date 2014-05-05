@@ -3,9 +3,8 @@ package pipe.actions.gui.animate;
 import pipe.actions.manager.AnimateActionManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.Animator;
+import pipe.gui.GUIAnimator;
 import pipe.gui.ApplicationSettings;
-import pipe.gui.model.PipeApplicationModel;
 
 import java.awt.event.ActionEvent;
 
@@ -22,7 +21,7 @@ public class MultiRandomAnimateAction extends AnimateAction {
         PipeApplicationController controller = ApplicationSettings.getApplicationController();
 
         PetriNetController petriNetController = controller.getActivePetriNetController();
-        Animator animator = petriNetController.getAnimator();
+        GUIAnimator animator = petriNetController.getAnimator();
         if(animator.getNumberSequences() > 0)
         {
             animator.setNumberSequences(0); // stop animation

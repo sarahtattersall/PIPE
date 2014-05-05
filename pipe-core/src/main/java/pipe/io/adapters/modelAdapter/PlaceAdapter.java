@@ -1,7 +1,10 @@
 package pipe.io.adapters.modelAdapter;
 
 import com.google.common.base.Joiner;
-import pipe.io.adapters.model.*;
+import pipe.io.adapters.model.AdaptedPlace;
+import pipe.io.adapters.model.NameDetails;
+import pipe.io.adapters.model.OffsetGraphics;
+import pipe.io.adapters.model.Point;
 import pipe.io.adapters.utils.ConnectableUtils;
 import pipe.io.adapters.utils.TokenUtils;
 import pipe.models.component.place.Place;

@@ -2,9 +2,9 @@ package pipe.math;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.IncidenceMatrix;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

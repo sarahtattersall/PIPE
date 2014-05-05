@@ -25,22 +25,22 @@ public class Place extends Connectable {
     /**
      * Marking x offset relative to the place x coordinate
      */
-    double markingXOffset = 0;
+    private double markingXOffset = 0;
 
     /**
      * Marking y offset relative to the place y coordinate
      */
-    double markingYOffset = 0;
+    private double markingYOffset = 0;
 
     /**
      * Place capacity
      */
-    int capacity = 0;
+    private int capacity = 0;
 
     /**
      * Place tokens
      */
-    Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+    private Map<Token, Integer> tokenCounts = new HashMap<>();
 
     public Place(String id, String name) {
         super(id, name);
@@ -109,20 +109,24 @@ public class Place extends Connectable {
             }
         }
         Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
-        this.tokenCounts = tokenCounts;
+        this.tokenCounts = new HashMap<>(tokenCounts);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
+    public boolean hasCapacityRestriction() {
+        return capacity > 0;
+    }
+
+    /**
+     * @param tokens map of tokens to their counts
+     * @return total number of tokens stored in the map
+     */
     private int getNumberOfTokensStored(Map<Token, Integer> tokens) {
         int sum = 0;
         for (Integer value : tokens.values()) {
             sum += value;
         }
         return sum;
-    }
-
-    public boolean hasCapacityRestriction() {
-        return capacity > 0;
     }
 
     /**
@@ -157,6 +161,13 @@ public class Place extends Connectable {
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
+    /**
+     * @return the number of tokens currently stored in this place
+     */
+    public int getNumberOfTokensStored() {
+        return getNumberOfTokensStored(tokenCounts);
+    }
+
     public int getTokenCount(Token token) {
         if (tokenCounts.containsKey(token)) {
             return tokenCounts.get(token);
@@ -166,6 +177,7 @@ public class Place extends Connectable {
 
     /**
      * A less efficient way to get the count for a token. Use in cases where token is not avaiable
+     *
      * @param tokenName
      * @return token count for the colour token
      */
@@ -177,13 +189,6 @@ public class Place extends Connectable {
             }
         }
         return 0;
-    }
-
-    /**
-     * @return the number of tokens currently stored in this place
-     */
-    public int getNumberOfTokensStored() {
-        return getNumberOfTokensStored(tokenCounts);
     }
 
     public void decrementTokenCount(Token token) {
@@ -248,6 +253,16 @@ public class Place extends Connectable {
         return new Point2D.Double(getX() + getWidth() / 2, getY() + getHeight() / 2);
     }
 
+    @Override
+    public int getHeight() {
+        return DIAMETER;
+    }
+
+    @Override
+    public int getWidth() {
+        return DIAMETER;
+    }
+
     /**
      * Since Place is a circle, performs basic trigonometry
      * based on the angle that the other object is from
@@ -262,7 +277,7 @@ public class Place extends Connectable {
      */
     @Override
     public Point2D.Double getArcEdgePoint(double angle) {
-        double radius = DIAMETER/ 2;
+        double radius = DIAMETER / 2;
         double centreX = x + radius;
         double opposite = Math.cos(angle);
         double attachX = centreX - radius * opposite;
@@ -277,16 +292,6 @@ public class Place extends Connectable {
     @Override
     public boolean isEndPoint() {
         return true;
-    }
-
-    @Override
-    public int getHeight() {
-        return DIAMETER;
-    }
-
-    @Override
-    public int getWidth() {
-        return DIAMETER;
     }
 
 

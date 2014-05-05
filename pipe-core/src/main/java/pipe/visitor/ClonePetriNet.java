@@ -84,7 +84,7 @@ public class ClonePetriNet {
             newPlace.setTokenCount(newTokens.get(entry.getKey().getId()), entry.getValue());
         }
         newPetriNet.addPlace(newPlace);
-        connectables.put(place.getId(), place);
+        connectables.put(place.getId(), newPlace);
     }
 
     public void visit(RateParameter rate) {
@@ -109,7 +109,7 @@ public class ClonePetriNet {
             RateParameter rateParameter = (RateParameter) transition.getRate();
             newTransition.setRate(rateParameters.get(rateParameter.getId()));
         }
-        connectables.put(transition.getId(), transition);
-        newPetriNet.addTransition(transition);
+        connectables.put(transition.getId(), newTransition);
+        newPetriNet.addTransition(newTransition);
     }
 }

@@ -1,7 +1,7 @@
 package pipe.actions.gui.create;
 
 import pipe.controllers.PlaceController;
-import pipe.models.component.place.Place;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.token.Token;
 
 import java.awt.event.InputEvent;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DeleteTokenAction extends TokenAction {
-    public DeleteTokenAction() {
-        super("Delete token", "Delete a token (alt-D)", KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK);
+    public DeleteTokenAction(PipeApplicationModel applicationModel) {
+        super("Delete token", "Delete a token (alt-D)", KeyEvent.VK_D, InputEvent.ALT_DOWN_MASK, applicationModel);
     }
 
     @Override

@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.file.CloseWindowAction;
 import pipe.controllers.PipeApplicationController;
 import pipe.views.PipeApplicationView;
@@ -20,26 +19,18 @@ public class CloseActionTest {
     CloseWindowAction closeWindowAction;
 
     @Mock
-    PipeApplicationView mockView;
-
-    @Mock
     PipeApplicationController mockController;
 
     @Before
     public void setUp() {
-        mockView = mock(PipeApplicationView.class);
-        closeWindowAction = new CloseWindowAction(mockView, mockController);
+        closeWindowAction = new CloseWindowAction(mockController);
+        when(mockController.hasCurrentPetriNetChanged()).thenReturn(false);
     }
 
     @Test
     public void actionPerformed() {
-        int selectedIndex = 20;
-        JTabbedPane mockpane = mock(JTabbedPane.class);
-        when(mockpane.getTabCount()).thenReturn(1);
-        when(mockpane.getSelectedIndex()).thenReturn(selectedIndex);
-        when(mockView.getFrameForPetriNetTabs()).thenReturn(mockpane);
         closeWindowAction.actionPerformed(null);
-        verify(mockView).removeCurrentTab();
+        verify(mockController).removeActiveTab();
     }
 
     @Test

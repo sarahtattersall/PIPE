@@ -5,7 +5,6 @@ import pipe.models.component.Connectable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Listens for connectable name changes

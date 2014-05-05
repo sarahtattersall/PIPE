@@ -22,8 +22,8 @@ public abstract class AbstractPetriNetComponent implements PetriNetComponent {
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
-    }
+    changeSupport.addPropertyChangeListener(listener);
+}
 
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {

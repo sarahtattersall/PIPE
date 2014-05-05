@@ -1,6 +1,5 @@
 package pipe.models.component.arc;
 
-import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.visitor.component.PetriNetComponentVisitor;
 

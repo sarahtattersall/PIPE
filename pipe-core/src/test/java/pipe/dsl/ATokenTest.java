@@ -6,7 +6,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 

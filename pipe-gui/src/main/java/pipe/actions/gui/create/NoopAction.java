@@ -1,6 +1,7 @@
 package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Connectable;
 
 import java.awt.event.InputEvent;
@@ -12,8 +13,8 @@ import java.awt.event.MouseEvent;
  * Useful for when toggling in and out of animation mode
  */
 public class NoopAction extends CreateAction {
-    public NoopAction() {
-        super("Noop", "Noop", KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK);
+    public NoopAction(PipeApplicationModel applicationModel) {
+        super("Noop", "Noop", KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK, applicationModel);
     }
 
     @Override

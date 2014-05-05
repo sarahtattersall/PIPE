@@ -11,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.TimedTransitionAction;
 import pipe.actions.gui.create.TransitionAction;
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
@@ -38,9 +39,13 @@ public class TimedTransactionActionTest {
     @Mock
     UndoableEditListener listener;
 
+    @Mock
+    PipeApplicationModel applicationModel;
+
+
     @Before
     public void setUp() {
-        action = new TimedTransitionAction();
+        action = new TimedTransitionAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockController.getPetriNet()).thenReturn(mockNet);
         when(mockController.getUniqueTransitionName()).thenReturn("T0");

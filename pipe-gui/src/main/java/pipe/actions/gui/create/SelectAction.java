@@ -5,6 +5,7 @@ import pipe.controllers.PipeApplicationController;
 import pipe.gui.DragManager;
 import pipe.gui.PetriNetTab;
 import pipe.gui.SelectionManager;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.Connectable;
 import pipe.views.PipeApplicationView;
 
@@ -18,8 +19,9 @@ public class SelectAction extends CreateAction {
 
     private final PipeApplicationController pipeApplicationController;
 
-    public SelectAction(PipeApplicationView pipeApplicationView, PipeApplicationController pipeApplicationController) {
-        super("Select", "Select components (alt-S)", KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK);
+    public SelectAction(PipeApplicationModel applicationModel, PipeApplicationView pipeApplicationView,
+                        PipeApplicationController pipeApplicationController) {
+        super("Select", "Select components (alt-S)", KeyEvent.VK_S, InputEvent.ALT_DOWN_MASK, applicationModel);
         this.pipeApplicationView = pipeApplicationView;
         this.pipeApplicationController = pipeApplicationController;
     }

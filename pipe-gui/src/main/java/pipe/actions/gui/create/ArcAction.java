@@ -4,6 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
@@ -32,9 +33,9 @@ public class ArcAction extends CreateAction {
     private TemporaryArcView<? extends Connectable> temporaryArcView = null;
 
     public ArcAction(String name, String tooltip, int key, int modifiers, ArcSourceVisitor sourceVisitor,
-                     ArcActionCreator arcCreator, PipeApplicationController controller,
+                     ArcActionCreator arcCreator, PipeApplicationModel applicationModel, PipeApplicationController controller,
                      ArcHead arcHead) {
-        super(name, tooltip, key, modifiers);
+        super(name, tooltip, key, modifiers, applicationModel);
         this.sourceVisitor = sourceVisitor;
         this.arcCreator = arcCreator;
         this.controller = controller;
@@ -83,7 +84,7 @@ public class ArcAction extends CreateAction {
 
     private <T extends Connectable> void createArc(T connectable, PetriNetTab tab) {
 
-        Arc<Connectable, T> arc = arcCreator.create(temporaryArcView.getSourceConnectable(), connectable,
+        Arc<? extends Connectable, T> arc = arcCreator.create(temporaryArcView.getSourceConnectable(), connectable,
                 temporaryArcView.getIntermediatePoints());
 
         PetriNetController petriNetController = controller.getActivePetriNetController();

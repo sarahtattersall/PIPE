@@ -1,6 +1,5 @@
 package pipe.io.adapters.modelAdapter;
 
-import pipe.io.adapters.model.AdaptedConnectable;
 import pipe.io.adapters.model.AdaptedTransition;
 import pipe.io.adapters.model.NameDetails;
 import pipe.io.adapters.utils.ConnectableUtils;

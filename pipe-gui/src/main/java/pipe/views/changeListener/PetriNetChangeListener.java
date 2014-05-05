@@ -44,7 +44,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
     /**
      * Contains the property name and method it maps to
      */
-    private Map<String, Method> eventMethods = new HashMap<String, Method>();
+    private Map<String, Method> eventMethods = new HashMap<>();
 
     public PetriNetChangeListener(PipeApplicationView applicationView, PetriNetTab petriNetTab,
                                   PetriNetController controller) {
@@ -118,18 +118,6 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
-    /**
-     * Refreshes the token class choices, and starts listening incase a token changes
-     *
-     * @param propertyChangeEvent
-     */
-    @EventAction(PetriNet.NEW_TOKEN_CHANGE_MESSAGE)
-    private void newToken(PropertyChangeEvent propertyChangeEvent) {
-        Token token = (Token) propertyChangeEvent.getNewValue();
-        token.addPropertyChangeListener(new TokenChangeListener(applicationView));
-        applicationView.refreshTokenClassChoices();
-    }
-
     @EventAction(PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE)
     private void newRate(PropertyChangeEvent propertyChangeEvent) {
 
@@ -143,6 +131,11 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         AnnotationView view = builder.build();
         petriNetTab.addNewPetriNetComponent(view);
 
+    }
+
+    @EventAction(PetriNet.NEW_TOKEN_CHANGE_MESSAGE)
+    private void newToken(PropertyChangeEvent propertyChangeEvent) {
+        applicationView.refreshTokenClassChoices();
     }
 
     @EventAction("newStateGroup")

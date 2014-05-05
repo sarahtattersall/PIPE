@@ -49,7 +49,7 @@ public class PetriNetControllerTest {
     private PetriNet net;
 
     @Mock
-    private Animator mockAnimator;
+    private GUIAnimator mockAnimator;
 
     @Mock
     private PetriNetTab mocKTab;

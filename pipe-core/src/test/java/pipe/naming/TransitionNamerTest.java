@@ -2,12 +2,10 @@ package pipe.naming;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.transition.Transition;
+import pipe.models.petrinet.PetriNet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TransitionNamerTest {
     PetriNet petriNet;
