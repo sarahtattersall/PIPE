@@ -46,7 +46,7 @@ public class ComponentCreatorManager implements ActionManager {
 
         inhibarcAction =
                 new ArcAction("Inhibitor Arc", "Add an inhibitor arc (alt-h)", KeyEvent.VK_H, InputEvent.ALT_DOWN_MASK,
-                        new InhibitorSourceVisitor(), new InhibitorCreator(applicationController), applicationModel,
+                        new InhibitorSourceVisitor(), new InhibitorCreator(), applicationModel,
                         applicationController, new InhibitorArcHead());
         arcAction = new ArcAction("Arc", "Add an arc (alt-a)", KeyEvent.VK_A, InputEvent.ALT_DOWN_MASK,
                 new NormalArcSourceVisitor(), new NormalCreator(applicationController), applicationModel,

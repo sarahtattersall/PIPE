@@ -3,7 +3,7 @@ package pipe.models.component.arc;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.component.token.Token;
-import pipe.visitor.component.PetriNetComponentVisitor;
+import pipe.models.petrinet.PetriNet;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
+public abstract class Arc<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponent {
 
     /**
      * Message fired when the arc source is changed
@@ -52,7 +52,7 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
      */
-    private Map<Token, String> tokenWeights = new HashMap<Token, String>();
+    protected Map<Token, String> tokenWeights = new HashMap<>();
 
     private final ArcType type;
 
@@ -138,13 +138,6 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
     @Override
     public boolean isDraggable() {
         return true;
-    }
-
-    @Override
-    public void accept(PetriNetComponentVisitor visitor) {
-        if (visitor instanceof ArcVisitor) {
-            ((ArcVisitor) visitor).visit(this);
-        }
     }
 
     @Override
@@ -323,5 +316,14 @@ public class Arc<S extends Connectable, T extends Connectable> extends AbstractP
 
         return true;
     }
+
+    /**
+     *
+     * @param petriNet
+     * @param state
+     * @return true if given the current state the arc can fire
+     */
+    //TODO: Dont pass in Petri net, get around this with better design
+    public abstract boolean canFire(PetriNet petriNet, Map<String, Map<String, Integer>> state);
 
 }

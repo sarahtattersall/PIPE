@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.dsl.*;
 import pipe.exceptions.PetriNetComponentException;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.InboundNormalArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -131,7 +131,7 @@ public class ExpanderTest {
         weights.put(token, "1");
         weights.put(redToken, "2");
 
-        Arc<Place, Transition> arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
+        InboundArc arc = new InboundNormalArc(place, transition, weights);
         petriNet.addArc(arc);
 
         expander = new Expander(petriNet);
@@ -142,7 +142,7 @@ public class ExpanderTest {
         Place newPlace = new Place("P0_Red_Default", "P0_Red_Default");
         expected.addPlace(newPlace);
         expected.add(transition);
-        expected.add(new Arc<>(newPlace, transition, weights, ArcType.NORMAL));
+        expected.add(new InboundNormalArc(newPlace, transition, weights));
 
         PetriNet unfolded = expander.unfold();
         checkPetriNetsEqual(expected, unfolded);

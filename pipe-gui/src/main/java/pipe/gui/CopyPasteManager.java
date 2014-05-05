@@ -7,8 +7,9 @@ import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.OutboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.token.Token;
@@ -321,10 +322,6 @@ public class CopyPasteManager extends javax.swing.JComponent
     private Collection<PetriNetComponent> getNonConnectablesToPaste() {
         final Collection<PetriNetComponent> components = new LinkedList<>();
         PetriNetComponentVisitor componentVisitor = new NonConnectableVisitor() {
-            @Override
-            public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
-                components.add(arc);
-            }
 
             @Override
             public void visit(Token token) {
@@ -334,6 +331,17 @@ public class CopyPasteManager extends javax.swing.JComponent
             @Override
             public void visit(Annotation annotation) {
                 components.add(annotation);
+            }
+
+            @Override
+            public void visit(InboundArc inboundArc) {
+                components.add(inboundArc);
+            }
+
+            @Override
+            public void visit(OutboundArc outboundArc) {
+                components.add(outboundArc);
+
             }
         };
 

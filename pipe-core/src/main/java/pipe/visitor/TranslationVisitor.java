@@ -4,10 +4,7 @@ import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcPointVisitor;
-import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.transition.Transition;
@@ -32,7 +29,7 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
         this.selected = selected;
     }
 
-    @Override
+
     public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
         if (selected.contains(arc.getSource()) && selected.contains(arc.getTarget())) {
             List<ArcPoint> points = arc.getArcPoints();
@@ -70,5 +67,15 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
     public void visit(Annotation annotation) {
         annotation.setX(annotation.getX() + (int)translation.getX());
         annotation.setY(annotation.getY() + (int)translation.getY());
+    }
+
+    @Override
+    public void visit(InboundArc inboundArc) {
+        visit(inboundArc);
+    }
+
+    @Override
+    public void visit(OutboundArc outboundArc) {
+        visit(outboundArc);
     }
 }

@@ -1,11 +1,11 @@
 package pipe.animation;
 
 import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.*;
+import pipe.models.petrinet.IncidenceMatrix;
+import pipe.models.petrinet.PetriNet;
 
 import java.util.*;
 
@@ -23,23 +23,8 @@ public class PetriNetAnimator implements Animator {
     public PetriNetAnimator(PetriNet petriNet) {
         this.petriNet = petriNet;
         saveState();
-        backwardsStrategies.put(ArcType.NORMAL, new BackwardsNormalStrategy());
-        backwardsStrategies.put(ArcType.INHIBITOR, new InhibitorStrategy());
-        forwardStrategies.put(ArcType.NORMAL, new ForwardsNormalStrategy());
     }
 
-
-    /**
-     * Houses the backwards strategies for arcs place -> transition
-     * There can be two kinds, normal and inhibitor
-     */
-    private final Map<ArcType, ArcStrategy<Place, Transition>> backwardsStrategies = new HashMap<>();
-
-    /**
-     * Houses forward stratergies for arcs transition -> place
-     * There can be only one kind, normal.
-     */
-    private final Map<ArcType, ArcStrategy<Transition, Place>> forwardStrategies = new HashMap<>();
 
     @Override
     public final void saveState() {
@@ -78,7 +63,7 @@ public class PetriNetAnimator implements Animator {
     @Override
     public Set<Transition> getEnabledTransitions() {
 
-        Set<Transition> enabledTransitions = findEnabledTransitions();
+        Set<Transition> enabledTransitions = findEnabledTransitions(getCurrentState());
         boolean hasImmediate = areAnyTransitionsImmediate(enabledTransitions);
         int maxPriority = hasImmediate ? getMaxPriority(enabledTransitions) : 0;
 
@@ -155,11 +140,11 @@ public class PetriNetAnimator implements Animator {
     /**
      * @return all the currently enabed transitions in the petri net
      */
-    private Set<Transition> findEnabledTransitions() {
+    private Set<Transition> findEnabledTransitions(Map<String, Map<String, Integer>> state) {
 
         Set<Transition> enabledTransitions = new HashSet<>();
         for (Transition transition : petriNet.getTransitions()) {
-            if (isEnabled(transition)) {
+            if (isEnabled(transition, state)) {
                 enabledTransitions.add(transition);
             }
         }
@@ -176,15 +161,17 @@ public class PetriNetAnimator implements Animator {
      * @param transition to see if it is enabled
      * @return true if transition is enabled
      */
-    private boolean isEnabled(Transition transition) {
+    private boolean isEnabled(Transition transition, Map<String, Map<String, Integer>> state) {
         boolean enabledForArcs = true;
         for (Arc<Place, Transition> arc : petriNet.inboundArcs(transition)) {
-            ArcStrategy<Place, Transition> strategy = backwardsStrategies.get(arc.getType());
-            enabledForArcs &= strategy.canFire(petriNet, arc);
+//            ArcStrategy<Place, Transition> strategy = backwardsStrategies.get(arc.getType());
+//            enabledForArcs &= strategy.canFire(petriNet, arc);
+            enabledForArcs &= arc.canFire(petriNet, state);
         }
         for (Arc<Transition, Place> arc : petriNet.outboundArcs(transition)) {
-            ArcStrategy<Transition, Place> strategy = forwardStrategies.get(arc.getType());
-            enabledForArcs &= strategy.canFire(petriNet, arc);
+//            ArcStrategy<Transition, Place> strategy = forwardStrategies.get(arc.getType());
+//            enabledForArcs &= strategy.canFire(petriNet, arc);
+            enabledForArcs &= arc.canFire(petriNet, state);
         }
         return enabledForArcs;
     }
@@ -283,5 +270,23 @@ public class PetriNetAnimator implements Animator {
                 place.setTokenCount(token, newCount);
             }
         }
+    }
+
+    /**
+     * Creates a new state containing the token counts for the
+     * current Petri net.
+     *
+     * @return current state of the Petri net
+     */
+    private  Map<String, Map<String, Integer>> getCurrentState() {
+        Map<String, Map<String, Integer>> tokenCounts = new HashMap<>();
+        for (Place place : petriNet.getPlaces()) {
+            Map<String, Integer> counts = new HashMap<>();
+            for (Token token : petriNet.getTokens()) {
+                counts.put(token.getId(), place.getTokenCount(token));
+            }
+            tokenCounts.put(place.getId(), counts);
+        }
+        return  tokenCounts;
     }
 }

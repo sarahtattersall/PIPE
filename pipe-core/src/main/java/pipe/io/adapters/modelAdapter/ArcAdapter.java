@@ -3,9 +3,7 @@ package pipe.io.adapters.modelAdapter;
 import com.google.common.base.Joiner;
 import pipe.io.adapters.model.AdaptedArc;
 import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -15,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Adapts arcs for writing to PNML.
+ */
 public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable, ? extends Connectable>> {
 
 
@@ -50,16 +51,16 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         if (adaptedArc.getType().equals("inhibitor")) {
             Place place = places.get(source);
             Transition transition = transitions.get(target);
-            arc = new Arc<>(place, transition, weights, ArcType.INHIBITOR);
+            arc = new InboundInhibitorArc(place, transition);
         } else {
             if (places.containsKey(source)) {
                 Place place = places.get(source);
                 Transition transition = transitions.get(target);
-                arc = new Arc<>(place, transition, weights, ArcType.NORMAL);
+                arc = new InboundNormalArc(place, transition, weights);
             } else {
                 Place place = places.get(target);
                 Transition transition = transitions.get(source);
-                arc = new Arc<>(transition, place, weights, ArcType.NORMAL);
+                arc = new OutboundNormalArc(transition, place, weights);
             }
         }
         arc.setId(adaptedArc.getId());

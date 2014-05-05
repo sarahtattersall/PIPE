@@ -1,6 +1,6 @@
 package pipe.dsl;
 
-import pipe.models.component.Connectable;
+import pipe.models.component.place.Place;
 import pipe.models.component.rate.NormalRate;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
@@ -38,7 +38,7 @@ public class ATransition implements DSLCreator<Transition> {
     }
 
     @Override
-    public Transition create(Map<String, Token> tokens, Map<String, Connectable> connectables,
+    public Transition create(Map<String, Token> tokens, Map<String, Place> places, Map<String, Transition> transitions,
                              Map<String, RateParameter> rateParameters) {
         Transition transition = new Transition(id, id);
         transition.setPriority(priority);
@@ -53,7 +53,7 @@ public class ATransition implements DSLCreator<Transition> {
             transition.setRate(rateParameters.get(rateParameter));
         }
 
-        connectables.put(id, transition);
+        transitions.put(id, transition);
         return transition;
     }
 

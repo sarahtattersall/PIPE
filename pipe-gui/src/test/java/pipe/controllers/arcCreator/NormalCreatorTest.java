@@ -8,9 +8,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.InboundNormalArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -19,10 +19,10 @@ import pipe.views.PipeApplicationView;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -60,13 +60,13 @@ public class NormalCreatorTest {
         Transition transition = new Transition("", "");
         Token token = new Token("Default", new Color(0, 0, 0));
         when(mockPetriNetController.getSelectedToken()).thenReturn(token);
-        Arc<? extends Connectable, ? extends Connectable> actual = creator.create(source, transition);
+         InboundArc actual = creator.createInboundArc(source, transition, new LinkedList<ArcPoint>());
 
 
         Map<Token, String> tokens = new HashMap<>();
         tokens.put(token, "1");
 
-        Arc<Place, Transition> expected = new Arc<>(source, transition, tokens, ArcType.NORMAL);
+        InboundArc expected = new InboundNormalArc(source, transition, tokens);
         assertEquals(expected, actual);
     }
 

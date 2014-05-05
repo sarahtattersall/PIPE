@@ -4,8 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -32,14 +31,34 @@ public class PetriNetComponentAddVisitorTest {
     }
 
     @Test
-    public void testAddsArc() {
+    public void testAddsInboundNormalArc() {
         Place place = new Place("", "");
         Transition transition = new Transition("", "");
-        Map<Token, String> weights = new HashMap<Token, String>();
-        Arc<Place, Transition> arc = new Arc<Place, Transition>(place, transition, weights, ArcType.NORMAL);
+        Map<Token, String> weights = new HashMap<>();
+        InboundArc arc = new InboundNormalArc(place, transition, weights);
         arc.accept(visitor);
         verify(mockNet).addArc(arc);
 
+    }
+
+
+    @Test
+    public void testAddsOutboundNormalArc() {
+        Place place = new Place("", "");
+        Transition transition = new Transition("", "");
+        Map<Token, String> weights = new HashMap<>();
+        OutboundArc arc = new OutboundNormalArc(transition, place, weights);
+        arc.accept(visitor);
+        verify(mockNet).addArc(arc);
+    }
+
+    @Test
+    public void testAddsInhibitorArc() {
+        Place place = new Place("", "");
+        Transition transition = new Transition("", "");
+        InboundArc arc = new InboundInhibitorArc(place, transition);
+        arc.accept(visitor);
+        verify(mockNet).addArc(arc);
     }
 
     @Test
@@ -64,14 +83,6 @@ public class PetriNetComponentAddVisitorTest {
 
     }
 
-    //TODO: CHange RateParameter to model then test this
-    //    @Test
-    //    public void testAddsRateParameter() throws Exception {
-    //        RateParameter parameter = new RateParameter("", 0, 0, 0);
-    //        parameter.accept
-    //
-    //    }
-
     @Test
     public void testAddsToken() throws PetriNetComponentException {
         Token token = new Token("", new Color(0, 0, 0));
@@ -79,10 +90,5 @@ public class PetriNetComponentAddVisitorTest {
         verify(mockNet).addToken(token);
     }
 
-    //    TODO: MAKE STATEGROUP HAVE VISITOR PATTERN
-    //    @Test
-    //    public void testAddsStateGroup() throws Exception {
-    //
-    //    }
 
 }

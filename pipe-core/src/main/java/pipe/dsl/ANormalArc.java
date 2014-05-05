@@ -1,11 +1,11 @@
 package pipe.dsl;
 
 import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.*;
+import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -61,14 +61,19 @@ public class ANormalArc implements DSLCreator<Arc<? extends Connectable, ? exten
 
     @Override
     public Arc<? extends Connectable, ? extends Connectable> create(Map<String, Token> tokens,
-                                                                    Map<String, Connectable> connectables,
-                                                                    Map<String, RateParameter> rateParameters) {
+                                                                    Map<String, Place> places,
+                                                                    Map<String, Transition> transitions, Map<String, RateParameter> rateParameters) {
         Map<Token, String> arcWeights = new HashMap<>();
         for (Map.Entry<String, String> entry : weights.entrySet()) {
             arcWeights.put(tokens.get(entry.getKey()), entry.getValue());
         }
 
-        Arc<? extends Connectable, ? extends Connectable> arc = new Arc<>(connectables.get(source), connectables.get(target), arcWeights, ArcType.NORMAL);
+        Arc<? extends Connectable, ? extends Connectable> arc;
+        if(places.containsKey(source)){
+            arc = new InboundNormalArc(places.get(source), transitions.get(target), arcWeights);
+        } else {
+            arc = new OutboundNormalArc(transitions.get(source), places.get(target), arcWeights);
+        }
         arc.addIntermediatePoints(intermediatePoints);
         return arc;
     }

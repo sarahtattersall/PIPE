@@ -2,11 +2,11 @@ package pipe.models.petrinet;
 
 import pipe.exceptions.InvalidRateException;
 import pipe.exceptions.PetriNetComponentException;
-import pipe.models.component.Connectable;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.OutboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.rate.RateParameter;
@@ -22,12 +22,6 @@ public class PetriNetComponentRemovalVisitor
 
     public PetriNetComponentRemovalVisitor(PetriNet net) {
         this.net = net;
-    }
-
-    @Override
-    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
-        net.removeArc(arc);
-
     }
 
     @Override
@@ -55,5 +49,15 @@ public class PetriNetComponentRemovalVisitor
     @Override
     public void visit(RateParameter rate) throws InvalidRateException {
         net.removeRateParameter(rate);
+    }
+
+    @Override
+    public void visit(InboundArc inboundArc) {
+        net.removeArc(inboundArc);
+    }
+
+    @Override
+    public void visit(OutboundArc outboundArc) {
+        net.removeArc(outboundArc);
     }
 }

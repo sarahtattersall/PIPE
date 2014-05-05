@@ -12,8 +12,8 @@ import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.OutboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -115,7 +115,7 @@ public class ArcActionTest {
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         action.doConnectableAction(place, mockController);
-        verify(mockCreatorVisitor).create(eq(transition), eq(place), anyListOf(ArcPoint.class));
+        verify(mockCreatorVisitor).createOutboundArc(eq(place), eq(transition), anyListOf(ArcPoint.class));
     }
 
     @Test
@@ -132,8 +132,8 @@ public class ArcActionTest {
         Place place = new Place("", "");
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
-        Arc<Transition, Place> mockArc = mock(Arc.class);
-        when(mockCreatorVisitor.create(any(Transition.class), any(Place.class), anyListOf(ArcPoint.class))).thenReturn(
+        OutboundArc mockArc = mock(OutboundArc.class);
+        when(mockCreatorVisitor.createOutboundArc(any(Place.class), any(Transition.class), anyListOf(ArcPoint.class))).thenReturn(
                 mockArc);
 
 

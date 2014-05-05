@@ -1,10 +1,11 @@
 package pipe.dsl;
 
 import pipe.exceptions.PetriNetComponentException;
-import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
+import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 
 import java.util.ArrayList;
@@ -85,13 +86,14 @@ public class APetriNet {
      */
     private PetriNet makePetriNet() {
         Map<String, Token> tokens = new HashMap<>();
-        Map<String, Connectable> connectables = new HashMap<>();
+        Map<String, Place> places = new HashMap<>();
+        Map<String, Transition> transitions = new HashMap<>();
         Map<String, RateParameter> rateParameters = new HashMap<>();
 
         PetriNet petriNet = new PetriNet();
         for (DSLCreator<? extends PetriNetComponent> creator : creators) {
             try {
-                petriNet.add(creator.create(tokens, connectables, rateParameters));
+                petriNet.add(creator.create(tokens, places, transitions, rateParameters));
             } catch (PetriNetComponentException e) {
                 e.printStackTrace();
             }

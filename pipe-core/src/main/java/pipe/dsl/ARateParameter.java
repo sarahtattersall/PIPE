@@ -1,8 +1,9 @@
 package pipe.dsl;
 
-import pipe.models.component.Connectable;
+import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
+import pipe.models.component.transition.Transition;
 
 import java.util.Map;
 
@@ -32,8 +33,8 @@ public class ARateParameter implements DSLCreator<RateParameter> {
 
 
     @Override
-    public RateParameter create(Map<String, Token> tokens, Map<String, Connectable> connectables,
-                                Map<String, RateParameter> rateParameters) {
+    public RateParameter create(Map<String, Token> tokens, Map<String, Place> places,
+                                Map<String, Transition> transitions, Map<String, RateParameter> rateParameters) {
         RateParameter rateParameter = new RateParameter(expression, id, id);
         rateParameters.put(id, rateParameter);
         return rateParameter;

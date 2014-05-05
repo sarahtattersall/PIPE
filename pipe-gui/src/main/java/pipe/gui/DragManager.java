@@ -2,17 +2,13 @@ package pipe.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.exceptions.PetriNetComponentException;
-import pipe.historyActions.component.MovePetriNetObject;
 import pipe.historyActions.MultipleEdit;
-import pipe.models.component.Connectable;
+import pipe.historyActions.component.MovePetriNetObject;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.PlaceablePetriNetComponent;
 import pipe.models.component.annotation.Annotation;
 import pipe.models.component.annotation.AnnotationVisitor;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.ArcPointVisitor;
-import pipe.models.component.arc.ArcVisitor;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.place.PlaceVisitor;
 import pipe.models.component.transition.Transition;
@@ -140,11 +136,6 @@ public class DragManager {
         }
 
         @Override
-        public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
-            //TODO: Arc arc points covered by the above?
-        }
-
-        @Override
         public void visit(Place place) {
             savedCoordinates.put(place, new Point2D.Double(place.getX(), place.getY()));
         }
@@ -153,6 +144,16 @@ public class DragManager {
         public void visit(Transition transition) {
             savedCoordinates.put(transition, new Point2D.Double(transition.getX(), transition.getY()));
 
+        }
+
+        @Override
+        public void visit(InboundArc inboundArc) {
+            //TODO: Arc arc points covered by the above?
+        }
+
+        @Override
+        public void visit(OutboundArc outboundArc) {
+            //TODO: Arc arc points covered by the above?
         }
     }
 }

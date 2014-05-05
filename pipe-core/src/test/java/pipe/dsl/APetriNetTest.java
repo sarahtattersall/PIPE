@@ -2,8 +2,7 @@ package pipe.dsl;
 
 import org.junit.Test;
 import pipe.exceptions.InvalidRateException;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
+import pipe.models.component.arc.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.rate.RateParameter;
 import pipe.models.component.token.Token;
@@ -44,7 +43,7 @@ public class APetriNetTest {
         expected.addTransition(transition);
         Map<Token, String> arcWeights = new HashMap<>();
         arcWeights.put(token, "5");
-        Arc<Place, Transition> arc = new Arc<>(place, transition, arcWeights, ArcType.NORMAL);
+        InboundArc arc = new InboundNormalArc(place, transition, arcWeights);
         expected.addArc(arc);
 
         assertEquals(expected, petriNet);
@@ -95,11 +94,10 @@ public class APetriNetTest {
         Map<Token, String> arcWeights = new HashMap<>();
         arcWeights.put(red, "5");
         arcWeights.put(blue, "1");
-        Arc<Place, Transition> normalArc = new Arc<>(p0, t0, arcWeights, ArcType.NORMAL);
+        InboundArc normalArc = new InboundNormalArc(p0, t0, arcWeights);
         expected.addArc(normalArc);
 
-        //Apologies, this shouldn't really be passing in a weight. It's on my todo list to refactor
-        Arc<Place, Transition> inihibArc = new Arc<>(p1, t0, new HashMap<Token, String>(), ArcType.INHIBITOR);
+        InboundArc inihibArc = new InboundInhibitorArc(p1, t0);
         expected.addArc(inihibArc);
 
         assertEquals(expected, petriNet);
