@@ -1,16 +1,16 @@
 package pipe.reachability.io;
 
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 /**
  * Private inner class representing a state transition.
  */
 public class StateTransition {
-    public final State state;
+    public final ExplorerState state;
 
-    public final State successor;
+    public final ExplorerState successor;
 
-    public StateTransition(State state, State successor) {
+    public StateTransition(ExplorerState state, ExplorerState successor) {
         this.state = state;
         this.successor = successor;
     }

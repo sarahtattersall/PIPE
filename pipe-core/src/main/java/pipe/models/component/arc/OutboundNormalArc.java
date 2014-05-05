@@ -1,5 +1,6 @@
 package pipe.models.component.arc;
 
+import pipe.animation.State;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -28,7 +29,7 @@ public class OutboundNormalArc extends OutboundArc {
      *         not cause capacity overflow
      */
     @Override
-    public boolean canFire(PetriNet petriNet, Map<String, Map<String, Integer>> state) {
+    public boolean canFire(PetriNet petriNet, State state) {
         Place place = getTarget();
         if (!place.hasCapacityRestriction()) {
             return true;
@@ -75,10 +76,10 @@ public class OutboundNormalArc extends OutboundArc {
         return count;
     }
 
-    private int getTokensInPlace(Map<String, Map<String, Integer>> state) {
+    private int getTokensInPlace(State state) {
         Place place = getTarget();
         int count = 0;
-        for (Integer value : state.get(place.getId()).values()) {
+        for (Integer value : state.getTokens(place.getId()).values()) {
             count += value;
         }
         return count;

@@ -1,9 +1,11 @@
 package pipe.reachability.io;
 
+import pipe.reachability.state.ExplorerState;
 import pipe.reachability.state.Record;
-import pipe.reachability.state.State;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Writes the state space exploration transitions into a binary stream
@@ -18,8 +20,8 @@ public class ByteWriterFormatter implements WriterFormatter {
     @Override
     public Record read(ObjectInputStream inputStream) throws IOException {
         try  {
-            State state = (State) inputStream.readObject();
-            State successor = (State) inputStream.readObject();
+            ExplorerState state = (ExplorerState) inputStream.readObject();
+            ExplorerState successor = (ExplorerState) inputStream.readObject();
             double rate = inputStream.readDouble();
             return new Record(state, successor, rate);
 
@@ -40,7 +42,7 @@ public class ByteWriterFormatter implements WriterFormatter {
      * @throws IOException
      */
     @Override
-    public void write(State state, State successor, double successorRate, ObjectOutputStream stream) throws IOException {
+    public void write(ExplorerState state, ExplorerState successor, double successorRate, ObjectOutputStream stream) throws IOException {
             stream.writeObject(state);
             stream.writeObject(successor);
             stream.writeDouble(successorRate);

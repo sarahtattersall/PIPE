@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.reachability.algorithm.state.SerializingStateWriter;
 import pipe.reachability.io.WriterFormatter;
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -17,7 +17,7 @@ import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SerializingStateWriterTest {
+public class SerializingExplorerStateWriterTest {
 
     private SerializingStateWriter explorer;
 
@@ -28,10 +28,10 @@ public class SerializingStateWriterTest {
     ObjectOutputStream writer;
 
     @Mock
-    State previous;
+    ExplorerState previous;
 
     @Mock
-    State state;
+    ExplorerState state;
 
     @Before
     public void setUp() {
@@ -41,7 +41,7 @@ public class SerializingStateWriterTest {
     @Test
     public void doesNotWriteIfPreviousIsNull() throws IOException {
         explorer.transition(null, state, 1.0);
-        verify(formatter, never()).write(any(State.class), any(State.class), anyDouble(), any(ObjectOutputStream.class));
+        verify(formatter, never()).write(any(ExplorerState.class), any(ExplorerState.class), anyDouble(), any(ObjectOutputStream.class));
     }
 
     @Test

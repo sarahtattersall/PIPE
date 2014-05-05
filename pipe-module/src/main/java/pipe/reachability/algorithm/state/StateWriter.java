@@ -1,6 +1,6 @@
 package pipe.reachability.algorithm.state;
 
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 /**
  * This class is used in conjunction with the {@link StateSpaceExplorer}
@@ -15,5 +15,5 @@ public interface StateWriter {
      * @param state state to explore
      * @param rate  rate at which the state is entered
      */
-    void transition(State previous, State state, double rate);
+    void transition(ExplorerState previous, ExplorerState state, double rate);
 }

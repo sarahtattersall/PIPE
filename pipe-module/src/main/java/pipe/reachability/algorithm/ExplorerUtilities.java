@@ -1,7 +1,7 @@
 package pipe.reachability.algorithm;
 
 import pipe.models.component.transition.Transition;
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 import java.util.Collection;
 import java.util.Map;
@@ -18,7 +18,7 @@ public interface ExplorerUtilities {
      * @param state state in the Petri net to find successors of
      * @return map of successor states to the transitions that caused them
      */
-    Map<State, Collection<Transition>> getSuccessorsWithTransitions(State state);
+    Map<ExplorerState, Collection<Transition>> getSuccessorsWithTransitions(ExplorerState state);
 
 
     /**
@@ -29,7 +29,7 @@ public interface ExplorerUtilities {
      * @param state state in the Petri net to find successors of
      * @return map of successor states to the transitions that caused them
      */
-    Collection<State> getSuccessors(State state);
+    Collection<ExplorerState> getSuccessors(ExplorerState state);
 
 
 
@@ -41,7 +41,7 @@ public interface ExplorerUtilities {
      * It then sums the firing rates of this intersection and divides by the sum of the firing rates
      * of the enabled transition
      */
-    double rate(State state, State successor);
+    double rate(ExplorerState state, ExplorerState successor);
 
     /**
      *
@@ -53,7 +53,7 @@ public interface ExplorerUtilities {
      *
      * @return underlying state of the Petri net
      */
-    State getCurrentState();
+    ExplorerState getCurrentState();
 
     /**
      * Calculates the set of transitions that will take you from one state to the successor.
@@ -63,7 +63,7 @@ public interface ExplorerUtilities {
      * @return enabled transitions that take you from state to successor, if it is not directly reachable then
      * an empty Collection will be returned
      */
-    Collection<Transition> getTransitions(State state, State successor);
+    Collection<Transition> getTransitions(ExplorerState state, ExplorerState successor);
 
     /**
      *
@@ -81,5 +81,5 @@ public interface ExplorerUtilities {
      * @param state state in the Petri net to determine enabled transitions of
      * @return all enabled transitions for the specified state
      */
-    Collection<Transition> getAllEnabledTransitions(State state);
+    Collection<Transition> getAllEnabledTransitions(ExplorerState state);
 }

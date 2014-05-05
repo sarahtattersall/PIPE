@@ -6,7 +6,7 @@ import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
 
@@ -20,12 +20,12 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Queue for states yet to be explored
      */
-    Queue<State> explorationQueue = new ArrayDeque<>();
+    Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
 
     /**
      * Contains states that have already been explored.
      */
-    private Set<State> explored = new HashSet<>();
+    private Set<ExplorerState> explored = new HashSet<>();
 
     /**
      * Used for writing transitions
@@ -52,7 +52,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      * all successors of a state. It is then used to write the records to the stateWriter
      * only once all successors have been processed.
      */
-    private final Map<State, Double> successorRates = new HashMap<>();
+    private final Map<ExplorerState, Double> successorRates = new HashMap<>();
 
 
     public SequentialStateSpaceExplorer(StateWriter stateWriter, VanishingExplorer vanishingExplorer,
@@ -70,7 +70,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
     @Override
     public void generate() throws TimelessTrapException {
         clearDataStructures();
-        State initialState = explorerUtilities.getCurrentState();
+        ExplorerState initialState = explorerUtilities.getCurrentState();
         exploreInitialState(initialState);
 
         stateSpaceExploration();
@@ -93,9 +93,9 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      */
     private void stateSpaceExploration() throws TimelessTrapException {
         while (!explorationQueue.isEmpty()) {
-            State state = explorationQueue.poll();
+            ExplorerState state = explorationQueue.poll();
             successorRates.clear();
-            for (State successor : explorerUtilities.getSuccessors(state)) {
+            for (ExplorerState successor : explorerUtilities.getSuccessors(state)) {
                 double rate = explorerUtilities.rate(state, successor);
                 if (successor.isTangible()) {
                     registerStateTransition(state, successor, rate);
@@ -120,9 +120,9 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      *
      * @param state the current state that successors belong to
      */
-    private void writeStateTransitions(State state) {
-        for (Map.Entry<State, Double> entry : successorRates.entrySet()) {
-            State successor = entry.getKey();
+    private void writeStateTransitions(ExplorerState state) {
+        for (Map.Entry<ExplorerState, Double> entry : successorRates.entrySet()) {
+            ExplorerState successor = entry.getKey();
             double rate = entry.getValue();
             stateWriter.transition(state, successor, rate);
         }
@@ -137,7 +137,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      * @param successor state that is possible via an enabled transition from state
      * @param rate rate at which state transitions to successor
      */
-    private void registerStateTransition(State state, State successor, double rate) {
+    private void registerStateTransition(ExplorerState state, ExplorerState successor, double rate) {
         registerStateRate(successor, rate);
         if (!explored.contains(successor)) {
             explorationQueue.add(successor);
@@ -153,7 +153,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      * @param successor key to successor rates
      * @param rate rate at which successor is entered via some transition
      */
-    private void registerStateRate(State successor, double rate) {
+    private void registerStateRate(ExplorerState successor, double rate) {
         if (successorRates.containsKey(successor)) {
             double previousRate = successorRates.get(successor);
             successorRates.put(successor, previousRate + rate);
@@ -172,7 +172,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      *
      * @param initialState starting state of the algorithm
      */
-    private void exploreInitialState(State initialState) throws TimelessTrapException {
+    private void exploreInitialState(ExplorerState initialState) throws TimelessTrapException {
         if (initialState.isTangible()) {
             explorationQueue.add(initialState);
             markAsExplored(initialState);
@@ -191,7 +191,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      * @param state
      */
     //TODO: IMPLEMENT COMPRESSED VERSION
-    private void markAsExplored(State state) {
+    private void markAsExplored(ExplorerState state) {
         explored.add(state);
     }
 

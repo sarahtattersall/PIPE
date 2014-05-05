@@ -7,8 +7,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import pipe.animation.HashedState;
 import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
 import pipe.reachability.algorithm.CachingExplorerUtilities;
@@ -16,14 +16,14 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
+import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.io.SerializedStateSpaceExplorationReader;
 import pipe.reachability.io.StateTransition;
 import pipe.reachability.io.WriterFormatter;
-import pipe.reachability.state.HashedState;
-import pipe.reachability.state.State;
+import pipe.reachability.state.ExplorerState;
+import pipe.reachability.state.HashedExplorerState;
 import utils.Utils;
 
 import javax.xml.bind.JAXBException;
@@ -35,8 +35,6 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.Assert.*;
 
 public class StateSpaceExplorerStepDefinitions {
-    VanishingExplorer vanishingExplorer;
-
     /**
      * Petri net to perform exploration on
      */
@@ -55,12 +53,12 @@ public class StateSpaceExplorerStepDefinitions {
     /**
      * Auxillary state for registering with expected records
      */
-    private State state;
+    private ExplorerState state;
 
     /**
      * Auxillary state for registering with expected records
      */
-    private State successor;
+    private ExplorerState successor;
 
     private StateExplorerUtils utils;
 
@@ -116,20 +114,20 @@ public class StateSpaceExplorerStepDefinitions {
         state = toState(jsonState);
     }
 
-    private State toState(String json) throws IOException, PetriNetComponentNotFoundException {
+    private ExplorerState toState(String json) throws IOException, PetriNetComponentNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, HashMap<String, Integer>> map =
                 mapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, Integer>>>() {
                 });
-        Map<String, Map<Token, Integer>> stateMap = new HashMap<>();
+        Map<String, Map<String , Integer>> stateMap = new HashMap<>();
         for (Map.Entry<String, HashMap<String, Integer>> entry : map.entrySet()) {
-            Map<Token, Integer> tokenCounts = new HashMap<>();
+            Map<String , Integer> tokenCounts = new HashMap<>();
             for (Map.Entry<String, Integer> tokenEntry : entry.getValue().entrySet()) {
-                tokenCounts.put(petriNet.getComponent(tokenEntry.getKey(), Token.class), tokenEntry.getValue());
+                tokenCounts.put(tokenEntry.getKey(), tokenEntry.getValue());
             }
             stateMap.put(entry.getKey(), tokenCounts);
         }
-        return HashedState.tangibleState(stateMap);
+        return HashedExplorerState.tangibleState(new HashedState(stateMap));
     }
 
     @And("^successor")

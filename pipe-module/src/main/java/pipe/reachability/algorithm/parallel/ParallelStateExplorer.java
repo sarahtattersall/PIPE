@@ -1,10 +1,10 @@
 package pipe.reachability.algorithm.parallel;
 
+import pipe.reachability.state.ExplorerState;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.state.State;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 
-public class ParallelStateExplorer implements Callable<Map<State, Double>> {
+public class ParallelStateExplorer implements Callable<Map<ExplorerState, Double>> {
 
     /**
      * Count down latch, this value is decremented once the call method
@@ -24,13 +24,13 @@ public class ParallelStateExplorer implements Callable<Map<State, Double>> {
     /**
      * State to explore successors of in call method
      */
-    private final State state;
+    private final ExplorerState state;
 
     private final ExplorerUtilities explorerUtilities;
 
     private final VanishingExplorer vanishingExplorer;
 
-    public ParallelStateExplorer(CountDownLatch latch, State state, ExplorerUtilities explorerUtilities,
+    public ParallelStateExplorer(CountDownLatch latch, ExplorerState state, ExplorerUtilities explorerUtilities,
                                  VanishingExplorer vanishingExplorer) {
 
         this.latch = latch;
@@ -45,9 +45,9 @@ public class ParallelStateExplorer implements Callable<Map<State, Double>> {
      * @return successors
      */
     @Override
-    public Map<State, Double> call() throws TimelessTrapException {
-        Map<State, Double> stateRates = new HashMap<>();
-        for (State successor : explorerUtilities.getSuccessors(state)) {
+    public Map<ExplorerState, Double> call() throws TimelessTrapException {
+        Map<ExplorerState, Double> stateRates = new HashMap<>();
+        for (ExplorerState successor : explorerUtilities.getSuccessors(state)) {
             double rate = explorerUtilities.rate(state, successor);
             if (successor.isTangible()) {
                 registerStateRate(successor, rate, stateRates);
@@ -62,7 +62,7 @@ public class ParallelStateExplorer implements Callable<Map<State, Double>> {
         return stateRates;
     }
 
-    private void registerStateRate(State successor, double rate, Map<State, Double> stateRates) {
+    private void registerStateRate(ExplorerState successor, double rate, Map<ExplorerState, Double> stateRates) {
         if (stateRates.containsKey(successor)) {
             double previousRate = stateRates.get(successor);
             stateRates.put(successor, previousRate + rate);

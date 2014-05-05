@@ -1,5 +1,6 @@
 package pipe.animation;
 
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -10,7 +11,8 @@ import pipe.models.petrinet.PetriNet;
 import java.util.*;
 
 /**
- * Class that contains methods to help with animating the Petri net
+ * Contains methods to help with animating the Petri net and performs
+ * in place modifications to the Petri net.
  */
 public class PetriNetAnimator implements Animator {
     /**
@@ -18,10 +20,13 @@ public class PetriNetAnimator implements Animator {
      */
     private final PetriNet petriNet;
 
+    private final AnimationLogic animationLogic;
+
     private Map<String, Map<Token, Integer>> savedStateTokens = new HashMap<>();
 
     public PetriNetAnimator(PetriNet petriNet) {
         this.petriNet = petriNet;
+        animationLogic = new PetriNetAnimationLogic(petriNet);
         saveState();
     }
 
@@ -62,188 +67,43 @@ public class PetriNetAnimator implements Animator {
 
     @Override
     public Set<Transition> getEnabledTransitions() {
-
-        Set<Transition> enabledTransitions = findEnabledTransitions(getCurrentState());
-        boolean hasImmediate = areAnyTransitionsImmediate(enabledTransitions);
-        int maxPriority = hasImmediate ? getMaxPriority(enabledTransitions) : 0;
-
-        if (hasImmediate) {
-            removeTimedTransitions(enabledTransitions);
-        }
-
-        removePrioritiesLessThan(maxPriority, enabledTransitions);
-        return enabledTransitions;
+        return animationLogic.getEnabledTransitions(getCurrentState());
     }
 
     /**
-     * @param transitions to check if any are timed
-     * @return true if any of the transitions are timed
-     */
-    private boolean areAnyTransitionsImmediate(Iterable<Transition> transitions) {
-        for (Transition transition : transitions) {
-            if (!transition.isTimed()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Note we must use an iterator in order to ensure save removal
-     * whilst looping
+     * Creates a new state containing the token counts for the
+     * current Petri net.
      *
-     * @param priority    minimum priority of transitions allowed to remain in the Collection
-     * @param transitions to remove if their priority is less than the specified value
+     * @return current state of the Petri net
      */
-    private void removePrioritiesLessThan(int priority, Iterable<Transition> transitions) {
-        Iterator<Transition> transitionIterator = transitions.iterator();
-        while (transitionIterator.hasNext()) {
-            Transition transition = transitionIterator.next();
-            if (!transition.isTimed() && transition.getPriority() < priority) {
-                transitionIterator.remove();
+    private State getCurrentState() {
+        Map<String, Map<String, Integer>> tokenCounts = new HashMap<>();
+        for (Place place : petriNet.getPlaces()) {
+            Map<String, Integer> counts = new HashMap<>();
+            for (Token token : petriNet.getTokens()) {
+                counts.put(token.getId(), place.getTokenCount(token));
             }
+            tokenCounts.put(place.getId(), counts);
         }
-    }
-
-    /**
-     * Removes timed transitions from transitions
-     * <p/>
-     * Note have to use an iterator for save deletions whilst
-     * iterating through the list
-     *
-     * @param transitions to remove timed transitions from
-     */
-    private void removeTimedTransitions(Set<Transition> transitions) {
-        Iterator<Transition> transitionIterator = transitions.iterator();
-        while (transitionIterator.hasNext()) {
-            Transition transition = transitionIterator.next();
-            if (transition.isTimed()) {
-                transitionIterator.remove();
-            }
-        }
-    }
-
-    /**
-     * @param transitions to find max prioirty of
-     * @return the maximum priority of immediate transitions in the collection
-     */
-    private int getMaxPriority(Iterable<Transition> transitions) {
-        int maxPriority = 0;
-        for (Transition transition : transitions) {
-            if (!transition.isTimed()) {
-                maxPriority = Math.max(maxPriority, transition.getPriority());
-            }
-        }
-        return maxPriority;
-    }
-
-    /**
-     * @return all the currently enabed transitions in the petri net
-     */
-    private Set<Transition> findEnabledTransitions(Map<String, Map<String, Integer>> state) {
-
-        Set<Transition> enabledTransitions = new HashSet<>();
-        for (Transition transition : petriNet.getTransitions()) {
-            if (isEnabled(transition, state)) {
-                enabledTransitions.add(transition);
-            }
-        }
-        return enabledTransitions;
+        return  new HashedState(tokenCounts);
     }
 
 
-    /**
-     * Works out if an transition is enabled. This means that it checks if
-     * a) places connected by an incoming arc to this transition have enough tokens to fire
-     * b) places connected by an outgoing arc to this transition have enough space to fit the
-     * new tokens (that is enough capacity).
-     *
-     * @param transition to see if it is enabled
-     * @return true if transition is enabled
-     */
-    private boolean isEnabled(Transition transition, Map<String, Map<String, Integer>> state) {
-        boolean enabledForArcs = true;
-        for (Arc<Place, Transition> arc : petriNet.inboundArcs(transition)) {
-//            ArcStrategy<Place, Transition> strategy = backwardsStrategies.get(arc.getType());
-//            enabledForArcs &= strategy.canFire(petriNet, arc);
-            enabledForArcs &= arc.canFire(petriNet, state);
-        }
-        for (Arc<Transition, Place> arc : petriNet.outboundArcs(transition)) {
-//            ArcStrategy<Transition, Place> strategy = forwardStrategies.get(arc.getType());
-//            enabledForArcs &= strategy.canFire(petriNet, arc);
-            enabledForArcs &= arc.canFire(petriNet, state);
-        }
-        return enabledForArcs;
-    }
-
-
-    /**
-     *
-     * Creates a map of new values for Places whose token counts change by first
-     * calculating the decremented token counts and then calculating the incremented
-     * token counts.
-     *
-     * We cannot set the token counts in the decrement phase incase an incrememnt
-     * depends on this value.
-     *
-     * E.g. if P0 -> T0 -> P1 and T0 -> P1 has a weight of #(P0) then we expect
-     * #(P0) to refer to the number of tokens before firing.
-     *
-     *
-     * @param transition
-     * @return Map of places whose token counts differ from those in the initial state
-     */
-    //TODO: This method is a bit too long
-    private Map<Place, Map<Token, Integer>> getFiredState(Transition transition) {
-        Map<Place, Map<Token, Integer>> placeTokenCounts = new HashMap<>();
-        Set<Transition> enabled = getEnabledTransitions();
-        if (enabled.contains(transition)) {
-            //Decrement previous places
-            for (Arc<Place, Transition> arc : petriNet.inboundArcs(transition)) {
-                Place place = arc.getSource();
-                Map<Token, Integer> tokenCounts = new HashMap<>();
-                placeTokenCounts.put(place, tokenCounts);
-                for (Token token : arc.getTokenWeights().keySet()) {
-                    IncidenceMatrix matrix = petriNet.getBackwardsIncidenceMatrix(token);
-                    int currentCount = place.getTokenCount(token);
-                    int newCount = currentCount - matrix.get(place, transition);
-                    tokenCounts.put(token, newCount);
-                }
-            }
-
-            //Increment new places
-            for (Arc<Transition, Place> arc : petriNet.outboundArcs(transition)) {
-                Place place = arc.getTarget();
-                Map<Token, Integer> tokenCounts;
-                if (placeTokenCounts.containsKey(place)) {
-                    tokenCounts = placeTokenCounts.get(place);
-                } else {
-                    tokenCounts = new HashMap<>();
-                    placeTokenCounts.put(place, tokenCounts);
-                }
-                for (Token token : arc.getTokenWeights().keySet()) {
-                    IncidenceMatrix matrix = petriNet.getForwardsIncidenceMatrix(token);
-                    int currentCount;
-                    if (tokenCounts.containsKey(token)) {
-                        currentCount = tokenCounts.get(token);
-                    } else {
-                        currentCount = place.getTokenCount(token);
-                    }
-                    int newCount = currentCount + matrix.get(place, transition);
-                    tokenCounts.put(token, newCount);
-                }
-            }
-        }
-        return placeTokenCounts;
-    }
 
     @Override
     public void fireTransition(Transition transition) {
-        Map<Place, Map<Token, Integer>> updatedPlaces = getFiredState(transition);
+        State newState = animationLogic.getFiredState(getCurrentState(), transition);
 
         //Set all counts
-        for (Map.Entry<Place, Map<Token, Integer>> entry : updatedPlaces.entrySet()) {
-            entry.getKey().setTokenCounts(entry.getValue());
+        for (Place place : petriNet.getPlaces()) {
+            try {
+                for (Map.Entry<String, Integer> tokenEntry : newState.getTokens(place.getId()).entrySet()) {
+                    Token token = petriNet.getComponent(tokenEntry.getKey(), Token.class);
+                    place.setTokenCount(token, tokenEntry.getValue());
+                }
+            } catch (PetriNetComponentNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -272,21 +132,5 @@ public class PetriNetAnimator implements Animator {
         }
     }
 
-    /**
-     * Creates a new state containing the token counts for the
-     * current Petri net.
-     *
-     * @return current state of the Petri net
-     */
-    private  Map<String, Map<String, Integer>> getCurrentState() {
-        Map<String, Map<String, Integer>> tokenCounts = new HashMap<>();
-        for (Place place : petriNet.getPlaces()) {
-            Map<String, Integer> counts = new HashMap<>();
-            for (Token token : petriNet.getTokens()) {
-                counts.put(token.getId(), place.getTokenCount(token));
-            }
-            tokenCounts.put(place.getId(), counts);
-        }
-        return  tokenCounts;
-    }
+
 }

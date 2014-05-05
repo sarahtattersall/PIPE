@@ -1,6 +1,6 @@
 package pipe.reachability.state;
 
-import pipe.models.component.token.Token;
+import pipe.animation.State;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -19,13 +19,16 @@ import java.util.Map;
  * Then the state will be as follows:
  * (1, 2, 3, 1, 0)
  */
-public interface State extends Serializable {
+public interface ExplorerState extends Serializable {
     /**
      *
      * @param id Place id
      * @return number of tokens for the place with the given id
      */
-    Map<Token, Integer> getTokens(String id);
+    Map<String, Integer> getTokens(String id);
+
+    State getState();
 
     boolean isTangible();
+
 }

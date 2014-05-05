@@ -1,5 +1,6 @@
 package pipe.models.component.arc;
 
+import pipe.animation.State;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -14,9 +15,11 @@ public class InboundNormalArc extends InboundArc {
     }
 
     @Override
-    public boolean canFire(PetriNet petriNet, Map<String, Map<String, Integer>> state) {
+    public boolean canFire(PetriNet petriNet, State state) {
         Place place = getSource();
-        Map<String, Integer> tokenCounts = state.get(place.getId());
+
+            Map<String, Integer> tokenCounts = state.getTokens(place.getId());
+
 
         for (Map.Entry<Token, String> entry : getTokenWeights().entrySet()) {
             int tokenCount = tokenCounts.get(entry.getKey().getId());
@@ -32,6 +35,6 @@ public class InboundNormalArc extends InboundArc {
                 return false;
             }
         }
-        return !place.getTokenCounts().isEmpty();
+        return !tokenCounts.isEmpty();
     }
 }

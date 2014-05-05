@@ -6,11 +6,11 @@ package pipe.reachability.state;
  */
 public class Record {
 
-    public final State state;
-    public final State successor;
+    public final ExplorerState state;
+    public final ExplorerState successor;
     public final double rate;
 
-    public Record(State state, State successor, double rate) {
+    public Record(ExplorerState state, ExplorerState successor, double rate) {
         this.state = state;
         this.successor = successor;
         this.rate = rate;
