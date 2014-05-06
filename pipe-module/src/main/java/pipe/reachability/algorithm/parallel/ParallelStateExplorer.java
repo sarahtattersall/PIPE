@@ -13,6 +13,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 
+/**
+ * Callable worker that is given a state to explore and calculates the successors
+ * of the state.
+ *
+ */
 public class ParallelStateExplorer implements Callable<Map<ExplorerState, Double>> {
 
     /**
@@ -26,8 +31,15 @@ public class ParallelStateExplorer implements Callable<Map<ExplorerState, Double
      */
     private final ExplorerState state;
 
+    /**
+     * Utilities associated with the Petri net that the state belongs to.
+     * They provide a means to query for the states successors
+     */
     private final ExplorerUtilities explorerUtilities;
 
+    /**
+     * Describes how to explore vanishing states
+     */
     private final VanishingExplorer vanishingExplorer;
 
     public ParallelStateExplorer(CountDownLatch latch, ExplorerState state, ExplorerUtilities explorerUtilities,
@@ -46,20 +58,23 @@ public class ParallelStateExplorer implements Callable<Map<ExplorerState, Double
      */
     @Override
     public Map<ExplorerState, Double> call() throws TimelessTrapException {
-        Map<ExplorerState, Double> stateRates = new HashMap<>();
-        for (ExplorerState successor : explorerUtilities.getSuccessors(state)) {
-            double rate = explorerUtilities.rate(state, successor);
-            if (successor.isTangible()) {
-                registerStateRate(successor, rate, stateRates);
-            } else {
-                Collection<StateRateRecord> explorableStates = vanishingExplorer.explore(successor, rate);
-                for (StateRateRecord record : explorableStates) {
-                    registerStateRate(record.getState(), record.getRate(), stateRates);
+        try {
+            Map<ExplorerState, Double> stateRates = new HashMap<>();
+            for (ExplorerState successor : explorerUtilities.getSuccessors(state)) {
+                double rate = explorerUtilities.rate(state, successor);
+                if (successor.isTangible()) {
+                    registerStateRate(successor, rate, stateRates);
+                } else {
+                    Collection<StateRateRecord> explorableStates = vanishingExplorer.explore(successor, rate);
+                    for (StateRateRecord record : explorableStates) {
+                        registerStateRate(record.getState(), record.getRate(), stateRates);
+                    }
                 }
             }
+            return stateRates;
+        } finally {
+            latch.countDown();
         }
-        latch.countDown();
-        return stateRates;
     }
 
     private void registerStateRate(ExplorerState successor, double rate, Map<ExplorerState, Double> stateRates) {
