@@ -68,11 +68,9 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
      *
      */
     @Override
-    public void generate() throws TimelessTrapException {
+    public void generate(ExplorerState initialState) throws TimelessTrapException {
         clearDataStructures();
-        ExplorerState initialState = explorerUtilities.getCurrentState();
         exploreInitialState(initialState);
-
         stateSpaceExploration();
     }
 
@@ -188,7 +186,7 @@ public class SequentialStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Adds a compressed version of a tangible state to exploredStates
      *
-     * @param state
+     * @param state state that has been explored
      */
     //TODO: IMPLEMENT COMPRESSED VERSION
     private void markAsExplored(ExplorerState state) {

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ParallelExplorerStateExplorerTest {
+public class ParallelStateExplorerTest {
 
     @Mock
     CountDownLatch latch;
@@ -52,6 +52,24 @@ public class ParallelExplorerStateExplorerTest {
     public void decrementsLatch() throws TimelessTrapException {
         explorer.call();
         verify(latch, times(1)).countDown();
+    }
+
+    @Test
+    public void decrementsLatchIfTimelessTrap() {
+        try {
+            ExplorerState successor = mock(ExplorerState.class);
+            when(successor.isTangible()).thenReturn(false);
+            successors.add(successor);
+
+            when(explorerUtilities.rate(state, successor)).thenReturn(5.0);
+
+            when(vanishingExplorer.explore(successor, 5.0)).thenThrow(new TimelessTrapException());
+
+            explorer.call();
+        } catch (TimelessTrapException e) {
+        } finally {
+            verify(latch, times(1)).countDown();
+        }
     }
 
     @Test
