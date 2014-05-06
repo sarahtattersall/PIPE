@@ -1,4 +1,4 @@
-package pipe.reachability.algorithm.parallel;
+package pipe.reachability.algorithm;
 
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateRateRecord;
@@ -9,25 +9,20 @@ import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
-    private ExecutorService executorService;
-
+public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Used for writing transitions
      */
-    private final StateWriter stateWriter;
+    protected final StateWriter stateWriter;
 
     /**
      * Used for exploring vanishing states
      */
-    private final VanishingExplorer vanishingExplorer;
-
-    /**
-     * Performs useful state calculations
-     */
-    private ExplorerUtilities explorerUtilities;
+    protected final VanishingExplorer vanishingExplorer;
 
     /**
      * Map to register successor states to their rate when exploring a state.
@@ -39,7 +34,14 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
      * all successors of a state. It is then used to write the records to the stateWriter
      * only once all successors have been processed.
      */
-    private final Map<ExplorerState, Double> successorRates = new HashMap<>();
+    protected final Map<ExplorerState, Double> successorRates = new HashMap<>();
+
+    protected ExecutorService executorService;
+
+    /**
+     * Performs useful state calculations
+     */
+    protected ExplorerUtilities explorerUtilities;
 
     /**
      * Queue for states yet to be explored
@@ -49,15 +51,14 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Contains states that have already been explored.
      */
-    private Set<ExplorerState> explored = new HashSet<>();
+    protected Set<ExplorerState> explored = new HashSet<>();
 
-    public ParallelStateSpaceExplorer(StateWriter stateWriter, VanishingExplorer vanishingExplorer,
-                                      ExplorerUtilities explorerUtilities) {
-        this.stateWriter = stateWriter;
-        this.vanishingExplorer = vanishingExplorer;
+    public AbstractStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
+                                      StateWriter stateWriter) {
         this.explorerUtilities = explorerUtilities;
+        this.vanishingExplorer = vanishingExplorer;
+        this.stateWriter = stateWriter;
         executorService = Executors.newFixedThreadPool(8);
-
     }
 
     @Override
@@ -83,7 +84,7 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
      *
      * @param initialState starting state of the algorithm
      */
-    private void exploreInitialState(ExplorerState initialState) throws TimelessTrapException {
+    protected void exploreInitialState(ExplorerState initialState) throws TimelessTrapException {
         if (initialState.isTangible()) {
             explorationQueue.add(initialState);
             markAsExplored(initialState);
@@ -96,48 +97,7 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
 
     }
 
-    private void stateSpaceExploration() throws InterruptedException, ExecutionException, TimelessTrapException {
-        int elemsAtCurrentLevel = explorationQueue.size();
-        int elemsAtNextLevel = 0;
-        while (!explorationQueue.isEmpty()) {
-
-            Map<ExplorerState, Future<Map<ExplorerState, Double>>> successorFutures = new HashMap<>();
-            CountDownLatch latch = new CountDownLatch(elemsAtCurrentLevel);
-            for (int i = 0; i < elemsAtCurrentLevel; i++) {
-                ExplorerState state = explorationQueue.poll();
-                successorFutures.put(state, executorService.submit(
-                        new ParallelStateExplorer(latch, state, explorerUtilities, vanishingExplorer)));
-            }
-
-            latch.await();
-            for (Map.Entry<ExplorerState, Future<Map<ExplorerState, Double>>> entry : successorFutures.entrySet()) {
-                Future<Map<ExplorerState, Double>> future = entry.getValue();
-                ExplorerState state = entry.getKey();
-                successorRates.clear();
-
-                try {
-                    Map<ExplorerState, Double> successors = future.get();
-                    for (Map.Entry<ExplorerState, Double> successorEntry : successors.entrySet()) {
-                        ExplorerState successor = successorEntry.getKey();
-                        double rate = successorEntry.getValue();
-                        registerStateRate(successor, rate);
-                        if (!explored.contains(successor)) {
-                            elemsAtNextLevel++;
-                            explorationQueue.add(successor);
-                            markAsExplored(successor);
-                        }
-                    }
-                } catch (ExecutionException ee) {
-                    throw new TimelessTrapException();
-                }
-                writeStateTransitions(state);
-            }
-            elemsAtCurrentLevel = elemsAtNextLevel;
-            elemsAtNextLevel = 0;
-
-        }
-
-    }
+    protected abstract void stateSpaceExploration() throws InterruptedException, ExecutionException, TimelessTrapException;
 
     /**
      * Adds a compressed version of a tangible state to exploredStates
@@ -145,7 +105,7 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
      * @param state state that has been explored
      */
     //TODO: IMPLEMENT COMPRESSED VERSION
-    private void markAsExplored(ExplorerState state) {
+    protected void markAsExplored(ExplorerState state) {
         explored.add(state);
     }
 
@@ -157,7 +117,7 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
      * @param successor state that is possible via an enabled transition from state
      * @param rate      rate at which state transitions to successor
      */
-    private void registerStateTransition(ExplorerState state, ExplorerState successor, double rate) {
+    protected void registerStateTransition(ExplorerState state, ExplorerState successor, double rate) {
         registerStateRate(successor, rate);
         if (!explored.contains(successor)) {
             explorationQueue.add(successor);
@@ -174,7 +134,7 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
      * @param successor key to successor rates
      * @param rate      rate at which successor is entered via some transition
      */
-    private void registerStateRate(ExplorerState successor, double rate) {
+    protected void registerStateRate(ExplorerState successor, double rate) {
         if (successorRates.containsKey(successor)) {
             double previousRate = successorRates.get(successor);
             successorRates.put(successor, previousRate + rate);
@@ -193,7 +153,7 @@ public class ParallelStateSpaceExplorer implements StateSpaceExplorer {
      *
      * @param state the current state that successors belong to
      */
-    private void writeStateTransitions(ExplorerState state) {
+    protected void writeStateTransitions(ExplorerState state) {
         for (Map.Entry<ExplorerState, Double> entry : successorRates.entrySet()) {
             ExplorerState successor = entry.getKey();
             double rate = entry.getValue();

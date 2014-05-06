@@ -91,7 +91,7 @@ public class StateSpaceExplorerStepDefinitions {
             VanishingExplorer vanishingExplorer = utils.getVanishingExplorer(explorerUtilities);
 
             StateSpaceExplorer stateSpaceExplorer =
-                    new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilities);
+                    new SequentialStateSpaceExplorer(explorerUtilities, vanishingExplorer, tangibleExplorer);
             stateSpaceExplorer.generate(explorerUtilities.getCurrentState());
 
             try (ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteStream.toByteArray());

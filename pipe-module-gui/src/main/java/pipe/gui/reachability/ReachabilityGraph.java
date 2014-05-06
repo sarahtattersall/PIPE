@@ -177,7 +177,7 @@ public class ReachabilityGraph {
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
-                new SequentialStateSpaceExplorer(tangibleExplorer, vanishingExplorer, explorerUtilites);
+                new SequentialStateSpaceExplorer(explorerUtilites, vanishingExplorer, tangibleExplorer);
         stateSpaceExplorer.generate(explorerUtilites.getCurrentState());
     }
 
