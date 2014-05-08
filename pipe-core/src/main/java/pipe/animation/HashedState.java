@@ -21,6 +21,11 @@ public class HashedState implements State {
     }
 
     @Override
+    public Map<String, Map<String, Integer>> asMap() {
+        return tokenCounts;
+    }
+
+    @Override
     public String toString() {
 
         StringBuilder builder = new StringBuilder();

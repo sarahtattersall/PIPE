@@ -26,4 +26,6 @@ public interface State extends Serializable {
      */
     Map<String, Integer> getTokens(String id);
 
+    Map<String, Map<String, Integer>> asMap();
+
 }
