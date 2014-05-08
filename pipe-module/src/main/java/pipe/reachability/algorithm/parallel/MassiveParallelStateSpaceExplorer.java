@@ -2,7 +2,6 @@ package pipe.reachability.algorithm.parallel;
 
 import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
@@ -56,12 +55,29 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
                 submitted++;
             }
 
+
+            Map<ExplorerState, Map<ExplorerState, Double>> transitions = new HashMap<>();
+            Collection<ExplorerState> unexplored = new HashSet<>();
             for (int i = 0; i < submitted; i++) {
                 MultiStateExplorer.Result result = completionService.take().get();
                 explored.addAll(result.explored);
-                explorationQueue.addAll(result.unexplored); //TODO: Potentially adding something that is in later explored set?
+                unexplored.addAll(result.unexplored); //TODO: Potentially adding something that is in later explored set?
+
+                //Combine results to avoid writing dups
                 for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : result.transitions.entrySet()) {
-                    writeStateTransitions(entry.getKey(), entry.getValue()); //TODO: Can this write duplicates?
+                    if (!transitions.containsKey(entry.getKey())) {
+                        transitions.put(entry.getKey(), new HashMap<ExplorerState, Double>());
+                    }
+                    transitions.get(entry.getKey()).putAll(entry.getValue());
+                }
+            }
+
+            for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : transitions.entrySet()) {
+                writeStateTransitions(entry.getKey(), entry.getValue());
+            }
+            for (ExplorerState state : unexplored) {
+                if (!transitions.containsKey(state)) {
+                    explorationQueue.add(state);
                 }
             }
         }
@@ -103,14 +119,14 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         /**
          * States that have been explored whilst exploring exploreCount states
          */
-        private final ExploredSet exploredStates = new ExploredSet();
+        private final Set<ExplorerState>  exploredStates = new HashSet<>();
 
         /**
          * States that were explored prior to this thread running it's exploration
          */
-        private final Set<ExplorerState> previouslySeen;
+        private final Set<ExplorerState>  previouslySeen;
 
-        private MultiStateExplorer(ExplorerState initialState, Set<ExplorerState> previouslySeen, int exploreCount,
+        private MultiStateExplorer(ExplorerState initialState, Set<ExplorerState>  previouslySeen, int exploreCount,
                                    ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer) {
             this.initialState = initialState;
             this.exploreCount = exploreCount;
@@ -204,10 +220,10 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
 
             public final Set<ExplorerState> unexplored;
 
-            public final ExploredSet explored;
+            public final Set<ExplorerState> explored;
 
             public Result(Map<ExplorerState, Map<ExplorerState, Double>> transitions, Set<ExplorerState> unexplored,
-                          ExploredSet explored) {
+                          Set<ExplorerState> explored) {
                 this.transitions = transitions;
                 this.unexplored = unexplored;
                 this.explored = explored;
