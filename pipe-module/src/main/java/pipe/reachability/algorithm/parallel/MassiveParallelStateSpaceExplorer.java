@@ -13,6 +13,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
      */
     private final int statesPerThread;
 
+
     public MassiveParallelStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
                                              StateWriter stateWriter, int statesPerThread) {
         super(explorerUtilities, vanishingExplorer, stateWriter);
@@ -20,6 +21,22 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         this.statesPerThread = statesPerThread;
     }
 
+    /**
+     * Performs state space exploration by spinning up threads and allowing them to process
+     * states in parallel. The number of states that each thread processes is set in the constructor
+     * and is statesPerThread.
+     *
+     * Results are then merged together into the explored and explorationQueue data sets
+     * and transitions are written to the output stream.
+     *
+     * A possible extension to this is to have the threads ask for work
+     * if they run out and/or dynamically scale the number of threads processed according to
+     * how it benefits each different state space.
+     *
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws TimelessTrapException if vanishing states lead to a timeless trap
+     */
     @Override
     protected void stateSpaceExploration() throws InterruptedException, ExecutionException, TimelessTrapException {
         executorService = Executors.newFixedThreadPool(8);
@@ -30,39 +47,63 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
             int submitted = 0;
             while (submitted < 8 && !explorationQueue.isEmpty()) {
                 ExplorerState state = explorationQueue.poll();
-                //                if (!explored.contains(state)) { //TODO: Some duplicates possible/ already explored?
                 completionService.submit(
                         new MultiStateExplorer(state, explored, statesPerThread, explorerUtilities, vanishingExplorer));
                 submitted++;
-                //                }
             }
 
             for (int i = 0; i < submitted; i++) {
                 MultiStateExplorer.Result result = completionService.take().get();
                 explored.addAll(result.explored);
-                explorationQueue.addAll(result.unexplored);
+                explorationQueue.addAll(result.unexplored); //TODO: Potentially adding something that is in later explored set?
                 for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : result.transitions.entrySet()) {
-                    writeStateTransitions(entry.getKey(), entry.getValue());
+                    writeStateTransitions(entry.getKey(), entry.getValue()); //TODO: Can this write duplicates?
                 }
             }
         }
         executorService.shutdownNow();
     }
 
+    /**
+     * Callable implementation that explores a state and its successors up to a certain
+     * depth.
+     *
+     * It registers all transitions that it observes
+     */
     private static class MultiStateExplorer implements Callable<MultiStateExplorer.Result> {
-
+        /**
+         * Starting state to explore
+         */
         private final ExplorerState initialState;
 
+        /**
+         * Number of states the thread is allowed to explore before finishing execution
+         */
         private final int exploreCount;
 
+        /**
+         * Utilities for exploring a state within a Petri net
+         */
         private final ExplorerUtilities explorerUtilities;
 
+        /**
+         * Used to explore a vanishing state
+         */
         private final VanishingExplorer vanishingExplorer;
 
+        /**
+         * Transitions found whilst exploring exploreCount states
+         */
         private final Map<ExplorerState, Map<ExplorerState, Double>> transitions = new HashMap<>();
 
+        /**
+         * States that have been explored whilst exploring exploreCount states
+         */
         private final Set<ExplorerState> exploredStates = new HashSet<>();
 
+        /**
+         * States that were explored prior to this thread running it's exploration
+         */
         private final Set<ExplorerState> previouslySeen;
 
         private MultiStateExplorer(ExplorerState initialState, Set<ExplorerState> previouslySeen, int exploreCount,
@@ -74,6 +115,14 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
             this.previouslySeen = previouslySeen;
         }
 
+        /**
+         * Performs sequential state space exploration using a BFS up to a certain number
+         * of states
+         *
+         * @return the result of a BFS including any transitions seen, states that have not yet been explored
+         *         and those that have.
+         * @throws TimelessTrapException
+         */
         @Override
         public Result call() throws TimelessTrapException {
             Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
@@ -108,6 +157,12 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
             return new Result(transitions, unexplored, exploredStates);
         }
 
+        /**
+         *
+         * @param successor
+         * @param rate
+         * @param successorRates
+         */
         private void registerStateRate(ExplorerState successor, double rate,
                                        Map<ExplorerState, Double> successorRates) {
             if (successorRates.containsKey(successor)) {
@@ -126,11 +181,20 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
             return exploredStates.contains(state) || previouslySeen.contains(state);
         }
 
+        /**
+         * Puts the state and its rates into the transitions data structure
+         * @param state
+         * @param successorRates
+         */
         private void writeStateTransitions(ExplorerState state, Map<ExplorerState, Double> successorRates) {
             transitions.put(state, successorRates);
-
         }
 
+        /**
+         * Basic struct that is return value of call method.
+         *
+         * Contains data structures to be processed on method completion.
+         */
         public static class Result {
             public final Map<ExplorerState, Map<ExplorerState, Double>> transitions;
 
