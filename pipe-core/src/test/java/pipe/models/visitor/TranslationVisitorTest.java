@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.models.component.PetriNetComponent;
 import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.InboundArc;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
 import pipe.visitor.TranslationVisitor;
@@ -37,7 +37,7 @@ public class TranslationVisitorTest {
     public void translatesIntermediateArcPointsIfBothSourceAndTargetInSelected() {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
-        Arc<Place, Transition> arc = mock(Arc.class);
+        InboundArc arc = mock(InboundArc.class);
         when(arc.getSource()).thenReturn(place);
         when(arc.getTarget()).thenReturn(transition);
 
@@ -62,7 +62,7 @@ public class TranslationVisitorTest {
     public void doesNotTranslateArcIfSourceIsOnlySelected() {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
-        Arc<Place, Transition> arc = mock(Arc.class);
+        InboundArc arc = mock(InboundArc.class);
         when(arc.getSource()).thenReturn(place);
         when(arc.getTarget()).thenReturn(transition);
 
@@ -86,7 +86,7 @@ public class TranslationVisitorTest {
     public void doesNotTranslateIfTargetsOnlySelected() {
         Place place = mock(Place.class);
         Transition transition = mock(Transition.class);
-        Arc<Place, Transition> arc = mock(Arc.class);
+        InboundArc arc = mock(InboundArc.class);
         when(arc.getSource()).thenReturn(place);
         when(arc.getTarget()).thenReturn(transition);
 

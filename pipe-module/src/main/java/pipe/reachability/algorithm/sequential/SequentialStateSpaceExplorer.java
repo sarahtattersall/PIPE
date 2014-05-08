@@ -42,7 +42,7 @@ public class SequentialStateSpaceExplorer extends AbstractStateSpaceExplorer {
                     }
                 }
             }
-            writeStateTransitions(state);
+            writeStateTransitions(state, successorRates);
         }
     }
 }

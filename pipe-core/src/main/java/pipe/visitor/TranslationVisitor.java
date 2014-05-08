@@ -30,17 +30,6 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
     }
 
 
-    public <T extends Connectable, S extends Connectable> void visit(Arc<S, T> arc) {
-        if (selected.contains(arc.getSource()) && selected.contains(arc.getTarget())) {
-            List<ArcPoint> points = arc.getArcPoints();
-            for (ArcPoint arcPoint : points) {
-                Point2D point = arcPoint.getPoint();
-                Point2D newPoint =
-                        new Point2D.Double(point.getX() + translation.getX(), point.getY() + translation.getY());
-                arcPoint.setPoint(newPoint);
-            }
-        }
-    }
 
     @Override
     public void visit(Place place) {
@@ -71,11 +60,24 @@ public class TranslationVisitor implements ArcVisitor, ArcPointVisitor, PlaceVis
 
     @Override
     public void visit(InboundArc inboundArc) {
-        visit(inboundArc);
+        visitArc(inboundArc);
     }
 
     @Override
     public void visit(OutboundArc outboundArc) {
-        visit(outboundArc);
+        visitArc(outboundArc);
+    }
+
+
+    private <T extends Connectable, S extends Connectable> void visitArc(Arc<S, T> arc) {
+        if (selected.contains(arc.getSource()) && selected.contains(arc.getTarget())) {
+            List<ArcPoint> points = arc.getArcPoints();
+            for (ArcPoint arcPoint : points) {
+                Point2D point = arcPoint.getPoint();
+                Point2D newPoint =
+                        new Point2D.Double(point.getX() + translation.getX(), point.getY() + translation.getY());
+                arcPoint.setPoint(newPoint);
+            }
+        }
     }
 }
