@@ -15,6 +15,7 @@ import pipe.reachability.state.HashedExplorerState;
 import pipe.visitor.ClonePetriNet;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Useful methods to help explore the state space.
@@ -38,7 +39,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * <p/>
      * It will be most useful when exploring cyclic transitions
      */
-    private Map<ExplorerState, Map<ExplorerState, Collection<Transition>>> cachedSuccessors = new HashMap<>();
+    private Map<ExplorerState, Map<ExplorerState, Collection<Transition>>> cachedSuccessors = new ConcurrentHashMap<>();
 
     /**
      * Takes a copy of the Petri net to use for state space exploration so
@@ -49,17 +50,6 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     public CachingExplorerUtilities(PetriNet petriNet) {
         this.petriNet = ClonePetriNet.clone(petriNet);
         animationLogic = new PetriNetAnimationLogic(this.petriNet);
-    }
-
-    /**
-     * Sets the current state based on a token counts map
-     *
-     * @param tokenCounts a map of place id -> token counts
-     */
-    private void setState(Map<String, Map<Token, Integer>> tokenCounts) {
-        for (Place place : petriNet.getPlaces()) {
-            place.setTokenCounts(tokenCounts.get(place.getId()));
-        }
     }
 
     /**
@@ -165,9 +155,10 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     @Override
     public Collection<Transition> getTransitions(ExplorerState state, ExplorerState successor) {
         Map<ExplorerState, Collection<Transition>> stateTransitions = getSuccessorsWithTransitions(state);
-        if (stateTransitions.containsKey(successor)) {
-            return stateTransitions.get(successor);
-        }
+            if (stateTransitions.containsKey(successor)) {
+                return stateTransitions.get(successor);
+            }
+
         return new LinkedList<>();
     }
 

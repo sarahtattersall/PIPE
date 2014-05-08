@@ -65,7 +65,7 @@ public class IndividualParallelStateSpaceExplorer extends AbstractStateSpaceExpl
                 } catch (ExecutionException ee) {
                     throw new TimelessTrapException();
                 }
-                writeStateTransitions(state);
+                writeStateTransitions(state, successorRates);
             }
             elemsAtCurrentLevel = elemsAtNextLevel;
             elemsAtNextLevel = 0;

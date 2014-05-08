@@ -1,9 +1,5 @@
 package pipe.reachability.algorithm;
 
-import pipe.reachability.algorithm.ExplorerUtilities;
-import pipe.reachability.algorithm.StateRateRecord;
-import pipe.reachability.algorithm.TimelessTrapException;
-import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.state.ExplorerState;
@@ -46,7 +42,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Queue for states yet to be explored
      */
-    Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
+    protected Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
 
     /**
      * Contains states that have already been explored.
@@ -152,8 +148,9 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      * disk and must be dealt with accordingly.
      *
      * @param state the current state that successors belong to
+     * @param successorRates
      */
-    protected void writeStateTransitions(ExplorerState state) {
+    protected void writeStateTransitions(ExplorerState state, Map<ExplorerState, Double> successorRates) {
         for (Map.Entry<ExplorerState, Double> entry : successorRates.entrySet()) {
             ExplorerState successor = entry.getKey();
             double rate = entry.getValue();
