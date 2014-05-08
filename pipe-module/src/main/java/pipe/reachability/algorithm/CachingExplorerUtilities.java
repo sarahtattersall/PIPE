@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Useful methods to help explore the state space.
  * <p/>
- * Performs caching of frequent computations
+ * Performs caching of frequent computations in a thread safe manner
  */
 public class CachingExplorerUtilities implements ExplorerUtilities {
     /**
@@ -38,6 +38,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * a states successors it has already seen before.
      * <p/>
      * It will be most useful when exploring cyclic transitions
+     * It is thread safe due to the nature of this class being accessed from many threads
      */
     private Map<ExplorerState, Map<ExplorerState, Collection<Transition>>> cachedSuccessors = new ConcurrentHashMap<>();
 
