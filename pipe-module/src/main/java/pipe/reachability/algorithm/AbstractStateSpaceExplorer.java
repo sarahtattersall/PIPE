@@ -2,7 +2,6 @@ package pipe.reachability.algorithm;
 
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
@@ -45,7 +44,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Contains states that have already been explored.
      */
-    protected ExploredSet explored = new ExploredSet();
+    protected Set<ExplorerState> explored = new HashSet<>();
 
     /**
      * Number of states that have been written to the writer

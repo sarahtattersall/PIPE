@@ -5,8 +5,20 @@ import com.google.common.hash.*;
 
 import java.util.*;
 
-public class ExploredSet implements Set<ExplorerState> {
-    Set<CompressedExplorerState> states = new HashSet<>();
+public class ExploredSet implements Set<CompressedExplorerState> {
+    private Set<CompressedExplorerState> states = new HashSet<>();
+
+    private ExplorerStateVisitor stateVisitor = new ExplorerStateVisitor() {
+        @Override
+        public void visit(HashedExplorerState state) {
+            add(state);
+        }
+
+        @Override
+        public void visit(CompressedExplorerState state) {
+            add(state);
+        }
+    };
 
     @Override
     public int size() {
@@ -20,18 +32,22 @@ public class ExploredSet implements Set<ExplorerState> {
 
     @Override
     public boolean contains(Object o) {
-        if (!(o instanceof ExplorerState)) {
+        if (!(o instanceof CompressedExplorerState)) {
             return false;
         }
 
-        ExplorerState state = (ExplorerState) o;
-        CompressedExplorerState compressedExplorerState = compress(state);
-        return states.contains(compressedExplorerState);
+        CompressedExplorerState compressed = (CompressedExplorerState) o;
+        return states.contains(compressed);
+    }
+
+    public boolean containsExplorerState(ExplorerState state) {
+        CompressedExplorerState compressed = compress(state);
+        return contains(compressed);
     }
 
     @Override
-    public Iterator<ExplorerState> iterator() {
-        throw new UnsupportedOperationException();
+    public Iterator<CompressedExplorerState> iterator() {
+        return states.iterator();
     }
 
     @Override
@@ -45,9 +61,13 @@ public class ExploredSet implements Set<ExplorerState> {
     }
 
     @Override
+    public boolean add(CompressedExplorerState compressedExplorerState) {
+        return states.add(compressedExplorerState);
+    }
+
     public boolean add(ExplorerState explorerState) {
         CompressedExplorerState compressedExplorerState = compress(explorerState);
-        return states.add(compressedExplorerState);
+        return add(compressedExplorerState);
     }
 
     /**
@@ -73,13 +93,14 @@ public class ExploredSet implements Set<ExplorerState> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends ExplorerState> c) {
-        ExplorerStateVisitor stateVisitor = new ExplorerStateVisitor() {
-            @Override
-            public void visit(HashedExplorerState state) {
-                add(state);
-            }
-        };
+    public boolean addAll(Collection<? extends CompressedExplorerState> c) {
+        for (CompressedExplorerState state : c) {
+            state.accept(stateVisitor);
+        }
+        return true;
+    }
+
+    public boolean addAllExplorers(Collection<? extends ExplorerState> c) {
         for (ExplorerState state : c) {
             state.accept(stateVisitor);
         }
@@ -153,36 +174,5 @@ public class ExploredSet implements Set<ExplorerState> {
     @Override
     public void clear() {
         throw new UnsupportedOperationException();
-    }
-
-    private class CompressedExplorerState {
-
-        private final int hash1;
-
-        private final int hash2;
-
-        private CompressedExplorerState(int hash1, int hash2) {
-            this.hash1 = hash1;
-            this.hash2 = hash2;
-        }
-
-        @Override
-        public int hashCode() {
-            return hash1;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof CompressedExplorerState)) {
-                return false;
-            }
-
-            CompressedExplorerState that = (CompressedExplorerState) o;
-
-            return that.hash2 == this.hash2;
-        }
     }
 }

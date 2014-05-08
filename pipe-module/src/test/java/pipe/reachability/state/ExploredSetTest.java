@@ -31,14 +31,14 @@ public class ExploredSetTest {
     @Test
     public void containsExactItem() {
         set.add(explorerState);
-        assertTrue(set.contains(explorerState));
+        assertTrue(set.containsExplorerState(explorerState));
     }
 
     @Test
     public void containsDuplicateItem() {
         set.add(explorerState);
         ExplorerState sameState = createState(1, 2);
-        assertTrue(set.contains(sameState));
+        assertTrue(set.containsExplorerState(sameState));
     }
 
 
