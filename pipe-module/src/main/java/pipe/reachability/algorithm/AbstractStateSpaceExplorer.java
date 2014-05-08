@@ -2,12 +2,11 @@ package pipe.reachability.algorithm;
 
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
+import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
@@ -32,7 +31,6 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      */
     protected final Map<ExplorerState, Double> successorRates = new HashMap<>();
 
-    protected ExecutorService executorService;
 
     /**
      * Performs useful state calculations
@@ -47,26 +45,27 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Contains states that have already been explored.
      */
-    protected Set<ExplorerState> explored = new HashSet<>();
+    protected ExploredSet explored = new ExploredSet();
+
+    /**
+     * Number of states that have been written to the writer
+     */
+    protected int writtenCount = 0;
 
     public AbstractStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
                                       StateWriter stateWriter) {
         this.explorerUtilities = explorerUtilities;
         this.vanishingExplorer = vanishingExplorer;
         this.stateWriter = stateWriter;
-        executorService = Executors.newFixedThreadPool(8);
     }
 
     @Override
     public void generate(ExplorerState initialState)
             throws TimelessTrapException, InterruptedException, ExecutionException {
 
-        if (executorService.isTerminated()) {
-            executorService = Executors.newFixedThreadPool(8);
-        }
         exploreInitialState(initialState);
         stateSpaceExploration();
-        executorService.shutdownNow();
+        System.out.println("WRote " + writtenCount + " Transitions");
 
     }
 
@@ -155,6 +154,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
             ExplorerState successor = entry.getKey();
             double rate = entry.getValue();
             stateWriter.transition(state, successor, rate);
+            writtenCount++;
         }
     }
 }

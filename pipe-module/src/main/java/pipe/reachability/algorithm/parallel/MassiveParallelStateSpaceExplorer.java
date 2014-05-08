@@ -2,6 +2,7 @@ package pipe.reachability.algorithm.parallel;
 
 import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.state.StateWriter;
+import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
@@ -12,6 +13,9 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
      * Number of states to analyse sequentially per thread
      */
     private final int statesPerThread;
+
+
+    protected ExecutorService executorService;
 
 
     public MassiveParallelStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
@@ -99,7 +103,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         /**
          * States that have been explored whilst exploring exploreCount states
          */
-        private final Set<ExplorerState> exploredStates = new HashSet<>();
+        private final ExploredSet exploredStates = new ExploredSet();
 
         /**
          * States that were explored prior to this thread running it's exploration
@@ -200,10 +204,10 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
 
             public final Set<ExplorerState> unexplored;
 
-            public final Set<ExplorerState> explored;
+            public final ExploredSet explored;
 
             public Result(Map<ExplorerState, Map<ExplorerState, Double>> transitions, Set<ExplorerState> unexplored,
-                          Set<ExplorerState> explored) {
+                          ExploredSet explored) {
                 this.transitions = transitions;
                 this.unexplored = unexplored;
                 this.explored = explored;

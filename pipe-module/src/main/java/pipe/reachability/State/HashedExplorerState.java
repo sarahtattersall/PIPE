@@ -61,6 +61,11 @@ public class HashedExplorerState implements ExplorerState {
         return tangible;
     }
 
+    @Override
+    public void accept(ExplorerStateVisitor visitor) {
+        visitor.visit(this);
+    }
+
 
     /**
      *

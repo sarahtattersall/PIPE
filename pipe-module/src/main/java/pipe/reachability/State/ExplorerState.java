@@ -31,4 +31,6 @@ public interface ExplorerState extends Serializable {
 
     boolean isTangible();
 
+    void accept(ExplorerStateVisitor visitor);
+
 }
