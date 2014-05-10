@@ -5,174 +5,126 @@ import com.google.common.hash.*;
 
 import java.util.*;
 
-public class ExploredSet implements Set<CompressedExplorerState> {
-    private Set<CompressedExplorerState> states = new HashSet<>();
-
-    private ExplorerStateVisitor stateVisitor = new ExplorerStateVisitor() {
+/**
+ * Uses a probabalistic method to compress data by double hashing items.
+ * The first hash yields the location for the object and the second is used for
+ * object equality comparisons.
+ *
+ * The idea is that false-positives are very low due to the double hash.
+ */
+public class ExploredSet {
+    private final int size;
+    private final List<LinkedList<HashCode>> array;
+    private static final Funnel<ExplorerState> funnel = new Funnel<ExplorerState>() {
         @Override
-        public void visit(HashedExplorerState state) {
-            add(state);
-        }
+        public void funnel(ExplorerState from, PrimitiveSink into) {
+            into.putBoolean(from.isTangible());
+            Map<String, Map<String, Integer>> s = from.getState().asMap();
+            for (Map.Entry<String, Map<String, Integer>> entry : s.entrySet()) {
+                into.putString(entry.getKey(), Charsets.UTF_8);
+                for (Map.Entry<String, Integer> entry1 : entry.getValue().entrySet()) {
+                    into.putString(entry1.getKey(), Charsets.UTF_8);
+                    into.putInt(entry1.getValue());
+                }
+            }
 
-        @Override
-        public void visit(CompressedExplorerState state) {
-            add(state);
         }
     };
 
-    @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        if (!(o instanceof CompressedExplorerState)) {
-            return false;
+    public ExploredSet(int size) {
+        this.size = size;
+        array = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            array.add(new LinkedList<HashCode>());
         }
-
-        CompressedExplorerState compressed = (CompressedExplorerState) o;
-        return states.contains(compressed);
-    }
-
-    public boolean containsExplorerState(ExplorerState state) {
-        CompressedExplorerState compressed = compress(state);
-        return contains(compressed);
-    }
-
-    @Override
-    public Iterator<CompressedExplorerState> iterator() {
-        return states.iterator();
-    }
-
-    @Override
-    public Object[] toArray() {
-        return new Object[0];
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return null;
-    }
-
-    @Override
-    public boolean add(CompressedExplorerState compressedExplorerState) {
-        return states.add(compressedExplorerState);
-    }
-
-    public boolean add(ExplorerState explorerState) {
-        CompressedExplorerState compressedExplorerState = compress(explorerState);
-        return add(compressedExplorerState);
     }
 
     /**
-     * This is not implemented because this class should be used
-     * to add states only
+     * Uses two hashes to compress the state/
      *
-     * @param o
-     * @return always false
+     * The first hash is used to determine the items location in memory
+     * The second hash is stored for the object equality
+     * @param state
      */
-    @Override
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
+    public void add(ExplorerState state) {
+        int location = getLocation(state);
+        HashCode value = hashTwo(state);
+        LinkedList<HashCode> list = array.get(location);
+        list.add(value);
     }
 
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        for (Object item : c) {
-            if (!contains(item)) {
-                return false;
-            }
+    /**
+     *
+     * Compresses states and adds them to the explored data structure
+     *
+     * @param states all states that have been explored
+     */
+    public void addAll(Collection<ExplorerState> states) {
+        for (ExplorerState state : states) {
+            add(state);
         }
-        return false;
     }
 
-    @Override
-    public boolean addAll(Collection<? extends CompressedExplorerState> c) {
-        for (CompressedExplorerState state : c) {
-            state.accept(stateVisitor);
-        }
-        return true;
+    /**
+     * Adds all elements in the exploredSet into this one
+     *
+     * Sadly since the original item has been lost, we cannot re-hash it
+     * into this set. Therefore we must loop through it and keep items in their
+     * same location in memory
+     *
+     * @param exploredSet
+     */
+    public void addAll(ExploredSet exploredSet) {
+       for (int i = 0; i < exploredSet.array.size(); i++) {
+           List<HashCode> theirs = exploredSet.array.get(i);
+           List<HashCode> ours = array.get(i % size);
+           ours.addAll(theirs);
+       }
     }
 
-    public boolean addAllExplorers(Collection<? extends ExplorerState> c) {
-        for (ExplorerState state : c) {
-            state.accept(stateVisitor);
-        }
-        return true;
+    /**
+     *
+     * Works out where the state should be placed/found in array.
+     *
+     * It does this by working out its hashcode and taking the absolute value.
+     *
+     * This is then modded by the size of the array to give a guaranteed index
+     * into the array.
+     *
+     * @param state
+     * @return the location that this state falls in the array
+     */
+    public int getLocation(ExplorerState state) {
+        return  Math.abs(hashOne(state) % size);
     }
 
-    public boolean addAll(ExploredSet c) {
-         return states.addAll(c.states);
+    public boolean contains(ExplorerState state) {
+        int location = getLocation(state);
+        HashCode value = hashTwo(state);
+        List<HashCode> list = array.get(location);
+        return list.contains(value);
     }
 
-    private CompressedExplorerState compress(ExplorerState explorerState) {
-        return new CompressedExplorerState(hashOne(explorerState), hashTwo(explorerState));
-    }
+
 
     private int hashOne(ExplorerState state) {
-        HashFunction hf = Hashing.md5();
+        HashFunction hf = Hashing.murmur3_32();
         HashCode hc = hashCodeForState(state, hf);
         return hc.asInt();
     }
 
-    private int hashTwo(ExplorerState state) {
+    private HashCode hashTwo(ExplorerState state) {
         HashFunction hf = Hashing.sha1();
-        HashCode hc = hashCodeForState(state, hf);
-        return hc.asInt();
+        return hashCodeForState(state, hf);
     }
 
     private HashCode hashCodeForState(ExplorerState state, HashFunction hf) {
-        return hf.newHasher().putObject(state, new Funnel<ExplorerState>() {
-            @Override
-            public void funnel(ExplorerState from, PrimitiveSink into) {
-                into.putBoolean(from.isTangible());
-                Map<String, Map<String, Integer>> s = from.getState().asMap();
-                for (Map.Entry<String, Map<String, Integer>> entry : s.entrySet()) {
-                    into.putString(entry.getKey(), Charsets.UTF_8);
-                    for (Map.Entry<String, Integer> entry1 : entry.getValue().entrySet()) {
-                        into.putString(entry1.getKey(), Charsets.UTF_8);
-                        into.putInt(entry1.getValue());
-                    }
-                }
-
-            }
-        }).hash();
+        return hf.newHasher().putObject(state, funnel).hash();
     }
 
-    /**
-     * This is not implemented because this class should be used
-     * to add states only
-     *
-     * @param c
-     */
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * This is not implemented because this class should be used
-     * to add states only
-     *
-     * @param c
-     */
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * This is not implemented because this class should be used
-     * to add states only
-     */
-    @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        for (List<HashCode> list : array) {
+            list.clear();
+        }
     }
 }

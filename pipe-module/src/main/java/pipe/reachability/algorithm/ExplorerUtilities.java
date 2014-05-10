@@ -82,4 +82,6 @@ public interface ExplorerUtilities {
      * @return all enabled transitions for the specified state
      */
     Collection<Transition> getAllEnabledTransitions(ExplorerState state);
+
+    void clear();
 }
