@@ -49,7 +49,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Number of states that have been written to the writer
      */
-    protected int writtenCount = 0;
+    public int writtenCount = 0;
 
     public AbstractStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
                                       StateWriter stateWriter) {

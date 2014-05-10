@@ -198,4 +198,12 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
         return results;
     }
 
+    /**
+     * Clears the cache
+     */
+    @Override
+    public void clear() {
+        cachedSuccessors.clear();
+    }
+
 }

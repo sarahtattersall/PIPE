@@ -2,6 +2,7 @@ package pipe.reachability.algorithm.parallel;
 
 import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.state.StateWriter;
+import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
@@ -56,7 +57,9 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
             }
 
 
-            Map<ExplorerState, Map<ExplorerState, Double>> transitions = new HashMap<>();
+            Set<ExplorerState> transitions = new HashSet<>();
+//            ExploredSet transitions = new ExploredSet(1500);
+
             Collection<ExplorerState> unexplored = new HashSet<>();
             for (int i = 0; i < submitted; i++) {
                 MultiStateExplorer.Result result = completionService.take().get();
@@ -65,21 +68,24 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
 
                 //Combine results to avoid writing dups
                 for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : result.transitions.entrySet()) {
-                    if (!transitions.containsKey(entry.getKey())) {
-                        transitions.put(entry.getKey(), new HashMap<ExplorerState, Double>());
+                    if (!transitions.contains(entry.getKey())) {
+                        writeStateTransitions(entry.getKey(), entry.getValue());
+                        transitions.add(entry.getKey());
+//                        transitions.put(entry.getKey(), new HashMap<ExplorerState, Double>());
                     }
-                    transitions.get(entry.getKey()).putAll(entry.getValue());
+//                    transitions.get(entry.getKey()).putAll(entry.getValue());
                 }
             }
 
-            for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : transitions.entrySet()) {
-                writeStateTransitions(entry.getKey(), entry.getValue());
-            }
+//            for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : transitions.entrySet()) {
+//                writeStateTransitions(entry.getKey(), entry.getValue());
+//            }
             for (ExplorerState state : unexplored) {
-                if (!transitions.containsKey(state)) {
+                if (!transitions.contains(state)) {
                     explorationQueue.add(state);
                 }
             }
+            explorerUtilities.clear();
         }
         executorService.shutdownNow();
     }
