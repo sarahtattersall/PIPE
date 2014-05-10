@@ -40,6 +40,7 @@ public class SerializingStateWriter implements StateWriter {
         if (previous != null) {
             try {
                 formatter.write(previous, state, rate, writer);
+                writer.reset();
             } catch (IOException e) {
                 e.printStackTrace();
             }
