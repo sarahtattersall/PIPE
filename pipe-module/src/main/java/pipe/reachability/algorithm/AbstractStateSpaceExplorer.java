@@ -44,8 +44,8 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Contains states that have already been explored.
      */
-    protected Set<ExplorerState> explored = new HashSet<>();
-
+//    protected ExploredSet explored = new ExploredSet(300_000);
+    protected HashSet<ExplorerState> explored = new HashSet<>();
     /**
      * Number of states that have been written to the writer
      */
@@ -64,7 +64,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
 
         exploreInitialState(initialState);
         stateSpaceExploration();
-        System.out.println("WRote " + writtenCount + " Transitions");
+        System.out.println("Wrote " + writtenCount + " Transitions");
 
     }
 
