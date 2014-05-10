@@ -2,7 +2,6 @@ package pipe.reachability.algorithm.parallel;
 
 import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
 import java.util.*;
@@ -44,7 +43,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
     @Override
     protected void stateSpaceExploration() throws InterruptedException, ExecutionException, TimelessTrapException {
         executorService = Executors.newFixedThreadPool(8);
-        CompletionService<MultiStateExplorer.Result> completionService =
+        CompletionService<Result> completionService =
                 new ExecutorCompletionService<>(executorService);
 
         while (!explorationQueue.isEmpty()) {
@@ -52,7 +51,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
             while (submitted < 8 && !explorationQueue.isEmpty()) {
                 ExplorerState state = explorationQueue.poll();
                 completionService.submit(
-                        new MultiStateExplorer(state, explored, statesPerThread, explorerUtilities, vanishingExplorer));
+                        new MultiStateExplorer(state, statesPerThread, explorerUtilities, vanishingExplorer));
                 submitted++;
             }
 
@@ -62,7 +61,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
 
             Collection<ExplorerState> unexplored = new HashSet<>();
             for (int i = 0; i < submitted; i++) {
-                MultiStateExplorer.Result result = completionService.take().get();
+                Result result = completionService.take().get();
                 explored.addAll(result.explored);
                 unexplored.addAll(result.unexplored); //TODO: Potentially adding something that is in later explored set?
 
@@ -96,7 +95,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
      *
      * It registers all transitions that it observes
      */
-    private static class MultiStateExplorer implements Callable<MultiStateExplorer.Result> {
+    private class MultiStateExplorer implements Callable<Result> {
         /**
          * Starting state to explore
          */
@@ -127,18 +126,12 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
          */
         private final Set<ExplorerState>  exploredStates = new HashSet<>();
 
-        /**
-         * States that were explored prior to this thread running it's exploration
-         */
-        private final Set<ExplorerState>  previouslySeen;
-
-        private MultiStateExplorer(ExplorerState initialState, Set<ExplorerState>  previouslySeen, int exploreCount,
-                                   ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer) {
+        private MultiStateExplorer(ExplorerState initialState, int exploreCount, ExplorerUtilities explorerUtilities,
+                                   VanishingExplorer vanishingExplorer) {
             this.initialState = initialState;
             this.exploreCount = exploreCount;
             this.explorerUtilities = explorerUtilities;
             this.vanishingExplorer = vanishingExplorer;
-            this.previouslySeen = previouslySeen;
         }
 
         /**
@@ -204,7 +197,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
          * @return true if the state has already been explored
          */
         private boolean seen(ExplorerState state) {
-            return exploredStates.contains(state) || previouslySeen.contains(state);
+            return exploredStates.contains(state) || explored.contains(state);
         }
 
         /**
@@ -215,27 +208,26 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         private void writeStateTransitions(ExplorerState state, Map<ExplorerState, Double> successorRates) {
             transitions.put(state, successorRates);
         }
+    }
 
-        /**
-         * Basic struct that is return value of call method.
-         *
-         * Contains data structures to be processed on method completion.
-         */
-        public static class Result {
-            public final Map<ExplorerState, Map<ExplorerState, Double>> transitions;
 
-            public final Set<ExplorerState> unexplored;
+    /**
+     * Basic struct that is return value of call method.
+     *
+     * Contains data structures to be processed on method completion.
+     */
+    private static class Result {
+        public final Map<ExplorerState, Map<ExplorerState, Double>> transitions;
 
-            public final Set<ExplorerState> explored;
+        public final Set<ExplorerState> unexplored;
 
-            public Result(Map<ExplorerState, Map<ExplorerState, Double>> transitions, Set<ExplorerState> unexplored,
-                          Set<ExplorerState> explored) {
-                this.transitions = transitions;
-                this.unexplored = unexplored;
-                this.explored = explored;
-            }
+        public final Set<ExplorerState> explored;
+
+        public Result(Map<ExplorerState, Map<ExplorerState, Double>> transitions, Set<ExplorerState> unexplored,
+                      Set<ExplorerState> explored) {
+            this.transitions = transitions;
+            this.unexplored = unexplored;
+            this.explored = explored;
         }
-
-
     }
 }
