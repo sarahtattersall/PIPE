@@ -178,9 +178,9 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
         }
     }
 
-    public void setWeight(String defaultToken, String weight) {
+    public void setWeight(String tokenId, String weight) {
         Map<String, String> old = new HashMap<>(tokenWeights);
-        tokenWeights.put(defaultToken, weight);
+        tokenWeights.put(tokenId, weight);
         changeSupport.firePropertyChange(WEIGHT_CHANGE_MESSAGE, old, tokenWeights);
     }
 
@@ -326,4 +326,11 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
     //TODO: Dont pass in Petri net, get around this with better design
     public abstract boolean canFire(PetriNet petriNet, State state);
 
+    /**
+     * Removes the weight associated with the token from this arc
+     * @param tokenId
+     */
+    public void removeAllTokenWeights(String tokenId) {
+        tokenWeights.remove(tokenId);
+    }
 }

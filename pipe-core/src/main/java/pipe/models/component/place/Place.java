@@ -294,4 +294,13 @@ public class Place extends Connectable {
     }
 
 
+    /**
+     *
+     * Removes all tokens with the given id from this place
+     *
+     * @param token
+     */
+    public void removeAllTokens(String token) {
+        tokenCounts.remove(token);
+    }
 }
