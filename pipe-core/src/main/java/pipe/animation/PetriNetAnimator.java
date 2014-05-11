@@ -1,6 +1,7 @@
 package pipe.animation;
 
-import pipe.exceptions.PetriNetComponentNotFoundException;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -22,7 +23,7 @@ public class PetriNetAnimator implements Animator {
 
     private final AnimationLogic animationLogic;
 
-    private Map<String, Map<Token, Integer>> savedStateTokens = new HashMap<>();
+    private Map<String, Map<String, Integer>> savedStateTokens = new HashMap<>();
 
     public PetriNetAnimator(PetriNet petriNet) {
         this.petriNet = petriNet;
@@ -42,7 +43,7 @@ public class PetriNetAnimator implements Animator {
     @Override
     public void reset() {
         for (Place place : petriNet.getPlaces()) {
-            Map<Token, Integer> originalTokens = savedStateTokens.get(place.getId());
+            Map<String, Integer> originalTokens = savedStateTokens.get(place.getId());
             place.setTokenCounts(originalTokens);
         }
     }
@@ -77,15 +78,13 @@ public class PetriNetAnimator implements Animator {
      * @return current state of the Petri net
      */
     private State getCurrentState() {
-        Map<String, Map<String, Integer>> tokenCounts = new HashMap<>();
+        Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
         for (Place place : petriNet.getPlaces()) {
-            Map<String, Integer> counts = new HashMap<>();
             for (Token token : petriNet.getTokens()) {
-                counts.put(token.getId(), place.getTokenCount(token));
+                tokenCounts.put(place.getId(), new TokenCount(token.getId(), place.getTokenCount(token.getId())));
             }
-            tokenCounts.put(place.getId(), counts);
         }
-        return  new HashedState(tokenCounts);
+        return new HashedState(tokenCounts);
     }
 
 
@@ -96,13 +95,8 @@ public class PetriNetAnimator implements Animator {
 
         //Set all counts
         for (Place place : petriNet.getPlaces()) {
-            try {
-                for (Map.Entry<String, Integer> tokenEntry : newState.getTokens(place.getId()).entrySet()) {
-                    Token token = petriNet.getComponent(tokenEntry.getKey(), Token.class);
-                    place.setTokenCount(token, tokenEntry.getValue());
-                }
-            } catch (PetriNetComponentNotFoundException e) {
-                e.printStackTrace();
+            for (TokenCount tokenCount : newState.getTokens(place.getId())) {
+                place.setTokenCount(tokenCount.token, tokenCount.count);
             }
         }
     }
@@ -112,7 +106,7 @@ public class PetriNetAnimator implements Animator {
         //Increment previous places
         for (Arc<Place, Transition> arc : petriNet.inboundArcs(transition)) {
             Place place = arc.getSource();
-            for (Token token : arc.getTokenWeights().keySet()) {
+            for (String token : arc.getTokenWeights().keySet()) {
                 IncidenceMatrix matrix = petriNet.getBackwardsIncidenceMatrix(token);
                 int currentCount = place.getTokenCount(token);
                 int newCount = currentCount + matrix.get(place, transition);
@@ -123,7 +117,7 @@ public class PetriNetAnimator implements Animator {
         //Decrement new places
         for (Arc<Transition, Place> arc : petriNet.outboundArcs(transition)) {
             Place place = arc.getTarget();
-            for (Token token : arc.getTokenWeights().keySet()) {
+            for (String token : arc.getTokenWeights().keySet()) {
                 IncidenceMatrix matrix = petriNet.getForwardsIncidenceMatrix(token);
                 int oldCount = place.getTokenCount(token);
                 int newCount = oldCount - matrix.get(place, transition);

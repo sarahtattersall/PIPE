@@ -5,17 +5,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.place.ChangePlaceTokens;
-import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.place.PlaceCapacity;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.utilities.transformers.Contains;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
-import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +31,8 @@ public class PlaceControllerTest {
     UndoableEditListener listener;
 
     PlaceController placeController;
+
+    private final static String DEFAULT_TOKEN_ID = "Default";
 
     @Before
     public void setUp() {
@@ -64,30 +64,28 @@ public class PlaceControllerTest {
 
     @Test
     public void setTokenCountModifiesPlace() {
-        Map<Token, Integer> tokenCounts = new HashMap<>();
-        Token defaultToken = new Token("Default", Color.BLACK);
+        Map<String, Integer> tokenCounts = new HashMap<>();
         int oldCount = 7;
         int newCount = 5;
 
-        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-        tokenCounts.put(defaultToken, newCount);
+        when(place.getTokenCount(DEFAULT_TOKEN_ID)).thenReturn(oldCount);
+        tokenCounts.put(DEFAULT_TOKEN_ID, newCount);
         placeController.setTokenCounts(tokenCounts);
 
-        verify(place).setTokenCount(defaultToken, newCount);
+        verify(place).setTokenCount(DEFAULT_TOKEN_ID, newCount);
     }
 
     @Test
     public void setTokenCountCreatesUndoItem() {
-        Map<Token, Integer> tokenCounts = new HashMap<>();
-        Token defaultToken = new Token("Default", Color.BLACK);
+        Map<String, Integer> tokenCounts = new HashMap<>();
         int oldCount = 7;
         int newCount = 5;
 
-        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-        tokenCounts.put(defaultToken, newCount);
+        when(place.getTokenCount(DEFAULT_TOKEN_ID)).thenReturn(oldCount);
+        tokenCounts.put(DEFAULT_TOKEN_ID, newCount);
         placeController.setTokenCounts(tokenCounts);
 
-        UndoableEdit changed = new ChangePlaceTokens(place, defaultToken, oldCount, newCount);
+        UndoableEdit changed = new ChangePlaceTokens(place, DEFAULT_TOKEN_ID, oldCount, newCount);
         MultipleEdit edit = new MultipleEdit(Arrays.asList(changed));
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(edit)));
     }
@@ -95,21 +93,19 @@ public class PlaceControllerTest {
     @Test
     public void incrementsPlaceCounter() {
         int count = 1;
-        Token token = new Token("Default", new Color(0, 0, 0));
-        when(place.getTokenCount(token)).thenReturn(count);
-        placeController.addTokenToPlace(token);
-        verify(place).setTokenCount(token, count + 1);
+        when(place.getTokenCount(DEFAULT_TOKEN_ID)).thenReturn(count);
+        placeController.addTokenToPlace(DEFAULT_TOKEN_ID);
+        verify(place).setTokenCount(DEFAULT_TOKEN_ID, count + 1);
     }
 
     @Test
     public void incrementPlaceCounterCreatesHistoryItem() {
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         int oldCount = 7;
 
-        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-        placeController.addTokenToPlace(defaultToken);
+        when(place.getTokenCount(DEFAULT_TOKEN_ID)).thenReturn(oldCount);
+        placeController.addTokenToPlace(DEFAULT_TOKEN_ID);
 
-        UndoableEdit changed = new ChangePlaceTokens(place, defaultToken, oldCount, oldCount + 1);
+        UndoableEdit changed = new ChangePlaceTokens(place, DEFAULT_TOKEN_ID, oldCount, oldCount + 1);
         MultipleEdit edit = new MultipleEdit(Arrays.asList(changed));
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(edit)));
     }
@@ -117,21 +113,19 @@ public class PlaceControllerTest {
     @Test
     public void decrementsPlaceCounter() {
         int count = 1;
-        Token token = new Token("Default", new Color(0, 0, 0));
-        when(place.getTokenCount(token)).thenReturn(count);
-        placeController.deleteTokenInPlace(token);
-        verify(place).setTokenCount(token, count - 1);
+        when(place.getTokenCount(DEFAULT_TOKEN_ID)).thenReturn(count);
+        placeController.deleteTokenInPlace(DEFAULT_TOKEN_ID);
+        verify(place).setTokenCount(DEFAULT_TOKEN_ID, count - 1);
     }
 
     @Test
     public void decrementPlaceCounterCreatesHistoryItem() {
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         int oldCount = 7;
 
-        when(place.getTokenCount(defaultToken)).thenReturn(oldCount);
-        placeController.deleteTokenInPlace(defaultToken);
+        when(place.getTokenCount(DEFAULT_TOKEN_ID)).thenReturn(oldCount);
+        placeController.deleteTokenInPlace(DEFAULT_TOKEN_ID);
 
-        UndoableEdit changed = new ChangePlaceTokens(place, defaultToken, oldCount, oldCount - 1);
+        UndoableEdit changed = new ChangePlaceTokens(place, DEFAULT_TOKEN_ID, oldCount, oldCount - 1);
         MultipleEdit edit = new MultipleEdit(Arrays.asList(changed));
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(edit)));
     }

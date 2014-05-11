@@ -45,7 +45,7 @@ public class PetriNetWriterTest extends XMLTestCase {
         place.setY(240);
         place.setNameXOffset(5);
         place.setNameYOffset(26);
-        place.setTokenCount(token, 1);
+        place.setTokenCount(token.getId(), 1);
         petriNet.addToken(token);
         petriNet.addPlace(place);
 
@@ -59,10 +59,6 @@ public class PetriNetWriterTest extends XMLTestCase {
         String expected = XMLUtils.readFile(expectedPath, Charset.defaultCharset());
 
         String actual = stringWriter.toString();
-        System.out.println("ACTUAL:");
-        System.out.println(actual);
-        System.out.println("EXPECTED:");
-        System.out.println(expected);
         assertXMLEqual(expected, actual);
     }
 

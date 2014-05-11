@@ -4,6 +4,7 @@ import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.state.ExplorerState;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -41,7 +42,8 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
      * @throws TimelessTrapException if vanishing states lead to a timeless trap
      */
     @Override
-    protected void stateSpaceExploration() throws InterruptedException, ExecutionException, TimelessTrapException {
+    protected void stateSpaceExploration()
+            throws InterruptedException, ExecutionException, TimelessTrapException, IOException {
         executorService = Executors.newFixedThreadPool(8);
         CompletionService<Result> completionService =
                 new ExecutorCompletionService<>(executorService);
@@ -57,8 +59,6 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
 
 
             Set<ExplorerState> transitions = new HashSet<>();
-//            ExploredSet transitions = new ExploredSet(1500);
-
             Collection<ExplorerState> unexplored = new HashSet<>();
             for (int i = 0; i < submitted; i++) {
                 Result result = completionService.take().get();
@@ -70,21 +70,17 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
                     if (!transitions.contains(entry.getKey())) {
                         writeStateTransitions(entry.getKey(), entry.getValue());
                         transitions.add(entry.getKey());
-//                        transitions.put(entry.getKey(), new HashMap<ExplorerState, Double>());
                     }
-//                    transitions.get(entry.getKey()).putAll(entry.getValue());
                 }
             }
 
-//            for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : transitions.entrySet()) {
-//                writeStateTransitions(entry.getKey(), entry.getValue());
-//            }
             for (ExplorerState state : unexplored) {
                 if (!transitions.contains(state)) {
                     explorationQueue.add(state);
                 }
             }
             explorerUtilities.clear();
+            stateWriter.clear();
         }
         executorService.shutdownNow();
     }

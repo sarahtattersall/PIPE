@@ -3,7 +3,6 @@ package pipe.models.component.arc;
 import pipe.animation.State;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
-import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
 
 import java.awt.geom.Point2D;
@@ -53,7 +52,7 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
      * Map of Token to corresponding weights
      * Weights can be functional e.g '> 5'
      */
-    protected Map<Token, String> tokenWeights = new HashMap<>();
+    protected Map<String, String> tokenWeights = new HashMap<>();
 
     private final ArcType type;
 
@@ -62,7 +61,7 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
      */
     private final List<ArcPoint> arcPoints = new LinkedList<>();
 
-    public Arc(S source, T target, Map<Token, String> tokenWeights, ArcType type) {
+    public Arc(S source, T target, Map<String, String> tokenWeights, ArcType type) {
         this.source = source;
         this.target = target;
         this.tokenWeights = tokenWeights;
@@ -103,7 +102,7 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
 
     }
 
-    public Map<Token, String> getTokenWeights() {
+    public Map<String, String> getTokenWeights() {
         return tokenWeights;
     }
 
@@ -171,7 +170,7 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
         this.tagged = tagged;
     }
 
-    public String getWeightForToken(Token token) {
+    public String getWeightForToken(String token) {
         if (tokenWeights.containsKey(token)) {
             return tokenWeights.get(token);
         } else {
@@ -179,8 +178,8 @@ public abstract class Arc<S extends Connectable, T extends Connectable> extends 
         }
     }
 
-    public void setWeight(Token defaultToken, String weight) {
-        Map<Token, String> old = new HashMap<>(tokenWeights);
+    public void setWeight(String defaultToken, String weight) {
+        Map<String, String> old = new HashMap<>(tokenWeights);
         tokenWeights.put(defaultToken, weight);
         changeSupport.firePropertyChange(WEIGHT_CHANGE_MESSAGE, old, tokenWeights);
     }

@@ -9,6 +9,9 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Adds a token to a place
+ */
 public class AddTokenAction extends TokenAction {
 
     public AddTokenAction(PipeApplicationModel applicationModel) {
@@ -16,8 +19,8 @@ public class AddTokenAction extends TokenAction {
     }
 
     @Override
-    protected void performTokenAction(PlaceController placeController, Token token) {
-        Map<Token, Integer> tokenCount = new HashMap<>();
+    protected void performTokenAction(PlaceController placeController, String token) {
+        Map<String, Integer> tokenCount = new HashMap<>();
         tokenCount.put(token, placeController.getTokenCount(token) + 1);
         setTokenCounts(placeController, tokenCount);
     }

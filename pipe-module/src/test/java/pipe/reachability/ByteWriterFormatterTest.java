@@ -1,16 +1,17 @@
 package pipe.reachability;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.animation.HashedState;
+import pipe.animation.TokenCount;
 import pipe.reachability.io.ByteWriterFormatter;
 import pipe.reachability.state.ExplorerState;
 import pipe.reachability.state.HashedExplorerState;
 import pipe.reachability.state.Record;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,20 +28,17 @@ public class ByteWriterFormatterTest {
     public void setUp() throws IOException {
         formatter = new ByteWriterFormatter();
 
-        Map<String, Map<String, Integer>> stateTokens = new HashMap<>();
-        String defaultToken = "Default";
-        stateTokens.put("P1", new HashMap<String, Integer>());
-        stateTokens.get("P1").put(defaultToken, 1);
-        stateTokens.put("P2", new HashMap<String, Integer>());
-        stateTokens.get("P2").put(defaultToken, 2);
+        Multimap<String, TokenCount> stateTokens = HashMultimap.create();
+        stateTokens.put("P1", new TokenCount("Default", 1));
+        stateTokens.put("P2", new TokenCount("Default", 2));
+
         state = HashedExplorerState.tangibleState(new HashedState(stateTokens));
 
 
-        Map<String, Map<String, Integer>> successorTokens = new HashMap<>();
-        successorTokens.put("P1", new HashMap<String, Integer>());
-        successorTokens.get("P1").put(defaultToken, 0);
-        successorTokens.put("P2", new HashMap<String, Integer>());
-        successorTokens.get("P2").put(defaultToken, 3);
+
+        Multimap<String, TokenCount> successorTokens = HashMultimap.create();
+        stateTokens.put("P1", new TokenCount("Default", 0));
+        stateTokens.put("P2", new TokenCount("Default", 3));
         successor = HashedExplorerState.vanishingState(new HashedState(successorTokens));
 
         rate = 4.5;
@@ -50,7 +48,7 @@ public class ByteWriterFormatterTest {
     public void correctlySerializesAndDeserializes() throws IOException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
              ObjectOutputStream outputStream = new ObjectOutputStream(stream)) {
-            formatter.write(state, successor, rate, outputStream);
+             formatter.write(state, successor, rate, outputStream);
 
 
             try (ByteArrayInputStream s = new ByteArrayInputStream(stream.toByteArray());

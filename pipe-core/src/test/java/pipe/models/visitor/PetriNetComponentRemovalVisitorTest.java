@@ -34,7 +34,7 @@ public class PetriNetComponentRemovalVisitorTest {
     public void testDeletesInboundNormalArc() {
         Place place = new Place("", "");
         Transition transition = new Transition("", "");
-        Map<Token, String> weights = new HashMap<>();
+        Map<String, String> weights = new HashMap<>();
         InboundArc arc = new InboundNormalArc(place, transition, weights);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);
@@ -45,7 +45,7 @@ public class PetriNetComponentRemovalVisitorTest {
     public void testDeletesOutboundNormalArc() {
         Place place = new Place("", "");
         Transition transition = new Transition("", "");
-        Map<Token, String> weights = new HashMap<>();
+        Map<String, String> weights = new HashMap<>();
         OutboundArc arc = new OutboundNormalArc(transition, place, weights);
         arc.accept(visitor);
         verify(mockNet).removeArc(arc);

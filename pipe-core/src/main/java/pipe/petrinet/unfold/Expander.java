@@ -199,13 +199,13 @@ public class Expander {
         StringBuilder newNameBuilder = new StringBuilder(place.getName());
         int placeTokenCount = 0;
         int arcWeight = 0;
-        for (Map.Entry<Token, String> entry : arc.getTokenWeights().entrySet()) {
-            Token token = entry.getKey();
+        for (Map.Entry<String, String> entry : arc.getTokenWeights().entrySet()) {
+            String token = entry.getKey();
             String weight = entry.getValue();
             //TODO: THIS IS ASUMING IT ISNT FUNCTIONAL :/
             arcWeight = Integer.valueOf(weight);
             if (arcWeight > 0) {
-                newNameBuilder.append("_").append(token.getId());
+                newNameBuilder.append("_").append(token);
                 placeTokenCount = place.getTokenCount(token);
             }
 
@@ -220,9 +220,9 @@ public class Expander {
 
         Place place = new Place(original);
 
-        Map<Token, Integer> newTokenCounts = new HashMap<>();
+        Map<String, Integer> newTokenCounts = new HashMap<>();
         if (tokenCount > 0) {
-            newTokenCounts.put(unfoldToken, tokenCount);
+            newTokenCounts.put(unfoldToken.getId(), tokenCount);
         }
 
         place.setTokenCounts(newTokenCounts);
@@ -263,9 +263,9 @@ public class Expander {
      * @param arcWeight new weight for unfolded token
      * @return single entry mapping the unfolded token set in the constructor to the arc weight specified
      */
-    private Map<Token, String> getNewArcWeight(int arcWeight) {
-        Map<Token, String> arcWeights = new HashMap<Token, String>();
-        arcWeights.put(unfoldToken, Integer.toString(arcWeight));
+    private Map<String, String> getNewArcWeight(int arcWeight) {
+        Map<String, String> arcWeights = new HashMap<>();
+        arcWeights.put(unfoldToken.getId(), Integer.toString(arcWeight));
         return arcWeights;
     }
 

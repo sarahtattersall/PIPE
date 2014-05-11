@@ -1,14 +1,13 @@
 package pipe.controllers;
 
-import pipe.historyActions.*;
+import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.arc.AddArcPathPoint;
 import pipe.historyActions.arc.ArcPathPointType;
 import pipe.historyActions.arc.DeleteArcPathPoint;
 import pipe.historyActions.arc.SetArcWeightAction;
+import pipe.models.component.Connectable;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.Connectable;
-import pipe.models.component.token.Token;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.UnparsableException;
 
@@ -38,10 +37,10 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Sets the weight for the current arc
-     * @param token
-     * @param expr
+     * @param token token id
+     * @param expr weight for the associated token on the underlying arc
      */
-    public void setWeight(Token token, String expr) throws UnparsableException {
+    public void setWeight(String token, String expr) throws UnparsableException {
         throwExceptionIfWeightNotValid(expr);
         registerUndoableEdit(updateWeightForArc(token, expr));
     }
@@ -73,19 +72,19 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         return value % 1 != 0;
     }
 
-    private void throwExceptionIfWeightsNotValid(Map<Token, String> weights) throws UnparsableException {
-        for (Map.Entry<Token, String> entry : weights.entrySet()) {
+    private void throwExceptionIfWeightsNotValid(Map<String, String> weights) throws UnparsableException {
+        for (Map.Entry<String, String> entry : weights.entrySet()) {
             throwExceptionIfWeightNotValid(entry.getValue());
         }
     }
 
     /**
      * Creates a historyItem for updating weight and applies it
-     * @param token token to associate the expression with
+     * @param token token id to associate the expression with
      * @param expr new weight expression for the arc
      * @return the UndoableEdit associated with this action
      */
-    private UndoableEdit updateWeightForArc(Token token,
+    private UndoableEdit updateWeightForArc(String token,
                                     String expr) {
         String oldWeight = arc.getWeightForToken(token);
         arc.setWeight(token, expr);
@@ -93,16 +92,16 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         return new SetArcWeightAction<>(arc, token, oldWeight, expr);
     }
 
-    public void setWeights(Map<Token, String> newWeights) throws UnparsableException {
+    public void setWeights(Map<String, String> newWeights) throws UnparsableException {
         throwExceptionIfWeightsNotValid(newWeights);
         List<UndoableEdit> edits = new LinkedList<>();
-        for (Map.Entry<Token, String> entry : newWeights.entrySet()) {
+        for (Map.Entry<String, String> entry : newWeights.entrySet()) {
             edits.add(updateWeightForArc(entry.getKey(), entry.getValue()));
         }
         registerUndoableEdit(new MultipleEdit(edits));
     }
 
-    public String getWeightForToken(Token token) {
+    public String getWeightForToken(String token) {
         return arc.getWeightForToken(token);
     }
 

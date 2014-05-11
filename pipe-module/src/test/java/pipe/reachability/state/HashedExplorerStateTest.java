@@ -1,11 +1,11 @@
 package pipe.reachability.state;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.junit.Test;
 import pipe.animation.HashedState;
 import pipe.animation.State;
-
-import java.util.HashMap;
-import java.util.Map;
+import pipe.animation.TokenCount;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -16,9 +16,8 @@ public class HashedExplorerStateTest {
 
     @Test
     public void equalityIdenticalState() {
-        Map<String, Map<String, Integer>> tokens = new HashMap<>();
-        tokens.put("P1", new HashMap<String, Integer>());
-        tokens.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens = HashMultimap.create();
+        tokens.put("P1", new TokenCount("Default", 3));
         State state = new HashedState(tokens);
 
         ExplorerState explorerState1 = HashedExplorerState.tangibleState(state);
@@ -30,15 +29,13 @@ public class HashedExplorerStateTest {
 
     @Test
     public void equalitySameState() {
-        Map<String, Map<String, Integer>> tokens = new HashMap<>();
-        tokens.put("P1", new HashMap<String, Integer>());
-        tokens.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens = HashMultimap.create();
+        tokens.put("P1", new TokenCount("Default", 3));
         State state = new HashedState(tokens);
 
 
-        Map<String, Map<String, Integer>> tokens2 = new HashMap<>();
-        tokens2.put("P1", new HashMap<String, Integer>());
-        tokens2.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens2 = HashMultimap.create();
+        tokens2.put("P1", new TokenCount("Default", 3));
         State state2 = new HashedState(tokens2);
 
         ExplorerState explorerState1 = HashedExplorerState.tangibleState(state);
@@ -48,9 +45,8 @@ public class HashedExplorerStateTest {
 
     @Test
     public void inequalityIdenticalState() {
-        Map<String, Map<String, Integer>> tokens = new HashMap<>();
-        tokens.put("P1", new HashMap<String, Integer>());
-        tokens.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens = HashMultimap.create();
+        tokens.put("P1", new TokenCount("Default", 3));
         State state = new HashedState(tokens);
 
         ExplorerState explorerState1 = HashedExplorerState.tangibleState(state);
@@ -61,15 +57,13 @@ public class HashedExplorerStateTest {
 
     @Test
     public void inequalitySameState() {
-        Map<String, Map<String, Integer>> tokens = new HashMap<>();
-        tokens.put("P1", new HashMap<String, Integer>());
-        tokens.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens = HashMultimap.create();
+        tokens.put("P1", new TokenCount("Default", 3));
         State state = new HashedState(tokens);
 
 
-        Map<String, Map<String, Integer>> tokens2 = new HashMap<>();
-        tokens2.put("P1", new HashMap<String, Integer>());
-        tokens2.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens2 = HashMultimap.create();
+        tokens2.put("P1", new TokenCount("Default", 3));
         State state2 = new HashedState(tokens2);
 
         ExplorerState explorerState1 = HashedExplorerState.tangibleState(state);
@@ -79,17 +73,13 @@ public class HashedExplorerStateTest {
 
     @Test
     public void inequalityDifferentState() {
-        Map<String, Map<String, Integer>> tokens = new HashMap<>();
-        tokens.put("P1", new HashMap<String, Integer>());
-        tokens.get("P1").put("Default", 3);
+        Multimap<String, TokenCount> tokens = HashMultimap.create();
+        tokens.put("P1", new TokenCount("Default", 3));
         State state = new HashedState(tokens);
 
-
-        Map<String, Map<String, Integer>> tokens2 = new HashMap<>();
-        tokens2.put("P1", new HashMap<String, Integer>());
-        tokens2.get("P1").put("Red", 3);
+        Multimap<String, TokenCount> tokens2 = HashMultimap.create();
+        tokens2.put("P1", new TokenCount("Red", 3));
         State state2 = new HashedState(tokens2);
-
         ExplorerState explorerState1 = HashedExplorerState.tangibleState(state);
         ExplorerState explorerState2 = HashedExplorerState.tangibleState(state2);
         assertThat(explorerState1, is(not(explorerState2)));

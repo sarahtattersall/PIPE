@@ -3,6 +3,7 @@ package pipe.reachability.algorithm.state;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.state.ExplorerState;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,5 +25,6 @@ public interface StateSpaceExplorer {
      * @param initialState starting state for exploration.
      * @throws pipe.reachability.algorithm.TimelessTrapException
      */
-    void generate(ExplorerState initialState) throws TimelessTrapException, InterruptedException, ExecutionException;
+    void generate(ExplorerState initialState)
+            throws TimelessTrapException, InterruptedException, ExecutionException, IOException;
 }

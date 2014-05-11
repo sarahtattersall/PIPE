@@ -47,16 +47,16 @@ public class ExpanderTest {
 
     }
 
-    private Token getRedToken() {
-        return new Token("Red", new Color(255, 0, 0));
+    private Token getDefaultToken() {
+        return new Token("Default", new Color(0, 0, 0));
     }
 
     private Token getBlackToken() {
         return new Token("Black", new Color(0, 0, 0));
     }
 
-    private Token getDefaultToken() {
-        return new Token("Default", new Color(0, 0, 0));
+    private Token getRedToken() {
+        return new Token("Red", new Color(255, 0, 0));
     }
 
     @Test
@@ -92,17 +92,16 @@ public class ExpanderTest {
 
     @Test
     public void singleTokenPetriNetIsExpandedToItself() {
-        petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0")).and(ATransition.withId("T0")).andFinally(
+        petriNet = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0")).and(
+                ATransition.withId("T0")).andFinally(
                 ANormalArc.withSource("P0").andTarget("T0").with("2", "Default").tokens());
 
         expander = new Expander(petriNet);
 
-        PetriNet expected = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0_Default")).and(ATransition.withId("T0")).andFinally(
-                ANormalArc.withSource("P0_Default").andTarget("T0").with("2", "Default").tokens());
-//        Place newPlace = new Place("P0_Default", "P0_Default");
-//        expected.addPlace(newPlace);
-//        expected.add(transition);
-//        expected.add(new Arc<>(newPlace, transition, weights, ArcType.NORMAL));
+        PetriNet expected =
+                APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(APlace.withId("P0_Default")).and(
+                        ATransition.withId("T0")).andFinally(
+                        ANormalArc.withSource("P0_Default").andTarget("T0").with("2", "Default").tokens());
 
         PetriNet unfolded = expander.unfold();
         checkPetriNetsEqual(expected, unfolded);
@@ -122,27 +121,23 @@ public class ExpanderTest {
         petriNet.addToken(redToken);
 
         Place place = new Place("P0", "P0");
-        place.setTokenCount(redToken, 1);
+        place.setTokenCount(redToken.getId(), 1);
         petriNet.addPlace(place);
         Transition transition = new Transition("T0", "T0");
         petriNet.addTransition(transition);
 
-        Map<Token, String> weights = new HashMap<>();
-        weights.put(token, "1");
-        weights.put(redToken, "2");
+        Map<String, String> weights = new HashMap<>();
+        weights.put(token.getId(), "1");
+        weights.put(redToken.getId(), "2");
 
         InboundArc arc = new InboundNormalArc(place, transition, weights);
         petriNet.addArc(arc);
 
         expander = new Expander(petriNet);
 
-        PetriNet expected = new PetriNet();
-        //TODO: THIS ISNT THE BEST BECAUSE DUE TO HASHMAP IT MIGHT BE IN A IDFF ORDER
-        // WORK OUT A BETTER WAY TO CHECK
-        Place newPlace = new Place("P0_Red_Default", "P0_Red_Default");
-        expected.addPlace(newPlace);
-        expected.add(transition);
-        expected.add(new InboundNormalArc(newPlace, transition, weights));
+        PetriNet expected = APetriNet.with(AToken.called("Default").withColor(Color.BLACK)).and(
+                APlace.withId("P0_Default_Red").and(1, "Default").token()).and(ATransition.withId("T0")).andFinally(
+                ANormalArc.withSource("P0_Default_Red").andTarget("T0").with("1", "Default").token().and("2", "Red").tokens());
 
         PetriNet unfolded = expander.unfold();
         checkPetriNetsEqual(expected, unfolded);

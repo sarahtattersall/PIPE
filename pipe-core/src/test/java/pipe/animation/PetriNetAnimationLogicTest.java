@@ -1,5 +1,7 @@
 package pipe.animation;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -13,7 +15,6 @@ import pipe.models.petrinet.PetriNet;
 
 import java.awt.Color;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,13 +51,11 @@ public class PetriNetAnimationLogicTest {
      * @return current state of the Petri net
      */
     private State getState(PetriNet petriNet) {
-        Map<String, Map<String, Integer>> tokenCounts = new HashMap<>();
+        Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
         for (Place place : petriNet.getPlaces()) {
-            Map<String, Integer> counts = new HashMap<>();
             for (Token token : petriNet.getTokens()) {
-                counts.put(token.getId(), place.getTokenCount(token));
+                tokenCounts.put(place.getId(), new TokenCount(token.getId(), place.getTokenCount(token.getId())));
             }
-            tokenCounts.put(place.getId(), counts);
         }
         return  new HashedState(tokenCounts);
     }
@@ -127,10 +126,9 @@ public class PetriNetAnimationLogicTest {
     public void correctlyIdentifiesNotEnabledTransitionDueToEmptyPlace() throws PetriNetComponentNotFoundException {
         int tokenWeight = 4;
         PetriNet petriNet = createSimplePetriNet(tokenWeight);
-        Token token = petriNet.getComponent("Default", Token.class);
         Place place = petriNet.getComponent("P1", Place.class);
         Transition transition = petriNet.getComponent("T1", Transition.class);
-        place.decrementTokenCount(token);
+        place.decrementTokenCount("Default");
 
         AnimationLogic animator = new PetriNetAnimationLogic(petriNet);
         Collection<Transition> enabled = animator.getEnabledTransitions(getState(petriNet));
@@ -186,7 +184,7 @@ public class PetriNetAnimationLogicTest {
         petriNet.addToken(redToken);
 
         InboundArc arc = petriNet.getComponent("P1 TO T1", InboundArc.class);
-        arc.getTokenWeights().put(redToken, "1");
+        arc.getTokenWeights().put(redToken.getId(), "1");
         Transition transition = petriNet.getComponent("T1", Transition.class);
 
         AnimationLogic animator = new PetriNetAnimationLogic(petriNet);
@@ -202,11 +200,11 @@ public class PetriNetAnimationLogicTest {
         Token redToken = new Token("red", new Color(255, 0, 0));
         petriNet.addToken(redToken);
         InboundArc arc = petriNet.getComponent("P1 TO T1", InboundArc.class);
-        arc.getTokenWeights().put(redToken, "1");
+        arc.getTokenWeights().put(redToken.getId(), "1");
 
         Place place = petriNet.getComponent("P1", Place.class);
         Transition transition = petriNet.getComponent("T1", Transition.class);
-        place.incrementTokenCount(redToken);
+        place.incrementTokenCount(redToken.getId());
 
         AnimationLogic animator = new PetriNetAnimationLogic(petriNet);
         Collection<Transition> enabled = animator.getEnabledTransitions(getState(petriNet));
@@ -235,7 +233,7 @@ public class PetriNetAnimationLogicTest {
         Token token = petriNet.getComponent("Default", Token.class);
 
         Place p1 = petriNet.getComponent("P1", Place.class);
-        p1.setTokenCount(token, 2);
+        p1.setTokenCount(token.getId(), 2);
         Place p2 = petriNet.getComponent("P2", Place.class);
         p2.setCapacity(1);
 
@@ -251,7 +249,7 @@ public class PetriNetAnimationLogicTest {
         PetriNet petriNet = createSelfLoopPetriNet("1");
         Place place = petriNet.getComponent("P0", Place.class);
         Token token = petriNet.getComponent("Default", Token.class);
-        place.setTokenCount(token, 1);
+        place.setTokenCount(token.getId(), 1);
         place.setCapacity(1);
 
         Transition transition = petriNet.getComponent("T1", Transition.class);
@@ -301,11 +299,12 @@ public class PetriNetAnimationLogicTest {
         assertEquals(1, successors.size());
         State successor = successors.keySet().iterator().next();
 
-        int actualP1 =   successor.getTokens("P1").get("Default");
-        assertEquals(0, actualP1);
+        Collection<TokenCount> actualP1 =   successor.getTokens("P1");
+        assertThat(actualP1).contains(new TokenCount("Default", 0));
 
-        int actualP2 = successor.getTokens("P2").get("Default");
-        assertEquals(1, actualP2);
+
+        Collection<TokenCount> actualP2 =   successor.getTokens("P2");
+        assertThat(actualP2).contains(new TokenCount("Default", 1));
     }
 
 

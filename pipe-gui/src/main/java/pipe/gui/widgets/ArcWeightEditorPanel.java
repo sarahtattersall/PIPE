@@ -2,7 +2,6 @@ package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.token.Token;
 import pipe.parsers.UnparsableException;
@@ -77,7 +76,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             tokenClassWeight.setEditable(true);
             tokenClassWeight.setName(token.getId());
 
-            tokenClassWeight.setText(arcController.getWeightForToken(token));
+            tokenClassWeight.setText(arcController.getWeightForToken(token.getId()));
             inputtedWeights.add(tokenClassWeight);
 
             tokenClassName.setText(token.getId() + ": ");
@@ -122,7 +121,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    createEditorWindow(token);
+                    createEditorWindow(token.getId());
                 }
             });
 
@@ -203,18 +202,11 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
             }
         }
 
-        Map<Token, String> newWeights = new HashMap<>();
+        Map<String, String> newWeights = new HashMap<>();
         for (int i = 0; i < inputtedWeights.size(); i++) {
             String tokenClassName = inputtedTokenClassNames.get(i);
-            try {
-                Token token = petriNetController.getToken(tokenClassName);
-                String weight = inputtedWeights.get(i).getText();
-                newWeights.put(token, weight);
-
-            } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {
-                GuiUtils.displayErrorMessage(null, petriNetComponentNotFoundException.getMessage());
-                return;
-            }
+            String weight = inputtedWeights.get(i).getText();
+            newWeights.put(tokenClassName, weight);
         }
         try {
             arcController.setWeights(newWeights);
@@ -238,7 +230,7 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         // focusLost(nameTextField);
     }
 
-    public void createEditorWindow(Token token) {
+    public void createEditorWindow(String token) {
         EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
         ArcFunctionEditor feditor =
                 new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);

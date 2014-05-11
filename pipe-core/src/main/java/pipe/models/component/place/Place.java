@@ -1,7 +1,6 @@
 package pipe.models.component.place;
 
 import pipe.models.component.Connectable;
-import pipe.models.component.token.Token;
 import pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.geom.Point2D;
@@ -40,7 +39,7 @@ public class Place extends Connectable {
     /**
      * Place tokens
      */
-    private Map<Token, Integer> tokenCounts = new HashMap<>();
+    private Map<String, Integer> tokenCounts = new HashMap<>();
 
     public Place(String id, String name) {
         super(id, name);
@@ -97,18 +96,18 @@ public class Place extends Connectable {
         this.capacity = capacity;
     }
 
-    public Map<Token, Integer> getTokenCounts() {
+    public Map<String, Integer> getTokenCounts() {
         return tokenCounts;
     }
 
-    public void setTokenCounts(Map<Token, Integer> tokenCounts) {
+    public void setTokenCounts(Map<String, Integer> tokenCounts) {
         if (hasCapacityRestriction()) {
             int count = getNumberOfTokensStored(tokenCounts);
             if (count > capacity) {
                 throw new RuntimeException("Count of tokens exceeds capacity!");
             }
         }
-        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
+        Map<String, Integer> old = new HashMap<>(this.tokenCounts);
         this.tokenCounts = new HashMap<>(tokenCounts);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
@@ -121,7 +120,7 @@ public class Place extends Connectable {
      * @param tokens map of tokens to their counts
      * @return total number of tokens stored in the map
      */
-    private int getNumberOfTokensStored(Map<Token, Integer> tokens) {
+    private int getNumberOfTokensStored(Map<String, Integer> tokens) {
         int sum = 0;
         for (Integer value : tokens.values()) {
             sum += value;
@@ -134,7 +133,7 @@ public class Place extends Connectable {
      *
      * @param token
      */
-    public void incrementTokenCount(Token token) {
+    public void incrementTokenCount(String token) {
         Integer count;
         if (tokenCounts.containsKey(token)) {
             count = tokenCounts.get(token);
@@ -142,12 +141,12 @@ public class Place extends Connectable {
         } else {
             count = 1;
         }
-        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
+        Map<String, Integer> old = new HashMap<>(this.tokenCounts);
         setTokenCount(token, count);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
 
-    public void setTokenCount(Token token, int count) {
+    public void setTokenCount(String token, int count) {
         if (hasCapacityRestriction()) {
             int currentTokenCount = getNumberOfTokensStored();
             int countMinusToken = currentTokenCount - getTokenCount(token);
@@ -156,7 +155,7 @@ public class Place extends Connectable {
                         "the capacity of " + count);
             }
         }
-        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
+        Map<String, Integer> old = new HashMap<>(this.tokenCounts);
         tokenCounts.put(token, count);
         changeSupport.firePropertyChange(TOKEN_CHANGE_MESSAGE, old, tokenCounts);
     }
@@ -168,31 +167,31 @@ public class Place extends Connectable {
         return getNumberOfTokensStored(tokenCounts);
     }
 
-    public int getTokenCount(Token token) {
+    public int getTokenCount(String token) {
         if (tokenCounts.containsKey(token)) {
             return tokenCounts.get(token);
         }
         return 0;
     }
 
-    /**
-     * A less efficient way to get the count for a token. Use in cases where token is not avaiable
-     *
-     * @param tokenName
-     * @return token count for the colour token
-     */
-    //TODO: Make this O(n). Maybe change the hashmap to store name rather than token?
-    public int getTokenCount(String tokenName) {
-        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
-            if (entry.getKey().getId().equals(tokenName)) {
-                return entry.getValue();
-            }
-        }
-        return 0;
-    }
+//    /**
+//     * A less efficient way to get the count for a token. Use in cases where token is not avaiable
+//     *
+//     * @param tokenName
+//     * @return token count for the colour token
+//     */
+//    //TODO: Make this O(n). Maybe change the hashmap to store name rather than token?
+//    public int getTokenCount(String tokenName) {
+//        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
+//            if (entry.getKey().getId().equals(tokenName)) {
+//                return entry.getValue();
+//            }
+//        }
+//        return 0;
+//    }
 
-    public void decrementTokenCount(Token token) {
-        Map<Token, Integer> old = new HashMap<>(this.tokenCounts);
+    public void decrementTokenCount(String token) {
+        Map<String, Integer> old = new HashMap<>(this.tokenCounts);
         Integer count;
         if (tokenCounts.containsKey(token)) {
             count = tokenCounts.get(token);

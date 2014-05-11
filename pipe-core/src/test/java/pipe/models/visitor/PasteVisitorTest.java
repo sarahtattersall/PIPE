@@ -7,9 +7,11 @@ import org.mockito.ArgumentMatcher;
 import pipe.exceptions.PetriNetComponentException;
 import pipe.models.component.Connectable;
 import pipe.models.component.PetriNetComponent;
-import pipe.models.component.arc.*;
+import pipe.models.component.arc.Arc;
+import pipe.models.component.arc.ArcPoint;
+import pipe.models.component.arc.InboundArc;
+import pipe.models.component.arc.InboundNormalArc;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.naming.MultipleNamer;
@@ -123,7 +125,7 @@ public class PasteVisitorTest {
         pasteComponents.add(place);
         pasteComponents.add(transition);
 
-        Map<Token, String> weights = new HashMap<Token, String>();
+        Map<String, String> weights = new HashMap<>();
         InboundArc arc = new InboundNormalArc(place, transition, weights);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
@@ -144,7 +146,7 @@ public class PasteVisitorTest {
         pasteComponents.add(place);
 
         Transition transition = new Transition("id", "name");
-        Map<Token, String> weights = new HashMap<Token, String>();
+        Map<String, String> weights = new HashMap<>();
         InboundArc arc = new InboundNormalArc(place, transition, weights);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);
@@ -161,7 +163,7 @@ public class PasteVisitorTest {
             pasteComponents.add(place);
 
             Transition transition = new Transition("id", "name");
-            Map<Token, String> weights = new HashMap<>();
+            Map<String, String> weights = new HashMap<>();
         InboundArc arc = new InboundNormalArc(place, transition, weights);
             ArcPoint arcPoint = new ArcPoint(new Point2D.Double(200, 100), true);
             arc.addIntermediatePoint(arcPoint);
@@ -213,7 +215,7 @@ public class PasteVisitorTest {
         Transition transition = new Transition("id", "name");
         pasteComponents.add(transition);
 
-        Map<Token, String> weights = new HashMap<>();
+        Map<String, String> weights = new HashMap<>();
         InboundArc arc = new InboundNormalArc(place, transition, weights);
         pasteComponents.add(arc);
         visitor = new PasteVisitor(petriNet, pasteComponents, mockNamer);

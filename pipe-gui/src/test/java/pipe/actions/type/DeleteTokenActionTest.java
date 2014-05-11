@@ -39,25 +39,24 @@ public class DeleteTokenActionTest {
     @Mock
     private Place place;
 
-    @Mock
-    private Token mockToken;
+    private String tokenId = "Default";
 
     @Before
     public void setUp() {
         action = new DeleteTokenAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockPetriNetController.getPlaceController(place)).thenReturn(mockPlaceController);
-        when(mockPlaceController.getTokenCount(mockToken)).thenReturn(1);
+        when(mockPlaceController.getTokenCount(tokenId)).thenReturn(1);
     }
 
     @Test
     public void deletesToken() {
-        when(mockPetriNetController.getSelectedToken()).thenReturn(mockToken);
+        when(mockPetriNetController.getSelectedToken()).thenReturn(tokenId);
 
         action.doConnectableAction(place, mockPetriNetController);
 
-        Map<Token, Integer> counts = new HashMap<>();
-        counts.put(mockToken, 0);
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put(tokenId, 0);
         verify(mockPlaceController).setTokenCounts(counts);
     }
 

@@ -78,6 +78,7 @@ public class ClonePetriNet {
         switch (arc.getType()) {
             case INHIBITOR:
                 newArc = new InboundInhibitorArc(source, target);
+                break;
             default:
                 newArc = new InboundNormalArc(source, target, arc.getTokenWeights());
         }
@@ -105,8 +106,8 @@ public class ClonePetriNet {
 
     public void visit(Place place) {
         Place newPlace = new Place(place);
-        for (Map.Entry<Token, Integer> entry : place.getTokenCounts().entrySet()) {
-            newPlace.setTokenCount(newTokens.get(entry.getKey().getId()), entry.getValue());
+        for (Map.Entry<String, Integer> entry : place.getTokenCounts().entrySet()) {
+            newPlace.setTokenCount(entry.getKey(), entry.getValue());
         }
         newPetriNet.addPlace(newPlace);
         places.put(place.getId(), newPlace);

@@ -1,10 +1,9 @@
 package pipe.controllers;
 
-import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.MultipleEdit;
+import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.place.PlaceCapacity;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
@@ -24,22 +23,22 @@ public class PlaceController extends AbstractPetriNetComponentController<Place> 
     }
 
     /**
-     * @param token
+     * @param token token id
      * @return number of tokens of type token in the corresponding place
      */
-    public int getTokenCount(Token token) {
+    public int getTokenCount(String token) {
         return place.getTokenCount(token);
     }
 
     /**
      * Sets the place token counts to those in counts and registers an undo event for it
      *
-     * @param counts a map of token to its new count for the place
+     * @param counts a map of token id to its new count for the place
      */
-    public void setTokenCounts(Map<Token, Integer> counts) {
+    public void setTokenCounts(Map<String, Integer> counts) {
         List<UndoableEdit> undoableEditList = new LinkedList<>();
-        for (Map.Entry<Token, Integer> entry : counts.entrySet()) {
-            Token token = entry.getKey();
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            String token = entry.getKey();
             Integer newTokenCount = entry.getValue();
             int currentTokenCount = place.getTokenCount(token);
             UndoableEdit markingAction = new ChangePlaceTokens(place, token, currentTokenCount, newTokenCount);
@@ -76,14 +75,31 @@ public class PlaceController extends AbstractPetriNetComponentController<Place> 
     }
 
 
-    public void addTokenToPlace(Token token) {
-        Map<Token, Integer> tokenCount = new HashMap<>();
+    /**
+     *
+     * Increments the value of the specified token in a place
+     *
+     * @param token token id
+     */
+    public void addTokenToPlace(String token) {
+        Map<String, Integer> tokenCount = new HashMap<>();
         tokenCount.put(token, place.getTokenCount(token) + 1);
         setTokenCounts(tokenCount);
     }
 
-    public void deleteTokenInPlace(Token token) {
-        Map<Token, Integer> tokenCount = new HashMap<>();
+    /**
+     * Deletes a single token of the type of token specified from
+     * the underlying place.
+     *
+     * For example if the place has 3 red tokens and 2 black tokens
+     * and we call this with "red" the place will now have 2 red and two
+     * black tokens.
+     *
+     * @param token token id to decrement the count of
+     */
+    //TODO: If it had 0?
+    public void deleteTokenInPlace(String token) {
+        Map<String, Integer> tokenCount = new HashMap<>();
         tokenCount.put(token, place.getTokenCount(token) - 1);
         setTokenCounts(tokenCount);
     }

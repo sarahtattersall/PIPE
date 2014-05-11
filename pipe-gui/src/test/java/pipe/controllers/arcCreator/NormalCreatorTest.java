@@ -12,12 +12,10 @@ import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.InboundArc;
 import pipe.models.component.arc.InboundNormalArc;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -45,6 +43,8 @@ public class NormalCreatorTest {
 
     NormalCreator creator;
 
+    private static final String DEFAULT_TOKEN_ID = "Default";
+
     @Before
     public void setUp() {
 
@@ -58,13 +58,12 @@ public class NormalCreatorTest {
     public void createsCorrectArc() {
         Place source = new Place("", "");
         Transition transition = new Transition("", "");
-        Token token = new Token("Default", new Color(0, 0, 0));
-        when(mockPetriNetController.getSelectedToken()).thenReturn(token);
+        when(mockPetriNetController.getSelectedToken()).thenReturn(DEFAULT_TOKEN_ID);
          InboundArc actual = creator.createInboundArc(source, transition, new LinkedList<ArcPoint>());
 
 
-        Map<Token, String> tokens = new HashMap<>();
-        tokens.put(token, "1");
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put(DEFAULT_TOKEN_ID, "1");
 
         InboundArc expected = new InboundNormalArc(source, transition, tokens);
         assertEquals(expected, actual);

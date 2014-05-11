@@ -45,20 +45,13 @@ public class ExprEvaluator {
 
         String lexpr = new String(expr.replaceAll("\\s", ""));
 
-        Token token = null;
-        try {
-            token = petriNet.getComponent(tokenId, Token.class);
-        } catch (PetriNetComponentNotFoundException e) {
-            e.printStackTrace();
-            return -1;
-        }
         for (Place place : petriNet.getPlaces()) {
             lexpr = findAndReplaceCapacity(lexpr, place);
             String name = getPlaceNameRepresentation(place);
 
             if (lexpr.toLowerCase().contains(name.toLowerCase())) {
-                Map<Token, Integer> tokens = place.getTokenCounts();
-                int numOfToken = tokens.get(token);
+                Map<String, Integer> tokens = place.getTokenCounts();
+                int numOfToken = tokens.get(tokenId);
                 lexpr = findAndReplaceTokens(lexpr, name, numOfToken);
             }
         }

@@ -41,7 +41,7 @@ public class ANormalArcTest {
                 ANormalArc.withSource("P0").andTarget("T1").create(tokens, places, transitions, rateParameters);
 
         Arc<? extends Connectable, ? extends Connectable> expected =
-                new InboundNormalArc(places.get("P0"), transitions.get("T1"), new HashMap<Token, String>());
+                new InboundNormalArc(places.get("P0"), transitions.get("T1"), new HashMap<String, String>());
         assertEquals(expected, arc);
     }
 
@@ -54,8 +54,8 @@ public class ANormalArcTest {
                 ANormalArc.withSource("P0").andTarget("T1").with("4", "Red").tokens().create(tokens, places, transitions,
                         rateParameters);
 
-        HashMap<Token, String> tokenWeights = new HashMap<>();
-        tokenWeights.put(tokens.get("Red"), "4");
+        HashMap<String, String> tokenWeights = new HashMap<>();
+        tokenWeights.put("Red", "4");
         Arc<? extends Connectable, ? extends Connectable> expected =
                 new InboundNormalArc(places.get("P0"), transitions.get("T1"), tokenWeights);
 
@@ -73,9 +73,9 @@ public class ANormalArcTest {
                         places, transitions,
                         rateParameters);
 
-        HashMap<Token, String> tokenWeights = new HashMap<>();
-        tokenWeights.put(tokens.get("Red"), "4");
-        tokenWeights.put(tokens.get("Default"), "1");
+        HashMap<String, String> tokenWeights = new HashMap<>();
+        tokenWeights.put("Red", "4");
+        tokenWeights.put("Default", "1");
         Arc<? extends Connectable, ? extends Connectable> expected =
                 new InboundNormalArc(places.get("P0"), transitions.get("T1"), tokenWeights);
 

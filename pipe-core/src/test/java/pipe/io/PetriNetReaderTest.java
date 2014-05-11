@@ -19,15 +19,14 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PetriNetReaderTest {
 
-    private static final Token DEFAULT_TOKEN = new Token("Default", new Color(0, 0, 0));
-    private static final Token RED_TOKEN = new Token("Red", Color.RED);
-
+    private static final String DEFAULT_TOKEN = "Default";
+    private static final String RED_TOKEN = "Red";
     PetriNetReader reader;
 
     @Before
@@ -49,10 +48,8 @@ public class PetriNetReaderTest {
         assertThat(petriNet.getTokens()).isNotEmpty();
         assertThat(petriNet.getPlaces()).isNotEmpty();
 
-        Token expectedToken = new Token("Default", new Color(0, 0, 0));
-
         Place place = petriNet.getPlaces().iterator().next();
-        assertThat(place.getTokenCounts()).containsKey(expectedToken);
+        assertThat(place.getTokenCounts()).containsKey("Default");
     }
 
     @Test
@@ -92,7 +89,7 @@ public class PetriNetReaderTest {
         assertThat(petriNet.getPlaces()).hasSize(1);
         Place place = petriNet.getPlaces().iterator().next();
 
-        Map<Token, Integer> counts = place.getTokenCounts();
+        Map<String, Integer> counts = place.getTokenCounts();
         assertThat(counts).containsEntry(RED_TOKEN, 1);
     }
 
@@ -139,7 +136,7 @@ public class PetriNetReaderTest {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
 
-        Map<Token, String> weights = arc.getTokenWeights();
+        Map<String, String> weights = arc.getTokenWeights();
         assertEquals(1, weights.size());
 
         assertTrue(weights.containsKey(DEFAULT_TOKEN));
@@ -151,7 +148,7 @@ public class PetriNetReaderTest {
     public void createsMarkingWithCorrectToken() throws UnparsableException {
         PetriNet petriNet = reader.read(FileUtils.fileLocation(XMLUtils.getNormalArcWithWeight()));
         Arc<? extends Connectable, ? extends Connectable> arc = petriNet.getArcs().iterator().next();
-        Map<Token, String> weights = arc.getTokenWeights();
+        Map<String, String> weights = arc.getTokenWeights();
         assertEquals(1, weights.size());
         assertTrue(weights.containsKey(DEFAULT_TOKEN));
     }

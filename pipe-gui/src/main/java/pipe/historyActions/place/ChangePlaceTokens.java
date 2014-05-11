@@ -5,19 +5,17 @@
 package pipe.historyActions.place;
 
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * 
- * @author corveau
+ * Responsible for changing the value of a single token in a place
  */
 public class ChangePlaceTokens extends AbstractUndoableEdit
 {
 
     private final Place place;
-    private final Token token;
+    private final String token;
     private final int previousCount;
     private final int newCount;
 
@@ -57,7 +55,7 @@ public class ChangePlaceTokens extends AbstractUndoableEdit
         return result;
     }
 
-    public ChangePlaceTokens(Place place, Token token, int previousCount, int newCount) {
+    public ChangePlaceTokens(Place place, String token, int previousCount, int newCount) {
 		this.place = place;
         this.token = token;
         this.previousCount = previousCount;

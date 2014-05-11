@@ -10,15 +10,14 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.event.UndoableEditListener;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddTokenActionTest {
@@ -33,8 +32,7 @@ public class AddTokenActionTest {
     @Mock
     private Place place;
 
-    @Mock
-    private Token mockToken;
+    private static final String TOKEN_ID = "Default";
 
     @Mock
     private PipeApplicationView mockView;
@@ -50,17 +48,17 @@ public class AddTokenActionTest {
         action = new AddTokenAction(applicationModel);
         action.addUndoableEditListener(listener);
         when(mockPetriNetController.getPlaceController(place)).thenReturn(mockPlaceController);
-        when(mockPlaceController.getTokenCount(mockToken)).thenReturn(1);
+        when(mockPlaceController.getTokenCount(TOKEN_ID)).thenReturn(1);
     }
 
     @Test
     public void addsToken() {
-        when(mockPetriNetController.getSelectedToken()).thenReturn(mockToken);
+        when(mockPetriNetController.getSelectedToken()).thenReturn(TOKEN_ID);
 
         action.doConnectableAction(place, mockPetriNetController);
 
-        Map<Token, Integer> counts = new HashMap<>();
-        counts.put(mockToken, 2);
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put(TOKEN_ID, 2);
         verify(mockPlaceController).setTokenCounts(counts);
     }
 
