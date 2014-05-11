@@ -1,9 +1,9 @@
 package pipe.models.component.arc;
 
-import pipe.animation.State;
 import pipe.models.component.AbstractPetriNetComponent;
 import pipe.models.component.Connectable;
 import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.state.State;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;

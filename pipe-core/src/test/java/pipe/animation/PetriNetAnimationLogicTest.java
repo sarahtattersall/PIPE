@@ -1,7 +1,5 @@
 package pipe.animation;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -12,6 +10,8 @@ import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.state.HashedStateBuilder;
+import uk.ac.imperial.state.State;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -51,13 +51,13 @@ public class PetriNetAnimationLogicTest {
      * @return current state of the Petri net
      */
     private State getState(PetriNet petriNet) {
-        Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
+        HashedStateBuilder builder = new HashedStateBuilder();
         for (Place place : petriNet.getPlaces()) {
             for (Token token : petriNet.getTokens()) {
-                tokenCounts.put(place.getId(), new TokenCount(token.getId(), place.getTokenCount(token.getId())));
+                builder.placeWithToken(place.getId(), token.getId(), place.getTokenCount(token.getId()));
             }
         }
-        return  new HashedState(tokenCounts);
+        return builder.build();
     }
 
     @Test
@@ -299,12 +299,11 @@ public class PetriNetAnimationLogicTest {
         assertEquals(1, successors.size());
         State successor = successors.keySet().iterator().next();
 
-        Collection<TokenCount> actualP1 =   successor.getTokens("P1");
-        assertThat(actualP1).contains(new TokenCount("Default", 0));
+        int actualP1 =   successor.getTokens("P1").get("Default");
+        assertEquals(0, actualP1);
 
-
-        Collection<TokenCount> actualP2 =   successor.getTokens("P2");
-        assertThat(actualP2).contains(new TokenCount("Default", 1));
+        int actualP2 =   successor.getTokens("P2").get("Default");
+        assertEquals(1, actualP2);
     }
 
 

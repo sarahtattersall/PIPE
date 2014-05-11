@@ -1,8 +1,8 @@
 package pipe.reachability.algorithm.sequential;
 
 import pipe.reachability.algorithm.*;
-import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.io.StateProcessor;
+import uk.ac.imperial.state.ClassifiedState;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -16,8 +16,8 @@ public class SequentialStateSpaceExplorer extends AbstractStateSpaceExplorer {
 
 
     public SequentialStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
-                                        StateWriter stateWriter) {
-        super(explorerUtilities, vanishingExplorer, stateWriter);
+                                        StateProcessor stateProcessor) {
+        super(explorerUtilities, vanishingExplorer, stateProcessor);
     }
 
     /**
@@ -30,22 +30,21 @@ public class SequentialStateSpaceExplorer extends AbstractStateSpaceExplorer {
     @Override
     protected void stateSpaceExploration() throws TimelessTrapException, IOException {
         while (!explorationQueue.isEmpty()) {
-            ExplorerState state = explorationQueue.poll();
+            ClassifiedState state = explorationQueue.poll();
             successorRates.clear();
-            for (ExplorerState successor : explorerUtilities.getSuccessors(state)) {
+            for (ClassifiedState successor : explorerUtilities.getSuccessors(state)) {
                 double rate = explorerUtilities.rate(state, successor);
                 if (successor.isTangible()) {
-                    registerStateTransition(state, successor, rate);
+                    registerStateTransition(successor, rate);
                 } else {
                     Collection<StateRateRecord> explorableStates = vanishingExplorer.explore(successor, rate);
                     for (StateRateRecord record : explorableStates) {
-                        registerStateTransition(state, record.getState(), record.getRate());
+                        registerStateTransition(record.getState(), record.getRate());
                     }
                 }
             }
             writeStateTransitions(state, successorRates);
             explorerUtilities.clear();
-            stateWriter.clear();
         }
     }
 }

@@ -21,6 +21,7 @@ public class PetriNetAnimatorTest {
 
     @Test
     public void correctlyIncrementsTokenCountInSelfLoop() throws PetriNetComponentNotFoundException {
+
         PetriNet petriNet = createSelfLoopPetriNet("1");
         Place place = petriNet.getComponent("P0", Place.class);
         place.setTokenCount("Default", 1);

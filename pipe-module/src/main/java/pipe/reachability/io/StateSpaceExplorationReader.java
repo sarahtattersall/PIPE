@@ -1,6 +1,6 @@
 package pipe.reachability.io;
 
-import pipe.reachability.state.Record;
+import uk.ac.imperial.state.Record;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

@@ -1,11 +1,10 @@
 package pipe.reachability;
 
+import com.esotericsoftware.kryo.io.Output;
 import pipe.reachability.algorithm.ExplorerUtilities;
-import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.io.WriterFormatter;
-
-import java.io.ObjectOutputStream;
+import uk.ac.imperial.io.StateProcessor;
+import uk.ac.imperial.io.StateWriter;
 
 /**
  * Useful class to distinguish in Cucumber integration tests whether
@@ -14,7 +13,7 @@ import java.io.ObjectOutputStream;
  */
 public interface StateExplorerUtils {
 
-    StateWriter getTangibleStateExplorer(WriterFormatter formatter, ObjectOutputStream outputStream);
+    StateProcessor getTangibleStateExplorer(StateWriter stateWriter, Output outputStream);
     VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities);
 
 }

@@ -1,13 +1,12 @@
 package pipe.animation;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.FunctionalResults;
+import uk.ac.imperial.state.HashedStateBuilder;
+import uk.ac.imperial.state.State;
 
 import java.util.*;
 
@@ -75,46 +74,47 @@ public class PetriNetAnimationLogic implements AnimationLogic {
     //TODO: This method is a bit too long
     @Override
     public State getFiredState(State state, Transition transition) {
-        Multimap<String, TokenCount> placeTokenCounts = HashMultimap.create();
+        HashedStateBuilder builder = new HashedStateBuilder();
+        for (Place place : petriNet.getPlaces()) { //Copy tokens
+            builder.placeWithTokens(place.getId(), state.getTokens(place.getId()));
+        }
+
         Set<Transition> enabled = getEnabledTransitions(state);
-        Set<Place> seenPlaces = new HashSet<>();
         if (enabled.contains(transition)) {
+
             //Decrement previous places
             for (Arc<Place, Transition> arc : petriNet.inboundArcs(transition)) {
-                seenPlaces.add(arc.getSource());
                 String placeId = arc.getSource().getId();
                 Map<String, String> arcWeights = arc.getTokenWeights();
-                for (TokenCount tokenCount : state.getTokens(placeId)) {
-                    if (arcWeights.containsKey(tokenCount.token)) {
-                        int currentCount = tokenCount.count;
-                        double arcWeight = getArcWeight(arcWeights.get(tokenCount.token));
+                for (Map.Entry<String, Integer> entry : state.getTokens(placeId).entrySet()) {
+                    String tokenId = entry.getKey();
+                    if (arcWeights.containsKey(tokenId)) {
+                        int currentCount = entry.getValue();
+                        double arcWeight = getArcWeight(arcWeights.get(tokenId));
                         int newCount = (int) (currentCount - arcWeight);
-                        placeTokenCounts.put(placeId, new TokenCount(tokenCount.token, newCount));
+
+                        builder.placeWithToken(placeId, tokenId, newCount);
                     }
                 }
             }
 
-            for (Place place : Sets.difference(new HashSet<>(petriNet.getPlaces()), seenPlaces)) {
-                for (TokenCount tokenCount : state.getTokens(place.getId())) {
-                    placeTokenCounts.put(place.getId(), new TokenCount(tokenCount.token, tokenCount.count));
-                }
-            }
+
+            State temporaryState = builder.build();
 
 
             //Increment new places
             for (Arc<Transition, Place> arc : petriNet.outboundArcs(transition)) {
                 String placeId = arc.getTarget().getId();
                 Map<String, String> arcWeights = arc.getTokenWeights();
-                for (TokenCount tokenCount : placeTokenCounts.get(placeId)) {
-                    if (arcWeights.containsKey(tokenCount.token)) {
-                        int currentCount = tokenCount.count;
-                        double arcWeight = getArcWeight(arcWeights.get(tokenCount.token));
-                        tokenCount.count = (int) (currentCount + arcWeight);
-                    }
+                for (Map.Entry<String, String> entry : arcWeights.entrySet()) {
+                    String tokenId = entry.getKey();
+                    int currentCount = temporaryState.getTokens(placeId).get(tokenId);
+                    double arcWeight = getArcWeight(entry.getValue());
+                    builder.placeWithToken(placeId, tokenId, (int) (currentCount + arcWeight));
                 }
             }
         }
-        return new HashedState(placeTokenCounts);
+        return builder.build();
     }
 
     /**

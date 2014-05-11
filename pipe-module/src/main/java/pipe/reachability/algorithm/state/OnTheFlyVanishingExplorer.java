@@ -5,7 +5,7 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.state.ClassifiedState;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -52,7 +52,7 @@ public class OnTheFlyVanishingExplorer implements VanishingExplorer {
     }
 
     @Override
-    public Collection<StateRateRecord> explore(ExplorerState vanishingState, double rate)
+    public Collection<StateRateRecord> explore(ClassifiedState vanishingState, double rate)
             throws TimelessTrapException {
         Deque<StateRateRecord> vanishingStack = new ArrayDeque<>();
         vanishingStack.push(new StateRateRecord(vanishingState, rate));
@@ -60,8 +60,8 @@ public class OnTheFlyVanishingExplorer implements VanishingExplorer {
         Collection<StateRateRecord> tangibleStatesFound = new LinkedList<>();
         while (!vanishingStack.isEmpty() && iterations < ALLOWED_ITERATIONS) {
             StateRateRecord record = vanishingStack.pop();
-            ExplorerState previous = record.getState();
-            for (ExplorerState successor : explorerUtilities.getSuccessors(previous)) {
+            ClassifiedState previous = record.getState();
+            for (ClassifiedState successor : explorerUtilities.getSuccessors(previous)) {
                 double successorRate = record.getRate() * probability(previous, successor);
                 if (successor.isTangible()) {
                     tangibleStatesFound.add(new StateRateRecord(successor, successorRate));
@@ -88,7 +88,7 @@ public class OnTheFlyVanishingExplorer implements VanishingExplorer {
      * @param successor next state
      * @return the probability of transitioning to the successor state from state
      */
-    private double probability(ExplorerState state, ExplorerState successor) {
+    private double probability(ClassifiedState state, ClassifiedState successor) {
         Collection<Transition> marked = explorerUtilities.getTransitions(state, successor);
         if (marked.isEmpty()) {
             return 0;

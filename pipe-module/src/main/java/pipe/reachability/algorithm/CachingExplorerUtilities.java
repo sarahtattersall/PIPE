@@ -1,17 +1,18 @@
 package pipe.reachability.algorithm;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import pipe.animation.*;
+import pipe.animation.AnimationLogic;
+import pipe.animation.PetriNetAnimationLogic;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.PetriNetWeightParser;
-import pipe.reachability.state.ExplorerState;
-import pipe.reachability.state.HashedExplorerState;
 import pipe.visitor.ClonePetriNet;
+import uk.ac.imperial.state.ClassifiedState;
+import uk.ac.imperial.state.HashedClassifiedState;
+import uk.ac.imperial.state.HashedStateBuilder;
+import uk.ac.imperial.state.State;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +40,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * It will be most useful when exploring cyclic transitions
      * It is thread safe due to the nature of this class being accessed from many threads
      */
-    private Map<ExplorerState, Map<ExplorerState, Collection<Transition>>> cachedSuccessors = new ConcurrentHashMap<>();
+    private Map<ClassifiedState, Map<ClassifiedState, Collection<Transition>>> cachedSuccessors = new ConcurrentHashMap<>();
 
     /**
      * Takes a copy of the Petri net to use for state space exploration so
@@ -64,15 +65,15 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * @return map of successor states to the transitions that caused them
      */
     @Override
-    public Map<ExplorerState, Collection<Transition>> getSuccessorsWithTransitions(ExplorerState state) {
+    public Map<ClassifiedState, Collection<Transition>> getSuccessorsWithTransitions(ClassifiedState state) {
 
         if (cachedSuccessors.containsKey(state)) {
             return cachedSuccessors.get(state);
         }
 
-        Map<ExplorerState, Collection<Transition>> successors = new HashMap<>();
+        Map<ClassifiedState, Collection<Transition>> successors = new HashMap<>();
         for (Map.Entry<State, Collection<Transition>> entry : animationLogic.getSuccessors(
-                state.getState()).entrySet()) {
+                state).entrySet()) {
             successors.put(createState(entry.getKey()), entry.getValue());
         }
         cachedSuccessors.put(state, successors);
@@ -81,12 +82,12 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     }
 
     @Override
-    public Collection<ExplorerState> getSuccessors(ExplorerState state) {
+    public Collection<ClassifiedState> getSuccessors(ClassifiedState state) {
         return getSuccessorsWithTransitions(state).keySet();
     }
 
     @Override
-    public double rate(ExplorerState state, ExplorerState successor) {
+    public double rate(ClassifiedState state, ClassifiedState successor) {
         Collection<Transition> transitionsToSuccessor = getTransitions(state, successor);
         return getWeightOfTransitions(transitionsToSuccessor);
     }
@@ -99,21 +100,21 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * @return current state of the Petri net
      */
     @Override
-    public ExplorerState getCurrentState() {
-        Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
+    public ClassifiedState getCurrentState() {
+        HashedStateBuilder builder = new HashedStateBuilder();
         for (Place place : petriNet.getPlaces()) {
             for (Token token : petriNet.getTokens()) {
-                tokenCounts.put(place.getId(), new TokenCount(token.getId(), place.getTokenCount(token.getId())));
+                builder.placeWithToken(place.getId(), token.getId(), place.getTokenCount(token.getId()));
             }
         }
 
-        return createState(new HashedState(tokenCounts));
+        return createState(builder.build());
     }
 
-    private ExplorerState createState(State tokenCounts) {
+    private ClassifiedState createState(State tokenCounts) {
         boolean tanigble = isTangible(tokenCounts);
-        return (tanigble ? HashedExplorerState.tangibleState(tokenCounts) :
-                HashedExplorerState.vanishingState(tokenCounts));
+        return (tanigble ? HashedClassifiedState.tangibleState(tokenCounts) :
+                HashedClassifiedState.vanishingState(tokenCounts));
     }
 
     /**
@@ -151,8 +152,8 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * an empty Collection will be returned
      */
     @Override
-    public Collection<Transition> getTransitions(ExplorerState state, ExplorerState successor) {
-        Map<ExplorerState, Collection<Transition>> stateTransitions = getSuccessorsWithTransitions(state);
+    public Collection<Transition> getTransitions(ClassifiedState state, ClassifiedState successor) {
+        Map<ClassifiedState, Collection<Transition>> stateTransitions = getSuccessorsWithTransitions(state);
             if (stateTransitions.containsKey(successor)) {
                 return stateTransitions.get(successor);
             }
@@ -187,7 +188,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * @return all enabled transitions for the specified state
      */
     @Override
-    public Collection<Transition> getAllEnabledTransitions(ExplorerState state) {
+    public Collection<Transition> getAllEnabledTransitions(ClassifiedState state) {
         Collection<Transition> results = new LinkedList<>();
         for (Collection<Transition> transitions : getSuccessorsWithTransitions(state).values()) {
             results.addAll(transitions);

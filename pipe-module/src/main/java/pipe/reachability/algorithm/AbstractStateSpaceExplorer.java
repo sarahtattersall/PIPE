@@ -1,9 +1,10 @@
 package pipe.reachability.algorithm;
 
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
-import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExploredSet;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.io.StateProcessor;
+import uk.ac.imperial.state.ClassifiedState;
+import uk.ac.imperial.state.State;
+import uk.ac.imperial.utils.ExploredSet;
 
 import java.io.IOException;
 import java.util.*;
@@ -11,9 +12,9 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
-     * Used for writing transitions
+     * Used for processing transitions
      */
-    protected final StateWriter stateWriter;
+    protected final StateProcessor stateProcessor;
 
     /**
      * Used for exploring vanishing states
@@ -30,7 +31,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      * all successors of a state. It is then used to write the records to the stateWriter
      * only once all successors have been processed.
      */
-    protected final Map<ExplorerState, Double> successorRates = new HashMap<>();
+    protected final Map<ClassifiedState, Double> successorRates = new HashMap<>();
 
 
     /**
@@ -41,7 +42,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     /**
      * Queue for states yet to be explored
      */
-    protected Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
+    protected Queue<ClassifiedState> explorationQueue = new ArrayDeque<>();
 
     /**
      * Contains states that have already been explored.
@@ -50,28 +51,28 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
     protected ExploredSet explored;
 
     /**
-     * Number of states that have been written to the writer
+     * Number of states that have been processed during exploraton
      */
-    public int writtenCount = 0;
+    public int processedCount = 0;
 
     public AbstractStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
-                                      StateWriter stateWriter) {
+                                      StateProcessor stateProcessor) {
         this.explorerUtilities = explorerUtilities;
         this.vanishingExplorer = vanishingExplorer;
-        this.stateWriter = stateWriter;
+        this.stateProcessor = stateProcessor;
     }
 
     @Override
-    public void generate(ExplorerState initialState)
+    public int generate(ClassifiedState initialState)
             throws TimelessTrapException, InterruptedException, ExecutionException, IOException {
-        initialiseExplorerd(initialState);
+        initialiseExplored(initialState);
         exploreInitialState(initialState);
         stateSpaceExploration();
-        System.out.println("Wrote " + writtenCount + " Transitions");
+        return processedCount;
 
     }
 
-    private void initialiseExplorerd(ExplorerState state) {
+    private void initialiseExplored(State state) {
         List<String> placeOrder = getPlaceNames(state);
         explored = new ExploredSet(300_000, placeOrder);
     }
@@ -81,8 +82,8 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      * @param state
      * @return List of place names contained in state
      */
-    private List<String> getPlaceNames(ExplorerState state) {
-        return new LinkedList<>(state.getState().asMap().keySet());
+    private List<String> getPlaceNames(State state) {
+        return new LinkedList<>(state.getPlaces());
     }
 
     /**
@@ -95,14 +96,14 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      *
      * @param initialState starting state of the algorithm
      */
-    protected void exploreInitialState(ExplorerState initialState) throws TimelessTrapException {
+    protected void exploreInitialState(ClassifiedState initialState) throws TimelessTrapException {
         if (initialState.isTangible()) {
             explorationQueue.add(initialState);
             markAsExplored(initialState);
         } else {
             Collection<StateRateRecord> explorableStates = vanishingExplorer.explore(initialState, 1.0);
             for (StateRateRecord record : explorableStates) {
-                registerStateTransition(null, record.getState(), record.getRate());
+                registerStateTransition(record.getState(), record.getRate());
             }
         }
 
@@ -117,19 +118,17 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      * @param state state that has been explored
      */
     //TODO: IMPLEMENT COMPRESSED VERSION
-    protected void markAsExplored(ExplorerState state) {
+    protected void markAsExplored(ClassifiedState state) {
         explored.add(state);
     }
 
     /**
      * registers a transition to the successor in stateRecords and
      * adds the successor to the exploredQueue if it is not already contained in it.
-     *
-     * @param state     current state
-     * @param successor state that is possible via an enabled transition from state
+     *  @param successor state that is possible via an enabled transition from state
      * @param rate      rate at which state transitions to successor
      */
-    protected void registerStateTransition(ExplorerState state, ExplorerState successor, double rate) {
+    protected void registerStateTransition(ClassifiedState successor, double rate) {
         registerStateRate(successor, rate);
         if (!explored.contains(successor)) {
             explorationQueue.add(successor);
@@ -146,7 +145,7 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      * @param successor key to successor rates
      * @param rate      rate at which successor is entered via some transition
      */
-    protected void registerStateRate(ExplorerState successor, double rate) {
+    protected void registerStateRate(ClassifiedState successor, double rate) {
         if (successorRates.containsKey(successor)) {
             double previousRate = successorRates.get(successor);
             successorRates.put(successor, previousRate + rate);
@@ -166,12 +165,8 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
      * @param state the current state that successors belong to
      * @param successorRates
      */
-    protected void writeStateTransitions(ExplorerState state, Map<ExplorerState, Double> successorRates) {
-        for (Map.Entry<ExplorerState, Double> entry : successorRates.entrySet()) {
-            ExplorerState successor = entry.getKey();
-            double rate = entry.getValue();
-            stateWriter.transition(state, successor, rate);
-            writtenCount++;
-        }
+    protected void writeStateTransitions(ClassifiedState state, Map<ClassifiedState, Double> successorRates) {
+        stateProcessor.processTransitions(state, successorRates);
+        processedCount += successorRates.size();
     }
 }
