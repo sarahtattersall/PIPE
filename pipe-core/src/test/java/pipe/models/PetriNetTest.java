@@ -50,7 +50,7 @@ public class PetriNetTest {
     @Test
     public void addingPlaceNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Place place = new Place("", "");
+        Place place = new Place("P1", "P1");
         net.addPlace(place);
 
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
@@ -457,4 +457,39 @@ public class PetriNetTest {
         a.setId("A1");
         assertEquals(a, net.getComponent(a.getId(), InboundArc.class));
     }
+
+    @Test
+    public void changingTokenIdChangesPlaceReferences() {
+        Token token = new Token("Default", Color.BLACK);
+        Place place = new Place("P1", "P1");
+        place.setTokenCount(token.getId(), 5);
+
+        net.addToken(token);
+        net.addPlace(place);
+        token.setId("Red");
+
+        assertEquals(0, place.getTokenCount("Default"));
+        assertEquals(5, place.getTokenCount("Red"));
+    }
+
+    @Test
+    public void changingTokenIdChangesArcReferences() {
+        Place p = new Place("P0", "P0");
+        Transition t = new Transition("T0", "T0");
+        Token token = new Token("Default", Color.BLACK);
+
+        HashMap<String, String> weights = new HashMap<>();
+        weights.put(token.getId(), "5");
+        InboundArc a = new InboundNormalArc(p, t, weights);
+
+        net.addToken(token);
+        net.addPlace(p);
+        net.addTransition(t);
+        net.addArc(a);
+
+        token.setId("Red");
+        assertEquals("0", a.getWeightForToken("Default"));
+        assertEquals("5", a.getWeightForToken("Red"));
+    }
+
 }

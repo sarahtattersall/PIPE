@@ -401,6 +401,7 @@ public class PetriNet {
         if (!tokens.containsValue(token)) {
             tokens.put(token.getId(), token);
             token.addPropertyChangeListener(new NameChangeListener<>(token, tokens));
+            token.addPropertyChangeListener(new TokenNameChanger());
             changeSupport.firePropertyChange(NEW_TOKEN_CHANGE_MESSAGE, null, token);
         }
     }
@@ -759,13 +760,16 @@ public class PetriNet {
         return functionalWeightParser.evaluateExpression(expr);
     }
 
+    /**
+     * Listener for changing a components name in the set it is referenced by
+     * @param <T>
+     */
     private static class NameChangeListener<T extends PetriNetComponent> implements PropertyChangeListener {
         private final T component;
 
         private final Map<String, T> componentMap;
 
         public NameChangeListener(T component, Map<String, T> componentMap) {
-
             this.component = component;
             this.componentMap = componentMap;
         }
@@ -779,6 +783,52 @@ public class PetriNet {
                 componentMap.put(newId, component);
             }
 
+        }
+    }
+
+    private class TokenNameChanger implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(AbstractPetriNetComponent.ID_CHANGE_MESSAGE)) {
+                String oldId = (String) evt.getOldValue();
+                String newId = (String) evt.getNewValue();
+                changePlaceTokens(oldId, newId);
+                changeArcTokens(oldId, newId);
+            }
+        }
+
+
+        /**
+         *
+         * Changes references of token counts in place containing old id to new id
+         *
+         * @param oldId old token id
+         * @param newId new token id
+         */
+        private void changePlaceTokens(String oldId, String newId) {
+            for (Place place : getPlaces()) {
+                int count = place.getTokenCount(oldId);
+                place.removeAllTokens(oldId);
+                place.setTokenCount(newId, count);
+            }
+        }
+
+        /**
+         *
+         * Changes references of token weights in arcs from old id to new id
+         *
+         * @param oldId old token id
+         * @param newId new token id
+         */
+        private void changeArcTokens(String oldId, String newId) {
+            for (Arc<? extends Connectable, ? extends Connectable> arc : getArcs()) {
+                if (arc.getTokenWeights().containsKey(oldId)) {
+                    String weight = arc.getWeightForToken(oldId);
+                    arc.removeAllTokenWeights(oldId);
+                    arc.setWeight(newId, weight);
+                }
+            }
         }
     }
 }
