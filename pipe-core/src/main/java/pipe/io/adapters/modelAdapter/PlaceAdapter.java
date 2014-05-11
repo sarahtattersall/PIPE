@@ -6,7 +6,6 @@ import pipe.io.adapters.model.NameDetails;
 import pipe.io.adapters.model.OffsetGraphics;
 import pipe.io.adapters.model.Point;
 import pipe.io.adapters.utils.ConnectableUtils;
-import pipe.io.adapters.utils.TokenUtils;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 
@@ -66,27 +65,25 @@ public class PlaceAdapter extends XmlAdapter<AdaptedPlace, Place> {
         return adapted;
     }
 
-    private String weightToString(Map<Token, Integer> weights) {
+    private String weightToString(Map<String, Integer> weights) {
         return Joiner.on(",").withKeyValueSeparator(",").join(weights);
     }
 
-    public Map<Token, Integer> stringToWeights(String value) {
-        Map<Token, Integer> tokenWeights = new HashMap<Token, Integer>();
+    public Map<String, Integer> stringToWeights(String value) {
+        Map<String, Integer> tokenWeights = new HashMap<>();
         if (value.isEmpty()) {
             return tokenWeights;
         }
 
         String[] commaSeperatedMarkings = value.split(",");
         if (commaSeperatedMarkings.length == 1) {
-            Token token = TokenUtils.getOrCreateDefaultToken(tokens);
             Integer weight = Integer.valueOf(commaSeperatedMarkings[0]);
-            tokenWeights.put(token, weight);
+            tokenWeights.put("Default", weight);
         } else {
             for (int i = 0; i < commaSeperatedMarkings.length; i += 2) {
                 Integer weight = Integer.valueOf(commaSeperatedMarkings[i + 1].replace("@", ","));
                 String tokenName = commaSeperatedMarkings[i];
-                Token token = getTokenIfExists(tokenName);
-                tokenWeights.put(token, weight);
+                tokenWeights.put(tokenName, weight);
             }
         }
         return tokenWeights;

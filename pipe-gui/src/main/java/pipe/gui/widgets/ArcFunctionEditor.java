@@ -1,28 +1,32 @@
 package pipe.gui.widgets;
 
-import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.ArcController;
-import pipe.models.petrinet.PetriNet;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
+import pipe.models.petrinet.ExprEvaluator;
+import pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ArcFunctionEditor extends JPanel {
     private PetriNet petriNet;
     private EscapableDialog _rootPane;
     private ArcController<?,?> arcController;
-    private Token token;
+
+    /**
+     * Token id
+     */
+    private String token;
     private ArcWeightEditorPanel awep;
 
     public ArcFunctionEditor(ArcWeightEditorPanel awep,
                              EscapableDialog guiDialog, PetriNet petriNet,
-                             ArcController<?,?> arcController, Token token) {
+                             ArcController<?,?> arcController, String token) {
         this.awep = awep;
         this.petriNet = petriNet;
         _rootPane = guiDialog;
@@ -43,12 +47,12 @@ public class ArcFunctionEditor extends JPanel {
         north.setBorder(
                 javax.swing.BorderFactory.createTitledBorder("Places input:"));
 
-        List<String> placename = new LinkedList<String>();
+        Collection<String> placeNames = new LinkedList<>();
         for (Place place : petriNet.getPlaces()) {
-            placename.add(place.getName());
+            placeNames.add(place.getName());
         }
 
-        JComboBox places = new JComboBox(placename.toArray());
+        JComboBox places = new JComboBox(placeNames.toArray());
         north.add(places);
 
         JPanel south = new JPanel(new FlowLayout());
@@ -69,11 +73,11 @@ public class ArcFunctionEditor extends JPanel {
                     //TODO: PASS THIS IN
 
                     ExprEvaluator parser = new ExprEvaluator(petriNet);
-                    if (parser.parseAndEvalExpr(func, token.getId()) != -1) {
-                        awep.setWeight(func, token.getId());
+                    if (parser.parseAndEvalExpr(func, token) != -1) {
+                        awep.setWeight(func, token);
                     }
                     else {
-                        if (parser.parseAndEvalExpr(func, token.getId()) ==
+                        if (parser.parseAndEvalExpr(func, token) ==
                                 -2) {
                             JOptionPane.showMessageDialog(null,
                                     "Please make sure division and floating numbers are " +

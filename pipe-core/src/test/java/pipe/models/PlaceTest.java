@@ -143,33 +143,29 @@ public class PlaceTest {
 
     @Test
     public void addNewTokenSetsCountToOne() {
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.incrementTokenCount(token);
-        assertEquals(1, place.getTokenCount(token));
+        place.incrementTokenCount("red");
+        assertEquals(1, place.getTokenCount("red"));
     }
 
     @Test
     public void addExistingTokenIncrementsCount() {
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.incrementTokenCount(token);
+        place.incrementTokenCount("red");
 
-        place.incrementTokenCount(token);
-        assertEquals(2, place.getTokenCount(token));
+        place.incrementTokenCount("red");
+        assertEquals(2, place.getTokenCount("red"));
     }
 
     @Test
     public void decrementExistingTokenDecreasesCount() {
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.incrementTokenCount(token);
+        place.incrementTokenCount("red");
 
-        place.decrementTokenCount(token);
-        assertEquals(0, place.getTokenCount(token));
+        place.decrementTokenCount("red");
+        assertEquals(0, place.getTokenCount("red"));
     }
 
     @Test
     public void tokenCountIsZeroIfPlaceDoesNotContainToken() {
-        Token token = new Token("red", new Color(255, 0, 0));
-        assertEquals(0, place.getTokenCount(token));
+        assertEquals(0, place.getTokenCount("red"));
     }
 
     @Test
@@ -177,8 +173,7 @@ public class PlaceTest {
         exception.expect(RuntimeException.class);
         exception.expectMessage("Cannot set token count that exceeds the capacity");
         place.setCapacity(1);
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.setTokenCount(token, 2);
+        place.setTokenCount("red", 2);
     }
 
     @Test
@@ -187,9 +182,8 @@ public class PlaceTest {
         exception.expectMessage("Cannot set token count that exceeds the capacity");
         place.setCapacity(1);
 
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.incrementTokenCount(token);
-        place.incrementTokenCount(token);
+        place.incrementTokenCount("red");
+        place.incrementTokenCount("red");
     }
 
     @Test
@@ -197,8 +191,7 @@ public class PlaceTest {
         int capacity = 0;
         place.setCapacity(capacity);
 
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.incrementTokenCount(token);
+        place.incrementTokenCount("red");
     }
 
     @Test
@@ -207,9 +200,8 @@ public class PlaceTest {
         exception.expectMessage("Count of tokens exceeds capacity!");
         place.setCapacity(1);
 
-        Token token = new Token("red",  new Color(255, 0, 0));
-        Map<Token, Integer> tokenCounts = new HashMap<>();
-        tokenCounts.put(token, 10);
+        Map<String, Integer> tokenCounts = new HashMap<>();
+        tokenCounts.put("red", 10);
 
         place.setTokenCounts(tokenCounts);
     }
@@ -219,10 +211,9 @@ public class PlaceTest {
         int capacity = 1;
         place.setCapacity(capacity);
 
-        Token token = new Token("red", new Color(255, 0, 0));
-        place.incrementTokenCount(token);
+        place.incrementTokenCount("red");
 
-        place.setTokenCount(token, 1);
+        place.setTokenCount("red", 1);
     }
 
     @Test
@@ -231,12 +222,10 @@ public class PlaceTest {
         place.setCapacity(capacity);
 
         int redTokenCount = 3;
-        Token redToken = new Token("red",  new Color(255, 0, 0));
-        place.setTokenCount(redToken, 3);
+        place.setTokenCount("red", 3);
 
         int blueTokenCount = 10;
-        Token blueToken = new Token("red", new Color(0, 0, 255));
-        place.setTokenCount(blueToken, blueTokenCount);
+        place.setTokenCount("blue", blueTokenCount);
 
         assertEquals(redTokenCount + blueTokenCount, place.getNumberOfTokensStored());
     }
@@ -244,19 +233,18 @@ public class PlaceTest {
     @Test
     public void notifiesObserverOnTokenChange() {
         PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
-        Token defaultToken = TokenUtils.createDefaultToken();
+
         place.addPropertyChangeListener(mockListener);
 
-        place.setTokenCount(defaultToken, 7);
+        place.setTokenCount("Default", 7);
         verify(mockListener).propertyChange(any(PropertyChangeEvent.class));
     }
 
     @Test
     public void notifiesObserverOnTokenMapChange() {
-        Map<Token, Integer> tokenCounts = new HashMap<Token, Integer>();
+        Map<String, Integer> tokenCounts = new HashMap<>();
         PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
-        Token defaultToken = TokenUtils.createDefaultToken();
-        tokenCounts.put(defaultToken, 7);
+        tokenCounts.put("Default", 7);
         place.addPropertyChangeListener(mockListener);
 
         place.setTokenCounts(tokenCounts);

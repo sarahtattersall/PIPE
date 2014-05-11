@@ -15,7 +15,6 @@ import pipe.historyActions.component.AddPetriNetObject;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.arc.OutboundArc;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.utilities.transformers.Contains;
@@ -55,8 +54,7 @@ public class ArcActionTest {
     @Mock
     private PetriNetTab mockTab;
 
-    @Mock
-    private Token activeToken;
+    private static final String ACTIVE_TOKEN_ID = "Default";
 
     @Mock
     private ArcSourceVisitor mockSourceVisitor;
@@ -68,10 +66,10 @@ public class ArcActionTest {
     public void setUp() {
         when(mockController.getPetriNet()).thenReturn(mockNet);
 
-        when(mockApplicationView.getSelectedTokenName()).thenReturn("Default");
+        when(mockApplicationView.getSelectedTokenName()).thenReturn(ACTIVE_TOKEN_ID);
 
         when(mockController.getPetriNetTab()).thenReturn(mockTab);
-        when(mockController.getSelectedToken()).thenReturn(activeToken);
+        when(mockController.getSelectedToken()).thenReturn(ACTIVE_TOKEN_ID);
 
         when(mockApplicationController.getActivePetriNetController()).thenReturn(mockController);
 

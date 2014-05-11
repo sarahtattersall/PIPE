@@ -1,6 +1,7 @@
 package pipe.models.component.arc;
 
 import pipe.animation.State;
+import pipe.animation.TokenCount;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
@@ -17,7 +18,7 @@ import java.util.Map;
  * this arc will produce
  */
 public class OutboundNormalArc extends OutboundArc {
-    public OutboundNormalArc(Transition source, Place target, Map<Token, String> tokenWeights) {
+    public OutboundNormalArc(Transition source, Place target, Map<String, String> tokenWeights) {
         super(source, target, tokenWeights, ArcType.NORMAL);
     }
 
@@ -65,7 +66,7 @@ public class OutboundNormalArc extends OutboundArc {
 
     private int getTokenCounts(PetriNet petriNet, Arc<? extends Connectable, ? extends Connectable> arc) {
         int count = 0;
-        for (Map.Entry<Token, String> entry : arc.tokenWeights.entrySet()) {
+        for (Map.Entry<String, String> entry : arc.tokenWeights.entrySet()) {
             FunctionalResults<Double> result =  petriNet.parseExpression(entry.getValue());
             if (result.hasErrors()) {
                 throw new RuntimeException("Cannot parse outbound arc weight");
@@ -79,8 +80,8 @@ public class OutboundNormalArc extends OutboundArc {
     private int getTokensInPlace(State state) {
         Place place = getTarget();
         int count = 0;
-        for (Integer value : state.getTokens(place.getId()).values()) {
-            count += value;
+        for (TokenCount tokenCount : state.getTokens(place.getId())) {
+            count += tokenCount.count;
         }
         return count;
     }

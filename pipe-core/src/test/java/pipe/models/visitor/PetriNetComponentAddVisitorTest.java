@@ -34,7 +34,7 @@ public class PetriNetComponentAddVisitorTest {
     public void testAddsInboundNormalArc() {
         Place place = new Place("", "");
         Transition transition = new Transition("", "");
-        Map<Token, String> weights = new HashMap<>();
+        Map<String, String> weights = new HashMap<>();
         InboundArc arc = new InboundNormalArc(place, transition, weights);
         arc.accept(visitor);
         verify(mockNet).addArc(arc);
@@ -46,7 +46,7 @@ public class PetriNetComponentAddVisitorTest {
     public void testAddsOutboundNormalArc() {
         Place place = new Place("", "");
         Transition transition = new Transition("", "");
-        Map<Token, String> weights = new HashMap<>();
+        Map<String, String> weights = new HashMap<>();
         OutboundArc arc = new OutboundNormalArc(transition, place, weights);
         arc.accept(visitor);
         verify(mockNet).addArc(arc);

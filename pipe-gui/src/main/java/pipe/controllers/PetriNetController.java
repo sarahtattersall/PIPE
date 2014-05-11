@@ -77,9 +77,9 @@ public class PetriNetController implements IController, Serializable {
     private final UniqueNamer transitionNamer;
 
     /**
-     * Token that is currently selected in the drop down
+     * Token id that is currently selected in the drop down
      */
-    private Token selectedToken;
+    private String selectedToken;
 
     /**
      * Animator class for animating tokens in the petri net
@@ -116,7 +116,7 @@ public class PetriNetController implements IController, Serializable {
         this.animator = animator;
         this.copyPasteManager = copyPasteManager;
         if (model.getTokens().size() > 0) {
-            selectedToken = model.getTokens().iterator().next();
+            selectedToken = model.getTokens().iterator().next().getId();
         }
         placeNamer = new PlaceNamer(model);
         transitionNamer = new TransitionNamer(model);
@@ -341,7 +341,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
     public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {
-        selectToken(getToken(tokenName));
+        selectedToken = tokenName;
     }
 
     /**
@@ -351,11 +351,6 @@ public class PetriNetController implements IController, Serializable {
      */
     public Token getToken(String name) throws PetriNetComponentNotFoundException {
         return petriNet.getComponent(name, Token.class);
-    }
-
-    //TODO: Should this be in the model???
-    public void selectToken(Token token) {
-        this.selectedToken = token;
     }
 
     public void copySelection() {
@@ -370,7 +365,7 @@ public class PetriNetController implements IController, Serializable {
         copyPasteManager.cancelPaste();
     }
 
-    public Token getSelectedToken() {
+    public String getSelectedToken() {
         return selectedToken;
     }
 

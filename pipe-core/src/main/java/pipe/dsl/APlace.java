@@ -59,10 +59,7 @@ public class APlace implements DSLCreator<Place> {
         place.setY(y);
 
         place.setCapacity(capacity);
-
-        for (Map.Entry<String, Integer> entry : tokenCounts.entrySet()) {
-            place.setTokenCount(tokens.get(entry.getKey()), entry.getValue());
-        }
+        place.setTokenCounts(tokenCounts);
 
         places.put(id, place);
         return place;

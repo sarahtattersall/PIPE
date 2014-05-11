@@ -41,8 +41,8 @@ public class APetriNetTest {
         expected.addPlace(place);
         Transition transition = new Transition("T0", "T0");
         expected.addTransition(transition);
-        Map<Token, String> arcWeights = new HashMap<>();
-        arcWeights.put(token, "5");
+        Map<String, String> arcWeights = new HashMap<>();
+        arcWeights.put(token.getId(), "5");
         InboundArc arc = new InboundNormalArc(place, transition, arcWeights);
         expected.addArc(arc);
 
@@ -77,9 +77,9 @@ public class APetriNetTest {
 
         Place p0 = new Place("P0", "P0");
         p0.setCapacity(10);
-        Map<Token, Integer> p0Tokens = new HashMap<>();
-        p0Tokens.put(blue, 5);
-        p0Tokens.put(red, 2);
+        Map<String, Integer> p0Tokens = new HashMap<>();
+        p0Tokens.put(blue.getId(), 5);
+        p0Tokens.put(red.getId(), 2);
         p0.setTokenCounts(p0Tokens);
         expected.addPlace(p0);
 
@@ -91,9 +91,9 @@ public class APetriNetTest {
         t0.setRate(rateParameter);
         expected.addTransition(t0);
 
-        Map<Token, String> arcWeights = new HashMap<>();
-        arcWeights.put(red, "5");
-        arcWeights.put(blue, "1");
+        Map<String, String> arcWeights = new HashMap<>();
+        arcWeights.put(red.getId(), "5");
+        arcWeights.put(blue.getId(), "1");
         InboundArc normalArc = new InboundNormalArc(p0, t0, arcWeights);
         expected.addArc(normalArc);
 

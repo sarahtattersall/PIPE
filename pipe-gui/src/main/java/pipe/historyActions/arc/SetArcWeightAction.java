@@ -4,9 +4,8 @@
 
 package pipe.historyActions.arc;
 
-import pipe.models.component.arc.Arc;
 import pipe.models.component.Connectable;
-import pipe.models.component.token.Token;
+import pipe.models.component.arc.Arc;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
@@ -16,11 +15,11 @@ import javax.swing.undo.AbstractUndoableEdit;
 public class SetArcWeightAction<S extends Connectable, T extends Connectable> extends AbstractUndoableEdit {
 
     private final Arc<S,T> arc;
-    private final Token token;
+    private final String token;
     private final String newWeight;
     private final String oldWeight;
 
-    public SetArcWeightAction(Arc<S, T> arc, Token token, String oldWeight, String newWeight) {
+    public SetArcWeightAction(Arc<S, T> arc, String token, String oldWeight, String newWeight) {
 
         this.arc = arc;
         this.token = token;

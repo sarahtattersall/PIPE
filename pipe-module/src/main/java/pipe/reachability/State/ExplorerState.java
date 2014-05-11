@@ -1,9 +1,10 @@
 package pipe.reachability.state;
 
 import pipe.animation.State;
+import pipe.animation.TokenCount;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * Represents a state of the Petri net in a reachability graph
@@ -25,7 +26,7 @@ public interface ExplorerState extends Serializable {
      * @param id Place id
      * @return number of tokens for the place with the given id
      */
-    Map<String, Integer> getTokens(String id);
+    Collection<TokenCount> getTokens(String id);
 
     State getState();
 

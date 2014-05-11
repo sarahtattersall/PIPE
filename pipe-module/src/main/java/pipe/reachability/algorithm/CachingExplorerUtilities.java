@@ -1,9 +1,8 @@
 package pipe.reachability.algorithm;
 
-import pipe.animation.AnimationLogic;
-import pipe.animation.HashedState;
-import pipe.animation.PetriNetAnimationLogic;
-import pipe.animation.State;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import pipe.animation.*;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -101,13 +100,11 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      */
     @Override
     public ExplorerState getCurrentState() {
-        Map<String, Map<String, Integer>> tokenCounts = new HashMap<>();
+        Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
         for (Place place : petriNet.getPlaces()) {
-            Map<String, Integer> counts = new HashMap<>();
             for (Token token : petriNet.getTokens()) {
-                counts.put(token.getId(), place.getTokenCount(token));
+                tokenCounts.put(place.getId(), new TokenCount(token.getId(), place.getTokenCount(token.getId())));
             }
-            tokenCounts.put(place.getId(), counts);
         }
 
         return createState(new HashedState(tokenCounts));

@@ -143,7 +143,7 @@ public class PetriNetTest {
         expectedException.expectMessage("Cannot remove Default token places: P0 contain it");
         Token token = new Token("Default", Color.BLACK);
         Place place = new Place("P0", "P0");
-        place.setTokenCount(token, 2);
+        place.setTokenCount(token.getId(), 2);
         net.addPlace(place);
 
         net.removeToken(token);
@@ -218,7 +218,7 @@ public class PetriNetTest {
     public void genericRemoveMethodRemovesArc() throws PetriNetComponentException {
         Place place = new Place("source", "source");
         Transition transition = new Transition("target", "target");
-        Map<Token, String> weights = new HashMap<>();
+        Map<String, String> weights = new HashMap<>();
         InboundNormalArc arc = new InboundNormalArc(place, transition, weights);
         net.addArc(arc);
 
@@ -253,7 +253,7 @@ public class PetriNetTest {
 
         Token token = getComponent("Default", petriNet.getTokens());
 
-        IncidenceMatrix forwardMatrix = petriNet.getForwardsIncidenceMatrix(token);
+        IncidenceMatrix forwardMatrix = petriNet.getForwardsIncidenceMatrix(token.getId());
 
         Transition transition = getComponent("T1", petriNet.getTransitions());
         Place p1 = getComponent("P1", petriNet.getPlaces());
@@ -298,7 +298,7 @@ public class PetriNetTest {
         Place p1 = getComponent("P1", petriNet.getPlaces());
         Place p2 = getComponent("P2", petriNet.getPlaces());
 
-        IncidenceMatrix backwardIncidence = petriNet.getBackwardsIncidenceMatrix(token);
+        IncidenceMatrix backwardIncidence = petriNet.getBackwardsIncidenceMatrix(token.getId());
         assertEquals(tokenWeight, backwardIncidence.get(p1, transition));
         assertEquals(0, backwardIncidence.get(p2, transition));
     }
@@ -443,7 +443,7 @@ public class PetriNetTest {
     public void canGetArcById() throws PetriNetComponentNotFoundException {
         Place p = new Place("P0", "P0");
         Transition t = new Transition("T0", "T0");
-        InboundArc a = new InboundNormalArc(p, t, new HashMap<Token, String>());
+        InboundArc a = new InboundNormalArc(p, t, new HashMap<String, String>());
         net.addArc(a);
         assertEquals(a, net.getComponent(a.getId(), InboundArc.class));
     }
@@ -452,7 +452,7 @@ public class PetriNetTest {
     public void canGetArcByIdAfterNameChange() throws PetriNetComponentNotFoundException {
         Place p = new Place("P0", "P0");
         Transition t = new Transition("T0", "T0");
-        InboundArc a = new InboundNormalArc(p, t, new HashMap<Token, String>());
+        InboundArc a = new InboundNormalArc(p, t, new HashMap<String, String>());
         net.addArc(a);
         a.setId("A1");
         assertEquals(a, net.getComponent(a.getId(), InboundArc.class));

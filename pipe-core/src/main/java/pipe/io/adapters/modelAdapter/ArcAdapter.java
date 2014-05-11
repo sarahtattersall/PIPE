@@ -47,7 +47,7 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         String source = adaptedArc.getSource();
         String target = adaptedArc.getTarget();
 
-        Map<Token, String> weights = stringToWeights(adaptedArc.getInscription().getTokenCounts());
+        Map<String, String> weights = stringToWeights(adaptedArc.getInscription().getTokenCounts());
         if (adaptedArc.getType().equals("inhibitor")) {
             Place place = places.get(source);
             Transition transition = transitions.get(target);
@@ -71,9 +71,9 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         return arc;
     }
 
-    private Map<Token, String> stringToWeights(String weights) {
+    private Map<String, String> stringToWeights(String weights) {
 
-        Map<Token, String> tokenWeights = new HashMap<Token, String>();
+        Map<String, String> tokenWeights = new HashMap<>();
         if (weights.isEmpty()) {
             return tokenWeights;
         }
@@ -82,13 +82,13 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         if (commaSeperatedMarkings.length == 1) {
             Token token = getDefaultToken();
             String weight = commaSeperatedMarkings[0];
-            tokenWeights.put(token, weight);
+            tokenWeights.put(token.getId(), weight);
         } else {
             for (int i = 0; i < commaSeperatedMarkings.length; i += 2) {
                 String weight = commaSeperatedMarkings[i + 1].replace("@", ",");
                 String tokenName = commaSeperatedMarkings[i];
                 Token token = getTokenIfExists(tokenName);
-                tokenWeights.put(token, weight);
+                tokenWeights.put(token.getId(), weight);
             }
         }
         return tokenWeights;
@@ -148,7 +148,7 @@ public class ArcAdapter extends XmlAdapter<AdaptedArc, Arc<? extends Connectable
         return adapted;
     }
 
-    private String weightToString(Map<Token, String> weights) {
+    private String weightToString(Map<String, String> weights) {
         return Joiner.on(",").withKeyValueSeparator(",").join(weights);
     }
 

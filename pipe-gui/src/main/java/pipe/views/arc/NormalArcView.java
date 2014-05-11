@@ -1,6 +1,7 @@
 package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.*;
@@ -121,15 +122,19 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     private void createWeightLabels() {
-        Map<Token, String> weights = model.getTokenWeights();
-        for (Map.Entry<Token, String> entry : weights.entrySet()) {
-            Token token = entry.getKey();
+        Map<String, String> weights = model.getTokenWeights();
+        for (Map.Entry<String, String> entry : weights.entrySet()) {
             String weight = entry.getValue();
-
+            String tokenId = entry.getKey();
             NameLabel label = new NameLabel();
             label.setText(weight);
-            label.setColor(token.getColor());
-            label.updateSize();
+            try {
+                Token token = petriNetController.getToken(tokenId);
+                label.setColor(token.getColor());
+            } catch (PetriNetComponentNotFoundException e) {
+                e.printStackTrace();
+                label.setColor(Color.BLACK);
+            } label.updateSize();
             weightLabel.add(label);
         }
     }

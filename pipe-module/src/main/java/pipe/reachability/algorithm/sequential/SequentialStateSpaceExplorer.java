@@ -4,6 +4,7 @@ import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.state.StateWriter;
 import pipe.reachability.state.ExplorerState;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -27,7 +28,7 @@ public class SequentialStateSpaceExplorer extends AbstractStateSpaceExplorer {
      *
      */
     @Override
-    protected void stateSpaceExploration() throws TimelessTrapException {
+    protected void stateSpaceExploration() throws TimelessTrapException, IOException {
         while (!explorationQueue.isEmpty()) {
             ExplorerState state = explorationQueue.poll();
             successorRates.clear();
@@ -43,6 +44,8 @@ public class SequentialStateSpaceExplorer extends AbstractStateSpaceExplorer {
                 }
             }
             writeStateTransitions(state, successorRates);
+            explorerUtilities.clear();
+            stateWriter.clear();
         }
     }
 }

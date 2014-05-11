@@ -446,7 +446,7 @@ public class PetriNet {
     private Collection<Place> getPlacesContainingToken(Token token) {
         Collection<Place> result = new LinkedList<>();
         for (Place place : places.values()) {
-            if (place.getTokenCount(token) > 0) {
+            if (place.getTokenCount(token.getId()) > 0) {
                 result.add(place);
             }
         }
@@ -645,7 +645,7 @@ public class PetriNet {
      *
      * @param token calculates backwards incidence matrix for this token
      */
-    public IncidenceMatrix getBackwardsIncidenceMatrix(Token token) {
+    public IncidenceMatrix getBackwardsIncidenceMatrix(String token) {
         IncidenceMatrix backwardsIncidenceMatrix = new IncidenceMatrix();
         for (InboundArc arc : inboundArcs.values()) {
             Transition transition = arc.getTarget();
@@ -677,9 +677,9 @@ public class PetriNet {
 
         for (Arc<Place, Transition> arc : inboundArcs(transition)) {
             Place place = arc.getSource();
-            Map<Token, String> arcWeights = arc.getTokenWeights();
-            for (Map.Entry<Token, String> entry : arcWeights.entrySet()) {
-                Token arcToken = entry.getKey();
+            Map<String, String> arcWeights = arc.getTokenWeights();
+            for (Map.Entry<String, String> entry : arcWeights.entrySet()) {
+                String arcToken = entry.getKey();
                 String arcTokenExpression = entry.getValue();
 
                 //TODO: SHOULD WE FLOOR?
@@ -726,7 +726,7 @@ public class PetriNet {
      * @return forwards incidence matrix for the specified token. That is the
      * token weights needed in order to fire an arc from transition to place
      */
-    public IncidenceMatrix getForwardsIncidenceMatrix(Token token) {
+    public IncidenceMatrix getForwardsIncidenceMatrix(String token) {
 
         IncidenceMatrix forwardsIncidenceMatrix = new IncidenceMatrix();
         for (OutboundArc arc : outboundArcs.values()) {

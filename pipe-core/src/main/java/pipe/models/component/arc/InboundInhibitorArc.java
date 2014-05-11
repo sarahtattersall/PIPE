@@ -1,13 +1,13 @@
 package pipe.models.component.arc;
 
 import pipe.animation.State;
+import pipe.animation.TokenCount;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * An inhibitor arc maps from places to tokens and is allowed to fire
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class InboundInhibitorArc extends InboundArc {
     public InboundInhibitorArc(Place source, Transition target) {
-        super(source, target, new HashMap<Token, String>(), ArcType.INHIBITOR);
+        super(source, target, new HashMap<String, String>(), ArcType.INHIBITOR);
     }
 
     /**
@@ -27,9 +27,9 @@ public class InboundInhibitorArc extends InboundArc {
      */
     @Override
     public boolean canFire(PetriNet petriNet, State state) {
-        Map<String, Integer> tokens = state.getTokens(getSource().getId());
-        for (Map.Entry<String, Integer> entry : tokens.entrySet()) {
-            if (entry.getValue() != 0) {
+        Collection<TokenCount> tokens = state.getTokens(getSource().getId());
+        for (TokenCount tokenCount : tokens) {
+            if (tokenCount.count != 0) {
                 return false;
             }
         }

@@ -63,16 +63,11 @@ public class ANormalArc implements DSLCreator<Arc<? extends Connectable, ? exten
     public Arc<? extends Connectable, ? extends Connectable> create(Map<String, Token> tokens,
                                                                     Map<String, Place> places,
                                                                     Map<String, Transition> transitions, Map<String, RateParameter> rateParameters) {
-        Map<Token, String> arcWeights = new HashMap<>();
-        for (Map.Entry<String, String> entry : weights.entrySet()) {
-            arcWeights.put(tokens.get(entry.getKey()), entry.getValue());
-        }
-
         Arc<? extends Connectable, ? extends Connectable> arc;
         if(places.containsKey(source)){
-            arc = new InboundNormalArc(places.get(source), transitions.get(target), arcWeights);
+            arc = new InboundNormalArc(places.get(source), transitions.get(target), weights);
         } else {
-            arc = new OutboundNormalArc(transitions.get(source), places.get(target), arcWeights);
+            arc = new OutboundNormalArc(transitions.get(source), places.get(target), weights);
         }
         arc.addIntermediatePoints(intermediatePoints);
         return arc;

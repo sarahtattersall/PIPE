@@ -5,9 +5,6 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import pipe.animation.HashedState;
 import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.UnparsableException;
@@ -23,7 +20,7 @@ import pipe.reachability.io.SerializedStateSpaceExplorationReader;
 import pipe.reachability.io.StateTransition;
 import pipe.reachability.io.WriterFormatter;
 import pipe.reachability.state.ExplorerState;
-import pipe.reachability.state.HashedExplorerState;
+import pipe.reachability.state.StateUtils;
 import utils.Utils;
 
 import javax.xml.bind.JAXBException;
@@ -111,28 +108,12 @@ public class StateSpaceExplorerStepDefinitions {
 
     @And("^I expect a record with state")
     public void I_expect_a_record_with_state(String jsonState) throws IOException, PetriNetComponentNotFoundException {
-        state = toState(jsonState);
-    }
-
-    private ExplorerState toState(String json) throws IOException, PetriNetComponentNotFoundException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, HashMap<String, Integer>> map =
-                mapper.readValue(json, new TypeReference<HashMap<String, HashMap<String, Integer>>>() {
-                });
-        Map<String, Map<String , Integer>> stateMap = new HashMap<>();
-        for (Map.Entry<String, HashMap<String, Integer>> entry : map.entrySet()) {
-            Map<String , Integer> tokenCounts = new HashMap<>();
-            for (Map.Entry<String, Integer> tokenEntry : entry.getValue().entrySet()) {
-                tokenCounts.put(tokenEntry.getKey(), tokenEntry.getValue());
-            }
-            stateMap.put(entry.getKey(), tokenCounts);
-        }
-        return HashedExplorerState.tangibleState(new HashedState(stateMap));
+        state = StateUtils.toState(jsonState);
     }
 
     @And("^successor")
     public void successor(String jsonState) throws IOException, PetriNetComponentNotFoundException {
-        successor = toState(jsonState);
+        successor = StateUtils.toState(jsonState);
     }
 
     @And("^rate (\\d+.\\d+)")

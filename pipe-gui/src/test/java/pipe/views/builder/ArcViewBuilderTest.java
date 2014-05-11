@@ -32,7 +32,7 @@ public class ArcViewBuilderTest {
         Place source = new Place("source", "source");
         Transition transition = new Transition("id", "name");
 
-        arc = new InboundNormalArc(source, transition, new HashMap<Token, String>());
+        arc = new InboundNormalArc(source, transition, new HashMap<String, String>());
         arc.setId("id");
         builder = new NormalArcViewBuilder(arc, mockController);
     }

@@ -1,7 +1,7 @@
 package pipe.animation;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * Represents the state of a Petri net
@@ -24,8 +24,8 @@ public interface State extends Serializable {
      * @param id Place id
      * @return number of tokens for the place with the given id
      */
-    Map<String, Integer> getTokens(String id);
+    Collection<TokenCount> getTokens(String id);
 
-    Map<String, Map<String, Integer>> asMap();
+    com.google.common.collect.Multimap<String, TokenCount> asMap();
 
 }

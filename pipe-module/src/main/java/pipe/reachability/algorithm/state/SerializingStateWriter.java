@@ -27,7 +27,7 @@ public class SerializingStateWriter implements StateWriter {
 
     /**
      *
-     * Tries to write the state transiton to the specified writer.
+     * Tries to write the state transition to the specified writer.
      * It will not write a transition if previous is null, and this represents no transition
      * into the root of the graph
      *
@@ -40,10 +40,18 @@ public class SerializingStateWriter implements StateWriter {
         if (previous != null) {
             try {
                 formatter.write(previous, state, rate, writer);
-                writer.reset();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Clears the output streams cached objects
+     * @throws IOException
+     */
+    @Override
+    public void clear() throws IOException {
+        writer.reset();
     }
 }

@@ -2,8 +2,10 @@ package pipe.reachability.algorithm;
 
 import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import pipe.reachability.algorithm.state.StateWriter;
+import pipe.reachability.state.ExploredSet;
 import pipe.reachability.state.ExplorerState;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -43,9 +45,10 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
 
     /**
      * Contains states that have already been explored.
+     * Initialised in generate when initialState info is given
      */
-//    protected ExploredSet explored = new ExploredSet(300_000);
-    protected HashSet<ExplorerState> explored = new HashSet<>();
+    protected ExploredSet explored;
+
     /**
      * Number of states that have been written to the writer
      */
@@ -60,12 +63,26 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
 
     @Override
     public void generate(ExplorerState initialState)
-            throws TimelessTrapException, InterruptedException, ExecutionException {
-
+            throws TimelessTrapException, InterruptedException, ExecutionException, IOException {
+        initialiseExplorerd(initialState);
         exploreInitialState(initialState);
         stateSpaceExploration();
         System.out.println("Wrote " + writtenCount + " Transitions");
 
+    }
+
+    private void initialiseExplorerd(ExplorerState state) {
+        List<String> placeOrder = getPlaceNames(state);
+        explored = new ExploredSet(300_000, placeOrder);
+    }
+
+    /**
+     *
+     * @param state
+     * @return List of place names contained in state
+     */
+    private List<String> getPlaceNames(ExplorerState state) {
+        return new LinkedList<>(state.getState().asMap().keySet());
     }
 
     /**
@@ -91,7 +108,8 @@ public abstract class AbstractStateSpaceExplorer implements StateSpaceExplorer {
 
     }
 
-    protected abstract void stateSpaceExploration() throws InterruptedException, ExecutionException, TimelessTrapException;
+    protected abstract void stateSpaceExploration()
+            throws InterruptedException, ExecutionException, TimelessTrapException, IOException;
 
     /**
      * Adds a compressed version of a tangible state to exploredStates

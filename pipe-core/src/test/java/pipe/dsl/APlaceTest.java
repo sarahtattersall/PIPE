@@ -59,8 +59,8 @@ public class APlaceTest {
 
         Place place = APlace.withId("P0").containing(5, "Red").tokens().and(1, "Default").token().create(tokens, places, transitions, rateParameters);
         Place expected = new Place("P0", "P0");
-        expected.setTokenCount(tokens.get("Red"), 5);
-        expected.setTokenCount(tokens.get("Default"), 1);
+        expected.setTokenCount("Red", 5);
+        expected.setTokenCount("Default", 1);
         assertEquals(expected, place);
     }
 }

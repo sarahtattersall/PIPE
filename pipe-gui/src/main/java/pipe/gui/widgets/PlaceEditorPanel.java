@@ -2,7 +2,6 @@ package pipe.gui.widgets;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.models.component.token.Token;
 import pipe.models.petrinet.PetriNet;
@@ -84,7 +83,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                 tokenNameConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
                 placeEditorPanel.add(tokenClassName, tokenNameConstraints);
 
-                tokenClassMarking.setValue(placeController.getTokenCount(token));
+                tokenClassMarking.setValue(placeController.getTokenCount(token.getId()));
                 tokenClassMarking.setMinimumSize(new java.awt.Dimension(50, 20));
                 tokenClassMarking.setPreferredSize(new java.awt.Dimension(50, 20));
                 tokenClassMarking.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -279,7 +278,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
 
     private void doOK() {
 
-        Map<Token, Integer> newTokenValues = getNewTokenValues();
+        Map<String, Integer> newTokenValues = getNewTokenValues();
         if (canSetCapacity() && canSetNameValue()) {
 
             placeController.startMultipleEdits();
@@ -322,8 +321,8 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
      *
      * @return new token counts, empty if could not change
      */
-    private  Map<Token, Integer> getNewTokenValues() {
-        Map<Token, Integer> newTokenCounts = new HashMap<>();
+    private  Map<String, Integer> getNewTokenValues() {
+        Map<String, Integer> newTokenCounts = new HashMap<>();
         int totalCount = calculateTokenCount();
         if (placeController.hasCapacityRestriction() && totalCount > getCapacitySpinnerValue()) {
             JOptionPane.showMessageDialog(null,
@@ -342,9 +341,8 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                     return newTokenCounts;
                 }
 
-                Token token = netController.getToken(tokenName);
-                if (placeController.getTokenCount(token) != newTokenCount) {
-                    newTokenCounts.put(token, newTokenCount);
+                if (placeController.getTokenCount(tokenName) != newTokenCount) {
+                    newTokenCounts.put(tokenName, newTokenCount);
                 }
 
             } catch (NumberFormatException ignored) {
@@ -352,7 +350,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                         "Invalid entry", JOptionPane.ERROR_MESSAGE);
                 newTokenCounts.clear();
                 return newTokenCounts;
-            } catch (HeadlessException | PetriNetComponentNotFoundException e) {
+            } catch (HeadlessException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Please enter a positive integer greater or equal to 0.",
                         "Invalid entry", JOptionPane.ERROR_MESSAGE);

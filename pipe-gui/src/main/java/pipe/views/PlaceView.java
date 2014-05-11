@@ -1,6 +1,7 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
+import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -145,17 +146,28 @@ public class PlaceView extends ConnectableView<Place> {
     /**
      * Displays each token in the Place as an oval
      *
+     * If the token does not exist in the petri net the color is displayed
+     * as black
+     *
+     *
      * @param g2 graphics
      */
     private void displayOvalTokens(Graphics2D g2) {
         int offset = 0;
 
-        Map<Token, Integer> tokenCounts = model.getTokenCounts();
-        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
-            Token token = entry.getKey();
+        Map<String, Integer> tokenCounts = model.getTokenCounts();
+        for (Map.Entry<String, Integer> entry : tokenCounts.entrySet()) {
+            String tokenId = entry.getKey();
             Integer count = entry.getValue();
             Insets insets = getInsets();
-            paintOvalTokens(g2, insets, token.getColor(), count, offset);
+            Token token = null;
+            try {
+                token = petriNetController.getToken(tokenId);
+                paintOvalTokens(g2, insets, token.getColor(), count, offset);
+            } catch (PetriNetComponentNotFoundException e) {
+                e.printStackTrace();
+                paintOvalTokens(g2, insets, Color.BLACK, count, offset);
+            }
             offset += count;
         }
     }
@@ -210,18 +222,27 @@ public class PlaceView extends ConnectableView<Place> {
     /**
      * Display each token in the place as a number textually
      *
+     * If the token does not exist in the petri net the color is displayed
+     * as black
+     *
      * @param g2 graphics
      */
     private void displayTextualTokens(Graphics2D g2) {
         int offset = 0;
 
-        Map<Token, Integer> tokenCounts = model.getTokenCounts();
-        for (Map.Entry<Token, Integer> entry : tokenCounts.entrySet()) {
-            Token token = entry.getKey();
+        Map<String, Integer> tokenCounts = model.getTokenCounts();
+        for (Map.Entry<String, Integer> entry : tokenCounts.entrySet()) {
+            String tokenId = entry.getKey();
             Integer count = entry.getValue();
             Insets insets = getInsets();
-            paintTextualTokens(g2, insets, token.getColor(), count, offset);
-            offset += 10;
+            try {
+                Token token = petriNetController.getToken(tokenId);
+                paintTextualTokens(g2, insets, token.getColor(), count, offset);
+            } catch (PetriNetComponentNotFoundException e) {
+                e.printStackTrace();
+                paintTextualTokens(g2, insets, Color.BLACK, count, offset);
+
+            } offset += 10;
         }
     }
 

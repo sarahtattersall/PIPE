@@ -1,6 +1,7 @@
 package pipe.models.component.arc;
 
 import pipe.animation.State;
+import pipe.animation.TokenCount;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
@@ -10,7 +11,7 @@ import pipe.parsers.FunctionalResults;
 import java.util.Map;
 
 public class InboundNormalArc extends InboundArc {
-    public InboundNormalArc(Place source, Transition target, Map<Token, String> tokenWeights) {
+    public InboundNormalArc(Place source, Transition target, Map<String, String> tokenWeights) {
         super(source, target, tokenWeights, ArcType.NORMAL);
     }
 
@@ -18,23 +19,41 @@ public class InboundNormalArc extends InboundArc {
     public boolean canFire(PetriNet petriNet, State state) {
         Place place = getSource();
 
-            Map<String, Integer> tokenCounts = state.getTokens(place.getId());
+//            Map<String, Integer> tokenCounts = state.getTokens(place.getId());
 
+        Map<String, String> tokenWeights = getTokenWeights();
+        for (TokenCount tokenCount : state.getTokens(place.getId())) {
+            if (tokenWeights.containsKey(tokenCount.token)) {
+                FunctionalResults<Double> results = petriNet.parseExpression(tokenWeights.get(tokenCount.token));
+                if (results.hasErrors()) {
+                    //TODO:
+                    throw new RuntimeException("Errors evaluating arc weight against Petri net. Needs handling in code");
+                }
 
-        for (Map.Entry<Token, String> entry : getTokenWeights().entrySet()) {
-            int tokenCount = tokenCounts.get(entry.getKey().getId());
-            FunctionalResults<Double> results = petriNet.parseExpression(entry.getValue());
-            if (results.hasErrors()) {
-                //TODO:
-                throw new RuntimeException("Errors evaluating arc weight against Petri net. Needs handling in code");
-            }
+                double tokenWeight = results.getResult();
 
-            double tokenWeight = results.getResult();
-
-            if (tokenCount < tokenWeight && tokenCount != -1) {
-                return false;
+                if (tokenCount.count < tokenWeight && tokenCount.count != -1) {
+                    return false;
+                }
             }
         }
-        return !tokenCounts.isEmpty();
+        return true;
+
+//
+//        for (Map.Entry<String, String> entry : getTokenWeights().entrySet()) {
+//            int tokenCount = tokenCounts.get(entry.getKey().getId());
+//            FunctionalResults<Double> results = petriNet.parseExpression(entry.getValue());
+//            if (results.hasErrors()) {
+//                //TODO:
+//                throw new RuntimeException("Errors evaluating arc weight against Petri net. Needs handling in code");
+//            }
+//
+//            double tokenWeight = results.getResult();
+//
+//            if (tokenCount < tokenWeight && tokenCount != -1) {
+//                return false;
+//            }
+//        }
+//        return !tokenCounts.isEmpty();
     }
 }

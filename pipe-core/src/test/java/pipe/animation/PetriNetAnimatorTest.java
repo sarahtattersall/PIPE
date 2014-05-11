@@ -23,14 +23,13 @@ public class PetriNetAnimatorTest {
     public void correctlyIncrementsTokenCountInSelfLoop() throws PetriNetComponentNotFoundException {
         PetriNet petriNet = createSelfLoopPetriNet("1");
         Place place = petriNet.getComponent("P0", Place.class);
-        Token token = petriNet.getComponent("Default", Token.class);
-        place.setTokenCount(token, 1);
+        place.setTokenCount("Default", 1);
         place.setCapacity(1);
 
         Animator animator = new PetriNetAnimator(petriNet);
         Transition transition = petriNet.getComponent("T1", Transition.class);
         animator.fireTransition(transition);
-        assertEquals(1, place.getTokenCount(token));
+        assertEquals(1, place.getTokenCount("Default"));
     }
 
 
@@ -43,8 +42,6 @@ public class PetriNetAnimatorTest {
                 ANormalArc.withSource("P0").andTarget("T1").with("#(P0)", "Default").tokens()).andFinally(
                 ANormalArc.withSource("T1").andTarget("P1").with("#(P0)*2", "Red").tokens());
 
-        Token token = petriNet.getComponent("Default", Token.class);
-        Token redToken = petriNet.getComponent("Red", Token.class);
         Place p1 = petriNet.getComponent("P0", Place.class);
         Place p2 = petriNet.getComponent("P1", Place.class);
         Transition transition = petriNet.getComponent("T1", Transition.class);
@@ -52,8 +49,8 @@ public class PetriNetAnimatorTest {
         Animator animator = new PetriNetAnimator(petriNet);
         animator.fireTransition(transition);
 
-        assertEquals(0, p1.getTokenCount(token));
-        assertEquals(10, p2.getTokenCount(redToken));
+        assertEquals(0, p1.getTokenCount("Default"));
+        assertEquals(10, p2.getTokenCount("Red"));
     }
 
     @Test
@@ -62,7 +59,7 @@ public class PetriNetAnimatorTest {
         PetriNet petriNet = createSimplePetriNet(tokenWeight);
         Place place = petriNet.getComponent("P1", Place.class);
         Token token = petriNet.getComponent("Default", Token.class);
-        place.setTokenCount(token, 2);
+        place.setTokenCount(token.getId(), 2);
 
         Transition transition = petriNet.getComponent("T1", Transition.class);
         Animator animator = new PetriNetAnimator(petriNet);
@@ -106,7 +103,7 @@ public class PetriNetAnimatorTest {
         Place place = petriNet.getComponent("P1", Place.class);
         Token token = petriNet.getComponent("Default", Token.class);
 
-        assertThat(place.getTokenCount(token)).isEqualTo(1);
+        assertThat(place.getTokenCount(token.getId())).isEqualTo(1);
     }
 
 
@@ -146,8 +143,8 @@ public class PetriNetAnimatorTest {
         Token token = petriNet.getComponent("Default", Token.class);
         Place p1 = petriNet.getComponent("P1", Place.class);
         Place p2 = petriNet.getComponent("P2", Place.class);
-        assertEquals(0, p1.getTokenCount(token));
-        assertEquals(1, p2.getTokenCount(token));
+        assertEquals(0, p1.getTokenCount(token.getId()));
+        assertEquals(1, p2.getTokenCount(token.getId()));
     }
 
     /**

@@ -7,7 +7,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.historyActions.*;
+import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.arc.AddArcPathPoint;
 import pipe.historyActions.arc.ArcPathPointType;
 import pipe.historyActions.arc.SetArcWeightAction;
@@ -15,7 +15,6 @@ import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.arc.ArcPoint;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.parsers.FunctionalResults;
 import pipe.parsers.UnparsableException;
@@ -23,7 +22,6 @@ import pipe.utilities.transformers.Contains;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
-import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.*;
 
@@ -42,6 +40,8 @@ public class ArcControllerTest {
 
     ArcController<Place, Transition> controller;
 
+    private static final String DEFAULT_TOKEN_ID = "Default";
+
     @Mock
     UndoableEditListener listener;
 
@@ -55,45 +55,42 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightCreatesHistoryItem() throws UnparsableException {
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         String oldWeight = "5";
-        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(DEFAULT_TOKEN_ID)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
-        controller.setWeight(defaultToken, newWeight);
+        controller.setWeight(DEFAULT_TOKEN_ID, newWeight);
 
         SetArcWeightAction<Place, Transition> weightAction =
-                new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
+                new SetArcWeightAction<>(mockArc, DEFAULT_TOKEN_ID, oldWeight, newWeight);
 
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(weightAction)));
     }
 
     @Test
     public void setWeightUpdatesArcWeight() throws UnparsableException {
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
         String oldWeight = "5";
-        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(DEFAULT_TOKEN_ID)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
-        controller.setWeight(defaultToken, newWeight);
-        verify(mockArc).setWeight(defaultToken, newWeight);
+        controller.setWeight(DEFAULT_TOKEN_ID, newWeight);
+        verify(mockArc).setWeight(DEFAULT_TOKEN_ID, newWeight);
     }
 
     @Test
     public void setWeightsCreatesHistoryItem() throws UnparsableException {
-        Map<Token, String> tokenWeights = new HashMap<>();
-        Token defaultToken = new Token("Default",  new Color(0, 0, 0));
+        Map<String, String> tokenWeights = new HashMap<>();
         String oldWeight = "5";
-        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(DEFAULT_TOKEN_ID)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
-        tokenWeights.put(defaultToken, newWeight);
+        tokenWeights.put(DEFAULT_TOKEN_ID, newWeight);
         controller.setWeights(tokenWeights);
 
-        UndoableEdit weightAction = new SetArcWeightAction<>(mockArc, defaultToken, oldWeight, newWeight);
+        UndoableEdit weightAction = new SetArcWeightAction<>(mockArc, DEFAULT_TOKEN_ID, oldWeight, newWeight);
         UndoableEdit edit = new MultipleEdit(Arrays.asList(weightAction));
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(edit)));
 
@@ -101,16 +98,15 @@ public class ArcControllerTest {
 
     @Test
     public void setWeightsUpdatesArc() throws UnparsableException {
-        Map<Token, String> tokenWeights = new HashMap<>();
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
+        Map<String, String> tokenWeights = new HashMap<>();
         String oldWeight = "5";
-        when(mockArc.getWeightForToken(defaultToken)).thenReturn(oldWeight);
+        when(mockArc.getWeightForToken(DEFAULT_TOKEN_ID)).thenReturn(oldWeight);
 
 
         String newWeight = "51";
-        tokenWeights.put(defaultToken, newWeight);
+        tokenWeights.put(DEFAULT_TOKEN_ID, newWeight);
         controller.setWeights(tokenWeights);
-        verify(mockArc).setWeight(defaultToken, newWeight);
+        verify(mockArc).setWeight(DEFAULT_TOKEN_ID, newWeight);
     }
 
     @Test
@@ -120,29 +116,27 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("Value is not an integer, please surround expression with floor or ceil");
 
-        Token defaultToken = new Token("Default",new Color(0, 0, 0));
-        controller.setWeight(defaultToken, "1.2");
+        controller.setWeight(DEFAULT_TOKEN_ID, "1.2");
     }
 
 
     @Test
     public void throwsUnparsableExceptionForNonIntegerWeights() throws UnparsableException {
 
-        Map<Token, String> tokenWeights = new HashMap<>();
+        Map<String, String> tokenWeights = new HashMap<>();
         FunctionalResults<Double> result = new FunctionalResults<>(5.2, new HashSet<String>());
         when(mockPetriNetController.parseFunctionalExpression(anyString())).thenReturn(result);
         exception.expect(UnparsableException.class);
         exception.expectMessage("Value is not an integer, please surround expression with floor or ceil");
 
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
-        tokenWeights.put(defaultToken, "5.2");
+        tokenWeights.put(DEFAULT_TOKEN_ID, "5.2");
         controller.setWeights(tokenWeights);
     }
 
     @Test
     public void throwsUnparsableExceptionForErrorInWeights() throws UnparsableException {
 
-        Map<Token, String> tokenWeights = new HashMap<>();
+        Map<String, String> tokenWeights = new HashMap<>();
         List<String> errors = new LinkedList<>();
         errors.add("test error");
 
@@ -151,8 +145,7 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("test error");
 
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
-        tokenWeights.put(defaultToken, "5.2");
+        tokenWeights.put(DEFAULT_TOKEN_ID, "5.2");
         controller.setWeights(tokenWeights);
     }
 
@@ -166,8 +159,7 @@ public class ArcControllerTest {
         exception.expect(UnparsableException.class);
         exception.expectMessage("test error");
 
-        Token defaultToken = new Token("Default", new Color(0, 0, 0));
-        controller.setWeight(defaultToken, "5.0");
+        controller.setWeight(DEFAULT_TOKEN_ID, "5.0");
     }
 
     @Test

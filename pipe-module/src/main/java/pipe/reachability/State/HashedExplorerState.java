@@ -1,8 +1,9 @@
 package pipe.reachability.state;
 
 import pipe.animation.State;
+import pipe.animation.TokenCount;
 
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * This represents a state by using a HashMap to store place name to token count
@@ -47,7 +48,7 @@ public class HashedExplorerState implements ExplorerState {
     }
 
     @Override
-    public Map<String, Integer> getTokens(String id) {
+    public Collection<TokenCount> getTokens(String id) {
         return state.getTokens(id);
     }
 

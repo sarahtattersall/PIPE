@@ -1,46 +1,35 @@
 package pipe.animation;
 
-import java.util.HashMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import java.util.Collection;
 import java.util.Map;
 
 public class HashedState implements State {
-    public HashedState(Map<String, Map<String, Integer>> tokenCounts) {
-        this.tokenCounts = new HashMap<>(tokenCounts);
-    }
-
     /**
      * The token counts for the current State.
      * Contains Place id -> {Token -> Integer count}
      */
-    private final Map<String, Map<String, Integer>> tokenCounts;
+    private final Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
 
+    public HashedState(Multimap<String, TokenCount> tokenCounts) {
+        this.tokenCounts.putAll(tokenCounts);
+    }
 
     @Override
-    public Map<String, Integer> getTokens(String id) {
+    public Collection<TokenCount> getTokens(String id) {
         return tokenCounts.get(id);
     }
 
     @Override
-    public Map<String, Map<String, Integer>> asMap() {
+    public Multimap<String, TokenCount> asMap() {
         return tokenCounts;
     }
 
     @Override
-    public String toString() {
-
-        StringBuilder builder = new StringBuilder();
-        builder.append("{");
-        int count = 0;
-        for (Map.Entry<String, Map<String, Integer>> entry : tokenCounts.entrySet()) {
-            builder.append(entry.getKey()).append(": ").append(entry.getValue());
-
-            if (count < tokenCounts.size() - 1) {
-                builder.append(", ");
-            }
-            count++;
-        }
-        builder.append("}");
-        return builder.toString();
+    public int hashCode() {
+        return tokenCounts.hashCode();
     }
 
     @Override
@@ -62,7 +51,29 @@ public class HashedState implements State {
     }
 
     @Override
-    public int hashCode() {
-        return tokenCounts.hashCode();
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        int count = 0;
+        for (Map.Entry<String, Collection<TokenCount>> entry : tokenCounts.asMap().entrySet()) {
+            builder.append("\"").append(entry.getKey()).append("\"").append(": {");
+            int insideCount = 0;
+            for (TokenCount tokenCount : entry.getValue()) {
+                builder.append("\"").append(tokenCount.token).append("\"").append(": ").append(tokenCount.count);
+                if (insideCount < entry.getValue().size() - 1) {
+                    builder.append(", ");
+                }
+            }
+            builder.append("}");
+
+            if (count < tokenCounts.size() - 1) {
+                builder.append(", ");
+            }
+            count++;
+        }
+        builder.append("}");
+        return builder.toString();
     }
+
 }

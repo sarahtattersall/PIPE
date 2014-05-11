@@ -171,7 +171,7 @@ public class ReachabilityGraph {
      * @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
      */
     private void writeStateSpace(WriterFormatter formatter, ObjectOutputStream objectOutputStream)
-            throws TimelessTrapException, ExecutionException, InterruptedException {
+            throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
         PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
         StateWriter tangibleExplorer = new SerializingStateWriter(formatter, objectOutputStream);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
