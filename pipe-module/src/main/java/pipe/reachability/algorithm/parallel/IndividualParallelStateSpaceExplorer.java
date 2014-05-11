@@ -4,8 +4,8 @@ import pipe.reachability.algorithm.AbstractStateSpaceExplorer;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.io.StateProcessor;
+import uk.ac.imperial.state.ClassifiedState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +19,9 @@ import java.util.concurrent.*;
  */
 public class IndividualParallelStateSpaceExplorer extends AbstractStateSpaceExplorer {
 
-    public IndividualParallelStateSpaceExplorer(StateWriter stateWriter, VanishingExplorer vanishingExplorer,
+    public IndividualParallelStateSpaceExplorer(StateProcessor stateProcessor, VanishingExplorer vanishingExplorer,
                                                 ExplorerUtilities explorerUtilities) {
-        super(explorerUtilities, vanishingExplorer, stateWriter);
+        super(explorerUtilities, vanishingExplorer, stateProcessor);
         executorService = Executors.newFixedThreadPool(8);
 
     }
@@ -36,24 +36,24 @@ public class IndividualParallelStateSpaceExplorer extends AbstractStateSpaceExpl
         int elemsAtNextLevel = 0;
         while (!explorationQueue.isEmpty()) {
 
-            Map<ExplorerState, Future<Map<ExplorerState, Double>>> successorFutures = new HashMap<>();
+            Map<ClassifiedState, Future<Map<ClassifiedState, Double>>> successorFutures = new HashMap<>();
             CountDownLatch latch = new CountDownLatch(elemsAtCurrentLevel);
             for (int i = 0; i < elemsAtCurrentLevel; i++) {
-                ExplorerState state = explorationQueue.poll();
+                ClassifiedState state = explorationQueue.poll();
                 successorFutures.put(state, executorService.submit(
                         new ParallelStateExplorer(latch, state, explorerUtilities, vanishingExplorer)));
             }
 
             latch.await();
-            for (Map.Entry<ExplorerState, Future<Map<ExplorerState, Double>>> entry : successorFutures.entrySet()) {
-                Future<Map<ExplorerState, Double>> future = entry.getValue();
-                ExplorerState state = entry.getKey();
+            for (Map.Entry<ClassifiedState, Future<Map<ClassifiedState, Double>>> entry : successorFutures.entrySet()) {
+                Future<Map<ClassifiedState, Double>> future = entry.getValue();
+                ClassifiedState state = entry.getKey();
                 successorRates.clear();
 
                 try {
-                    Map<ExplorerState, Double> successors = future.get();
-                    for (Map.Entry<ExplorerState, Double> successorEntry : successors.entrySet()) {
-                        ExplorerState successor = successorEntry.getKey();
+                    Map<ClassifiedState, Double> successors = future.get();
+                    for (Map.Entry<ClassifiedState, Double> successorEntry : successors.entrySet()) {
+                        ClassifiedState successor = successorEntry.getKey();
                         double rate = successorEntry.getValue();
                         registerStateRate(successor, rate);
                         if (!explored.contains(successor)) {

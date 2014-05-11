@@ -1,8 +1,8 @@
 package pipe.reachability.algorithm.parallel;
 
 import pipe.reachability.algorithm.*;
-import pipe.reachability.algorithm.state.StateWriter;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.io.StateProcessor;
+import uk.ac.imperial.state.ClassifiedState;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,8 +19,8 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
 
 
     public MassiveParallelStateSpaceExplorer(ExplorerUtilities explorerUtilities, VanishingExplorer vanishingExplorer,
-                                             StateWriter stateWriter, int statesPerThread) {
-        super(explorerUtilities, vanishingExplorer, stateWriter);
+                                             StateProcessor stateProcessor, int statesPerThread) {
+        super(explorerUtilities, vanishingExplorer, stateProcessor);
 
         this.statesPerThread = statesPerThread;
     }
@@ -51,22 +51,22 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         while (!explorationQueue.isEmpty()) {
             int submitted = 0;
             while (submitted < 8 && !explorationQueue.isEmpty()) {
-                ExplorerState state = explorationQueue.poll();
+                ClassifiedState state = explorationQueue.poll();
                 completionService.submit(
                         new MultiStateExplorer(state, statesPerThread, explorerUtilities, vanishingExplorer));
                 submitted++;
             }
 
 
-            Set<ExplorerState> transitions = new HashSet<>();
-            Collection<ExplorerState> unexplored = new HashSet<>();
+            Set<ClassifiedState> transitions = new HashSet<>();
+            Collection<ClassifiedState> unexplored = new HashSet<>();
             for (int i = 0; i < submitted; i++) {
                 Result result = completionService.take().get();
                 explored.addAll(result.explored);
                 unexplored.addAll(result.unexplored); //TODO: Potentially adding something that is in later explored set?
 
                 //Combine results to avoid writing dups
-                for (Map.Entry<ExplorerState, Map<ExplorerState, Double>> entry : result.transitions.entrySet()) {
+                for (Map.Entry<ClassifiedState, Map<ClassifiedState, Double>> entry : result.transitions.entrySet()) {
                     if (!transitions.contains(entry.getKey())) {
                         writeStateTransitions(entry.getKey(), entry.getValue());
                         transitions.add(entry.getKey());
@@ -74,13 +74,12 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
                 }
             }
 
-            for (ExplorerState state : unexplored) {
+            for (ClassifiedState state : unexplored) {
                 if (!transitions.contains(state)) {
                     explorationQueue.add(state);
                 }
             }
             explorerUtilities.clear();
-            stateWriter.clear();
         }
         executorService.shutdownNow();
     }
@@ -95,7 +94,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         /**
          * Starting state to explore
          */
-        private final ExplorerState initialState;
+        private final ClassifiedState initialState;
 
         /**
          * Number of states the thread is allowed to explore before finishing execution
@@ -115,14 +114,14 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
         /**
          * Transitions found whilst exploring exploreCount states
          */
-        private final Map<ExplorerState, Map<ExplorerState, Double>> transitions = new HashMap<>();
+        private final Map<ClassifiedState, Map<ClassifiedState, Double>> transitions = new HashMap<>();
 
         /**
          * States that have been explored whilst exploring exploreCount states
          */
-        private final Set<ExplorerState>  exploredStates = new HashSet<>();
+        private final Set<ClassifiedState>  exploredStates = new HashSet<>();
 
-        private MultiStateExplorer(ExplorerState initialState, int exploreCount, ExplorerUtilities explorerUtilities,
+        private MultiStateExplorer(ClassifiedState initialState, int exploreCount, ExplorerUtilities explorerUtilities,
                                    VanishingExplorer vanishingExplorer) {
             this.initialState = initialState;
             this.exploreCount = exploreCount;
@@ -140,12 +139,12 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
          */
         @Override
         public Result call() throws TimelessTrapException {
-            Queue<ExplorerState> explorationQueue = new ArrayDeque<>();
+            Queue<ClassifiedState> explorationQueue = new ArrayDeque<>();
             explorationQueue.add(initialState);
             for (int explored = 0; explored < exploreCount && !explorationQueue.isEmpty(); explored++) {
-                ExplorerState state = explorationQueue.poll();
-                Map<ExplorerState, Double> successorRates = new HashMap<>();
-                for (ExplorerState successor : explorerUtilities.getSuccessors(state)) {
+                ClassifiedState state = explorationQueue.poll();
+                Map<ClassifiedState, Double> successorRates = new HashMap<>();
+                for (ClassifiedState successor : explorerUtilities.getSuccessors(state)) {
                     double rate = explorerUtilities.rate(state, successor);
                     if (successor.isTangible()) {
                         registerStateRate(successor, rate, successorRates);
@@ -167,7 +166,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
                 writeStateTransitions(state, successorRates);
             }
 
-            Set<ExplorerState> unexplored = new HashSet<>();
+            Set<ClassifiedState> unexplored = new HashSet<>();
             unexplored.addAll(explorationQueue);
             return new Result(transitions, unexplored, exploredStates);
         }
@@ -178,8 +177,8 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
          * @param rate
          * @param successorRates
          */
-        private void registerStateRate(ExplorerState successor, double rate,
-                                       Map<ExplorerState, Double> successorRates) {
+        private void registerStateRate(ClassifiedState successor, double rate,
+                                       Map<ClassifiedState, Double> successorRates) {
             if (successorRates.containsKey(successor)) {
                 double previousRate = successorRates.get(successor);
                 successorRates.put(successor, previousRate + rate);
@@ -192,7 +191,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
          * @param state
          * @return true if the state has already been explored
          */
-        private boolean seen(ExplorerState state) {
+        private boolean seen(ClassifiedState state) {
             return exploredStates.contains(state) || explored.contains(state);
         }
 
@@ -201,7 +200,7 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
          * @param state
          * @param successorRates
          */
-        private void writeStateTransitions(ExplorerState state, Map<ExplorerState, Double> successorRates) {
+        private void writeStateTransitions(ClassifiedState state, Map<ClassifiedState, Double> successorRates) {
             transitions.put(state, successorRates);
         }
     }
@@ -213,14 +212,14 @@ public class MassiveParallelStateSpaceExplorer extends AbstractStateSpaceExplore
      * Contains data structures to be processed on method completion.
      */
     private static class Result {
-        public final Map<ExplorerState, Map<ExplorerState, Double>> transitions;
+        public final Map<ClassifiedState, Map<ClassifiedState, Double>> transitions;
 
-        public final Set<ExplorerState> unexplored;
+        public final Set<ClassifiedState> unexplored;
 
-        public final Set<ExplorerState> explored;
+        public final Set<ClassifiedState> explored;
 
-        public Result(Map<ExplorerState, Map<ExplorerState, Double>> transitions, Set<ExplorerState> unexplored,
-                      Set<ExplorerState> explored) {
+        public Result(Map<ClassifiedState, Map<ClassifiedState, Double>> transitions, Set<ClassifiedState> unexplored,
+                      Set<ClassifiedState> explored) {
             this.transitions = transitions;
             this.unexplored = unexplored;
             this.explored = explored;

@@ -1,5 +1,7 @@
 package pipe.gui.reachability;
 
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
@@ -13,13 +15,12 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.algorithm.state.*;
-import pipe.reachability.io.ByteWriterFormatter;
-import pipe.reachability.io.SerializedStateSpaceExplorationReader;
-import pipe.reachability.io.StateSpaceExplorationReader;
-import pipe.reachability.io.WriterFormatter;
-import pipe.reachability.state.ExplorerState;
-import pipe.reachability.state.Record;
+import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
+import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
+import pipe.reachability.algorithm.state.StateSpaceExplorer;
+import uk.ac.imperial.io.*;
+import uk.ac.imperial.state.ClassifiedState;
+import uk.ac.imperial.state.Record;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
@@ -29,7 +30,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -121,15 +125,15 @@ public class ReachabilityGraph {
      */
     private void calculateResults() {
         try {
-            WriterFormatter formatter = new ByteWriterFormatter();
+            KryoStateIO stateWriter = new KryoStateIO();
             Path temporary = Files.createTempFile("rea", ".tmp");
             try (OutputStream stream = Files.newOutputStream(temporary);
-                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(stream)) {
-                writeStateSpace(formatter, objectOutputStream);
+                 Output objectOutputStream = new Output(stream)) {
+                writeStateSpace(stateWriter, objectOutputStream);
 
                 try (InputStream inputStream = Files.newInputStream(temporary);
-                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-                    Collection<Record> records = readResults(formatter, objectInputStream);
+                     Input objectInputStream = new Input(inputStream)) {
+                    Collection<Record> records = readResults(stateWriter, objectInputStream);
                     updateGraph(records);
                 }
             } catch (InterruptedException | ExecutionException e) {
@@ -166,33 +170,33 @@ public class ReachabilityGraph {
     /**
      * Writes the petriNet state space out to a temporary file which is referenced by the objectOutputStream
      *
-     * @param formatter          format in which to write the results to
-     * @param objectOutputStream stream to write state space to
+     * @param stateWriter          format in which to write the results to
+     * @param output stream to write state space to
      * @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
      */
-    private void writeStateSpace(WriterFormatter formatter, ObjectOutputStream objectOutputStream)
+    private void writeStateSpace(StateWriter stateWriter, Output output)
             throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
         PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
-        StateWriter tangibleExplorer = new SerializingStateWriter(formatter, objectOutputStream);
+        StateProcessor processor = new StateIOProcessor(stateWriter, output);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
-                new SequentialStateSpaceExplorer(explorerUtilites, vanishingExplorer, tangibleExplorer);
+                new SequentialStateSpaceExplorer(explorerUtilites, vanishingExplorer, processor);
         stateSpaceExplorer.generate(explorerUtilites.getCurrentState());
     }
 
     /**
      * Reads results of steady state exploration into a collection of records
      *
-     * @param formatter
-     * @param objectInputStream
+     * @param stateReader
+     * @param input
      * @return state transitions with rates
      * @throws IOException
      */
-    private Collection<Record> readResults(WriterFormatter formatter, ObjectInputStream objectInputStream)
+    private Collection<Record> readResults(StateReader stateReader, Input input)
             throws IOException {
-        StateSpaceExplorationReader reader = new SerializedStateSpaceExplorationReader(formatter);
-        return reader.getRecords(objectInputStream);
+        MultiStateReader reader = new EntireStateReader(stateReader);
+        return reader.readRecords(input);
     }
 
     /**
@@ -214,13 +218,15 @@ public class ReachabilityGraph {
         mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
         layout.setInterHierarchySpacing(20);
         layout.setInterRankCellSpacing(50);
-        Map<ExplorerState, Object> verticies = new HashMap<>();
+        Map<ClassifiedState, Object> verticies = new HashMap<>();
         try {
             graph.clearSelection();
             for (Record record : records) {
                 Object state = getInsertedState(verticies, record.state, graph);
-                Object successor = getInsertedState(verticies, record.successor, graph);
-                addEdge(parent, state, successor, record.rate);
+                for (Map.Entry<ClassifiedState, Double> entry : record.successors.entrySet()) {
+                    Object successor = getInsertedState(verticies, entry.getKey(), graph);
+                    addEdge(parent, state, successor, entry.getValue());
+                }
             }
         } finally {
             graph.getModel().endUpdate();
@@ -261,7 +267,7 @@ public class ReachabilityGraph {
      * @param state     state to represent graphically
      * @return graphical vertex representation for the State
      */
-    private Object getInsertedState(Map<ExplorerState, Object> verticies, ExplorerState state, TooltipMXGraph graph) {
+    private Object getInsertedState(Map<ClassifiedState, Object> verticies, ClassifiedState state, TooltipMXGraph graph) {
         if (verticies.containsKey(state)) {
             return verticies.get(state);
         }
@@ -280,7 +286,7 @@ public class ReachabilityGraph {
      * @param state
      * @return settings string
      */
-    private String getColor(ExplorerState state) {
+    private String getColor(ClassifiedState state) {
         if (state.isTangible()) {
             return "fillColor=#99CCFF";
         }

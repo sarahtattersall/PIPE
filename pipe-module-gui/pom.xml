@@ -33,6 +33,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>uk.ac.imperial</groupId>
+            <artifactId>pipe-markov-chain</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>com.jgoodies</groupId>

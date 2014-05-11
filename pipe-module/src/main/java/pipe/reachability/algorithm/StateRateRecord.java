@@ -1,10 +1,10 @@
 package pipe.reachability.algorithm;
 
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.state.ClassifiedState;
 
 /**
  * Record containing a  state and the rate into it.
- * USed for the Reachability algorithm to perform on the fly
+ * USed for the state space exploration algorithm to perform on the fly
  * elimination of vanishing states.
  */
 public class StateRateRecord {
@@ -12,14 +12,14 @@ public class StateRateRecord {
     /**
      * State
      */
-    private final ExplorerState state;
+    private final ClassifiedState state;
 
     /**
      * Rate into the state
      */
     private double rate;
 
-    public StateRateRecord(ExplorerState state, double rate) {
+    public StateRateRecord(ClassifiedState state, double rate) {
         this.state = state;
         this.rate = rate;
     }
@@ -36,7 +36,7 @@ public class StateRateRecord {
      *
      * @return vanishing state rate
      */
-    public ExplorerState getState() {
+    public ClassifiedState getState() {
         return state;
     }
 

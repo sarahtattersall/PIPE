@@ -3,7 +3,7 @@ package pipe.reachability.algorithm.state;
 import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.state.ClassifiedState;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class SimpleVanishingExplorer implements VanishingExplorer {
     @Override
-    public Collection<StateRateRecord> explore(ExplorerState vanishingState, double rate) throws TimelessTrapException {
+    public Collection<StateRateRecord> explore(ClassifiedState vanishingState, double rate) throws TimelessTrapException {
         return Arrays.asList(new StateRateRecord(vanishingState, rate));
     }
 }

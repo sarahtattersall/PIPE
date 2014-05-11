@@ -1,13 +1,13 @@
 package pipe.animation;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import pipe.models.component.arc.Arc;
 import pipe.models.component.place.Place;
 import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.IncidenceMatrix;
 import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.state.HashedStateBuilder;
+import uk.ac.imperial.state.State;
 
 import java.util.*;
 
@@ -71,33 +71,13 @@ public class PetriNetAnimator implements Animator {
         return animationLogic.getEnabledTransitions(getCurrentState());
     }
 
-    /**
-     * Creates a new state containing the token counts for the
-     * current Petri net.
-     *
-     * @return current state of the Petri net
-     */
-    private State getCurrentState() {
-        Multimap<String, TokenCount> tokenCounts = HashMultimap.create();
-        for (Place place : petriNet.getPlaces()) {
-            for (Token token : petriNet.getTokens()) {
-                tokenCounts.put(place.getId(), new TokenCount(token.getId(), place.getTokenCount(token.getId())));
-            }
-        }
-        return new HashedState(tokenCounts);
-    }
-
-
-
     @Override
     public void fireTransition(Transition transition) {
         State newState = animationLogic.getFiredState(getCurrentState(), transition);
 
         //Set all counts
         for (Place place : petriNet.getPlaces()) {
-            for (TokenCount tokenCount : newState.getTokens(place.getId())) {
-                place.setTokenCount(tokenCount.token, tokenCount.count);
-            }
+            place.setTokenCounts(newState.getTokens(place.getId()));
         }
     }
 
@@ -124,6 +104,22 @@ public class PetriNetAnimator implements Animator {
                 place.setTokenCount(token, newCount);
             }
         }
+    }
+
+    /**
+     * Creates a new state containing the token counts for the
+     * current Petri net.
+     *
+     * @return current state of the Petri net
+     */
+    private State getCurrentState() {
+        HashedStateBuilder builder = new HashedStateBuilder();
+        for (Place place : petriNet.getPlaces()) {
+            for (Token token : petriNet.getTokens()) {
+                builder.placeWithToken(place.getId(), token.getId(), place.getTokenCount(token.getId()));
+            }
+        }
+        return builder.build();
     }
 
 

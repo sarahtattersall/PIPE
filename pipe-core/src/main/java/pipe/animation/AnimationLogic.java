@@ -1,6 +1,7 @@
 package pipe.animation;
 
 import pipe.models.component.transition.Transition;
+import uk.ac.imperial.state.State;
 
 import java.util.Collection;
 import java.util.Map;

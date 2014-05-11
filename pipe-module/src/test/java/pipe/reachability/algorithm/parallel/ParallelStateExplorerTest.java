@@ -9,7 +9,7 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
-import pipe.reachability.state.ExplorerState;
+import uk.ac.imperial.state.ClassifiedState;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,14 +33,14 @@ public class ParallelStateExplorerTest {
     VanishingExplorer vanishingExplorer;
 
     @Mock
-    ExplorerState state;
+    ClassifiedState state;
 
     private ParallelStateExplorer explorer;
 
     /**
      * Successors for explorerUtilities and state
      */
-    private Collection<ExplorerState> successors = new LinkedList<>();
+    private Collection<ClassifiedState> successors = new LinkedList<>();
 
     @Before
     public void setUp() {
@@ -57,7 +57,7 @@ public class ParallelStateExplorerTest {
     @Test
     public void decrementsLatchIfTimelessTrap() {
         try {
-            ExplorerState successor = mock(ExplorerState.class);
+            ClassifiedState successor = mock(ClassifiedState.class);
             when(successor.isTangible()).thenReturn(false);
             successors.add(successor);
 
@@ -74,13 +74,13 @@ public class ParallelStateExplorerTest {
 
     @Test
     public void tangibleRatesAdded() throws TimelessTrapException {
-        ExplorerState successor = mock(ExplorerState.class);
+        ClassifiedState successor = mock(ClassifiedState.class);
         when(successor.isTangible()).thenReturn(true);
         successors.add(successor);
 
         when(explorerUtilities.rate(state, successor)).thenReturn(5.0);
 
-        Map<ExplorerState, Double> results = explorer.call();
+        Map<ClassifiedState, Double> results = explorer.call();
 
         assertEquals(1, results.size());
         assertEquals(5.0, results.get(successor), 0.001);
@@ -89,17 +89,17 @@ public class ParallelStateExplorerTest {
 
     @Test
     public void vanishingRatesAdded() throws TimelessTrapException {
-        ExplorerState successor = mock(ExplorerState.class);
+        ClassifiedState successor = mock(ClassifiedState.class);
         when(successor.isTangible()).thenReturn(false);
         successors.add(successor);
 
         when(explorerUtilities.rate(state, successor)).thenReturn(5.0);
 
-        ExplorerState vanishingSuccessor = mock(ExplorerState.class);
+        ClassifiedState vanishingSuccessor = mock(ClassifiedState.class);
         StateRateRecord rateRecord = new StateRateRecord(vanishingSuccessor, 2.5);
         when(vanishingExplorer.explore(successor, 5.0)).thenReturn(Arrays.asList(rateRecord));
 
-        Map<ExplorerState, Double> results = explorer.call();
+        Map<ClassifiedState, Double> results = explorer.call();
 
         assertEquals(1, results.size());
         assertEquals(2.5, results.get(vanishingSuccessor), 0.001);
@@ -109,18 +109,18 @@ public class ParallelStateExplorerTest {
 
     @Test
     public void sumsVanishingRatesForSameState() throws TimelessTrapException {
-        ExplorerState successor = mock(ExplorerState.class);
+        ClassifiedState successor = mock(ClassifiedState.class);
         when(successor.isTangible()).thenReturn(false);
         successors.add(successor);
 
         when(explorerUtilities.rate(state, successor)).thenReturn(5.0);
 
-        ExplorerState vanishingSuccessor = mock(ExplorerState.class);
+        ClassifiedState vanishingSuccessor = mock(ClassifiedState.class);
         StateRateRecord rateRecord = new StateRateRecord(vanishingSuccessor, 2.5);
         StateRateRecord duplicateRateRecord = new StateRateRecord(vanishingSuccessor, 9.5);
         when(vanishingExplorer.explore(successor, 5.0)).thenReturn(Arrays.asList(rateRecord, duplicateRateRecord));
 
-        Map<ExplorerState, Double> results = explorer.call();
+        Map<ClassifiedState, Double> results = explorer.call();
 
         assertEquals(1, results.size());
         assertEquals(12.0, results.get(vanishingSuccessor), 0.001);

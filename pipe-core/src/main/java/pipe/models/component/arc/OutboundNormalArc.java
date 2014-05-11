@@ -1,13 +1,11 @@
 package pipe.models.component.arc;
 
-import pipe.animation.State;
-import pipe.animation.TokenCount;
 import pipe.models.component.Connectable;
 import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
 import pipe.models.component.transition.Transition;
 import pipe.models.petrinet.PetriNet;
 import pipe.parsers.FunctionalResults;
+import uk.ac.imperial.state.State;
 
 import java.util.Map;
 
@@ -80,8 +78,8 @@ public class OutboundNormalArc extends OutboundArc {
     private int getTokensInPlace(State state) {
         Place place = getTarget();
         int count = 0;
-        for (TokenCount tokenCount : state.getTokens(place.getId())) {
-            count += tokenCount.count;
+        for (Integer value : state.getTokens(place.getId()).values()) {
+            count += value;
         }
         return count;
     }
