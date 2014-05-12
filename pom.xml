@@ -6,7 +6,6 @@
     
     <groupId>uk.ac.imperial</groupId>
     <artifactId>PIPE</artifactId>
-
     <packaging>pom</packaging>
     <version>5.0.0-beta-2</version>
     <name>PIPE Parent Project</name>

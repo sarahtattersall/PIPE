@@ -100,7 +100,7 @@ public class PetriNetTest {
     @Test
     public void removingArcNotifiesObservers() {
         net.addPropertyChangeListener(mockListener);
-        Arc<? extends Connectable, ? extends Connectable> mockArc = mock(Arc.class);
+        Arc<Connectable, Connectable> mockArc = mock(Arc.class);
         Connectable connectable = mock(Connectable.class);
         when(mockArc.getTarget()).thenReturn(connectable);
         when(mockArc.getSource()).thenReturn(connectable);
