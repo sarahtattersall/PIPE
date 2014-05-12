@@ -12,6 +12,17 @@
     <artifactId>pipe-core</artifactId>
 
 
+    <repositories>
+        <repository>
+            <id>PIPEMarkovChain-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPEMarkovChain/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>uk.ac.imperial</groupId>

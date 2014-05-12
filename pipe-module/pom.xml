@@ -9,6 +9,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <repositories>
+        <repository>
+            <id>PIPEMarkovChain-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPEMarkovChain/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <artifactId>pipe-module</artifactId>
 
     <dependencies>
