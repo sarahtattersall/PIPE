@@ -33,6 +33,15 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+
+        <repository>
+            <id>PIPEAnalysis-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPEAnalysis/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -45,8 +54,8 @@
 
         <dependency>
             <groupId>uk.ac.imperial</groupId>
-            <artifactId>pipe-module</artifactId>
-            <version>${project.version}</version>
+            <artifactId>pipe-analysis</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
