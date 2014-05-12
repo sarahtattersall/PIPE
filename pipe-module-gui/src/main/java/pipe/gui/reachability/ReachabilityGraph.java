@@ -127,9 +127,10 @@ public class ReachabilityGraph {
         try {
             KryoStateIO stateWriter = new KryoStateIO();
             Path temporary = Files.createTempFile("rea", ".tmp");
-            try (OutputStream stream = Files.newOutputStream(temporary);
-                 Output objectOutputStream = new Output(stream)) {
-                writeStateSpace(stateWriter, objectOutputStream);
+            try (OutputStream stream = Files.newOutputStream(temporary)) {
+                 try (Output output = new Output(stream)) {
+                     writeStateSpace(stateWriter, output);
+                 }
 
                 try (InputStream inputStream = Files.newInputStream(temporary);
                      Input objectInputStream = new Input(inputStream)) {
