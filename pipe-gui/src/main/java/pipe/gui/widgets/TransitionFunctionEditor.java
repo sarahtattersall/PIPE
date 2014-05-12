@@ -83,7 +83,7 @@ public class TransitionFunctionEditor extends JPanel {
                         return;
                     }
                     ExprEvaluator parser = new ExprEvaluator(petriNet);
-                    if (parser.parseAndEvalExprForTransition(func) != null) {
+                    if (parser.evaluateExpression(func) != null) {
                         _editor.setRate(func);
                         //transitionController.setRate(func);
                     }

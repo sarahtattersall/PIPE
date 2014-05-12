@@ -73,11 +73,11 @@ public class ArcFunctionEditor extends JPanel {
                     //TODO: PASS THIS IN
 
                     ExprEvaluator parser = new ExprEvaluator(petriNet);
-                    if (parser.parseAndEvalExpr(func, token) != -1) {
+                    if (parser.evaluateExpression(func) != -1) {
                         awep.setWeight(func, token);
                     }
                     else {
-                        if (parser.parseAndEvalExpr(func, token) ==
+                        if (parser.evaluateExpression(func) ==
                                 -2) {
                             JOptionPane.showMessageDialog(null,
                                     "Please make sure division and floating numbers are " +

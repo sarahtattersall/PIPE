@@ -200,7 +200,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
         ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
         try {
-            return parser.parseAndEvalExprForTransition(model.getRateExpr());
+            return parser.evaluateExpression(model.getRateExpr());
         } catch (FunctionalEvaluationException ignored) {
             showErrorMessage();
             return -1;
