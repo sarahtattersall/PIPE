@@ -16,8 +16,15 @@
             <id>repo</id>
             <url>file://${project.basedir}/src/local-libs</url>
         </repository>
+        <repository>
+            <id>PIPEMarkovChain-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPEMarkovChain/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
     </repositories>
-
 
     <dependencies>
 
