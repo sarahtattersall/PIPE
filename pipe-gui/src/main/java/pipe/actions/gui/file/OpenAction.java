@@ -2,12 +2,12 @@ package pipe.actions.gui.file;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PipeApplicationController;
-import pipe.parsers.UnparsableException;
 import pipe.utilities.gui.GuiUtils;
-import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.FileDialog;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;

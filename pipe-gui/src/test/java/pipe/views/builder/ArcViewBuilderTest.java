@@ -6,13 +6,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.InboundArc;
-import pipe.models.component.arc.InboundNormalArc;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
 import pipe.views.ArcView;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.InboundArc;
+import uk.ac.imperial.pipe.models.component.arc.InboundNormalArc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.util.HashMap;
 

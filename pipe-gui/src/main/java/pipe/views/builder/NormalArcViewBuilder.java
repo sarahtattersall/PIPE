@@ -1,9 +1,9 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.Connectable;
 import pipe.views.arc.NormalArcView;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
 
 public class NormalArcViewBuilder {
     private final Arc<? extends Connectable, ? extends Connectable> arc;
@@ -22,7 +22,7 @@ public class NormalArcViewBuilder {
     String idInput, boolean taggedInput, NormalArc model) {     */
     public NormalArcView<Connectable, Connectable> build() {
         NormalArcView<Connectable, Connectable> view =
-                new NormalArcView<Connectable, Connectable>((Arc<Connectable,Connectable>) arc, controller);
+                new NormalArcView<>((Arc<Connectable,Connectable>) arc, controller);
         return view;
 
     }

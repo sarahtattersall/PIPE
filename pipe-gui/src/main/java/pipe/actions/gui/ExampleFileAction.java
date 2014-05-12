@@ -2,9 +2,9 @@ package pipe.actions.gui;
 
 import pipe.gui.ApplicationSettings;
 import pipe.io.JarUtilities;
-import pipe.parsers.UnparsableException;
 import pipe.utilities.gui.GuiUtils;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

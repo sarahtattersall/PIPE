@@ -1,7 +1,7 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.component.token.Token;
 
 import javax.swing.*;
 import java.awt.Color;

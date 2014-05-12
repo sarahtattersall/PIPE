@@ -3,9 +3,10 @@
  */
 package pipe.historyActions.component;
 
-import pipe.exceptions.PetriNetComponentException;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.PetriNetComponent;
+
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

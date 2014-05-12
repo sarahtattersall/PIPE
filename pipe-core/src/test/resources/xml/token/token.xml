@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<pnml>
-   <net>
-      <token id="red" red="255" green="0" blue="0"/>
-   </net>
-</pnml>

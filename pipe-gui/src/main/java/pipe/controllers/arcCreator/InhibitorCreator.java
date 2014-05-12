@@ -1,12 +1,13 @@
 package pipe.controllers.arcCreator;
 
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.InboundArc;
-import pipe.models.component.arc.InboundInhibitorArc;
-import pipe.models.component.arc.OutboundArc;
-import pipe.models.component.place.Place;
-import pipe.models.component.transition.Transition;
+
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.arc.InboundArc;
+import uk.ac.imperial.pipe.models.component.arc.InboundInhibitorArc;
+import uk.ac.imperial.pipe.models.component.arc.OutboundArc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.util.List;
 

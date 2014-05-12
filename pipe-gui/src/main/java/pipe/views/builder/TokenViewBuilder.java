@@ -1,8 +1,8 @@
 package pipe.views.builder;
 
 import pipe.controllers.TokenController;
-import pipe.models.component.token.Token;
 import pipe.views.TokenView;
+import uk.ac.imperial.pipe.models.component.token.Token;
 
 public class TokenViewBuilder {
 

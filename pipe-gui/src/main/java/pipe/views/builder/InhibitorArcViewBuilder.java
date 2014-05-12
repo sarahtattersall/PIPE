@@ -1,10 +1,10 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.place.Place;
-import pipe.models.component.transition.Transition;
 import pipe.views.arc.InhibitorArcView;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 public class InhibitorArcViewBuilder {
     private final Arc<Place, Transition> arc;

@@ -11,7 +11,7 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.MouseUtilities;
-import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;

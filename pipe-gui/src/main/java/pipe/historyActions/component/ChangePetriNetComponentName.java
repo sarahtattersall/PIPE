@@ -3,7 +3,8 @@
  */
 package pipe.historyActions.component;
 
-import pipe.models.component.PetriNetComponent;
+
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

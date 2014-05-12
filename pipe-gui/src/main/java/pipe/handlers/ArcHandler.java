@@ -3,13 +3,13 @@ package pipe.handlers;
 import pipe.actions.petrinet.SplitArcAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
-import pipe.models.component.Connectable;
 import pipe.views.ArcView;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.arc.ArcType;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;

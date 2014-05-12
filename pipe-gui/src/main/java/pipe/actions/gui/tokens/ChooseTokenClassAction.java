@@ -2,9 +2,9 @@ package pipe.actions.gui.tokens;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 
 import java.awt.event.ActionEvent;
 

@@ -1,15 +1,16 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.LabelHandler;
-import pipe.models.component.Connectable;
 import pipe.views.viewComponents.NameLabel;
+import uk.ac.imperial.pipe.models.component.Connectable;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;

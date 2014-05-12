@@ -4,9 +4,10 @@
 
 package pipe.historyActions.arc;
 
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
+
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

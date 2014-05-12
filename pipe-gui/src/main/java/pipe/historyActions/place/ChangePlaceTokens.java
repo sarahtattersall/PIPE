@@ -4,7 +4,8 @@
 
 package pipe.historyActions.place;
 
-import pipe.models.component.place.Place;
+
+import uk.ac.imperial.pipe.models.component.place.Place;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

@@ -18,6 +18,14 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+        <repository>
+            <id>PIPECore-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPECore/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
     </repositories>
 
     <artifactId>pipe-module</artifactId>
@@ -26,7 +34,7 @@
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-core</artifactId>
-            <version>${project.version}</version>
+            <version>5.0.0-beta-2</version>
         </dependency>
 
         <dependency>

@@ -1,28 +1,28 @@
 package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
-import pipe.exceptions.PetriNetComponentException;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.historyActions.component.DeletePetriNetObject;
-import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
-import pipe.models.component.PlaceablePetriNetComponent;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.place.Place;
-import pipe.models.component.rate.RateParameter;
-import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.PetriNet;
-import pipe.naming.PlaceNamer;
-import pipe.naming.TransitionNamer;
-import pipe.naming.UniqueNamer;
-import pipe.parsers.FunctionalResults;
-import pipe.visitor.ClonePetriNet;
-import pipe.visitor.TranslationVisitor;
-import pipe.visitor.component.PetriNetComponentVisitor;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.component.PlaceablePetriNetComponent;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.naming.PlaceNamer;
+import uk.ac.imperial.pipe.naming.TransitionNamer;
+import uk.ac.imperial.pipe.naming.UniqueNamer;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.visitor.ClonePetriNet;
+import uk.ac.imperial.pipe.visitor.TranslationVisitor;
+import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
@@ -164,7 +164,7 @@ public class PetriNetController implements IController, Serializable {
     }
 
     /**
-     * Translates any components that are selected using a {@link pipe.visitor.TranslationVisitor}
+     * Translates any components that are selected using a TranslationVisitor
      *
      * @param translation translation distance
      */

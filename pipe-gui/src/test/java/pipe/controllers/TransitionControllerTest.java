@@ -7,11 +7,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.transition.*;
-import pipe.models.component.rate.NormalRate;
-import pipe.models.component.rate.Rate;
-import pipe.models.component.rate.RateParameter;
-import pipe.models.component.transition.Transition;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.rate.NormalRate;
+import uk.ac.imperial.pipe.models.component.rate.Rate;
+import uk.ac.imperial.pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;

@@ -7,17 +7,16 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
-import pipe.models.PipeObservable;
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
 import pipe.views.viewComponents.ArcPath;
+import uk.ac.imperial.pipe.models.PipeObservable;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -283,7 +282,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     public void addToPetriNetTab(PetriNetTab tab) {
         this.tab = tab;
         updatePath();
-        ArcHandler<S, T> arcHandler = new ArcHandler<S, T>(this, tab, this.model, petriNetController);
+        ArcHandler<S, T> arcHandler = new ArcHandler<>(this, tab, this.model, petriNetController);
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -371,15 +370,5 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     // Accessor function to check whether or not the Arc is tagged
     public boolean isTagged() {
         return false;
-    }
-
-    //TODO: DELETE
-    public List<MarkingView> getWeightSimple() {
-        return null;
-    }
-
-    //TODO DELETE:
-    public List<MarkingView> getWeight() {
-        return null;
     }
 }

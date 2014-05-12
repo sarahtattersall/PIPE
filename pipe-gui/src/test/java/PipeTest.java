@@ -43,11 +43,9 @@ public class PipeTest {
 
     private File fileForTesting;
 
-    private List<MarkingView> markingViews;
 
     private PlaceView placeView;
 
-    private MarkingView markingView;
 
 
     private TokenView defaultTokenView;
@@ -57,8 +55,6 @@ public class PipeTest {
     private SpecifyTokenAction tokenAction;
 
     private TokenView greenTokenView;
-
-    private List<MarkingView> newMarkingViews;
 
     @BeforeClass
     public static void setUpLog4J() throws Exception {
@@ -203,29 +199,7 @@ public class PipeTest {
         return item.getAction();
     }
 
-    private void checkTokenViews() {
-        numTokens = tokenViews.size();
-        for (int i = 0; i < numTokens; i++) {
-            checkPlaces(tokenViews.get(i), i);
-            checkArcs(tokenViews.get(i), i);
-        }
-    }
 
-    private void checkPlaces(TokenView tokenView, int i) {
-        for (PlaceView placeView : placeViews) {
-            assertEquals(numTokens, placeView.getCurrentMarkingView().size());
-            assertEquals(tokenView, placeView.getCurrentMarkingView().get(i).getToken());
-        }
-    }
-
-    private void checkArcs(TokenView tokenView, int i) {
-        for (ArcView arcView : arcViews) {
-            assertEquals(numTokens, arcView.getWeight().size());
-            List<MarkingView> markings = arcView.getWeight();
-            MarkingView marking = markings.get(i);
-            assertEquals(tokenView, marking.getToken());
-        }
-    }
 
     private void checkButton(String name, int index) {
         if (name == null) {

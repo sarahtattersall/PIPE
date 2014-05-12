@@ -2,10 +2,10 @@ package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.place.Place;
-import pipe.models.component.transition.Transition;
 import pipe.views.ArcView;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;

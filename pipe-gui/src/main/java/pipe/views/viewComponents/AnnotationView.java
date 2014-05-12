@@ -11,8 +11,8 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.AnnotationEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
-import pipe.models.component.annotation.Annotation;
 import pipe.views.AbstractPetriNetViewComponent;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

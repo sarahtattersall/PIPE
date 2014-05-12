@@ -3,9 +3,9 @@ package pipe.actions.gui.create;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.models.component.Connectable;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import java.awt.Point;
 import java.awt.event.InputEvent;

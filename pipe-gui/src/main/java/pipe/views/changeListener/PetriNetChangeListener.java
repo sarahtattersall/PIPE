@@ -2,19 +2,21 @@ package pipe.views.changeListener;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.models.component.Connectable;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcType;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.petrinet.name.PetriNetName;
-import pipe.views.*;
+import pipe.views.ArcView;
+import pipe.views.PipeApplicationView;
+import pipe.views.PlaceView;
+import pipe.views.TransitionView;
 import pipe.views.arc.InhibitorArcView;
 import pipe.views.builder.*;
 import pipe.views.viewComponents.AnnotationView;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.arc.ArcType;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -28,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class listens for changes in {@link pipe.models.petrinet.PetriNet}
+ * This class listens for changes in PetriNet
  * and creates/deletes the relevant views as appropriate
  */
 public class PetriNetChangeListener implements PropertyChangeListener {

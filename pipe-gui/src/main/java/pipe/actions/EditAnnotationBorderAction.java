@@ -4,11 +4,7 @@
  */
 package pipe.actions;
 
-import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
-import pipe.models.component.annotation.Annotation;
-import pipe.views.viewComponents.AnnotationView;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

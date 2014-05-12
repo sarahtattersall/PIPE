@@ -1,28 +1,24 @@
 package pipe.views;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import pipe.controllers.PetriNetController;
+import pipe.views.arc.NormalArcView;
+import pipe.views.viewComponents.ArcPath;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import pipe.controllers.PetriNetController;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.place.Place;
-import pipe.models.component.transition.Transition;
-import pipe.views.arc.NormalArcView;
-import pipe.views.viewComponents.ArcPath;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcViewTest {

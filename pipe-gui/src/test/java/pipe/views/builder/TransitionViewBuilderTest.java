@@ -3,10 +3,10 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
-import pipe.models.component.transition.Transition;
 import pipe.views.TransitionView;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

@@ -2,12 +2,12 @@ package pipe.views;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.place.Place;
 import pipe.views.arc.NormalHead;
 import pipe.views.arc.TemporaryArcView;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.place.Place;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,7 @@ public class TemporaryArcViewTest {
         place = new Place("P0", "P0");
         place.setX(100);
         place.setY(100);
-        temporaryArcView = new TemporaryArcView<Place>(place, new NormalHead());
+        temporaryArcView = new TemporaryArcView<>(place, new NormalHead());
     }
 
     @Test

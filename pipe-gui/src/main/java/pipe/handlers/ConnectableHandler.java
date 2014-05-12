@@ -1,15 +1,15 @@
 package pipe.handlers;
 
-import pipe.actions.petrinet.ShowHideInfoAction;
 import pipe.actions.gui.create.CreateAction;
+import pipe.actions.petrinet.ShowHideInfoAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.Connectable;
-import pipe.views.*;
+import pipe.views.ConnectableView;
+import uk.ac.imperial.pipe.models.component.Connectable;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.MouseEvent;
 
 /**

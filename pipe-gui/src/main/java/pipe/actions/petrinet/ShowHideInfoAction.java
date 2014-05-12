@@ -1,7 +1,7 @@
 package pipe.actions.petrinet;
 
-import pipe.models.component.Connectable;
 import pipe.views.ConnectableView;
+import uk.ac.imperial.pipe.models.component.Connectable;
 
 import java.awt.event.ActionEvent;
 

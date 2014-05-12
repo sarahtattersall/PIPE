@@ -1,8 +1,8 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.transition.Transition;
 import pipe.views.TransitionView;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 public class TransitionViewBuilder {
     private final Transition transition;

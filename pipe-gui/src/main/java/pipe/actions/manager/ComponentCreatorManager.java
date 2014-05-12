@@ -8,8 +8,8 @@ import pipe.controllers.arcCreator.NormalCreator;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.arc.InhibitorArcHead;
 import pipe.views.arc.NormalHead;
-import pipe.visitor.connectable.arc.InhibitorSourceVisitor;
-import pipe.visitor.connectable.arc.NormalArcSourceVisitor;
+import uk.ac.imperial.pipe.visitor.connectable.arc.InhibitorSourceVisitor;
+import uk.ac.imperial.pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 
 import javax.swing.event.UndoableEditListener;
 import java.awt.event.InputEvent;

@@ -1,11 +1,11 @@
 package pipe.gui;
 
 import pipe.historyActions.AnimationHistory;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.*;
 import javax.swing.text.*;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
 

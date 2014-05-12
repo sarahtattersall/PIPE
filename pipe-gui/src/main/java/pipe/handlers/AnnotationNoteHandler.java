@@ -7,11 +7,11 @@ package pipe.handlers;
 
 import pipe.actions.EditAnnotationBorderAction;
 import pipe.controllers.PetriNetController;
-import pipe.models.component.annotation.Annotation;
 import pipe.views.viewComponents.AnnotationView;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 

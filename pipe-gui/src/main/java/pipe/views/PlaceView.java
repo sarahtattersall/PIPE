@@ -1,7 +1,6 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
@@ -9,8 +8,9 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.token.Token;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Graphical representation of a {@link pipe.models.component.place.Place}
+ * Graphical representation of a Place
  */
 public class PlaceView extends ConnectableView<Place> {
 
@@ -321,18 +321,6 @@ public class PlaceView extends ConnectableView<Place> {
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);
-    }
-
-    public HistoryItem setCurrentMarking(List<MarkingView> currentMarkingViewInput) {
-        return null;
-    }
-
-    public List<MarkingView> getCurrentMarkingView() {
-        return null;
-    }
-
-    public List<MarkingView> getCurrentMarkingObject() {
-        return null;
     }
 
     public Double getMarkingOffsetXObject() {

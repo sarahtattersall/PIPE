@@ -2,13 +2,13 @@ package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.historyActions.HistoryItem;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.transition.Transition;
+import pipe.historyActions.HistoryItem;
 import pipe.views.TransitionView;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;

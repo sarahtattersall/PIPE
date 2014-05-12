@@ -2,11 +2,11 @@ package pipe.actions.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.models.petrinet.PetriNet;
-import pipe.petrinet.unfold.Expander;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.petrinet.unfold.Expander;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

@@ -2,14 +2,13 @@ package pipe.handlers;
 
 import pipe.actions.gui.create.CreateAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.mouse.MouseUtilities;
-import pipe.models.petrinet.PetriNet;
 
 import javax.swing.event.MouseInputAdapter;
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
@@ -28,8 +27,8 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     private PetriNetController petriNetController;
 
-    public PetriNetMouseHandler(PipeApplicationModel applicationModel, MouseUtilities mouseUtilities, PetriNetController controller,
-                                PetriNetTab petriNetTab) {
+    public PetriNetMouseHandler(PipeApplicationModel applicationModel, MouseUtilities mouseUtilities,
+                                PetriNetController controller, PetriNetTab petriNetTab) {
         super();
         this.applicationModel = applicationModel;
         this.petriNetTab = petriNetTab;

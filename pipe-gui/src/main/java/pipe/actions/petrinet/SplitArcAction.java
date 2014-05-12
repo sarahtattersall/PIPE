@@ -4,11 +4,9 @@
 package pipe.actions.petrinet;
 
 import pipe.controllers.ArcController;
-import pipe.controllers.PetriNetController;
-import pipe.gui.ZoomController;
-import pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.Connectable;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 

@@ -2,15 +2,15 @@ package pipe.views;
 // Although this is a controller, it's currently in the views package because it collaborates closely with TokenView.
 // It could be moved, if some TokenView methods were changed from protected to public.
 
-import pipe.exceptions.TokenLockedException;
 
-import java.awt.*;
+import uk.ac.imperial.pipe.exceptions.TokenLockedException;
+
+import java.awt.Color;
 import java.util.*;
-import java.util.List;
 
 
 /**
- * Controller for the set of TokenViews used in a given {@link PetriNetView}.
+ * Controller for the set of TokenViews
  * <p/>
  * At construction, the set is always given a default TokenView (enabled, id="Default", black color).
  * The contents of the set may be updated by one or more TokenViews, e.g., built from a GUI or from a PNML file.

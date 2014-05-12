@@ -4,18 +4,14 @@
 
 package pipe.historyActions.component;
 
-import pipe.models.component.PetriNetComponent;
-import pipe.models.component.PlaceablePetriNetComponent;
-import pipe.views.AbstractPetriNetViewComponent;
-import pipe.visitor.component.PetriNetComponentVisitor;
+import uk.ac.imperial.pipe.models.component.PlaceablePetriNetComponent;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import java.awt.geom.Point2D;
 
 
 /**
- *
- * @author Pere Bonet
+ * Undo action for moving petri net objects on the canvas
  */
 public class MovePetriNetObject
         extends AbstractUndoableEdit

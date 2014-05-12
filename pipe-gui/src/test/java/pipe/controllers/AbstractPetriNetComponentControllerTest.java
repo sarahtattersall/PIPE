@@ -6,13 +6,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.MultipleEdit;
-import pipe.models.component.place.Place;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.place.Place;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
-
 import java.util.Arrays;
 
 import static org.mockito.Matchers.any;

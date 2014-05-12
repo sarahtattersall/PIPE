@@ -1,10 +1,10 @@
 package pipe.controllers;
 
 import pipe.historyActions.transition.*;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.place.Place;
-import pipe.models.component.rate.Rate;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.rate.Rate;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
@@ -49,7 +49,7 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
     //TODO: GET CURRENT PETRINET
     public Collection<Arc<Place, Transition>> inboundArcs() {
 //        return component.inboundArcs();
-        return new LinkedList<Arc<Place, Transition>>();
+        return new LinkedList<>();
     }
 
     public void setInfiniteServer(boolean infiniteValue) {

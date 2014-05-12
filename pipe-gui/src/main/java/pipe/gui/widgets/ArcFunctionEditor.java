@@ -1,9 +1,9 @@
 package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
-import pipe.models.component.place.Place;
-import pipe.models.petrinet.ExprEvaluator;
-import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import java.awt.BorderLayout;

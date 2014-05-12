@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.annotation.ChangeAnnotationText;
-import pipe.models.component.annotation.Annotation;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;

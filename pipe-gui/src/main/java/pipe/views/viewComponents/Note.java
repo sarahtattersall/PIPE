@@ -6,12 +6,15 @@ import pipe.gui.Constants;
 import pipe.gui.Translatable;
 import pipe.historyActions.AnnotationBorder;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.annotation.Annotation;
 import pipe.views.AbstractPetriNetViewComponent;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.geom.RectangularShape;
 
 

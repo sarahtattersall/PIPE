@@ -3,11 +3,11 @@ package pipe.actions.gui.edit;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.exceptions.PetriNetComponentException;
 import pipe.historyActions.MultipleEdit;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

@@ -1,8 +1,11 @@
 package pipe.historyActions;
 
-import pipe.models.component.transition.Transition;
 
-import java.util.*;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 
 /**
  * AnimationHistory for an individual PetriNet

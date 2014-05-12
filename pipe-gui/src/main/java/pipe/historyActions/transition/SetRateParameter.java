@@ -4,8 +4,8 @@
 package pipe.historyActions.transition;
 
 
-import pipe.models.component.rate.Rate;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.rate.Rate;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

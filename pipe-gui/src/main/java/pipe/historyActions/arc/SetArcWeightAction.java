@@ -4,13 +4,14 @@
 
 package pipe.historyActions.arc;
 
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.Arc;
+
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * @author Alex Charalambous
+ * Undable edit for setting the arc weight for a token id
  */
 public class SetArcWeightAction<S extends Connectable, T extends Connectable> extends AbstractUndoableEdit {
 

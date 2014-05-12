@@ -6,8 +6,8 @@ import pipe.gui.DragManager;
 import pipe.gui.PetriNetTab;
 import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.Connectable;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.models.component.Connectable;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;

@@ -1,11 +1,11 @@
 package pipe.gui;
 
 import com.google.common.collect.Sets;
-import pipe.animation.Animator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.animation.Animator;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

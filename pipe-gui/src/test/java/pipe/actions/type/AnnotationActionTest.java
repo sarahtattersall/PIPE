@@ -12,9 +12,9 @@ import pipe.actions.gui.create.AnnotationAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.petrinet.PetriNet;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.event.UndoableEditListener;
 import java.awt.Point;

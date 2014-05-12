@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -37,7 +37,6 @@ public class AnimationHistoryTest {
 
     @Test
     public void clearNotifiesObserver() {
-        Transition transition = mock(Transition.class);
         history.addObserver(observer);
         history.clear();
         verify(observer).update(any(Observable.class), any(Object.class));

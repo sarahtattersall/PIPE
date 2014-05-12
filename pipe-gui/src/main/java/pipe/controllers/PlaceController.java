@@ -3,7 +3,7 @@ package pipe.controllers;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.place.PlaceCapacity;
-import pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.place.Place;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;

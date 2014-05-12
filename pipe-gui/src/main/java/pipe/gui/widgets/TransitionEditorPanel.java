@@ -1,20 +1,19 @@
 package pipe.gui.widgets;
 
-import net.sourceforge.jeval.EvaluationException;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.PetriNetComponent;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.place.Place;
-import pipe.models.component.rate.NormalRate;
-import pipe.models.component.rate.Rate;
-import pipe.models.component.rate.RateParameter;
-import pipe.models.component.rate.RateType;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.ExprEvaluator;
-import pipe.models.petrinet.FunctionalEvaluationException;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.rate.NormalRate;
+import uk.ac.imperial.pipe.models.component.rate.Rate;
+import uk.ac.imperial.pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.component.rate.RateType;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
+import uk.ac.imperial.pipe.models.petrinet.FunctionalEvaluationException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -5,7 +5,6 @@ import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ZoomController;
-import pipe.models.component.Connectable;
 import pipe.views.viewComponents.NameLabel;
 
 import static org.junit.Assert.assertEquals;

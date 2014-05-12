@@ -5,11 +5,12 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.PetriNetComponent;
 import pipe.views.AbstractPetriNetViewComponent;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 //import java.awt.event.MouseWheelEvent; eliminat NOU-PERE

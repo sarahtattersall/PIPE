@@ -9,8 +9,7 @@ import pipe.actions.gui.create.DeleteTokenAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.component.place.Place;
 
 import javax.swing.event.UndoableEditListener;
 import java.util.HashMap;

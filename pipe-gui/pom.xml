@@ -16,6 +16,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>PIPECore-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPECore/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>LocalLibs</id>
+            <name>Imperial</name>
+            <url>file://${project.basedir}/src/local-libs</url>
+        </repository>
+    </repositories>
+
     <build>
         <finalName>pipe</finalName>
         <plugins>
@@ -59,19 +76,11 @@
     </build>
 
 
-    <repositories>
-        <repository>
-            <id>LocalLibs</id>
-            <name>Imperial</name>
-            <url>file://${project.basedir}/src/local-libs</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-core</artifactId>
-            <version>${project.version}</version>
+            <version>5.0.0-beta-2</version>
         </dependency>
 
         <dependency>

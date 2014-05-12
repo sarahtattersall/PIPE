@@ -7,11 +7,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.OpenAction;
 import pipe.controllers.PipeApplicationController;
-import pipe.parsers.UnparsableException;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.FileDialog;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 

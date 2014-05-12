@@ -1,14 +1,15 @@
 package pipe.gui.widgets;
 
-import pipe.models.petrinet.ExprEvaluator;
 import pipe.controllers.TransitionController;
-import pipe.models.petrinet.FunctionalEvaluationException;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.place.Place;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
+import uk.ac.imperial.pipe.models.petrinet.FunctionalEvaluationException;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;

@@ -8,17 +8,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.SaveAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.petrinet.name.NormalPetriNetName;
-import pipe.models.petrinet.name.PetriNetFileName;
-import pipe.models.petrinet.name.PetriNetName;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.name.NormalPetriNetName;
+import uk.ac.imperial.pipe.models.petrinet.name.PetriNetFileName;
+import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
-import java.awt.*;
+import java.awt.FileDialog;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 

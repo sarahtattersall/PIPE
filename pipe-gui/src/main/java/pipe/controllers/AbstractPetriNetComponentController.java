@@ -1,8 +1,8 @@
 package pipe.controllers;
 
-import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.MultipleEdit;
-import pipe.models.component.PetriNetComponent;
+import pipe.historyActions.component.ChangePetriNetComponentName;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;

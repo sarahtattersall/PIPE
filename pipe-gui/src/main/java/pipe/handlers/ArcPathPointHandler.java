@@ -5,17 +5,17 @@
  */
 package pipe.handlers;
 
+import pipe.actions.gui.edit.DeleteArcPathPointAction;
 import pipe.actions.petrinet.SplitArcPointAction;
 import pipe.actions.petrinet.ToggleArcPointAction;
-import pipe.actions.gui.edit.DeleteArcPathPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.arc.ArcPoint;
 import pipe.views.viewComponents.ArcPathPoint;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 

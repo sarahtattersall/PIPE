@@ -4,7 +4,8 @@
 
 package pipe.historyActions.annotation;
 
-import pipe.models.component.annotation.Annotation;
+
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

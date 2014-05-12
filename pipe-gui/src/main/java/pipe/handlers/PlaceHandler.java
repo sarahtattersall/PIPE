@@ -1,11 +1,11 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
-import pipe.models.component.place.Place;
 import pipe.views.PlaceView;
+import uk.ac.imperial.pipe.models.component.place.Place;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;

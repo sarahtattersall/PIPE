@@ -5,12 +5,12 @@
 package pipe.historyActions.rateparameter;
 
 
-import pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.component.rate.RateParameter;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * HistoryItem responsible for undo/redoing a rate parameters
+ * Undoable edit responsible for undo/redoing a rate parameters
  * expression
  */
 public class ChangeRateParameterRate extends AbstractUndoableEdit {

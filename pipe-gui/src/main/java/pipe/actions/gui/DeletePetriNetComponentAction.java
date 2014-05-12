@@ -6,9 +6,9 @@
 package pipe.actions.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentException;
-import pipe.models.component.PetriNetComponent;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
 
 import java.awt.event.ActionEvent;
 

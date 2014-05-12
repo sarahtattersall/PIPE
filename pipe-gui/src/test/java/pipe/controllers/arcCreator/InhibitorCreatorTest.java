@@ -8,18 +8,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.PetriNetTab;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.arc.InboundArc;
-import pipe.models.component.arc.InboundInhibitorArc;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.PetriNet;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.arc.InboundArc;
+import uk.ac.imperial.pipe.models.component.arc.InboundInhibitorArc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;

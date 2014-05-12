@@ -1,7 +1,6 @@
 package pipe.gui.widgets;
 
 import pipe.controllers.AnnotationController;
-import pipe.models.component.annotation.Annotation;
 
 import javax.swing.*;
 

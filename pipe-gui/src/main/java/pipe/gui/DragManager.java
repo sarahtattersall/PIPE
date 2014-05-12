@@ -1,19 +1,19 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentException;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.MovePetriNetObject;
-import pipe.models.component.PetriNetComponent;
-import pipe.models.component.PlaceablePetriNetComponent;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.component.annotation.AnnotationVisitor;
-import pipe.models.component.arc.*;
-import pipe.models.component.place.Place;
-import pipe.models.component.place.PlaceVisitor;
-import pipe.models.component.transition.Transition;
-import pipe.models.component.transition.TransitionVisitor;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.component.PlaceablePetriNetComponent;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.component.annotation.AnnotationVisitor;
+import uk.ac.imperial.pipe.models.component.arc.*;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.place.PlaceVisitor;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.TransitionVisitor;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.UndoableEdit;

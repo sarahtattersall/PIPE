@@ -3,9 +3,12 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Translatable;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;

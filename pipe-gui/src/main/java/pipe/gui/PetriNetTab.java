@@ -1,16 +1,16 @@
 package pipe.gui;
 
-import pipe.exceptions.PetriNetComponentException;
-import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
-import pipe.models.component.place.Place;
-import pipe.models.component.place.PlaceVisitor;
-import pipe.models.component.transition.Transition;
-import pipe.models.component.transition.TransitionVisitor;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
 import pipe.views.PipeApplicationView;
-import pipe.visitor.component.PetriNetComponentVisitor;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.place.PlaceVisitor;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.TransitionVisitor;
+import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.*;
 import java.awt.*;

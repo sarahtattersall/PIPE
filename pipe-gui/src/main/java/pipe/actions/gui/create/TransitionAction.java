@@ -3,11 +3,11 @@ package pipe.actions.gui.create;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.models.petrinet.PetriNet;
-import pipe.models.component.Connectable;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 /**

@@ -3,8 +3,8 @@ package pipe.gui.widgets;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.ApplicationSettings;
-import pipe.models.component.token.Token;
-import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;

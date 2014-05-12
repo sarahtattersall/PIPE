@@ -1,10 +1,10 @@
 package pipe.reachability.algorithm.state;
 
-import pipe.models.component.transition.Transition;
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateRateRecord;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.state.ClassifiedState;
 
 import java.util.ArrayDeque;

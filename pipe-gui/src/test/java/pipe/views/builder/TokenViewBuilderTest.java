@@ -2,10 +2,10 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.models.component.token.Token;
 import pipe.views.TokenView;
+import uk.ac.imperial.pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
 
 import static org.junit.Assert.assertEquals;
 

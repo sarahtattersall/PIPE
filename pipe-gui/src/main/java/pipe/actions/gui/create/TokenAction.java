@@ -3,8 +3,8 @@ package pipe.actions.gui.create;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.Connectable;
-import pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.place.Place;
 
 import java.awt.event.MouseEvent;
 import java.util.Map;

@@ -5,27 +5,29 @@ package pipe.views.viewComponents;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentException;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.ArcPoint;
-import pipe.models.component.place.Place;
-import pipe.models.component.place.PlaceVisitor;
-import pipe.models.component.transition.Transition;
-import pipe.models.component.transition.TransitionVisitor;
 import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.math.Cubic;
 import pipe.views.ArcView;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.place.PlaceVisitor;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.TransitionVisitor;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**

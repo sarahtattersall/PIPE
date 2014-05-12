@@ -2,16 +2,9 @@ package pipe.actions.gui.create;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.Connectable;
 
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.AbstractUndoableEdit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -34,7 +27,8 @@ public abstract class CreateAction extends GuiAction {
     /**
      * Action that happens when a mouse press event is fired on the petri net whilst
      * this action is selected
-     * @param event mouse event
+     *
+     * @param event              mouse event
      * @param petriNetController controller for the petri net
      */
     public abstract void doAction(MouseEvent event, PetriNetController petriNetController);
@@ -43,9 +37,9 @@ public abstract class CreateAction extends GuiAction {
      * Action that happens when a mouse press event is fired on a {@link pipe.views.ConnectableView}
      * whilst this action is selected
      *
-     * @param connectable item clicked
+     * @param connectable        item clicked
      * @param petriNetController controller for the petri net
-     * @param <T> connectable type
+     * @param <T>                connectable type
      */
     public abstract <T extends Connectable> void doConnectableAction(T connectable,
                                                                      PetriNetController petriNetController);
@@ -54,7 +48,6 @@ public abstract class CreateAction extends GuiAction {
     public void actionPerformed(ActionEvent e) {
         applicationModel.selectTypeAction(this);
     }
-
 
 
 }

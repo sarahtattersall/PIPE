@@ -1,11 +1,12 @@
 package pipe.views.arc;
 
 import pipe.gui.Constants;
-import pipe.models.component.Connectable;
-import pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
      * Intermediate points build up by clicking on the canvas
      * Press shift for curved points
      */
-    private List<ArcPoint> intermediatePoints = new ArrayList<ArcPoint>();
+    private List<ArcPoint> intermediatePoints = new ArrayList<>();
 
     /**
      * Maximum intermediate point for setting rectangle bounds

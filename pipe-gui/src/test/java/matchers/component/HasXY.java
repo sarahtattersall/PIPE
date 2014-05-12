@@ -1,6 +1,7 @@
 package matchers.component;
 
-import pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.Connectable;
+
 /**
  * Checks if connectable has given x and y
  */

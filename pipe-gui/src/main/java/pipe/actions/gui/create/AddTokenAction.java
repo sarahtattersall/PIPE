@@ -2,7 +2,6 @@ package pipe.actions.gui.create;
 
 import pipe.controllers.PlaceController;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.models.component.token.Token;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

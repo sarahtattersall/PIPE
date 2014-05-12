@@ -1,14 +1,16 @@
 package utils;
 
-import pipe.io.PetriNetIOImpl;
-import pipe.io.PetriNetReader;
-import pipe.models.petrinet.PetriNet;
-import pipe.parsers.UnparsableException;
+
+import uk.ac.imperial.pipe.io.PetriNetIOImpl;
+import uk.ac.imperial.pipe.io.PetriNetReader;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.xml.bind.JAXBException;
 
 public class Utils {
-    private Utils() {}
+    private Utils() {
+    }
 
     public static PetriNet readPetriNet(String path) throws JAXBException, UnparsableException {
         PetriNetReader io = new PetriNetIOImpl();

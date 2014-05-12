@@ -6,9 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.animation.Animator;
 import pipe.historyActions.AnimationHistory;
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.animation.Animator;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import static org.mockito.Mockito.*;
 

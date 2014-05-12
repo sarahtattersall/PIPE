@@ -1,17 +1,12 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.InvalidRateException;
-import pipe.exceptions.PetriNetComponentNotFoundException;
-import pipe.models.component.rate.RateParameter;
-import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.models.component.rate.RateParameter;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 import java.util.List;
 
 /**

@@ -1,17 +1,17 @@
 package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.*;
+import pipe.historyActions.HistoryItem;
 import pipe.historyActions.arc.JoinInverseArc;
 import pipe.historyActions.arc.SetInverseArc;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.Connectable;
-import pipe.models.component.token.Token;
 import pipe.views.ArcView;
 import pipe.views.viewComponents.NameLabel;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.component.token.Token;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

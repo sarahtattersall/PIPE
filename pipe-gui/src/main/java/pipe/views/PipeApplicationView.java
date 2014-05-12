@@ -15,13 +15,13 @@ import pipe.actions.gui.zoom.ZoomOutAction;
 import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.exceptions.PetriNetComponentNotFoundException;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.io.JarUtilities;
-import pipe.models.component.token.Token;
-import pipe.models.petrinet.PetriNet;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

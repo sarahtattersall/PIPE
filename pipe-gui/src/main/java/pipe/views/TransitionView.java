@@ -10,10 +10,10 @@ import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.ExprEvaluator;
-import pipe.models.petrinet.FunctionalEvaluationException;
-import pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
+import uk.ac.imperial.pipe.models.petrinet.FunctionalEvaluationException;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import java.awt.*;

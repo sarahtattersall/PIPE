@@ -3,12 +3,13 @@
  */
 package pipe.historyActions.transition;
 
-import pipe.models.component.transition.Transition;
+
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * In charge of setting {@link Transition} angle
+ * In charge of setting transition angle
  */
 public class TransitionRotation extends AbstractUndoableEdit {
 

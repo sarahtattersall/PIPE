@@ -11,9 +11,9 @@ import pipe.actions.gui.create.PlaceAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.models.component.place.Place;
-import pipe.models.petrinet.PetriNet;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;

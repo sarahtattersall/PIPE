@@ -1,16 +1,14 @@
 package pipe.views;
 
 import pipe.controllers.TokenController;
-import pipe.exceptions.TokenLockedException;
-import pipe.models.component.*;
-import pipe.models.component.arc.Arc;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
 import pipe.utilities.math.Matrix;
 import pipe.views.arc.InhibitorArcView;
+import uk.ac.imperial.pipe.exceptions.TokenLockedException;
+import uk.ac.imperial.pipe.models.component.token.Token;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Observable;
@@ -221,32 +219,5 @@ public class TokenView extends Observable implements Serializable {
         builder.append(", Color=");
         builder.append(_model.getColor());
         return builder.toString();
-    }
-
-    //TODO: DELETE STUB
-    public int[][] getBackwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs,
-                                               final Collection<Transition> transitions,
-                                               final Collection<Place> places) {
-        return new int[0][];  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    //TODO: DELETE STUB
-    public int[][] getForwardsIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs,
-                                              final Collection<Transition> transitions,
-                                              final Collection<Place> places) {
-        return new int[0][];  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    //TODO: DELETE STUB
-    public Matrix getInhibitionMatrix(final Collection<InhibitorArcView> inhibitorsArrayList,
-                                      final Collection<TransitionView> transitionsArrayList,
-                                      final Collection<PlaceView> placesArrayList) {
-        return null;
-    }
-
-    //TODO: DELETE STUB
-    public int[][] getIncidenceMatrix(final Collection<Arc<? extends Connectable, ? extends Connectable>> arcs,
-                                      final Collection<Transition> transitions, final Collection<Place> places) {
-        return new int[0][];  //To change body of created methods use File | Settings | File Templates.
     }
 }

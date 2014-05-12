@@ -1,6 +1,6 @@
 package pipe.reachability.algorithm;
 
-import pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.state.ClassifiedState;
 
 import java.util.Collection;
@@ -83,5 +83,8 @@ public interface ExplorerUtilities {
      */
     Collection<Transition> getAllEnabledTransitions(ClassifiedState state);
 
+    /**
+     * Clear any saved states
+     */
     void clear();
 }

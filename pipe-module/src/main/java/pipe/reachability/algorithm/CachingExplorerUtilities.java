@@ -1,26 +1,25 @@
 package pipe.reachability.algorithm;
 
-import pipe.animation.AnimationLogic;
-import pipe.animation.PetriNetAnimationLogic;
-import pipe.models.component.place.Place;
-import pipe.models.component.token.Token;
-import pipe.models.component.transition.Transition;
-import pipe.models.petrinet.PetriNet;
-import pipe.parsers.FunctionalResults;
-import pipe.parsers.PetriNetWeightParser;
-import pipe.visitor.ClonePetriNet;
+import uk.ac.imperial.pipe.animation.Animator;
+import uk.ac.imperial.pipe.animation.PetriNetAnimator;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
+import uk.ac.imperial.pipe.visitor.ClonePetriNet;
 import uk.ac.imperial.state.ClassifiedState;
 import uk.ac.imperial.state.HashedClassifiedState;
 import uk.ac.imperial.state.HashedStateBuilder;
 import uk.ac.imperial.state.State;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Useful methods to help explore the state space.
- * <p/>
- * Performs caching of frequent computations in a thread safe manner
+ *
+ * Performs caching of frequent computations
  */
 public class CachingExplorerUtilities implements ExplorerUtilities {
     /**
@@ -31,18 +30,18 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     /**
      * Animator for the Petri net
      */
-    private final AnimationLogic animationLogic;
+    private final Animator animator;
 
     /**
      * Cached successors is used when exploring states to quickly determine
      * a states successors it has already seen before.
      * <p/>
      * It will be most useful when exploring cyclic transitions
-     * It is thread safe due to the nature of this class being accessed from many threads
      */
-    private Map<ClassifiedState, Map<ClassifiedState, Collection<Transition>>> cachedSuccessors = new ConcurrentHashMap<>();
+    private Map<ClassifiedState, Map<ClassifiedState, Collection<Transition>>> cachedSuccessors = new HashMap<>();
 
     /**
+     *
      * Takes a copy of the Petri net to use for state space exploration so
      * not to affect the reference
      *
@@ -50,13 +49,14 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      */
     public CachingExplorerUtilities(PetriNet petriNet) {
         this.petriNet = ClonePetriNet.clone(petriNet);
-        animationLogic = new PetriNetAnimationLogic(this.petriNet);
+        animator = new PetriNetAnimator(this.petriNet);
     }
 
     /**
+     *
      * Finds successors of the given state. A successor is a state that occurs
      * when one of the enabled transitions in the current state is fired.
-     * <p/>
+     *
      * Performs caching of the successors to speed up computation time
      * when a state is queried more than once. This is particularly useful
      * if on the fly vanishing state exploration is used
@@ -71,11 +71,22 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
             return cachedSuccessors.get(state);
         }
 
+
+        setState(petriNet, state);
+        Collection<Transition> enabled = animator.getEnabledTransitions();
         Map<ClassifiedState, Collection<Transition>> successors = new HashMap<>();
-        for (Map.Entry<State, Collection<Transition>> entry : animationLogic.getSuccessors(
-                state).entrySet()) {
-            successors.put(createState(entry.getKey()), entry.getValue());
+        for (Transition transition : enabled) {
+            setState(petriNet, state);
+            animator.fireTransition(transition);
+            ClassifiedState successor = getCurrentState();
+
+
+            if (!successors.containsKey(successor)) {
+                successors.put(successor, new LinkedList<Transition>());
+            }
+            successors.get(successor).add(transition);
         }
+
         cachedSuccessors.put(state, successors);
 
         return successors;
@@ -108,13 +119,9 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
             }
         }
 
-        return createState(builder.build());
-    }
-
-    private ClassifiedState createState(State tokenCounts) {
-        boolean tanigble = isTangible(tokenCounts);
-        return (tanigble ? HashedClassifiedState.tangibleState(tokenCounts) :
-                HashedClassifiedState.vanishingState(tokenCounts));
+        State state = builder.build();
+        boolean tanigble = isTangible(state);
+        return (tanigble ? HashedClassifiedState.tangibleState(state) : HashedClassifiedState.vanishingState(state));
     }
 
     /**
@@ -122,11 +129,13 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
      * a) Has no enabled transitions
      * b) Has entirely timed transitions leaving it
      *
-     * @param tokenCounts to test for tangibility
+     *
+     * @param state to test for tangibility
      * @return true if the current token count setting is tangible
      */
-    private boolean isTangible(State tokenCounts) {
-        Set<Transition> enabledTransitions = animationLogic.getEnabledTransitions(tokenCounts);
+    private boolean isTangible(State state) {
+        setState(state);
+        Set<Transition> enabledTransitions = animator.getEnabledTransitions();
         boolean anyTimed = false;
         boolean anyImmediate = false;
         for (Transition transition : enabledTransitions) {
@@ -139,10 +148,26 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
         return enabledTransitions.isEmpty() || (anyTimed && !anyImmediate);
     }
 
+    /**
+     * Sets the Petri net to this state
+     *
+     * @param state contains the token counts to set the places to
+     */
+    private void setState(PetriNet petriNet, State state) {
+        for (Place place : petriNet.getPlaces()) {
+            place.setTokenCounts(state.getTokens(place.getId()));
+        }
+    }
+
+    private void setState(State state) {
+        for (Place place : petriNet.getPlaces()) {
+            place.setTokenCounts(state.getTokens(place.getId()));
+        }
+    }
 
     /**
      * Calculates the set of transitions that will take you from one state to the successor.
-     * <p/>
+     *
      * Uses the current underlying cached methods so that duplicate calls to this method
      * will not result in another computation
      *
@@ -154,15 +179,15 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     @Override
     public Collection<Transition> getTransitions(ClassifiedState state, ClassifiedState successor) {
         Map<ClassifiedState, Collection<Transition>> stateTransitions = getSuccessorsWithTransitions(state);
-            if (stateTransitions.containsKey(successor)) {
-                return stateTransitions.get(successor);
-            }
-
+        if (stateTransitions.containsKey(successor)) {
+            return stateTransitions.get(successor);
+        }
         return new LinkedList<>();
     }
 
 
     /**
+     *
      * Sums up the weights of the transitions. Transitions may have functional rates
      *
      * @param transitions
@@ -184,6 +209,7 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
     }
 
     /**
+     *
      * @param state
      * @return all enabled transitions for the specified state
      */
@@ -196,12 +222,9 @@ public class CachingExplorerUtilities implements ExplorerUtilities {
         return results;
     }
 
-    /**
-     * Clears the cache
-     */
     @Override
     public void clear() {
-        cachedSuccessors.clear();
+       cachedSuccessors.clear();
     }
 
 }

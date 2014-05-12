@@ -9,11 +9,12 @@ package pipe.views.viewComponents;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.HistoryItem;
-import pipe.models.component.arc.ArcPoint;
 import pipe.views.AbstractPetriNetViewComponent;
+import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;

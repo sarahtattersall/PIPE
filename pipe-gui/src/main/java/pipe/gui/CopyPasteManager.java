@@ -1,28 +1,28 @@
 package pipe.gui;
 
-import pipe.exceptions.PetriNetComponentException;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.models.component.Connectable;
-import pipe.models.component.PetriNetComponent;
-import pipe.models.component.annotation.Annotation;
-import pipe.models.component.annotation.AnnotationVisitor;
-import pipe.models.component.arc.ArcVisitor;
-import pipe.models.component.arc.InboundArc;
-import pipe.models.component.arc.OutboundArc;
-import pipe.models.component.place.Place;
-import pipe.models.component.place.PlaceVisitor;
-import pipe.models.component.token.Token;
-import pipe.models.component.token.TokenVisitor;
-import pipe.models.component.transition.Transition;
-import pipe.models.component.transition.TransitionVisitor;
-import pipe.models.petrinet.PetriNet;
-import pipe.naming.MultipleNamer;
-import pipe.naming.PetriNetComponentNamer;
 import pipe.utilities.gui.GuiUtils;
 import pipe.views.PipeApplicationView;
-import pipe.visitor.PasteVisitor;
-import pipe.visitor.component.PetriNetComponentVisitor;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.component.annotation.AnnotationVisitor;
+import uk.ac.imperial.pipe.models.component.arc.ArcVisitor;
+import uk.ac.imperial.pipe.models.component.arc.InboundArc;
+import uk.ac.imperial.pipe.models.component.arc.OutboundArc;
+import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.place.PlaceVisitor;
+import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.component.token.TokenVisitor;
+import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.component.transition.TransitionVisitor;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.naming.MultipleNamer;
+import uk.ac.imperial.pipe.naming.PetriNetComponentNamer;
+import uk.ac.imperial.pipe.visitor.PasteVisitor;
+import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -317,7 +317,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     /**
-     * @return Petri net components that do not inherit from {@link pipe.models.component.Connectable}
+     * @return Petri net components that do not inherit from Connectable
      */
     private Collection<PetriNetComponent> getNonConnectablesToPaste() {
         final Collection<PetriNetComponent> components = new LinkedList<>();
