@@ -2,16 +2,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import pipe.actions.gui.GuiAction;
-import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.gui.ApplicationSettings;
-import pipe.views.*;
+import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 import java.awt.Container;
-import java.io.File;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -29,32 +24,9 @@ public class PipeTest {
 
     private JToolBar toolbar;
 
-    private Collection<PlaceView> placeViews;
-
-    private Collection<ArcView> arcViews;
-
-    private LinkedList<TokenView> tokenViews;
-
-    private int numTokens;
-
     private JMenu menu;
 
     private JMenu subMenu;
-
-    private File fileForTesting;
-
-
-    private PlaceView placeView;
-
-
-
-    private TokenView defaultTokenView;
-
-    private TokenView redTokenView;
-
-    private SpecifyTokenAction tokenAction;
-
-    private TokenView greenTokenView;
 
     @BeforeClass
     public static void setUpLog4J() throws Exception {
@@ -93,22 +65,6 @@ public class PipeTest {
         assertEquals("Examples", menu.getItem(11).getText());
         subMenu = (JMenu) menu.getMenuComponent(11);
         assertEquals("expecting 15 examples", 15, subMenu.getItemCount());
-        assertEquals("Accident & Emergency Unit (basic model).xml", subMenu.getItem(0).getText());
-        assertEquals("Accident & Emergency Unit Coloured.xml", subMenu.getItem(1).getText());
-        assertEquals("ClassicGSPN.xml", subMenu.getItem(2).getText());
-        assertEquals("Coloured Reader Writer.xml", subMenu.getItem(3).getText());
-        assertEquals("Courier Protocol.xml", subMenu.getItem(4).getText());
-        assertEquals("Dining philosophers.xml", subMenu.getItem(5).getText());
-        assertEquals("Dual Processor With Colour.xml", subMenu.getItem(6).getText());
-        assertEquals("FMS1.xml", subMenu.getItem(7).getText());
-        assertEquals("Producer & Consumer.xml", subMenu.getItem(8).getText());
-        assertEquals("Readers & Writers.xml", subMenu.getItem(9).getText());
-        assertEquals("Simple Coloured Net.xml", subMenu.getItem(10).getText());
-        assertEquals("fms.xml", subMenu.getItem(11).getText());
-        assertEquals("gspn1.xml", subMenu.getItem(12).getText());
-        assertEquals("gspn2.xml", subMenu.getItem(13).getText());
-        assertEquals("gspn3.xml", subMenu.getItem(14).getText());
-        assertEquals("Exit", menu.getItem(13).getText());
 
         menu = applicationView.getJMenuBar().getMenu(1);
         assertEquals("Edit", menu.getText());

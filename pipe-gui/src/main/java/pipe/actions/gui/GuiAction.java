@@ -8,10 +8,7 @@ import pipe.gui.ApplicationSettings;
 import javax.swing.*;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoableEdit;
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.net.URL;
 
 
@@ -57,7 +54,7 @@ public abstract class GuiAction
 
     protected GuiAction(String name, String tooltip) {
         super(name);
-        URL iconURL = Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + name + ".png");
+        URL iconURL = this.getClass().getResource(ApplicationSettings.getImagePath() + name + ".png");
         if(iconURL != null)
         {
             putValue(SMALL_ICON, new ImageIcon(iconURL));
@@ -72,18 +69,7 @@ public abstract class GuiAction
     protected GuiAction(String name, String tooltip, String keystroke)
     {
 
-        super(name);
-        URL iconURL = Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + name + ".png");
-        if(iconURL != null)
-        {
-            putValue(SMALL_ICON, new ImageIcon(iconURL));
-        }
-
-        if(tooltip != null)
-        {
-            putValue(SHORT_DESCRIPTION, tooltip);
-        }
-
+        this(name, tooltip);
         if(keystroke != null)
         {
             putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(keystroke));

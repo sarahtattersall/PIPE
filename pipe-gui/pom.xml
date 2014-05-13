@@ -34,7 +34,6 @@
     </repositories>
 
     <build>
-        <finalName>pipe</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -72,6 +71,47 @@
                     </arguments>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>Pipe</mainClass>
+                                </transformer>
+                            </transformers>
+
+                            <filters>
+                                <filter>
+                                    <!--
+                                        Exclude files that sign a jar
+                                        (one or multiple of the dependencies).
+                                        One may not repack a signed jar without
+                                        this, or you will get a
+                                        SecurityException at program start.
+                                    -->
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/*.INF</exclude> <!-- This one may not be required -->
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
     </build>
 

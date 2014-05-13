@@ -17,7 +17,6 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.io.JarUtilities;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.component.token.Token;
@@ -39,14 +38,11 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer, Serializable {
@@ -170,8 +166,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             e.printStackTrace();
         }
 
-        this.setIconImage(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(
-                ApplicationSettings.getImagePath() + "icon.png")).getImage());
+        this.setIconImage(new ImageIcon(getImageURL("icon.png")).getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 80 / 100, screenSize.height * 80 / 100);
@@ -531,8 +526,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
 
         JMenu exportMenu = new JMenu("Export");
-        exportMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(
-                ApplicationSettings.getImagePath() + "Export.png")));
+        exportMenu.setIcon(new ImageIcon(getImageURL("Export.png")));
         addMenuItem(exportMenu, exportPNGAction);
         addMenuItem(exportMenu, exportPSAction);
         addMenuItem(exportMenu, exportTNAction);
@@ -581,8 +575,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         viewMenu.setMnemonic('V');
 
         JMenu zoomMenu = new JMenu("Zoom");
-        zoomMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(
-                ApplicationSettings.getImagePath() + "Zoom.png")));
+        zoomMenu.setIcon(new ImageIcon(getImageURL("Zoom.png")));
         addZoomMenuItems(zoomMenu);
 
         addMenuItem(viewMenu, zoomOutAction);
@@ -608,12 +601,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         JMenuItem aboutItem = helpMenu.add("About PIPE");
         aboutItem.addActionListener(this); // Help - About is implemented
         // differently
-
-        URL iconURL = Thread.currentThread().getContextClassLoader().getResource(
-                ApplicationSettings.getImagePath() + "About.png");
-        if (iconURL != null) {
-            aboutItem.setIcon(new ImageIcon(iconURL));
-        }
+        aboutItem.setIcon(new ImageIcon(getImageURL("About.png")));
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
@@ -649,89 +637,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      */
     private JMenu createExampleFileMenu() {
         JMenu exampleMenu = new JMenu("Examples");
-        exampleMenu.setIcon(new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(
-                ApplicationSettings.getImagePath() + "Example.png")));
+        exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
+        URL examplesDirURL = this.getClass().getResource("/extras/examples/");
         try {
-            URL examplesDirURL = Thread.currentThread().getContextClassLoader().getResource(
-                    ApplicationSettings.getExamplesDirectoryPath() + System.getProperty("file.separator"));
-
-            if (JarUtilities.isJarFile(examplesDirURL)) {
-
-                JarFile jarFile = new JarFile(JarUtilities.getJarName(examplesDirURL));
-
-                ArrayList<JarEntry> nets =
-                        JarUtilities.getJarEntries(jarFile, ApplicationSettings.getExamplesDirectoryPath());
-
-                Arrays.sort(nets.toArray(), new Comparator() {
-                    @Override
-                    public int compare(Object one, Object two) {
-                        return ((JarEntry) one).getName().compareTo(((JarEntry) two).getName());
-                    }
-                });
-
-                if (nets.size() > 0) {
-                    int index = 0;
-                    for (JarEntry net : nets) {
-                        if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu, new ExampleFileAction(net, this));
-                            index++;
-                        }
-                    }
-                }
-            } else {
-                /**
-                 * The next block fixes a problem that surfaced on Mac OSX with
-                 * PIPE 2.4. In that environment (and not in Windows) any blanks
-                 * in the project name in Eclipse are property converted to
-                 * '%20' but the blank in "extras.examples" is not. The following
-                 * code will do nothing on a Windows machine or if the logic on
-                 * OSX changess. I also added a stack trace so if the problem
-                 * occurs for another environment (perhaps multiple blanks need
-                 * to be manually changed) it can be easily fixed. DP
-                 */
-                // examplesDir = new File(new URI(examplesDirURL.toString()));
-                String dirURLString = examplesDirURL.toString();
-                int index = dirURLString.indexOf(" ");
-                if (index > 0) {
-                    StringBuffer sb = new StringBuffer(dirURLString);
-                    sb.replace(index, index + 1, "%20");
-                    dirURLString = sb.toString();
-                }
-
-                File examplesDir = new File(new URI(dirURLString));
-
-                File[] nets = examplesDir.listFiles();
-
-                Arrays.sort(nets, new Comparator() {
-                    @Override
-                    public int compare(Object one, Object two) {
-                        return ((File) one).getName().compareTo(((File) two).getName());
-                    }
-                });
-
-                // Oliver Haggarty - fixed code here so that if folder contains
-                // non
-                // .xml file the Example x counter is not incremented when that
-                // file
-                // is ignored
-
-                if (nets.length > 0) {
-                    int k = 0;
-                    for (File net : nets) {
-                        if (net.getName().toLowerCase().endsWith(".xml")) {
-                            addMenuItem(exampleMenu, new ExampleFileAction(net, this));
-                        }
-                    }
-
-                }
-                return exampleMenu;
-            }
-        } catch (IOException | URISyntaxException e) {
-            System.err.println("Error getting example files:" + e);
+            URI uri = examplesDirURL.toURI();
+            File directory = new File(uri);
+          for (File entry : directory.listFiles()) {
+              addMenuItem(exampleMenu, new ExampleFileAction(entry, this));
+          }
+        } catch (URISyntaxException e) {
             e.printStackTrace();
-        } finally {
-            return exampleMenu;
         }
+        return exampleMenu;
     }
 
     private void setZoomChangeListener() {
@@ -870,5 +787,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     private Map<PetriNetTab, AnimationHistoryView> histories = new HashMap<>();
+
+    private URL getImageURL(String name) {
+        return this.getClass().getResource(
+                ApplicationSettings.getImagePath() + name);
+    }
 }
 

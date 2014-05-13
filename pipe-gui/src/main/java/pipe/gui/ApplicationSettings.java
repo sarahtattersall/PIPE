@@ -4,9 +4,11 @@ import pipe.gui.model.PipeApplicationModel;
 import pipe.controllers.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 
+import java.io.File;
+
 public class ApplicationSettings
 {
-    private static final String _imgPath = "." + System.getProperty("file.separator") + "images" + System.getProperty("file.separator");
+    private static final String _imgPath =  File.separator + "images" + File.separator;
     private static PipeApplicationView _applicationView;
     private static PipeApplicationController _applicationController;
     private static PipeApplicationModel _applicationModel;
@@ -33,7 +35,7 @@ public class ApplicationSettings
 
     public static String getExamplesDirectoryPath()
     {
-        return "extras"+ System.getProperty("file.separator") +"examples";
+        return "extras"+ File.separator +"examples";
     }
 
     public static PipeApplicationView getApplicationView()

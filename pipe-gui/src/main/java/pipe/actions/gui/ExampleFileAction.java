@@ -21,7 +21,7 @@ public class ExampleFileAction extends GuiAction
         super(file.getName(), "Open example file \"" + file.getName() + "\"");
         filename = file;
         this.applicationView = applicationView;
-        putValue(SMALL_ICON, new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + "Net.png")));
+        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(ApplicationSettings.getImagePath() + "Net.png")));
     }
 
     public ExampleFileAction(JarEntry entry, PipeApplicationView applicationView)
@@ -29,7 +29,7 @@ public class ExampleFileAction extends GuiAction
         super(entry.getName().substring(1 + entry.getName().indexOf(System.getProperty("file.separator"))), "Open example file \"" + entry.getName() + "\"");
         this.applicationView = applicationView;
         filename = JarUtilities.getFile(entry);
-        putValue(SMALL_ICON, new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(ApplicationSettings.getImagePath() + "Net.png")));
+        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(ApplicationSettings.getImagePath() + "Net.png")));
     }
 
     @Override
