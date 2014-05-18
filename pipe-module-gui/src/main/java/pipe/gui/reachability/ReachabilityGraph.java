@@ -126,16 +126,22 @@ public class ReachabilityGraph {
     private void calculateResults() {
         try {
             KryoStateIO stateWriter = new KryoStateIO();
-            Path temporary = Files.createTempFile("rea", ".tmp");
-            try (OutputStream stream = Files.newOutputStream(temporary)) {
-                 try (Output output = new Output(stream)) {
-                     writeStateSpace(stateWriter, output);
-                 }
+            Path temporaryTransitions = Files.createTempFile("transitions", ".tmp");
+            Path temporaryStates = Files.createTempFile("states", ".tmp");
+            try (OutputStream transitionStream = Files.newOutputStream(temporaryTransitions);
+                 OutputStream stateStream = Files.newOutputStream(temporaryStates)) {
+                try (Output transitionOutput = new Output(transitionStream);
+                     Output stateOutput = new Output(stateStream)) {
+                    writeStateSpace(stateWriter, transitionOutput, stateOutput);
+                }
 
-                try (InputStream inputStream = Files.newInputStream(temporary);
-                     Input objectInputStream = new Input(inputStream)) {
-                    Collection<Record> records = readResults(stateWriter, objectInputStream);
-                    updateGraph(records);
+                try (InputStream inputStream = Files.newInputStream(temporaryTransitions);
+                     InputStream stateInputStream = Files.newInputStream(temporaryStates);
+                     Input transitionInput = new Input(inputStream);
+                     Input stateInput = new Input(stateInputStream)) {
+                    Collection<Record> records = readResults(stateWriter, transitionInput);
+                    Map<Integer, ClassifiedState> stateMap = readMappings(stateWriter, stateInput);
+                    updateGraph(records, stateMap);
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -171,14 +177,15 @@ public class ReachabilityGraph {
     /**
      * Writes the petriNet state space out to a temporary file which is referenced by the objectOutputStream
      *
-     * @param stateWriter          format in which to write the results to
-     * @param output stream to write state space to
+     * @param stateWriter      format in which to write the results to
+     * @param transitionOutput stream to write state space to
+     * @param stateOutput      stream to write state integer mappings to
      * @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
      */
-    private void writeStateSpace(StateWriter stateWriter, Output output)
+    private void writeStateSpace(StateWriter stateWriter, Output transitionOutput, Output stateOutput)
             throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
         PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
-        StateProcessor processor = new StateIOProcessor(stateWriter, output);
+        StateProcessor processor = new StateIOProcessor(stateWriter, transitionOutput, stateOutput);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
@@ -194,19 +201,33 @@ public class ReachabilityGraph {
      * @return state transitions with rates
      * @throws IOException
      */
-    private Collection<Record> readResults(StateReader stateReader, Input input)
-            throws IOException {
+    private Collection<Record> readResults(StateReader stateReader, Input input) throws IOException {
         MultiStateReader reader = new EntireStateReader(stateReader);
         return reader.readRecords(input);
     }
 
+
     /**
+     * Reads results of the mapping of an integer state representation to
+     * the Classified State it represents
      *
+     * @param stateReader
+     * @param input
+     * @return state mappings
+     * @throws IOException
+     */
+    private Map<Integer, ClassifiedState> readMappings(StateReader stateReader, Input input) throws IOException {
+        MultiStateReader reader = new EntireStateReader(stateReader);
+        return reader.readStates(input);
+    }
+
+    /**
      * Updates the mxGraph to display the records
      *
-     * @param records state transitions from a processed Petri net
+     * @param records  state transitions from a processed Petri net
+     * @param stateMap
      */
-    private void updateGraph(Iterable<Record> records) {
+    private void updateGraph(Iterable<Record> records, Map<Integer, ClassifiedState> stateMap) {
 
         removeCurrentContent();
 
@@ -219,13 +240,15 @@ public class ReachabilityGraph {
         mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
         layout.setInterHierarchySpacing(20);
         layout.setInterRankCellSpacing(50);
-        Map<ClassifiedState, Object> verticies = new HashMap<>();
+        Map<Integer, Object> verticies = new HashMap<>();
         try {
             graph.clearSelection();
             for (Record record : records) {
-                Object state = getInsertedState(verticies, record.state, graph);
-                for (Map.Entry<ClassifiedState, Double> entry : record.successors.entrySet()) {
-                    Object successor = getInsertedState(verticies, entry.getKey(), graph);
+                Object state = getInsertedState(verticies, record.state, stateMap.get(record.state), graph);
+                for (Map.Entry<Integer, Double> entry : record.successors.entrySet()) {
+                    Integer successorId = entry.getKey();
+                    ClassifiedState successorState = stateMap.get(successorId);
+                    Object successor = getInsertedState(verticies, successorId, successorState, graph);
                     addEdge(parent, state, successor, entry.getValue());
                 }
             }
@@ -235,15 +258,6 @@ public class ReachabilityGraph {
 
         layout.execute(graph.getDefaultParent());
 
-    }
-
-    private Object addEdge(Object parent, Object state, Object successor, double rate) {
-
-        return graph.insertEdge(parent, null, String.format("%.2f", rate), state, successor);
-    }
-
-    private void removeCurrentContent() {
-        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
     }
 
     /**
@@ -259,24 +273,35 @@ public class ReachabilityGraph {
         return new OnTheFlyVanishingExplorer(explorerUtilities);
     }
 
+    private void removeCurrentContent() {
+        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+    }
+
     /**
      * Creates/retreives a graphical representation of the state. If it does not exist
      * on the canvas already it is created and added to the verticies map
      *
      * @param verticies verticies map representing states already existing on the graph to their
      *                  graphical representation
-     * @param state     state to represent graphically
+     * @param stateId   state id that is represented in state space
+     * @param state     state that stateid maps to in state space
      * @return graphical vertex representation for the State
      */
-    private Object getInsertedState(Map<ClassifiedState, Object> verticies, ClassifiedState state, TooltipMXGraph graph) {
-        if (verticies.containsKey(state)) {
-            return verticies.get(state);
+    private Object getInsertedState(Map<Integer, Object> verticies, Integer stateId, ClassifiedState state,
+                                    TooltipMXGraph graph) {
+        if (verticies.containsKey(stateId)) {
+            return verticies.get(stateId);
         }
         Object parent = graph.getDefaultParent();
         Object vertexState = graph.insertVertex(parent, null, verticies.size(), 0, 0, 30, 30, getColor(state));
-        graph.setTooltipText(vertexState, state.toString());
-        verticies.put(state, vertexState);
+        graph.setTooltipText(vertexState, stateId.toString());
+        verticies.put(stateId, vertexState);
         return vertexState;
+    }
+
+    private Object addEdge(Object parent, Object state, Object successor, double rate) {
+
+        return graph.insertEdge(parent, null, String.format("%.2f", rate), state, successor);
     }
 
     /**
