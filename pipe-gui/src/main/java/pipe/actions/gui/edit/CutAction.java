@@ -22,11 +22,13 @@ public class CutAction extends GuiAction {
     @Override
     public void actionPerformed(final ActionEvent actionEvent) {
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
-        petriNetController.copySelection();
-        try {
-            registerUndoEvent(new MultipleEdit(petriNetController.deleteSelection()));
-        } catch (PetriNetComponentException e) {
-            GuiUtils.displayErrorMessage(null, e.getMessage());
+        if (!petriNetController.getSelectedComponents().isEmpty()) {
+            petriNetController.copySelection();
+            try {
+                registerUndoEvent(new MultipleEdit(petriNetController.deleteSelection()));
+            } catch (PetriNetComponentException e) {
+                GuiUtils.displayErrorMessage(null, e.getMessage());
+            }
         }
     }
 }
