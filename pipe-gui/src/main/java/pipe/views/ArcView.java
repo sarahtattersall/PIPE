@@ -54,23 +54,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected boolean inView = true;
 
-    /**
-     * Source of arc
-     */
-    private ArcPoint sourcePoint;
-
-    /**
-     * Target of arc
-     */
-    private ArcPoint endPoint;
-
     public ArcView(Arc<S, T> model, PetriNetController controller) {
         super(model.getId(), model, controller);
         arcPath = new ArcPath(this, controller);
 
-
-//        addPathSourceLocation();
-//        addPathEndLocation();
         updatePath();
         updateBounds();
         registerModelListeners();
@@ -93,7 +80,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             public void propertyChange(PropertyChangeEvent evt) {
                 String name = evt.getPropertyName();
                 if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-//                    setSourceStartAndEnd();
                     arcSpecificUpdate();
                 }
             }
@@ -107,14 +93,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * E.g. NormalArc should show weights
      */
     public abstract void arcSpecificUpdate();
-
-    /**
-     * Sets the source start and end based on the models start and end points
-     */
-    private void setSourceStartAndEnd() {
-        sourcePoint.setPoint(model.getStartPoint());
-        endPoint.setPoint(model.getEndPoint());
-    }
 
     /**
      * Listens for intermediate points being added/deleted
@@ -143,7 +121,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     private void updateAllPoints() {
         updatePath();
-//        setSourceStartAndEnd();
         arcSpecificUpdate();
         updateBounds();
     }

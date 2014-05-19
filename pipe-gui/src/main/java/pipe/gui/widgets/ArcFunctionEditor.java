@@ -1,9 +1,14 @@
 package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
+import uk.ac.imperial.pipe.animation.AnimationUtils;
 import uk.ac.imperial.pipe.models.component.place.Place;
-import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.parsers.FunctionalWeightParser;
+import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
+import uk.ac.imperial.pipe.parsers.StateEvalVisitor;
+import uk.ac.imperial.state.State;
 
 import javax.swing.*;
 import java.awt.BorderLayout;
@@ -12,22 +17,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ArcFunctionEditor extends JPanel {
     private PetriNet petriNet;
+
     private EscapableDialog _rootPane;
-    private ArcController<?,?> arcController;
+
+    private ArcController<?, ?> arcController;
 
     /**
      * Token id
      */
     private String token;
-    private ArcWeightEditorPanel awep;
 
-    public ArcFunctionEditor(ArcWeightEditorPanel awep,
-                             EscapableDialog guiDialog, PetriNet petriNet,
-                             ArcController<?,?> arcController, String token) {
-        this.awep = awep;
+    private ArcWeightEditorPanel weightEditorPanel;
+
+    public ArcFunctionEditor(ArcWeightEditorPanel weightEditorPanel, EscapableDialog guiDialog, PetriNet petriNet,
+                             ArcController<?, ?> arcController, String token) {
+        this.weightEditorPanel = weightEditorPanel;
         this.petriNet = petriNet;
         _rootPane = guiDialog;
         this.arcController = arcController;
@@ -40,12 +48,10 @@ public class ArcFunctionEditor extends JPanel {
         function.setText(arcController.getWeightForToken(token));
 
         JScrollPane scrollPane = new JScrollPane(function);
-        scrollPane.setBorder(javax.swing.BorderFactory
-                .createTitledBorder("Weight expression input:"));
+        scrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Weight expression input:"));
 
         JPanel north = new JPanel();
-        north.setBorder(
-                javax.swing.BorderFactory.createTitledBorder("Places input:"));
+        north.setBorder(javax.swing.BorderFactory.createTitledBorder("Places input:"));
 
         Collection<String> placeNames = new LinkedList<>();
         for (Place place : petriNet.getPlaces()) {
@@ -63,53 +69,33 @@ public class ArcFunctionEditor extends JPanel {
 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    String func = function.getText();
-                    if (func == null || func.equals("")) {
-                        exit();
-                        return;
-                    }
-
-                    //TODO: PASS THIS IN
-
-                    ExprEvaluator parser = new ExprEvaluator(petriNet);
-                    if (parser.evaluateExpression(func) != -1) {
-                        awep.setWeight(func, token);
-                    }
-                    else {
-                        if (parser.evaluateExpression(func) ==
-                                -2) {
-                            JOptionPane.showMessageDialog(null,
-                                    "Please make sure division and floating numbers are " +
-                                            "surrounded by ceil() or floor()");
-                            return;
-                        }
-                        else {
-                            System.err.println(
-                                    "Error in functional rates expression.");
-                            String message =
-                                    " Expression is invalid. Please check your function.";
-                            String title = "Error";
-                            JOptionPane.showMessageDialog(null, message, title,
-                                    JOptionPane.YES_NO_OPTION);
-                            return;
-                        }
-                    }
+                String func = function.getText();
+                if (func == null || func.equals("")) {
                     exit();
-//                } catch (MarkingDividedByNumberException e) {
-//                    JOptionPane.showMessageDialog(null,
-//                            "Marking-dependent arc weight divided by number not supported.\r\n" +
-//                                    "Since this may cause non-integer arc weight.");
-//                    return;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.err.println("Error in functional rates expression.");
-                    String message =
-                            " Expression is invalid. Please check your function.";
-                    String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title,
-                            JOptionPane.YES_NO_OPTION);
+                    return;
                 }
+
+                //TODO: PASS THIS IN
+
+
+                State state = AnimationUtils.getState(petriNet);
+                StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);
+                FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, petriNet);
+                FunctionalResults<Double> results = parser.evaluateExpression(func);
+                if (!results.hasErrors()) {
+                    weightEditorPanel.setWeight(func, token);
+                } else {
+                    List<String> errors = results.getErrors();
+                    String concatenated = concatenateErrors(errors);
+                    JOptionPane.showMessageDialog(null, concatenated);
+                    return;
+                }
+                exit();
+                //                } catch (MarkingDividedByNumberException e) {
+                //                    JOptionPane.showMessageDialog(null,
+                //                            "Marking-dependent arc weight divided by number not supported.\r\n" +
+                //                                    "Since this may cause non-integer arc weight.");
+                //                    return;
 
             }
         });
@@ -154,5 +140,20 @@ public class ArcFunctionEditor extends JPanel {
 
     private void exit() {
         _rootPane.setVisible(false);
+    }
+
+    /**
+     * Concatenates a list of errors into a single string
+     *
+     * @param errors
+     * @return single string representation of the error, which is just the errors
+     * appended together and seperated via a comma.
+     */
+    private String concatenateErrors(List<String> errors) {
+        StringBuilder builder = new StringBuilder();
+        for (String error : errors) {
+            builder.append(error).append(", ");
+        }
+        return builder.toString();
     }
 }
