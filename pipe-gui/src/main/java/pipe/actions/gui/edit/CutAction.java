@@ -15,7 +15,7 @@ public class CutAction extends GuiAction {
     private final PipeApplicationController applicationController;
 
     public CutAction(PipeApplicationController applicationController) {
-        super("Cut", "Cut (Ctrl-X)", KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        super("Cut", "Cut (Ctrl-X)", KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
     }
 
