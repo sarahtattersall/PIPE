@@ -11,9 +11,10 @@ import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
-import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
-import uk.ac.imperial.pipe.models.petrinet.FunctionalEvaluationException;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.parsers.EvalVisitor;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -198,13 +199,13 @@ public class TransitionView extends ConnectableView<Transition> {
             return -1;
         }
 
-        ExprEvaluator parser = new ExprEvaluator(petriNetController.getPetriNet());
-        try {
-            return parser.evaluateExpression(model.getRateExpr());
-        } catch (FunctionalEvaluationException ignored) {
+        PetriNetWeightParser parser = new PetriNetWeightParser(new EvalVisitor(petriNetController.getPetriNet()), petriNetController.getPetriNet());
+        FunctionalResults<Double> result = parser.evaluateExpression(model.getRateExpr());
+        if (result.hasErrors()) {
             showErrorMessage();
             return -1;
         }
+        return result.getResult();
     }
 
     private void showErrorMessage() {

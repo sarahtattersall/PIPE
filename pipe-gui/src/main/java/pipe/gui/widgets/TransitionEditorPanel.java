@@ -12,8 +12,9 @@ import uk.ac.imperial.pipe.models.component.rate.Rate;
 import uk.ac.imperial.pipe.models.component.rate.RateParameter;
 import uk.ac.imperial.pipe.models.component.rate.RateType;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
-import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
-import uk.ac.imperial.pipe.models.petrinet.FunctionalEvaluationException;
+import uk.ac.imperial.pipe.parsers.EvalVisitor;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -617,14 +618,14 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     }
 
     private boolean canSetRate() {
-        ExprEvaluator parser = new ExprEvaluator(netController.getPetriNet());
-        double rate;
-        try {
-            rate = parser.evaluateExpression(rateTextField.getText());
-        } catch (FunctionalEvaluationException e) {
-            showErrorMessage("Functional rate expression is invalid. Please check your function." + e.getMessage());
+        PetriNetWeightParser parser = new PetriNetWeightParser(new EvalVisitor(netController.getPetriNet()), netController.getPetriNet());
+        FunctionalResults<Double> result = parser.evaluateExpression(rateTextField.getText());
+        if (result.hasErrors()) {
+            String concatenated = concatenateErrors(result.getErrors());
+            showErrorMessage("Functional rate expression is invalid. Please check your function. Errors are:" + concatenated);
             return false;
         }
+        double rate = result.getResult();
 
         if (rate == -1) {
             showErrorMessage("Functional rate expression is invalid. Please check your function.");
@@ -636,6 +637,19 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             return false;
         }
         return true;
+    }
+
+    /**
+     *
+     * @param errors
+     * @return errors concatenated via a new line
+     */
+    private String concatenateErrors(Iterable<String> errors) {
+        StringBuilder builder = new StringBuilder();
+        for (String error : errors) {
+            builder.append(error).append("\n");
+        }
+        return builder.toString();
     }
 
     /**

@@ -3,9 +3,10 @@ package pipe.gui.widgets;
 import pipe.controllers.TransitionController;
 import uk.ac.imperial.pipe.models.component.place.Place;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
-import uk.ac.imperial.pipe.models.petrinet.ExprEvaluator;
-import uk.ac.imperial.pipe.models.petrinet.FunctionalEvaluationException;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.parsers.EvalVisitor;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
 
 import javax.swing.*;
 import java.awt.BorderLayout;
@@ -76,25 +77,21 @@ public class TransitionFunctionEditor extends JPanel {
 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
                     String func = function.getText();
                     if (func == null || func.equals("")) {
                         exit();
                         return;
                     }
-                    ExprEvaluator parser = new ExprEvaluator(petriNet);
-                    if (parser.evaluateExpression(func) != null) {
+                    PetriNetWeightParser parser = new PetriNetWeightParser(new EvalVisitor(petriNet), petriNet);
+                    FunctionalResults<Double> result = parser.evaluateExpression(func);
+                    if (!result.hasErrors()) {
                         _editor.setRate(func);
-                        //transitionController.setRate(func);
+                    } else {
+                        String message = " Expresison is invalid. ";
+                        String title = "Error";
+                        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
                     }
                     exit();
-                } catch (FunctionalEvaluationException e) {
-                    System.err.println("Error in functional rates expression.");
-                    String message =
-                            " Expression is invalid. " + e.getMessage();
-                    String title = "Error";
-                    JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-                }
             }
         });
         helpbutton.addActionListener(new java.awt.event.ActionListener() {
