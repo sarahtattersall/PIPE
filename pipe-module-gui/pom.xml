@@ -5,7 +5,7 @@
     <parent>
         <artifactId>PIPE</artifactId>
         <groupId>uk.ac.imperial</groupId>
-        <version>5.0.0-beta-2</version>
+        <version>5.0.0-beta-2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
