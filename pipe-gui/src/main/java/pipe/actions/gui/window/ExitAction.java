@@ -5,10 +5,9 @@ import pipe.controllers.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 public class ExitAction extends GuiAction {
 
@@ -37,7 +36,7 @@ public class ExitAction extends GuiAction {
      * asking the user if they wish to exit. The result is then published and the relevant action
      * is performed (e.g. exit or cancel).
      *
-     * @param safeExit boolean determines if it safe to quit immediatly
+     * @param safeExit boolean determines if it safe to quit immediately
      */
     private void tryToExit(boolean safeExit) {
         if (safeExit) {

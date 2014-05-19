@@ -51,10 +51,10 @@ public class TokenSetController extends Observable {
      */
     public TokenSetController() {
         duplicateAllowed = false;
-        mapIdsToTokenViews = new Hashtable<String, TokenView>();
-        mapColorsToTokenViews = new Hashtable<Color, TokenView>();
-        enabledTokenViews = new LinkedList<TokenView>();
-        allTokenViews = new LinkedList<TokenView>();
+        mapIdsToTokenViews = new Hashtable<>();
+        mapColorsToTokenViews = new Hashtable<>();
+        enabledTokenViews = new LinkedList<>();
+        allTokenViews = new LinkedList<>();
         addDefaultTokenViewToMaps();
         onlyEnabledTokenViewIsInitialDefault = true;
     }

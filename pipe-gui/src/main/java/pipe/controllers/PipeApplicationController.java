@@ -18,9 +18,6 @@ import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.pipe.models.manager.PetriNetManager;
 import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
-import uk.ac.imperial.pipe.models.petrinet.name.PetriNetFileName;
-import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
-import uk.ac.imperial.pipe.naming.PetriNetNamer;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.event.UndoableEditListener;
@@ -45,22 +42,18 @@ public class PipeApplicationController {
      */
     private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<>();
 
-    /**
-     * Responsible for naming petri nets
-     */
-    private final PetriNetNamer petriNetNamer = new PetriNetNamer();
 
     private final PipeApplicationModel applicationModel;
-
-    /**
-     * The current tab displayed in the view
-     */
-    private PetriNetTab activeTab;
 
     /**
      * Manages creation/deletion of Petri net models
      */
     private final PetriNetManager manager = new PetriNetManagerImpl();
+
+    /**
+     * The current tab displayed in the view
+     */
+    private PetriNetTab activeTab;
 
     public PipeApplicationController(PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
@@ -68,42 +61,30 @@ public class PipeApplicationController {
     }
 
     public void register(final PipeApplicationView view) {
-       manager.addPropertyChangeListener(new PropertyChangeListener() {
-           @Override
-           public void propertyChange(PropertyChangeEvent evt) {
-               if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_PETRI_NET_MESSAGE)) {
-                   PetriNet petriNet = (PetriNet) evt.getNewValue();
+        manager.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_PETRI_NET_MESSAGE)) {
+                    PetriNet petriNet = (PetriNet) evt.getNewValue();
                     view.registerNewPetriNet(petriNet);
-               } else if (evt.getPropertyName().equals(PetriNetManagerImpl.REMOVE_PETRI_NET_MESSAGE))  {
-                   view.removeCurrentTab();
-               }
+                } else if (evt.getPropertyName().equals(PetriNetManagerImpl.REMOVE_PETRI_NET_MESSAGE)) {
+                    view.removeCurrentTab();
+                }
 
-           }
-       });
+            }
+        });
     }
 
     /**
-     * Creates an empty petrinet with a default token
+     * Creates an empty Petri net with a default token
      */
     public void createEmptyPetriNet() {
         manager.createNewPetriNet();
     }
 
-    /**
-     * Names the petri net based on the file
-     *
-     * @param petriNet petri net loaded from file
-     * @param file     xml location
-     */
-    private void namePetriNetFromFile(PetriNet petriNet, File file) {
-        PetriNetName petriNetName = new PetriNetFileName(file);
-        petriNet.setName(petriNetName);
-        petriNetNamer.registerPetriNet(petriNet);
-    }
-
-
     //TODO: THIS IS RATHER UGLY, too many params but better than what was here before
-    public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener, PropertyChangeListener zoomListener) {
+    public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener,
+                            PropertyChangeListener zoomListener) {
         AnimationHistory animationHistory = new AnimationHistory();
         animationHistory.addObserver(historyObserver);
         GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory);
@@ -132,6 +113,10 @@ public class PipeApplicationController {
 
         setActiveTab(tab);
         initialiseNet(net, changeListener);
+    }
+
+    public void setActiveTab(PetriNetTab tab) {
+        this.activeTab = tab;
     }
 
     /**
@@ -195,10 +180,6 @@ public class PipeApplicationController {
         //        return copyPasteManager.pasteEnabled();
     }
 
-    public void setActiveTab(PetriNetTab tab) {
-        this.activeTab = tab;
-    }
-
     public void saveAsCurrentPetriNet(File outFile)
             throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
@@ -223,6 +204,18 @@ public class PipeApplicationController {
     }
 
     /**
+     * @return true if the current petri net has changed
+     */
+    public boolean hasCurrentPetriNetChanged() {
+        PetriNetController activeController = getActivePetriNetController();
+        return activeController != null && activeController.hasChanged();
+    }
+
+    public boolean anyNetsChanged() {
+        return !getNetsChanged().isEmpty();
+    }
+
+    /**
      * @return the names of the petri nets that have changed
      */
     public Set<String> getNetsChanged() {
@@ -233,19 +226,6 @@ public class PipeApplicationController {
             }
         }
         return changed;
-    }
-
-    /**
-     *
-     * @return true if the current petri net has changed
-     */
-    public boolean hasCurrentPetriNetChanged() {
-        PetriNetController activeController = getActivePetriNetController();
-        return activeController != null && activeController.hasChanged();
-    }
-
-    public boolean anyNetsChanged() {
-        return !getNetsChanged().isEmpty();
     }
 
     public void removeActiveTab() {
