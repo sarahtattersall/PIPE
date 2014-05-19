@@ -19,7 +19,7 @@ The active token can be changed via the token drop down menu.
 
 ![Change active token](images/taskbar/change_token.png)
 
-#### Adding and editing a place ![Place icon](images/taskbar/place.png)
+#### Adding and editing a place ![Place icon](images/taskbar/Place.png)
 
 The place component tool be selected by clicking the icon with a round circle.
 
