@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 
 /**
@@ -46,7 +47,7 @@ public abstract class JarUtilities {
    }
 
    
-   public static File getFile(JarEntry entry) {
+   public static File getFile(ZipEntry entry) {
       URL urlJarEntry  = Thread.currentThread().getContextClassLoader().
                  getResource(entry.getName());
       return new File (urlJarEntry.toString());      

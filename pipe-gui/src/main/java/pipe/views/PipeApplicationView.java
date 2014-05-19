@@ -38,11 +38,15 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer, Serializable {
@@ -636,6 +640,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * Creates an example file menu based on examples in resources/extras/examples
      */
     private JMenu createExampleFileMenu() {
+        if (isJar()) {
+            try {
+                return loadJarExamples();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         JMenu exampleMenu = new JMenu("Examples");
         exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
         URL examplesDirURL = this.getClass().getResource("/extras/examples/");
@@ -647,6 +658,27 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
           }
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }
+        return exampleMenu;
+    }
+
+    private JMenu loadJarExamples() throws IOException {
+        JMenu exampleMenu = new JMenu("Examples");
+
+        CodeSource src = PipeApplicationView.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+            URL jar = src.getLocation();
+            ZipInputStream zip = new ZipInputStream(jar.openStream());
+            while (true) {
+                ZipEntry e = zip.getNextEntry();
+                if (e == null)
+                    break;
+                String name = e.getName();
+                if (name.startsWith("foo/")) {
+                    addMenuItem(exampleMenu, new ExampleFileAction(e, this));
+      /* Do something with this entry. */
+                }
+            }
         }
         return exampleMenu;
     }
@@ -791,6 +823,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private URL getImageURL(String name) {
         return this.getClass().getResource(
                 ApplicationSettings.getImagePath() + name);
+    }
+
+    public boolean isJar() {
+        CodeSource src = PipeApplicationView.class.getProtectionDomain().getCodeSource();
+        URL jar = src.getLocation();
+        return jar.getPath().endsWith(".jar");
     }
 }
 

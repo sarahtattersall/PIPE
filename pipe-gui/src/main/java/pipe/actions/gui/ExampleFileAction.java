@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.jar.JarEntry;
+import java.util.zip.ZipEntry;
 
 public class ExampleFileAction extends GuiAction
 {
@@ -24,7 +25,7 @@ public class ExampleFileAction extends GuiAction
         putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(ApplicationSettings.getImagePath() + "Net.png")));
     }
 
-    public ExampleFileAction(JarEntry entry, PipeApplicationView applicationView)
+    public ExampleFileAction(ZipEntry entry, PipeApplicationView applicationView)
     {
         super(entry.getName().substring(1 + entry.getName().indexOf(System.getProperty("file.separator"))), "Open example file \"" + entry.getName() + "\"");
         this.applicationView = applicationView;
