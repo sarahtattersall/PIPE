@@ -49,6 +49,9 @@ public class ReachabilityGraph {
      */
     private final FileDialog loadDialog;
 
+    /**
+     * For saving state space results
+     */
     private final FileDialog saveBinaryDialog;
 
     /**
@@ -58,25 +61,55 @@ public class ReachabilityGraph {
 
     private JPanel panel1;
 
+    /**
+     * Used to start state space generation
+     */
     private JButton goButton;
 
+    /**
+     * Displays the name of the Petri net loaded from file
+     */
     private JTextField petriNetNameLabel;
 
+    /**
+     * Contains the graph based results of state space exploration
+     */
     private JPanel resultsPanel;
 
+    /**
+     * Check box to determine if we include vanishing states in the exploration
+     */
     private JCheckBox includeVanishingStatesCheckBox;
 
+    /**
+     * For saving state space results
+     */
     private JButton saveButton;
 
 
+    /**
+     * Radio button, if selected we use existing petri net
+     */
     private JRadioButton useExistingPetriNetRadioButton;
 
+    /**
+     * Label to show the transition binaries currently loaded
+     */
     private JTextField transitionFieldLabel;
 
+    /**
+     * Label to show the latest state binaries loaded
+     */
     private JTextField stateFieldLabel;
 
+    /**
+     * If this radio button is selected we will use the file loaded for state space exploration
+     */
     private JRadioButton loadPetriNetFromFileRadioButton;
 
+    /**
+     * If this radio button is selected then previous results will be displayed
+     */
     private JRadioButton loadFromBinariesRadio;
 
     /**
@@ -149,6 +182,9 @@ public class ReachabilityGraph {
         });
     }
 
+    /**
+     * Loads a petri net into the defaultPetriNet field
+     */
     private void loadDefaultPetriNet() {
         try {
             PetriNetReader petriNetIO = new PetriNetIOImpl();
@@ -227,6 +263,9 @@ public class ReachabilityGraph {
         }
     }
 
+    /**
+     * Loads the transition and state binary files into the member variables
+     */
     private void loadBinaryFiles() {
         loadDialog.setTitle("Load transitions file");
         loadDialog.setVisible(true);
@@ -264,6 +303,16 @@ public class ReachabilityGraph {
         return loadFromBinariesRadio.isSelected() ? binaryStates : Files.createTempFile("states", ".tmp");
     }
 
+    /**
+     * Writes the state space into transitions and states
+     * @param stateWriter
+     * @param transitions
+     * @param states
+     * @throws IOException
+     * @throws TimelessTrapException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     private void generateStateSpace(StateWriter stateWriter, Path transitions, Path states)
             throws IOException, TimelessTrapException, ExecutionException, InterruptedException {
         try (OutputStream transitionStream = Files.newOutputStream(transitions);
@@ -275,6 +324,13 @@ public class ReachabilityGraph {
         }
     }
 
+    /**
+     * Reads in the state space from transitions and states
+     * @param stateReader
+     * @param transitions
+     * @param states
+     * @throws IOException
+     */
     private void processBinaryResults(StateReader stateReader, Path transitions, Path states) throws IOException {
         try (InputStream inputStream = Files.newInputStream(transitions);
              InputStream stateInputStream = Files.newInputStream(states);
