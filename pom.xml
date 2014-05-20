@@ -1,10 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>uk.ac.imperial</groupId>
     <artifactId>PIPE</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.0-beta-3</version>
+    <version>5.0.0-beta-2-SNAPSHOT</version>
     <name>PIPE Parent Project</name>
 
     <properties>
@@ -14,8 +17,7 @@
 
     <scm>
         <developerConnection>scm:git:git@github.com:sarahtattersall/PIPE.git</developerConnection>
-      <tag>PIPE-5.0.0-beta-3</tag>
-  </scm>
+    </scm>
 
     <modules>
         <module>pipe-gui</module>
