@@ -68,6 +68,15 @@
             <version>1.6.0</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>forms_rt</artifactId>
+            <version>5.0</version>
+        </dependency>
+
+
+
         <dependency>
             <groupId>com.jgraphx</groupId>
             <artifactId>jgraphx</artifactId>
@@ -105,6 +114,45 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!--Used to convert intellij forms in GUI to maven executable -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>ideauidesigner-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>javac2</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <fork>true</fork>
+                    <debug>true</debug>
+                    <failOnError>true</failOnError>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-cp</argument>
+                        <classpath />
+                        <argument>pipe.gui.reachability.ReachabilityGraph</argument>
+                    </arguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>

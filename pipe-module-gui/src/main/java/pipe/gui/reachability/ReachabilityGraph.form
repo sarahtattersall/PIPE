@@ -10,9 +10,13 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
     <constraints>
-      <xy x="20" y="20" width="554" height="635"/>
+      <xy x="20" y="20" width="1032" height="704"/>
     </constraints>
     <properties>
       <enabled value="false"/>
@@ -21,15 +25,7 @@
     <children>
       <grid id="9b36f" layout-manager="FormLayout">
         <rowspec value="center:d:noGrow"/>
-        <colspec value="fill:d:noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:d:noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:d:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -37,7 +33,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="e7385" class="javax.swing.JCheckBox" binding="useExistingPetriNetCheckBox" default-binding="true">
+          <component id="c9fcd" class="javax.swing.JRadioButton" binding="useExistingPetriNetRadioButton" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -47,90 +43,29 @@
               <text value="Use existing Petri net"/>
             </properties>
           </component>
-          <component id="a9402" class="javax.swing.JSeparator">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false" defaultalign-vert="false"/>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="ef785" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text value="Load from Petri net file"/>
-            </properties>
-          </component>
-          <component id="34a50" class="javax.swing.JTextField" binding="petriNetNameLabel">
-            <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-              <forms defaultalign-horz="false"/>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-              <enabled value="true"/>
-              <minimumSize width="40" height="28"/>
-              <preferredSize width="500" height="28"/>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="2daad" class="javax.swing.JButton" binding="loadButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <enabled value="false"/>
-              <text value="&amp;Load"/>
-            </properties>
-          </component>
         </children>
       </grid>
       <component id="3fb2a" class="javax.swing.JButton" binding="goButton" default-binding="true">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-vert="false"/>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false" defaultalign-vert="false"/>
         </constraints>
         <properties>
           <text value="&amp;Go!"/>
         </properties>
       </component>
-      <grid id="5507e" binding="resultsPanel" layout-manager="GridBagLayout">
+      <grid id="5507e" binding="resultsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-vert="false"/>
         </constraints>
         <properties>
-          <minimumSize width="500" height="500"/>
-          <preferredSize width="500" height="500"/>
+          <focusable value="false"/>
+          <minimumSize width="1000" height="500"/>
+          <preferredSize width="1000" height="500"/>
         </properties>
         <border type="none"/>
         <children/>
-      </grid>
-      <grid id="ea076" layout-manager="FormLayout">
-        <rowspec value="center:d:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="7638c" class="javax.swing.JCheckBox" binding="includeVanishingStatesCheckBox" default-binding="true">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text value="Include Vanishing States"/>
-            </properties>
-          </component>
-        </children>
       </grid>
       <grid id="f261a" layout-manager="FormLayout">
         <rowspec value="center:d:grow"/>
@@ -138,7 +73,7 @@
         <rowspec value="center:d:grow"/>
         <colspec value="fill:d:noGrow"/>
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties/>
@@ -155,6 +90,164 @@
           </component>
         </children>
       </grid>
+      <grid id="83a38" layout-manager="FormLayout">
+        <rowspec value="center:d:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="3bc38" class="javax.swing.JTextField" binding="petriNetNameLabel">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <enabled value="true"/>
+              <minimumSize width="40" height="28"/>
+              <preferredSize width="500" height="28"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="e8ca" class="javax.swing.JRadioButton" binding="loadPetriNetFromFileRadioButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Load Petri net from file"/>
+            </properties>
+          </component>
+          <component id="a250e" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Petri net file:"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="10963" layout-manager="FormLayout">
+        <rowspec value="center:d:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(d;4px):noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="aa650" class="javax.swing.JTextField" binding="stateFieldLabel">
+            <constraints>
+              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <enabled value="true"/>
+              <minimumSize width="40" height="28"/>
+              <preferredSize width="500" height="28"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="c3b66" class="javax.swing.JTextField" binding="transitionFieldLabel">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <enabled value="true"/>
+              <minimumSize width="40" height="28"/>
+              <preferredSize width="500" height="28"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="62599" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Transition binaries:"/>
+            </properties>
+          </component>
+          <component id="1266" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="State binaries:"/>
+            </properties>
+          </component>
+          <component id="4d72" class="javax.swing.JRadioButton" binding="loadFromBinariesRadio">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Load from previous binaries"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="ea076" layout-manager="FormLayout">
+        <rowspec value="center:d:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="7638c" class="javax.swing.JCheckBox" binding="includeVanishingStatesCheckBox" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Include Vanishing States"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="loadFromGroup">
+      <member id="c20cd"/>
+      <member id="83524"/>
+    </group>
+    <group name="sourceRadioGroup">
+      <member id="c9fcd"/>
+      <member id="e8ca"/>
+      <member id="4d72"/>
+    </group>
+  </buttonGroups>
 </form>

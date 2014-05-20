@@ -28,8 +28,6 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +47,7 @@ public class ReachabilityGraph {
     /**
      * For loading Petri nets to explore
      */
-    private final FileDialog loadPetriNetDialog;
+    private final FileDialog loadDialog;
 
     private final FileDialog saveBinaryDialog;
 
@@ -62,17 +60,24 @@ public class ReachabilityGraph {
 
     private JButton goButton;
 
-    private JCheckBox useExistingPetriNetCheckBox;
-
     private JTextField petriNetNameLabel;
-
-    private JButton loadButton;
 
     private JPanel resultsPanel;
 
     private JCheckBox includeVanishingStatesCheckBox;
 
     private JButton saveButton;
+
+
+    private JRadioButton useExistingPetriNetRadioButton;
+
+    private JTextField transitionFieldLabel;
+
+    private JTextField stateFieldLabel;
+
+    private JRadioButton loadPetriNetFromFileRadioButton;
+
+    private JRadioButton loadFromBinariesRadio;
 
     /**
      * Temporary transitions file for generating results into
@@ -94,7 +99,17 @@ public class ReachabilityGraph {
      */
     private PetriNet defaultPetriNet;
 
-    public ReachabilityGraph(FileDialog loadPetriNetDialog, final FileDialog saveBinaryDialog) {
+    /**
+     * Binary transitions loaded when binary transitions radio check box is selected
+     */
+    private Path binaryTransitions;
+
+    /**
+     * Binary states loaded when binary transitions radio check box is selected
+     */
+    private Path binaryStates;
+
+    public ReachabilityGraph(FileDialog loadDialog, final FileDialog saveBinaryDialog) {
         this.saveBinaryDialog = saveBinaryDialog;
         loadDefaultPetriNet();
 
@@ -113,28 +128,23 @@ public class ReachabilityGraph {
                 calculateResults();
             }
         });
-        this.loadPetriNetDialog = loadPetriNetDialog;
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadPetriNet();
-            }
-        });
-        useExistingPetriNetCheckBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                int state = e.getStateChange();
-                if (state == ItemEvent.DESELECTED) {
-                    loadButton.setEnabled(true);
-                } else if (state == ItemEvent.SELECTED) {
-                    loadButton.setEnabled(false);
-                }
-            }
-        });
+        this.loadDialog = loadDialog;
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveBinaryFiles();
+            }
+        });
+        loadPetriNetFromFileRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadData();
+            }
+        });
+        loadFromBinariesRadio.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadBinaryFiles();
             }
         });
     }
@@ -169,52 +179,20 @@ public class ReachabilityGraph {
     private void calculateResults() {
         try {
             KryoStateIO stateWriter = new KryoStateIO();
-            temporaryTransitions = Files.createTempFile("transitions", ".tmp");
-            temporaryStates = Files.createTempFile("states", ".tmp");
 
-            try (OutputStream transitionStream = Files.newOutputStream(temporaryTransitions);
-                 OutputStream stateStream = Files.newOutputStream(temporaryStates)) {
-                try (Output transitionOutput = new Output(transitionStream);
-                     Output stateOutput = new Output(stateStream)) {
-                    writeStateSpace(stateWriter, transitionOutput, stateOutput);
-                }
+            temporaryTransitions = getTransitionsPath();
+            temporaryStates = getStatesPath();
 
-                try (InputStream inputStream = Files.newInputStream(temporaryTransitions);
-                     InputStream stateInputStream = Files.newInputStream(temporaryStates);
-                     Input transitionInput = new Input(inputStream);
-                     Input stateInput = new Input(stateInputStream)) {
-                    Collection<Record> records = readResults(stateWriter, transitionInput);
-                    Map<Integer, ClassifiedState> stateMap = readMappings(stateWriter, stateInput);
-                    updateGraph(records, stateMap);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+
+            if (!loadFromBinariesRadio.isSelected()) {
+                generateStateSpace(stateWriter, temporaryTransitions, temporaryStates);
             }
-        } catch (TimelessTrapException | IOException e) {
+
+            processBinaryResults(stateWriter, temporaryTransitions, temporaryStates);
+
+
+        } catch (TimelessTrapException | IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Opens the file dialog and saves the selected Petri net into lastLoadedPetriNet
-     * for use when calculating the state space exploration
-     */
-    private void loadPetriNet() {
-        loadPetriNetDialog.setVisible(true);
-
-        File[] files = loadPetriNetDialog.getFiles();
-        if (files.length > 0) {
-            File path = files[0];
-
-            try {
-                PetriNetReader petriNetIO = new PetriNetIOImpl();
-                lastLoadedPetriNet = petriNetIO.read(path.getAbsolutePath());
-                petriNetNameLabel.setText(path.getName());
-            } catch (JAXBException e) {
-                e.printStackTrace();
-            } catch (UnparsableException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -229,9 +207,88 @@ public class ReachabilityGraph {
     }
 
     /**
-     *
+     * Opens the file dialog and saves the selected Petri net into lastLoadedPetriNet
+     * for use when calculating the state space exploration
+     */
+    private void loadData() {
+        loadDialog.setTitle("Select petri net");
+        loadDialog.setVisible(true);
+
+        File[] files = loadDialog.getFiles();
+        if (files.length > 0) {
+            File path = files[0];
+            try {
+                petriNetNameLabel.setText(path.getName());
+                PetriNetReader petriNetIO = new PetriNetIOImpl();
+                lastLoadedPetriNet = petriNetIO.read(path.getAbsolutePath());
+            } catch (JAXBException | UnparsableException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadBinaryFiles() {
+        loadDialog.setTitle("Load transitions file");
+        loadDialog.setVisible(true);
+        File[] files = loadDialog.getFiles();
+        if (files.length > 0) {
+            File file = files[0];
+            binaryTransitions = Paths.get(file.toURI());
+            transitionFieldLabel.setText(file.getName());
+        }
+
+        loadDialog.setTitle("Load states file");
+        loadDialog.setVisible(true);
+        File[] statesFiles = loadDialog.getFiles();
+        if (statesFiles.length > 0) {
+            File file = statesFiles[0];
+            binaryStates = Paths.get(file.toURI());
+            stateFieldLabel.setText(file.getName());
+        }
+
+    }
+
+    /**
+     * @return Path for state space transitions
+     * @throws IOException
+     */
+    private Path getTransitionsPath() throws IOException {
+        return loadFromBinariesRadio.isSelected() ? binaryTransitions : Files.createTempFile("transitions", ".tmp");
+    }
+
+    /**
+     * @return Path for state space states
+     * @throws IOException
+     */
+    private Path getStatesPath() throws IOException {
+        return loadFromBinariesRadio.isSelected() ? binaryStates : Files.createTempFile("states", ".tmp");
+    }
+
+    private void generateStateSpace(StateWriter stateWriter, Path transitions, Path states)
+            throws IOException, TimelessTrapException, ExecutionException, InterruptedException {
+        try (OutputStream transitionStream = Files.newOutputStream(transitions);
+             OutputStream stateStream = Files.newOutputStream(states)) {
+            try (Output transitionOutput = new Output(transitionStream);
+                 Output stateOutput = new Output(stateStream)) {
+                writeStateSpace(stateWriter, transitionOutput, stateOutput);
+            }
+        }
+    }
+
+    private void processBinaryResults(StateReader stateReader, Path transitions, Path states) throws IOException {
+        try (InputStream inputStream = Files.newInputStream(transitions);
+             InputStream stateInputStream = Files.newInputStream(states);
+             Input transitionInput = new Input(inputStream);
+             Input stateInput = new Input(stateInputStream)) {
+            Collection<Record> records = readResults(stateReader, transitionInput);
+            Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
+            updateGraph(records, stateMap);
+        }
+    }
+
+    /**
      * @param temporary path to copy to new location
-     * @param message displayed message in save file dialog pop up
+     * @param message   displayed message in save file dialog pop up
      */
     private void copyFile(Path temporary, String message) {
         saveBinaryDialog.setTitle(message);
@@ -259,7 +316,7 @@ public class ReachabilityGraph {
      */
     private void writeStateSpace(StateWriter stateWriter, Output transitionOutput, Output stateOutput)
             throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
-        PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? defaultPetriNet : lastLoadedPetriNet);
+        PetriNet petriNet = (useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet);
         StateProcessor processor = new StateIOProcessor(stateWriter, transitionOutput, stateOutput);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
