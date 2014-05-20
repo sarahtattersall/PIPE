@@ -34,8 +34,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +49,9 @@ public class ReachabilityGraph {
     /**
      * For loading Petri nets to explore
      */
-    private final FileDialog fileDialog;
+    private final FileDialog loadPetriNetDialog;
+
+    private final FileDialog saveBinaryDialog;
 
     /**
      * Graphical representation of reachability
@@ -67,12 +72,32 @@ public class ReachabilityGraph {
 
     private JCheckBox includeVanishingStatesCheckBox;
 
+    private JButton saveButton;
+
+    /**
+     * Temporary transitions file for generating results into
+     */
+    private Path temporaryTransitions;
+
+    /**
+     * Temporary states file for generating results into
+     */
+    private Path temporaryStates;
+
     /**
      * Last loaded Petri net via the load dialog
      */
     private PetriNet lastLoadedPetriNet;
 
-    public ReachabilityGraph(FileDialog fileDialog) {
+    /**
+     * Default petri net
+     */
+    private PetriNet defaultPetriNet;
+
+    public ReachabilityGraph(FileDialog loadPetriNetDialog, final FileDialog saveBinaryDialog) {
+        this.saveBinaryDialog = saveBinaryDialog;
+        loadDefaultPetriNet();
+
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
         graphComponent.setPreferredSize(new Dimension(500, 500));
         graphComponent.setToolTips(true);
@@ -88,7 +113,7 @@ public class ReachabilityGraph {
                 calculateResults();
             }
         });
-        this.fileDialog = fileDialog;
+        this.loadPetriNetDialog = loadPetriNetDialog;
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -106,6 +131,24 @@ public class ReachabilityGraph {
                 }
             }
         });
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveBinaryFiles();
+            }
+        });
+    }
+
+    private void loadDefaultPetriNet() {
+        try {
+            PetriNetReader petriNetIO = new PetriNetIOImpl();
+            URL resource = getClass().getResource("/simple_vanishing.xml");
+            defaultPetriNet = petriNetIO.read(resource.getPath());
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (UnparsableException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -126,8 +169,9 @@ public class ReachabilityGraph {
     private void calculateResults() {
         try {
             KryoStateIO stateWriter = new KryoStateIO();
-            Path temporaryTransitions = Files.createTempFile("transitions", ".tmp");
-            Path temporaryStates = Files.createTempFile("states", ".tmp");
+            temporaryTransitions = Files.createTempFile("transitions", ".tmp");
+            temporaryStates = Files.createTempFile("states", ".tmp");
+
             try (OutputStream transitionStream = Files.newOutputStream(temporaryTransitions);
                  OutputStream stateStream = Files.newOutputStream(temporaryStates)) {
                 try (Output transitionOutput = new Output(transitionStream);
@@ -156,9 +200,9 @@ public class ReachabilityGraph {
      * for use when calculating the state space exploration
      */
     private void loadPetriNet() {
-        fileDialog.setVisible(true);
+        loadPetriNetDialog.setVisible(true);
 
-        File[] files = fileDialog.getFiles();
+        File[] files = loadPetriNetDialog.getFiles();
         if (files.length > 0) {
             File path = files[0];
 
@@ -175,6 +219,37 @@ public class ReachabilityGraph {
     }
 
     /**
+     * Copies the temporary files to a permenant loaction
+     */
+    private void saveBinaryFiles() {
+        if (temporaryStates != null && temporaryTransitions != null) {
+            copyFile(temporaryTransitions, "Select location for temporary transitions");
+            copyFile(temporaryStates, "Select location for temporary states");
+        }
+    }
+
+    /**
+     *
+     * @param temporary path to copy to new location
+     * @param message displayed message in save file dialog pop up
+     */
+    private void copyFile(Path temporary, String message) {
+        saveBinaryDialog.setTitle(message);
+        saveBinaryDialog.setVisible(true);
+
+        File[] files = saveBinaryDialog.getFiles();
+        if (files.length > 0) {
+            File file = files[0];
+            Path path = Paths.get(file.toURI());
+            try {
+                Files.copy(temporary, path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Writes the petriNet state space out to a temporary file which is referenced by the objectOutputStream
      *
      * @param stateWriter      format in which to write the results to
@@ -184,7 +259,7 @@ public class ReachabilityGraph {
      */
     private void writeStateSpace(StateWriter stateWriter, Output transitionOutput, Output stateOutput)
             throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
-        PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? null : lastLoadedPetriNet);
+        PetriNet petriNet = (useExistingPetriNetCheckBox.isSelected() ? defaultPetriNet : lastLoadedPetriNet);
         StateProcessor processor = new StateIOProcessor(stateWriter, transitionOutput, stateOutput);
         ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
@@ -322,7 +397,8 @@ public class ReachabilityGraph {
     public static void main(String[] args) {
         JFrame frame = new JFrame("ReachabilityGraph");
         FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
-        frame.setContentPane(new ReachabilityGraph(selector).panel1);
+        FileDialog saver = new FileDialog(frame, "Save binary transition data", FileDialog.SAVE);
+        frame.setContentPane(new ReachabilityGraph(selector, saver).panel1);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
