@@ -25,7 +25,7 @@
         </repository>
 
         <repository>
-            <id>PIPECore-mvn-repo</id>
+            <id>PIPEMarkovCh-mvn-repo</id>
             <url>https://raw.github.com/sarahtattersall/PIPEMarkovChain/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
