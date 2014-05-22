@@ -1,10 +1,10 @@
-# PIPE 2  [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=master)](https://travis-ci.org/sarahtattersall/PIPE)
+# PIPE  [![Build Status](https://travis-ci.org/sarahtattersall/PIPE.png?branch=master)](https://travis-ci.org/sarahtattersall/PIPE)
 
 
 A tool for creating and analysing Petri nets, migrated from [Sourceforge](http://pipe2.sourceforge.net/about.html). A user-guide can be found [here](http://sarahtattersall.github.io/PIPE/) for how to use PIPE's features.
 
 ## About ##
-PIPE2 is an open source, platform independent tool for creating and analysing Petri nets including 
+PIPE is an open source, platform independent tool for creating and analysing Petri nets including 
 Generalised Stochastic Petri nets. Petri nets are a popular way for modelling concurrency and synchronisation 
 in distributed systems. To learn more about Petri nets, you can start by reading the 2006/7 MSc. 
 project report available [here](http://pipe2.sourceforge.net/docs.html).
