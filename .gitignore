@@ -15,6 +15,7 @@
 # Maven
 log/
 target/
+pipe-gui/dependency-reduced-pom.xml
 
 #ANTLR
 pipe-core/gen
