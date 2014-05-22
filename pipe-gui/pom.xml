@@ -25,6 +25,15 @@
         </repository>
 
         <repository>
+            <id>PIPECore-mvn-repo</id>
+            <url>https://raw.github.com/sarahtattersall/PIPEMarkovChain/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+
+        <repository>
             <id>LocalLibs</id>
             <name>Imperial</name>
             <url>file://${project.basedir}/src/local-libs</url>
@@ -148,6 +157,13 @@
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-core</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>uk.ac.imperial</groupId>
+            <artifactId>pipe-markov-chain</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
