@@ -12,6 +12,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -69,7 +70,7 @@ public class PlaceActionTest {
         when(mockEvent.getPoint()).thenReturn(point);
 
         action.doAction(mockEvent, mockController);
-        Place place = new Place("P0", "P0");
+        Place place = new DiscretePlace("P0", "P0");
         place.setX(10);
         place.setY(20);
 

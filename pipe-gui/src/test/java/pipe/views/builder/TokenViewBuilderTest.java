@@ -3,6 +3,7 @@ package pipe.views.builder;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.views.TokenView;
+import uk.ac.imperial.pipe.models.component.token.ColoredToken;
 import uk.ac.imperial.pipe.models.component.token.Token;
 
 import java.awt.Color;
@@ -16,7 +17,7 @@ public class TokenViewBuilderTest {
     @Before
     public void setUp()
     {
-        token = new Token("id", Color.BLACK);
+        token = new ColoredToken("id", Color.BLACK);
         builder = new TokenViewBuilder(token);
     }
 

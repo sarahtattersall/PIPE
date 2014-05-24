@@ -13,6 +13,7 @@ import uk.ac.imperial.pipe.models.component.arc.Arc;
 import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 import uk.ac.imperial.pipe.models.component.place.Place;
 import uk.ac.imperial.pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.component.token.ColoredToken;
 import uk.ac.imperial.pipe.models.component.token.Token;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
@@ -301,7 +302,7 @@ public class PetriNetController implements IController, Serializable {
      * @param color
      */
     public void createNewToken(String name, Color color) {
-        Token token = new Token(name, color);
+        Token token = new ColoredToken(name, color);
         petriNet.addToken(token);
     }
 

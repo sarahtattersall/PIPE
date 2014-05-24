@@ -241,9 +241,8 @@ public class ArcControllerTest {
     @Test
     public void setNameChangesName() {
         String newName = "newName";
-        controller.setName(newName);
+        controller.setId(newName);
         verify(mockArc).setId(newName);
-        verify(mockArc).setName(newName);
     }
 
 
@@ -252,7 +251,7 @@ public class ArcControllerTest {
         String oldName = "oldName";
         String newName = "newName";
         when(mockArc.getId()).thenReturn(oldName);
-        controller.setName(newName);
+        controller.setId(newName);
 
         UndoableEdit nameEdit = new ChangePetriNetComponentName(mockArc, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));

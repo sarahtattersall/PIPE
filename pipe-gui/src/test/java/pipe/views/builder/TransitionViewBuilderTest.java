@@ -2,27 +2,31 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.views.TransitionView;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.awt.Rectangle;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TransitionViewBuilderTest {
     private static final double DOUBLE_DELTA = 0.001;
     Transition transition;
     TransitionViewBuilder builder;
 
+    @Mock
     private PetriNetController mockController;
 
     @Before
     public void setUp()
     {
-        transition = new Transition("id", "name");
-        mockController = mock(PetriNetController.class);
+        transition = new DiscreteTransition("id", "name");
         builder = new TransitionViewBuilder(transition, mockController);
     }
 

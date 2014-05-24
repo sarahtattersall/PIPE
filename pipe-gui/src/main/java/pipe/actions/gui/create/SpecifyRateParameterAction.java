@@ -13,6 +13,7 @@ import pipe.historyActions.rateparameter.ChangeRateParameterRate;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.component.rate.FunctionalRateParameter;
 import uk.ac.imperial.pipe.models.component.rate.RateParameter;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -110,7 +111,7 @@ public class SpecifyRateParameterAction extends GuiAction {
             for (RateEditorPanel.RateModel.Datum datum : deletedData) {
                 if (rateEditorPanel.isExistingRateParameter(datum)) {
                     try {
-                        RateParameter rateParameter = petriNet.getRateParameter(datum.id);
+                        RateParameter rateParameter = petriNet.getComponent(datum.id, RateParameter.class);
                         UndoableEdit historyItem = new DeletePetriNetObject(rateParameter, petriNet);
                         undoableEdits.add(historyItem);
                         petriNet.removeRateParameter(rateParameter);
@@ -135,7 +136,7 @@ public class SpecifyRateParameterAction extends GuiAction {
                     AbstractDatum initial = modified.initial;
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {
-                            RateParameter rateParameter = petriNetController.getPetriNet().getRateParameter(initial.id);
+                            RateParameter rateParameter = petriNetController.getPetriNet().getComponent(initial.id, RateParameter.class);
                             UndoableEdit idEdit =
                                     new ChangePetriNetComponentName(rateParameter, initial.id, modified.id);
                             undoableEdits.add(idEdit);
@@ -149,7 +150,7 @@ public class SpecifyRateParameterAction extends GuiAction {
                         }
                     }
                 } else if (modified.hasBeenSet()) {
-                    RateParameter rateParameter = new RateParameter(modified.expression, modified.id, modified.id);
+                    RateParameter rateParameter = new FunctionalRateParameter(modified.expression, modified.id, modified.id);
                     try {
                         petriNetController.getPetriNet().add(rateParameter);
                         undoableEdits.add(new AddPetriNetObject(rateParameter, petriNetController.getPetriNet()));

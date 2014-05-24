@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.views.PlaceView;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +21,7 @@ public class PlaceViewBuilderTest {
     public void setUp()
     {
         mockController = mock(PetriNetController.class);
-        place = new Place("id", "name");
+        place = new DiscretePlace("id", "name");
         builder = new PlaceViewBuilder(place, mockController);
     }
 

@@ -62,7 +62,6 @@ public class ChangePetriNetComponentName extends AbstractUndoableEdit {
     @Override
     public void undo() {
         super.undo();
-        component.setName(oldName);
         component.setId(oldName);
     }
 
@@ -71,7 +70,6 @@ public class ChangePetriNetComponentName extends AbstractUndoableEdit {
     @Override
     public void redo() {
         super.redo();
-        component.setName(newName);
         component.setId(newName);
     }
 

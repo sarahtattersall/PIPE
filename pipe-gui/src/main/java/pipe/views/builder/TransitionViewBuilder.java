@@ -14,8 +14,6 @@ public class TransitionViewBuilder {
     }
 
     public TransitionView build() {
-        TransitionView view =
-                new TransitionView(transition, controller);
-        return view;
+        return new TransitionView(transition, controller);
     }
 }

@@ -8,9 +8,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.transition.*;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.rate.FunctionalRateParameter;
 import uk.ac.imperial.pipe.models.component.rate.NormalRate;
 import uk.ac.imperial.pipe.models.component.rate.Rate;
-import uk.ac.imperial.pipe.models.component.rate.RateParameter;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import javax.swing.event.UndoableEditListener;
@@ -108,11 +108,10 @@ public class TransitionControllerTest {
     }
 
     @Test
-    public void setNameChangesName() {
+    public void setIdChangesId() {
         String newName = "newName";
-        controller.setName(newName);
+        controller.setId(newName);
         verify(transition).setId(newName);
-        verify(transition).setName(newName);
     }
 
 
@@ -121,7 +120,7 @@ public class TransitionControllerTest {
         String oldName = "oldName";
         String newName = "newName";
         when(transition.getId()).thenReturn(oldName);
-        controller.setName(newName);
+        controller.setId(newName);
 
         UndoableEdit nameEdit = new ChangePetriNetComponentName(transition, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));
@@ -150,7 +149,7 @@ public class TransitionControllerTest {
     public void setRateCreatesRateUndoItemForRateParameter() {
         Rate oldRate = new NormalRate("1");
         when(transition.getRate()).thenReturn(oldRate);
-        Rate rate = new RateParameter("2", "foo", "foo");
+        Rate rate = new FunctionalRateParameter("2", "foo", "foo");
         controller.setRate(rate);
         UndoableEdit rateEdit = new SetRateParameter(transition, oldRate, rate);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(rateEdit)));
@@ -159,7 +158,7 @@ public class TransitionControllerTest {
 
     @Test
     public void setRateChangesRateParameter() {
-        Rate rate = new RateParameter("2", "foo", "foo");
+        Rate rate = new FunctionalRateParameter("2", "foo", "foo");
         controller.setRate(rate);
         verify(transition).setRate(rate);
     }

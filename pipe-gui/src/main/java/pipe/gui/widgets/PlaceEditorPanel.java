@@ -285,7 +285,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
             int newCapacity = (Integer) capacitySpinner.getValue();
             placeController.setCapacity(newCapacity);
             String newName = nameTextField.getText();
-            placeController.setName(newName);
+            placeController.setId(newName);
             placeController.setTokenCounts(newTokenValues);
             placeController.finishMultipleEdits();
             exit();

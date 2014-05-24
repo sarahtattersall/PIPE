@@ -12,7 +12,9 @@ import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 import uk.ac.imperial.pipe.models.component.arc.InboundArc;
 import uk.ac.imperial.pipe.models.component.arc.InboundInhibitorArc;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -51,8 +53,8 @@ public class InhibitorCreatorTest {
 
     @Test
     public void createsCorrectArc() {
-        Place source = new Place("", "");
-        Transition transition = new Transition("", "");
+        Place source = new DiscretePlace("", "");
+        Transition transition = new DiscreteTransition("", "");
         InboundArc actual = creator.createInboundArc(source, transition,
                 new LinkedList<ArcPoint>());
 

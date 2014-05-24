@@ -18,7 +18,9 @@ import pipe.views.arc.InhibitorArcHead;
 import pipe.views.arc.TemporaryArcView;
 import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 import uk.ac.imperial.pipe.models.component.arc.OutboundArc;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.visitor.connectable.arc.ArcSourceVisitor;
@@ -81,7 +83,7 @@ public class ArcActionTest {
 
     @Test
     public void createsTemporaryArcViewOnClick() {
-        Transition transition = new Transition("", "");
+        Transition transition = new DiscreteTransition("", "");
         when(mockSourceVisitor.canStart(transition)).thenReturn(true);
         action.doConnectableAction(transition, mockController);
 
@@ -90,12 +92,12 @@ public class ArcActionTest {
 
     @Test
     public void removesTemporaryArcViewOnRealCreation() {
-        Transition transition = new Transition("", "");
+        Transition transition = new DiscreteTransition("", "");
         when(mockSourceVisitor.canStart(transition)).thenReturn(true);
         action.doConnectableAction(transition, mockController);
 
 
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         action.doConnectableAction(place, mockController);
@@ -104,12 +106,12 @@ public class ArcActionTest {
 
     @Test
     public void callsCreateOnRealCreation() {
-        Transition transition = new Transition("", "");
+        Transition transition = new DiscreteTransition("", "");
         when(mockSourceVisitor.canStart(transition)).thenReturn(true);
         action.doConnectableAction(transition, mockController);
 
 
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         action.doConnectableAction(place, mockController);
@@ -123,11 +125,11 @@ public class ArcActionTest {
 
     @Test
     public void createsUndoAction() {
-        Transition transition = new Transition("", "");
+        Transition transition = new DiscreteTransition("", "");
         when(mockSourceVisitor.canStart(transition)).thenReturn(true);
         action.doConnectableAction(transition, mockController);
 
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         when(mockCreatorVisitor.canCreate(transition, place)).thenReturn(true);
 
         OutboundArc mockArc = mock(OutboundArc.class);

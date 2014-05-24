@@ -30,9 +30,8 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
         this.listener = listener;
     }
 
-    public void setName(String newName) {
+    public void setId(String newName) {
         String oldName = component.getId();
-        component.setName(newName);
         component.setId(newName);
         registerUndoableEdit(new ChangePetriNetComponentName(component, oldName, newName));
     }

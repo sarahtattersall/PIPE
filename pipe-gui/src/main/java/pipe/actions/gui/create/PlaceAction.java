@@ -4,6 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -43,7 +44,7 @@ public class PlaceAction extends CreateAction {
 
     private Place newPlace(Point point, PetriNetController petriNetController) {
         String id = getNewPetriNetName(petriNetController);
-        Place place = new Place(id, id);
+        Place place = new DiscretePlace(id, id);
         place.setX(point.x);
         place.setY(point.y);
 

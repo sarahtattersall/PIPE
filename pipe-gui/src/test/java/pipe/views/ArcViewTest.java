@@ -10,7 +10,9 @@ import pipe.views.arc.NormalArcView;
 import pipe.views.viewComponents.ArcPath;
 import uk.ac.imperial.pipe.models.component.arc.Arc;
 import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.awt.geom.Point2D;
@@ -35,8 +37,8 @@ public class ArcViewTest {
     @Before
     public void setUp() {
         PetriNetController mockController = mock(PetriNetController.class);
-        source = new Place("P0","P0");
-        target =  new Transition("T0", "T0");
+        source = new DiscretePlace("P0","P0");
+        target =  new DiscreteTransition("T0", "T0");
         when(mockArc.getSource()).thenReturn(source);
         when(mockArc.getTarget()).thenReturn(target);
         when(mockArc.getStartPoint()).thenReturn(start);

@@ -2,7 +2,6 @@ package pipe.views;
 
 import pipe.controllers.TokenController;
 import pipe.utilities.math.Matrix;
-import pipe.views.arc.InhibitorArcView;
 import uk.ac.imperial.pipe.exceptions.TokenLockedException;
 import uk.ac.imperial.pipe.models.component.token.Token;
 
@@ -10,7 +9,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Observable;
 
 
@@ -23,11 +21,6 @@ public class TokenView extends Observable implements Serializable {
 
     public TokenView(TokenController controller, Token model) {
         _model = model;
-    }
-
-    //TODO: DELETE
-    public TokenView(String id, Color color) {
-        _model = new Token(id, color);
     }
 
     public void update(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {

@@ -4,6 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -38,7 +39,7 @@ public abstract class TransitionAction extends CreateAction {
     private Transition newTransition(Point point, PetriNetController petriNetController) {
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
         String id = getNetTransitionName(petriNetController);
-        Transition transition = new Transition(id, id);
+        Transition transition = new DiscreteTransition(id, id);
         transition.setX(point.x);
         transition.setY(point.y);
         transition.setTimed(isTimed());

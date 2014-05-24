@@ -5,6 +5,7 @@ import org.junit.Test;
 import pipe.views.arc.NormalHead;
 import pipe.views.arc.TemporaryArcView;
 import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
 
 import java.awt.Rectangle;
@@ -19,7 +20,7 @@ public class TemporaryArcViewTest {
 
     @Before
     public void setUp() {
-        place = new Place("P0", "P0");
+        place = new DiscretePlace("P0", "P0");
         place.setX(100);
         place.setY(100);
         temporaryArcView = new TemporaryArcView<>(place, new NormalHead());

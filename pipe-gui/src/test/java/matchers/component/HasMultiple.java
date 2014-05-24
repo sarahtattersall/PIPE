@@ -11,7 +11,7 @@ import java.util.List;
  * Class that can have multiple @link{Has} items for a Connectable type
  */
 public class HasMultiple<T extends PetriNetComponent> extends ArgumentMatcher<T> {
-    List<Has<T>> has_items = new LinkedList<Has<T>>();
+    List<Has<T>> has_items = new LinkedList<>();
 
     public HasMultiple(Has<T>... items)
     {

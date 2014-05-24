@@ -10,7 +10,9 @@ import pipe.views.ArcView;
 import uk.ac.imperial.pipe.models.component.Connectable;
 import uk.ac.imperial.pipe.models.component.arc.InboundArc;
 import uk.ac.imperial.pipe.models.component.arc.InboundNormalArc;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 
 import java.util.HashMap;
@@ -28,8 +30,8 @@ public class ArcViewBuilderTest {
 
     @Before
     public void setUp() {
-        Place source = new Place("source", "source");
-        Transition transition = new Transition("id", "name");
+        Place source = new DiscretePlace("source", "source");
+        Transition transition = new DiscreteTransition("id", "name");
 
         arc = new InboundNormalArc(source, transition, new HashMap<String, String>());
         arc.setId("id");

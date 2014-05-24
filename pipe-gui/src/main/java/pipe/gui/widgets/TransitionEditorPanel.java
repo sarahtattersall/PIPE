@@ -602,7 +602,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private void setNameIfChanged() {
         String newName = nameTextField.getText();
         if (!newName.equals(transitionController.getName())) {
-            transitionController.setName(newName);
+            transitionController.setId(newName);
         }
     }
 

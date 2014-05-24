@@ -14,6 +14,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.transformers.Contains;
+import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -73,7 +74,7 @@ public class ImmediateTransitionActionTest {
 
         action.doAction(mockEvent, mockController);
 
-        Transition transition = new Transition("T0", "T0");
+        Transition transition = new DiscreteTransition("T0", "T0");
         transition.setX(10);
         transition.setY(20);
         transition.setTimed(false);

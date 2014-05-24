@@ -131,11 +131,10 @@ public class PlaceControllerTest {
     }
 
     @Test
-    public void setNameChangesName() {
+    public void setIdChangesId() {
         String newName = "newName";
-        placeController.setName(newName);
+        placeController.setId(newName);
         verify(place).setId(newName);
-        verify(place).setName(newName);
     }
 
 
@@ -144,7 +143,7 @@ public class PlaceControllerTest {
         String oldName = "oldName";
         String newName = "newName";
         when(place.getId()).thenReturn(oldName);
-        placeController.setName(newName);
+        placeController.setId(newName);
 
         UndoableEdit nameEdit = new ChangePetriNetComponentName(place, oldName, newName);
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(nameEdit)));

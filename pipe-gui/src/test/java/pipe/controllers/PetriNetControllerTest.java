@@ -12,10 +12,10 @@ import pipe.historyActions.component.DeletePetriNetObject;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.component.AbstractPetriNetComponent;
 import uk.ac.imperial.pipe.models.component.PetriNetComponent;
 import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
 import uk.ac.imperial.pipe.models.component.arc.InboundArc;
+import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
 import uk.ac.imperial.pipe.models.component.place.Place;
 import uk.ac.imperial.pipe.models.component.token.Token;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
@@ -95,7 +95,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void deletesSelectedRemovesFromNet() throws PetriNetComponentException {
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         net.addPlace(place);
 
         controller.select(place);
@@ -105,7 +105,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void deletingSelectionReturnsListOfAbstractUndoEdits() throws PetriNetComponentException {
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         net.addPlace(place);
 
         controller.select(place);
@@ -117,7 +117,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void deleteComponentRemovesFromPetriNet() throws PetriNetComponentException {
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         net.addPlace(place);
 
         controller.delete(place);
@@ -127,7 +127,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void deletingComponentAddsToHistoryManager() throws PetriNetComponentException {
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         net.addPlace(place);
 
         UndoableEdit edit = controller.delete(place);
@@ -138,7 +138,7 @@ public class PetriNetControllerTest {
 
     @Test
     public void deletesSelectedNotifiesObserver() throws PetriNetComponentException {
-        Place place = new Place("", "");
+        Place place = new DiscretePlace("", "");
         net.addPlace(place);
 
         PropertyChangeListener mockListener = mock(PropertyChangeListener.class);
@@ -326,7 +326,7 @@ public class PetriNetControllerTest {
         assertEquals(color, token.getColor());
     }
 
-    private class DummyPetriNetComponent extends AbstractPetriNetComponent {
+    private class DummyPetriNetComponent implements PetriNetComponent {
         @Override
         public boolean isSelectable() {
             return false;
@@ -352,7 +352,14 @@ public class PetriNetControllerTest {
         }
 
         @Override
-        public void setName(String name) {
+        public void addPropertyChangeListener(PropertyChangeListener listener) {
+
         }
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+        }
+
     }
 }
