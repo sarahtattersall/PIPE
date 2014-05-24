@@ -24,7 +24,7 @@ import uk.ac.imperial.state.Record;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
-import java.awt.Dimension;
+import java.awt.Container;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -142,12 +142,34 @@ public class ReachabilityGraph {
      */
     private Path binaryStates;
 
-    public ReachabilityGraph(FileDialog loadDialog, final FileDialog saveBinaryDialog) {
-        this.saveBinaryDialog = saveBinaryDialog;
-        loadDefaultPetriNet();
+    /**
+     * When selecting use current Petri net the petri net used will be
+     * @param loadDialog
+     * @param saveBinaryDialog
+     * @param petriNet
+     */
 
+    public ReachabilityGraph(FileDialog loadDialog, FileDialog saveBinaryDialog, PetriNet petriNet) {
+        this.saveBinaryDialog = saveBinaryDialog;
+        this.loadDialog = loadDialog;
+        defaultPetriNet = petriNet;
+        setUp();
+    }
+
+    /**
+     * Constructor deactivates use current petri net radio button since none is supplied.
+     * @param loadDialog
+     * @param saveBinaryDialog
+     */
+    public ReachabilityGraph(FileDialog loadDialog, FileDialog saveBinaryDialog) {
+        useExistingPetriNetRadioButton.setEnabled(false);
+        this.saveBinaryDialog = saveBinaryDialog;
+        this.loadDialog = loadDialog;
+        setUp();
+    }
+
+    private void setUp() {
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension(500, 500));
         graphComponent.setToolTips(true);
         graphComponent.setDragEnabled(false);
 
@@ -161,7 +183,6 @@ public class ReachabilityGraph {
                 calculateResults();
             }
         });
-        this.loadDialog = loadDialog;
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -519,5 +540,9 @@ public class ReachabilityGraph {
     }
 
     private void createUIComponents() {
+    }
+
+    public Container getMainPanel() {
+        return panel1;
     }
 }
