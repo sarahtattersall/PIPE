@@ -11,10 +11,6 @@ import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.component.transition.Transition;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
-import uk.ac.imperial.pipe.parsers.EvalVisitor;
-import uk.ac.imperial.pipe.parsers.FunctionalResults;
-import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -181,31 +177,10 @@ public class TransitionView extends ConnectableView<Transition> {
 
     private void changeToolTipText() {
         if (this.isTimed()) {
-            setToolTipText("r = " + this.getRate());
+            setToolTipText("r = " + model.getRate());
         } else {
-            setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + this.getRate());
+            setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + model.getRate());
         }
-    }
-
-
-    //TODO: DON'T CALCULATE THIS IN HERE?
-    public double getRate() {
-        if (isInfiniteServer()) {
-            PetriNet petriNet = petriNetController.getPetriNet();
-            return petriNet.getEnablingDegree(model);
-        }
-
-        if (model.getRateExpr() == null) {
-            return -1;
-        }
-
-        PetriNetWeightParser parser = new PetriNetWeightParser(new EvalVisitor(petriNetController.getPetriNet()), petriNetController.getPetriNet());
-        FunctionalResults<Double> result = parser.evaluateExpression(model.getRateExpr());
-        if (result.hasErrors()) {
-            showErrorMessage();
-            return -1;
-        }
-        return result.getResult();
     }
 
     private void showErrorMessage() {

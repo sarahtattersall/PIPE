@@ -2,7 +2,6 @@ package pipe.gui.widgets;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
-import pipe.gui.ApplicationSettings;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.models.component.PetriNetComponent;
 import uk.ac.imperial.pipe.models.component.arc.Arc;
@@ -27,42 +26,101 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author pere
- * @author yufei wang
+ * Panel for editing a transitions properties
  */
 public class TransitionEditorPanel extends javax.swing.JPanel {
 
+    /**
+     * Message to be displayed if the user wishes to define their own rate and not use
+     * a rate parameter
+     */
     private static final String NO_RATE_PARAMETER = "No Rate Parameter";
 
+    /**
+     * Controller for the transition being changes
+     */
     private final TransitionController transitionController;
 
+    /**
+     * Controller for the Petri net the transition belongs to
+     */
     private final PetriNetController netController;
 
+    /**
+     * Owener of the panel
+     */
     private final JRootPane rootPane;
 
+    /**
+     * Radio button for immediate, in a group with the timed radio button
+     */
     private final JRadioButton immediateRadioButton = new JRadioButton();
 
+    /**
+     * Radio button for chosing a timed transition, in a group with the immediate radio button
+     */
+    private final JRadioButton timedRadioButton = new JRadioButton();
+
+    /**
+     * Radio button for single server semantics, in a group with infinite server semantics
+     */
+    private final JRadioButton singleServerRadioButton = new JRadioButton();
+
+    /**
+     * Radio button for immediate, in a group with the infinite server radio button
+     */
     private final JRadioButton infiniteServerRadioButton = new JRadioButton();
 
+    /**
+     * Id of the transition
+     */
     private final JTextField nameTextField = new JTextField();
 
+    /**
+     * OK butotn for setting changes
+     */
     private final JButton okButton = new JButton();
 
-    private final JLabel priorityLabel = new JLabel();
 
+
+    /**
+     * Priority panel holds priority details
+     */
     private final JPanel priorityPanel = new JPanel();
 
+
+    /**
+     * Priority message next to priority slider
+     */
+    private final JLabel priorityLabel = new JLabel();
+
+    /**
+     * Slider to set the transitions priority
+     */
     private final JSlider prioritySlider = new JSlider();
 
+    /**
+     * Text field for the priority chosen
+     */
     private final JTextField priorityTextField = new JTextField();
 
+    /**
+     * Rate parameter combo box for selecting current rate parameters
+     */
     private final JComboBox<String> rateComboBox = new JComboBox<>();
 
-    private final JLabel rateLabel = new JLabel();
+    /**
+     * Rate/Weight label. Displays what the weightRateTextField refers to
+     * It will be a weight if it is an immediate transition, and a rate for a timed transition
+     */
+    private final JLabel weightRateLabel = new JLabel();
 
-    private final JButton functionalratebutton = new JButton();
 
-    private final JTextField rateTextField = new JTextField();
+    /**
+     * Transitions weight/rate value, can either be user defined or the value of a rate parameter, or a user defined rate
+     * It will be a weight if it is an immediate transition, and a rate for a timed transition
+     */
+    private final JTextField weightRateTextField = new JTextField();
 
     private final JComboBox<String> rotationComboBox = new JComboBox<>();
 
@@ -72,9 +130,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private final JPanel serverPanel = new JPanel();
 
-    private final JRadioButton singleServerRadioButton = new JRadioButton();
-
-    private final JRadioButton timedRadioButton = new JRadioButton();
 
     /**
      * Contains the index of the rate in the rateComboBox to the RateParameter it maps
@@ -155,7 +210,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             int index = getIndexOfRate(rateParameter.getId());
             rateComboBox.setSelectedIndex(index);
             if (index > 0) {
-                rateTextField.setEnabled(false);
+                weightRateTextField.setEnabled(false);
             }
         }
     }
@@ -198,7 +253,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         transitionEditorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Transition Editor"));
         transitionEditorPanel.setLayout(new java.awt.GridBagLayout());
 
-        nameLabel.setText("NameDetails:");
+        nameLabel.setText("Name:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -226,21 +281,13 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         transitionEditorPanel.add(nameTextField, gridBagConstraints);
 
-        rateLabel.setText("Constant Rate:");
+        weightRateLabel.setText("Constant Rate:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        transitionEditorPanel.add(rateLabel, gridBagConstraints);
-
-        functionalratebutton.setText("Editor");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        transitionEditorPanel.add(functionalratebutton, gridBagConstraints);
+        transitionEditorPanel.add(weightRateLabel, gridBagConstraints);
 
         priorityLabel.setText("Priority:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -378,10 +425,10 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         transitionEditorPanel.add(rotationComboBox, gridBagConstraints);
 
-        rateTextField.setMaximumSize(new java.awt.Dimension(40, 19));
-        rateTextField.setMinimumSize(new java.awt.Dimension(40, 19));
-        rateTextField.setPreferredSize(new java.awt.Dimension(40, 19));
-        rateTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+        weightRateTextField.setMaximumSize(new java.awt.Dimension(40, 19));
+        weightRateTextField.setMinimumSize(new java.awt.Dimension(40, 19));
+        weightRateTextField.setPreferredSize(new java.awt.Dimension(40, 19));
+        weightRateTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent evt) {
                 rateTextFieldFocusGained();
@@ -397,7 +444,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        transitionEditorPanel.add(rateTextField, gridBagConstraints);
+        transitionEditorPanel.add(weightRateTextField, gridBagConstraints);
 
         timingLabel.setText("Timing:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -487,16 +534,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 8, 3);
         add(buttonPanel, gridBagConstraints);
-
-        functionalratebutton.addActionListener(new java.awt.event.ActionListener() {
-
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createWindow();
-            }
-
-        });
-
     }
 
     /**
@@ -619,7 +656,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private boolean canSetRate() {
         PetriNetWeightParser parser = new PetriNetWeightParser(new EvalVisitor(netController.getPetriNet()), netController.getPetriNet());
-        FunctionalResults<Double> result = parser.evaluateExpression(rateTextField.getText());
+        FunctionalResults<Double> result = parser.evaluateExpression(weightRateTextField.getText());
         if (result.hasErrors()) {
             String concatenated = concatenateErrors(result.getErrors());
             showErrorMessage("Functional rate expression is invalid. Please check your function. Errors are:" + concatenated);
@@ -661,7 +698,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             RateParameter rateParameter = indexToRates.get(selected);
             transitionController.setRate(rateParameter);
         } else {
-            String rateExpression = rateTextField.getText();
+            String rateExpression = weightRateTextField.getText();
             Rate rate = new NormalRate(rateExpression);
             transitionController.setRate(rate);
         }
@@ -728,27 +765,23 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private void serverRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (singleServerRadioButton.isSelected()) {
-            functionalratebutton.setEnabled(true);
             singleServerRadioButton.setSelected(true);
             infiniteServerRadioButton.setSelected(false);
-            rateTextField.setEditable(true);
-            rateTextField.setText(transitionController.getRateExpr());
+            weightRateTextField.setEditable(true);
+            weightRateTextField.setText(transitionController.getRateExpr());
         } else {
             if (checkIfArcsAreFunctional()) {
                 String message = "Infinite server cannot be connect directly to \r\n"
                         + "arcs with functional weights for this version";
                 showErrorMessage(message);
-                functionalratebutton.setEnabled(true);
                 singleServerRadioButton.setSelected(true);
                 infiniteServerRadioButton.setSelected(false);
 
                 return;
             }
-            rateTextField.setEditable(false);
+            weightRateTextField.setEditable(false);
             singleServerRadioButton.setSelected(false);
             infiniteServerRadioButton.setSelected(true);
-            functionalratebutton.setEnabled(false);
-            rateTextField.setText("ED(" + transitionController.getName() + ")");
         }
     }
 
@@ -778,15 +811,15 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         int selected = rateComboBox.getSelectedIndex();
         if (selected > 0) {
             RateParameter rateParameter = indexToRates.get(selected);
-            rateTextField.setEnabled(false);
-            rateTextField.setText(rateParameter.getExpression());
+            weightRateTextField.setEnabled(false);
+            weightRateTextField.setText(rateParameter.getExpression());
         } else {
-            rateTextField.setEnabled(true);
+            weightRateTextField.setEnabled(true);
         }
     }
 
     private void rateTextFieldFocusGained() {
-        focusGained(rateTextField);
+        focusGained(weightRateTextField);
     }
 
     private void nameTextFieldFocusGained() {
@@ -807,33 +840,31 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     }
 
     private void rateTextFieldFocusLost() {
-        focusLost(rateTextField);
+        focusLost(weightRateTextField);
     }
 
-    private void createWindow() {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        TransitionFunctionEditor feditor =
-                new TransitionFunctionEditor(this, guiDialog, transitionController, netController.getPetriNet());
-        guiDialog.add(feditor);
-        guiDialog.setSize(270, 230);
-        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
-        guiDialog.setVisible(true);
-        guiDialog.dispose();
-    }
+//    private void createWindow() {
+//        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+//        TransitionFunctionEditor feditor =
+//                new TransitionFunctionEditor(this, guiDialog, transitionController, netController.getPetriNet());
+//        guiDialog.add(feditor);
+//        guiDialog.setSize(270, 230);
+//        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
+//        guiDialog.setVisible(true);
+//        guiDialog.dispose();
+//    }
 
     private void setUpImmediateTransition() {
         immediateRadioButton.setSelected(true);
-        rateLabel.setText("Weight:");
+        weightRateLabel.setText("Weight:");
         if (transitionController.isInfiniteServer()) {
-            rateTextField.setText("ED(" + transitionController.getName() + ")");
-            rateTextField.setEditable(false);
+            weightRateTextField.setText("ED(" + transitionController.getName() + ")");
+            weightRateTextField.setEditable(false);
         } else {
-            rateTextField.setText(transitionController.getRateExpr());
-            rateTextField.setEditable(true);
+            weightRateTextField.setText(transitionController.getRateExpr());
+            weightRateTextField.setEditable(true);
         }
-        rateTextField.setEnabled(false);
-        functionalratebutton.setEnabled(true);
-        functionalratebutton.setText("Weight expression editor");
+        weightRateTextField.setEnabled(true);
 
         prioritySlider.setEnabled(true);
         priorityTextField.setText("" + transitionController.getPriority());
@@ -845,17 +876,15 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
 
     private void setUpTimedTransition() {
         timedRadioButton.setSelected(true);
-        rateLabel.setText("Rate:");
+        weightRateLabel.setText("Rate:");
         if (transitionController.isInfiniteServer()) {
-            rateTextField.setText("ED(" + transitionController.getName() + ")");
-            rateTextField.setEditable(false);
+            weightRateTextField.setText("ED(" + transitionController.getName() + ")");
+            weightRateTextField.setEditable(false);
         } else {
-            rateTextField.setText(transitionController.getRateExpr());
-            rateTextField.setEditable(true);
+            weightRateTextField.setText(transitionController.getRateExpr());
+            weightRateTextField.setEditable(true);
         }
-        rateTextField.setEnabled(true);
-        functionalratebutton.setEnabled(true);
-        functionalratebutton.setText("Rate Expression editor");
+        weightRateTextField.setEnabled(true);
 
         prioritySlider.setEnabled(false);
         priorityTextField.setText("0");
@@ -877,7 +906,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * @param func new Rate for the transition
      */
     public void setRate(String func) {
-        this.rateTextField.setText(func);
+        this.weightRateTextField.setText(func);
     }
 
 }
