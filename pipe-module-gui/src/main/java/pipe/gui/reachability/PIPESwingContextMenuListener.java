@@ -2,7 +2,7 @@
  * PIPESwingContextMenuListener.java
  */
 
-package pipe.extensions.jpowergraph;
+package pipe.gui.reachability;
 
 import net.sourceforge.jpowergraph.Edge;
 import net.sourceforge.jpowergraph.Graph;

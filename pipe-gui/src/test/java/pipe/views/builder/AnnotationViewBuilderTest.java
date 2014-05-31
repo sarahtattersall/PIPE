@@ -5,6 +5,7 @@ import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.views.viewComponents.AnnotationView;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -18,7 +19,7 @@ public class AnnotationViewBuilderTest {
     @Before
     public void setUp() {
         mockController = mock(PetriNetController.class);
-        annotation = new Annotation(10, 10, "annotation", 1, 3, true);
+        annotation = new AnnotationImpl(10, 10, "annotation", 1, 3, true);
         builder = new AnnotationViewBuilder(annotation, mockController);
     }
 
@@ -38,7 +39,7 @@ public class AnnotationViewBuilderTest {
 //        assertEquals(annotation.getY(), annotationNote._positionY, DOUBLE_DELTA);
 //        assertEquals(annotation.getHeight(), annotationNote.getHeight(), DOUBLE_DELTA);
 //        assertEquals(annotation.getWidth(), annotationNote.getWidth(), DOUBLE_DELTA);
-        assertEquals(annotation.hasBoarder(), annotationView.isShowingBorder());
+        assertEquals(annotation.hasBorder(), annotationView.isShowingBorder());
         assertEquals(annotation.getText(), annotationView.getNoteText());
     }
 }

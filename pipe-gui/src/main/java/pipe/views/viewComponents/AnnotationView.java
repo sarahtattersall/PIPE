@@ -13,6 +13,7 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -108,7 +109,7 @@ public class AnnotationView extends Note {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals(Annotation.TEXT_CHANGE_MESSAGE)) {
+                if (name.equals(AnnotationImpl.TEXT_CHANGE_MESSAGE)) {
                     String text = (String) propertyChangeEvent.getNewValue();
                     setText(text);
                 } else if (name.equals(Annotation.X_CHANGE_MESSAGE) || name.equals(Annotation.Y_CHANGE_MESSAGE)) {

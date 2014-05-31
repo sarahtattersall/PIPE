@@ -83,6 +83,17 @@
             <version>2.5.1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>jpowergraph-common</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>jpowergraph-swing</artifactId>
+            <version>0.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

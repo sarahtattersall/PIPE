@@ -2,14 +2,19 @@ package pipe.gui.reachability;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxStylesheet;
-import pipe.reachability.algorithm.CachingExplorerUtilities;
-import pipe.reachability.algorithm.ExplorerUtilities;
-import pipe.reachability.algorithm.TimelessTrapException;
-import pipe.reachability.algorithm.VanishingExplorer;
+import net.sourceforge.jpowergraph.Edge;
+import net.sourceforge.jpowergraph.Node;
+import net.sourceforge.jpowergraph.defaults.DefaultGraph;
+import net.sourceforge.jpowergraph.defaults.TextEdge;
+import net.sourceforge.jpowergraph.layout.Layouter;
+import net.sourceforge.jpowergraph.layout.spring.SpringLayoutStrategy;
+import net.sourceforge.jpowergraph.lens.*;
+import net.sourceforge.jpowergraph.manipulator.popup.PopupManipulator;
+import net.sourceforge.jpowergraph.swing.SwingJGraphPane;
+import net.sourceforge.jpowergraph.swing.SwingJGraphScrollPane;
+import net.sourceforge.jpowergraph.swing.manipulator.SwingPopupDisplayer;
+import net.sourceforge.jpowergraph.swtswinginteraction.color.JPowerGraphColor;
+import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
 import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
@@ -37,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,11 +59,6 @@ public class ReachabilityGraph {
      * For saving state space results
      */
     private final FileDialog saveBinaryDialog;
-
-    /**
-     * Graphical representation of reachability
-     */
-    private final TooltipMXGraph graph = new TooltipMXGraph();
 
     private JPanel panel1;
 
@@ -146,11 +147,14 @@ public class ReachabilityGraph {
      */
     private Path binaryStates;
 
+    private DefaultGraph graph = new DefaultGraph();
+
     /**
      * When selecting use current Petri net the petri net used will be
+     *
      * @param loadDialog
      * @param saveBinaryDialog
-     * @param petriNet
+     * @param petriNet current petri net
      */
 
     public ReachabilityGraph(FileDialog loadDialog, FileDialog saveBinaryDialog, PetriNet petriNet) {
@@ -160,26 +164,9 @@ public class ReachabilityGraph {
         setUp();
     }
 
-    /**
-     * Constructor deactivates use current petri net radio button since none is supplied.
-     * @param loadDialog
-     * @param saveBinaryDialog
-     */
-    public ReachabilityGraph(FileDialog loadDialog, FileDialog saveBinaryDialog) {
-        useExistingPetriNetRadioButton.setEnabled(false);
-        this.saveBinaryDialog = saveBinaryDialog;
-        this.loadDialog = loadDialog;
-        setUp();
-    }
-
     private void setUp() {
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        graphComponent.setToolTips(true);
-        graphComponent.setDragEnabled(false);
-
-        setupGraph();
-
-        resultsPanel.add(graphComponent);
+        JPanel pane = setupGraph();
+        resultsPanel.add(pane);
 
         goButton.addActionListener(new ActionListener() {
             @Override
@@ -208,26 +195,37 @@ public class ReachabilityGraph {
     }
 
     /**
-     * Loads a petri net into the defaultPetriNet field
+     * Sets up the graph and returns the JPanel to add to
+     * the resultsPanel
      */
-    private void loadDefaultPetriNet() {
-        try {
-            PetriNetReader petriNetIO = new PetriNetIOImpl();
-            URL resource = getClass().getResource("/simple_vanishing.xml");
-            defaultPetriNet = petriNetIO.read(resource.getPath());
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (UnparsableException e) {
-            e.printStackTrace();
-        }
-    }
+    private JPanel setupGraph() {
+        SwingJGraphPane pane = new SwingJGraphPane(graph);
+        LensSet lensSet = new LensSet();
+        lensSet.addLens(new RotateLens());
+        lensSet.addLens(new TranslateLens());
+        lensSet.addLens(new ZoomLens());
+        lensSet.addLens(new CursorLens());
+        lensSet.addLens(new TooltipLens());
+        lensSet.addLens(new LegendLens());
+        lensSet.addLens(new NodeSizeLens());
+        pane.setLens(lensSet);
+        pane.addManipulator(new PopupManipulator(pane, (TooltipLens) lensSet.getFirstLensOfType(TooltipLens.class)));
 
-    /**
-     * Sets up the graph so that components are not editable
-     */
-    private void setupGraph() {
-        graph.setCellsLocked(true);
-        graph.setEdgeLabelsMovable(false);
+
+        pane.setNodePainter(TangibleStateNode.class, TangibleStateNode.getShapeNodePainter());
+        pane.setNodePainter(VanishingStateNode.class, VanishingStateNode.getShapeNodePainter());
+
+
+        pane.setEdgePainter(TextEdge.class,
+                new PIPELineWithTextEdgePainter(JPowerGraphColor.BLACK, JPowerGraphColor.GRAY, false));
+
+
+        pane.setAntialias(true);
+
+        pane.setPopupDisplayer(new SwingPopupDisplayer(new PIPESwingToolTipListener(),
+                new PIPESwingContextMenuListener(graph, new LensSet(), new Integer[]{}, new Integer[]{})));
+
+        return new SwingJGraphScrollPane(pane, lensSet);
     }
 
     /**
@@ -330,6 +328,7 @@ public class ReachabilityGraph {
 
     /**
      * Writes the state space into transitions and states
+     *
      * @param stateWriter
      * @param transitions
      * @param states
@@ -351,6 +350,7 @@ public class ReachabilityGraph {
 
     /**
      * Reads in the state space from transitions and states
+     *
      * @param stateReader
      * @param transitions
      * @param states
@@ -366,36 +366,6 @@ public class ReachabilityGraph {
             updateTextResults(records);
             updateGraph(records, stateMap);
         }
-    }
-
-    /**
-     * Updates the text results with the number of states and transitions
-     *
-     * Although this method could take the results from generating the state space
-     * with the pre-calculated transition count, if we load from disk then this is
-     * lost so for now just caluclate the transition count directly from the records
-     * @param records State space successor records
-     */
-    private void updateTextResults(Collection<Record> records) {
-        StringBuilder results = new StringBuilder();
-        int transitions = numberOfTransitions(records);
-        results.append("Results: ")
-               .append(records.size()).append(" states and ")
-               .append(transitions).append(" transitions");
-        textResultsLabel.setText(results.toString());
-    }
-
-    /**
-     * Calculates the number of transitions from the results records
-     * @param records
-     * @return total number of transitions
-     */
-    private int numberOfTransitions(Collection<Record> records) {
-        int transitions = 0;
-        for (Record record : records) {
-            transitions += record.successors.size();
-        }
-        return transitions;
     }
 
     /**
@@ -430,7 +400,7 @@ public class ReachabilityGraph {
             throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
         PetriNet petriNet = (useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet);
         StateProcessor processor = new StateIOProcessor(stateWriter, transitionOutput, stateOutput);
-        ExplorerUtilities explorerUtilites = new CachingExplorerUtilities(petriNet);
+        ExplorerUtilities explorerUtilites = new CoverabilityExplorerUtilities(new CachingExplorerUtilities(petriNet));
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
         StateSpaceExplorer stateSpaceExplorer =
                 new SequentialStateSpaceExplorer(explorerUtilites, vanishingExplorer, processor);
@@ -450,7 +420,6 @@ public class ReachabilityGraph {
         return reader.readRecords(input);
     }
 
-
     /**
      * Reads results of the mapping of an integer state representation to
      * the Classified State it represents
@@ -466,42 +435,34 @@ public class ReachabilityGraph {
     }
 
     /**
+     * Updates the text results with the number of states and transitions
+     * <p/>
+     * Although this method could take the results from generating the state space
+     * with the pre-calculated transition count, if we load from disk then this is
+     * lost so for now just caluclate the transition count directly from the records
+     *
+     * @param records State space successor records
+     */
+    private void updateTextResults(Collection<Record> records) {
+        StringBuilder results = new StringBuilder();
+        int transitions = numberOfTransitions(records);
+        results.append("Results: ").append(records.size()).append(" states and ").append(transitions).append(
+                " transitions");
+        textResultsLabel.setText(results.toString());
+    }
+
+    /**
      * Updates the mxGraph to display the records
      *
      * @param records  state transitions from a processed Petri net
      * @param stateMap
      */
     private void updateGraph(Iterable<Record> records, Map<Integer, ClassifiedState> stateMap) {
-
-        removeCurrentContent();
-
-        Object parent = graph.getDefaultParent();
-        graph.getModel().beginUpdate();
-        mxStylesheet stylesheet = graph.getStylesheet();
-        Map<String, Object> vertexStyles = stylesheet.getDefaultVertexStyle();
-        vertexStyles.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-
-        mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-        layout.setInterHierarchySpacing(20);
-        layout.setInterRankCellSpacing(50);
-        Map<Integer, Object> verticies = new HashMap<>();
-        try {
-            graph.clearSelection();
-            for (Record record : records) {
-                Object state = getInsertedState(verticies, record.state, stateMap.get(record.state), graph);
-                for (Map.Entry<Integer, Double> entry : record.successors.entrySet()) {
-                    Integer successorId = entry.getKey();
-                    ClassifiedState successorState = stateMap.get(successorId);
-                    Object successor = getInsertedState(verticies, successorId, successorState, graph);
-                    addEdge(parent, state, successor, entry.getValue());
-                }
-            }
-        } finally {
-            graph.getModel().endUpdate();
-        }
-
-        layout.execute(graph.getDefaultParent());
-
+        graph.clear();
+        Map<Integer, Node> nodes = getNodes(stateMap);
+        Collection<Edge> edges = getEdges(records, nodes);
+        graph.addElements(nodes.values(), edges);
+        layoutGraph();
     }
 
     /**
@@ -517,35 +478,113 @@ public class ReachabilityGraph {
         return new OnTheFlyVanishingExplorer(explorerUtilities);
     }
 
-    private void removeCurrentContent() {
-        graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+    /**
+     * Calculates the number of transitions from the results records
+     *
+     * @param records
+     * @return total number of transitions
+     */
+    private int numberOfTransitions(Iterable<Record> records) {
+        int transitions = 0;
+        for (Record record : records) {
+            transitions += record.successors.size();
+        }
+        return transitions;
     }
 
     /**
-     * Creates/retreives a graphical representation of the state. If it does not exist
-     * on the canvas already it is created and added to the verticies map
-     *
-     * @param verticies verticies map representing states already existing on the graph to their
-     *                  graphical representation
-     * @param stateId   state id that is represented in state space
-     * @param state     state that stateid maps to in state space
-     * @return graphical vertex representation for the State
+     * Performs laying out of items on the graph
      */
-    private Object getInsertedState(Map<Integer, Object> verticies, Integer stateId, ClassifiedState state,
-                                    TooltipMXGraph graph) {
-        if (verticies.containsKey(stateId)) {
-            return verticies.get(stateId);
-        }
-        Object parent = graph.getDefaultParent();
-        Object vertexState = graph.insertVertex(parent, null, verticies.size(), 0, 0, 30, 30, getColor(state));
-        graph.setTooltipText(vertexState, stateId.toString());
-        verticies.put(stateId, vertexState);
-        return vertexState;
+    private void layoutGraph() {
+        Layouter layouter = new Layouter(new SpringLayoutStrategy(graph));
+        layouter.start();
     }
 
-    private Object addEdge(Object parent, Object state, Object successor, double rate) {
+    /**
+     * @param stateMap
+     * @return All nodes to be added to the graph
+     */
+    private Map<Integer, Node> getNodes(Map<Integer, ClassifiedState> stateMap) {
+        Map<Integer, Node> nodes = new HashMap<>(stateMap.size());
+        for (Map.Entry<Integer, ClassifiedState> entry : stateMap.entrySet()) {
+            ClassifiedState state = entry.getValue();
+            int id = entry.getKey();
+            nodes.put(id, createNode(state, id));
+        }
+        return nodes;
+    }
 
-        return graph.insertEdge(parent, null, String.format("%.2f", rate), state, successor);
+    /**
+     * All edges to be added to the graph
+     *
+     * @param records
+     * @param nodes
+     * @return
+     */
+    private Collection<Edge> getEdges(Iterable<Record> records, Map<Integer, Node> nodes) {
+        Collection<Edge> edges = new ArrayList<>();
+        for (Record record : records) {
+            int state = record.state;
+            for (Map.Entry<Integer, Double> entry : record.successors.entrySet()) {
+                int succ = entry.getKey();
+                edges.add(new TextEdge(nodes.get(state), nodes.get(succ), String.format("%.2f", entry.getValue())));
+            }
+        }
+        return edges;
+    }
+
+    /**
+     * @param state classified state to be turned into a graph node
+     * @param id    state integer id
+     * @return Tangible or Vanishing state node corresponding to the state and its integer id representation
+     */
+    private Node createNode(ClassifiedState state, int id) {
+        String label = Integer.toString(id);
+        String toolTip = state.toString();
+        if (state.isTangible()) {
+            return new TangibleStateNode(label, toolTip);
+        }
+        return new VanishingStateNode(label, toolTip);
+    }
+
+
+    /**
+     * Constructor deactivates use current petri net radio button since none is supplied.
+     *
+     * @param loadDialog
+     * @param saveBinaryDialog
+     */
+    public ReachabilityGraph(FileDialog loadDialog, FileDialog saveBinaryDialog) {
+        useExistingPetriNetRadioButton.setEnabled(false);
+        this.saveBinaryDialog = saveBinaryDialog;
+        this.loadDialog = loadDialog;
+        setUp();
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("ReachabilityGraph");
+        FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
+        FileDialog saver = new FileDialog(frame, "Save binary transition data", FileDialog.SAVE);
+        frame.setContentPane(new ReachabilityGraph(selector, saver).panel1);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+
+    }
+
+    /**
+     * Loads a petri net into the defaultPetriNet field
+     */
+    private void loadDefaultPetriNet() {
+        try {
+            PetriNetReader petriNetIO = new PetriNetIOImpl();
+            URL resource = getClass().getResource("/simple_vanishing.xml");
+            defaultPetriNet = petriNetIO.read(resource.getPath());
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (UnparsableException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -561,17 +600,6 @@ public class ReachabilityGraph {
             return "fillColor=#99CCFF";
         }
         return "fillColor=#FF8566";
-    }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("ReachabilityGraph");
-        FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
-        FileDialog saver = new FileDialog(frame, "Save binary transition data", FileDialog.SAVE);
-        frame.setContentPane(new ReachabilityGraph(selector, saver).panel1);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-
     }
 
     private void createUIComponents() {

@@ -8,17 +8,13 @@ import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
 import pipe.views.viewComponents.ArcPath;
-import uk.ac.imperial.pipe.models.PipeObservable;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * This class contains the common methods for different arc types.
@@ -30,7 +26,7 @@ import java.util.Observer;
  * @param <T> Model target type
  */
 public abstract class ArcView<S extends Connectable, T extends Connectable>
-        extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable, Serializable, Observer {
+        extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable {
     /**
      * Bounds of arc need to be grown in order to avoid clipping problems.
      * This value achieves it.
@@ -263,19 +259,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
-    }
-
-    // Steve Doubleday (Oct 2013): cascading clean up of Marking Views if Token View is disabled
-    @Override
-    public void update(Observable observable, Object obj) {
-        if ((observable instanceof PipeObservable) && (obj == null)) {
-            // if multiple cases are added, consider creating specific subclasses of Observable
-            Object originalObject = ((PipeObservable) observable).getObservable();
-            //            if (originalObject instanceof MarkingView) {
-            //                MarkingView viewToDelete = (MarkingView) originalObject;
-            //                _weight.remove(viewToDelete);
-            //            }
-        }
     }
 
     //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION

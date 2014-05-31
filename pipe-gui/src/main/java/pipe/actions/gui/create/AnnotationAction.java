@@ -3,8 +3,9 @@ package pipe.actions.gui.create;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import java.awt.Point;
@@ -38,7 +39,7 @@ public class AnnotationAction extends CreateAction {
 
         int x = new Double(point.getX()).intValue();
         int y = new Double(point.getY()).intValue();
-        Annotation annotation = new Annotation(x, y, "Enter text here", 100, 50, true);
+        Annotation annotation = new AnnotationImpl(x, y, "Enter text here", 100, 50, true);
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addAnnotation(annotation);

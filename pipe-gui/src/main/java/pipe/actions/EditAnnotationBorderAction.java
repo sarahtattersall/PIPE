@@ -27,7 +27,7 @@ public class EditAnnotationBorderAction extends AbstractAction {
 
 //        PipeApplicationController controller = ApplicationSettings.getApplicationController();
 //        PetriNetController petriNetController = controller.getActivePetriNetController();
-          annotation.toggleBorder();
+//          annotation.toggleBorder();
         //TODO: UNDO ACTION!
 //        petriNetController.getHistoryManager().addNewEdit(annotation.showBorder(!annotation.isShowingBorder()));
     }

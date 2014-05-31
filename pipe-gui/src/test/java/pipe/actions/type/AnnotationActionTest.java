@@ -14,6 +14,7 @@ import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.transformers.Contains;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.event.UndoableEditListener;
@@ -69,7 +70,7 @@ public class AnnotationActionTest {
         when(mockEvent.getPoint()).thenReturn(point);
 
         action.doAction(mockEvent, mockController);
-        Annotation annotation = new Annotation(10, 20, "Enter text here", 100, 50, true);
+        Annotation annotation = new AnnotationImpl(10, 20, "Enter text here", 100, 50, true);
         AddPetriNetObject addItem = new AddPetriNetObject(annotation, mockNet);
 
         verify(listener).undoableEditHappened(argThat(Contains.thisAction(addItem)));
