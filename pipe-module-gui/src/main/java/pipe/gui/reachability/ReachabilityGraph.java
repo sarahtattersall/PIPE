@@ -112,6 +112,10 @@ public class ReachabilityGraph {
      */
     private JRadioButton loadFromBinariesRadio;
 
+    private JPanel textResultsPanel;
+
+    private JLabel textResultsLabel;
+
     /**
      * Temporary transitions file for generating results into
      */
@@ -359,8 +363,39 @@ public class ReachabilityGraph {
              Input stateInput = new Input(stateInputStream)) {
             Collection<Record> records = readResults(stateReader, transitionInput);
             Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
+            updateTextResults(records);
             updateGraph(records, stateMap);
         }
+    }
+
+    /**
+     * Updates the text results with the number of states and transitions
+     *
+     * Although this method could take the results from generating the state space
+     * with the pre-calculated transition count, if we load from disk then this is
+     * lost so for now just caluclate the transition count directly from the records
+     * @param records State space successor records
+     */
+    private void updateTextResults(Collection<Record> records) {
+        StringBuilder results = new StringBuilder();
+        int transitions = numberOfTransitions(records);
+        results.append("Results: ")
+               .append(records.size()).append(" states and ")
+               .append(transitions).append(" transitions");
+        textResultsLabel.setText(results.toString());
+    }
+
+    /**
+     * Calculates the number of transitions from the results records
+     * @param records
+     * @return total number of transitions
+     */
+    private int numberOfTransitions(Collection<Record> records) {
+        int transitions = 0;
+        for (Record record : records) {
+            transitions += record.successors.size();
+        }
+        return transitions;
     }
 
     /**
