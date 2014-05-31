@@ -5,7 +5,7 @@ import pipe.controllers.PipeApplicationController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.GUIAnimator;
 import pipe.views.PipeApplicationView;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;

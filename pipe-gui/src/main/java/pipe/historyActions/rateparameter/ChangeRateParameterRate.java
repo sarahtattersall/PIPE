@@ -5,7 +5,7 @@
 package pipe.historyActions.rateparameter;
 
 
-import uk.ac.imperial.pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.petrinet.RateParameter;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

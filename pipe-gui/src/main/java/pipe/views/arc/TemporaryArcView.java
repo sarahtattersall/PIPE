@@ -1,8 +1,8 @@
 package pipe.views.arc;
 
 import pipe.gui.Constants;
-import uk.ac.imperial.pipe.models.component.Connectable;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import javax.swing.*;
 import java.awt.Graphics;

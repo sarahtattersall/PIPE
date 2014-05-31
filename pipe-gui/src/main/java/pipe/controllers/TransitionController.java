@@ -1,10 +1,10 @@
 package pipe.controllers;
 
 import pipe.historyActions.transition.*;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
-import uk.ac.imperial.pipe.models.component.place.Place;
-import uk.ac.imperial.pipe.models.component.rate.Rate;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.Rate;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;

@@ -6,7 +6,7 @@ import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.AbstractPetriNetViewComponent;
-import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.Container;

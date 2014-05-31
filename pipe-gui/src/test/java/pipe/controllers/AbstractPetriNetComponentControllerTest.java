@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.MultipleEdit;
 import pipe.utilities.transformers.Contains;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;

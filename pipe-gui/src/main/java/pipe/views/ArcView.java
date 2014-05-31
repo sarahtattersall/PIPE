@@ -9,9 +9,9 @@ import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.ArcHandler;
 import pipe.views.viewComponents.ArcPath;
 import uk.ac.imperial.pipe.models.PipeObservable;
-import uk.ac.imperial.pipe.models.component.Connectable;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;

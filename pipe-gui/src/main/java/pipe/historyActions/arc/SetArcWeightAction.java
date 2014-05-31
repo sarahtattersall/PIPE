@@ -5,8 +5,8 @@
 package pipe.historyActions.arc;
 
 
-import uk.ac.imperial.pipe.models.component.Connectable;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

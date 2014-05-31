@@ -9,9 +9,9 @@ import pipe.historyActions.arc.SetInverseArc;
 import pipe.views.ArcView;
 import pipe.views.viewComponents.NameLabel;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.component.Connectable;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

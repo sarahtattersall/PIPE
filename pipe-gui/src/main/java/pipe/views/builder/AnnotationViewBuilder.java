@@ -2,7 +2,7 @@ package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
 import pipe.views.viewComponents.AnnotationView;
-import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 public class AnnotationViewBuilder {
     final Annotation annotation;

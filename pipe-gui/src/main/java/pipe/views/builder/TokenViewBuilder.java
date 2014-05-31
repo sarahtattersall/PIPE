@@ -2,7 +2,7 @@ package pipe.views.builder;
 
 import pipe.controllers.TokenController;
 import pipe.views.TokenView;
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 public class TokenViewBuilder {
 

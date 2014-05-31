@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.historyActions.AnimationHistory;
 import uk.ac.imperial.pipe.animation.Animator;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import static org.mockito.Mockito.*;
 

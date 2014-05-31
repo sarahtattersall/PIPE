@@ -1,7 +1,7 @@
 package pipe.historyActions.transition;
 
 
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

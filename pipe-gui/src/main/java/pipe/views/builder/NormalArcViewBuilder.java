@@ -2,8 +2,8 @@ package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
 import pipe.views.arc.NormalArcView;
-import uk.ac.imperial.pipe.models.component.Connectable;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
 
 public class NormalArcViewBuilder {
     private final Arc<? extends Connectable, ? extends Connectable> arc;

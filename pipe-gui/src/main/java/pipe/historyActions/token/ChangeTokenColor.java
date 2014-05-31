@@ -1,7 +1,7 @@
 package pipe.historyActions.token;
 
 
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import java.awt.Color;

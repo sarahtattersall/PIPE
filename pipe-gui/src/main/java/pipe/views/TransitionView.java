@@ -10,7 +10,7 @@ import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
 import java.awt.*;

@@ -5,9 +5,9 @@ import pipe.historyActions.arc.AddArcPathPoint;
 import pipe.historyActions.arc.ArcPathPointType;
 import pipe.historyActions.arc.DeleteArcPathPoint;
 import pipe.historyActions.arc.SetArcWeightAction;
-import uk.ac.imperial.pipe.models.component.Connectable;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.parsers.FunctionalResults;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 

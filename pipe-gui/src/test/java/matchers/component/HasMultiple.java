@@ -1,7 +1,7 @@
 package matchers.component;
 
 import org.mockito.ArgumentMatcher;
-import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import java.util.Collections;
 import java.util.LinkedList;

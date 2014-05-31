@@ -2,7 +2,7 @@ package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
 import pipe.views.PlaceView;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.*;
 import java.awt.Container;

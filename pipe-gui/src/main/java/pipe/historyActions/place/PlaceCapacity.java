@@ -5,7 +5,7 @@
 package pipe.historyActions.place;
 
 
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

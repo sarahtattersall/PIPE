@@ -3,7 +3,7 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Translatable;
 import pipe.historyActions.HistoryItem;
-import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.Container;

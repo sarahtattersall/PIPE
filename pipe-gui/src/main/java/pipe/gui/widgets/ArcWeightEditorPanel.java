@@ -4,7 +4,7 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.utilities.gui.GuiUtils;
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;

@@ -10,7 +10,7 @@ import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.place.PlaceCapacity;
 import pipe.utilities.transformers.Contains;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;

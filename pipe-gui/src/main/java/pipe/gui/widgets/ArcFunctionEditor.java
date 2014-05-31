@@ -2,7 +2,7 @@ package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
 import uk.ac.imperial.pipe.animation.AnimationUtils;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.parsers.FunctionalResults;
 import uk.ac.imperial.pipe.parsers.FunctionalWeightParser;

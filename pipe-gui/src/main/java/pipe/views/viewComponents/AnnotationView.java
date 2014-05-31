@@ -12,7 +12,7 @@ import pipe.gui.widgets.AnnotationEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.views.AbstractPetriNetViewComponent;
-import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

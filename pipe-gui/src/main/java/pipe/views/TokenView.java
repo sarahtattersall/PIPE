@@ -3,7 +3,7 @@ package pipe.views;
 import pipe.controllers.TokenController;
 import pipe.utilities.math.Matrix;
 import uk.ac.imperial.pipe.exceptions.TokenLockedException;
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import java.awt.Color;
 import java.awt.Graphics;

@@ -2,7 +2,7 @@ package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
 import pipe.views.PlaceView;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 public class PlaceViewBuilder {
     private final Place place;

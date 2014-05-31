@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.views.arc.NormalHead;
 import pipe.views.arc.TemporaryArcView;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
-import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;

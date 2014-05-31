@@ -2,7 +2,7 @@ package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
-import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

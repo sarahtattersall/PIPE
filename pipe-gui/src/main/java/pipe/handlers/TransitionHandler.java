@@ -5,7 +5,7 @@ import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.historyActions.HistoryItem;
 import pipe.views.TransitionView;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
 import java.awt.Container;

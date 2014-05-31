@@ -10,7 +10,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.views.AbstractPetriNetViewComponent;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

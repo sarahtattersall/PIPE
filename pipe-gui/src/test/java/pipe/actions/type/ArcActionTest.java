@@ -16,12 +16,12 @@ import pipe.utilities.transformers.Contains;
 import pipe.views.PipeApplicationView;
 import pipe.views.arc.InhibitorArcHead;
 import pipe.views.arc.TemporaryArcView;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
-import uk.ac.imperial.pipe.models.component.arc.OutboundArc;
-import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
-import uk.ac.imperial.pipe.models.component.place.Place;
-import uk.ac.imperial.pipe.models.component.transition.DiscreteTransition;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.OutboundArc;
+import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.visitor.connectable.arc.ArcSourceVisitor;
 

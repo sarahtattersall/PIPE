@@ -9,8 +9,8 @@ import pipe.gui.widgets.PlaceEditorPanel;
 import pipe.handlers.PlaceHandler;
 import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.component.place.Place;
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import javax.swing.*;
 import java.awt.*;

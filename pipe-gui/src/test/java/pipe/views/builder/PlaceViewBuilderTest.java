@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import pipe.controllers.PetriNetController;
 import pipe.views.PlaceView;
-import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;

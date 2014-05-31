@@ -4,7 +4,7 @@
 package pipe.actions.petrinet;
 
 import pipe.controllers.ArcController;
-import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;

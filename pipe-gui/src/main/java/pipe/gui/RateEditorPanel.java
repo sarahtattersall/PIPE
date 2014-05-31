@@ -1,7 +1,7 @@
 package pipe.gui;
 
 import pipe.controllers.PetriNetController;
-import uk.ac.imperial.pipe.models.component.rate.RateParameter;
+import uk.ac.imperial.pipe.models.petrinet.RateParameter;
 
 import javax.swing.*;
 import java.awt.Dimension;

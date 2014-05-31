@@ -5,7 +5,7 @@ package pipe.historyActions.component;
 
 
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
-import uk.ac.imperial.pipe.models.component.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.undo.AbstractUndoableEdit;

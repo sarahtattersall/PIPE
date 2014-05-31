@@ -12,14 +12,7 @@ import pipe.historyActions.component.DeletePetriNetObject;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.component.PetriNetComponent;
-import uk.ac.imperial.pipe.models.component.arc.ArcPoint;
-import uk.ac.imperial.pipe.models.component.arc.InboundArc;
-import uk.ac.imperial.pipe.models.component.place.DiscretePlace;
-import uk.ac.imperial.pipe.models.component.place.Place;
-import uk.ac.imperial.pipe.models.component.token.Token;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.visitor.TranslationVisitor;
 import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 
@@ -186,7 +179,9 @@ public class PetriNetControllerTest {
 
     @Test
     public void selectsArcIfIntersects() {
+        Transition t = new DiscreteTransition("T1", "T1");
         InboundArc arc = mock(InboundArc.class);
+        when(arc.getTarget()).thenReturn(t);
         Point2D.Double start = new Point2D.Double(0, 0);
         Point2D.Double end = new Point2D.Double(10, 10);
         when(arc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));
@@ -200,7 +195,9 @@ public class PetriNetControllerTest {
 
     @Test
     public void doesNotSelectArcIfDoesntIntersect() {
+        Transition t = new DiscreteTransition("T1", "T1");
         InboundArc arc = mock(InboundArc.class);
+        when(arc.getTarget()).thenReturn(t);
         Point2D.Double start = new Point2D.Double(0, 0);
         Point2D.Double end = new Point2D.Double(10, 10);
         when(arc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));

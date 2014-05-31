@@ -6,7 +6,7 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.ConnectableView;
-import uk.ac.imperial.pipe.models.component.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.*;
 import java.awt.Container;

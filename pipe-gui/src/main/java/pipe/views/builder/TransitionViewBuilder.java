@@ -2,7 +2,7 @@ package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
 import pipe.views.TransitionView;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 public class TransitionViewBuilder {
     private final Transition transition;

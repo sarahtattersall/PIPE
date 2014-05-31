@@ -1,7 +1,7 @@
 package matchers.component;
 
 
-import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 public class HasAnnotationFields implements Has<Annotation> {
     private String text;

@@ -7,7 +7,7 @@ import pipe.gui.Translatable;
 import pipe.historyActions.AnnotationBorder;
 import pipe.historyActions.HistoryItem;
 import pipe.views.AbstractPetriNetViewComponent;
-import uk.ac.imperial.pipe.models.component.annotation.Annotation;
+import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;

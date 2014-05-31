@@ -10,7 +10,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
-import uk.ac.imperial.pipe.models.component.place.Place;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.event.UndoableEditListener;
 import java.util.HashMap;

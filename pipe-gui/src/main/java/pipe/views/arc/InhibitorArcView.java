@@ -3,9 +3,9 @@ package pipe.views.arc;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.views.ArcView;
-import uk.ac.imperial.pipe.models.component.arc.Arc;
-import uk.ac.imperial.pipe.models.component.place.Place;
-import uk.ac.imperial.pipe.models.component.transition.Transition;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;

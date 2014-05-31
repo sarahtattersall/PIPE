@@ -2,7 +2,7 @@ package pipe.controllers;
 
 import pipe.controllers.interfaces.IController;
 import pipe.views.TokenView;
-import uk.ac.imperial.pipe.models.component.token.Token;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import java.util.ArrayList;
 
