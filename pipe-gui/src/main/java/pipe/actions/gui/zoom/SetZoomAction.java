@@ -14,16 +14,18 @@ public class SetZoomAction extends GuiAction {
 
     private final PipeApplicationController applicationController;
 
-    public SetZoomAction(String name, String tooltip, String keystroke, PipeApplicationController applicationController) {
+    private final PipeApplicationView applicationView;
+
+    public SetZoomAction(String name, String tooltip, String keystroke, PipeApplicationController applicationController,
+                         PipeApplicationView applicationView) {
         super(name, tooltip, keystroke);
         this.applicationController = applicationController;
+        this.applicationView = applicationView;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-
-        String selection = (String) pipeApplicationView.zoomComboBox.getSelectedItem();
+        String selection = (String) applicationView.zoomComboBox.getSelectedItem();
         validateAndZoom(selection);
     }
 
@@ -37,8 +39,7 @@ public class SetZoomAction extends GuiAction {
 
         if (Integer.parseInt(validatedSelection) < Constants.ZOOM_MIN
                 || Integer.parseInt(validatedSelection) > Constants.ZOOM_MAX) {
-            PipeApplicationView pipeApplicationView = ApplicationSettings.getApplicationView();
-            pipeApplicationView.zoomComboBox.setSelectedItem("");
+            applicationView.zoomComboBox.setSelectedItem("");
             return;
         }
 

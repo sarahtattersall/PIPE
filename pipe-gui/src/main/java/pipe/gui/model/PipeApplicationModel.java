@@ -57,7 +57,6 @@ public class PipeApplicationModel implements Serializable {
     private CreateAction selectedType;
 
     public PipeApplicationModel(String version) {
-        ApplicationSettings.register(this);
         _name = "PIPE: Platform Independent Petri Net Editor " + version;
         registerZoomActions();
     }

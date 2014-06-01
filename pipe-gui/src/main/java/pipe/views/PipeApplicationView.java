@@ -116,7 +116,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public PipeApplicationView(final PipeApplicationController applicationController, PipeApplicationModel applicationModel,
                                ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
-                               AnimateActionManager animateActionManager, TokenActionManager tokenActionManager) {
+                               AnimateActionManager animateActionManager, SimpleUndoListener undoListener) {
 
         applicationController.register(this);
         applicationModel.addPropertyChangeListener(new PropertyChangeListener() {
@@ -142,7 +142,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         });
         this.componentCreatorManager = componentCreatorManager;
         this.animateActionManager = animateActionManager;
-        this.tokenActionManager = tokenActionManager;
+        this.tokenActionManager = new TokenActionManager(undoListener, applicationModel, applicationController, this);
         ApplicationSettings.register(this);
         this.componentEditorManager = componentManager;
         this.editorManager = new PetriNetEditorManager(this, applicationController);
@@ -154,7 +154,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         zoomOutAction = new ZoomOutAction(zoomUI);
         zoomInAction = new ZoomInAction(zoomUI);
-        zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
+        zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController, this);
 
         unfoldAction = new UnfoldAction(this, applicationController);
 

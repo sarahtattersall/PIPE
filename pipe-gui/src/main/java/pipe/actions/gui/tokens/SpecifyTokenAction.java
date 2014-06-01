@@ -4,7 +4,6 @@ import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.AbstractDatum;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.TokenEditorPanel;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
@@ -12,11 +11,12 @@ import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.component.DeletePetriNetObject;
 import pipe.historyActions.token.ChangeTokenColor;
 import pipe.utilities.gui.GuiUtils;
+import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 import uk.ac.imperial.pipe.models.petrinet.Token;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
 import javax.swing.undo.UndoableEdit;
@@ -33,16 +33,19 @@ import java.util.List;
 public class SpecifyTokenAction extends GuiAction {
     private final PipeApplicationController pipeApplicationController;
 
+    private final PipeApplicationView applicationView;
+
     private TokenEditorPanel tokenEditorPanel;
 
     private JDialog guiDialog;
 
     private ActionEvent forcedAction;
 
-    public SpecifyTokenAction(PipeApplicationController pipeApplicationController) {
+    public SpecifyTokenAction(PipeApplicationController pipeApplicationController, PipeApplicationView applicationView) {
         super("SpecifyTokenClasses", "Specify tokens (ctrl-shift-T)", KeyEvent.VK_T,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_DOWN_MASK);
         this.pipeApplicationController = pipeApplicationController;
+        this.applicationView = applicationView;
     }
 
     /**
@@ -109,8 +112,7 @@ public class SpecifyTokenAction extends GuiAction {
         private TokenEditorPanel tokenEditorPanel;
 
         public TokenDialog(String title, boolean modal, TokenEditorPanel tokenEditorPanel) {
-            //TODO: Work out how to get View?
-            super(ApplicationSettings.getApplicationView(), title, modal);
+            super(applicationView, title, modal);
             this.tokenEditorPanel = tokenEditorPanel;
         }
 

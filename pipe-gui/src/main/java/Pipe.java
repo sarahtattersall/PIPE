@@ -12,7 +12,7 @@ public class Pipe
 	@SuppressWarnings("unused")
 	private PipeApplicationController applicationController;
 
-    private PipeApplicationView applicationView;
+    protected static PipeApplicationView applicationView;
 
 	private Pipe(String version)
     {
@@ -21,11 +21,9 @@ public class Pipe
         ComponentEditorManager componentManager = new ComponentEditorManager(applicationController);
         SimpleUndoListener undoListener = new SimpleUndoListener(componentManager, applicationController);
         ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, applicationModel, applicationController);
-        TokenActionManager tokenActionManager = new TokenActionManager(undoListener, applicationModel,
-                applicationController);
         AnimateActionManager animateActionManager = new AnimateActionManager(applicationModel, applicationController);
         applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager, componentCreatorManager, animateActionManager,
-                tokenActionManager);
+                undoListener);
     }
     public static void main(String args[])
     {
@@ -46,6 +44,6 @@ public class Pipe
 	}
     protected static void runPipeForTesting() throws InterruptedException, InvocationTargetException
     {
-    	SwingUtilities.invokeAndWait(pipeRunnable()); 
+    	SwingUtilities.invokeAndWait(pipeRunnable());
     }
 }

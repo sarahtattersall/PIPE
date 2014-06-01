@@ -1,12 +1,11 @@
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import pipe.actions.gui.GuiAction;
-import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
 import java.awt.Container;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.Assert.*;
 
@@ -28,17 +27,11 @@ public class PipeTest {
 
     private JMenu subMenu;
 
-    @BeforeClass
-    public static void setUpLog4J() throws Exception {
-        // to avoid the time penalty of repeated startups, start the GUI once
-        // ... but the tests will not be atomic, as there is only one GUI.
-        // if there are side effects between tests, consider separate test classes.
-        Pipe.runPipeForTesting();
-    }
-
     @Before
-    public void setUp() throws Exception {
-        applicationView = ApplicationSettings.getApplicationView();
+    public void setUp() throws InvocationTargetException, InterruptedException {
+        Pipe.runPipeForTesting();
+
+        applicationView = Pipe.applicationView;
     }
 
     @Test

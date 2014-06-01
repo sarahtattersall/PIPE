@@ -10,7 +10,6 @@ import pipe.actions.petrinet.SplitArcPointAction;
 import pipe.actions.petrinet.ToggleArcPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.views.viewComponents.ArcPathPoint;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
@@ -88,15 +87,6 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint, ArcPath
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-
-        if (!ApplicationSettings.getApplicationModel().isEditionAllowed() ||  //NOU-PERE
-                e.isControlDown()) {
-            return;
-        }
-
-        if (e.isShiftDown()) {
-//            petriNetController.getHistoryManager().addNewEdit(viewComponent.togglePointType());
-        }
     }
 
 }
