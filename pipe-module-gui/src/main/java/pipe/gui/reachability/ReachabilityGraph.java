@@ -5,7 +5,6 @@ import com.esotericsoftware.kryo.io.Output;
 import net.sourceforge.jpowergraph.Edge;
 import net.sourceforge.jpowergraph.Node;
 import net.sourceforge.jpowergraph.defaults.DefaultGraph;
-import net.sourceforge.jpowergraph.defaults.TextEdge;
 import net.sourceforge.jpowergraph.layout.Layouter;
 import net.sourceforge.jpowergraph.layout.spring.SpringLayoutStrategy;
 import net.sourceforge.jpowergraph.lens.*;
@@ -245,9 +244,8 @@ public class ReachabilityGraph {
         pane.setNodePainter(VanishingStateNode.class, VanishingStateNode.getShapeNodePainter());
 
 
-        pane.setEdgePainter(TextEdge.class,
+        pane.setEdgePainter(DirectedTextEdge.class,
                 new PIPELineWithTextEdgePainter(JPowerGraphColor.BLACK, JPowerGraphColor.GRAY, false));
-
 
         pane.setAntialias(true);
 
@@ -428,7 +426,7 @@ public class ReachabilityGraph {
             int state = record.state;
             for (Map.Entry<Integer, Double> entry : record.successors.entrySet()) {
                 int succ = entry.getKey();
-                edges.add(new TextEdge(nodes.get(state), nodes.get(succ), String.format("%.2f", entry.getValue())));
+                edges.add(new DirectedTextEdge(nodes.get(state), nodes.get(succ), String.format("%.2f", entry.getValue())));
             }
         }
         return edges;

@@ -5,8 +5,7 @@
 package pipe.gui.reachability;
 
 import net.sourceforge.jpowergraph.SubGraphHighlighter;
-import net.sourceforge.jpowergraph.defaults.TextEdge;
-import net.sourceforge.jpowergraph.painters.edge.LineWithTextEdgePainter;
+import net.sourceforge.jpowergraph.painters.edge.LineEdgePainter;
 import net.sourceforge.jpowergraph.pane.JGraphPane;
 import net.sourceforge.jpowergraph.swtswinginteraction.JPowerGraphGraphics;
 import net.sourceforge.jpowergraph.swtswinginteraction.color.JPowerGraphColor;
@@ -20,7 +19,7 @@ import java.awt.geom.Point2D;
 /**
  * This class defines the edge painter for edges with text used in the reachability graph
  */
-public class PIPELineWithTextEdgePainter<T extends TextEdge> extends LineWithTextEdgePainter<T> {
+public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends LineEdgePainter<T> {
 
 
     public PIPELineWithTextEdgePainter(JPowerGraphColor dragging, JPowerGraphColor normal, boolean isDashedLine) {
