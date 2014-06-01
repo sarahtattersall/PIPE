@@ -25,7 +25,40 @@ public class ChangeRateParameterRate extends AbstractUndoableEdit {
      */
     private final String previousExpression;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChangeRateParameterRate)) {
+            return false;
+        }
+
+        ChangeRateParameterRate that = (ChangeRateParameterRate) o;
+
+        if (!newExpression.equals(that.newExpression)) {
+            return false;
+        }
+        if (!previousExpression.equals(that.previousExpression)) {
+            return false;
+        }
+        if (!rateParameter.equals(that.rateParameter)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rateParameter.hashCode();
+        result = 31 * result + previousExpression.hashCode();
+        result = 31 * result + newExpression.hashCode();
+        return result;
+    }
+
     /**
+
      * Value the expression has been changed to
      */
     private final String newExpression;

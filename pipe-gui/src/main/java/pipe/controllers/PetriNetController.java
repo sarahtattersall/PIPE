@@ -341,6 +341,12 @@ public class PetriNetController implements IController, Serializable {
         return new TransitionController(transition, undoListener);
     }
 
+    public RateParameterController getRateParameterController(final String rateParameter)
+            throws PetriNetComponentNotFoundException {
+        RateParameter parameter = petriNet.getComponent(rateParameter, RateParameter.class);
+        return new RateParameterController(parameter, petriNet, undoListener);
+    }
+
     public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {
         selectedToken = tokenName;
     }

@@ -39,7 +39,7 @@ public class Pipe
                                 public void run()
                                 {
                                     @SuppressWarnings("unused")
-									Pipe pipe = new Pipe("v4.3.0");
+									Pipe pipe = new Pipe("v5.0.0");
                                 }
                             };
 		return runnable;

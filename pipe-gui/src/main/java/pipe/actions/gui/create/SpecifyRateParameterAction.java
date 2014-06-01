@@ -3,19 +3,19 @@ package pipe.actions.gui.create;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
+import pipe.controllers.RateParameterController;
 import pipe.gui.AbstractDatum;
 import pipe.gui.RateEditorPanel;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
-import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.component.DeletePetriNetObject;
-import pipe.historyActions.rateparameter.ChangeRateParameterRate;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.exceptions.InvalidRateException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.FunctionalRateParameter;
-import uk.ac.imperial.pipe.models.petrinet.RateParameter;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.RateParameter;
 
 import javax.swing.*;
 import javax.swing.undo.UndoableEdit;
@@ -126,7 +126,8 @@ public class SpecifyRateParameterAction extends GuiAction {
 
 
         /**
-         * @return changes to be applied to the actual model based on the Datum available in the table
+         * Performs an update on the table data items
+         * @param data list of data in the table
          */
         private void updateFromTable(Iterable<RateEditorPanel.RateModel.Datum> data) {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
@@ -136,16 +137,13 @@ public class SpecifyRateParameterAction extends GuiAction {
                     AbstractDatum initial = modified.initial;
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {
-                            RateParameter rateParameter = petriNetController.getPetriNet().getComponent(initial.id, RateParameter.class);
-                            UndoableEdit idEdit =
-                                    new ChangePetriNetComponentName(rateParameter, initial.id, modified.id);
-                            undoableEdits.add(idEdit);
-
-                            UndoableEdit expressionEdit = new ChangeRateParameterRate(rateParameter, rateParameter.getExpression(), modified.expression);
-                            undoableEdits.add(expressionEdit);
-                            rateParameter.setExpression(modified.expression);
-
-                        } catch (PetriNetComponentNotFoundException e) {
+                            RateParameterController rateController = petriNetController.getRateParameterController(
+                                    initial.id);
+                            rateController.startMultipleEdits();
+                            rateController.setId(modified.id);
+                            rateController.setRate(modified.expression);
+                            rateController.finishMultipleEdits();
+                        } catch (PetriNetComponentNotFoundException | InvalidRateException e) {
                             GuiUtils.displayErrorMessage(null, e.getMessage());
                         }
                     }

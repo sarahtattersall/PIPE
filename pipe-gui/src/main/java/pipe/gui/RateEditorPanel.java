@@ -2,6 +2,7 @@ package pipe.gui;
 
 import pipe.controllers.PetriNetController;
 import uk.ac.imperial.pipe.models.petrinet.RateParameter;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
 
 import javax.swing.*;
 import java.awt.Dimension;
@@ -61,8 +62,11 @@ public class RateEditorPanel extends JPanel {
 
         private final int VALUE_COL = 1;
 
+        private final PetriNetController petriNetController;
+
 
         public RateModel(PetriNetController petriNetController) {
+            this.petriNetController = petriNetController;
             COLUMN_NAMES = new String[]{"Name", "Value"};
             for (RateParameter rateParameter : petriNetController.getRateParameters()) {
                 Datum initial = new Datum(rateParameter.getId(), rateParameter.getExpression());
@@ -112,13 +116,35 @@ public class RateEditorPanel extends JPanel {
                         showWarning("The rate name cannot be empty");
                         return false;
                     }
+                    if (!isValidRate(datum.id, datum.expression)) {
+                        return false;
+                    }
                 } else if (datum.id.isEmpty() && !datum.expression.isEmpty()) {
                     showWarning("The rate name cannot be empty");
                     return false;
                 } else if (!datum.id.isEmpty() && datum.expression.isEmpty()) {
                     showWarning("The rate value cannot be empty");
                     return false;
+                } else if (!datum.id.isEmpty()) {
+                    if (!isValidRate(datum.id, datum.expression)) {
+                        return false;
+                    }
                 }
+            }
+            return true;
+        }
+
+        /**
+         *
+         * Pops up an error if the rate is invalid
+         * @param rate
+         * @return if rate is valid or not
+         */
+        private boolean isValidRate(String id, String rate) {
+            FunctionalResults<Double> results = petriNetController.parseFunctionalExpression(rate);
+            if (results.hasErrors()) {
+                showWarning("Error! Invalid rate for: " + id + "\n" + "Problem is: " + results.getErrorString(", "));
+                return false;
             }
             return true;
         }
