@@ -100,8 +100,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         _draggable = allow;
     }
 
-    public abstract void addedToGui();
-
     @Override
     public void delete() {
         _deleted = true;

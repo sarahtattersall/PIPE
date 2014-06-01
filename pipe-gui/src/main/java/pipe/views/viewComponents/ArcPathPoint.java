@@ -216,10 +216,6 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
     }
 
     @Override
-    public void addedToGui() {
-    }
-
-    @Override
     public void delete() {// Won't delete if only two points left. General delete.
         if (isDeleteable()) {
             if (getArcPath().getArc().isSelected()) {

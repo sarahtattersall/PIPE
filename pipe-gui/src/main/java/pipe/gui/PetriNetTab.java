@@ -85,7 +85,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
         setLayer(component, DEFAULT_LAYER + component.getLayerOffset());
         super.add(component);
-        component.addedToGui();
         petriNetComponents.put(component.getId(), component);
         updatePreferredSize();
         //        repaint();

@@ -57,6 +57,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         updatePath();
         updateBounds();
         registerModelListeners();
+        tab = controller.getPetriNetTab();
     }
 
     /**
@@ -190,17 +191,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     @Override
     public String getId() {
         return model.getId();
-    }
-
-    @Override
-    public void addedToGui() {
-        // called by PetriNetTab / State viewer when adding component.
-        _deleted = false;
-        _markedAsDeleted = false;
-
-        arcPath.addPointsToGui(tab);
-        updateArcPosition();
-        //addWeightLabelsToContainer(getParent());
     }
 
     @Override

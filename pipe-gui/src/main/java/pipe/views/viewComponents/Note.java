@@ -169,17 +169,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
         return noteRect.contains(x, y);
     }
 
-    //
-    @Override
-    public void addedToGui() {
-        if (ApplicationSettings.getApplicationView().getCurrentTab() != null) {
-            _markedAsDeleted = false;
-            _deleted = false;
-            updateBounds();
-            //         Pipe.getCurrentTab().setNetChanged(true);
-        }
-    }
-
     @Override
     public void delete() {
         //        ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);

@@ -113,14 +113,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     @Override
-    public void addedToGui() {
-        _deleted = false;
-        _markedAsDeleted = false;
-        updateBounds();
-        //        update();
-    }
-
-    @Override
     public void delete() {
         if (getParent() != null) {
             getParent().remove(nameLabel);

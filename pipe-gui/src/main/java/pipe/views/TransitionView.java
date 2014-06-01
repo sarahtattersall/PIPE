@@ -79,12 +79,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     }
 
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
-        update();
-    }
-
     public void update() {
         this.repaint();
     }
