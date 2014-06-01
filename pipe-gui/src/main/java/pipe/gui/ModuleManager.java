@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.plugin.GuiModule;
+import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
@@ -53,11 +54,11 @@ public class ModuleManager
     private final Component parent;
 
 
-    public ModuleManager(PipeApplicationController controller)
+    public ModuleManager(PipeApplicationView view, PipeApplicationController controller)
     {
         this.controller = controller;
 
-        parent = ApplicationSettings.getApplicationView();
+        parent = view;
         installedModules = new HashSet<>();
     }
 

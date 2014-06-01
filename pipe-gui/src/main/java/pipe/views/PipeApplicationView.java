@@ -110,8 +110,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private JToolBar animationToolBar, drawingToolBar;
 
-    private HelpBox helpAction;
-
     private JScrollPane scroller;
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
@@ -192,7 +190,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
 
-        ModuleManager moduleManager = new ModuleManager(applicationController);
+        ModuleManager moduleManager = new ModuleManager(this, applicationController);
         JTree moduleTree = moduleManager.getModuleTree();
         moduleAndAnimationHistoryFrame = new JSplitPane(JSplitPane.VERTICAL_SPLIT, moduleTree, null);
         moduleAndAnimationHistoryFrame.setContinuousLayout(true);
@@ -457,7 +455,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         animationToolBar.setVisible(false);
 
         toolBar.addSeparator();
-        addButton(toolBar, helpAction);
 
         for (int i = 0; i < toolBar.getComponentCount(); i++) {
             toolBar.getComponent(i).setFocusable(false);
@@ -601,8 +598,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
-        helpAction = new HelpBox("Help", "View documentation", "F1", "index.htm");
-        addMenuItem(helpMenu, helpAction);
 
         JMenuItem aboutItem = helpMenu.add("About PIPE");
         aboutItem.addActionListener(this); // Help - About is implemented

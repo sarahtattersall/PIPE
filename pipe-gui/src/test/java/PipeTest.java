@@ -127,9 +127,8 @@ public class PipeTest {
 
         menu = applicationView.getJMenuBar().getMenu(5);
         assertEquals("Help", menu.getText());
-        assertEquals("expecting 2 Help menu items", 2, menu.getItemCount());
-        assertEquals("Help", menu.getItem(0).getText());
-        assertEquals("About PIPE", menu.getItem(1).getText());
+        assertEquals("expecting 1 Help menu items", 1, menu.getItemCount());
+        assertEquals("About PIPE", menu.getItem(0).getText());
     }
 
     @Test
