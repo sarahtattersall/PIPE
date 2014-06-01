@@ -1,26 +1,24 @@
 package pipe.gui;
 
-import pipe.io.JarUtilities;
+import org.reflections.Reflections;
+import pipe.controllers.PipeApplicationController;
+import pipe.plugin.GuiModule;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
+import javax.swing.tree.*;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.Set;
+
 
 
 /**
@@ -42,7 +40,10 @@ import java.util.jar.JarFile;
 public class ModuleManager
 {
 
-    private final HashSet installedModules;
+    private final Set<Class<?>> installedModules;
+
+    private final PipeApplicationController controller;
+
     private JTree moduleTree;
     private DefaultTreeModel treeModel;
     private DefaultMutableTreeNode load_modules;
@@ -50,10 +51,12 @@ public class ModuleManager
     private final Component parent;
 
 
-    public ModuleManager()
+    public ModuleManager(PipeApplicationController controller)
     {
+        this.controller = controller;
+
         parent = ApplicationSettings.getApplicationView();
-        installedModules = new HashSet();
+        installedModules = new HashSet<>();
     }
 
     /**
@@ -63,11 +66,11 @@ public class ModuleManager
      * Matthew - modified to access module folder directly
      * @return
      */
-    File getModuleDir()
+    private File getModuleDir()
     {
         File modLocation = new File(ExtFileManager.getClassRoot(this.getClass()),
-                                    System.getProperty("file.separator") + "pipe" +
-                                            System.getProperty("file.separator") + "modules");
+                                    File.pathSeparator + "pipe" +
+                                            File.pathSeparator + "plugin");
 
         if(!modLocation.exists())
         {
@@ -89,36 +92,46 @@ public class ModuleManager
      * @return
      */
     //only load attempt to add .class files
-    Vector getModuleClasses(File rootDir)
+    private Collection<Class<? extends GuiModule>> getModuleClasses(File rootDir)
     {
-        final ExtensionFilter class_files = new ExtensionFilter(Constants.CLASS_FILE_EXTENSION, Constants.CLASS_FILE_DESC);
-        Vector classes = new Vector();
-        Class aModuleClass;
-
-        //recursively search through files and folders of module directory
-        File children[] = rootDir.listFiles();
-
-        // our base case just returns the empty vector
-        if(children == null || children.length == 0)
-        {
-            return classes;
-        }
-        for(File aChildren : children)
-        {
-            if((aChildren).isDirectory())
-            {
-                classes.addAll(getModuleClasses(aChildren));
-            }
-            else if(class_files.accept(aChildren))
-            {
-                aModuleClass = ModuleLoader.importModule(aChildren);
-                if(aModuleClass != null)
-                {
-                    classes.addElement(aModuleClass);
-                }
-            }
-        }
-        return classes;
+        Reflections reflections = new Reflections("pipe.plugin");
+        return reflections.getSubTypesOf(GuiModule.class);
+//        Reflections reflections = new Reflections("pipe.plugin");
+//        Set<Class<?>> allClasses =
+//                reflections.getSubTypesOf(Object.class);
+//
+//        Reflections reflections1 = new Reflections("pipe.actions");
+//        Set<Class<?>> allClasses1 =
+//                reflections1.getSubTypesOf(Object.class);
+//
+//        ExtensionFilter class_files = new ExtensionFilter(Constants.CLASS_FILE_EXTENSION, Constants.CLASS_FILE_DESC);
+//        Collection<Class<?>> classes = new ArrayList<>();
+////        aModuleClass;
+//
+//        //recursively search through files and folders of module directory
+//        File children[] = rootDir.listFiles();
+//
+//        // our base case just returns the empty vector
+//        if(children == null || children.length == 0)
+//        {
+//            return classes;
+//        }
+//        for(File aChildren : children)
+//        {
+//            if((aChildren).isDirectory())
+//            {
+//                classes.addAll(getModuleClasses(aChildren));
+//            }
+//            else if(class_files.accept(aChildren))
+//            {
+//                Class<?> pluginClass = ModuleLoader.importModule(aChildren);
+//                if(pluginClass != null)
+//                {
+//                    classes.add(pluginClass);
+//                }
+//            }
+//        }
+//        return classes;
     }
 
 
@@ -136,16 +149,15 @@ public class ModuleManager
      * the run method of each module class into the tree
      * @param moduleClass
      */
-    private void addClassToTree(Class moduleClass)
+    private void addClassToTree(Class<? extends GuiModule> moduleClass)
     {
-        DefaultMutableTreeNode modNode;
         if(installedModules.add(moduleClass))
         {
-            modNode = new DefaultMutableTreeNode(new ModuleClassContainer(moduleClass));
+            DefaultMutableTreeNode modNode = new DefaultMutableTreeNode(new ModuleClassContainer(moduleClass));
 
             try
             {
-                Method tempMethod = moduleClass.getMethod("start");
+                Method tempMethod = moduleClass.getMethod("start", PetriNet.class);
                 ModuleMethod m = new ModuleMethod(moduleClass, tempMethod);
                 m.setName(modNode.getUserObject().toString());
                 modNode.add(new DefaultMutableTreeNode(m));
@@ -172,44 +184,42 @@ public class ModuleManager
 
     public JTree getModuleTree()
     {
-        // get the names of all the classes that are confirmed to be modules
-        Vector names = new Vector();
-        Vector classes = new Vector();
-
         URL modulesDirURL = Thread.currentThread().getContextClassLoader().getResource("pipe" + System.getProperty("file.separator") + "modules" + System.getProperty("file.separator"));
-        
-        if(JarUtilities.isJarFile(modulesDirURL))
-        {
-            try
-            {
-                JarFile jarFile = new JarFile(JarUtilities.getJarName(modulesDirURL));
-                ArrayList<JarEntry> modules = JarUtilities.getJarEntries(jarFile, "modules");
 
-                for(JarEntry module : modules)
-                {
-                    if(module.getName().toLowerCase().endsWith(".class"))
-                    {
-                    	
-                        Class aModuleClass = ModuleLoader.importModule(module);
-                        if(aModuleClass != null)
-                        {
-                            classes.add(aModuleClass);
-                        }
-                    }
-                }
-            }
-            catch(IOException ex)
-            {
-                ex.printStackTrace();
-            }
-        }
-        else
+        Collection<Class<? extends GuiModule>> classes = new ArrayList<>();
+//        if(JarUtilities.isJarFile(modulesDirURL))
+//        {
+//            try
+//            {
+//                JarFile jarFile = new JarFile(JarUtilities.getJarName(modulesDirURL));
+//                ArrayList<JarEntry> modules = JarUtilities.getJarEntries(jarFile, "modules");
+//
+//                for(JarEntry module : modules)
+//                {
+//                    if(module.getName().toLowerCase().endsWith(".class"))
+//                    {
+//
+//                        Class<?> pluginClass = ModuleLoader.importModule(module);
+//                        if(pluginClass != null)
+//                        {
+//                            classes.add(pluginClass);
+//                        }
+//                    }
+//                }
+//            }
+//            catch(IOException ex)
+//            {
+//                ex.printStackTrace();
+//            }
+//        }
+//        else
+        if(true)
         {
             File dir = getModuleDir();
 
             // get the names of all the classes that are confirmed to be modules
-            names = getModuleClasses(dir);
-            
+            Collection<Class<? extends GuiModule>> names = getModuleClasses(dir);
+
             /*
              * temporarily get rid of the modules that needs web servers for calculation
              */
@@ -230,20 +240,15 @@ public class ModuleManager
         // create root children
         load_modules = new DefaultMutableTreeNode("Available Modules");
 
-        DefaultMutableTreeNode add_modules = new DefaultMutableTreeNode(loadNodeString);
+        MutableTreeNode add_modules = new DefaultMutableTreeNode(loadNodeString);
 
         // iterate over the class names and create a node for each
-        Iterator iterator = classes.iterator();
-        while(iterator.hasNext())
-        {
-            try
-            {
+        for (Class<? extends GuiModule> clazz : classes) {
+            try {
                 // create each ModuleClass node using an instantiation of the
                 // ModuleClass
-                addClassToTree((Class) iterator.next());
-            }
-            catch(Throwable e)
-            {
+                addClassToTree(clazz);
+            } catch (Throwable ignored) {
                 System.out.println("Error in creating class node");
             }
         }
@@ -271,7 +276,7 @@ public class ModuleManager
      *
      * @param newNode The node to be removed.
      */
-    void removeModuleFromTree(DefaultMutableTreeNode newNode)
+    void removeModuleFromTree(MutableTreeNode newNode)
     {
         treeModel.removeNodeFromParent(newNode);
         treeModel.reload();
@@ -290,6 +295,7 @@ public class ModuleManager
             removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e)
         {
             Object o = removeNode.getUserObject();
@@ -343,6 +349,7 @@ public class ModuleManager
         }
 
 
+        @Override
         public void mouseReleased(MouseEvent e)
         {
             if(e.isPopupTrigger())
@@ -352,15 +359,17 @@ public class ModuleManager
         }
 
 
+        @Override
         public void mousePressed(MouseEvent e)
         {
-            if(e.isPopupTrigger())
-            {
+            if (e.getClickCount() == 2) {
+                System.out.println("Double click");
                 showPopupMenu(e);
             }
         }
 
 
+        @Override
         public void mouseClicked(MouseEvent e)
         {
             int selRow = moduleTree.getRowForLocation(e.getX(), e.getY());
@@ -376,10 +385,9 @@ public class ModuleManager
                 {
                     if(nodeObj instanceof ModuleMethod)
                     {
-//                        if(ApplicationSettings.getApplicationView().getCurrentPetriNetView() != null)
-//                        {
-//                            ((ModuleMethod) nodeObj).execute();
-//                        }
+
+                        PetriNet petriNet = controller.getActivePetriNetController().getPetriNet();
+                        ((ModuleMethod) nodeObj).execute(petriNet);
                     }
                     else if(nodeObj == loadNodeString)
                     {
@@ -395,11 +403,12 @@ public class ModuleManager
                         if(returnVal == JFileChooser.APPROVE_OPTION)
                         {
                             File moduleProp = fc.getSelectedFile();
-                            Class newModuleClass = ModuleLoader.importModule(moduleProp);
+                            Class<?> newModuleClass = ModuleLoader.importModule(moduleProp);
 
                             if(newModuleClass != null)
                             {
-                                addClassToTree(newModuleClass);
+                                //TODO
+//                                addClassToTree(newModuleClass);
                                 treeModel.reload();
                                 moduleTree.expandPath(moduleTree.getPathForRow(1));
                             }

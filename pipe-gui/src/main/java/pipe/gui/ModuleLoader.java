@@ -8,6 +8,7 @@ import pipe.io.JarUtilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.jar.JarEntry;
 
@@ -16,87 +17,81 @@ import java.util.jar.JarEntry;
  * @author Matthew Worthington - simplification and refactoring (Jan,2007)
  * @author Pere Bonet - changes (JarUtilities)
  */
-class ModuleLoader{
+class ModuleLoader {
 
 
-   public ModuleLoader() {
-   }
-   
-   public static Class importModule(File modFile) {
-      Class modClass = null;
-      
-      if (modFile.exists() && modFile.isFile() && modFile.canRead()) {
-         String className = getClassName(modFile);
-         
-         modFile = modFile.getParentFile();
-         
-         while (!modFile.getName().endsWith("pipe")){
+    public ModuleLoader() {
+    }
+
+    public static Class<?> importModule(File modFile) {
+        Class<?> modClass = null;
+
+        if (modFile.exists() && modFile.isFile() && modFile.canRead()) {
+            String className = getClassName(modFile);
+
             modFile = modFile.getParentFile();
-         }
-         ExtFileManager.addSearchPath(modFile);
-         try {
+
+            while (!modFile.getName().endsWith("pipe")) {
+                modFile = modFile.getParentFile();
+            }
+            ExtFileManager.addSearchPath(modFile);
             modClass = ExtFileManager.loadExtClass(className);
             if (!isModule(modClass)) {
-               return null;
+                return null;
             }
-         } catch (Exception e) {
-         }
-      }
-      return modClass;
-   }
-   
-   
-   public static Class importModule(JarEntry entry) {
-      Class modClass = null;
-      File file = new File(JarUtilities.getFile(entry).getPath());
+        }
+        return modClass;
+    }
 
-      String className = getClassName(file);
-      try {
-         URL[] pathURLs = {file.toURI().toURL()};
-         ExtFileManager.addSearchPath(pathURLs);
-         
-         modClass = ExtFileManager.loadExtClass(className);
-         if (!isModule(modClass)) {
+    private static String getClassName(File moduleFile) {
+        String filename;
+
+        try {
+            filename = moduleFile.getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
-         }
-      } catch (Exception e) {
-      }
-      return modClass;
-   }   
+        }
+        String seperator = System.getProperty("file.separator");
+        filename = filename.replace(seperator.charAt(0), '.');
+        filename = filename.substring(0, filename.length() - 6);
+        int position = filename.lastIndexOf("pipe");
+        if (position != -1) {
+            filename = filename.substring(position);
+        } else {
+            filename = filename.substring(filename.lastIndexOf(".") + 1);
+        }
+        return filename;
+    }
 
-   
-   private static boolean isModule(Class modClass) {
-      Class interfaces[] = modClass.getInterfaces();
-      
-      for (Class anInterface : interfaces) {
-         if (anInterface.getName().equals("pipe.modules.interfaces.IModule")) {
-            return true;
-         }
-      }         
-      return false;
-   }
-   
-   
-   private static String getClassName(File  moduleFile)	{
-      String filename;
-      
-      try {
-         filename = moduleFile.getCanonicalPath();
-      } catch (IOException e) {
-         e.printStackTrace();
-         return null;
-      }
-      String seperator = System.getProperty("file.separator");
-      filename = filename.replace(seperator.charAt(0), '.');
-      filename = filename.substring(0, filename.length()-6);
-      int position = filename.lastIndexOf("pipe");
-      if (position != -1) {
-         filename = filename.substring(position);
-      } else {
-         filename=filename.substring(filename.lastIndexOf(".")+1);
-      }
-      return filename;
-   }
+    private static boolean isModule(Class<?> modClass) {
+        Class<?> interfaces[] = modClass.getInterfaces();
+
+        for (Class<?> anInterface : interfaces) {
+            if (anInterface.getName().equals("pipe.modules.interfaces.IModule")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Class<?> importModule(JarEntry entry) {
+        Class<?> modClass = null;
+        File file = new File(JarUtilities.getFile(entry).getPath());
+
+        String className = getClassName(file);
+        try {
+            URL[] pathURLs = {file.toURI().toURL()};
+            ExtFileManager.addSearchPath(pathURLs);
+
+            modClass = ExtFileManager.loadExtClass(className);
+            if (!isModule(modClass)) {
+                return null;
+            }
+        } catch (MalformedURLException ignored) {
+        }
+        return modClass;
+    }
 
    
    /*

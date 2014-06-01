@@ -1,5 +1,8 @@
 package pipe.gui;
 
+import pipe.plugin.GuiModule;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -22,7 +25,7 @@ class ModuleMethod
 {
 
     private final Method modMeth;
-    private final Class modClass;
+    private final Class<? extends GuiModule> clazz;
     private String name;
 
 
@@ -30,9 +33,9 @@ class ModuleMethod
     * @param cl The Class that the Method belongs to
     * @param m The Method that this class represents
     */
-    public ModuleMethod(Class cl, Method m)
+    public ModuleMethod(Class<? extends GuiModule> clazz, Method m)
     {
-        modClass = cl;
+        this.clazz = clazz;
         modMeth = m;
         name = m.getName();
     }
@@ -52,19 +55,19 @@ class ModuleMethod
         name = _name;
     }
 
-    void execute()
+    void execute(PetriNet petriNet)
     {
         try
         {
-            Constructor ct = modClass.getDeclaredConstructor(new Class[0]);
-            Object moduleObj = ct.newInstance();
+            Constructor<? extends GuiModule> ctr = clazz.getDeclaredConstructor(new Class[0]);
+            Object moduleObj = ctr.newInstance();
 
             // handy debug to see what's being passed to the module
             //System.out.println("models obj being passed to module: ");
             //args[0].print();
 
             // invoke the name method for display
-            modMeth.invoke(moduleObj);
+            modMeth.invoke(moduleObj, petriNet);
 
         }
         catch(Exception e)
@@ -80,7 +83,7 @@ class ModuleMethod
      */
     public Class getModClass()
     {
-        return modClass;
+        return clazz;
     }
 
 }

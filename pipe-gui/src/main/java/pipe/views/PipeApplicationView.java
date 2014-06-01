@@ -191,7 +191,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
 
-        ModuleManager moduleManager = new ModuleManager();
+        ModuleManager moduleManager = new ModuleManager(applicationController);
         JTree moduleTree = moduleManager.getModuleTree();
         moduleAndAnimationHistoryFrame = new JSplitPane(JSplitPane.VERTICAL_SPLIT, moduleTree, null);
         moduleAndAnimationHistoryFrame.setContinuousLayout(true);

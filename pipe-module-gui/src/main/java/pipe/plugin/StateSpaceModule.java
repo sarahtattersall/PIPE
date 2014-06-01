@@ -1,6 +1,6 @@
-package pipe.gui.reachability;
+package pipe.plugin;
 
-import pipe.GuiModule;
+import pipe.gui.reachability.ReachabilityGraph;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
@@ -12,10 +12,14 @@ public class StateSpaceModule implements GuiModule {
         JFrame frame = new JFrame("State Space Explorer");
         FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
         FileDialog saver = new FileDialog(frame, "Save binary transition data", FileDialog.SAVE);
-        frame.setContentPane(new ReachabilityGraph(selector, saver).getMainPanel());
+        frame.setContentPane(new ReachabilityGraph(selector, saver, petriNet).getMainPanel());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+    }
 
+    @Override
+    public String getName() {
+        return "State space exploration";
     }
 }

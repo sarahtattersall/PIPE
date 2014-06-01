@@ -154,6 +154,13 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>uk.ac.imperial</groupId>
+            <artifactId>pipe-module-gui</artifactId>
+            <version>5.0.0-beta-4-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-core</artifactId>
@@ -268,6 +275,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>15.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9-RC1</version>
         </dependency>
 
         <dependency>

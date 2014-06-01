@@ -1,4 +1,4 @@
-package pipe;
+package pipe.plugin;
 
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
@@ -12,4 +12,10 @@ public interface GuiModule {
      * @param petriNet
      */
     void start(PetriNet petriNet);
+
+    /**
+     *
+     * @return the name of the module for
+     */
+    String getName();
 }

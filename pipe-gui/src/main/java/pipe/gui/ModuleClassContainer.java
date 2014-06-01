@@ -1,5 +1,7 @@
 package pipe.gui;
 
+import pipe.plugin.GuiModule;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -13,23 +15,23 @@ import java.lang.reflect.Method;
 class ModuleClassContainer {
    
    private String displayName;
-   private final Class thisClass;
+   private final Class<? extends GuiModule> clazz;
    
    
    /** 
     * Sets up the private fields, includes instantiating an object and calling 
     * the getName method used to set the displayName.
-    * @param cl The class that the ModuleClass encapsulates.
+    * @param clazz The class that the ModuleClass encapsulates.
     */
-   public ModuleClassContainer(Class cl) {
-      thisClass = cl;
+   public ModuleClassContainer(Class<? extends GuiModule> clazz) {
+      this.clazz = clazz;
 
       try {
-         Constructor ct = thisClass.getDeclaredConstructor(new Class[0]);
-         Object moduleObj = ct.newInstance();
+         Constructor<? extends GuiModule> ctr = this.clazz.getDeclaredConstructor(new Class[0]);
+         Object moduleObj = ctr.newInstance();
          
          // invoke the name method for display
-         Method meth = thisClass.getMethod("getName", new Class[0]);
+         Method meth = this.clazz.getMethod("getName", new Class[0]);
          displayName = (String)meth.invoke(moduleObj);
       } catch (Throwable e) {
          System.out.println("Error in ModuleClass instantiation: " + 
@@ -47,12 +49,11 @@ class ModuleClassContainer {
    }
    
    
-   /** 
-    * Returns the class object that the ModuleClass encapsulates
-    * @return
+   /**
+    * @return the class object that the ModuleClass encapsulates
     */
-   public Class returnClass() {
-      return thisClass;
+   public Class<? extends GuiModule> returnClass() {
+      return clazz;
    }
    
 }
