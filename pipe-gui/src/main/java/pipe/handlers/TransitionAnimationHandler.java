@@ -33,8 +33,7 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
             GUIAnimator animator = petriNetController.getAnimator();
             animator.fireTransition(transition);
 
-            //TODO: REMOVE APPLICATION SETTINGS.....
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
+            PipeApplicationView applicationView = petriNetController.getPetriNetTab().getApplicationView();
             applicationView.getAnimateActionManager().setStepForward(animator.isStepForwardAllowed());
             applicationView.getAnimateActionManager().setStepBackward(animator.isStepBackAllowed());
         }

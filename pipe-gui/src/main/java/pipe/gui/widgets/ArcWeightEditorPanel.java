@@ -2,7 +2,6 @@ package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
@@ -231,12 +230,12 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     }
 
     public void createEditorWindow(String token) {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE2", true);
         ArcFunctionEditor feditor =
                 new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
-        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
+        guiDialog.setLocationRelativeTo(petriNetController.getPetriNetTab().getApplicationView());
         guiDialog.setVisible(true);
         guiDialog.dispose();
     }

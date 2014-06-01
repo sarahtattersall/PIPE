@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
+import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.animation.Animator;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
@@ -79,7 +80,7 @@ public class GUIAnimator {
                 timer.setDelay(Integer.parseInt(s));
                 timer.start();
             } catch (NumberFormatException e) {
-                ApplicationSettings.getApplicationView().setAnimationMode(false);
+                GuiUtils.displayErrorMessage(null, "Error in animator: " + e.getMessage());
             }
         }
     }

@@ -1,7 +1,6 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.ArcWeightEditorPanel;
@@ -236,7 +235,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     public void showEditor() {
         // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE", true);
+        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE", true);
 
         ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
                 petriNetController.getArcController(this.model));

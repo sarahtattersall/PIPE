@@ -2,7 +2,6 @@ package pipe.views;
 
 import org.jfree.util.ShapeUtilities;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.EscapableDialog;
@@ -152,7 +151,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     @Override
     public void showEditor() {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE", true);
         TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(),
                 petriNetController.getTransitionController(this.model), petriNetController);
         guiDialog.add(te);

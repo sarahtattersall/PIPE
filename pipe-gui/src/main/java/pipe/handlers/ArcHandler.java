@@ -2,11 +2,10 @@ package pipe.handlers;
 
 import pipe.actions.petrinet.SplitArcAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.views.ArcView;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.ArcType;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.*;
 import java.awt.Container;
@@ -38,8 +37,6 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         JPopupMenu popup = super.getPopup(e);
 
 
-        MouseEvent accurateEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e,
-                ApplicationSettings.getApplicationView().getCurrentTab());
         menuItem = new JMenuItem(new SplitArcAction(petriNetController.getArcController(component),
                 e.getPoint()));
         menuItem.setText("Split Arc Segment");

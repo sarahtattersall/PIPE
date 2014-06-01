@@ -1,7 +1,6 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.EscapableDialog;
@@ -275,7 +274,7 @@ public class PlaceView extends ConnectableView<Place> {
     @Override
     public void showEditor() {
         // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE2", true);
 
         Container contentPane = guiDialog.getContentPane();
 

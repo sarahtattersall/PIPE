@@ -1,7 +1,6 @@
 package pipe.views.viewComponents;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Translatable;
 import pipe.historyActions.AnnotationBorder;
@@ -167,12 +166,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     @Override
     public boolean contains(int x, int y) {
         return noteRect.contains(x, y);
-    }
-
-    @Override
-    public void delete() {
-        //        ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);
-        ApplicationSettings.getApplicationView().getCurrentTab().remove(this);
     }
 
     @Override

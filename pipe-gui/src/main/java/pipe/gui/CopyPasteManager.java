@@ -402,7 +402,8 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     public void cancelPaste() {
-        cancelPaste(ApplicationSettings.getApplicationView().getCurrentTab());
+        PetriNetTab tab = applicationController.getActiveTab();
+        cancelPaste(tab);
     }
 
     void cancelPaste(PetriNetTab view) {
