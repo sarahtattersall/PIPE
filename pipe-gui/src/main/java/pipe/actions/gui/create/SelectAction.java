@@ -34,7 +34,7 @@ public class SelectAction extends CreateAction {
     @Override
     public <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController) {
         if (!petriNetController.isSelected(connectable)) {
-            SelectionManager selectionManager = pipeApplicationController.getSelectionManager(pipeApplicationView.getCurrentTab());
+            SelectionManager selectionManager = pipeApplicationController.getActivePetriNetController().getSelectionManager();
             selectionManager.clearSelection();
         }
         petriNetController.select(connectable);
@@ -48,7 +48,7 @@ public class SelectAction extends CreateAction {
         super.actionPerformed(e);
         if (pipeApplicationView.areAnyTabsDisplayed()) {
             PetriNetTab petriNetTab = pipeApplicationView.getCurrentTab();
-            SelectionManager selectionManager = pipeApplicationController.getSelectionManager(petriNetTab);
+            SelectionManager selectionManager = pipeApplicationController.getActivePetriNetController().getSelectionManager();
             selectionManager.enableSelection();
             petriNetTab.setCursorType("arrow");
         }

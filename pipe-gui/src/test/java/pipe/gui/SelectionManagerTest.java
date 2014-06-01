@@ -2,26 +2,32 @@ package pipe.gui;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 
-import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SelectionManagerTest {
 
     SelectionManager manager;
+
+    @Mock
     PetriNetTab tab;
+
+    @Mock
     PetriNetController mockController;
 
     @Before
     public void setUp() {
-        mockController = mock(PetriNetController.class);
-        tab = mock(PetriNetTab.class);
-        manager = new SelectionManager(tab, mockController);
+        when(mockController.getPetriNetTab()).thenReturn(tab);
+        manager = new SelectionManager(mockController);
     }
 
     @Test

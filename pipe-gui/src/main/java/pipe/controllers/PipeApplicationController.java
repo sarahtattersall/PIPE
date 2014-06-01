@@ -37,12 +37,6 @@ public class PipeApplicationController {
      */
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<>();
 
-    /**
-     * Selection managers for each tab
-     */
-    private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<>();
-
-
     private final PipeApplicationModel applicationModel;
 
     /**
@@ -87,7 +81,7 @@ public class PipeApplicationController {
                             PropertyChangeListener zoomListener) {
         AnimationHistory animationHistory = new AnimationHistory();
         animationHistory.addObserver(historyObserver);
-        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory);
+        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory, this);
 
         CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
 
@@ -95,8 +89,6 @@ public class PipeApplicationController {
         tab.addZoomListener(zoomController);
         PetriNetController petriNetController =
                 new PetriNetController(net, undoListener, animator, copyPasteManager, zoomController, tab);
-        SelectionManager selectionManager = new SelectionManager(tab, petriNetController);
-        selectionManagers.put(tab, selectionManager);
         netControllers.put(tab, petriNetController);
 
         PetriNetMouseHandler handler =
@@ -197,10 +189,6 @@ public class PipeApplicationController {
 
     public PetriNetController getActivePetriNetController() {
         return netControllers.get(activeTab);
-    }
-
-    public SelectionManager getSelectionManager(PetriNetTab petriNetTab) {
-        return selectionManagers.get(petriNetTab);
     }
 
     /**

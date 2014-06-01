@@ -35,11 +35,11 @@ public class SelectionManager extends javax.swing.JComponent
 
     private boolean enabled = true;
 
-    public SelectionManager(PetriNetTab _view, PetriNetController controller) {
+    public SelectionManager(PetriNetController controller) {
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
-        this.petriNetTab = _view;
+        this.petriNetTab = controller.getPetriNetTab();
         this.petriNetController = controller;
         dragManager = controller.getDragManager();
     }

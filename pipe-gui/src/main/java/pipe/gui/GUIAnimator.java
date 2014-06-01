@@ -27,11 +27,15 @@ public class GUIAnimator {
 
     private final AnimationHistory animationHistory;
 
+    private final PipeApplicationController applicationController;
+
     private int numberSequences = 0;
 
-    public GUIAnimator(Animator animator, AnimationHistory animationHistory) {
+    public GUIAnimator(Animator animator, AnimationHistory animationHistory,
+                       PipeApplicationController applicationController) {
         this.animator = animator;
         this.animationHistory = animationHistory;
+        this.applicationController = applicationController;
     }
 
     /**
@@ -174,7 +178,6 @@ public class GUIAnimator {
     private class TimedTransitionActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            PipeApplicationController applicationController = ApplicationSettings.getApplicationController();
             PetriNetController controller = applicationController.getActivePetriNetController();
             if ((getNumberSequences() < 1) || !controller.isInAnimationMode()) {
                 timer.stop();

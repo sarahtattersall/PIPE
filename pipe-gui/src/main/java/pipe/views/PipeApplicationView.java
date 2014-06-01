@@ -134,7 +134,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     PetriNetTab petriNetTab = getCurrentTab();
                     if (petriNetTab != null) {
                         petriNetTab.setCursorType("crosshair");
-                        SelectionManager selectionManager = applicationController.getSelectionManager(petriNetTab);
+                        SelectionManager selectionManager = applicationController.getActivePetriNetController().getSelectionManager();
                         selectionManager.disableSelection();
                     }
                 }

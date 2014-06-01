@@ -2,8 +2,10 @@ package pipe.handlers;
 
 import pipe.actions.gui.DeletePetriNetComponentAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
-import pipe.gui.*;
+import pipe.gui.ApplicationSettings;
+import pipe.gui.Constants;
+import pipe.gui.DragManager;
+import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
@@ -12,9 +14,6 @@ import javax.swing.*;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-
-//import java.awt.event.MouseWheelEvent; eliminat NOU-PERE
-
 
 /**
  * Class used to implement methods corresponding to mouse events on all
@@ -52,7 +51,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
         this.viewComponent = viewComponent;
         contentPane = contentpane;
         this.component = component;
-        //TODO: PASS INTO CTR
         petriNetController = controller;
         dragManager = petriNetController.getDragManager();
     }
@@ -118,9 +116,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
                 if (e.isShiftDown()) {
                     petriNetController.deselect(component);
                 } else {
-                    PipeApplicationController controller = ApplicationSettings.getApplicationController();
-                    SelectionManager selectionManager = controller.getSelectionManager((PetriNetTab) contentPane);
-
+                    SelectionManager selectionManager = petriNetController.getSelectionManager();
                     selectionManager.clearSelection();
                     petriNetController.deselect(component);
                 }

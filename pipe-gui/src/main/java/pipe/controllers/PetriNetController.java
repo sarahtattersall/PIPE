@@ -106,12 +106,18 @@ public class PetriNetController implements IController, Serializable {
      */
     private boolean animateMode = false;
 
+    /**
+     * Selection manager for selecting petri net components
+     */
+    private SelectionManager selectionManager;
+
     public PetriNetController(PetriNet model, UndoableEditListener undoListener, GUIAnimator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController,
                               PetriNetTab petriNetTab) {
         petriNet = model;
         this.undoListener = undoListener;
         this.petriNetTab = petriNetTab;
+        selectionManager = new SelectionManager(this);
         lastSavedNet = ClonePetriNet.clone(model);
         this.zoomController = zoomController;
         this.animator = animator;
@@ -437,5 +443,9 @@ public class PetriNetController implements IController, Serializable {
 
     public boolean isInAnimationMode() {
         return animateMode;
+    }
+
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
     }
 }
