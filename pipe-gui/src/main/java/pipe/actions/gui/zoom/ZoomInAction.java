@@ -1,6 +1,7 @@
 package pipe.actions.gui.zoom;
 
 import pipe.actions.gui.GuiAction;
+import pipe.utilities.gui.GuiUtils;
 import pipe.views.ZoomManager;
 
 import java.awt.*;
@@ -19,8 +20,9 @@ public class ZoomInAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (zoomManager.canZoomIn()) {
-            zoomManager.zoomIn();
-        }
+        GuiUtils.displayErrorMessage(null, "Zooming in/out is currently not supported in this version.\n Please file an issue if it is particularly important to you.");
+//        if (zoomManager.canZoomIn()) {
+//            zoomManager.zoomIn();
+//        }
     }
 }

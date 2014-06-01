@@ -9,6 +9,10 @@ import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+/**
+ * Zoom UI which intercepts mouse presses on a zoomed panel and transforms them to their
+ * correct location
+ */
 public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     public static final String ZOOM_OUT_CHANGE_MESSAGE = "zoomOut";
@@ -62,12 +66,18 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     @Override
     public void paint(Graphics g, JComponent c) {
+        System.out.println("PAINT :)");
         g.clearRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
         Graphics2D g2 = (Graphics2D) g;
         g2.scale(zoom, zoom);
         super.paint(g2, c);
     }
 
+    /**
+     * Transforms zoomed mouse events to their unzoomed coordinates
+     * @param e
+     * @param l
+     */
     @Override
     protected void processMouseEvent(MouseEvent e, JLayer<? extends JComponent> l) {
         MouseEvent localEvent = translateToLayerCoordinates(e, l);
@@ -110,6 +120,11 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
             }
         }
         e.consume();
+    }
+
+    @Override
+    protected void processMouseWheelEvent(MouseWheelEvent e,JLayer<? extends JComponent> l) {
+        System.out.println("Mouse wheel event");
     }
 
     @Override

@@ -19,10 +19,11 @@ import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.petrinet.Token;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -747,17 +748,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * @param name name of tab
      * @param tab  tab to add
      */
-    //TODO: ADD SCROLL PANE
+    //TODO: ADD ZOOMING
     public void addNewTab(String name, PetriNetTab tab) {
 
-        //        JScrollPane scroller = new JScrollPane(tab);
-        //        scroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
+        JScrollPane tabScroller = new JScrollPane(tab,  ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        tabScroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
-        wrappedPetrinetTabs.add(jLayer);
+//        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
+//        wrappedPetrinetTabs.add(jLayer);
 
         petriNetTabs.add(tab);
-        frameForPetriNetTabs.addTab(name, null, jLayer, null);
+        frameForPetriNetTabs.addTab(name, tabScroller);
         frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
     }
 
