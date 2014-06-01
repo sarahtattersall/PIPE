@@ -12,14 +12,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.io.Serializable;
 
 
 /**
  * @author Pere Bonet
  * @version 1.0
  */
-public class InhibitorArcView extends ArcView<Place, Transition> implements Serializable {
+public class InhibitorArcView extends ArcView<Place, Transition> {
 
     private final static String type = "inhibitor";
 
@@ -33,25 +32,6 @@ public class InhibitorArcView extends ArcView<Place, Transition> implements Seri
     public void arcSpecificUpdate() {
 
     }
-
-    @Override
-    protected void arcSpecificDelete() {
-
-    }
-
-    @Override
-    protected void arcSpecificAdd() {
-
-    }
-
-
-
-
-    public InhibitorArcView copy() {
-        return null;
-//        return new InhibitorArcView(this);
-    }
-
 
     @Override
     public String getType() {

@@ -161,10 +161,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return tab;
     }
 
-    /**
-     * Perform any arc specific addition acitons
-     */
-    protected abstract void arcSpecificAdd();
 
     @Override
     public boolean contains(int x, int y) {
@@ -192,22 +188,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     public String getId() {
         return model.getId();
     }
-
-    @Override
-    public void delete() {
-        if (!_deleted) {
-            arcSpecificDelete();
-
-            arcPath.forceHidePoints();
-            super.delete();
-            _deleted = true;
-        }
-    }
-
-    /**
-     * Perform any arc specific deletion acitons
-     */
-    protected abstract void arcSpecificDelete();
 
     @Override
     public int getLayerOffset() {
@@ -251,44 +231,13 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         addMouseMotionListener(arcHandler);
     }
 
-    //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView<Connectable> getSource() {
-        return null;
-    }
-
-    //TODO: DELETE
-    void setSource(ConnectableView<?> sourceInput) {
-        throw new RuntimeException("Should be setting models source");
-    }
-
-    //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView<Connectable> getTarget() {
-        return null;
-    }
-
-    //TODO: DELETE
-    public void setTarget(ConnectableView<?> targetInput) {
-        throw new RuntimeException("Should be setting models target");
-    }
-
-    public int getSimpleWeight() {
-        return 1;
-    }
-
     public ArcPath getArcPath() {
         return arcPath;
     }
 
     public abstract String getType();
 
-    public boolean inView() {
-        return inView;
-    }
-
     public void removeFromView() {
-        if (getParent() != null) {
-            arcSpecificDelete();
-        }
         arcPath.forceHidePoints();
         removeFromContainer();
     }
