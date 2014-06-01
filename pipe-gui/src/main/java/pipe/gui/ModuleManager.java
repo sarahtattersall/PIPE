@@ -1,8 +1,9 @@
 package pipe.gui;
 
-import org.reflections.Reflections;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.ClassPath;
 import pipe.controllers.PipeApplicationController;
-import pipe.plugin.GuiModule;
+import pipe.gui.plugin.GuiModule;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -94,44 +96,20 @@ public class ModuleManager
     //only load attempt to add .class files
     private Collection<Class<? extends GuiModule>> getModuleClasses(File rootDir)
     {
-        Reflections reflections = new Reflections("pipe.plugin");
-        return reflections.getSubTypesOf(GuiModule.class);
-//        Reflections reflections = new Reflections("pipe.plugin");
-//        Set<Class<?>> allClasses =
-//                reflections.getSubTypesOf(Object.class);
-//
-//        Reflections reflections1 = new Reflections("pipe.actions");
-//        Set<Class<?>> allClasses1 =
-//                reflections1.getSubTypesOf(Object.class);
-//
-//        ExtensionFilter class_files = new ExtensionFilter(Constants.CLASS_FILE_EXTENSION, Constants.CLASS_FILE_DESC);
-//        Collection<Class<?>> classes = new ArrayList<>();
-////        aModuleClass;
-//
-//        //recursively search through files and folders of module directory
-//        File children[] = rootDir.listFiles();
-//
-//        // our base case just returns the empty vector
-//        if(children == null || children.length == 0)
-//        {
-//            return classes;
-//        }
-//        for(File aChildren : children)
-//        {
-//            if((aChildren).isDirectory())
-//            {
-//                classes.addAll(getModuleClasses(aChildren));
-//            }
-//            else if(class_files.accept(aChildren))
-//            {
-//                Class<?> pluginClass = ModuleLoader.importModule(aChildren);
-//                if(pluginClass != null)
-//                {
-//                    classes.add(pluginClass);
-//                }
-//            }
-//        }
-//        return classes;
+        Collection<Class<? extends GuiModule>> results = new ArrayList<>();
+        try {
+            ClassPath classPath = ClassPath.from(this.getClass().getClassLoader());
+            ImmutableSet<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("pipe.gui.plugin.concrete");
+            for (ClassPath.ClassInfo classInfo : set) {
+                Class<?> clazz = classInfo.load();
+                if (GuiModule.class.isAssignableFrom(clazz)) {
+                    results.add((Class<? extends GuiModule>) clazz);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return results;
     }
 
 

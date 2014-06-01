@@ -1,6 +1,6 @@
 package pipe.gui;
 
-import pipe.plugin.GuiModule;
+import pipe.gui.plugin.GuiModule;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

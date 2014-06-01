@@ -1,6 +1,7 @@
-package pipe.plugin;
+package pipe.gui.plugin.concrete;
 
 import pipe.gui.reachability.ReachabilityGraph;
+import pipe.gui.plugin.GuiModule;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;

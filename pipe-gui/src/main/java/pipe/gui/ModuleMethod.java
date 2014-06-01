@@ -1,6 +1,6 @@
 package pipe.gui;
 
-import pipe.plugin.GuiModule;
+import pipe.gui.plugin.GuiModule;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import java.lang.reflect.Constructor;

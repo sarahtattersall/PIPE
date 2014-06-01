@@ -1,4 +1,4 @@
-package pipe.plugin;
+package pipe.gui.plugin;
 
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
