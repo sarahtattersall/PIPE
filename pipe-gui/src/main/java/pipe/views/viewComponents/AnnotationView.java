@@ -62,7 +62,7 @@ public class AnnotationView extends Note {
     @Override
     public void enableEditMode() {
         // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE5", true);
 
         guiDialog.add(new AnnotationEditorPanel(petriNetController.getAnnotationController(model)));
 

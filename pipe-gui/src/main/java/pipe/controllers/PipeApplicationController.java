@@ -89,7 +89,7 @@ public class PipeApplicationController {
         animationHistory.addObserver(historyObserver);
         GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory);
 
-        CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net);
+        CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
 
         ZoomController zoomController = new ZoomController(100);
         tab.addZoomListener(zoomController);
@@ -239,5 +239,13 @@ public class PipeApplicationController {
         netControllers.remove(activeTab);
         PetriNet petriNet = controller.getPetriNet();
         manager.remove(petriNet);
+    }
+
+    /**
+     *
+     * @return the current active tab
+     */
+    public PetriNetTab getActiveTab() {
+        return activeTab;
     }
 }

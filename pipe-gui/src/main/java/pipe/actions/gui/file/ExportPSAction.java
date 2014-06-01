@@ -1,9 +1,6 @@
 package pipe.actions.gui.file;
 
 import pipe.actions.gui.GuiAction;
-import pipe.gui.ApplicationSettings;
-import pipe.gui.PetriNetTab;
-import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -19,8 +16,6 @@ public class ExportPSAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        PipeApplicationView view = ApplicationSettings.getApplicationView();
-        PetriNetTab tab = view.getCurrentTab();
 //        Export.exportGuiView(tab, Export.POSTSCRIPT, view.getCurrentPetriNetView());
     }
 

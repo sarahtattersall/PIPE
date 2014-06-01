@@ -106,7 +106,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public UnfoldAction unfoldAction;
 
-    public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(this);
+    public ChooseTokenClassAction chooseTokenClassAction;
 
     private JToolBar animationToolBar, drawingToolBar;
 
@@ -148,6 +148,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         ApplicationSettings.register(this);
         this.componentEditorManager = componentManager;
         this.editorManager = new PetriNetEditorManager(this, applicationController);
+        this.chooseTokenClassAction = new ChooseTokenClassAction(this, applicationController);
 
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
@@ -655,7 +656,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             URI uri = examplesDirURL.toURI();
             File directory = new File(uri);
           for (File entry : directory.listFiles()) {
-              addMenuItem(exampleMenu, new ExampleFileAction(entry, this));
+              addMenuItem(exampleMenu, new ExampleFileAction(entry, this, applicationController));
           }
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -676,7 +677,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     break;
                 String name = e.getName();
                 if (name.startsWith("foo/")) {
-                    addMenuItem(exampleMenu, new ExampleFileAction(e, this));
+                    addMenuItem(exampleMenu, new ExampleFileAction(e, this, applicationController));
       /* Do something with this entry. */
                 }
             }

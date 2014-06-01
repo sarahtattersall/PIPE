@@ -7,7 +7,6 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.PlaceEditorPanel;
 import pipe.handlers.PlaceHandler;
-import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Token;
@@ -18,7 +17,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,10 +53,6 @@ public class PlaceView extends ConnectableView<Place> {
         return model.getNumberOfTokensStored();
     }
 
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
-    }
 
     @Override
     public void delete() {
