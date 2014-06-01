@@ -10,7 +10,7 @@ public class ApplicationSettings
 {
     private static final String _imgPath =  File.separator + "images" + File.separator;
     private static PipeApplicationView _applicationView;
-    private static PipeApplicationController _applicationController;
+
     private static PipeApplicationModel _applicationModel;
 
     public static void register(PipeApplicationView view)
@@ -20,7 +20,6 @@ public class ApplicationSettings
 
     public static void register(PipeApplicationController applicationController)
     {
-        _applicationController = applicationController;
     }
 
     public static void register(PipeApplicationModel applicationModel)
@@ -41,11 +40,6 @@ public class ApplicationSettings
     public static PipeApplicationView getApplicationView()
     {
         return _applicationView;
-    }
-
-    public static PipeApplicationController getApplicationController()
-    {
-        return _applicationController;
     }
 
     public static PipeApplicationModel getApplicationModel()

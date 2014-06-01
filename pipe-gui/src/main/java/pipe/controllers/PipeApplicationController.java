@@ -51,7 +51,6 @@ public class PipeApplicationController {
 
     public PipeApplicationController(PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
-        ApplicationSettings.register(this);
     }
 
     public void register(final PipeApplicationView view) {
