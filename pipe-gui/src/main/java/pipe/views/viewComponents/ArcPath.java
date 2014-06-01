@@ -327,7 +327,6 @@ public class ArcPath implements Shape, Cloneable {
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 
                 createPath();
-                parent.arcSpecificUpdate();
                 parent.updateBounds();
                 parent.repaint();
             }

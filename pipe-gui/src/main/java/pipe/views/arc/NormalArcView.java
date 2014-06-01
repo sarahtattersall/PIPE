@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 
-public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T> implements Serializable {
+public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T>  {
     ArcHead arcHead = new NormalHead();
     private final static String type = "normal";
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
@@ -51,14 +51,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             }
         };
         model.addPropertyChangeListener(listener);
-    }
-
-    /**
-     * Updates the weights associated with the arc
-     */
-    @Override
-    public void arcSpecificUpdate() {
-        updateWeights();
     }
 
     @Override

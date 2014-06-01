@@ -29,11 +29,6 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
     }
 
     @Override
-    public void arcSpecificUpdate() {
-
-    }
-
-    @Override
     public String getType() {
         return type;
     }

@@ -77,19 +77,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             public void propertyChange(PropertyChangeEvent evt) {
                 String name = evt.getPropertyName();
                 if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-                    arcSpecificUpdate();
                 }
             }
         };
         model.getSource().addPropertyChangeListener(changeListener);
         model.getTarget().addPropertyChangeListener(changeListener);
     }
-
-    /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
-     */
-    public abstract void arcSpecificUpdate();
 
     /**
      * Listens for intermediate points being added/deleted
@@ -118,7 +111,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     private void updateAllPoints() {
         updatePath();
-        arcSpecificUpdate();
         updateBounds();
     }
 
