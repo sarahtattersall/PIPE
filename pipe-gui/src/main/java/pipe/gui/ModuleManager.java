@@ -340,8 +340,8 @@ public class ModuleManager
         @Override
         public void mousePressed(MouseEvent e)
         {
-            if (e.getClickCount() == 2) {
-                System.out.println("Double click");
+            if(e.isPopupTrigger())
+            {
                 showPopupMenu(e);
             }
         }
