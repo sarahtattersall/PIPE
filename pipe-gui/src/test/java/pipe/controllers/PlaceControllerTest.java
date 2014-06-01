@@ -133,6 +133,7 @@ public class PlaceControllerTest {
     @Test
     public void setIdChangesId() {
         String newName = "newName";
+        when(place.getId()).thenReturn("oldId");
         placeController.setId(newName);
         verify(place).setId(newName);
     }

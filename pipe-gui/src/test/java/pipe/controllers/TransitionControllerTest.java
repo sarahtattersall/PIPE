@@ -110,6 +110,7 @@ public class TransitionControllerTest {
     @Test
     public void setIdChangesId() {
         String newName = "newName";
+        when(transition.getId()).thenReturn("oldId");
         controller.setId(newName);
         verify(transition).setId(newName);
     }

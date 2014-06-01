@@ -241,6 +241,7 @@ public class ArcControllerTest {
     @Test
     public void setNameChangesName() {
         String newName = "newName";
+        when(mockArc.getId()).thenReturn("oldId");
         controller.setId(newName);
         verify(mockArc).setId(newName);
     }
