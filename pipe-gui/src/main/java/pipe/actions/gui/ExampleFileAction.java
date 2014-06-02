@@ -1,7 +1,7 @@
 package pipe.actions.gui;
 
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
+import pipe.gui.PIPEConstants;
 import pipe.io.JarUtilities;
 import pipe.utilities.gui.GuiUtils;
 import pipe.views.PipeApplicationView;
@@ -25,7 +25,7 @@ public class ExampleFileAction extends GuiAction
         filename = file;
         this.applicationView = applicationView;
         this.applicationController = applicationController;
-        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(ApplicationSettings.getImagePath() + "Net.png")));
+        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(PIPEConstants.IMAGE_PATH + "Net.png")));
     }
 
     public ExampleFileAction(ZipEntry entry, PipeApplicationView applicationView, PipeApplicationController applicationController)
@@ -34,7 +34,7 @@ public class ExampleFileAction extends GuiAction
         this.applicationView = applicationView;
         filename = JarUtilities.getFile(entry);
         this.applicationController = applicationController;
-        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(ApplicationSettings.getImagePath() + "Net.png")));
+        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(PIPEConstants.IMAGE_PATH + "Net.png")));
     }
 
     @Override

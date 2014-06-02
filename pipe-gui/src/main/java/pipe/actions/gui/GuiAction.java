@@ -3,7 +3,7 @@
  */
 package pipe.actions.gui;
 
-import pipe.gui.ApplicationSettings;
+import pipe.gui.PIPEConstants;
 
 import javax.swing.*;
 import javax.swing.event.UndoableEditEvent;
@@ -54,7 +54,7 @@ public abstract class GuiAction
 
     protected GuiAction(String name, String tooltip) {
         super(name);
-        URL iconURL = this.getClass().getResource(ApplicationSettings.getImagePath() + name + ".png");
+        URL iconURL = this.getClass().getResource(PIPEConstants.IMAGE_PATH + name + ".png");
         if(iconURL != null)
         {
             putValue(SMALL_ICON, new ImageIcon(iconURL));

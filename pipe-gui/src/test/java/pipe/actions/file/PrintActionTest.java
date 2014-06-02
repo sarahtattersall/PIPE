@@ -3,7 +3,6 @@ package pipe.actions.file;
 import org.junit.Before;
 import org.junit.Test;
 import pipe.actions.gui.file.PrintAction;
-import pipe.gui.ApplicationSettings;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;

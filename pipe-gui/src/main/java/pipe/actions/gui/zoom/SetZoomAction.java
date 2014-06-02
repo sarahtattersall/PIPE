@@ -3,7 +3,6 @@ package pipe.actions.gui.zoom;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.views.PipeApplicationView;

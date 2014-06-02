@@ -645,7 +645,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         JMenu exampleMenu = new JMenu("Examples");
         exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
-        URL examplesDirURL = this.getClass().getResource("/extras/examples/");
+        URL examplesDirURL = this.getClass().getResource(PIPEConstants.EXAMPLES_PATH);
         try {
             URI uri = examplesDirURL.toURI();
             File directory = new File(uri);
@@ -819,7 +819,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private URL getImageURL(String name) {
         return this.getClass().getResource(
-                ApplicationSettings.getImagePath() + name);
+                PIPEConstants.IMAGE_PATH + name);
     }
 
     public boolean isJar() {

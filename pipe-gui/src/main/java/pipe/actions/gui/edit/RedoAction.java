@@ -4,7 +4,6 @@ import pipe.actions.gui.GuiAction;
 import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
-import pipe.gui.ApplicationSettings;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
