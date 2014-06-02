@@ -2,6 +2,7 @@ package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.views.TransitionView;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
@@ -19,6 +20,7 @@ public class TransitionViewBuilder {
 
     public TransitionView build(Container parent, PipeApplicationModel model) {
         TransitionHandler transitionHandler = new TransitionHandler(parent, transition, controller, model);
-        return new TransitionView(transition, controller, parent, transitionHandler);
+        TransitionAnimationHandler animationHandler = new TransitionAnimationHandler(transition, controller);
+        return new TransitionView(transition, controller, parent, transitionHandler, animationHandler);
     }
 }

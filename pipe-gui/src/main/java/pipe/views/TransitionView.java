@@ -11,7 +11,6 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -22,7 +21,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     private boolean _enabled;
 
-    public TransitionView(Transition model, PetriNetController controller, Container parent, TransitionHandler transitionHandler) {
+    public TransitionView(Transition model, PetriNetController controller, Container parent, TransitionHandler transitionHandler, TransitionAnimationHandler animationHandler) {
         super(model.getId(), model, controller, parent, new Rectangle2D.Double(0, 0, model.getWidth(),
                 model.getHeight()));
         setChangeListener();
@@ -34,14 +33,16 @@ public class TransitionView extends ConnectableView<Transition> {
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
         //        changeToolTipText();
 
-        setMouseListener(transitionHandler);
+        setMouseListener(transitionHandler, animationHandler);
 
     }
 
-    private void setMouseListener(TransitionHandler transitionHandler) {
+    private void setMouseListener(TransitionHandler transitionHandler, TransitionAnimationHandler animationHandler) {
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);
+
+        addMouseListener(animationHandler);
 
     }
 
@@ -199,10 +200,6 @@ public class TransitionView extends ConnectableView<Transition> {
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         addLabelToContainer(tab);
-
-
-        MouseListener transitionAnimationHandler = new TransitionAnimationHandler(this.model, petriNetController);
-        addMouseListener(transitionAnimationHandler);
     }
 
     public int getAngle() {

@@ -1,6 +1,6 @@
-import pipe.actions.manager.*;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.model.PipeApplicationModel;
+import pipe.views.PipeApplicationBuilder;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -18,12 +18,10 @@ public class Pipe
     {
         applicationModel = new PipeApplicationModel(version);
         applicationController = new PipeApplicationController(applicationModel);
-        ComponentEditorManager componentManager = new ComponentEditorManager(applicationController);
-        SimpleUndoListener undoListener = new SimpleUndoListener(componentManager, applicationController);
-        ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, applicationModel, applicationController);
-        AnimateActionManager animateActionManager = new AnimateActionManager(applicationModel, applicationController);
-        applicationView = new PipeApplicationView(applicationController, applicationModel, componentManager, componentCreatorManager, animateActionManager,
-                undoListener);
+        PipeApplicationBuilder builder = new PipeApplicationBuilder();
+        applicationView = builder.build(applicationController, applicationModel);
+        applicationController.createEmptyPetriNet();
+
     }
     public static void main(String args[])
     {

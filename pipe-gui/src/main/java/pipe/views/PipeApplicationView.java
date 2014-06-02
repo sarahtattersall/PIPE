@@ -1,18 +1,5 @@
 package pipe.views;
 
-import pipe.actions.ZoomAction;
-import pipe.actions.gui.ExampleFileAction;
-import pipe.actions.gui.GuiAction;
-import pipe.actions.gui.UnfoldAction;
-import pipe.actions.gui.create.SelectAction;
-import pipe.actions.gui.file.*;
-import pipe.actions.gui.grid.GridAction;
-import pipe.actions.gui.tokens.ChooseTokenClassAction;
-import pipe.actions.gui.window.ExitAction;
-import pipe.actions.gui.zoom.SetZoomAction;
-import pipe.actions.gui.zoom.ZoomInAction;
-import pipe.actions.gui.zoom.ZoomOutAction;
-import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.*;
@@ -34,20 +21,13 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.CodeSource;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer, Serializable {
@@ -55,21 +35,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final StatusBar statusBar;
 
-    public final ComponentEditorManager componentEditorManager;
-
-    public final GuiAction selectAction;
-
-    public final ExitAction exitAction;
-
     final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
-
-    private final ComponentCreatorManager componentCreatorManager;
-
-    private final AnimateActionManager animateActionManager;
-
-    private final PetriNetEditorManager editorManager;
-
-    private final TokenActionManager tokenActionManager;
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -80,44 +46,21 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final PipeApplicationController applicationController;
 
     private final PipeApplicationModel applicationModel;
+    private UndoableEditListener undoListener;
 
 
     public JComboBox<String> zoomComboBox;
 
     public JComboBox<String> tokenClassComboBox;
 
-    public GuiAction printAction = new PrintAction();
-
-    public GuiAction exportPNGAction = new ExportPNGAction();
-
-    public GuiAction exportTNAction = new ExportTNAction();
-
-    public GuiAction exportPSAction = new ExportPSAction();
-
-    public GuiAction importAction = new ImportAction();
-
-    public GridAction toggleGrid = new GridAction(this);
-
-    public GuiAction zoomOutAction;
-
-    public GuiAction zoomInAction;
-
-    public GuiAction zoomAction;
-
-    public UnfoldAction unfoldAction;
-
-    public ChooseTokenClassAction chooseTokenClassAction;
-
-    private JToolBar animationToolBar, drawingToolBar;
-
     private JScrollPane scroller;
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
-    public PipeApplicationView(final PipeApplicationController applicationController, PipeApplicationModel applicationModel,
-                               ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
-                               AnimateActionManager animateActionManager, SimpleUndoListener undoListener) {
+    public PipeApplicationView(final PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
 
+        this.applicationModel = applicationModel;
+        this.applicationController = applicationController;
         applicationController.register(this);
         applicationModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -140,28 +83,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
             }
         });
-        this.componentCreatorManager = componentCreatorManager;
-        this.animateActionManager = animateActionManager;
-        this.tokenActionManager = new TokenActionManager(undoListener, applicationModel, applicationController, this);
-        this.componentEditorManager = componentManager;
-        this.editorManager = new PetriNetEditorManager(this, applicationController);
-        this.chooseTokenClassAction = new ChooseTokenClassAction(this, applicationController);
-
-        this.applicationController = applicationController;
-        this.applicationModel = applicationModel;
-
-
-        zoomOutAction = new ZoomOutAction(zoomUI);
-        zoomInAction = new ZoomInAction(zoomUI);
-        zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController, this);
-
-        unfoldAction = new UnfoldAction(this, applicationController);
-
-        selectAction = new SelectAction(applicationModel, this, applicationController);
-
-
-        exitAction = new ExitAction(this, applicationController);
-
         setTitle(null);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -175,16 +96,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setSize(screenSize.width * 80 / 100, screenSize.height * 80 / 100);
         this.setLocationRelativeTo(null);
 
-        setExitAction();
-
-        buildMenus();
-
         // Status bar...
         statusBar = new StatusBar();
         getContentPane().add(statusBar, BorderLayout.PAGE_END);
-
-        // Build menus
-        buildToolbar();
 
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
@@ -203,17 +117,19 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         getContentPane().add(pane);
 
         setVisible(true);
-        this.applicationModel.setMode(Constants.SELECT);
-        selectAction.actionPerformed(null);
-
-
-        applicationController.createEmptyPetriNet();
+        applicationModel.setMode(Constants.SELECT);
+        //TODO: DO YOU NEED TO DO THIS?
+//        selectAction.actionPerformed(null);
 
         setTabChangeListener();
 
         setZoomChangeListener();
     }
 
+
+    public void setUndoListener(UndoableEditListener listener) {
+        undoListener = listener;
+    }
     @Override
     public final void setTitle(String title) {
         String name = applicationModel.getName();
@@ -238,9 +154,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     petriNetTab.setVisible(true);
                     petriNetTab.repaint();
                     updateZoomCombo();
-
-                    enableActions(!controller.isInAnimationMode());
-
                     setTitle(petriNetTab.getName());
 
                     applicationModel.setInAnimationMode(controller.isInAnimationMode());
@@ -251,27 +164,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         });
     }
 
-    private void enableActions(boolean editMode) {
-        if (editMode) {
-            drawingToolBar.setVisible(true);
-            animationToolBar.setVisible(false);
-            componentEditorManager.enableActions();
-            componentCreatorManager.enableActions();
-            tokenActionManager.enableActions();
-            editorManager.enableActions();
-            animateActionManager.disableActions();
-        } else {
-            drawingToolBar.setVisible(false);
-            animationToolBar.setVisible(true);
-            componentEditorManager.disableActions();
-            componentCreatorManager.disableActions();
-            tokenActionManager.disableActions();
-            editorManager.disableActions();
-            animateActionManager.enableActions();
-        }
-
-        selectAction.setEnabled(editMode);
+    public void setTabChangeListener(ChangeListener listener) {
+        frameForPetriNetTabs.addChangeListener(listener);
     }
+
+
 
     public PetriNetTab getCurrentTab() {
         int index = frameForPetriNetTabs.getSelectedIndex();
@@ -354,19 +251,13 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     public void setAnimationMode(boolean animateMode) {
-        enableActions(!animateMode);
-
         if (animateMode) {
-            enableActions(false);// disables all non-animation buttons
-            applicationModel.setEditionAllowed(false);
             statusBar.changeText(statusBar.textforAnimation);
             createAnimationViewPane();
 
         } else {
-            applicationModel.setEditionAllowed(true);
             statusBar.changeText(statusBar.textforDrawing);
             removeAnimationViewPlane();
-            enableActions(true); // renables all non-animation buttons
         }
     }
 
@@ -392,73 +283,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         moduleAndAnimationHistoryFrame.setDividerSize(8);
     }
 
-    /**
-     * Builds the toolbar that holds actions for editin and creating Petri nets with PIPE
-     */
-    private void buildToolbar() {
-        // Create the toolbar
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);// Inhibit toolbar floating
-
-
-        for (GuiAction action : editorManager.getActions()) {
-            addButton(toolBar, action);
-        }
-
-        toolBar.addSeparator();
-        addButton(toolBar, printAction);
-        toolBar.addSeparator();
-        for (GuiAction action : componentEditorManager.getActions()) {
-            addButton(toolBar, action);
-        }
-        toolBar.addSeparator();
-
-        addButton(toolBar, zoomOutAction);
-        addZoomComboBox(toolBar, zoomAction);
-        addButton(toolBar, zoomInAction);
-        toolBar.addSeparator();
-        addButton(toolBar, toggleGrid);
-        for (GuiAction action : animateActionManager.getEditActions()) {
-            addButton(toolBar, action);
-        }
-
-        drawingToolBar = new JToolBar();
-        drawingToolBar.setFloatable(false);
-
-        toolBar.addSeparator();
-        addButton(drawingToolBar, selectAction);
-        drawingToolBar.addSeparator();
-        for (GuiAction action : componentCreatorManager.getActions()) {
-            addButton(drawingToolBar, action);
-        }
-        drawingToolBar.addSeparator();
-
-        for (GuiAction action : tokenActionManager.getActions()) {
-            addButton(drawingToolBar, action);
-        }
-
-        addTokenClassComboBox(drawingToolBar, chooseTokenClassAction);
-        addButton(drawingToolBar, unfoldAction);
-        drawingToolBar.addSeparator();
-
-        toolBar.add(drawingToolBar);
-
-        animationToolBar = new JToolBar();
-        animationToolBar.setFloatable(false);
-
-        for (GuiAction action : animateActionManager.getAnimateActions()) {
-            addButton(animationToolBar, action);
-        }
-
-        toolBar.add(animationToolBar);
-        animationToolBar.setVisible(false);
-
-        toolBar.addSeparator();
-
-        for (int i = 0; i < toolBar.getComponentCount(); i++) {
-            toolBar.getComponent(i).setFocusable(false);
-        }
-
+    public void setToolBar(JToolBar toolBar) {
         getContentPane().add(toolBar, BorderLayout.PAGE_START);
     }
 
@@ -482,201 +307,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     /**
-     * @param toolBar the JToolBar to add the button to
-     * @param action  the action that the ZoomComboBox performs
+     * Sets pipes menu
+     * @param menu
      */
-    private void addZoomComboBox(JToolBar toolBar, Action action) {
-        Dimension zoomComboBoxDimension = new Dimension(65, 28);
-        String[] zoomExamples = applicationModel.getZoomExamples();
-        zoomComboBox = new JComboBox<>(zoomExamples);
-        zoomComboBox.setEditable(true);
-        zoomComboBox.setSelectedItem("100%");
-        zoomComboBox.setMaximumRowCount(zoomExamples.length);
-        zoomComboBox.setMaximumSize(zoomComboBoxDimension);
-        zoomComboBox.setMinimumSize(zoomComboBoxDimension);
-        zoomComboBox.setPreferredSize(zoomComboBoxDimension);
-        zoomComboBox.setAction(action);
-        toolBar.add(zoomComboBox);
-    }
-
-    private void addButton(JToolBar toolBar, GuiAction action) {
-
-        if (action.getValue("selected") != null) {
-            toolBar.add(new ToggleButton(action));
-        } else {
-            toolBar.add(action);
-        }
-    }
-
-    /**
-     * This method builds the menus for the application
-     */
-    private void buildMenus() {
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.setMnemonic('F');
-
-        for (GuiAction action : editorManager.getActions()) {
-            addMenuItem(fileMenu, action);
-        }
-
-        fileMenu.addSeparator();
-        addMenuItem(fileMenu, importAction);
-
-        // Export menu
-
-
-        JMenu exportMenu = new JMenu("Export");
-        exportMenu.setIcon(new ImageIcon(getImageURL("Export.png")));
-        addMenuItem(exportMenu, exportPNGAction);
-        addMenuItem(exportMenu, exportPSAction);
-        addMenuItem(exportMenu, exportTNAction);
-        fileMenu.add(exportMenu);
-        fileMenu.addSeparator();
-        addMenuItem(fileMenu, printAction);
-        fileMenu.addSeparator();
-
-        // Example files menu
-        JMenu exampleMenu = createExampleFileMenu();
-
-        fileMenu.add(exampleMenu);
-        fileMenu.addSeparator();
-
-        addMenuItem(fileMenu, exitAction);
-
-        JMenu editMenu = new JMenu("Edit");
-        editMenu.setMnemonic('E');
-
-        for (GuiAction action : componentEditorManager.getActions()) {
-            addMenuItem(editMenu, action);
-        }
-
-        JMenu drawMenu = new JMenu("Draw");
-        drawMenu.setMnemonic('D');
-        addMenuItem(drawMenu, selectAction);
-
-        KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");
-        InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(stroke, "ESCAPE");
-
-        rootPane.getActionMap().put("ESCAPE", selectAction);
-
-        drawMenu.addSeparator();
-        for (GuiAction action : componentCreatorManager.getActions()) {
-            addMenuItem(drawMenu, action);
-        }
-        drawMenu.addSeparator();
-        for (Action action : tokenActionManager.getActions()) {
-            addMenuItem(drawMenu, action);
-        }
-        addMenuItem(drawMenu, unfoldAction);
-        drawMenu.addSeparator();
-
-        JMenu viewMenu = new JMenu("View");
-        viewMenu.setMnemonic('V');
-
-        JMenu zoomMenu = new JMenu("Zoom");
-        zoomMenu.setIcon(new ImageIcon(getImageURL("Zoom.png")));
-        addZoomMenuItems(zoomMenu);
-
-        addMenuItem(viewMenu, zoomOutAction);
-
-        addMenuItem(viewMenu, zoomInAction);
-        viewMenu.add(zoomMenu);
-
-        viewMenu.addSeparator();
-        addMenuItem(viewMenu, toggleGrid);
-
-        JMenu animateMenu = new JMenu("Animate");
-        animateMenu.setMnemonic('A');
-
-        for (GuiAction action : animateActionManager.getActions()) {
-            addMenuItem(animateMenu, action);
-        }
-
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic('H');
-
-        JMenuItem aboutItem = helpMenu.add("About PIPE");
-        aboutItem.addActionListener(this); // Help - About is implemented
-        // differently
-        aboutItem.setIcon(new ImageIcon(getImageURL("About.png")));
-
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(viewMenu);
-        menuBar.add(drawMenu);
-        menuBar.add(animateMenu);
-        menuBar.add(helpMenu);
-        setJMenuBar(menuBar);
-
-    }
-
-    private void addMenuItem(JMenu menu, Action action) {
-        JMenuItem item = menu.add(action);
-        KeyStroke keystroke = (KeyStroke) action.getValue(Action.ACCELERATOR_KEY);
-
-        if (keystroke != null) {
-            item.setAccelerator(keystroke);
-        }
-    }
-
-    /**
-     * @param zoomMenu to add to the applications menu bar
-     */
-    private void addZoomMenuItems(JMenu zoomMenu) {
-        for (ZoomAction zoomAction : applicationModel.getZoomActions()) {
-            JMenuItem newItem = new JMenuItem(zoomAction);
-            zoomMenu.add(newItem);
-        }
-    }
-
-    /**
-     * Creates an example file menu based on examples in resources/extras/examples
-     */
-    private JMenu createExampleFileMenu() {
-        if (isJar()) {
-            try {
-                return loadJarExamples();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        JMenu exampleMenu = new JMenu("Examples");
-        exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
-        URL examplesDirURL = this.getClass().getResource(PIPEConstants.EXAMPLES_PATH);
-        try {
-            URI uri = examplesDirURL.toURI();
-            File directory = new File(uri);
-          for (File entry : directory.listFiles()) {
-              addMenuItem(exampleMenu, new ExampleFileAction(entry, this, applicationController));
-          }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return exampleMenu;
-    }
-
-    private JMenu loadJarExamples() throws IOException {
-        JMenu exampleMenu = new JMenu("Examples");
-
-        CodeSource src = PipeApplicationView.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-            URL jar = src.getLocation();
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
-            while (true) {
-                ZipEntry e = zip.getNextEntry();
-                if (e == null)
-                    break;
-                String name = e.getName();
-                if (name.startsWith("foo/")) {
-                    addMenuItem(exampleMenu, new ExampleFileAction(e, this, applicationController));
-      /* Do something with this entry. */
-                }
-            }
-        }
-        return exampleMenu;
+    public void setMenu(JMenuBar menu) {
+        setJMenuBar(menu);
     }
 
     private void setZoomChangeListener() {
@@ -696,22 +331,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     /**
      * Sets the default behaviour for exit for both Windows/Linux/Mac OS X
      */
-    private void setExitAction() {
+    public void setExitAction(WindowListener adapter) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                exitAction.tryToExit();
-            }
-        });
-    }
-
-    public ComponentEditorManager getComponentEditorManager() {
-        return componentEditorManager;
-    }
-
-    public JTabbedPane getFrameForPetriNetTabs() {
-        return frameForPetriNetTabs;
+        addWindowListener(adapter);
     }
 
     /**
@@ -763,14 +385,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return petriNetTab._appFile;
     }
 
-    public StatusBar getStatusBar() {
-        return statusBar;
-    }
-
-    public void close() {
-        exitAction.actionPerformed(null);
-    }
-
     public void removeCurrentTab() {
         removeTab(frameForPetriNetTabs.getSelectedIndex());
     }
@@ -786,10 +400,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void updateSelectedTabName(String title) {
         int index = frameForPetriNetTabs.getSelectedIndex();
         frameForPetriNetTabs.setTitleAt(index, title);
-    }
-
-    public AnimateActionManager getAnimateActionManager() {
-        return animateActionManager;
     }
 
     public void registerNewPetriNet(PetriNet petriNet) {
@@ -809,7 +419,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         PetriNetTab petriNetTab = new PetriNetTab(this);
         histories.put(petriNetTab, animationHistoryView);
-        UndoableEditListener undoListener = new SimpleUndoListener(componentEditorManager, applicationController);
 
         applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
         addNewTab(petriNet.getNameValue(), petriNetTab);
@@ -822,10 +431,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 PIPEConstants.IMAGE_PATH + name);
     }
 
-    public boolean isJar() {
-        CodeSource src = PipeApplicationView.class.getProtectionDomain().getCodeSource();
-        URL jar = src.getLocation();
-        return jar.getPath().endsWith(".jar");
+    public void register(JComboBox<String> tokenClassComboBox) {
+        this.tokenClassComboBox = tokenClassComboBox;
+    }
+    public void registerZoom(JComboBox<String> zoomComboBox) {
+        this.zoomComboBox = zoomComboBox;
     }
 }
 

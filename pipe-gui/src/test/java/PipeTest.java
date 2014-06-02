@@ -130,7 +130,7 @@ public class PipeTest {
         subMenu = (JMenu) menu.getMenuComponent(11);
         selectMenuItem(subMenu, 0);
         Container c = applicationView.getContentPane();
-        toolbar = (JToolBar) c.getComponent(1);
+        toolbar = (JToolBar) c.getComponent(2);
         AbstractButton animateButton = ((AbstractButton) toolbar.getComponent(20));
         animateButton.getAction().actionPerformed(null);
 //        selectMenuItem(menu, 2);
