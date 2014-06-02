@@ -2,7 +2,7 @@ package pipe.views;
 
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;

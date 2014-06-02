@@ -1,8 +1,8 @@
 package pipe.handlers;
 
-import pipe.actions.gui.create.CreateAction;
+import pipe.actions.gui.CreateAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.*;

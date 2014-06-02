@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.create.AddTokenAction;
+import pipe.actions.gui.AddTokenAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 

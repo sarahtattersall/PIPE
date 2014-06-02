@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionViewBuilder;
 import pipe.gui.PetriNetTab;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.TransitionView;
 import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
 import uk.ac.imperial.pipe.models.petrinet.Transition;

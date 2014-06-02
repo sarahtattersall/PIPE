@@ -1,12 +1,12 @@
 package pipe.actions.manager;
 
 import pipe.actions.gui.GuiAction;
-import pipe.actions.gui.create.AddTokenAction;
-import pipe.actions.gui.create.CreateAction;
-import pipe.actions.gui.create.DeleteTokenAction;
+import pipe.actions.gui.AddTokenAction;
+import pipe.actions.gui.CreateAction;
+import pipe.actions.gui.DeleteTokenAction;
 import pipe.actions.gui.tokens.SpecifyTokenAction;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.event.UndoableEditListener;

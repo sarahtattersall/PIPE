@@ -1,7 +1,7 @@
 package pipe.controllers;
 
 import pipe.gui.PetriNetTab;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.*;
 import uk.ac.imperial.pipe.models.petrinet.*;
 

@@ -1,7 +1,6 @@
 package pipe.controllers;
 
-import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.PlaceHandler;
 import pipe.views.PlaceView;
 import uk.ac.imperial.pipe.models.petrinet.Place;

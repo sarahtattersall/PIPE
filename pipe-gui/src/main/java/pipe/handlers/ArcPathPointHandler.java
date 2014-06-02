@@ -5,11 +5,11 @@
  */
 package pipe.handlers;
 
-import pipe.actions.gui.edit.DeleteArcPathPointAction;
+import pipe.actions.gui.DeleteArcPathPointAction;
 import pipe.actions.petrinet.SplitArcPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.ArcPathPoint;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 

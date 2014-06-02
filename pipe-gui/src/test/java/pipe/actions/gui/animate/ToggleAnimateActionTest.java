@@ -5,10 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.actions.gui.ToggleAnimateAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.GUIAnimator;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.controllers.GUIAnimator;
+import pipe.actions.gui.PipeApplicationModel;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.edit.RedoAction;
-import pipe.actions.gui.edit.UndoAction;
+import pipe.actions.gui.RedoAction;
+import pipe.actions.gui.UndoAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 

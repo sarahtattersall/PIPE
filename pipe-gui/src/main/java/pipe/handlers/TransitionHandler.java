@@ -1,7 +1,7 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
 import uk.ac.imperial.pipe.models.petrinet.Transition;

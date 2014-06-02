@@ -6,7 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.create.CreateAction;
+import pipe.actions.gui.PipeApplicationModel;
+import pipe.actions.gui.CreateAction;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

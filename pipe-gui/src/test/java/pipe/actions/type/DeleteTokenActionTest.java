@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.create.DeleteTokenAction;
+import pipe.actions.gui.DeleteTokenAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.event.UndoableEditListener;

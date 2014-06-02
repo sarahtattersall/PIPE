@@ -3,9 +3,9 @@ package pipe.handlers;
 import pipe.actions.gui.DeletePetriNetComponentAction;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.DragManager;
-import pipe.gui.SelectionManager;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.controllers.DragManager;
+import pipe.controllers.SelectionManager;
+import pipe.actions.gui.PipeApplicationModel;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import javax.swing.*;

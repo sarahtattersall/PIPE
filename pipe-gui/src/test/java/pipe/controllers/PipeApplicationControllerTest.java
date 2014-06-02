@@ -2,7 +2,7 @@ package pipe.controllers;
 
 import org.junit.Before;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 
 import static org.mockito.Mockito.mock;
 

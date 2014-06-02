@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
 
 import java.awt.Point;
 import java.awt.Rectangle;

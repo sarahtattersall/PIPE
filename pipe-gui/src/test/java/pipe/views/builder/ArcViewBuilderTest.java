@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.NormalArcViewBuilder;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.ArcView;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.InboundArc;

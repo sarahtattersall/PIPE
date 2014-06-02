@@ -2,7 +2,7 @@ package pipe.handlers;
 
 import pipe.actions.petrinet.SplitArcAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.gui.widgets.ArcWeightEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import uk.ac.imperial.pipe.models.petrinet.Arc;

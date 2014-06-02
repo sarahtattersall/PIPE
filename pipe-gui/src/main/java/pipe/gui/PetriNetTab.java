@@ -1,6 +1,8 @@
 package pipe.gui;
 
 import pipe.constants.GUIConstants;
+import pipe.controllers.SelectionManager;
+import pipe.controllers.ZoomController;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;

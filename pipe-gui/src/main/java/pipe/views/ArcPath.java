@@ -6,7 +6,7 @@ package pipe.views;
 import pipe.constants.GUIConstants;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.utilities.gui.GuiUtils;

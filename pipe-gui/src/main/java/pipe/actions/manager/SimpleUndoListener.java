@@ -1,7 +1,7 @@
 package pipe.actions.manager;
 
-import pipe.actions.gui.edit.RedoAction;
-import pipe.actions.gui.edit.UndoAction;
+import pipe.actions.gui.RedoAction;
+import pipe.actions.gui.UndoAction;
 import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.event.UndoableEditEvent;

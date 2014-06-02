@@ -1,9 +1,9 @@
 package pipe.handlers;
 
-import pipe.actions.gui.create.CreateAction;
+import pipe.actions.gui.CreateAction;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.mouse.MouseUtilities;
 
 import javax.swing.event.MouseInputAdapter;

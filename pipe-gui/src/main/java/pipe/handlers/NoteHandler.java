@@ -7,7 +7,7 @@ package pipe.handlers;
 
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.model.PipeApplicationModel;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.AnnotationView;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
