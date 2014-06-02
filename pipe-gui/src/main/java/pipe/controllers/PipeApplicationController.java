@@ -6,7 +6,6 @@ import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.historyActions.AnimationHistory;
 import pipe.views.PipeApplicationView;
-import pipe.views.changeListener.PetriNetChangeListener;
 import uk.ac.imperial.pipe.animation.PetriNetAnimator;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;

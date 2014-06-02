@@ -1,22 +1,10 @@
-package pipe.views.changeListener;
+package pipe.controllers;
 
-import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.ArcView;
-import pipe.views.PipeApplicationView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
-import pipe.views.InhibitorArcView;
+import pipe.views.*;
 import pipe.views.builder.*;
-import pipe.views.AnnotationView;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
-import uk.ac.imperial.pipe.models.petrinet.Annotation;
-import uk.ac.imperial.pipe.models.petrinet.Arc;
-import uk.ac.imperial.pipe.models.petrinet.ArcType;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
 
 import java.beans.PropertyChangeEvent;
