@@ -9,13 +9,12 @@ import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.*;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * @param <T> Connectable model
@@ -37,11 +36,11 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     private ConnectableView(String id, T model, Shape shape) {
-        this(id, model, null, shape);
+        this(id, model, null, null, shape);
     }
 
-    ConnectableView(String id, T model, PetriNetController controller, Shape shape) {
-        super(id, model, controller);
+    ConnectableView(String id, T model, PetriNetController controller, Container parent, Shape shape) {
+        super(id, model, controller, parent);
         this.shape = shape;
         setLocation(model.getX(), model.getY());
 
@@ -113,14 +112,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     @Override
-    public void addedToGui() {
-        _deleted = false;
-        _markedAsDeleted = false;
-        updateBounds();
-        //        update();
-    }
-
-    @Override
     public void delete() {
         if (getParent() != null) {
             getParent().remove(nameLabel);
@@ -145,14 +136,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         return pnCopy;
     }
 
-    public int centreOffsetTop() {
-        return model.getHeight() / 2;
-    }
-
-    public int centreOffsetLeft() {
-        return model.getWidth() / 2;
-    }
-
     protected void addLabelToContainer(PetriNetTab tab) {
         tab.add(nameLabel);
         nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
@@ -162,19 +145,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         nameLabel.addMouseWheelListener(labelHandler);
     }
 
-    public void removeFromArc(ArcView oldArcView) {
-        //        model.removeFromArcs(oldArcView);
-    }
-
-    public LinkedList<ArcView> outboundArcs() {
-        //        return model.outboundArcs();
-        return null;
-    }
-
-    public LinkedList<ArcView> inboundArcs() {
-        //        return model.inboundArcs();
-        return null;
-    }
 
     @Override
     public void translate(int x, int y) {
@@ -188,34 +158,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         //        setPositionY(y - (getHeight() / 2.0));
         //        update();
     }
-
-    public Iterator<?> getConnectFromIterator() {
-        return null;
-        //        return model.outboundArcs().iterator();
-    }
-
-    public Iterator<?> getConnectToIterator() {
-        return null;
-        //        return model.inboundArcs().iterator();
-    }
-
-    void newCopy(ConnectableView<?> ptObject) {
-        //        if (_original != null) {
-        //            _original._lastCopy = ptObject;
-        //        };
-    }
-
-    //TODO: DELETE
-    public ConnectableView<?> getOriginal() {
-        //        return _original;
-        return null;
-    }
-
-    void setOriginal(ConnectableView<?> ptObject) {
-        //        _original = ptObject;
-    }
-
-    public abstract void showEditor();
 
     public boolean getAttributesVisible() {
         return _attributesVisible;

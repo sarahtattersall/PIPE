@@ -1,9 +1,13 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.arc.NormalArcView;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+
+import java.awt.Container;
 
 public class NormalArcViewBuilder {
     private final Arc<? extends Connectable, ? extends Connectable> arc;
@@ -14,15 +18,16 @@ public class NormalArcViewBuilder {
         this.controller = controller;
     }
 
-    /*
-    double startPositionXInput, double startPositionYInput,
-    double endPositionXInput, double endPositionYInput,
-    ConnectableView sourceInput,
-    ConnectableView targetInput, LinkedList<MarkingView> weightInput,
-    String idInput, boolean taggedInput, NormalArc model) {     */
-    public NormalArcView<Connectable, Connectable> build() {
+    /**
+     *
+     * Builds an arc view
+     * @param parent the parent of this arc
+     */
+    public NormalArcView<Connectable, Connectable> build(Container parent, PipeApplicationModel model) {
+
+        ArcHandler<? extends Connectable, ? extends Connectable> handler = new ArcHandler<>(parent, arc, controller, model);
         NormalArcView<Connectable, Connectable> view =
-                new NormalArcView<>((Arc<Connectable,Connectable>) arc, controller);
+                new NormalArcView<>((Arc<Connectable,Connectable>) arc, controller, parent, handler, model);
         return view;
 
     }

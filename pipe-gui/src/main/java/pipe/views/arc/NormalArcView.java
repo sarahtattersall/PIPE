@@ -3,27 +3,25 @@ package pipe.views.arc;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.HistoryItem;
-import pipe.historyActions.arc.JoinInverseArc;
-import pipe.historyActions.arc.SetInverseArc;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.ArcView;
 import pipe.views.viewComponents.NameLabel;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 
 
-public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T> implements Serializable {
+public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T>  {
     ArcHead arcHead = new NormalHead();
     private final static String type = "normal";
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
@@ -34,11 +32,13 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     private Boolean tagged = false;
 
     public NormalArcView(Arc<S, T> model,
-                         PetriNetController controller) {
-        super(model, controller);
+                         PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> handler, PipeApplicationModel applicationModel) {
+        super(model, controller, parent, handler, applicationModel);
         setTagged(model.isTagged());
         addConnectableListener();
-
+        for (NameLabel label : weightLabel) {
+            getParent().add(label);
+        }
     }
 
     private void addConnectableListener() {
@@ -54,14 +54,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         model.addPropertyChangeListener(listener);
     }
 
-    /**
-     * Updates the weights associated with the arc
-     */
-    @Override
-    public void arcSpecificUpdate() {
-        updateWeights();
-    }
-
     @Override
     public void delete() {
         super.delete();
@@ -72,17 +64,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     private void removeLabelFromParentContainer(NameLabel label) {
         tab.remove(label);
-    }
-
-    @Override
-    protected void arcSpecificDelete() {
-    }
-
-    @Override
-    protected void arcSpecificAdd() {
-        for (NameLabel label : weightLabel) {
-            getParent().add(label);
-        }
     }
 
     private void updateWeights() {
@@ -190,17 +171,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     }
 
-    public boolean hasInverse() {
-        return _inverse != null;
-    }
-
-    public HistoryItem setInverse(NormalArcView<S,T> _inverse, boolean joined) {
-        this._inverse = _inverse;
-        this._inverse._inverse = this;
-        updateArc(joined);
-        return new SetInverseArc(this, this._inverse, joined);
-    }
-
     private void updateArc(boolean isJoined) {
         inView = true;
         _inverse.inView = !isJoined;
@@ -216,30 +186,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         updateWeightLabel();
     }
 
-    void setJoined(boolean flag) {
-        joined = flag;
-    }
-
-    public HistoryItem split() {
-       return null;
-    }
-
-    public HistoryItem join() {
-        this.updateArc(true);
-        // ((NormalArc)arc.getInverse()).setInView(false);
-        // arc.getParent().remove(arc.getInverse());
-        _inverse.removeFromView();
-        this.setJoined(true);
-        if (this.getParent() != null) {
-            this.getParent().repaint();
-        }
-
-        return new JoinInverseArc(this);
-    }
-
-    public boolean hasInvisibleInverse() {
-        return ((this._inverse != null) && !(this._inverse.inView()));
-    }
 
     @Override
     public void paintComponent(Graphics g) {

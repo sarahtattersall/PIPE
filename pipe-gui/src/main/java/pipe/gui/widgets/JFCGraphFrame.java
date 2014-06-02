@@ -3,7 +3,7 @@ package pipe.gui.widgets;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
-import pipe.gui.ApplicationSettings;
+import pipe.gui.PIPEConstants;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -116,7 +116,7 @@ public class JFCGraphFrame extends JFrame {
 		contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.PAGE_AXIS));
 		contentPane.add(chartpnl);
 		contentPane.add(butBar);
-		this.setIconImage(new ImageIcon(ApplicationSettings.getImagePath() + "icon.png").getImage());
+		this.setIconImage(new ImageIcon(PIPEConstants.IMAGE_PATH + "icon.png").getImage());
 	}
 
 }

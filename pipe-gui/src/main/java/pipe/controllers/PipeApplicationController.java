@@ -37,12 +37,6 @@ public class PipeApplicationController {
      */
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<>();
 
-    /**
-     * Selection managers for each tab
-     */
-    private final Map<PetriNetTab, SelectionManager> selectionManagers = new HashMap<>();
-
-
     private final PipeApplicationModel applicationModel;
 
     /**
@@ -57,7 +51,6 @@ public class PipeApplicationController {
 
     public PipeApplicationController(PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
-        ApplicationSettings.register(this);
     }
 
     public void register(final PipeApplicationView view) {
@@ -87,16 +80,14 @@ public class PipeApplicationController {
                             PropertyChangeListener zoomListener) {
         AnimationHistory animationHistory = new AnimationHistory();
         animationHistory.addObserver(historyObserver);
-        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory);
+        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory, this);
 
-        CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net);
+        CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
 
         ZoomController zoomController = new ZoomController(100);
         tab.addZoomListener(zoomController);
         PetriNetController petriNetController =
                 new PetriNetController(net, undoListener, animator, copyPasteManager, zoomController, tab);
-        SelectionManager selectionManager = new SelectionManager(tab, petriNetController);
-        selectionManagers.put(tab, selectionManager);
         netControllers.put(tab, petriNetController);
 
         PetriNetMouseHandler handler =
@@ -108,7 +99,7 @@ public class PipeApplicationController {
         tab.updatePreferredSize();
 
         PropertyChangeListener changeListener =
-                new PetriNetChangeListener(tab.getApplicationView(), tab, petriNetController);
+                new PetriNetChangeListener(tab.getApplicationView(), applicationModel, tab, petriNetController);
         net.addPropertyChangeListener(changeListener);
 
         setActiveTab(tab);
@@ -199,10 +190,6 @@ public class PipeApplicationController {
         return netControllers.get(activeTab);
     }
 
-    public SelectionManager getSelectionManager(PetriNetTab petriNetTab) {
-        return selectionManagers.get(petriNetTab);
-    }
-
     /**
      * @return true if the current petri net has changed
      */
@@ -239,5 +226,13 @@ public class PipeApplicationController {
         netControllers.remove(activeTab);
         PetriNet petriNet = controller.getPetriNet();
         manager.remove(petriNet);
+    }
+
+    /**
+     *
+     * @return the current active tab
+     */
+    public PetriNetTab getActiveTab() {
+        return activeTab;
     }
 }

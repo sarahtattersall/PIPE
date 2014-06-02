@@ -26,6 +26,11 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     protected String _id;
 
+    /**
+     * Parent that this component is contained in.
+     */
+    protected final Container parent;
+
     protected boolean _copyPasteable;
 
     protected Rectangle bounds;
@@ -40,8 +45,9 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     private boolean _draggable;
 
-    public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller) {
+    public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller, Container parent) {
         _id = id;
+        this.parent = parent;
         _selectable = true;
         _draggable = true;
         _copyPasteable = true;
@@ -99,8 +105,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
     public void setDraggable(boolean allow) {
         _draggable = allow;
     }
-
-    public abstract void addedToGui();
 
     @Override
     public void delete() {

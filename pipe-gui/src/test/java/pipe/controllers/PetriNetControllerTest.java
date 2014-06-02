@@ -56,11 +56,6 @@ public class PetriNetControllerTest {
         ZoomController zoomController = mock(ZoomController.class);
 
         controller = new PetriNetController(net, undoListener, mockAnimator, copyPasteManager, zoomController, mocKTab);
-
-        //TODO: Remove this when you can get reid of ApplicationSettings
-        // nasty staticness means that some views persist between tests.
-        PipeApplicationView nullView = null;
-        ApplicationSettings.register(nullView);
     }
 
     @Test

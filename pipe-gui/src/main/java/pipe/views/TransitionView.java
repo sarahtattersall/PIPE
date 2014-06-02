@@ -2,11 +2,8 @@ package pipe.views;
 
 import org.jfree.util.ShapeUtilities;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.widgets.EscapableDialog;
-import pipe.gui.widgets.TransitionEditorPanel;
 import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
@@ -25,10 +22,9 @@ public class TransitionView extends ConnectableView<Transition> {
 
     private boolean _enabled;
 
-    public TransitionView(Transition model, PetriNetController controller) {
-        super(model.getId(), model, controller, new Rectangle2D.Double(0, 0, model.getWidth(),
+    public TransitionView(Transition model, PetriNetController controller, Container parent, TransitionHandler transitionHandler) {
+        super(model.getId(), model, controller, parent, new Rectangle2D.Double(0, 0, model.getWidth(),
                 model.getHeight()));
-//        constructTransition();
         setChangeListener();
 
         _enabled = false;
@@ -38,7 +34,17 @@ public class TransitionView extends ConnectableView<Transition> {
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
         //        changeToolTipText();
 
+        setMouseListener(transitionHandler);
+
     }
+
+    private void setMouseListener(TransitionHandler transitionHandler) {
+        addMouseListener(transitionHandler);
+        addMouseMotionListener(transitionHandler);
+        addMouseWheelListener(transitionHandler);
+
+    }
+
 
     public void rotate(int angleInc) {
         ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(), new Double(model.getCentre().getY()).floatValue());
@@ -77,12 +83,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
         _enabled = status;
 
-    }
-
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
-        update();
     }
 
     public void update() {
@@ -157,20 +157,6 @@ public class TransitionView extends ConnectableView<Transition> {
     }
 
     @Override
-    public void showEditor() {
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(),
-                petriNetController.getTransitionController(this.model), petriNetController);
-        guiDialog.add(te);
-        guiDialog.getRootPane().setDefaultButton(null);
-        guiDialog.setResizable(false);
-        guiDialog.pack();
-        guiDialog.setLocationRelativeTo(null);
-        guiDialog.setVisible(true);
-        guiDialog.dispose();
-    }
-
-    @Override
     public void toggleAttributesVisible() {
         _attributesVisible = !_attributesVisible;
     }
@@ -214,10 +200,6 @@ public class TransitionView extends ConnectableView<Transition> {
     public void addToPetriNetTab(PetriNetTab tab) {
         addLabelToContainer(tab);
 
-        TransitionHandler transitionHandler = new TransitionHandler(this, tab, this.model, petriNetController);
-        addMouseListener(transitionHandler);
-        addMouseMotionListener(transitionHandler);
-        addMouseWheelListener(transitionHandler);
 
         MouseListener transitionAnimationHandler = new TransitionAnimationHandler(this.model, petriNetController);
         addMouseListener(transitionAnimationHandler);

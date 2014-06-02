@@ -1,24 +1,11 @@
 package pipe.gui;
 
+import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.gui.GuiUtils;
-import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
-import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.Annotation;
-import uk.ac.imperial.pipe.models.petrinet.AnnotationVisitor;
-import uk.ac.imperial.pipe.models.petrinet.ArcVisitor;
-import uk.ac.imperial.pipe.models.petrinet.InboundArc;
-import uk.ac.imperial.pipe.models.petrinet.OutboundArc;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.PlaceVisitor;
-import uk.ac.imperial.pipe.models.petrinet.Token;
-import uk.ac.imperial.pipe.models.petrinet.TokenVisitor;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
-import uk.ac.imperial.pipe.models.petrinet.TransitionVisitor;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.naming.MultipleNamer;
 import uk.ac.imperial.pipe.naming.PetriNetComponentNamer;
 import uk.ac.imperial.pipe.visitor.PasteVisitor;
@@ -68,6 +55,8 @@ public class CopyPasteManager extends javax.swing.JComponent
      */
     private final PetriNet petriNet;
 
+    private final PipeApplicationController applicationController;
+
     /**
      * Origin of the selected components to paste (top left corner)
      */
@@ -91,13 +80,15 @@ public class CopyPasteManager extends javax.swing.JComponent
     private Collection<PetriNetComponent> pasteComponents = new ArrayList<>();
 
 
-    public CopyPasteManager(UndoableEditListener listener, PetriNetTab petriNetTab, PetriNet net) {
+    public CopyPasteManager(UndoableEditListener listener, PetriNetTab petriNetTab, PetriNet net,
+                            PipeApplicationController applicationController) {
         this.petriNetTab = petriNetTab;
         petriNet = net;
+        this.applicationController = applicationController;
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
-//        zoom = petriNetTab.getZoom();
+        //        zoom = petriNetTab.getZoom();
         this.listener = listener;
 
     }
@@ -158,10 +149,10 @@ public class CopyPasteManager extends javax.swing.JComponent
         if (!pasteInProgress) {
             petriNetTab.add(this);
             requestFocusInWindow();
-//            if (zoom != petriNetTab.getZoom()) {
-//                updateSize(pasteRectangle, zoom, petriNetTab.getZoom());
-//                zoom = petriNetTab.getZoom();
-//            }
+            //            if (zoom != petriNetTab.getZoom()) {
+            //                updateSize(pasteRectangle, zoom, petriNetTab.getZoom());
+            //                zoom = petriNetTab.getZoom();
+            //            }
 
             petriNetTab.setLayer(this, Constants.SELECTION_LAYER_OFFSET);
             repaint();
@@ -170,20 +161,10 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
-    private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
-//        ZoomController zoomController = petriNetTab.getZoomController();
-        int realWidth = pasteRectangle.width;
-        int realHeight = pasteRectangle.height;
-
-//        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
-//                (int) (realHeight * zoomController.getScaleFactor()));
-    }
-
     private void updateBounds() {
         if (pasteInProgress) {
-            PipeApplicationView applicationView = ApplicationSettings.getApplicationView();
-            setBounds(0, 0, applicationView.getCurrentTab().getWidth(),
-                    ApplicationSettings.getApplicationView().getCurrentTab().getHeight());
+            PetriNetTab activeTab = applicationController.getActiveTab();
+            setBounds(0, 0, activeTab.getWidth(), activeTab.getHeight());
         }
     }
 
@@ -210,6 +191,15 @@ public class CopyPasteManager extends javax.swing.JComponent
     public void zoomUpdate(int newZoom) {
         updateSize(pasteRectangle, zoom, newZoom);
         zoom = newZoom;
+    }
+
+    private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
+        //        ZoomController zoomController = petriNetTab.getZoomController();
+        int realWidth = pasteRectangle.width;
+        int realHeight = pasteRectangle.height;
+
+        //        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
+        //                (int) (realHeight * zoomController.getScaleFactor()));
     }
 
     /**
@@ -316,6 +306,30 @@ public class CopyPasteManager extends javax.swing.JComponent
         createPasteHistoryItem(pasteVisitor.getCreatedComponents());
     }
 
+    private Collection<Connectable> getConnectablesToPaste() {
+        final Collection<Connectable> connectables = new LinkedList<>();
+        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
+            @Override
+            public void visit(Place place) {
+                connectables.add(place);
+            }
+
+            @Override
+            public void visit(Transition transition) {
+                connectables.add(transition);
+            }
+        };
+
+        for (PetriNetComponent component : pasteComponents) {
+            try {
+                component.accept(connectableVisitor);
+            } catch (PetriNetComponentException e) {
+                GuiUtils.displayErrorMessage(null, e.getMessage());
+            }
+        }
+        return connectables;
+    }
+
     /**
      * @return Petri net components that do not inherit from Connectable
      */
@@ -355,30 +369,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         return components;
     }
 
-    private Collection<Connectable> getConnectablesToPaste() {
-        final Collection<Connectable> connectables = new LinkedList<>();
-        PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
-            @Override
-            public void visit(Place place) {
-                connectables.add(place);
-            }
-
-            @Override
-            public void visit(Transition transition) {
-                connectables.add(transition);
-            }
-        };
-
-        for (PetriNetComponent component : pasteComponents) {
-            try {
-                component.accept(connectableVisitor);
-            } catch (PetriNetComponentException e) {
-                GuiUtils.displayErrorMessage(null, e.getMessage());
-            }
-        }
-        return connectables;
-    }
-
     /**
      * Creates a history item for the new components added to the petrinet
      *
@@ -412,7 +402,8 @@ public class CopyPasteManager extends javax.swing.JComponent
     }
 
     public void cancelPaste() {
-        cancelPaste(ApplicationSettings.getApplicationView().getCurrentTab());
+        PetriNetTab tab = applicationController.getActiveTab();
+        cancelPaste(tab);
     }
 
     void cancelPaste(PetriNetTab view) {

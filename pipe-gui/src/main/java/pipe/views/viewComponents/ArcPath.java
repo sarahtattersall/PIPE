@@ -7,6 +7,7 @@ import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.utilities.gui.GuiUtils;
@@ -44,7 +45,7 @@ public class ArcPath implements Shape, Cloneable {
 
     private final List<ArcPathPoint> pathPoints = new ArrayList<>();
 
-    private final ArcView<? extends Connectable, ? extends Connectable> parent;
+    private final ArcView<? extends Connectable, ? extends Connectable> arcView;
 
     private final PetriNetController petriNetController;
 
@@ -65,10 +66,13 @@ public class ArcPath implements Shape, Cloneable {
 
     private int _transitionAngle;
 
-    public ArcPath(ArcView<? extends Connectable, ? extends Connectable> parent,
-                   PetriNetController petriNetController) {
-        this.parent = parent;
+    private final PipeApplicationModel applicationModel;
+
+    public ArcPath(ArcView<? extends Connectable, ? extends Connectable> arcView, PetriNetController petriNetController,
+                   PipeApplicationModel applicationModel) {
+        this.arcView = arcView;
         this.petriNetController = petriNetController;
+        this.applicationModel = applicationModel;
         _transitionAngle = 0;
     }
 
@@ -327,13 +331,12 @@ public class ArcPath implements Shape, Cloneable {
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 
                 createPath();
-                parent.arcSpecificUpdate();
-                parent.updateBounds();
-                parent.repaint();
+                arcView.updateBounds();
+                arcView.repaint();
             }
         };
         point.addPropertyChangeListener(listener);
-        return new ArcPathPoint(point, this, petriNetController);
+        return new ArcPathPoint(point, this, petriNetController, arcView.getParent());
 
     }
 
@@ -368,7 +371,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public void updateArc() {
-        parent.updateArcPosition();
+        arcView.updateArcPosition();
     }
 
     public int getNumPoints() {
@@ -554,7 +557,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     public ArcView<? extends Connectable, ? extends Connectable> getArc() {
-        return parent;
+        return arcView;
     }
 
     public void set_transitionAngle(int angle) {
@@ -573,7 +576,7 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
-        addPointsToGui(parent.getTab());
+        addPointsToGui(arcView.getTab());
     }
 
     public void addPointsToGui(PetriNetTab petriNetTab) {
@@ -598,9 +601,9 @@ public class ArcPath implements Shape, Cloneable {
 
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
                 ArcController<? extends Connectable, ? extends Connectable> arcController =
-                        petriNetController.getArcController(parent.getModel());
+                        petriNetController.getArcController(arcView.getModel());
                 ArcPathPointHandler pointHandler =
-                        new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController);
+                        new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController, applicationModel);
 
                 if (point.getMouseListeners().length == 0) {
                     point.addMouseListener(pointHandler);

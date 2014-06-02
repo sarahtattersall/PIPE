@@ -1,17 +1,16 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.widgets.ArcWeightEditorPanel;
-import pipe.gui.widgets.EscapableDialog;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
 import pipe.views.viewComponents.ArcPath;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
+import java.awt.Container;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -50,13 +49,21 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected boolean inView = true;
 
-    public ArcView(Arc<S, T> model, PetriNetController controller) {
-        super(model.getId(), model, controller);
-        arcPath = new ArcPath(this, controller);
+    public ArcView(Arc<S, T> model, PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> arcHandler, PipeApplicationModel applicationModel) {
+        super(model.getId(), model, controller, parent);
+        arcPath = new ArcPath(this, controller, applicationModel);
 
         updatePath();
         updateBounds();
         registerModelListeners();
+        tab = controller.getPetriNetTab();
+        setMouseListener(arcHandler);
+    }
+
+    public void setMouseListener(ArcHandler<? extends Connectable, ? extends Connectable> arcHandler) {
+        addMouseListener(arcHandler);
+        addMouseWheelListener(arcHandler);
+        addMouseMotionListener(arcHandler);
     }
 
     /**
@@ -76,19 +83,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             public void propertyChange(PropertyChangeEvent evt) {
                 String name = evt.getPropertyName();
                 if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-                    arcSpecificUpdate();
                 }
             }
         };
         model.getSource().addPropertyChangeListener(changeListener);
         model.getTarget().addPropertyChangeListener(changeListener);
     }
-
-    /**
-     * Perform any updates specific to the arc type
-     * E.g. NormalArc should show weights
-     */
-    public abstract void arcSpecificUpdate();
 
     /**
      * Listens for intermediate points being added/deleted
@@ -117,7 +117,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     private void updateAllPoints() {
         updatePath();
-        arcSpecificUpdate();
         updateBounds();
     }
 
@@ -160,10 +159,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return tab;
     }
 
-    /**
-     * Perform any arc specific addition acitons
-     */
-    protected abstract void arcSpecificAdd();
 
     @Override
     public boolean contains(int x, int y) {
@@ -191,33 +186,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     public String getId() {
         return model.getId();
     }
-
-    @Override
-    public void addedToGui() {
-        // called by PetriNetTab / State viewer when adding component.
-        _deleted = false;
-        _markedAsDeleted = false;
-
-        arcPath.addPointsToGui(tab);
-        updateArcPosition();
-        //addWeightLabelsToContainer(getParent());
-    }
-
-    @Override
-    public void delete() {
-        if (!_deleted) {
-            arcSpecificDelete();
-
-            arcPath.forceHidePoints();
-            super.delete();
-            _deleted = true;
-        }
-    }
-
-    /**
-     * Perform any arc specific deletion acitons
-     */
-    protected abstract void arcSpecificDelete();
 
     @Override
     public int getLayerOffset() {
@@ -255,34 +223,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     public void addToPetriNetTab(PetriNetTab tab) {
         this.tab = tab;
         updatePath();
-        ArcHandler<S, T> arcHandler = new ArcHandler<>(this, tab, this.model, petriNetController);
-        addMouseListener(arcHandler);
-        addMouseWheelListener(arcHandler);
-        addMouseMotionListener(arcHandler);
-    }
-
-    //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView<Connectable> getSource() {
-        return null;
-    }
-
-    //TODO: DELETE
-    void setSource(ConnectableView<?> sourceInput) {
-        throw new RuntimeException("Should be setting models source");
-    }
-
-    //TODO: DELETE AND REPOINT METHODS AT THE MODEL VERSION
-    public ConnectableView<Connectable> getTarget() {
-        return null;
-    }
-
-    //TODO: DELETE
-    public void setTarget(ConnectableView<?> targetInput) {
-        throw new RuntimeException("Should be setting models target");
-    }
-
-    public int getSimpleWeight() {
-        return 1;
     }
 
     public ArcPath getArcPath() {
@@ -291,41 +231,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     public abstract String getType();
 
-    public boolean inView() {
-        return inView;
-    }
-
     public void removeFromView() {
-        if (getParent() != null) {
-            arcSpecificDelete();
-        }
         arcPath.forceHidePoints();
         removeFromContainer();
     }
 
-    public void showEditor() {
-        // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE", true);
 
-        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
-                petriNetController.getArcController(this.model));
-
-        guiDialog.add(arcWeightEditor);
-
-        guiDialog.getRootPane().setDefaultButton(null);
-
-        guiDialog.setResizable(false);
-
-        // Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setVisible(true);
-
-        guiDialog.dispose();
-    }
 
     // Accessor function to check whether or not the Arc is tagged
     public boolean isTagged() {

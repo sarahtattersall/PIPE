@@ -106,11 +106,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public UnfoldAction unfoldAction;
 
-    public ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(this);
+    public ChooseTokenClassAction chooseTokenClassAction;
 
     private JToolBar animationToolBar, drawingToolBar;
-
-    private HelpBox helpAction;
 
     private JScrollPane scroller;
 
@@ -118,7 +116,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public PipeApplicationView(final PipeApplicationController applicationController, PipeApplicationModel applicationModel,
                                ComponentEditorManager componentManager, ComponentCreatorManager componentCreatorManager,
-                               AnimateActionManager animateActionManager, TokenActionManager tokenActionManager) {
+                               AnimateActionManager animateActionManager, SimpleUndoListener undoListener) {
 
         applicationController.register(this);
         applicationModel.addPropertyChangeListener(new PropertyChangeListener() {
@@ -134,7 +132,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     PetriNetTab petriNetTab = getCurrentTab();
                     if (petriNetTab != null) {
                         petriNetTab.setCursorType("crosshair");
-                        SelectionManager selectionManager = applicationController.getSelectionManager(petriNetTab);
+                        SelectionManager selectionManager = applicationController.getActivePetriNetController().getSelectionManager();
                         selectionManager.disableSelection();
                     }
                 }
@@ -144,10 +142,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         });
         this.componentCreatorManager = componentCreatorManager;
         this.animateActionManager = animateActionManager;
-        this.tokenActionManager = tokenActionManager;
-        ApplicationSettings.register(this);
+        this.tokenActionManager = new TokenActionManager(undoListener, applicationModel, applicationController, this);
         this.componentEditorManager = componentManager;
         this.editorManager = new PetriNetEditorManager(this, applicationController);
+        this.chooseTokenClassAction = new ChooseTokenClassAction(this, applicationController);
 
         this.applicationController = applicationController;
         this.applicationModel = applicationModel;
@@ -155,7 +153,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         zoomOutAction = new ZoomOutAction(zoomUI);
         zoomInAction = new ZoomInAction(zoomUI);
-        zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController);
+        zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", applicationController, this);
 
         unfoldAction = new UnfoldAction(this, applicationController);
 
@@ -191,7 +189,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
 
-        ModuleManager moduleManager = new ModuleManager(applicationController);
+        ModuleManager moduleManager = new ModuleManager(this, applicationController);
         JTree moduleTree = moduleManager.getModuleTree();
         moduleAndAnimationHistoryFrame = new JSplitPane(JSplitPane.VERTICAL_SPLIT, moduleTree, null);
         moduleAndAnimationHistoryFrame.setContinuousLayout(true);
@@ -456,7 +454,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         animationToolBar.setVisible(false);
 
         toolBar.addSeparator();
-        addButton(toolBar, helpAction);
 
         for (int i = 0; i < toolBar.getComponentCount(); i++) {
             toolBar.getComponent(i).setFocusable(false);
@@ -600,8 +597,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
-        helpAction = new HelpBox("Help", "View documentation", "F1", "index.htm");
-        addMenuItem(helpMenu, helpAction);
 
         JMenuItem aboutItem = helpMenu.add("About PIPE");
         aboutItem.addActionListener(this); // Help - About is implemented
@@ -650,12 +645,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         }
         JMenu exampleMenu = new JMenu("Examples");
         exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
-        URL examplesDirURL = this.getClass().getResource("/extras/examples/");
+        URL examplesDirURL = this.getClass().getResource(PIPEConstants.EXAMPLES_PATH);
         try {
             URI uri = examplesDirURL.toURI();
             File directory = new File(uri);
           for (File entry : directory.listFiles()) {
-              addMenuItem(exampleMenu, new ExampleFileAction(entry, this));
+              addMenuItem(exampleMenu, new ExampleFileAction(entry, this, applicationController));
           }
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -676,7 +671,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     break;
                 String name = e.getName();
                 if (name.startsWith("foo/")) {
-                    addMenuItem(exampleMenu, new ExampleFileAction(e, this));
+                    addMenuItem(exampleMenu, new ExampleFileAction(e, this, applicationController));
       /* Do something with this entry. */
                 }
             }
@@ -824,7 +819,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private URL getImageURL(String name) {
         return this.getClass().getResource(
-                ApplicationSettings.getImagePath() + name);
+                PIPEConstants.IMAGE_PATH + name);
     }
 
     public boolean isJar() {

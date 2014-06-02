@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
+import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.animation.Animator;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
@@ -26,11 +27,15 @@ public class GUIAnimator {
 
     private final AnimationHistory animationHistory;
 
+    private final PipeApplicationController applicationController;
+
     private int numberSequences = 0;
 
-    public GUIAnimator(Animator animator, AnimationHistory animationHistory) {
+    public GUIAnimator(Animator animator, AnimationHistory animationHistory,
+                       PipeApplicationController applicationController) {
         this.animator = animator;
         this.animationHistory = animationHistory;
+        this.applicationController = applicationController;
     }
 
     /**
@@ -79,7 +84,7 @@ public class GUIAnimator {
                 timer.setDelay(Integer.parseInt(s));
                 timer.start();
             } catch (NumberFormatException e) {
-                ApplicationSettings.getApplicationView().setAnimationMode(false);
+                GuiUtils.displayErrorMessage(null, "Error in animator: " + e.getMessage());
             }
         }
     }
@@ -173,7 +178,6 @@ public class GUIAnimator {
     private class TimedTransitionActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            PipeApplicationController applicationController = ApplicationSettings.getApplicationController();
             PetriNetController controller = applicationController.getActivePetriNetController();
             if ((getNumberSequences() < 1) || !controller.isInAnimationMode()) {
                 timer.stop();

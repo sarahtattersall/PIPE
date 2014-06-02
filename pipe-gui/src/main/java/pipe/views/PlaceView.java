@@ -1,24 +1,18 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.widgets.EscapableDialog;
-import pipe.gui.widgets.PlaceEditorPanel;
 import pipe.handlers.PlaceHandler;
-import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,9 +21,16 @@ import java.util.Map;
 public class PlaceView extends ConnectableView<Place> {
 
 
-    public PlaceView(Place model, PetriNetController controller) {
-        super(model.getId(), model, controller, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
+    public PlaceView(Place model, Container parent, PetriNetController controller, PlaceHandler placeHandler) {
+        super(model.getId(), model, controller, parent, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
         setChangeListener();
+        setMouseListener(placeHandler);
+    }
+
+    private void setMouseListener(PlaceHandler placeHandler) {
+        this.addMouseListener(placeHandler);
+        this.addMouseWheelListener(placeHandler);
+        this.addMouseMotionListener(placeHandler);
     }
 
     /**
@@ -55,10 +56,6 @@ public class PlaceView extends ConnectableView<Place> {
         return model.getNumberOfTokensStored();
     }
 
-    @Override
-    public void addedToGui() {
-        super.addedToGui();
-    }
 
     @Override
     public void delete() {
@@ -278,30 +275,6 @@ public class PlaceView extends ConnectableView<Place> {
         return model.getCapacity() > 0;
     }
 
-    @Override
-    public void showEditor() {
-        // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-
-        Container contentPane = guiDialog.getContentPane();
-
-        // 1 Set layout
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-
-        // 2 Add Place editor
-        contentPane.add(
-                new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(this.getModel()),
-                       petriNetController));
-
-        guiDialog.setResizable(false);
-
-        // Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-        guiDialog.setVisible(true);
-    }
 
     @Override
     public void toggleAttributesVisible() {
@@ -315,12 +288,6 @@ public class PlaceView extends ConnectableView<Place> {
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
         addLabelToContainer(tab);
-
-
-        PlaceHandler placeHandler = new PlaceHandler(this, tab, this.model, petriNetController);
-        this.addMouseListener(placeHandler);
-        this.addMouseWheelListener(placeHandler);
-        this.addMouseMotionListener(placeHandler);
     }
 
     public Double getMarkingOffsetXObject() {

@@ -16,8 +16,7 @@ public class AnimateActionManager implements ActionManager {
 
     private final GuiAction randomAction;
 
-    private final AnimateAction multipleRandomAction =
-            new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", this);
+    private final AnimateAction multipleRandomAction;
 
     public AnimateActionManager(PipeApplicationModel applicationModel, PipeApplicationController applicationController) {
         toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A",
@@ -26,6 +25,7 @@ public class AnimateActionManager implements ActionManager {
         randomAction =
                 new RandomAnimateAction("Random", "Randomly fire a transition", "5", applicationController, this);
         stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", applicationController, this);
+        multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", this, applicationController);
     }
 
     @Override

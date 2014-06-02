@@ -2,56 +2,31 @@ package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.ArcView;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.io.Serializable;
 
 
 /**
  * @author Pere Bonet
  * @version 1.0
  */
-public class InhibitorArcView extends ArcView<Place, Transition> implements Serializable {
+public class InhibitorArcView extends ArcView<Place, Transition> {
 
     private final static String type = "inhibitor";
 
     ArcHead arcHead = new InhibitorArcHead();
 
-    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller) {
-        super(model, controller);
+    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> handler, PipeApplicationModel applicationModel) {
+        super(model, controller, parent, handler, applicationModel);
     }
-
-    @Override
-    public void arcSpecificUpdate() {
-
-    }
-
-    @Override
-    protected void arcSpecificDelete() {
-
-    }
-
-    @Override
-    protected void arcSpecificAdd() {
-
-    }
-
-
-
-
-    public InhibitorArcView copy() {
-        return null;
-//        return new InhibitorArcView(this);
-    }
-
 
     @Override
     public String getType() {

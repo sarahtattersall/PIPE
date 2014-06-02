@@ -2,7 +2,7 @@ package pipe.actions.gui.tokens;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
+import pipe.controllers.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 
@@ -15,16 +15,18 @@ public class ChooseTokenClassAction extends GuiAction {
 
     private final PipeApplicationView pipeApplicationView;
 
-    public ChooseTokenClassAction(PipeApplicationView pipeApplicationView) {
+    private final PipeApplicationController applicationController;
+
+    public ChooseTokenClassAction(PipeApplicationView pipeApplicationView, PipeApplicationController applicationController) {
         super("chooseTokenClass", "Select current token");
         this.pipeApplicationView = pipeApplicationView;
+        this.applicationController = applicationController;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String currentSelection = (String) pipeApplicationView.tokenClassComboBox.getSelectedItem();
-        PetriNetController petriNetController =
-                ApplicationSettings.getApplicationController().getActivePetriNetController();
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
         try {
             petriNetController.selectToken(currentSelection);
         } catch (PetriNetComponentNotFoundException petriNetComponentNotFoundException) {

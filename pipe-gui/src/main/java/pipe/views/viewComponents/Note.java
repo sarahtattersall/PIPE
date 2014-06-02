@@ -1,7 +1,6 @@
 package pipe.views.viewComponents;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.Translatable;
 import pipe.historyActions.AnnotationBorder;
@@ -11,10 +10,7 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.RectangularShape;
 
 
@@ -40,8 +36,8 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     private int originalY;
 
 
-    Note(Annotation model, PetriNetController controller) {
-        super(model.getId(), model, controller);
+    Note(Annotation model, PetriNetController controller, Container parent) {
+        super(model.getId(), model, controller, parent);
         initialise(model.getX(), model.getY());
         note.setText(model.getText());
         note.setSize(model.getWidth(), model.getHeight());
@@ -97,7 +93,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
         setBounds(bounds);
     }
 
-    public abstract void enableEditMode();
 
     public boolean isShowingBorder() {
         return drawBorder;
@@ -167,23 +162,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     @Override
     public boolean contains(int x, int y) {
         return noteRect.contains(x, y);
-    }
-
-    //
-    @Override
-    public void addedToGui() {
-        if (ApplicationSettings.getApplicationView().getCurrentTab() != null) {
-            _markedAsDeleted = false;
-            _deleted = false;
-            updateBounds();
-            //         Pipe.getCurrentTab().setNetChanged(true);
-        }
-    }
-
-    @Override
-    public void delete() {
-        //        ApplicationSettings.getApplicationView().getCurrentPetriNetView().removePetriNetObject(this);
-        ApplicationSettings.getApplicationView().getCurrentTab().remove(this);
     }
 
     @Override

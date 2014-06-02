@@ -1,8 +1,12 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.AnnotationNoteHandler;
 import pipe.views.viewComponents.AnnotationView;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
+
+import java.awt.Container;
 
 public class AnnotationViewBuilder {
     final Annotation annotation;
@@ -14,7 +18,13 @@ public class AnnotationViewBuilder {
         this.controller = controller;
     }
 
-    public AnnotationView build() {
-        return new AnnotationView(annotation, controller);
+    /**
+     *
+     * @param parent
+     * @return a new annotation view who belongs in the specified parent
+     */
+    public AnnotationView build(Container parent, PipeApplicationModel model) {
+        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(parent, annotation, controller, model);
+        return new AnnotationView(annotation, controller, parent, noteHandler);
     }
 }

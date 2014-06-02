@@ -1,11 +1,8 @@
 package pipe.handlers;
 
 import pipe.actions.gui.create.CreateAction;
-import pipe.actions.petrinet.ShowHideInfoAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.ConnectableView;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.*;
@@ -15,14 +12,13 @@ import java.awt.event.MouseEvent;
 /**
  * ConnectableHandler handles mouse clicks on Connectables.
  */
-public class ConnectableHandler<T extends Connectable, V extends ConnectableView<T>>
-        extends PetriNetObjectHandler<T, V> {
+public class ConnectableHandler<T extends Connectable>
+        extends PetriNetObjectHandler<T> {
 
 
     // constructor passing in all required objects
-    ConnectableHandler(V view, Container contentpane,
-                       T obj, PetriNetController controller) {
-        super(view, contentpane, obj, controller);
+    ConnectableHandler(Container contentpane, T obj, PetriNetController controller, PipeApplicationModel applicationModel) {
+        super(contentpane, obj, controller, applicationModel);
         enablePopup = true;
     }
 
@@ -32,11 +28,10 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
 
         if (e.isPopupTrigger()) {
             JPopupMenu menu = getPopup(e);
-            menu.show(viewComponent, 0, 0);
+            menu.show(e.getComponent(), 0, 0);
         } else if (e.getButton() == MouseEvent.BUTTON1) {
 
-            PipeApplicationModel model = ApplicationSettings.getApplicationModel();
-            CreateAction selectedAction = model.getSelectedAction();
+            CreateAction selectedAction = applicationModel.getSelectedAction();
             selectedAction.doConnectableAction(component, petriNetController);
         }
     }
@@ -49,13 +44,13 @@ public class ConnectableHandler<T extends Connectable, V extends ConnectableView
     @Override
     protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popupMenu = super.getPopup(e);
-        JMenuItem menuItem = new JMenuItem(new ShowHideInfoAction<>(viewComponent));
-        if (viewComponent.getAttributesVisible()){
-            menuItem.setText("Hide Attributes");
-        } else {
-            menuItem.setText("Show Attributes");
-        }
-        popupMenu.insert(menuItem, 0);
+//        JMenuItem menuItem = new JMenuItem(new ShowHideInfoAction<>(viewComponent));
+//        if (viewComponent.getAttributesVisible()){
+//            menuItem.setText("Hide Attributes");
+//        } else {
+//            menuItem.setText("Show Attributes");
+//        }
+//        popupMenu.insert(menuItem, 0);
         return popupMenu;
     }
 }

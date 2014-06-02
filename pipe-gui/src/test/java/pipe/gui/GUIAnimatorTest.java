@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.controllers.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
 import uk.ac.imperial.pipe.animation.Animator;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
@@ -23,9 +24,12 @@ public class GUIAnimatorTest {
     @Mock
     private Animator mockAnimator;
 
+    @Mock
+    private PipeApplicationController applicationController;
+
     @Before
     public void setUp() {
-        animator = new GUIAnimator(mockAnimator, mockHistory);
+        animator = new GUIAnimator(mockAnimator, mockHistory, applicationController);
     }
 
     @Test

@@ -2,9 +2,8 @@ package pipe.gui.widgets;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.gui.ApplicationSettings;
-import uk.ac.imperial.pipe.models.petrinet.Token;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Token;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -68,7 +67,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         int col = 0;
         int row = 2;
 
-        PetriNet net = ApplicationSettings.getApplicationController().getActivePetriNetController().getPetriNet();
+        PetriNet net = netController.getPetriNet();
         for (Token token : net.getTokens()) {
                 JLabel tokenClassName = new JLabel();
                 JSpinner tokenClassMarking = new JSpinner();

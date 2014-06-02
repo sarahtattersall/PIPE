@@ -1,7 +1,9 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
-import pipe.views.PlaceView;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.gui.widgets.EscapableDialog;
+import pipe.gui.widgets.PlaceEditorPanel;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.*;
@@ -9,19 +11,17 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 
 
 /**
  * Handles place actions
  */
 public class PlaceHandler
-        extends ConnectableHandler<Place, PlaceView> {
+        extends ConnectableHandler<Place> {
 
 
-    public PlaceHandler(PlaceView view, Container contentpane, Place place,
-                        PetriNetController controller) {
-        super(view, contentpane, place, controller);
+    public PlaceHandler(Container contentpane, Place place, PetriNetController controller,  PipeApplicationModel applicationModel) {
+        super(contentpane, place, controller, applicationModel);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class PlaceHandler
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewComponent.showEditor();
+                showEditor();
             }
         };
         menuItem.addActionListener(actionListener);
@@ -43,71 +43,27 @@ public class PlaceHandler
         return popup;
     }
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        //
-        //        if(!ApplicationSettings.getApplicationModel().isEditionAllowed() || e.isControlDown())
-        //        {
-        //            return;
-        //        }
-        //
-        //        HistoryManager historyManager = ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager();
-        //        if(e.isShiftDown())
-        //        {
-        //            double oldCapacity = component.getCapacity();
-        //            LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) component).getCurrentMarkingView());
-        //
-        //            double newCapacity = oldCapacity - e.getWheelRotation();
-        //            if(newCapacity < 0)
-        //            {
-        //                newCapacity = 0;
-        //            }
-        //
-        //            historyManager.newEdit(); // new "transaction""
-        //            for(MarkingView m : oldMarkingViews)
-        //            {
-        //                if(m.getToken().hasSameId(
-        //                        ((PlaceView) component).getActiveTokenView()))
-        //                {
-        //                    if((newCapacity > 0)
-        //                            && (m.getCurrentMarking() > newCapacity))
-        //                    {
-        //                        historyManager.addEdit(((PlaceView) component)
-        //                                                    .setCurrentMarking(oldMarkingViews));
-        //                    }
-        //                    updateArcAndTran();
-        //                }
-        //            }
-        //
-        //            historyManager.addEdit(((PlaceView) component).setCapacity(newCapacity));
-        //        }
-        //        else
-        //        {
-        //            LinkedList<MarkingView> oldMarkingViews = Copier.mediumCopy(((PlaceView) component).getCurrentMarkingView());
-        //            int markingChange = e.getWheelRotation();
-        //            for(MarkingView m : oldMarkingViews)
-        //            {
-        //                if(m.getToken().hasSameId(
-        //                        ((PlaceView) component).getActiveTokenView()))
-        //                {
-        //                    //m.setToken(Pipe.getCurrentPetriNetView().getTokenClassFromID(m.getToken().getID()));
-        //                    int oldMarking = m.getCurrentMarking();
-        //                    int newMarking = m.getCurrentMarking() - markingChange;
-        //                    if(newMarking < 0)
-        //                    {
-        //                        newMarking = 0;
-        //                    }
-        //                    if(oldMarking != newMarking)
-        //                    {
-        //                        m.setCurrentMarking(newMarking);
-        //                        historyManager.addNewEdit(((PlaceView) component)
-        //                                                       .setCurrentMarking(oldMarkingViews));
-        //                    }
-        //                    updateArcAndTran();
-        //                    break;
-        //                }
-        //
-        //            }
-        //        }
+    public void showEditor() {
+        // Build interface
+        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE2", true);
+
+        Container contentPane = guiDialog.getContentPane();
+
+        // 1 Set layout
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+
+        // 2 Add Place editor
+        contentPane.add(
+                new PlaceEditorPanel(guiDialog.getRootPane(), petriNetController.getPlaceController(component),
+                        petriNetController));
+
+        guiDialog.setResizable(false);
+
+        // Make window fit contents' preferred size
+        guiDialog.pack();
+
+        // Move window to the middle of the screen
+        guiDialog.setLocationRelativeTo(null);
+        guiDialog.setVisible(true);
     }
 }

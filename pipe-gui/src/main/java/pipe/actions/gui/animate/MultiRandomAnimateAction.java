@@ -4,23 +4,26 @@ import pipe.actions.manager.AnimateActionManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 import pipe.gui.GUIAnimator;
-import pipe.gui.ApplicationSettings;
 
 import java.awt.event.ActionEvent;
 
 public class MultiRandomAnimateAction extends AnimateAction {
     private final AnimateActionManager animateActionManager;
 
-    public MultiRandomAnimateAction(String name, String tooltip, String keystroke, AnimateActionManager animateActionManager) {
+    private final PipeApplicationController applicationController;
+
+    public MultiRandomAnimateAction(String name, String tooltip, String keystroke,
+                                    AnimateActionManager animateActionManager,
+                                    PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
         this.animateActionManager = animateActionManager;
+        this.applicationController = applicationController;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        PipeApplicationController controller = ApplicationSettings.getApplicationController();
 
-        PetriNetController petriNetController = controller.getActivePetriNetController();
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
         GUIAnimator animator = petriNetController.getAnimator();
         if(animator.getNumberSequences() > 0)
         {
