@@ -9,8 +9,6 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
-import pipe.views.arc.NormalArcView;
-import pipe.views.viewComponents.ArcPath;
 import uk.ac.imperial.pipe.models.petrinet.*;
 
 import java.awt.geom.Point2D;

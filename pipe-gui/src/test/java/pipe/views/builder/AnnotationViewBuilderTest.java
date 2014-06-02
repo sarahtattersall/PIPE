@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.viewComponents.AnnotationView;
+import pipe.views.AnnotationView;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 

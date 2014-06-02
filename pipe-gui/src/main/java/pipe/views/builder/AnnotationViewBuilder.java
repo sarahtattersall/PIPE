@@ -3,7 +3,7 @@ package pipe.views.builder;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.AnnotationNoteHandler;
-import pipe.views.viewComponents.AnnotationView;
+import pipe.views.AnnotationView;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import java.awt.Container;

@@ -1,15 +1,7 @@
 package pipe.views;
 
-import org.junit.Before;
-import org.junit.Test;
-import pipe.controllers.PetriNetController;
-import pipe.gui.PetriNetTab;
-import pipe.gui.ZoomController;
-import pipe.views.viewComponents.NameLabel;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 //TODO:FIX
 public class ConnectableViewTest {

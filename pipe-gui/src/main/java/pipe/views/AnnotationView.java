@@ -2,13 +2,12 @@
  * Created on 04-Mar-2004
  * Author is Michael Camacho
  */
-package pipe.views.viewComponents;
+package pipe.views;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.AnnotationNoteHandler;
-import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 

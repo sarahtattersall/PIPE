@@ -1,4 +1,4 @@
-package pipe.views.arc;
+package pipe.views;
 
 import pipe.gui.Constants;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;

@@ -4,12 +4,11 @@
  * @author Edwin Chung 16 Mar 2007: modified the constructor and several other
  * functions so that DataLayer objects can be created outside the GUI
  */
-package pipe.views.viewComponents;
+package pipe.views;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import java.awt.Container;

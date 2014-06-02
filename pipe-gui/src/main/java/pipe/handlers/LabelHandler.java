@@ -1,7 +1,7 @@
 package pipe.handlers;
 
 import pipe.views.ConnectableView;
-import pipe.views.viewComponents.NameLabel;
+import pipe.views.NameLabel;
 
 import javax.swing.*;
 import java.awt.*;

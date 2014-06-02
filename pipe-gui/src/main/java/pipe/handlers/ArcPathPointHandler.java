@@ -10,7 +10,7 @@ import pipe.actions.petrinet.SplitArcPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.viewComponents.ArcPathPoint;
+import pipe.views.ArcPathPoint;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import javax.swing.*;

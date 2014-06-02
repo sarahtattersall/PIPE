@@ -3,7 +3,7 @@ package pipe.views.builder;
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
-import pipe.views.arc.NormalArcView;
+import pipe.views.NormalArcView;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 

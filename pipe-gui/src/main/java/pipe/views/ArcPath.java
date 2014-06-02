@@ -1,7 +1,7 @@
 /**
  * Created on 12-Feb-2004
  */
-package pipe.views.viewComponents;
+package pipe.views;
 
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
@@ -12,7 +12,6 @@ import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.math.Cubic;
-import pipe.views.ArcView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;

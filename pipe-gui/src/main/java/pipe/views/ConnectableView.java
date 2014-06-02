@@ -4,7 +4,6 @@ import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.handlers.LabelHandler;
-import pipe.views.viewComponents.NameLabel;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.*;

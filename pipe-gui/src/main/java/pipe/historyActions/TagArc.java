@@ -4,7 +4,7 @@
 package pipe.historyActions;
 
 
-import pipe.views.arc.NormalArcView;
+import pipe.views.NormalArcView;
 
 /**
  *

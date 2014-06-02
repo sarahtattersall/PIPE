@@ -5,7 +5,6 @@ import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
-import pipe.views.viewComponents.ArcPath;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;

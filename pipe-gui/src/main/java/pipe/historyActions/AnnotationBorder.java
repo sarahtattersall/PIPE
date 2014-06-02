@@ -4,7 +4,7 @@
 
 package pipe.historyActions;
 
-import pipe.views.viewComponents.Note;
+import pipe.views.Note;
 
 /**
  *

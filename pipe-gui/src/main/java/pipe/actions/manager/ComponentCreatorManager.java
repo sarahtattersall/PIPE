@@ -6,8 +6,8 @@ import pipe.controllers.PipeApplicationController;
 import pipe.controllers.arcCreator.InhibitorCreator;
 import pipe.controllers.arcCreator.NormalCreator;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.arc.InhibitorArcHead;
-import pipe.views.arc.NormalHead;
+import pipe.views.InhibitorArcHead;
+import pipe.views.NormalHead;
 import uk.ac.imperial.pipe.visitor.connectable.arc.InhibitorSourceVisitor;
 import uk.ac.imperial.pipe.visitor.connectable.arc.NormalArcSourceVisitor;
 

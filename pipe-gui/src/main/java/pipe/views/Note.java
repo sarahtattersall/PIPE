@@ -1,4 +1,4 @@
-package pipe.views.viewComponents;
+package pipe.views;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;

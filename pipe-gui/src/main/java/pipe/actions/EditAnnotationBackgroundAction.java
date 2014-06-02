@@ -1,6 +1,6 @@
 package pipe.actions;
 
-import pipe.views.viewComponents.AnnotationView;
+import pipe.views.AnnotationView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

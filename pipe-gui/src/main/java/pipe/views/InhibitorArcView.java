@@ -1,10 +1,9 @@
-package pipe.views.arc;
+package pipe.views;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
-import pipe.views.ArcView;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Place;

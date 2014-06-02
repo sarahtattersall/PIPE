@@ -1,4 +1,4 @@
-package pipe.views.arc;
+package pipe.views;
 import java.awt.*;
 
 public interface ArcHead {

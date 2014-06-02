@@ -2,8 +2,6 @@ package pipe.views;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.views.arc.NormalHead;
-import pipe.views.arc.TemporaryArcView;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
 import uk.ac.imperial.pipe.models.petrinet.Place;
