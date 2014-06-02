@@ -6,7 +6,6 @@ import pipe.actions.gui.edit.*;
 import pipe.controllers.PipeApplicationController;
 
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoManager;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,20 +114,5 @@ public class ComponentEditorManager implements ActionManager {
         for (GuiAction action : getActions()) {
             editEnabledStatus.put(action, action.isEnabled());
         }
-    }
-
-    public void setUndoActionEnabled(boolean flag) {
-        undoAction.setEnabled(flag);
-    }
-
-    public void setRedoActionEnabled(boolean flag) {
-        redoAction.setEnabled(flag);
-    }
-
-    public void updateButtons() {
-        UndoManager undoManager = controller.getActivePetriNetController().getUndoManager();
-
-        setRedoActionEnabled(undoManager.canRedo());
-        setUndoActionEnabled(undoManager.canUndo());
     }
 }
