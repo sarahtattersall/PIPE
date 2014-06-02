@@ -2,7 +2,7 @@ package pipe.actions.gui.tokens;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 

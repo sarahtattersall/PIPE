@@ -2,7 +2,7 @@ package pipe.gui;
 
 import com.google.common.collect.Sets;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.animation.Animator;

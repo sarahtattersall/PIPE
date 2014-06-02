@@ -2,7 +2,7 @@ package pipe.actions.gui.animate;
 
 import pipe.actions.manager.AnimateActionManager;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.GUIAnimator;
 
 import java.awt.event.ActionEvent;

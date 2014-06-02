@@ -3,7 +3,7 @@ package pipe.actions.manager;
 import pipe.actions.gui.DeleteAction;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.edit.*;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.event.UndoableEditListener;
 import java.util.Arrays;

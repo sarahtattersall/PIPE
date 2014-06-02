@@ -2,7 +2,7 @@ package pipe.actions.gui.create;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.RateParameterController;
 import pipe.gui.AbstractDatum;
 import pipe.gui.RateEditorPanel;

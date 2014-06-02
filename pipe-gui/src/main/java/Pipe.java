@@ -1,4 +1,4 @@
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationBuilder;
 import pipe.views.PipeApplicationView;

@@ -1,6 +1,6 @@
 package pipe.gui;
 
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.gui.GuiUtils;

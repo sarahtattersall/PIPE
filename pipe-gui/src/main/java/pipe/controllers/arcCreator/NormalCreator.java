@@ -1,7 +1,7 @@
 package pipe.controllers.arcCreator;
 
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.models.petrinet.Place;

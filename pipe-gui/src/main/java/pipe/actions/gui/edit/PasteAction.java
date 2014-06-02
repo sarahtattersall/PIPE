@@ -2,7 +2,7 @@ package pipe.actions.gui.edit;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

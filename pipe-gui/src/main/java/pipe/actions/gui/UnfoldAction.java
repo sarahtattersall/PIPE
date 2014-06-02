@@ -1,7 +1,7 @@
 package pipe.actions.gui;
 
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.petrinet.unfold.Expander;

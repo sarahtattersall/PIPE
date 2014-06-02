@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.edit.RedoAction;
 import pipe.actions.gui.edit.UndoAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
 import javax.swing.undo.UndoManager;

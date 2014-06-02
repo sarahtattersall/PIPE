@@ -3,9 +3,8 @@ package pipe.actions.gui.file;
 import org.apache.commons.io.FilenameUtils;
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.utilities.gui.GuiUtils;
-import pipe.views.PipeApplicationView;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;

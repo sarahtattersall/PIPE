@@ -1,7 +1,7 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.utilities.gui.GuiUtils;
@@ -35,7 +35,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final StatusBar statusBar;
 
-    final ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, this);
+    private final ZoomUI zoomUI;
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -57,7 +57,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
-    public PipeApplicationView(final PipeApplicationController applicationController, PipeApplicationModel applicationModel) {
+    public PipeApplicationView(ZoomUI zoomUI, final PipeApplicationController applicationController,
+                               PipeApplicationModel applicationModel) {
+        this.zoomUI = zoomUI;
 
         this.applicationModel = applicationModel;
         this.applicationController = applicationController;

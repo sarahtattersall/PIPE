@@ -2,7 +2,7 @@ package pipe.gui;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.plugin.GuiModule;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;

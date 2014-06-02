@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.create.ArcAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;

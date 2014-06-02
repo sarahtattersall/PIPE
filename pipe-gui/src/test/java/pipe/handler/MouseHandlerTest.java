@@ -63,7 +63,7 @@ public class MouseHandlerTest {
 
     @Test
     public void doesNoActionIfAnimating() {
-        when(mockController.isInAnimationMode()).thenReturn(true);
+        when(mockModel.isInAnimationMode()).thenReturn(true);
         handler.mousePressed(mockEvent);
         verify(mockAction, never()).doAction(any(MouseEvent.class), any(PetriNetController.class));
     }

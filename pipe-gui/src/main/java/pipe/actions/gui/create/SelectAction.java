@@ -1,7 +1,7 @@
 package pipe.actions.gui.create;
 
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.DragManager;
 import pipe.gui.PetriNetTab;
 import pipe.gui.SelectionManager;

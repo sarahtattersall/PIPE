@@ -1,8 +1,7 @@
 package pipe.actions.gui.file;
 
 import pipe.actions.gui.GuiAction;
-import pipe.controllers.PipeApplicationController;
-import pipe.views.PipeApplicationView;
+import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

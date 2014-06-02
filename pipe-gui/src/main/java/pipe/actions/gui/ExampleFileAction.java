@@ -1,6 +1,6 @@
 package pipe.actions.gui;
 
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PIPEConstants;
 import pipe.io.JarUtilities;
 import pipe.utilities.gui.GuiUtils;

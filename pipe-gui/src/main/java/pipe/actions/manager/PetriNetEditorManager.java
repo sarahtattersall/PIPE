@@ -2,7 +2,7 @@ package pipe.actions.manager;
 
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.file.*;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 
 import java.awt.FileDialog;

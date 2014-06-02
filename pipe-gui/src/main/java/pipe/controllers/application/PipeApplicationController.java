@@ -1,5 +1,7 @@
-package pipe.controllers;
+package pipe.controllers.application;
 
+import pipe.controllers.PetriNetChangeListener;
+import pipe.controllers.PetriNetController;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;

@@ -1,6 +1,6 @@
 package pipe.actions.gui.file;
 
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.name.FileNameVisitor;
 import uk.ac.imperial.pipe.models.petrinet.name.NormalNameVisitor;

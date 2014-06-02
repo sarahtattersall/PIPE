@@ -5,7 +5,7 @@ import pipe.actions.gui.create.AddTokenAction;
 import pipe.actions.gui.create.CreateAction;
 import pipe.actions.gui.create.DeleteTokenAction;
 import pipe.actions.gui.tokens.SpecifyTokenAction;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PipeApplicationView;
 

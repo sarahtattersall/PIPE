@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PetriNetTab;
 
 import javax.swing.*;
@@ -33,7 +34,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * ApplicationView that this zooming belongs for
      * is used to get petri net tab
      */
-    private final PipeApplicationView view;
+    private final PipeApplicationController controller;
 
     /**
      * Maximum scale allowed to zoom to
@@ -55,13 +56,14 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * @param zoomAmount    amount to zoom in/out by
      * @param zoomMax       maximum allowed zoom value
      * @param zoomMin       minimum allowed zoom value
+     * @param controller
      */
-    public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin, PipeApplicationView view) {
+    public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin, PipeApplicationController controller) {
         zoom = startingScale;
         this.zoomAmount = zoomAmount;
         this.zoomMax = zoomMax;
         this.zoomMin = zoomMin;
-        this.view = view;
+        this.controller = controller;
     }
 
     @Override
@@ -171,7 +173,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      */
     private Component getComponentClickedOn(JLayer<? extends JComponent> l, MouseEvent e) {
 
-        PetriNetTab tab = view.getCurrentTab();
+        PetriNetTab tab = controller.getActiveTab();
 
         Point coordinates = zoomedXY(e);
         return tab.getComponentAt(coordinates.x, coordinates.y);
@@ -194,7 +196,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * rather than the whole application
      */
     private MouseEvent translateToLayerCoordinates(MouseEvent e, JLayer<? extends JComponent> layer) {
-        PetriNetTab tab = view.getCurrentTab();
+        PetriNetTab tab = controller.getActiveTab();
         return SwingUtilities.convertMouseEvent(e.getComponent(), e, tab);
     }
 

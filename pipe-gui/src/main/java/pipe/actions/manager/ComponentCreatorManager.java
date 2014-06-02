@@ -2,7 +2,7 @@ package pipe.actions.manager;
 
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.create.*;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.arcCreator.InhibitorCreator;
 import pipe.controllers.arcCreator.NormalCreator;
 import pipe.gui.model.PipeApplicationModel;

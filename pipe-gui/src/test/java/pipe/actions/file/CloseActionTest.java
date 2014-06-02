@@ -6,8 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.file.CloseWindowAction;
-import pipe.controllers.PipeApplicationController;
-import pipe.views.PipeApplicationView;
+import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
 

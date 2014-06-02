@@ -1,6 +1,5 @@
 package pipe.gui.model;
 
-import pipe.actions.ZoomAction;
 import pipe.actions.gui.create.CreateAction;
 
 import java.beans.PropertyChangeListener;
@@ -21,7 +20,6 @@ public class PipeApplicationModel implements Serializable {
     public static final String TYPE_ACTION_CHANGE_MESSAGE = "Type action change";
 
     private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%", "120%", "140%", "160%", "180%", "200%", "300%"};
-    private List<ZoomAction> zoomActions = new ArrayList<>();
     private final String _name;
     private boolean editionAllowed = true;
     private int mode;
@@ -61,14 +59,8 @@ public class PipeApplicationModel implements Serializable {
 
     public PipeApplicationModel(String version) {
         _name = "PIPE: Platform Independent Petri Net Editor " + version;
-        registerZoomActions();
     }
 
-
-    private void registerZoomActions() {
-        for (int i = 0; i < zoomExamples.length; i++)
-            zoomActions.add(new ZoomAction(zoomExamples[i], "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
-    }
 
     public String[] getZoomExamples() {
         return zoomExamples;
@@ -105,11 +97,6 @@ public class PipeApplicationModel implements Serializable {
 
     public int getMode() {
         return mode;
-    }
-
-
-    public List<ZoomAction> getZoomActions() {
-        return zoomActions;
     }
 
 

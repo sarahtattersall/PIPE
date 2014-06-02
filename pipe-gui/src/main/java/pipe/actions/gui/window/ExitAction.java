@@ -1,23 +1,23 @@
 package pipe.actions.gui.window;
 
 import pipe.actions.gui.GuiAction;
-import pipe.controllers.PipeApplicationController;
-import pipe.views.PipeApplicationView;
+import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class ExitAction extends GuiAction {
 
-    PipeApplicationView view;
+    Frame application;
 
     private final PipeApplicationController pipeApplicationController;
 
-    public ExitAction(PipeApplicationView view, PipeApplicationController pipeApplicationController) {
+    public ExitAction(Frame application, PipeApplicationController pipeApplicationController) {
         super("Exit", "Close the program", KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-        this.view = view;
+        this.application = application;
         this.pipeApplicationController = pipeApplicationController;
     }
 
@@ -40,10 +40,10 @@ public class ExitAction extends GuiAction {
      */
     private void tryToExit(boolean safeExit) {
         if (safeExit) {
-            view.dispose();
+            application.dispose();
             System.exit(0);
         } else {
-            int result = JOptionPane.showConfirmDialog(view,  "Do you really want to exit? Some unsaved Petri nets have changed.",
+            int result = JOptionPane.showConfirmDialog(application,  "Do you really want to exit? Some unsaved Petri nets have changed.",
                     "Confirm Exit", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             switch (result) {
                 case JOptionPane.YES_OPTION:

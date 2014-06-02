@@ -2,7 +2,7 @@ package pipe.actions.manager;
 
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.animate.*;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.model.PipeApplicationModel;
 
 import java.util.Arrays;

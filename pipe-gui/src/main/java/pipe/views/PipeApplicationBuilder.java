@@ -14,7 +14,7 @@ import pipe.actions.gui.zoom.ZoomInAction;
 import pipe.actions.gui.zoom.ZoomOutAction;
 import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.PipeApplicationController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PIPEConstants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.SelectionManager;
@@ -36,7 +36,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -44,12 +43,13 @@ public final class PipeApplicationBuilder {
 
 
     public PipeApplicationView build(PipeApplicationController controller, PipeApplicationModel model) {
-        PipeApplicationView view = new PipeApplicationView(controller, model);
-        final PIPEComponents pipeComponents = buildComponents(view, model, controller);
+        ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, controller);
+        PipeApplicationView view = new PipeApplicationView(zoomUI, controller, model);
+        final PIPEComponents pipeComponents = buildComponents(view, model, controller, zoomUI);
         JToolBar drawingToolBar = getDrawingToolBar(pipeComponents, view);
         JToolBar animationToolBar = getAnimationToolBar(pipeComponents);
         JToolBar jToolBar = getToolBar(view, pipeComponents, model.getZoomExamples(), drawingToolBar, animationToolBar);
-        JMenuBar menuBar = buildMenu(pipeComponents, view, controller, model.getZoomActions());
+        JMenuBar menuBar = buildMenu(pipeComponents, view, controller, model.getZoomExamples());
         view.setUndoListener(pipeComponents.undoListener);
         view.setMenu(menuBar);
         view.setToolBar(jToolBar);
@@ -66,7 +66,7 @@ public final class PipeApplicationBuilder {
 
 
     private PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
-                                           PipeApplicationController controller) {
+                                           PipeApplicationController controller, ZoomUI zoomUI) {
         ComponentEditorManager componentEditorManager = new ComponentEditorManager(controller);
         SimpleUndoListener undoListener = new SimpleUndoListener(componentEditorManager.redoAction, componentEditorManager.undoAction, controller);
         ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, model, controller);
@@ -81,7 +81,6 @@ public final class PipeApplicationBuilder {
         ExportPSAction exportPSAction = new ExportPSAction();
         ImportAction importAction = new ImportAction();
         GridAction toggleGrid = new GridAction(view);
-        ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, view);
         ZoomOutAction zoomOutAction = new ZoomOutAction(zoomUI);
         ZoomInAction zoomInAction = new ZoomInAction(zoomUI);
         SetZoomAction zoomAction = new SetZoomAction("Zoom", "Select zoom percentage ", "", controller, view);
@@ -225,7 +224,7 @@ public final class PipeApplicationBuilder {
     }
 
     private JMenuBar buildMenu(PIPEComponents pipeComponents, PipeApplicationView view,
-                               PipeApplicationController controller, List<ZoomAction> zoomActions) {
+                               PipeApplicationController controller, String[] zoomActions) {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
@@ -378,10 +377,12 @@ public final class PipeApplicationBuilder {
     /**
      * @param zoomMenu to add to the applications menu bar
      */
-    private void addZoomMenuItems(JMenu zoomMenu, List<ZoomAction> zoomActions) {
-        for (ZoomAction zoomAction : zoomActions) {
-            JMenuItem newItem = new JMenuItem(zoomAction);
+    private void addZoomMenuItems(JMenu zoomMenu, String[] zoomExamples) {
+        int i = 0;
+        for (String zoomExample : zoomExamples) {
+            JMenuItem newItem = new JMenuItem(new ZoomAction(zoomExample, "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
             zoomMenu.add(newItem);
+            i++;
         }
     }
 
