@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.controllers.AnnotationViewBuilder;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;

@@ -2,7 +2,6 @@ package pipe.actions.gui;
 
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.petrinet.unfold.Expander;
 
@@ -15,14 +14,12 @@ import java.awt.event.KeyEvent;
  * Unfolds a coloured Petri net to an ordinary Petri net.
  */
 public class UnfoldAction extends GuiAction {
-    final PipeApplicationView pipeApplicationView;
 
     final PipeApplicationController pipeApplicationController;
 
-    public UnfoldAction(PipeApplicationView pipeApplicationView, PipeApplicationController pipeApplicationController) {
+    public UnfoldAction(PipeApplicationController pipeApplicationController) {
         super("unfoldAction", "Unfold Petri Net", KeyEvent.VK_U,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_DOWN_MASK);
-        this.pipeApplicationView = pipeApplicationView;
         this.pipeApplicationController = pipeApplicationController;
     }
 

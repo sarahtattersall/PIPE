@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.PlaceViewBuilder;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.PlaceView;

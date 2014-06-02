@@ -2,7 +2,6 @@ package pipe.actions.gui.zoom;
 
 import pipe.actions.gui.GuiAction;
 import pipe.utilities.gui.GuiUtils;
-import pipe.views.ZoomManager;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

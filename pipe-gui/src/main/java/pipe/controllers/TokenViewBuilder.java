@@ -1,6 +1,5 @@
-package pipe.views.builder;
+package pipe.controllers;
 
-import pipe.controllers.TokenController;
 import pipe.views.TokenView;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 

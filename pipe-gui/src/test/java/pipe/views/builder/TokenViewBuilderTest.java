@@ -2,6 +2,7 @@ package pipe.views.builder;
 
 import org.junit.Before;
 import org.junit.Test;
+import pipe.controllers.TokenViewBuilder;
 import pipe.views.TokenView;
 import uk.ac.imperial.pipe.models.petrinet.ColoredToken;
 import uk.ac.imperial.pipe.models.petrinet.Token;

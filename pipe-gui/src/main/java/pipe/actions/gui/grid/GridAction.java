@@ -1,9 +1,9 @@
 package pipe.actions.gui.grid;
 
 import pipe.actions.gui.GuiAction;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.Grid;
 import pipe.gui.PetriNetTab;
-import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -11,18 +11,18 @@ import java.awt.event.KeyEvent;
 
 public class GridAction extends GuiAction
 {
-    private final PipeApplicationView applicationView;
+    private final PipeApplicationController applicationController;
 
-    public GridAction(PipeApplicationView applicationView)
+    public GridAction(PipeApplicationController applicationController)
     {
         super("Cycle grid", "Change the grid size (alt-G)", KeyEvent.VK_G, InputEvent.ALT_DOWN_MASK);
-        this.applicationView = applicationView;
+        this.applicationController = applicationController;
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        PetriNetTab petriNetTab = applicationView.getCurrentTab();
+        PetriNetTab petriNetTab = applicationController.getActiveTab();
         Grid grid = petriNetTab.getGrid();
         grid.increment();
         petriNetTab.repaint();

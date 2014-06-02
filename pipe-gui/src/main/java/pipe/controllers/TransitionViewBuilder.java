@@ -1,4 +1,4 @@
-package pipe.views.builder;
+package pipe.controllers;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.model.PipeApplicationModel;

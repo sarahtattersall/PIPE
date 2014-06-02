@@ -10,9 +10,9 @@ import java.util.Arrays;
 public class AnimateActionManager implements ActionManager {
     private final GuiAction toggleAnimationAction;
 
-    private final GuiAction stepbackwardAction;
+    private final StepBackwardAction stepbackwardAction;
 
-    private final GuiAction stepforwardAction;
+    private final StepForwardAction stepforwardAction;
 
     private final GuiAction randomAction;
 
@@ -21,11 +21,12 @@ public class AnimateActionManager implements ActionManager {
     public AnimateActionManager(PipeApplicationModel applicationModel, PipeApplicationController applicationController) {
         toggleAnimationAction = new ToggleAnimateAction("Animation mode", "Toggle Animation Mode", "Ctrl A",
                 applicationModel, applicationController);
-        stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", applicationController, this);
+        stepforwardAction = new StepForwardAction("Forward", "Step forward a firing", "6", applicationController);
+        stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", applicationController, stepforwardAction);
+        stepforwardAction.registerStepBack(stepbackwardAction);
         randomAction =
-                new RandomAnimateAction("Random", "Randomly fire a transition", "5", applicationController, this);
-        stepbackwardAction = new StepBackwardAction("Back", "Step backward a firing", "4", applicationController, this);
-        multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", this, applicationController);
+                new RandomAnimateAction("Random", "Randomly fire a transition", "5", applicationController, stepforwardAction, stepbackwardAction);
+        multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", stepbackwardAction, stepforwardAction, applicationController);
     }
 
     @Override
@@ -55,13 +56,5 @@ public class AnimateActionManager implements ActionManager {
 
     public Iterable<GuiAction> getAnimateActions() {
         return Arrays.asList(stepbackwardAction, stepforwardAction, randomAction, multipleRandomAction);
-    }
-
-    public void setStepForward(boolean stepForwardAllowed) {
-        stepforwardAction.setEnabled(stepForwardAllowed);
-    }
-
-    public void setStepBackward(boolean stepBackwardAllowed) {
-        stepbackwardAction.setEnabled(stepBackwardAllowed);
     }
 }

@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.actions.gui.zoom.ZoomManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.*;
@@ -35,7 +36,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public final StatusBar statusBar;
 
-    private final ZoomUI zoomUI;
+    private final ZoomManager zoomManager;
 
     private final JSplitPane moduleAndAnimationHistoryFrame;
 
@@ -57,9 +58,9 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
 
-    public PipeApplicationView(ZoomUI zoomUI, final PipeApplicationController applicationController,
+    public PipeApplicationView(ZoomManager zoomManager, final PipeApplicationController applicationController,
                                PipeApplicationModel applicationModel) {
-        this.zoomUI = zoomUI;
+        this.zoomManager = zoomManager;
 
         this.applicationModel = applicationModel;
         this.applicationController = applicationController;
@@ -247,7 +248,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         ActionListener zoomComboListener = (zoomComboBox.getActionListeners())[0];
         zoomComboBox.removeActionListener(zoomComboListener);
 
-        String zoomPercentage = zoomUI.getPercentageZoom() + "%";
+        String zoomPercentage = zoomManager.getPercentageZoom() + "%";
         zoomComboBox.setSelectedItem(zoomPercentage);
         zoomComboBox.addActionListener(zoomComboListener);
     }
@@ -317,7 +318,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     private void setZoomChangeListener() {
-        zoomUI.addPropertyChangeListener(new PropertyChangeListener() {
+        zoomManager.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 getTabComponent().repaint();

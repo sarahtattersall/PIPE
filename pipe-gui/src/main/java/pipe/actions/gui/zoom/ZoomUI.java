@@ -1,4 +1,4 @@
-package pipe.views;
+package pipe.actions.gui.zoom;
 
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PetriNetTab;

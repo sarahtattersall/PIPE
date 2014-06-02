@@ -3,7 +3,6 @@ package pipe.controllers;
 import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.*;
-import pipe.views.builder.*;
 import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
 
