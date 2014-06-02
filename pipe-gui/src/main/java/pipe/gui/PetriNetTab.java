@@ -74,10 +74,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      * @param component to add to petri net view
      */
     public void addNewPetriNetComponent(AbstractPetriNetViewComponent<?> component) {
-        if (component.getMouseListeners().length == 0) {
             add(component);
             component.addToPetriNetTab(this);
-        }
     }
 
     public void add(AbstractPetriNetViewComponent<?> component) {

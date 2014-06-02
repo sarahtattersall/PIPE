@@ -2,15 +2,15 @@ package pipe.views.arc;
 
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.ArcView;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 
@@ -24,8 +24,8 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
     ArcHead arcHead = new InhibitorArcHead();
 
-    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller) {
-        super(model, controller);
+    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> handler, PipeApplicationModel applicationModel) {
+        super(model, controller, parent, handler, applicationModel);
     }
 
     @Override

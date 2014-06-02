@@ -12,6 +12,7 @@ import pipe.gui.PetriNetTab;
 import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -66,8 +67,8 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }
 
-    public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController) {
-        super("", point, petriNetController);
+    public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController, Container parent) {
+        super("", point, petriNetController, parent);
         setup();
         model = point;
         setPointLocation(model.getPoint());

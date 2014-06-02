@@ -1,8 +1,7 @@
 package pipe.gui.model;
 
-import pipe.actions.*;
+import pipe.actions.ZoomAction;
 import pipe.actions.gui.create.CreateAction;
-import pipe.gui.ApplicationSettings;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -10,6 +9,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains information about the underlying state of the application
+ * For example whether it is in animation mode and what action is currently selected
+ */
 public class PipeApplicationModel implements Serializable {
 
 

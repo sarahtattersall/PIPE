@@ -1,10 +1,15 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.arc.InhibitorArcView;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
+
+import java.awt.Container;
 
 public class InhibitorArcViewBuilder {
     private final Arc<Place, Transition> arc;
@@ -15,15 +20,14 @@ public class InhibitorArcViewBuilder {
         this.controller = controller;
     }
 
-    /*
-    double startPositionXInput, double startPositionYInput,
-    double endPositionXInput, double endPositionYInput,
-    ConnectableView sourceInput,
-    ConnectableView targetInput, LinkedList<MarkingView> weightInput,
-    String idInput, boolean taggedInput, NormalArc model) {     */
-    public InhibitorArcView build() {
+    /**
+     * @param parent, the parent of this arc view
+     * @return an inhibitor arc view
+     */
+    public InhibitorArcView build(Container parent, PipeApplicationModel model) {
+        ArcHandler<? extends Connectable, ? extends Connectable> handler = new ArcHandler<>(parent, arc, controller, model);
         InhibitorArcView view =
-                new InhibitorArcView(arc, controller);
+                new InhibitorArcView(arc, controller, parent, handler, model);
         return view;
 
     }

@@ -10,10 +10,7 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.RectangularShape;
 
 
@@ -39,8 +36,8 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     private int originalY;
 
 
-    Note(Annotation model, PetriNetController controller) {
-        super(model.getId(), model, controller);
+    Note(Annotation model, PetriNetController controller, Container parent) {
+        super(model.getId(), model, controller, parent);
         initialise(model.getX(), model.getY());
         note.setText(model.getText());
         note.setSize(model.getWidth(), model.getHeight());
@@ -96,7 +93,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
         setBounds(bounds);
     }
 
-    public abstract void enableEditMode();
 
     public boolean isShowingBorder() {
         return drawBorder;

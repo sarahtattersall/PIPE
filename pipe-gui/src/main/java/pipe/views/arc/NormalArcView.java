@@ -3,6 +3,8 @@ package pipe.views.arc;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.ArcView;
 import pipe.views.viewComponents.NameLabel;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
@@ -14,7 +16,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -31,8 +32,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     private Boolean tagged = false;
 
     public NormalArcView(Arc<S, T> model,
-                         PetriNetController controller) {
-        super(model, controller);
+                         PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> handler, PipeApplicationModel applicationModel) {
+        super(model, controller, parent, handler, applicationModel);
         setTagged(model.isTagged());
         addConnectableListener();
         for (NameLabel label : weightLabel) {

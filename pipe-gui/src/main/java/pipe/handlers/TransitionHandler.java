@@ -1,10 +1,9 @@
 package pipe.handlers;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.historyActions.HistoryItem;
-import pipe.views.TransitionView;
+import pipe.gui.widgets.EscapableDialog;
+import pipe.gui.widgets.TransitionEditorPanel;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
@@ -18,38 +17,18 @@ import java.awt.event.MouseWheelEvent;
  * Class used to implement methods corresponding to mouse events on transitions.
  */
 public class TransitionHandler 
-        extends ConnectableHandler<Transition, TransitionView>
+        extends ConnectableHandler<Transition>
 {
   
    
-   public TransitionHandler(TransitionView view, Container contentpane, Transition obj, PetriNetController controller) {
-      super(view, contentpane, obj, controller);
+   public TransitionHandler(Container contentpane, Transition obj, PetriNetController controller, PipeApplicationModel applicationModel) {
+      super(contentpane, obj, controller, applicationModel);
    }
 
    
    @Override
    public void mouseWheelMoved (MouseWheelEvent e) {
-//
-//       if (!ApplicationSettings.getApplicationModel().isEditionAllowed() ||
-//              e.isControlDown()) {
-//         return;
-//      }
-//
-//      if (e.isShiftDown()) {
-//          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-//                 ((TransitionView) component).setTimed(
-//                 !((TransitionView) component).isTimed()));
-//      } else {
-//         int rotation = 0;
-//         if (e.getWheelRotation() < 0) {
-//            rotation = -e.getWheelRotation() * 135;
-//         } else {
-//            rotation = e.getWheelRotation() * 45;
-//         }
-//          ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-//                 ((TransitionView) component).rotate(rotation));
-//      }
-   }   
+   }
    
    
    /** 
@@ -64,53 +43,27 @@ public class TransitionHandler
       menuItem.addActionListener(new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent e) {
-            viewComponent.showEditor();
+            showEditor();
          }
       });
       popup.insert(menuItem, index++);
 
       popup.insert(new JPopupMenu.Separator(), index);
-      menuItem = new JMenuItem("Group Transitions");
-      menuItem.addActionListener(new ActionListener(){
-         @Override
-         public void actionPerformed(ActionEvent e) {
-        	 HistoryItem edit = viewComponent.groupTransitions();
-        	 if(edit != null){
-//                 ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(edit);
-        	 }
-         }
-      });
-      popup.insert(menuItem, index++);
-
       return popup;
    }
-   
-   
-   @Override
-   public void mouseClicked(MouseEvent e) {
-          PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
-//      if (SwingUtilities.isLeftMouseButton(e)){
-//          if (e.getClickCount() == 2 &&
-//                 applicationModel.isEditionAllowed() &&
-//                 (applicationModel.getMode() == Constants.TIMEDTRANS ||
-//                 applicationModel.getMode() == Constants.IMMTRANS ||
-//                 applicationModel.getMode() == Constants.SELECT)) {
-//            ((TransitionView) component).showEditor();
-//         }
-//      }  else if (SwingUtilities.isRightMouseButton(e)){
-//          if (applicationModel.isEditionAllowed() && enablePopup) {
-//            JPopupMenu m = getPopup(e);
-//            if (m != null) {
-//               int x = ZoomController.getZoomedValue(
-//                       component.getNameXOffset(),
-//                       component.getZoomPercentage());
-//               int y = ZoomController.getZoomedValue(
-//                       component.getNameYOffset(),
-//                       component.getZoomPercentage());
-//               m.show(component, x, y);
-//            }
-//         }
-//      }
-   }
-   
+
+    public void showEditor() {
+        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE", true);
+        TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(),
+                petriNetController.getTransitionController(component), petriNetController);
+        guiDialog.add(te);
+        guiDialog.getRootPane().setDefaultButton(null);
+        guiDialog.setResizable(false);
+        guiDialog.pack();
+        guiDialog.setLocationRelativeTo(null);
+        guiDialog.setVisible(true);
+        guiDialog.dispose();
+    }
+
+
 }

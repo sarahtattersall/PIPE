@@ -7,7 +7,9 @@ package pipe.handlers;
 
 import pipe.actions.EditAnnotationBorderAction;
 import pipe.controllers.PetriNetController;
-import pipe.views.viewComponents.AnnotationView;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.gui.widgets.AnnotationEditorPanel;
+import pipe.gui.widgets.EscapableDialog;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
@@ -16,12 +18,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 
-public class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation, AnnotationView> {
+public class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation> {
 
 
-    public AnnotationNoteHandler(AnnotationView view, Container contentpane, Annotation note,
-                                 PetriNetController controller) {
-        super(view, contentpane, note, controller);
+    public AnnotationNoteHandler(Container contentpane, Annotation note, PetriNetController controller,  PipeApplicationModel applicationModel) {
+        super(contentpane, note, controller, applicationModel);
         enablePopup = true;
     }
 
@@ -37,20 +38,19 @@ public class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation, Ann
         JMenuItem menuItem = new JMenuItem(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                viewComponent.enableEditMode();
+                showEditor();
             }
         });
         menuItem.setText("Edit text");
         popup.insert(menuItem, popupIndex++);
 
-              menuItem = new JMenuItem(
-                      new EditAnnotationBorderAction(component));
-              if (viewComponent.isShowingBorder()){
-                 menuItem.setText("Disable Border");
-              } else{
-                 menuItem.setText("Enable Border");
-              }
-              popup.insert(menuItem, popupIndex++);
+        menuItem = new JMenuItem(new EditAnnotationBorderAction(component));
+        if (component.hasBorder()) {
+            menuItem.setText("Disable Border");
+        } else {
+            menuItem.setText("Enable Border");
+        }
+        popup.insert(menuItem, popupIndex++);
 
         //      menuItem = new JMenuItem(
         //              new EditAnnotationBackgroundAction((AnnotationNote) component));
@@ -64,12 +64,32 @@ public class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation, Ann
 
         return popup;
     }
-//
-//    @Override
-//    public void mouseClicked(MouseEvent e) {
-//        if (!e.getComponent().isEnabled() && (SwingUtilities.isRightMouseButton(e))) {
-//            viewComponent.enableEditMode();
-//        }
-//    }
+    //
+    //    @Override
+    //    public void mouseClicked(MouseEvent e) {
+    //        if (!e.getComponent().isEnabled() && (SwingUtilities.isRightMouseButton(e))) {
+    //            viewComponent.enableEditMode();
+    //        }
+    //    }
+
+
+    private void showEditor() {
+        // Build interface
+        EscapableDialog guiDialog =
+                new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE5", true);
+
+        guiDialog.add(new AnnotationEditorPanel(petriNetController.getAnnotationController(component)));
+
+        // Make window fit contents' preferred size
+        guiDialog.pack();
+
+        // Move window to the middle of the screen
+        guiDialog.setLocationRelativeTo(null);
+
+        guiDialog.setResizable(false);
+        guiDialog.setVisible(true);
+
+        guiDialog.dispose();
+    }
 
 }

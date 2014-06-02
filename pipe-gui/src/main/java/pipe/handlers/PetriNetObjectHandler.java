@@ -2,12 +2,10 @@ package pipe.handlers;
 
 import pipe.actions.gui.DeletePetriNetComponentAction;
 import pipe.controllers.PetriNetController;
-import pipe.gui.ApplicationSettings;
 import pipe.gui.Constants;
 import pipe.gui.DragManager;
 import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
-import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import javax.swing.*;
@@ -21,7 +19,7 @@ import java.awt.event.MouseEvent;
  *
  * @author unknown
  */
-public class PetriNetObjectHandler<T extends PetriNetComponent, V extends AbstractPetriNetViewComponent<T>>
+public class PetriNetObjectHandler<T extends PetriNetComponent>
         extends javax.swing.event.MouseInputAdapter {
     // justSelected: set to true on press, and false on release;
     static boolean justSelected = false;
@@ -30,9 +28,9 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
 
     protected final PetriNetController petriNetController;
 
-    final T component;
+    protected final PipeApplicationModel applicationModel;
 
-    final V viewComponent;
+    final T component;
 
     final DragManager dragManager;
 
@@ -47,17 +45,16 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
     private int totalY = 0;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(V viewComponent, Container contentpane, T component, PetriNetController controller) {
-        this.viewComponent = viewComponent;
+    PetriNetObjectHandler(Container contentpane, T component, PetriNetController controller, PipeApplicationModel applicationModel) {
         contentPane = contentpane;
         this.component = component;
         petriNetController = controller;
+        this.applicationModel = applicationModel;
         dragManager = petriNetController.getDragManager();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         if (applicationModel.isEditionAllowed() && enablePopup) {
             checkForPopup(e);
         }
@@ -72,7 +69,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
     private void checkForPopup(MouseEvent e) {
         if (e.isPopupTrigger()) {
             JPopupMenu m = getPopup(e);
-            m.show(viewComponent, 0, 0);
+            m.show(e.getComponent(), 0, 0);
         }
     }
 
@@ -102,7 +99,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
         }
         isDragging = false;
         // Have to check for popup here as well as on pressed for crossplatform!!
-        PipeApplicationModel applicationModel = ApplicationSettings.getApplicationModel();
         if (applicationModel.isEditionAllowed() && enablePopup) {
             checkForPopup(e);
         }
@@ -135,7 +131,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent, V extends Abstra
             return;
         }
 
-        if (ApplicationSettings.getApplicationModel().getMode() == Constants.SELECT) {
+        if (applicationModel.getMode() == Constants.SELECT) {
             if (component.isDraggable()) {
                 if (!isDragging) {
                     isDragging = true;

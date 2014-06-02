@@ -1,8 +1,12 @@
 package pipe.views.builder;
 
 import pipe.controllers.PetriNetController;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.PlaceHandler;
 import pipe.views.PlaceView;
 import uk.ac.imperial.pipe.models.petrinet.Place;
+
+import java.awt.Container;
 
 public class PlaceViewBuilder {
     private final Place place;
@@ -13,8 +17,9 @@ public class PlaceViewBuilder {
         this.controller = controller;
     }
 
-    public PlaceView build() {
-        return new PlaceView(place, controller);
+    public PlaceView build(Container parent, PipeApplicationModel model) {
+        PlaceHandler handler = new PlaceHandler(parent, place, controller, model);
+        return new PlaceView(place, parent, controller, handler);
     }
 
 }

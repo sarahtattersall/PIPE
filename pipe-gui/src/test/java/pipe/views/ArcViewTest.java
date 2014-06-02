@@ -6,14 +6,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pipe.controllers.PetriNetController;
+import pipe.gui.PetriNetTab;
+import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.ArcHandler;
 import pipe.views.arc.NormalArcView;
 import pipe.views.viewComponents.ArcPath;
-import uk.ac.imperial.pipe.models.petrinet.Arc;
-import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
-import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
+import uk.ac.imperial.pipe.models.petrinet.*;
 
 import java.awt.geom.Point2D;
 import java.util.Arrays;
@@ -26,6 +24,14 @@ import static org.mockito.Mockito.when;
 public class ArcViewTest {
 
     private ArcView<Place, Transition> arcView;
+    @Mock
+    PetriNetTab parent;
+
+    @Mock
+    private PipeApplicationModel model;
+
+    @Mock
+    ArcHandler<? extends Connectable, ? extends Connectable> handler;
 
     @Mock
     private Arc<Place, Transition> mockArc;
@@ -44,7 +50,7 @@ public class ArcViewTest {
         when(mockArc.getStartPoint()).thenReturn(start);
         when(mockArc.getEndPoint()).thenReturn(end);
         when(mockArc.getArcPoints()).thenReturn(Arrays.asList(new ArcPoint(start, false), new ArcPoint(end, false)));
-        arcView = new NormalArcView<>(mockArc, mockController);
+        arcView = new NormalArcView<>(mockArc, mockController, parent, handler, model);
     }
 
     @Test

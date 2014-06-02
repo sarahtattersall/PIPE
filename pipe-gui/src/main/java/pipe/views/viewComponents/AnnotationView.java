@@ -7,8 +7,6 @@ package pipe.views.viewComponents;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.widgets.AnnotationEditorPanel;
-import pipe.gui.widgets.EscapableDialog;
 import pipe.handlers.AnnotationNoteHandler;
 import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
@@ -30,11 +28,19 @@ public class AnnotationView extends Note {
 
     private AffineTransform prova = new AffineTransform();
 
-    public AnnotationView(Annotation annotation, PetriNetController controller) {
-        super(annotation, controller);
+    public AnnotationView(Annotation annotation, PetriNetController controller, Container parent, AnnotationNoteHandler handler) {
+        super(annotation, controller, parent);
         addChangeListener(annotation);
         setDragPoints();
+        setMouseHandler(handler);
         updateBounds();
+    }
+
+    private void setMouseHandler(AnnotationNoteHandler handler) {
+        addMouseListener(handler);
+        addMouseMotionListener(handler);
+        note.addMouseListener(handler);
+        note.addMouseMotionListener(handler);
     }
 
     @Override
@@ -58,24 +64,7 @@ public class AnnotationView extends Note {
         dragPoints[7].setLocation(noteRect.getMinX(), noteRect.getCenterY());
     }
 
-    @Override
-    public void enableEditMode() {
-        // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE5", true);
 
-        guiDialog.add(new AnnotationEditorPanel(petriNetController.getAnnotationController(model)));
-
-        // Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setResizable(false);
-        guiDialog.setVisible(true);
-
-        guiDialog.dispose();
-    }
 
     /**
      * @param x
@@ -185,11 +174,7 @@ public class AnnotationView extends Note {
 
     @Override
     public void addToPetriNetTab(PetriNetTab tab) {
-        AnnotationNoteHandler noteHandler = new AnnotationNoteHandler(this, tab, this.model, petriNetController);
-        addMouseListener(noteHandler);
-        addMouseMotionListener(noteHandler);
-        note.addMouseListener(noteHandler);
-        note.addMouseMotionListener(noteHandler);
+
     }
 
     /**

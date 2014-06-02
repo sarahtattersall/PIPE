@@ -3,14 +3,14 @@ package pipe.views;
 import pipe.controllers.PetriNetController;
 import pipe.gui.Constants;
 import pipe.gui.PetriNetTab;
-import pipe.gui.widgets.ArcWeightEditorPanel;
-import pipe.gui.widgets.EscapableDialog;
+import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
 import pipe.views.viewComponents.ArcPath;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
+import java.awt.Container;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -49,14 +49,21 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected boolean inView = true;
 
-    public ArcView(Arc<S, T> model, PetriNetController controller) {
-        super(model.getId(), model, controller);
-        arcPath = new ArcPath(this, controller);
+    public ArcView(Arc<S, T> model, PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> arcHandler, PipeApplicationModel applicationModel) {
+        super(model.getId(), model, controller, parent);
+        arcPath = new ArcPath(this, controller, applicationModel);
 
         updatePath();
         updateBounds();
         registerModelListeners();
         tab = controller.getPetriNetTab();
+        setMouseListener(arcHandler);
+    }
+
+    public void setMouseListener(ArcHandler<? extends Connectable, ? extends Connectable> arcHandler) {
+        addMouseListener(arcHandler);
+        addMouseWheelListener(arcHandler);
+        addMouseMotionListener(arcHandler);
     }
 
     /**
@@ -216,10 +223,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     public void addToPetriNetTab(PetriNetTab tab) {
         this.tab = tab;
         updatePath();
-        ArcHandler<S, T> arcHandler = new ArcHandler<>(this, tab, this.model, petriNetController);
-        addMouseListener(arcHandler);
-        addMouseWheelListener(arcHandler);
-        addMouseMotionListener(arcHandler);
     }
 
     public ArcPath getArcPath() {
@@ -233,29 +236,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         removeFromContainer();
     }
 
-    public void showEditor() {
-        // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE", true);
 
-        ArcWeightEditorPanel arcWeightEditor = new ArcWeightEditorPanel(guiDialog.getRootPane(), petriNetController,
-                petriNetController.getArcController(this.model));
-
-        guiDialog.add(arcWeightEditor);
-
-        guiDialog.getRootPane().setDefaultButton(null);
-
-        guiDialog.setResizable(false);
-
-        // Make window fit contents' preferred size
-        guiDialog.pack();
-
-        // Move window to the middle of the screen
-        guiDialog.setLocationRelativeTo(null);
-
-        guiDialog.setVisible(true);
-
-        guiDialog.dispose();
-    }
 
     // Accessor function to check whether or not the Arc is tagged
     public boolean isTagged() {
