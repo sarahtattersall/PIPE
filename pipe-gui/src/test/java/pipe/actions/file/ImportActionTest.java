@@ -20,7 +20,6 @@ public class ImportActionTest {
     {
         importAction = new ImportAction();
         mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
     }
 
     @Test

@@ -20,7 +20,6 @@ public class PrintActionTest {
     {
         printAction = new PrintAction();
         mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
     }
 
     @Test

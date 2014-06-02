@@ -20,7 +20,6 @@ public class ExportTNActionTest {
     {
         exportTAAction = new ExportTNAction();
         mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
     }
 
     @Test

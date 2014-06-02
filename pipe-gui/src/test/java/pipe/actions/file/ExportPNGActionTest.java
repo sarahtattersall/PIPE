@@ -20,7 +20,6 @@ public class ExportPNGActionTest {
     {
         exportPNGAction = new ExportPNGAction();
         mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
     }
 
     @Test

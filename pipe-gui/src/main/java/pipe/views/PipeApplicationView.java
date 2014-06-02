@@ -143,7 +143,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.componentCreatorManager = componentCreatorManager;
         this.animateActionManager = animateActionManager;
         this.tokenActionManager = new TokenActionManager(undoListener, applicationModel, applicationController, this);
-        ApplicationSettings.register(this);
         this.componentEditorManager = componentManager;
         this.editorManager = new PetriNetEditorManager(this, applicationController);
         this.chooseTokenClassAction = new ChooseTokenClassAction(this, applicationController);

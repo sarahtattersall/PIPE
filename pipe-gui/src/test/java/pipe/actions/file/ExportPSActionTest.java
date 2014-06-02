@@ -20,7 +20,6 @@ public class ExportPSActionTest {
     {
         exportPSAction = new ExportPSAction();
         mockView = mock(PipeApplicationView.class);
-        ApplicationSettings.register(mockView);
     }
 
     @Test
