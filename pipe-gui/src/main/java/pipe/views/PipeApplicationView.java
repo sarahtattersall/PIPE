@@ -11,6 +11,7 @@ import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
@@ -69,7 +70,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         this.applicationModel = applicationModel;
         this.applicationController = applicationController;
-        applicationController.register(this);
+        applicationController.registerToManager(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_PETRI_NET_MESSAGE)) {
+                    PetriNet petriNet = (PetriNet) evt.getNewValue();
+                    registerNewPetriNet(petriNet);
+                } else if (evt.getPropertyName().equals(PetriNetManagerImpl.REMOVE_PETRI_NET_MESSAGE)) {
+                    removeCurrentTab();
+                }
+
+            }
+        });
         applicationModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {

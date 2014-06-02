@@ -6,10 +6,10 @@ package pipe.views;
 
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.handlers.AnnotationNoteHandler;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -26,7 +26,7 @@ public class AnnotationView extends Note {
 
     private AffineTransform prova = new AffineTransform();
 
-    public AnnotationView(Annotation annotation, PetriNetController controller, Container parent, AnnotationNoteHandler handler) {
+    public AnnotationView(Annotation annotation, PetriNetController controller, Container parent, MouseInputAdapter handler) {
         super(annotation, controller, parent);
         addChangeListener(annotation);
         setDragPoints();
@@ -34,7 +34,7 @@ public class AnnotationView extends Note {
         updateBounds();
     }
 
-    private void setMouseHandler(AnnotationNoteHandler handler) {
+    private void setMouseHandler(MouseInputAdapter handler) {
         addMouseListener(handler);
         addMouseMotionListener(handler);
         note.addMouseListener(handler);

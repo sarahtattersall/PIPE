@@ -1,23 +1,13 @@
 package pipe.controllers.application;
 
-import pipe.controllers.*;
-import pipe.gui.*;
 import pipe.actions.gui.PipeApplicationModel;
-import pipe.handlers.PetriNetMouseHandler;
-import pipe.handlers.mouse.SwingMouseUtilities;
+import pipe.controllers.*;
+import pipe.gui.PetriNetTab;
 import pipe.historyActions.AnimationHistory;
-import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.animation.PetriNetAnimator;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
-import uk.ac.imperial.pipe.models.petrinet.Annotation;
-import uk.ac.imperial.pipe.models.petrinet.Arc;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.RateParameter;
-import uk.ac.imperial.pipe.models.petrinet.Token;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
 import uk.ac.imperial.pipe.models.manager.PetriNetManager;
 import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.event.UndoableEditListener;
@@ -53,19 +43,12 @@ public class PipeApplicationController {
         this.applicationModel = applicationModel;
     }
 
-    public void register(final PipeApplicationView view) {
-        manager.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_PETRI_NET_MESSAGE)) {
-                    PetriNet petriNet = (PetriNet) evt.getNewValue();
-                    view.registerNewPetriNet(petriNet);
-                } else if (evt.getPropertyName().equals(PetriNetManagerImpl.REMOVE_PETRI_NET_MESSAGE)) {
-                    view.removeCurrentTab();
-                }
-
-            }
-        });
+    /**
+     *
+     * @param listener to listen for change events in the petri net manager
+     */
+    public void registerToManager(PropertyChangeListener listener) {
+        manager.addPropertyChangeListener(listener);
     }
 
     /**
@@ -89,13 +72,6 @@ public class PipeApplicationController {
         PetriNetController petriNetController =
                 new PetriNetController(net, undoListener, animator, copyPasteManager, zoomController, tab);
         netControllers.put(tab, petriNetController);
-
-        PetriNetMouseHandler handler =
-                new PetriNetMouseHandler(applicationModel, new SwingMouseUtilities(), petriNetController, tab);
-        tab.addMouseListener(handler);
-        tab.addMouseMotionListener(handler);
-        tab.addMouseWheelListener(handler);
-
         tab.updatePreferredSize();
 
         PropertyChangeListener changeListener =

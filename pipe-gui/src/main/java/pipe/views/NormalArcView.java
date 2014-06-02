@@ -1,14 +1,14 @@
 package pipe.views;
 
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.actions.gui.PipeApplicationModel;
-import pipe.handlers.ArcHandler;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
@@ -29,7 +29,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     private Boolean tagged = false;
 
     public NormalArcView(Arc<S, T> model,
-                         PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> handler, PipeApplicationModel applicationModel) {
+                         PetriNetController controller, Container parent, MouseInputAdapter handler, PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);
         setTagged(model.isTagged());
         addConnectableListener();

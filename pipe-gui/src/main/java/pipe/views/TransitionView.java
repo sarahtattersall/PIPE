@@ -3,12 +3,11 @@ package pipe.views;
 import org.jfree.util.ShapeUtilities;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.handlers.TransitionAnimationHandler;
-import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -20,7 +19,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     private boolean _enabled;
 
-    public TransitionView(Transition model, PetriNetController controller, Container parent, TransitionHandler transitionHandler, TransitionAnimationHandler animationHandler) {
+    public TransitionView(Transition model, PetriNetController controller, Container parent, MouseInputAdapter transitionHandler, MouseInputAdapter animationHandler) {
         super(model.getId(), model, controller, parent, new Rectangle2D.Double(0, 0, model.getWidth(),
                 model.getHeight()));
         setChangeListener();
@@ -36,7 +35,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     }
 
-    private void setMouseListener(TransitionHandler transitionHandler, TransitionAnimationHandler animationHandler) {
+    private void setMouseListener(MouseInputAdapter transitionHandler, MouseInputAdapter animationHandler) {
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);

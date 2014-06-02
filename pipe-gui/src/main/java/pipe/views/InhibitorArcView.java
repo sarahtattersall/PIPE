@@ -1,14 +1,13 @@
 package pipe.views;
 
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.actions.gui.PipeApplicationModel;
-import pipe.handlers.ArcHandler;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -23,7 +22,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
     ArcHead arcHead = new InhibitorArcHead();
 
-    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller, Container parent, ArcHandler<? extends Connectable, ? extends Connectable> handler, PipeApplicationModel applicationModel) {
+    public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller, Container parent, MouseInputAdapter handler, PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);
     }
 

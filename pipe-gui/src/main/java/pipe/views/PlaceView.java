@@ -2,11 +2,11 @@ package pipe.views;
 
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.handlers.PlaceHandler;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -20,13 +20,13 @@ import java.util.Map;
 public class PlaceView extends ConnectableView<Place> {
 
 
-    public PlaceView(Place model, Container parent, PetriNetController controller, PlaceHandler placeHandler) {
+    public PlaceView(Place model, Container parent, PetriNetController controller, MouseInputAdapter placeHandler) {
         super(model.getId(), model, controller, parent, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
         setChangeListener();
         setMouseListener(placeHandler);
     }
 
-    private void setMouseListener(PlaceHandler placeHandler) {
+    private void setMouseListener(MouseInputAdapter placeHandler) {
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
         this.addMouseMotionListener(placeHandler);

@@ -1,12 +1,12 @@
 package pipe.views;
 
-import pipe.controllers.PetriNetController;
 import pipe.actions.gui.PipeApplicationModel;
-import pipe.handlers.ArcHandler;
+import pipe.controllers.PetriNetController;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
+import javax.swing.event.MouseInputAdapter;
 import java.awt.Container;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -40,7 +40,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     protected boolean inView = true;
 
     public ArcView(Arc<S, T> model, PetriNetController controller, Container parent,
-                   ArcHandler<? extends Connectable, ? extends Connectable> arcHandler,
+                   MouseInputAdapter arcHandler,
                    PipeApplicationModel applicationModel) {
         super(model.getId(), model, controller, parent);
         arcPath = new ArcPath(this, controller, applicationModel);
@@ -78,7 +78,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         addSourceTargetConnectableListener();
     }
 
-    public void setMouseListener(ArcHandler<? extends Connectable, ? extends Connectable> arcHandler) {
+    public void setMouseListener(MouseInputAdapter arcHandler) {
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);

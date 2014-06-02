@@ -2,8 +2,6 @@ package pipe.views;
 
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.AnnotationBorder;
-import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
@@ -94,12 +92,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
 
     public boolean isShowingBorder() {
         return drawBorder;
-    }
-
-    public HistoryItem showBorder(boolean show) {
-        drawBorder = show;
-        repaint();
-        return new AnnotationBorder(this);
     }
 
     public JTextArea getNote() {
