@@ -1,5 +1,7 @@
 package pipe.gui;
 
+import pipe.constants.GUIConstants;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -33,72 +35,72 @@ public class StatusBar
    
    public void changeText(int type ){
       switch(type){
-         case Constants.PLACE:
+         case GUIConstants.PLACE:
              String textforPlace = "Place Mode: Right click on a Place to see menu options " +
                      "[Mouse wheel -> marking; Shift + Mouse wheel -> capacity]";
              changeText(textforPlace);
             break;
             
-         case Constants.IMMTRANS:
+         case GUIConstants.IMMTRANS:
              String textforTrans = "Immediate Transition Mode: Right click on a Transition to see menu " +
                      "options [Mouse wheel -> rotate]";
              changeText(textforTrans);
             break;
             
-         case Constants.TIMEDTRANS:
+         case GUIConstants.TIMEDTRANS:
              String textforTimedTrans = "Timed Transition Mode: Right click on a Transition to see menu " +
                      "options [Mouse wheel -> rotate]";
              changeText(textforTimedTrans);
             break;
             
-         case Constants.ARC:
+         case GUIConstants.ARC:
              String textforArc = "Arc Mode: Right-Click on an Arc to see menu options " +
                      "[Mouse wheel -> weight]";
              changeText(textforArc);
             break;
             
-         case Constants.INHIBARC:
+         case GUIConstants.INHIBARC:
              String textforInhibArc = "Inhibitor Mode: Right-Click on an Arc to see menu options " +
                      "[Mouse wheel -> weight]";
              changeText(textforInhibArc);
             break;            
             
-         case Constants.ADDTOKEN:
+         case GUIConstants.ADDTOKEN:
              String textforAddtoken = "Add Token Mode: Click on a Place to add a Token";
              changeText(textforAddtoken);
             break;
             
-         case Constants.DELTOKEN:
+         case GUIConstants.DELTOKEN:
              String textforDeltoken = "Delete Token Mode: Click on a Place to delete a Token ";
              changeText(textforDeltoken);
             break;
             
-         case Constants.SELECT:
+         case GUIConstants.SELECT:
              String textforMove = "Select Mode: Click/drag to select objects; drag to move them";
              changeText(textforMove);
             break;
             
-         case Constants.DRAW:
+         case GUIConstants.DRAW:
             changeText(textforDrawing);
             break;
             
-         case Constants.ANNOTATION:
+         case GUIConstants.ANNOTATION:
              String textforAnnotation = "Annotation Mode: Right-Click on an Annotation to see menu options; " +
                      "Double click to edit";
              changeText(textforAnnotation);
             break;
             
-         case Constants.DRAG:
+         case GUIConstants.DRAG:
              String textforDrag = "Drag Mode";
              changeText(textforDrag);
             break;            
             
-         case Constants.MARKING:
+         case GUIConstants.MARKING:
              String textforMarking = "Add a marking parameter";
              changeText(textforMarking);
             break;
 
-         case Constants.RATE:
+         case GUIConstants.RATE:
              String textforRate = "Add a rate parameter";
              changeText(textforRate);
             break;            

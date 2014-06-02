@@ -1,6 +1,6 @@
 package pipe.views;
 
-import pipe.gui.Constants;
+import pipe.constants.GUIConstants;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
@@ -91,7 +91,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+        g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         GeneralPath path = new GeneralPath();
         path.moveTo(source.getCentre().getX(), source.getCentre().getY());
 

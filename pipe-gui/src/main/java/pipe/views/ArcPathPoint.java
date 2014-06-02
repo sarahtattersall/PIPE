@@ -6,9 +6,8 @@
  */
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import java.awt.Container;
@@ -154,14 +153,8 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
     }
 
     @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
+    public void addToContainer(Container container) {
 
-    }
-
-    @Override
-    public void translate(int x, int y) {
-        //        this.setPointLocation(point.x + x, point.y + y);
-        //        arcPath.updateArc();
     }
 
     @Override
@@ -244,22 +237,17 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
             }
 
             if (isSelected()) {
-                g2.setPaint(Constants.SELECTION_FILL_COLOUR);
+                g2.setPaint(GUIConstants.SELECTION_FILL_COLOUR);
                 g2.fill(shape);
-                g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+                g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
                 g2.draw(shape);
             } else {
-                g2.setPaint(Constants.ELEMENT_FILL_COLOUR);
+                g2.setPaint(GUIConstants.ELEMENT_FILL_COLOUR);
                 g2.fill(shape);
-                g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+                g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
                 g2.draw(shape);
             }
         }
-    }
-
-    @Override
-    public int getLayerOffset() {
-        return Constants.ARC_POINT_LAYER_OFFSET;
     }
 
     //TODO: WORK OUT HOW TO SELECT THESE?

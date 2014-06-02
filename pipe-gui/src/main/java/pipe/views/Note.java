@@ -1,11 +1,9 @@
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.Translatable;
 import pipe.historyActions.AnnotationBorder;
 import pipe.historyActions.HistoryItem;
-import pipe.views.AbstractPetriNetViewComponent;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
@@ -18,7 +16,7 @@ import java.awt.geom.RectangularShape;
  * This abstract class is the base class for AnnotationNote class and for
  * Parameter class
  */
-public abstract class Note extends AbstractPetriNetViewComponent<Annotation> implements Translatable {
+public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
     /**
      * Text note to appear on screen
      */
@@ -57,14 +55,14 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
 
         // Set minimum size the preferred size for an empty string:
         note.setText("");
-        note.setFont(new Font(Constants.ANNOTATION_DEFAULT_FONT, Font.PLAIN, Constants.ANNOTATION_DEFAULT_FONT_SIZE));
+        note.setFont(new Font(GUIConstants.ANNOTATION_DEFAULT_FONT, Font.PLAIN, GUIConstants.ANNOTATION_DEFAULT_FONT_SIZE));
         note.setSize(note.getPreferredSize().width, note.getPreferredSize().height);
         note.setMinimumSize(note.getPreferredSize());
         note.setHighlighter(new DefaultHighlighter());
-        note.setDisabledTextColor(Constants.NOTE_DISABLED_COLOUR);
-        note.setForeground(Constants.NOTE_EDITING_COLOUR);
+        note.setDisabledTextColor(GUIConstants.NOTE_DISABLED_COLOUR);
+        note.setForeground(GUIConstants.NOTE_EDITING_COLOUR);
         add(note);
-        setLocation(x - Constants.RESERVED_BORDER / 2, y - Constants.RESERVED_BORDER / 2);
+        setLocation(x - GUIConstants.RESERVED_BORDER / 2, y - GUIConstants.RESERVED_BORDER / 2);
     }
 
     /**
@@ -77,19 +75,19 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
             note.setSize(note.getWidth(), newHeight);
         }
 
-        int rectWidth = note.getWidth() + Constants.RESERVED_BORDER;
-        int rectHeight = note.getHeight() + Constants.RESERVED_BORDER;
+        int rectWidth = note.getWidth() + GUIConstants.RESERVED_BORDER;
+        int rectHeight = note.getHeight() + GUIConstants.RESERVED_BORDER;
 
-        noteRect.setFrame(Constants.RESERVED_BORDER / 2, Constants.RESERVED_BORDER / 2, rectWidth, rectHeight);
-        setSize(rectWidth + Constants.ANNOTATION_SIZE_OFFSET, rectHeight + Constants.ANNOTATION_SIZE_OFFSET);
+        noteRect.setFrame(GUIConstants.RESERVED_BORDER / 2, GUIConstants.RESERVED_BORDER / 2, rectWidth, rectHeight);
+        setSize(rectWidth + GUIConstants.ANNOTATION_SIZE_OFFSET, rectHeight + GUIConstants.ANNOTATION_SIZE_OFFSET);
 
         note.setLocation((int) noteRect.getX() + (rectWidth - note.getWidth()) / 2,
                 (int) noteRect.getY() + (rectHeight - note.getHeight()) / 2);
 
         bounds.setBounds(model.getX() - 20, model.getY() - 20,
-                (rectWidth + Constants.RESERVED_BORDER + Constants.ANNOTATION_SIZE_OFFSET) + 20,
-                (rectHeight + Constants.RESERVED_BORDER +
-                        +Constants.ANNOTATION_SIZE_OFFSET) + 20);
+                (rectWidth + GUIConstants.RESERVED_BORDER + GUIConstants.ANNOTATION_SIZE_OFFSET) + 20,
+                (rectHeight + GUIConstants.RESERVED_BORDER +
+                        +GUIConstants.ANNOTATION_SIZE_OFFSET) + 20);
         setBounds(bounds);
     }
 
@@ -120,17 +118,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
         return note.getHeight();
     }
 
-    /**
-     * Translates the component by x,y
-     */
-    @Override
-    public void translate(int x, int y) {
-        setLocation(getX() + x, getY() + y);
-        originalX += x;
-        originalY += y;
-        updateBounds();
-    }
-
     void adjustTop(int dy) {
         if (note.getPreferredSize().height <= (note.getHeight() - dy)) {
             note.setSize(new Dimension(note.getWidth(), note.getHeight() - dy));
@@ -146,7 +133,7 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     }
 
     void adjustLeft(int dx) {
-        if (Constants.ANNOTATION_MIN_WIDTH <= (note.getWidth() - dx)) {
+        if (GUIConstants.ANNOTATION_MIN_WIDTH <= (note.getWidth() - dx)) {
             note.setSize(new Dimension(note.getWidth() - dx, note.getHeight()));
             setLocation(getX() + dx, getY());
             originalX += dx;
@@ -154,7 +141,7 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     }
 
     void adjustRight(int dx) {
-        if (Constants.ANNOTATION_MIN_WIDTH <= (note.getWidth() + dx)) {
+        if (GUIConstants.ANNOTATION_MIN_WIDTH <= (note.getWidth() + dx)) {
             note.setSize(new Dimension(note.getWidth() + dx, note.getHeight()));
         }
     }
@@ -162,11 +149,6 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> imp
     @Override
     public boolean contains(int x, int y) {
         return noteRect.contains(x, y);
-    }
-
-    @Override
-    public int getLayerOffset() {
-        return Constants.NOTE_LAYER_OFFSET;
     }
 
     public String getText() {

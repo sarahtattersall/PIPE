@@ -3,27 +3,18 @@
  */
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.math.Cubic;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
-import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.PlaceVisitor;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
-import uk.ac.imperial.pipe.models.petrinet.TransitionVisitor;
+import uk.ac.imperial.pipe.models.petrinet.*;
 
-import java.awt.BasicStroke;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -36,9 +27,9 @@ import java.util.List;
  */
 public class ArcPath implements Shape, Cloneable {
 
-    private static final Stroke proximityStroke = new BasicStroke(Constants.ARC_PATH_PROXIMITY_WIDTH);
+    private static final Stroke proximityStroke = new BasicStroke(GUIConstants.ARC_PATH_PROXIMITY_WIDTH);
 
-    private static final Stroke stroke = new BasicStroke(Constants.ARC_PATH_SELECTION_WIDTH);
+    private static final Stroke stroke = new BasicStroke(GUIConstants.ARC_PATH_SELECTION_WIDTH);
 
     public final Point2D.Double midPoint = new Point2D.Double();
 
@@ -176,8 +167,8 @@ public class ArcPath implements Shape, Cloneable {
             // points are virtually superimposed anyway
             p = (Point2D.Double) C.clone();
         } else {
-            p.x = C.getX() + (ABx * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
-            p.y = C.getY() + (ABy * modCD / Constants.ARC_CONTROL_POINT_CONSTANT);
+            p.x = C.getX() + (ABx * modCD / GUIConstants.ARC_CONTROL_POINT_CONSTANT);
+            p.y = C.getY() + (ABy * modCD / GUIConstants.ARC_CONTROL_POINT_CONSTANT);
         }
         return p;
     }
@@ -288,7 +279,7 @@ public class ArcPath implements Shape, Cloneable {
                     ArcPathPoint myPoint = pathPoints.get(getEndIndex());
                     ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
                     float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
-                            / Constants.ARC_CONTROL_POINT_CONSTANT;
+                            / GUIConstants.ARC_CONTROL_POINT_CONSTANT;
                     myPoint.setControl2((float) (myPoint.getPoint().getX() + Math.cos(angle) * distance),
                             (float) (myPoint.getPoint().getY() + Math.sin(angle) * distance));
 
@@ -305,7 +296,7 @@ public class ArcPath implements Shape, Cloneable {
                     ArcPathPoint myPoint = pathPoints.get(1);
                     ArcPathPoint myLastPoint = pathPoints.get(0);
                     float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
-                            / Constants.ARC_CONTROL_POINT_CONSTANT;
+                            / GUIConstants.ARC_CONTROL_POINT_CONSTANT;
                     myPoint.setControl1((float) (myLastPoint.getPoint().getX() + Math.cos(angle) * distance),
                             (float) (myLastPoint.getPoint().getY() + Math.sin(angle) * distance));
 
@@ -575,10 +566,10 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);
-        addPointsToGui(arcView.getTab());
+        addPointsToGui(arcView.getParent());
     }
 
-    public void addPointsToGui(PetriNetTab petriNetTab) {
+    public void addPointsToGui(Container petriNetTab) {
         if (petriNetTab == null) {
             return; //Parent has not yet been added
         }
@@ -595,7 +586,8 @@ public class ArcPath implements Shape, Cloneable {
             // to add all the points again along with new action listeners,
             // we just want to add the new point.
             // Nadeem 21/06/2005
-            if (petriNetTab.getIndexOf(point) < 0) {
+//            if (petriNetTab.getIndexOf(point) < 0) {
+            if (true) {
                 petriNetTab.add(point);
 
                 //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!

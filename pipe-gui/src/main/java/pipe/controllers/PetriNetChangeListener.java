@@ -4,7 +4,6 @@ import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.views.*;
 import uk.ac.imperial.pipe.models.petrinet.*;
-import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -22,7 +21,6 @@ import java.util.Map;
  * and creates/deletes the relevant views as appropriate
  */
 public class PetriNetChangeListener implements PropertyChangeListener {
-    private final PipeApplicationView applicationView;
 
     /**
      * Pipe appliaction model, needed for building items so that
@@ -42,9 +40,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
      */
     private Map<String, Method> eventMethods = new HashMap<>();
 
-    public PetriNetChangeListener(PipeApplicationView applicationView, PipeApplicationModel applicationModel, PetriNetTab petriNetTab,
-                                  PetriNetController controller) {
-        this.applicationView = applicationView;
+    public PetriNetChangeListener(PipeApplicationModel applicationModel, PetriNetTab petriNetTab, PetriNetController controller) {
         this.applicationModel = applicationModel;
         this.petriNetTab = petriNetTab;
         this.controller = controller;
@@ -63,20 +59,16 @@ public class PetriNetChangeListener implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String name = propertyChangeEvent.getPropertyName();
-        Method method = eventMethods.get(name);
-        try {
-            method.invoke(this, propertyChangeEvent);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        if (eventMethods.containsKey(name)) {
+            Method method = eventMethods.get(name);
+            try {
+                method.invoke(this, propertyChangeEvent);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    @EventAction(PetriNet.PETRI_NET_NAME_CHANGE_MESSAGE)
-    private void nameChange(PropertyChangeEvent propertyChangeEvent) {
-        PetriNetName name = (PetriNetName) propertyChangeEvent.getNewValue();
-        applicationView.updateSelectedTabName(name.getName());
     }
 
     @EventAction(PetriNet.NEW_PLACE_CHANGE_MESSAGE)
@@ -130,11 +122,6 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     }
 
-    @EventAction(PetriNet.NEW_TOKEN_CHANGE_MESSAGE)
-    private void newToken(PropertyChangeEvent propertyChangeEvent) {
-        applicationView.refreshTokenClassChoices();
-    }
-
     @EventAction("newStateGroup")
     private void newStateGroup(PropertyChangeEvent propertyChangeEvent) {
 
@@ -159,11 +146,6 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         Arc<? extends Connectable, ? extends Connectable> arc =
                 (Arc<? extends Connectable, ? extends Connectable>) propertyChangeEvent.getOldValue();
         petriNetTab.deletePetriNetComponent(arc.getId());
-    }
-
-    @EventAction(PetriNet.DELETE_TOKEN_CHANGE_MESSAGE)
-    private void deleteToken(PropertyChangeEvent propertyChangeEvent) {
-        applicationView.refreshTokenClassChoices();
     }
 
     @EventAction(PetriNet.DELETE_RATE_PARAMETER_CHANGE_MESSAGE)

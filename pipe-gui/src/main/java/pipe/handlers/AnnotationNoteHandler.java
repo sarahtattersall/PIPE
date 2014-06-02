@@ -14,6 +14,7 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
 import java.awt.Container;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
@@ -75,8 +76,9 @@ public class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation> {
 
     private void showEditor() {
         // Build interface
+        Window window = SwingUtilities.getWindowAncestor(contentPane);
         EscapableDialog guiDialog =
-                new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE5", true);
+                new EscapableDialog(window, "PIPE5", true);
 
         guiDialog.add(new AnnotationEditorPanel(petriNetController.getAnnotationController(component)));
 

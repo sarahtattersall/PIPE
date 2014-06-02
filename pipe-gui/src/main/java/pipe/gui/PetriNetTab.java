@@ -1,18 +1,14 @@
 package pipe.gui;
 
+import pipe.constants.GUIConstants;
 import pipe.views.AbstractPetriNetViewComponent;
 import pipe.views.PetriNetViewComponent;
-import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
-import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.PlaceVisitor;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
-import uk.ac.imperial.pipe.models.petrinet.TransitionVisitor;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -39,15 +35,12 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     public File _appFile;
 
-    private PipeApplicationView pipeApplicationView;
-
-    public PetriNetTab(PipeApplicationView pipeApplicationView) {
-        this.pipeApplicationView = pipeApplicationView;
+    public PetriNetTab() {
         setLayout(null);
         setOpaque(true);
         setDoubleBuffered(true);
         setAutoscrolls(true);
-        setBackground(Constants.ELEMENT_FILL_COLOUR);
+        setBackground(GUIConstants.ELEMENT_FILL_COLOUR);
 
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     }
@@ -75,13 +68,13 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      */
     public void addNewPetriNetComponent(AbstractPetriNetViewComponent<?> component) {
             add(component);
-            component.addToPetriNetTab(this);
+            component.addToContainer(this);
     }
 
     public void add(AbstractPetriNetViewComponent<?> component) {
         registerLocationChangeListener(component.getModel());
 
-        setLayer(component, DEFAULT_LAYER + component.getLayerOffset());
+        setLayer(component, DEFAULT_LAYER);
         super.add(component);
         petriNetComponents.put(component.getId(), component);
         updatePreferredSize();
@@ -195,8 +188,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         return grid;
     }
 
-    public PipeApplicationView getApplicationView() {
-        return pipeApplicationView;
+    public void setMouseHandler(MouseInputAdapter handler) {
+        addMouseListener(handler);
+        addMouseMotionListener(handler);
+        addMouseWheelListener(handler);
     }
 
     /**

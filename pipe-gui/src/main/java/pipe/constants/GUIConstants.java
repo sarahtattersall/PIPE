@@ -1,8 +1,8 @@
-package pipe.gui;
+package pipe.constants;
 
 import java.awt.*;
 
-public interface Constants {
+public interface GUIConstants {
    
    public static final String TOOL = "PIPE";
    public static final String VERSION = "2.5";

@@ -1,8 +1,7 @@
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.handlers.PlaceHandler;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.Place;
@@ -86,16 +85,16 @@ public class PlaceView extends ConnectableView<Place> {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setColor(Constants.SELECTION_FILL_COLOUR);
+            g2.setColor(GUIConstants.SELECTION_FILL_COLOUR);
         } else {
-            g2.setColor(Constants.ELEMENT_FILL_COLOUR);
+            g2.setColor(GUIConstants.ELEMENT_FILL_COLOUR);
         }
         g2.fill(shape);
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
-            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         }
         g2.draw(shape);
 
@@ -286,8 +285,8 @@ public class PlaceView extends ConnectableView<Place> {
     }
 
     @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
-        addLabelToContainer(tab);
+    public void addToContainer(Container container) {
+        addLabelToContainer(container);
     }
 
     public Double getMarkingOffsetXObject() {

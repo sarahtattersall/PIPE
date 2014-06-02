@@ -23,7 +23,16 @@ public class EscapableDialog
    public EscapableDialog(Frame frame, String string, boolean modal) {
       super(frame, string, modal);
    }
-   
+
+
+    /** Creates a new instance of EscapableDialog
+     * @param window
+     * @param title
+     * @param modal*/
+    public EscapableDialog(Window window, String title, boolean modal) {
+        super(window, title);
+    }
+
    protected JRootPane createRootPane() {
       JRootPane rootPane = new JRootPane();
       KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");

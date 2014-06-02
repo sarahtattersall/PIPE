@@ -1,8 +1,8 @@
 package pipe.gui;
 
-import java.awt.*;
+import pipe.constants.GUIConstants;
+
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
@@ -42,27 +42,27 @@ public class ZoomController implements Serializable {
     public void zoomOut() {
         if (canZoomOut()) {
             int old = percent;
-            percent -= Constants.ZOOM_DELTA;
+            percent -= GUIConstants.ZOOM_DELTA;
             changeSupport.firePropertyChange("zoomOut", old, percent);
         }
     }
 
     public boolean canZoomOut() {
-        int newPercent = percent - Constants.ZOOM_DELTA;
-        return newPercent >= Constants.ZOOM_MIN;
+        int newPercent = percent - GUIConstants.ZOOM_DELTA;
+        return newPercent >= GUIConstants.ZOOM_MIN;
     }
 
     public void zoomIn() {
         if (canZoomIn()) {
             int old = percent;
-            percent += Constants.ZOOM_DELTA;
+            percent += GUIConstants.ZOOM_DELTA;
             changeSupport.firePropertyChange("zoomIn", old, percent);
         }
     }
 
     public boolean canZoomIn() {
-        int newPercent = percent + Constants.ZOOM_DELTA;
-        return newPercent <= Constants.ZOOM_MAX;
+        int newPercent = percent + GUIConstants.ZOOM_DELTA;
+        return newPercent <= GUIConstants.ZOOM_MAX;
     }
 
     public int getPercent() {
@@ -70,7 +70,7 @@ public class ZoomController implements Serializable {
     }
 
     private void setPercent(int newPercent) {
-        if ((newPercent >= Constants.ZOOM_MIN) && (newPercent <= Constants.ZOOM_MAX)) {
+        if ((newPercent >= GUIConstants.ZOOM_MIN) && (newPercent <= GUIConstants.ZOOM_MAX)) {
             percent = newPercent;
         }
     }

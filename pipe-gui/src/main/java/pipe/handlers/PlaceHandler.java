@@ -8,6 +8,7 @@ import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import javax.swing.*;
 import java.awt.Container;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -45,7 +46,8 @@ public class PlaceHandler
 
     public void showEditor() {
         // Build interface
-        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE2", true);
+        Window window = SwingUtilities.getWindowAncestor(contentPane);
+        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE2", true);
 
         Container contentPane = guiDialog.getContentPane();
 

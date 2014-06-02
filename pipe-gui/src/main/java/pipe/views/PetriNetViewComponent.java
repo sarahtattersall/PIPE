@@ -1,18 +1,15 @@
 package pipe.views;
 
-import pipe.gui.PetriNetTab;
+import java.awt.Container;
 
 public interface PetriNetViewComponent {
     void delete();
 
-    boolean isDeleted();
-
     /**
      * Each subclass should know how to add itself to a PetriNetTab
-     * @param tab to add itself to
+     * @param container to add itself to
      */
-    void addToPetriNetTab(PetriNetTab tab);
+    void addToContainer(Container container);
 
 
-    public int getLayerOffset();
 }

@@ -8,6 +8,7 @@ import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
 import java.awt.Dimension;
+import java.awt.Window;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -230,12 +231,12 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     }
 
     public void createEditorWindow(String token) {
-        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE2", true);
+        Window window = SwingUtilities.getWindowAncestor(rootPane);
+        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE2", true);
         ArcFunctionEditor feditor =
                 new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
-        guiDialog.setLocationRelativeTo(petriNetController.getPetriNetTab().getApplicationView());
         guiDialog.setVisible(true);
         guiDialog.dispose();
     }

@@ -1,8 +1,6 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.handlers.LabelHandler;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
@@ -123,11 +121,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         super.paintComponent(g);
     }
 
-    @Override
-    public int getLayerOffset() {
-        return Constants.PLACE_TRANSITION_LAYER_OFFSET;
-    }
-
     // TODO: DELETE
     @Override
     public AbstractPetriNetViewComponent clone() {
@@ -135,21 +128,13 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         return pnCopy;
     }
 
-    protected void addLabelToContainer(PetriNetTab tab) {
-        tab.add(nameLabel);
+    protected void addLabelToContainer(Container container) {
+        container.add(nameLabel);
         nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
         LabelHandler labelHandler = new LabelHandler(nameLabel, this);
         nameLabel.addMouseListener(labelHandler);
         nameLabel.addMouseMotionListener(labelHandler);
         nameLabel.addMouseWheelListener(labelHandler);
-    }
-
-
-    @Override
-    public void translate(int x, int y) {
-        //        setPositionX(_positionX + x);
-        //        setPositionY(_positionY + y);
-        //        update();
     }
 
     void setCentre(double x, double y) {

@@ -2,9 +2,9 @@ package pipe.gui;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
+import pipe.constants.GUIConstants;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.plugin.GuiModule;
-import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.*;
@@ -54,7 +54,7 @@ public class ModuleManager
     private final Component parent;
 
 
-    public ModuleManager(PipeApplicationView view, PipeApplicationController controller)
+    public ModuleManager(Component view, PipeApplicationController controller)
     {
         this.controller = controller;
 
@@ -375,8 +375,8 @@ public class ModuleManager
                         //Create a file chooser
                         JFileChooser fc = new JFileChooser();
                         fc.setFileFilter(
-                                new ExtensionFilter(Constants.PROPERTY_FILE_EXTENSION,
-                                                    Constants.PROPERTY_FILE_DESC));
+                                new ExtensionFilter(GUIConstants.PROPERTY_FILE_EXTENSION,
+                                                    GUIConstants.PROPERTY_FILE_DESC));
                         //In response to a button click:
                         int returnVal = fc.showOpenDialog(parent);
                         if(returnVal == JFileChooser.APPROVE_OPTION)

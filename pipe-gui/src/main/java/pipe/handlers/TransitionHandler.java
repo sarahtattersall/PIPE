@@ -8,6 +8,7 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
 import java.awt.Container;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -53,7 +54,8 @@ public class TransitionHandler
    }
 
     public void showEditor() {
-        EscapableDialog guiDialog = new EscapableDialog(petriNetController.getPetriNetTab().getApplicationView(), "PIPE", true);
+        Window window = SwingUtilities.getWindowAncestor(contentPane);
+        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE", true);
         TransitionEditorPanel te = new TransitionEditorPanel(guiDialog.getRootPane(),
                 petriNetController.getTransitionController(component), petriNetController);
         guiDialog.add(te);

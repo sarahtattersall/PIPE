@@ -1,9 +1,8 @@
 package pipe.views;
 
 import org.jfree.util.ShapeUtilities;
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.handlers.TransitionAnimationHandler;
 import pipe.handlers.TransitionHandler;
 import pipe.historyActions.HistoryItem;
@@ -98,9 +97,9 @@ public class TransitionView extends ConnectableView<Transition> {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setColor(Constants.SELECTION_FILL_COLOUR);
+            g2.setColor(GUIConstants.SELECTION_FILL_COLOUR);
         } else {
-            g2.setColor(Constants.ELEMENT_FILL_COLOUR);
+            g2.setColor(GUIConstants.ELEMENT_FILL_COLOUR);
         }
 
         if (model.isTimed()) {
@@ -110,11 +109,11 @@ public class TransitionView extends ConnectableView<Transition> {
                     g2.fill(shape);
                     Paint pen = g2.getPaint();
                     if (highlightView()) {
-                        g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
+                        g2.setPaint(GUIConstants.ENABLED_TRANSITION_COLOUR);
                     } else if (isSelected() && !_ignoreSelection) {
-                        g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+                        g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
                     } else {
-                        g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+                        g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
                     }
                     g2.draw(shape);
                     g2.setPaint(pen);
@@ -125,11 +124,11 @@ public class TransitionView extends ConnectableView<Transition> {
         }
 
         if (highlightView()) {
-            g2.setPaint(Constants.ENABLED_TRANSITION_COLOUR);
+            g2.setPaint(GUIConstants.ENABLED_TRANSITION_COLOUR);
         } else if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
-            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         }
 
         g2.draw(shape);
@@ -138,7 +137,7 @@ public class TransitionView extends ConnectableView<Transition> {
                 for (int i = 2; i >= 1; i--) {
                     g2.translate(2 * i, -2 * i);
                     Paint pen = g2.getPaint();
-                    g2.setPaint(Constants.ELEMENT_FILL_COLOUR);
+                    g2.setPaint(GUIConstants.ELEMENT_FILL_COLOUR);
                     g2.fill(shape);
                     g2.setPaint(pen);
                     g2.draw(shape);
@@ -198,8 +197,8 @@ public class TransitionView extends ConnectableView<Transition> {
     }
 
     @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
-        addLabelToContainer(tab);
+    public void addToContainer(Container container) {
+        addLabelToContainer(container);
     }
 
     public int getAngle() {

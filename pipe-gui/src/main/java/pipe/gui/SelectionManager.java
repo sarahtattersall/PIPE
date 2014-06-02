@@ -3,6 +3,7 @@
  */
 package pipe.gui;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 
 import java.awt.*;
@@ -145,7 +146,7 @@ public class SelectionManager extends javax.swing.JComponent
         startPoint = e.getPoint();
         if (e.getButton() == MouseEvent.BUTTON1 && !(e.isControlDown())) {
             isSelecting = true;
-            petriNetTab.setLayer(this, Constants.SELECTION_LAYER_OFFSET);
+            petriNetTab.setLayer(this, GUIConstants.SELECTION_LAYER_OFFSET);
             selectionRectangle.setRect(startPoint.getX(), startPoint.getY(), 0, 0);
             // Select anything that intersects with the rectangle.
             processSelection(e);
@@ -159,7 +160,7 @@ public class SelectionManager extends javax.swing.JComponent
             // Select anything that intersects with the rectangle.
             processSelection(e);
             isSelecting = false;
-            petriNetTab.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
+            petriNetTab.setLayer(this, GUIConstants.LOWEST_LAYER_OFFSET);
             selectionRectangle.setRect(-1, -1, 0, 0);
             repaint();
         }

@@ -1,7 +1,7 @@
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
@@ -45,9 +45,9 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
                 getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
-            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         }
 
         g2.setStroke(new BasicStroke(1f));
@@ -60,9 +60,9 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
         arcHead.draw(g2);
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
-            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         }
 
         g2.setTransform(reset);

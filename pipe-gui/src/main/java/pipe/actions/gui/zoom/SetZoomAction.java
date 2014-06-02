@@ -1,9 +1,9 @@
 package pipe.actions.gui.zoom;
 
 import pipe.actions.gui.GuiAction;
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.Constants;
 import pipe.gui.ZoomController;
 import pipe.views.PipeApplicationView;
 
@@ -36,8 +36,8 @@ public class SetZoomAction extends GuiAction {
             validatedSelection = selection.substring(0, (selection.length()) - 1);
         }
 
-        if (Integer.parseInt(validatedSelection) < Constants.ZOOM_MIN
-                || Integer.parseInt(validatedSelection) > Constants.ZOOM_MAX) {
+        if (Integer.parseInt(validatedSelection) < GUIConstants.ZOOM_MIN
+                || Integer.parseInt(validatedSelection) > GUIConstants.ZOOM_MAX) {
             applicationView.zoomComboBox.setSelectedItem("");
             return;
         }

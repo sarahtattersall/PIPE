@@ -1,14 +1,13 @@
 package pipe.views;
 
-import pipe.gui.Constants;
-import pipe.gui.Translatable;
-import pipe.gui.ZoomController;
-import pipe.gui.Zoomable;
+import pipe.constants.GUIConstants;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 
-public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoomable {
+public class NameLabel extends JTextArea implements Cloneable {
 
     private String _name;
     private String _text;
@@ -27,13 +26,13 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
         _text = "";
         Font font = new Font("Dialog", Font.BOLD, 10);
         setFont(getFont()
-                .deriveFont(Constants.LABEL_DEFAULT_FONT_SIZE));
+                .deriveFont(GUIConstants.LABEL_DEFAULT_FONT_SIZE));
         setFont(font);
         setCursor(new java.awt.Cursor(java.awt.Cursor.CROSSHAIR_CURSOR));
         setEditable(false);
         setFocusable(false);
         setOpaque(false);
-        setBackground(Constants.BACKGROUND_COLOR);
+        setBackground(GUIConstants.BACKGROUND_COLOR);
 
     }
 
@@ -56,14 +55,9 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
 
     public void updatePosition() {
         Dimension dimension = getPreferredSize();
-        setBounds((int) (_positionX - getPreferredSize().width), (int) (_positionY - Constants.NAMELABEL_OFFSET), (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight());
+        setBounds((int) (_positionX - getPreferredSize().width), (int) (_positionY - GUIConstants.NAMELABEL_OFFSET), (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight());
     }
 
-
-    @Override
-    public void translate(int x, int y) {
-        setPosition(_positionX + x, _positionY + y);
-    }
 
     public double getPositionX() {
         return _positionX;
@@ -89,14 +83,6 @@ public class NameLabel extends JTextArea implements Cloneable, Translatable, Zoo
         }
         updateSize();
     }
-
-    @Override
-    public void zoomUpdate(int value) {
-        setFont(getFont().deriveFont((float) Constants.LABEL_DEFAULT_FONT_SIZE));
-
-        updateSize();
-    }
-
 
     @Override
     public Object clone() {

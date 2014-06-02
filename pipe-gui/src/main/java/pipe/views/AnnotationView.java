@@ -4,9 +4,8 @@
  */
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.handlers.AnnotationNoteHandler;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
@@ -81,11 +80,6 @@ public class AnnotationView extends Note {
         return super.contains(x, y) || pointContains;
     }
 
-    @Override
-    public int getLayerOffset() {
-        return Constants.NOTE_LAYER_OFFSET;
-    }
-
     /**
      * Listens for changes to the annotation model
      *
@@ -145,19 +139,19 @@ public class AnnotationView extends Note {
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_FILL_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_FILL_COLOUR);
             g2.fill(noteRect);
             if (drawBorder) {
-                g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+                g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
                 g2.draw(noteRect);
             }
         } else {
-            g2.setPaint(Constants.ELEMENT_FILL_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_FILL_COLOUR);
             if (fillNote) {
                 g2.fill(noteRect);
             }
             if (drawBorder) {
-                g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+                g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
                 g2.draw(noteRect);
             }
         }
@@ -172,7 +166,7 @@ public class AnnotationView extends Note {
     }
 
     @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
+    public void addToContainer(Container container) {
 
     }
 
@@ -242,8 +236,8 @@ public class AnnotationView extends Note {
 
         public ResizePoint(int type) {
             setOpaque(false);
-            setBounds(-SIZE - 1, -SIZE - 1, 2 * SIZE + Constants.ANNOTATION_SIZE_OFFSET + 1,
-                    2 * SIZE + Constants.ANNOTATION_SIZE_OFFSET + 1);
+            setBounds(-SIZE - 1, -SIZE - 1, 2 * SIZE + GUIConstants.ANNOTATION_SIZE_OFFSET + 1,
+                    2 * SIZE + GUIConstants.ANNOTATION_SIZE_OFFSET + 1);
             typeMask = type;
         }
 
@@ -277,12 +271,12 @@ public class AnnotationView extends Note {
                 g2.setStroke(new BasicStroke(1.0f));
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 if (isPressed) {
-                    g2.setPaint(Constants.RESIZE_POINT_DOWN_COLOUR);
+                    g2.setPaint(GUIConstants.RESIZE_POINT_DOWN_COLOUR);
                 } else {
-                    g2.setPaint(Constants.ELEMENT_FILL_COLOUR);
+                    g2.setPaint(GUIConstants.ELEMENT_FILL_COLOUR);
                 }
                 g2.fill(shape);
-                g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+                g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
                 g2.draw(shape);
                 g2.setTransform(prova);
             }

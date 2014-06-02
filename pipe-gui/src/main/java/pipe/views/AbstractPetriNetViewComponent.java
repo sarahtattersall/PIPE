@@ -1,7 +1,6 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.gui.Translatable;
 import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
@@ -12,11 +11,10 @@ import java.awt.Rectangle;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
-import java.io.Serializable;
 import java.util.EventListener;
 
 
-public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements Cloneable, Translatable, Serializable, PetriNetViewComponent {
+public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements Cloneable, PetriNetViewComponent {
 
     public static final int COMPONENT_DRAW_OFFSET = 5;
 
@@ -121,11 +119,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         }
     }
 
-    @Override
-    public boolean isDeleted() {
-        return _deleted || _markedAsDeleted;
-    }
-
     //TODO: REMOVE
     public HistoryItem setPNObjectName(String name) {
         //        String oldName = this.getName();
@@ -139,9 +132,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
-
-
-    public abstract int getLayerOffset();
 
     @Override
     public AbstractPetriNetViewComponent<T> clone() {

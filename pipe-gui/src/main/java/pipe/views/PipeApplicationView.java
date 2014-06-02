@@ -1,14 +1,18 @@
 package pipe.views;
 
 import pipe.actions.gui.zoom.ZoomManager;
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.*;
 import pipe.gui.model.PipeApplicationModel;
+import pipe.handlers.PetriNetMouseHandler;
+import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.Token;
+import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -120,7 +124,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         getContentPane().add(pane);
 
         setVisible(true);
-        applicationModel.setMode(Constants.SELECT);
+        applicationModel.setMode(GUIConstants.SELECT);
         //TODO: DO YOU NEED TO DO THIS?
 //        selectAction.actionPerformed(null);
 
@@ -413,6 +417,19 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             }
         };
 
+        petriNet.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String msg = evt.getPropertyName();
+                if (msg.equals(PetriNet.PETRI_NET_NAME_CHANGE_MESSAGE)) {
+                    PetriNetName name = (PetriNetName) evt.getNewValue();
+                    updateSelectedTabName(name.getName());
+                } else if (msg.equals(PetriNet.NEW_TOKEN_CHANGE_MESSAGE) || msg.equals(PetriNet.DELETE_TOKEN_CHANGE_MESSAGE)) {
+                    refreshTokenClassChoices();
+                }
+            }
+        });
+
         AnimationHistoryView animationHistoryView;
         try {
             animationHistoryView = new AnimationHistoryView("Animation History");
@@ -420,10 +437,15 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             e.printStackTrace();
             throw new RuntimeException();
         }
-        PetriNetTab petriNetTab = new PetriNetTab(this);
+        PetriNetTab petriNetTab = new PetriNetTab();
         histories.put(petriNetTab, animationHistoryView);
 
         applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
+        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        petriNetTab.setMouseHandler(
+                new PetriNetMouseHandler(applicationModel, new SwingMouseUtilities(), petriNetController, petriNetTab));
+        petriNetTab.updatePreferredSize();
+
         addNewTab(petriNet.getNameValue(), petriNetTab);
     }
 

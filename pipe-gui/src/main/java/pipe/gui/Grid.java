@@ -3,6 +3,8 @@
  */
 package pipe.gui;
 
+import pipe.constants.GUIConstants;
+
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 
@@ -11,7 +13,7 @@ import java.awt.geom.GeneralPath;
  */
 public class Grid {
    
-   private float gridSpacing = Constants.PLACE_TRANSITION_HEIGHT/2;
+   private float gridSpacing = GUIConstants.PLACE_TRANSITION_HEIGHT/2;
    private final Color gridColor = new Color(240,240,255);
    private GeneralPath gridDisplay;
    private boolean enabled = true;
@@ -52,7 +54,7 @@ public class Grid {
    
    
    private void setGridSpacing(double spacing) {
-      gridSpacing = (float)(spacing * Constants.PLACE_TRANSITION_HEIGHT);
+      gridSpacing = (float)(spacing * GUIConstants.PLACE_TRANSITION_HEIGHT);
    }
    
    

@@ -1,5 +1,6 @@
 package pipe.gui;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.AddPetriNetObject;
@@ -27,7 +28,7 @@ import java.util.List;
  * Class to handle copy & paste functionality
  */
 public class CopyPasteManager extends javax.swing.JComponent
-        implements pipe.gui.Zoomable, java.awt.event.MouseListener, java.awt.event.MouseMotionListener,
+        implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener,
         java.awt.event.KeyListener {
 
     /**
@@ -154,7 +155,7 @@ public class CopyPasteManager extends javax.swing.JComponent
             //                zoom = petriNetTab.getZoom();
             //            }
 
-            petriNetTab.setLayer(this, Constants.SELECTION_LAYER_OFFSET);
+            petriNetTab.setLayer(this, GUIConstants.SELECTION_LAYER_OFFSET);
             repaint();
             pasteInProgress = true;
             updateBounds();
@@ -185,12 +186,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         g2d.fill(pasteRectangle);
         g2d.setXORMode(PASTE_COLOR_OUTLINE);
         g2d.draw(pasteRectangle);
-    }
-
-    @Override
-    public void zoomUpdate(int newZoom) {
-        updateSize(pasteRectangle, zoom, newZoom);
-        zoom = newZoom;
     }
 
     private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
@@ -247,7 +242,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     @Override
     public void mousePressed(MouseEvent e) {
         petriNetTab.updatePreferredSize();
-        petriNetTab.setLayer(this, Constants.LOWEST_LAYER_OFFSET);
+        petriNetTab.setLayer(this, GUIConstants.LOWEST_LAYER_OFFSET);
         repaint();
         if (pasteInProgress) {
             paste(petriNetTab);

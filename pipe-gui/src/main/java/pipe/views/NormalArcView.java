@@ -1,8 +1,7 @@
 package pipe.views;
 
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
-import pipe.gui.PetriNetTab;
 import pipe.gui.model.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
@@ -61,7 +60,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     private void removeLabelFromParentContainer(NameLabel label) {
-        tab.remove(label);
+        getParent().remove(label);
     }
 
     private void updateWeights() {
@@ -69,9 +68,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         createWeightLabels();
         setWeightLabelPosition();
 
-        if (tab != null) {
-            addWeightLabelsToContainer(tab);
-        }
+        addWeightLabelsToContainer(getParent());
     }
 
     protected void setWeightLabelPosition() {
@@ -125,8 +122,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     @Override
-    public void addToPetriNetTab(PetriNetTab tab) {
-        super.addToPetriNetTab(tab);
+    public void addToContainer(Container container) {
+        super.addToContainer(container);
         updateWeights();
     }
 
@@ -198,9 +195,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
-            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         }
 
         if (joined) {
@@ -219,9 +216,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
 
         if (isSelected() && !_ignoreSelection) {
-            g2.setPaint(Constants.SELECTION_LINE_COLOUR);
+            g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
-            g2.setPaint(Constants.ELEMENT_LINE_COLOUR);
+            g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
         }
 
         arcHead.draw(g2);

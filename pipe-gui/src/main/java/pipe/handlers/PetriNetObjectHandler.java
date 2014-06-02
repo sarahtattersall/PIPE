@@ -1,8 +1,8 @@
 package pipe.handlers;
 
 import pipe.actions.gui.DeletePetriNetComponentAction;
+import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.gui.Constants;
 import pipe.gui.DragManager;
 import pipe.gui.SelectionManager;
 import pipe.gui.model.PipeApplicationModel;
@@ -45,8 +45,8 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
     private int totalY = 0;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(Container contentpane, T component, PetriNetController controller, PipeApplicationModel applicationModel) {
-        contentPane = contentpane;
+    PetriNetObjectHandler(Container contentPane, T component, PetriNetController controller, PipeApplicationModel applicationModel) {
+        this.contentPane = contentPane;
         this.component = component;
         petriNetController = controller;
         this.applicationModel = applicationModel;
@@ -107,7 +107,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
             return;
         }
 
-        if (applicationModel.getMode() == Constants.SELECT) {
+        if (applicationModel.getMode() == GUIConstants.SELECT) {
             if (!justSelected) {
                 if (e.isShiftDown()) {
                     petriNetController.deselect(component);
@@ -131,7 +131,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
             return;
         }
 
-        if (applicationModel.getMode() == Constants.SELECT) {
+        if (applicationModel.getMode() == GUIConstants.SELECT) {
             if (component.isDraggable()) {
                 if (!isDragging) {
                     isDragging = true;
