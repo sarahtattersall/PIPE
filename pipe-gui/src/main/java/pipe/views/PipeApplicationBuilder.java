@@ -1,18 +1,7 @@
 package pipe.views;
 
 import pipe.actions.ZoomAction;
-import pipe.actions.gui.ExampleFileAction;
-import pipe.actions.gui.GuiAction;
-import pipe.actions.gui.UnfoldAction;
-import pipe.actions.gui.SelectAction;
-import pipe.actions.gui.file.*;
-import pipe.actions.gui.grid.GridAction;
-import pipe.actions.gui.tokens.ChooseTokenClassAction;
-import pipe.actions.gui.window.ExitAction;
-import pipe.actions.gui.zoom.SetZoomAction;
-import pipe.actions.gui.zoom.ZoomInAction;
-import pipe.actions.gui.zoom.ZoomOutAction;
-import pipe.actions.gui.zoom.ZoomUI;
+import pipe.actions.gui.*;
 import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
@@ -20,7 +9,6 @@ import pipe.gui.PIPEConstants;
 import pipe.gui.PetriNetTab;
 import pipe.controllers.SelectionManager;
 import pipe.gui.ToggleButton;
-import pipe.actions.gui.PipeApplicationModel;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

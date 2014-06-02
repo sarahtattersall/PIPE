@@ -1,4 +1,4 @@
-package pipe.actions.gui.file;
+package pipe.actions.gui;
 
 import pipe.controllers.application.PipeApplicationController;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;

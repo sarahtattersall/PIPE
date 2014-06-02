@@ -1,4 +1,4 @@
-package pipe.actions.gui.zoom;
+package pipe.actions.gui;
 
 import java.beans.PropertyChangeListener;
 

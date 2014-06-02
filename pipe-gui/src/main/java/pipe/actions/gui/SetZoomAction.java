@@ -1,4 +1,4 @@
-package pipe.actions.gui.zoom;
+package pipe.actions.gui;
 
 import pipe.actions.gui.GuiAction;
 import pipe.constants.GUIConstants;

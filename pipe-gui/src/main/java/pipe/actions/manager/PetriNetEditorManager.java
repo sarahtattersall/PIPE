@@ -1,7 +1,6 @@
 package pipe.actions.manager;
 
-import pipe.actions.gui.GuiAction;
-import pipe.actions.gui.file.*;
+import pipe.actions.gui.*;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 

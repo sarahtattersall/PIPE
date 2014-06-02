@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.file.NewPetriNetAction;
+import pipe.actions.gui.NewPetriNetAction;
 import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;

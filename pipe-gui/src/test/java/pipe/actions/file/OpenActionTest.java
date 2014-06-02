@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.file.OpenAction;
+import pipe.actions.gui.OpenAction;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.parsers.UnparsableException;

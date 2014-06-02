@@ -1,6 +1,5 @@
-package pipe.actions.gui.zoom;
+package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.utilities.gui.GuiUtils;
 
 import java.awt.*;

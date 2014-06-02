@@ -2,8 +2,8 @@ package pipe.views;
 
 import matchers.component.PropertyChangeUtils;
 import org.junit.Test;
-import pipe.actions.gui.zoom.ZoomManager;
-import pipe.actions.gui.zoom.ZoomUI;
+import pipe.actions.gui.ZoomManager;
+import pipe.actions.gui.ZoomUI;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

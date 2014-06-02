@@ -1,4 +1,4 @@
-package pipe.actions.gui.file;
+package pipe.actions.gui;
 
 import org.apache.commons.io.FilenameUtils;
 import pipe.actions.gui.GuiAction;

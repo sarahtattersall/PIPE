@@ -1,6 +1,6 @@
 package pipe.views;
 
-import pipe.actions.gui.zoom.ZoomManager;
+import pipe.actions.gui.ZoomManager;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.SelectionManager;

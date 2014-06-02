@@ -1,4 +1,4 @@
-package pipe.actions.gui.grid;
+package pipe.actions.gui;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.application.PipeApplicationController;

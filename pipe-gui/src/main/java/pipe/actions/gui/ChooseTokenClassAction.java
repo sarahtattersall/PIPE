@@ -1,4 +1,4 @@
-package pipe.actions.gui.tokens;
+package pipe.actions.gui;
 
 import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;

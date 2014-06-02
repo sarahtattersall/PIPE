@@ -2,7 +2,7 @@ package pipe.actions.file;
 
 import org.junit.Before;
 import org.junit.Test;
-import pipe.actions.gui.file.ExportPSAction;
+import pipe.actions.gui.ExportPSAction;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
