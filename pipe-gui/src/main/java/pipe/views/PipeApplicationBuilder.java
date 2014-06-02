@@ -68,7 +68,7 @@ public final class PipeApplicationBuilder {
     private PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
                                            PipeApplicationController controller) {
         ComponentEditorManager componentEditorManager = new ComponentEditorManager(controller);
-        SimpleUndoListener undoListener = new SimpleUndoListener(componentEditorManager, controller);
+        SimpleUndoListener undoListener = new SimpleUndoListener(componentEditorManager.redoAction, componentEditorManager.undoAction, controller);
         ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, model, controller);
         AnimateActionManager animateActionManager = new AnimateActionManager(model, controller);
         PetriNetEditorManager editorManager = new PetriNetEditorManager(view, controller);

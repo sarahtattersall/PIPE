@@ -1,5 +1,7 @@
 package pipe.actions.manager;
 
+import pipe.actions.gui.edit.RedoAction;
+import pipe.actions.gui.edit.UndoAction;
 import pipe.controllers.PipeApplicationController;
 
 import javax.swing.event.UndoableEditEvent;
@@ -14,20 +16,24 @@ import javax.swing.undo.UndoManager;
  */
 public class SimpleUndoListener implements UndoableEditListener {
 
-    private ComponentEditorManager componentEditorManager;
+    private final RedoAction redoAction;
+
+    private final UndoAction undoAction;
 
     private PipeApplicationController applicationController;
 
-    public SimpleUndoListener(ComponentEditorManager componentEditorManager, PipeApplicationController applicationController) {
-        this.componentEditorManager = componentEditorManager;
+    public SimpleUndoListener(RedoAction redoAction, UndoAction undoAction, PipeApplicationController applicationController) {
+        this.redoAction = redoAction;
+        this.undoAction = undoAction;
         this.applicationController = applicationController;
     }
 
     @Override
     public void undoableEditHappened(UndoableEditEvent e) {
-
         UndoManager undoManager = applicationController.getActivePetriNetController().getUndoManager();
         undoManager.addEdit(e.getEdit());
-        componentEditorManager.updateButtons();
+        redoAction.setEnabled(undoManager.canRedo());
+        undoAction.setEnabled(undoManager.canUndo());
+
     }
 }

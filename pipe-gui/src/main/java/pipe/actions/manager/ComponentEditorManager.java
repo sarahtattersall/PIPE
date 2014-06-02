@@ -39,13 +39,13 @@ public class ComponentEditorManager implements ActionManager {
     /**
      * Action that undoes the last edit
      */
-    private final UndoAction undoAction;
+    public final UndoAction undoAction;
 
 
     /**
      * Action that redoes the previous undo
      */
-    private final RedoAction redoAction;
+    public final RedoAction redoAction;
 
     private final PipeApplicationController controller;
 
@@ -62,12 +62,13 @@ public class ComponentEditorManager implements ActionManager {
         pasteAction = new PasteAction(controller);
         cutAction = new CutAction(controller);
         deleteAction = new DeleteAction(controller);
-        undoAction = new UndoAction(controller, this);
-        redoAction = new RedoAction(controller, this);
+        undoAction = new UndoAction(controller);
+        redoAction = new RedoAction(controller, undoAction);
+        undoAction.registerRedoAction(redoAction);
         undoAction.setEnabled(false);
         redoAction.setEnabled(false);
 
-        UndoableEditListener listener = new SimpleUndoListener(this, controller);
+        UndoableEditListener listener = new SimpleUndoListener(redoAction, undoAction, controller);
         deleteAction.addUndoableEditListener(listener);
         copyAction.addUndoableEditListener(listener);
         cutAction.addUndoableEditListener(listener);

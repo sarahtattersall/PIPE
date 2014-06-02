@@ -1,30 +1,41 @@
 package pipe.actions.gui.edit;
 
 import pipe.actions.gui.GuiAction;
-import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 
-import java.awt.*;
+import javax.swing.undo.UndoManager;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 public class UndoAction extends GuiAction {
 
     private final PipeApplicationController applicationController;
+    private RedoAction redoAction;
 
-    private final ComponentEditorManager container;
-
-    public UndoAction(PipeApplicationController applicationController, ComponentEditorManager container) {
+    public UndoAction(PipeApplicationController applicationController) {
         super("Undo", "Undo (Ctrl-Z)", KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
-        this.container = container;
+    }
+
+    /**
+     * Register a redo action to this undo actions
+     * @param redoAction
+     */
+    public void registerRedoAction(RedoAction redoAction) {
+        this.redoAction = redoAction;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         PetriNetController controller = applicationController.getActivePetriNetController();
-        controller.getUndoManager().undo();
-        container.updateButtons();
+        UndoManager manager = controller.getUndoManager();
+        manager.undo();
+
+        this.setEnabled(manager.canUndo());
+        if (redoAction != null) {
+            redoAction.setEnabled(manager.canRedo());
+        }
     }
 }

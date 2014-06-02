@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.actions.gui.edit.RedoAction;
 import pipe.actions.gui.edit.UndoAction;
-import pipe.actions.manager.ComponentEditorManager;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PipeApplicationController;
 
@@ -16,6 +16,8 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,14 +33,14 @@ public class UndoActionTest {
     PetriNetController mockPetriNetController;
 
     @Mock
-    ComponentEditorManager container;
+    UndoManager mockUndoManager;
 
     @Mock
-    UndoManager mockUndoManager;
+    RedoAction redoAction;
 
     @Before
     public void setUp() {
-        undoAction = new UndoAction(mockController, container);
+        undoAction = new UndoAction(mockController);
     }
 
     @Test
@@ -53,6 +55,39 @@ public class UndoActionTest {
     public void setShortDescription() {
         Object shortDescription = undoAction.getValue(Action.SHORT_DESCRIPTION);
         assertEquals("Undo (Ctrl-Z)", shortDescription);
+    }
+
+    @Test
+    public void enablesUndoRedo() {
+        when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
+        when(mockPetriNetController.getUndoManager()).thenReturn(mockUndoManager);
+
+        when(mockUndoManager.canRedo()).thenReturn(false);
+        when(mockUndoManager.canUndo()).thenReturn(true);
+        undoAction.registerRedoAction(redoAction);
+        undoAction.actionPerformed(null);
+
+        verify(redoAction).setEnabled(false);
+        verify(mockUndoManager).canRedo();
+        assertTrue(undoAction.isEnabled());
+
+    }
+
+    @Test
+    public void disablesUndoRedo() {
+        when(mockController.getActivePetriNetController()).thenReturn(mockPetriNetController);
+        when(mockPetriNetController.getUndoManager()).thenReturn(mockUndoManager);
+
+        when(mockUndoManager.canRedo()).thenReturn(true);
+        when(mockUndoManager.canUndo()).thenReturn(false);
+
+        undoAction.registerRedoAction(redoAction);
+        undoAction.actionPerformed(null);
+
+        verify(redoAction).setEnabled(true);
+        verify(mockUndoManager).canRedo();
+        assertFalse(undoAction.isEnabled());
+
     }
 
     @Test
