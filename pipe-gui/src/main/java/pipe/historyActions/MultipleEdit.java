@@ -2,10 +2,8 @@ package pipe.historyActions;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoableEdit;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 public class MultipleEdit extends AbstractUndoableEdit {
 
@@ -14,6 +12,11 @@ public class MultipleEdit extends AbstractUndoableEdit {
 
     public MultipleEdit(Collection<UndoableEdit> multipleEdits) {
         this.multipleEdits.addAll(multipleEdits);
+    }
+
+    @Override
+    public int hashCode() {
+        return multipleEdits.hashCode();
     }
 
     @Override
@@ -32,11 +35,6 @@ public class MultipleEdit extends AbstractUndoableEdit {
         }
 
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return multipleEdits.hashCode();
     }
 
     /** */
