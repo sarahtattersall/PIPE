@@ -14,6 +14,10 @@ import java.awt.event.MouseEvent;
 
 public class AnnotationAction extends CreateAction {
 
+    public static final int WIDTH = 100;
+
+    public static final int HEIGHT = 50;
+
     public AnnotationAction(PipeApplicationModel applicationModel) {
         super("Annotation", "Add an annotation (alt-N)", KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK, applicationModel);
     }
@@ -38,7 +42,7 @@ public class AnnotationAction extends CreateAction {
 
         int x = (int) point.getX();
         int y = (int) point.getY();
-        Annotation annotation = new AnnotationImpl(x, y, "Enter text here", 100, 50, true);
+        Annotation annotation = new AnnotationImpl(x, y, "Enter text here", WIDTH, HEIGHT, true);
 
         PetriNet petriNet = petriNetController.getPetriNet();
         petriNet.addAnnotation(annotation);

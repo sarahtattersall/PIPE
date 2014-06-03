@@ -42,7 +42,7 @@ public class SaveAction extends AbstractSaveAction {
      * Visits PetriNetName possible classes and detemrines if the save action
      * should be a save as action
      */
-    private class FileNamer implements NormalNameVisitor, FileNameVisitor {
+    private static class FileNamer implements NormalNameVisitor, FileNameVisitor {
 
         private File file = new File("");
 

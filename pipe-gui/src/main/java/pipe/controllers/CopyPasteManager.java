@@ -29,8 +29,7 @@ import java.util.List;
  * Class to handle copy & paste functionality
  */
 public class CopyPasteManager extends javax.swing.JComponent
-        implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener,
-        java.awt.event.KeyListener {
+        implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.event.KeyListener {
 
     /**
      * Colour of rectange displayed when pasting
@@ -103,33 +102,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     public void copy(Collection<PetriNetComponent> selectedComponents) {
         pasteComponents.clear();
         pasteComponents.addAll(selectedComponents);
-        final Location location = new Location();
-        PetriNetComponentVisitor locationVisitor = new PlaceTransitionVisitor() {
-            @Override
-            public void visit(Place place) {
-                adjustLocation(place);
-            }
-
-            private <T extends Connectable> void adjustLocation(T connectable) {
-                if (connectable.getX() < location.left) {
-                    location.left = connectable.getX();
-                }
-                if (connectable.getX() + connectable.getWidth() > location.right) {
-                    location.right = connectable.getX() + connectable.getWidth();
-                }
-                if (connectable.getY() < location.top) {
-                    location.top = connectable.getY();
-                }
-                if (connectable.getY() + connectable.getHeight() > location.bottom) {
-                    location.bottom = connectable.getY() + connectable.getHeight();
-                }
-            }
-
-            @Override
-            public void visit(Transition transition) {
-                adjustLocation(transition);
-            }
-        };
+        LocationVisitor locationVisitor = new LocationVisitor();
 
         for (PetriNetComponent component : selectedComponents) {
             try {
@@ -138,7 +111,7 @@ public class CopyPasteManager extends javax.swing.JComponent
                 GuiUtils.displayErrorMessage(null, e.getMessage());
             }
         }
-
+        Location location = locationVisitor.location;
         pasteRectangle.setRect(location.left, location.top, location.right - location.left,
                 location.bottom - location.top);
         rectangleOrigin.setLocation(location.left, location.top);
@@ -323,7 +296,6 @@ public class CopyPasteManager extends javax.swing.JComponent
     private Collection<PetriNetComponent> getNonConnectablesToPaste() {
         final Collection<PetriNetComponent> components = new LinkedList<>();
         PetriNetComponentVisitor componentVisitor = new NonConnectableVisitor() {
-
             @Override
             public void visit(Token token) {
                 components.add(token);
@@ -342,7 +314,6 @@ public class CopyPasteManager extends javax.swing.JComponent
             @Override
             public void visit(OutboundArc outboundArc) {
                 components.add(outboundArc);
-
             }
         };
 
@@ -427,6 +398,36 @@ public class CopyPasteManager extends javax.swing.JComponent
         double top = Double.MAX_VALUE;
 
         double left = Double.MAX_VALUE;
+    }
+
+    private static class LocationVisitor implements PlaceTransitionVisitor {
+        private final Location location = new Location();
+
+        @Override
+        public void visit(Place place) {
+            adjustLocation(place);
+        }
+
+        private <T extends Connectable> void adjustLocation(T connectable) {
+            if (connectable.getX() < location.left) {
+                location.left = connectable.getX();
+            }
+            if (connectable.getX() + connectable.getWidth() > location.right) {
+                location.right = connectable.getX() + connectable.getWidth();
+            }
+            if (connectable.getY() < location.top) {
+                location.top = connectable.getY();
+            }
+            if (connectable.getY() + connectable.getHeight() > location.bottom) {
+                location.bottom = connectable.getY() + connectable.getHeight();
+            }
+        }
+
+        @Override
+        public void visit(Transition transition) {
+            adjustLocation(transition);
+        }
+
     }
 
 

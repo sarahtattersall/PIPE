@@ -122,7 +122,7 @@ public class TokenEditorPanel extends JPanel {
     /**
      * TableModel for editing the Tokens
      */
-    public class TableModel extends AbstractComponentTableModel<Datum> {
+    public static class TableModel extends AbstractComponentTableModel<Datum> {
 
         private final static int NAME_COL = 0;
 

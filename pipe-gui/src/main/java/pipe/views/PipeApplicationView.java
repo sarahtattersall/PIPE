@@ -98,8 +98,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                         selectionManager.disableSelection();
                     }
                 }
-
-
             }
         });
         setTitle(null);
@@ -169,15 +167,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     if (controller.isCopyInProgress()) {
                         controller.cancelPaste();
                     }
-
                     petriNetTab.setVisible(true);
                     petriNetTab.repaint();
                     updateZoomCombo();
                     setTitle(petriNetTab.getName());
-
                     applicationModel.setInAnimationMode(controller.isInAnimationMode());
                 }
-
                 refreshTokenClassChoices();
             }
         });

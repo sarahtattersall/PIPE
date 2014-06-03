@@ -65,9 +65,7 @@ public final class ModuleLoader {
     }
 
     private static boolean isModule(Class<?> modClass) {
-        Class<?> interfaces[] = modClass.getInterfaces();
-
-        for (Class<?> anInterface : interfaces) {
+        for (Class<?> anInterface : modClass.getInterfaces()) {
             if (anInterface.getName().equals(IMODULE_LOCATION)) {
                 return true;
             }

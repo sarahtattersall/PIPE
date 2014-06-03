@@ -54,8 +54,8 @@ final class ExtFileManager {
     public static void addSearchPath(File p) {
         if (p.exists() && p.isDirectory()) {
             try {
-                URL[] pathURLs = {p.getCanonicalFile().toURI().toURL()};
-                addSearchPath(pathURLs);
+                URL pathURL = p.getCanonicalFile().toURI().toURL();
+                addSearchPath(pathURL);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Failed to add path: URI.toURL generated an error." + e.getMessage());
             }
@@ -63,11 +63,11 @@ final class ExtFileManager {
     }
 
 
-    public static void addSearchPath(URL[] urls) {
+    public static void addSearchPath(URL url) {
         if (cLoader == null) {
-            cLoader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
+            cLoader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
         } else {
-            cLoader = new URLClassLoader(urls, cLoader);
+            cLoader = new URLClassLoader(new URL[]{url}, cLoader);
         }
     }
 

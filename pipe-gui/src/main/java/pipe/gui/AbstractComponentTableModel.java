@@ -41,7 +41,7 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
 
 
     @Override
-    public String getColumnName(int col) {
+    public final String getColumnName(int col) {
         return COLUMN_NAMES[col];
     }
 
@@ -53,17 +53,17 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
      * @return true for all cells
      */
     @Override
-    public boolean isCellEditable(int row, int col) {
+    public final boolean isCellEditable(int row, int col) {
         return true;
     }
 
     @Override
-    public int getRowCount() {
+    public final int getRowCount() {
         return modifiedData.size();
     }
 
     @Override
-    public int getColumnCount() {
+    public final int getColumnCount() {
         return COLUMN_NAMES.length;
     }
 
@@ -71,15 +71,15 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
      * @param datum datum to check in model
      * @return true if the row being edited is an existing component in the Petri net
      */
-    protected boolean isExistingDatum(D datum) {
+    protected final boolean isExistingDatum(D datum) {
         return datum.initial != null;
     }
 
-    public List<D> getTableData() {
+    public final List<D> getTableData() {
         return modifiedData;
     }
 
-    public void deleteRow(int row) {
+    public final void deleteRow(int row) {
         if (isExistingDatum(modifiedData.get(row))) {
             deletedData.add(modifiedData.get(row));
             count--;
@@ -88,12 +88,12 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
         fireTableRowsDeleted(row, row);
     }
 
-    public Collection<D> getDeletedData() {
+    public final Collection<D> getDeletedData() {
         return deletedData;
     }
 
     @Override
-    public void setValueAt(Object value, int rowIndex, int colIndex) {
+    public final void setValueAt(Object value, int rowIndex, int colIndex) {
         D datum = modifiedData.get(rowIndex);
 
         updateTableAt(value, rowIndex, colIndex);
@@ -112,6 +112,6 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
      * @param rowIndex
      * @param colIndex
      */
-    protected  abstract void updateTableAt(Object value, int rowIndex, int colIndex);
+    protected abstract void updateTableAt(Object value, int rowIndex, int colIndex);
 
 }

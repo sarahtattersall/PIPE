@@ -74,11 +74,10 @@ public class TransitionFunctionEditor extends JPanel {
         JButton helpbutton = new JButton("Help");
 
         okbutton.addActionListener(new java.awt.event.ActionListener() {
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                     String func = function.getText();
-                    if (func == null || func.equals("")) {
+                    if (func == null || func.isEmpty()) {
                         exit();
                         return;
                     }
@@ -88,8 +87,7 @@ public class TransitionFunctionEditor extends JPanel {
                         _editor.setRate(func);
                     } else {
                         String message = " Expresison is invalid. ";
-                        String title = "Error";
-                        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+                        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.YES_NO_OPTION);
                     }
                     exit();
             }

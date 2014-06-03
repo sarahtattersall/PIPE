@@ -15,12 +15,17 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AnnotationView extends Note {
+
     private static final long serialVersionUID = 1L;
 
-    private final ResizePoint[] dragPoints = new ResizePoint[8];
+    public static final int NO_DRAG_POINTS = 8;
+
+    private final List<ResizePoint> dragPoints = new ArrayList<>(NO_DRAG_POINTS);
 
     private boolean fillNote = true;
 
@@ -45,21 +50,21 @@ public class AnnotationView extends Note {
     public final void updateBounds() {
         super.updateBounds();
         // TOP-LEFT
-        dragPoints[0].setLocation(noteRect.getMinX(), noteRect.getMinY());
+        dragPoints.get(0).setLocation(noteRect.getMinX(), noteRect.getMinY());
         // TOP-MIDDLE
-        dragPoints[1].setLocation(noteRect.getCenterX(), noteRect.getMinY());
+        dragPoints.get(1).setLocation(noteRect.getCenterX(), noteRect.getMinY());
         // TOP-RIGHT
-        dragPoints[2].setLocation(noteRect.getMaxX(), noteRect.getMinY());
+        dragPoints.get(2).setLocation(noteRect.getMaxX(), noteRect.getMinY());
         // MIDDLE-RIGHT
-        dragPoints[3].setLocation(noteRect.getMaxX(), noteRect.getCenterY());
+        dragPoints.get(3).setLocation(noteRect.getMaxX(), noteRect.getCenterY());
         // BOTTOM-RIGHT
-        dragPoints[4].setLocation(noteRect.getMaxX(), noteRect.getMaxY());
+        dragPoints.get(4).setLocation(noteRect.getMaxX(), noteRect.getMaxY());
         // BOTTOM-MIDDLE
-        dragPoints[5].setLocation(noteRect.getCenterX(), noteRect.getMaxY());
+        dragPoints.get(5).setLocation(noteRect.getCenterX(), noteRect.getMaxY());
         // BOTTOM-LEFT
-        dragPoints[6].setLocation(noteRect.getMinX(), noteRect.getMaxY());
+        dragPoints.get(6).setLocation(noteRect.getMinX(), noteRect.getMaxY());
         // MIDDLE-LEFT
-        dragPoints[7].setLocation(noteRect.getMinX(), noteRect.getCenterY());
+        dragPoints.get(7).setLocation(noteRect.getMinX(), noteRect.getCenterY());
     }
 
 
@@ -105,14 +110,14 @@ public class AnnotationView extends Note {
      * each edge
      */
     private void setDragPoints() {
-        dragPoints[0] = new ResizePoint(ResizePoint.TOP | ResizePoint.LEFT);
-        dragPoints[1] = new ResizePoint(ResizePoint.TOP);
-        dragPoints[2] = new ResizePoint(ResizePoint.TOP | ResizePoint.RIGHT);
-        dragPoints[3] = new ResizePoint(ResizePoint.RIGHT);
-        dragPoints[4] = new ResizePoint(ResizePoint.BOTTOM | ResizePoint.RIGHT);
-        dragPoints[5] = new ResizePoint(ResizePoint.BOTTOM);
-        dragPoints[6] = new ResizePoint(ResizePoint.BOTTOM | ResizePoint.LEFT);
-        dragPoints[7] = new ResizePoint(ResizePoint.LEFT);
+        dragPoints.add(new ResizePoint(ResizePoint.TOP | ResizePoint.LEFT));
+        dragPoints.add(new ResizePoint(ResizePoint.TOP));
+        dragPoints.add(new ResizePoint(ResizePoint.TOP | ResizePoint.RIGHT));
+        dragPoints.add(new ResizePoint(ResizePoint.RIGHT));
+        dragPoints.add(new ResizePoint(ResizePoint.BOTTOM | ResizePoint.RIGHT));
+        dragPoints.add(new ResizePoint(ResizePoint.BOTTOM));
+        dragPoints.add(new ResizePoint(ResizePoint.BOTTOM | ResizePoint.LEFT));
+        dragPoints.add(new ResizePoint(ResizePoint.LEFT));
 
         for (ResizePoint dragPoint : dragPoints) {
             ResizePointHandler handler = new ResizePointHandler(dragPoint);

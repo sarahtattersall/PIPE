@@ -13,6 +13,7 @@ import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.math.Cubic;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.models.petrinet.*;
+import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -271,42 +272,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     private void setEndControlPoints() {
-        ConnectableVisitor endPointVisitor = new ConnectableVisitor() {
-            @Override
-            public void visit(Place place) {
-                if (pathPoints.get(getEndIndex()).isCurved()) {
-                    double angle = Math.toRadians(_transitionAngle);
-                    ArcPathPoint myPoint = pathPoints.get(getEndIndex());
-                    ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
-                    float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
-                            / GUIConstants.ARC_CONTROL_POINT_CONSTANT;
-                    myPoint.setControl2((float) (myPoint.getPoint().getX() + Math.cos(angle) * distance),
-                            (float) (myPoint.getPoint().getY() + Math.sin(angle) * distance));
-
-                    myPoint = pathPoints.get(1);
-                    myPoint.setControl(getControlPoint(pathPoints.get(0).getPoint(), myPoint.getControl(),
-                            pathPoints.get(0).getPoint(), myPoint.getControl()));
-                }
-            }
-
-            @Override
-            public void visit(Transition transition) {
-                if (pathPoints.get(1).isCurved()) {
-                    double angle = Math.toRadians(_transitionAngle);
-                    ArcPathPoint myPoint = pathPoints.get(1);
-                    ArcPathPoint myLastPoint = pathPoints.get(0);
-                    float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
-                            / GUIConstants.ARC_CONTROL_POINT_CONSTANT;
-                    myPoint.setControl1((float) (myLastPoint.getPoint().getX() + Math.cos(angle) * distance),
-                            (float) (myLastPoint.getPoint().getY() + Math.sin(angle) * distance));
-
-                    myPoint = pathPoints.get(getEndIndex());
-                    myPoint.setControl(getControlPoint(myPoint.getPoint(), myPoint.getControl1(), myPoint.getPoint(),
-                            myPoint.getControl1()));
-                }
-            }
-        };
-
+        PetriNetComponentVisitor endPointVisitor = new ArcConnectableVisitor();
         Connectable source = getArc().getModel().getSource();
         try {
             source.accept(endPointVisitor);
@@ -673,6 +639,42 @@ public class ArcPath implements Shape, Cloneable {
     private static interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {
     }
 
+
+    private class ArcConnectableVisitor implements ConnectableVisitor {
+        @Override
+        public void visit(Place place) {
+            if (pathPoints.get(getEndIndex()).isCurved()) {
+                double angle = Math.toRadians(_transitionAngle);
+                ArcPathPoint myPoint = pathPoints.get(getEndIndex());
+                ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
+                float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
+                        / GUIConstants.ARC_CONTROL_POINT_CONSTANT;
+                myPoint.setControl2((float) (myPoint.getPoint().getX() + Math.cos(angle) * distance),
+                        (float) (myPoint.getPoint().getY() + Math.sin(angle) * distance));
+
+                myPoint = pathPoints.get(1);
+                myPoint.setControl(getControlPoint(pathPoints.get(0).getPoint(), myPoint.getControl(),
+                        pathPoints.get(0).getPoint(), myPoint.getControl()));
+            }
+        }
+
+        @Override
+        public void visit(Transition transition) {
+            if (pathPoints.get(1).isCurved()) {
+                double angle = Math.toRadians(_transitionAngle);
+                ArcPathPoint myPoint = pathPoints.get(1);
+                ArcPathPoint myLastPoint = pathPoints.get(0);
+                float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
+                        / GUIConstants.ARC_CONTROL_POINT_CONSTANT;
+                myPoint.setControl1((float) (myLastPoint.getPoint().getX() + Math.cos(angle) * distance),
+                        (float) (myLastPoint.getPoint().getY() + Math.sin(angle) * distance));
+
+                myPoint = pathPoints.get(getEndIndex());
+                myPoint.setControl(getControlPoint(myPoint.getPoint(), myPoint.getControl1(), myPoint.getPoint(),
+                        myPoint.getControl1()));
+            }
+        }
+    }
 }
 
 

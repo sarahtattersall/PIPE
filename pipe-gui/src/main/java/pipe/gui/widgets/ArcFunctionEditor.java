@@ -2,8 +2,8 @@ package pipe.gui.widgets;
 
 import pipe.controllers.ArcController;
 import uk.ac.imperial.pipe.animation.AnimationUtils;
-import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.parsers.FunctionalResults;
 import uk.ac.imperial.pipe.parsers.FunctionalWeightParser;
 import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
@@ -65,40 +65,7 @@ public class ArcFunctionEditor extends JPanel {
         JButton okbutton = new JButton("OK");
         JButton helpbutton = new JButton("Help");
 
-        okbutton.addActionListener(new java.awt.event.ActionListener() {
-
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                String func = function.getText();
-                if (func == null || func.equals("")) {
-                    exit();
-                    return;
-                }
-
-                //TODO: PASS THIS IN
-
-
-                State state = AnimationUtils.getState(petriNet);
-                StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);
-                FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, petriNet);
-                FunctionalResults<Double> results = parser.evaluateExpression(func);
-                if (!results.hasErrors()) {
-                    weightEditorPanel.setWeight(func, token);
-                } else {
-                    List<String> errors = results.getErrors();
-                    String concatenated = concatenateErrors(errors);
-                    JOptionPane.showMessageDialog(null, concatenated);
-                    return;
-                }
-                exit();
-                //                } catch (MarkingDividedByNumberException e) {
-                //                    JOptionPane.showMessageDialog(null,
-                //                            "Marking-dependent arc weight divided by number not supported.\r\n" +
-                //                                    "Since this may cause non-integer arc weight.");
-                //                    return;
-
-            }
-        });
+        okbutton.addActionListener(new ArcOKAction(function));
         helpbutton.addActionListener(new java.awt.event.ActionListener() {
 
             @Override
@@ -155,5 +122,37 @@ public class ArcFunctionEditor extends JPanel {
             builder.append(error).append(", ");
         }
         return builder.toString();
+    }
+
+    private class ArcOKAction implements ActionListener {
+
+        private final JTextArea function;
+
+        private ArcOKAction(JTextArea function) {
+            this.function = function;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String func = function.getText();
+            if (func == null || func.equals("")) {
+                exit();
+                return;
+            }
+
+            State state = AnimationUtils.getState(petriNet);
+            StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);
+            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, petriNet);
+            FunctionalResults<Double> results = parser.evaluateExpression(func);
+            if (!results.hasErrors()) {
+                weightEditorPanel.setWeight(func, token);
+            } else {
+                List<String> errors = results.getErrors();
+                String concatenated = concatenateErrors(errors);
+                JOptionPane.showMessageDialog(null, concatenated);
+                return;
+            }
+            exit();
+        }
     }
 }

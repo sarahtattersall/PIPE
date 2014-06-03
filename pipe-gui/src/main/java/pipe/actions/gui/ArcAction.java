@@ -91,38 +91,7 @@ public class ArcAction extends CreateAction {
     private <T extends Connectable> void createTemporaryArc(T connectable, final PetriNetTab tab) {
 
         temporaryArcView = new TemporaryArcView<>(connectable, arcHead);
-        temporaryArcView.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-                //Do nothing on type
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-
-                switch (keyEvent.getKeyCode()) {
-                    case KeyEvent.VK_META:
-                    case KeyEvent.VK_WINDOWS:
-                    case KeyEvent.VK_SPACE:
-                        tab.setMetaDown(true);
-                        break;
-
-                    case KeyEvent.VK_ESCAPE:
-                    case KeyEvent.VK_DELETE:
-                        tab.remove(temporaryArcView);
-                        tab.repaint();
-                        temporaryArcView = null;
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                //Do nothing on key release
-            }
-        });
-
+        temporaryArcView.addKeyListener(new ArcViewKeyListener(tab));
         tab.add(temporaryArcView);
         temporaryArcView.requestFocusInWindow();
     }
@@ -182,6 +151,45 @@ public class ArcAction extends CreateAction {
         }
     }
 
+
+    private class ArcViewKeyListener implements KeyListener {
+
+        private final PetriNetTab tab;
+
+        private ArcViewKeyListener(PetriNetTab tab) {
+            this.tab = tab;
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            //Not needed
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_META:
+                case KeyEvent.VK_WINDOWS:
+                case KeyEvent.VK_SPACE:
+                    tab.setMetaDown(true);
+                    break;
+
+                case KeyEvent.VK_ESCAPE:
+                case KeyEvent.VK_DELETE:
+                    tab.remove(temporaryArcView);
+                    tab.repaint();
+                    temporaryArcView = null;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            //Not needed
+        }
+    }
 
 }
 
