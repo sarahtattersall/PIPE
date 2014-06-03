@@ -22,8 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PetriNetTab extends JLayeredPane implements Observer, Printable {
+
+    private static final Logger LOGGER = Logger.getLogger(PetriNetTab.class.getName());
 
     /**
      * Map of components in the tab with id -> component
@@ -119,8 +123,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         try {
             component.accept(changeListener);
         } catch (PetriNetComponentException e) {
-            System.err.println("Could not register listener in Petri net tab");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 

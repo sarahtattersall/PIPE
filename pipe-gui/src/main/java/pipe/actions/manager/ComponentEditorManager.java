@@ -75,7 +75,7 @@ public class ComponentEditorManager implements ActionManager {
      * @return inorder iterable of the actions this class is responsible for managing
      */
     @Override
-    public Iterable<GuiAction> getActions() {
+    public final Iterable<GuiAction> getActions() {
         editEnabledStatus.keySet();
         return Arrays.asList(cutAction, copyAction, pasteAction, deleteAction, undoAction, redoAction);
     }

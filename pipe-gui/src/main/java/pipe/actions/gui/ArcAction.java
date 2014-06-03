@@ -22,8 +22,12 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ArcAction extends CreateAction {
+
+    private static final Logger LOGGER = Logger.getLogger(ArcAction.class.getName());
 
     private final ArcSourceVisitor sourceVisitor;
 
@@ -122,8 +126,7 @@ public final class ArcAction extends CreateAction {
             registerUndoEvent(new AddPetriNetObject(arc, net));
             net.add(arc);
         } catch (PetriNetComponentException e) {
-            //TODO:
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
 
         tab.remove(temporaryArcView);

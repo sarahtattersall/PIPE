@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -41,6 +43,8 @@ import java.util.Set;
 public class ModuleManager {
 
     private final static String LOAD_NODE_STRING = "Find IModule";
+
+    private static final Logger LOGGER = Logger.getLogger(ModuleManager.class.getName());
 
     private final Set<Class<?>> installedModules;
 
@@ -119,13 +123,9 @@ public class ModuleManager {
 
         // iterate over the class names and create a node for each
         for (Class<? extends GuiModule> clazz : classes) {
-            try {
-                // create each ModuleClass node using an instantiation of the
-                // ModuleClass
-                addClassToTree(clazz);
-            } catch (Throwable ignored) {
-                System.out.println("Error in creating class node");
-            }
+            // create each ModuleClass node using an instantiation of the
+            // ModuleClass
+            addClassToTree(clazz);
         }
 
         root.add(load_modules);
@@ -187,7 +187,7 @@ public class ModuleManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return results;
     }
@@ -216,10 +216,8 @@ public class ModuleManager {
                 ModuleMethod m = new ModuleMethod(moduleClass, tempMethod);
                 m.setName(modNode.getUserObject().toString());
                 modNode.add(new DefaultMutableTreeNode(m));
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (SecurityException | NoSuchMethodException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
 
             if (modNode.getChildCount() == 1) {
@@ -287,7 +285,7 @@ public class ModuleManager {
 
                         PetriNet petriNet = controller.getActivePetriNetController().getPetriNet();
                         ((ModuleMethod) nodeObj).execute(petriNet);
-                    } else if (nodeObj == LOAD_NODE_STRING) {
+                    } else if (nodeObj.equals(LOAD_NODE_STRING)) {
 
                         //Create a file chooser
                         JFileChooser fc = new JFileChooser();

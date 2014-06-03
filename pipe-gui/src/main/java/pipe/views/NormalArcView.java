@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T>  {
     ArcHead arcHead = new NormalHead();
-    private final static String type = "normal";
+    private final static String TYPE = "normal";
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
     // bidirectional arc?
     private boolean joined = false;
@@ -127,7 +127,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     @Override public String getType() {
-        return type;
+        return TYPE;
     }
 
     /**

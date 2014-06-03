@@ -54,7 +54,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Repopulates the path with the models points
      */
-    protected void updatePath() {
+    protected final void updatePath() {
         addIntermediatePoints();
         arcPath.createPath();
         arcPath.addPointsToGui(getParent());

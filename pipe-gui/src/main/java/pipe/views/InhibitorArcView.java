@@ -18,7 +18,7 @@ import java.awt.geom.AffineTransform;
  */
 public class InhibitorArcView extends ArcView<Place, Transition> {
 
-    private final static String type = "inhibitor";
+    private final static String TYPE = "inhibitor";
 
     private ArcHead arcHead = new InhibitorArcHead();
 
@@ -28,7 +28,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
     @Override
     public String getType() {
-        return type;
+        return TYPE;
     }
 
 

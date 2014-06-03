@@ -60,9 +60,10 @@ public class TokenView extends Observable  {
         canvas.setColor(getColor());
         int WIDTH = 4;
         int HEIGHT = 4;
+        int marking = tempTotalMarking;
         for (int i = 0; i < currentMarking; i++) {
 
-            switch (tempTotalMarking) {
+            switch (marking) {
                 case 5:
                     canvas.drawOval(x + 6, y + 6, WIDTH, HEIGHT);
                     canvas.fillOval(x + 6, y + 6, WIDTH, HEIGHT);
@@ -88,7 +89,7 @@ public class TokenView extends Observable  {
                 default:
                     break;
             }
-            tempTotalMarking--;
+            marking--;
         }
     }
 

@@ -34,10 +34,14 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class PipeApplicationView extends JFrame implements ActionListener, Observer {
 
+
+    private static final Logger LOGGER = Logger.getLogger(PipeApplicationView.class.getName());
 
     public final StatusBar statusBar;
 
@@ -104,7 +108,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
 
         this.setIconImage(new ImageIcon(getImageURL("icon.png")).getImage());
@@ -266,11 +270,11 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void setAnimationMode(boolean animateMode) {
         if (animateMode) {
-            statusBar.changeText(statusBar.textforAnimation);
+            statusBar.changeText(statusBar.TEXT_FOR_ANIMATION);
             createAnimationViewPane();
 
         } else {
-            statusBar.changeText(statusBar.textforDrawing);
+            statusBar.changeText(statusBar.TEXT_FOR_DRAWING);
             removeAnimationViewPlane();
         }
     }

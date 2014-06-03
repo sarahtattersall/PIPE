@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Contains constants used by the PIPE GUI.
  */
-public class PIPEConstants {
+public final class PIPEConstants {
     /**
      * Hidden constructor for utility class
      */

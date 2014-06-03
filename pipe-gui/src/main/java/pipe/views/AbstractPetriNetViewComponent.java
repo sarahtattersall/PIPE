@@ -33,7 +33,7 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     protected T model;
 
-    boolean _selectable;
+    protected boolean _selectable;
 
     public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller, Container parent) {
         this.id = id;

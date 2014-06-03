@@ -1,6 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.AbstractDatum;
@@ -29,6 +28,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SpecifyTokenAction extends GuiAction {
     private final PipeApplicationController pipeApplicationController;
@@ -109,6 +110,8 @@ public class SpecifyTokenAction extends GuiAction {
 
     public class TokenDialog<T extends PetriNetComponent> extends JDialog implements ActionListener {
 
+        private final Logger LOGGER = Logger.getLogger(TokenDialog.class.getName());
+
         private TokenEditorPanel tokenEditorPanel;
 
         public TokenDialog(String title, boolean modal, TokenEditorPanel tokenEditorPanel) {
@@ -159,7 +162,8 @@ public class SpecifyTokenAction extends GuiAction {
                         messageBuilder.append("All other changes will be applied but this token will not be deleted!");
                         GuiUtils.displayErrorMessage(null, messageBuilder.toString());
                     } catch (PetriNetComponentNotFoundException e) {
-                        e.printStackTrace();
+
+                        LOGGER.log(Level.SEVERE, e.getMessage());
                     }
                 }
             }
@@ -190,7 +194,7 @@ public class SpecifyTokenAction extends GuiAction {
                         Token token = petriNetController.getToken(modified.id);
                         undoableEdits.add(new AddPetriNetObject(token, petriNetController.getPetriNet()));
                     } catch (PetriNetComponentNotFoundException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, e.getMessage());
                     }
 
                 }

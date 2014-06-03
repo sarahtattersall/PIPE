@@ -13,12 +13,16 @@ import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Graphical representation of a Place
  */
 public class PlaceView extends ConnectableView<Place> {
 
+
+    private static final Logger LOGGER = Logger.getLogger(PlaceView.class.getName());
 
     public PlaceView(Place model, Container parent, PetriNetController controller, MouseInputAdapter placeHandler) {
         super(model.getId(), model, controller, parent, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
@@ -145,7 +149,7 @@ public class PlaceView extends ConnectableView<Place> {
                 token = petriNetController.getToken(tokenId);
                 paintOvalTokens(g2, insets, token.getColor(), count, offset);
             } catch (PetriNetComponentNotFoundException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
                 paintOvalTokens(g2, insets, Color.BLACK, count, offset);
             }
             offset += count;
@@ -219,7 +223,7 @@ public class PlaceView extends ConnectableView<Place> {
                 Token token = petriNetController.getToken(tokenId);
                 paintTextualTokens(g2, insets, token.getColor(), count, offset);
             } catch (PetriNetComponentNotFoundException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
                 paintTextualTokens(g2, insets, Color.BLACK, count, offset);
 
             } offset += 10;

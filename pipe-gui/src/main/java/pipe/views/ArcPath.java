@@ -28,9 +28,9 @@ import java.util.List;
  */
 public class ArcPath implements Shape, Cloneable {
 
-    private static final Stroke proximityStroke = new BasicStroke(GUIConstants.ARC_PATH_PROXIMITY_WIDTH);
+    private static final Stroke PROXIMITY_STROKE = new BasicStroke(GUIConstants.ARC_PATH_PROXIMITY_WIDTH);
 
-    private static final Stroke stroke = new BasicStroke(GUIConstants.ARC_PATH_SELECTION_WIDTH);
+    private static final Stroke STROKE = new BasicStroke(GUIConstants.ARC_PATH_SELECTION_WIDTH);
 
     public final Point2D.Double midPoint = new Point2D.Double();
 
@@ -53,9 +53,9 @@ public class ArcPath implements Shape, Cloneable {
      */
     private boolean pointLock = false;
 
-    private Shape shape = stroke.createStrokedShape(this);
+    private Shape shape = STROKE.createStrokedShape(this);
 
-    private Shape proximityShape = proximityStroke.createStrokedShape(this);
+    private Shape proximityShape = PROXIMITY_STROKE.createStrokedShape(this);
 
     private int _transitionAngle;
 
@@ -358,8 +358,8 @@ public class ArcPath implements Shape, Cloneable {
             length += getLength(currentPoint.getPoint(), previousPoint.getPoint());
         }
         setMidPoint(length);
-        shape = stroke.createStrokedShape(this);
-        proximityShape = proximityStroke.createStrokedShape(this);
+        shape = STROKE.createStrokedShape(this);
+        proximityShape = PROXIMITY_STROKE.createStrokedShape(this);
     }
 
     private void setControlPoints() {
@@ -459,8 +459,8 @@ public class ArcPath implements Shape, Cloneable {
             /* calculate a cubic for each section of the curve */
                 int lengthOfCurve = curveEndIndex - curveStartIndex;
                 int k1;
-                int x[] = new int[lengthOfCurve + 2];
-                int y[] = new int[lengthOfCurve + 2];
+                int[] x = new int[lengthOfCurve + 2];
+                int[] y = new int[lengthOfCurve + 2];
 
                 for (k1 = 0; k1 <= (curveEndIndex - curveStartIndex); k1++) {
                     x[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getX();

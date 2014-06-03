@@ -15,12 +15,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class listens for changes in PetriNet
  * and creates/deletes the relevant views as appropriate
  */
 public class PetriNetChangeListener implements PropertyChangeListener {
+
+    private static final Logger LOGGER = Logger.getLogger(PetriNetChangeListener.class.getName());
 
     /**
      * Pipe appliaction model, needed for building items so that
@@ -64,7 +68,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
             try {
                 method.invoke(this, propertyChangeEvent);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
     }

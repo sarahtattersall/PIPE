@@ -8,10 +8,10 @@ public class VanishingStateNode extends DefaultNode {
     private final String label;
     private String toolTip;
 
-    static final JPowerGraphColor bgColor = new JPowerGraphColor(182, 220, 255);
-    private static final JPowerGraphColor textColor = JPowerGraphColor.BLACK;
-    private static final ShapeNodePainter shapeNodePainter = new ShapeNodePainter(
-            ShapeNodePainter.ELLIPSE, bgColor, bgColor, textColor);
+    private static final JPowerGraphColor BG_COLOR = new JPowerGraphColor(182, 220, 255);
+    private static final JPowerGraphColor TEXT_COLOR = JPowerGraphColor.BLACK;
+    private static final ShapeNodePainter SHAPE_NODE_PAINTER = new ShapeNodePainter(
+            ShapeNodePainter.ELLIPSE, BG_COLOR, BG_COLOR, TEXT_COLOR);
 
     /**
      * Creates a new node instance.
@@ -42,6 +42,6 @@ public class VanishingStateNode extends DefaultNode {
 
 
     public static ShapeNodePainter getShapeNodePainter(){
-        return shapeNodePainter;
+        return SHAPE_NODE_PAINTER;
     }
 }

@@ -6,6 +6,8 @@ package pipe.gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -19,6 +21,8 @@ public final class ModuleLoader {
      */
     private static final String IMODULE_LOCATION = "pipe.modules.interfaces.IModule";
 
+    private static final Logger LOGGER = Logger.getLogger(ModuleLoader.class.getName());
+
 
     private ModuleLoader() {
     }
@@ -31,10 +35,11 @@ public final class ModuleLoader {
 
             modFile = modFile.getParentFile();
 
-            while (!modFile.getName().endsWith("pipe")) {
-                modFile = modFile.getParentFile();
+            File moduleFile = modFile;
+            while (!moduleFile.getName().endsWith("pipe")) {
+                moduleFile = moduleFile.getParentFile();
             }
-            ExtFileManager.addSearchPath(modFile);
+            ExtFileManager.addSearchPath(moduleFile);
             modClass = ExtFileManager.loadExtClass(className);
             if (!isModule(modClass)) {
                 return null;
@@ -49,7 +54,7 @@ public final class ModuleLoader {
         try {
             filename = moduleFile.getCanonicalPath();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
             return null;
         }
         String seperator = System.getProperty("file.separator");

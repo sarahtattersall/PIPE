@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * Static class with useful utility methods for the gui
  */
-public class GuiUtils {
+public final class GuiUtils {
 
     /**
      * Private constructor for static class

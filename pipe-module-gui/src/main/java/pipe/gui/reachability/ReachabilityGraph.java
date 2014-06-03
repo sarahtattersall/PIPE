@@ -43,8 +43,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReachabilityGraph {
+
+    private static final Logger LOGGER = Logger.getLogger(ReachabilityGraph.class.getName());
 
     /**
      * For loading Petri nets to explore
@@ -273,7 +277,7 @@ public class ReachabilityGraph {
 
 
         } catch (InvalidRateException | TimelessTrapException | IOException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -284,7 +288,7 @@ public class ReachabilityGraph {
             temporaryStates = getStatesPath();
             processBinaryResults(stateWriter, temporaryTransitions, temporaryStates);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -477,7 +481,7 @@ public class ReachabilityGraph {
                 PetriNetReader petriNetIO = new PetriNetIOImpl();
                 lastLoadedPetriNet = petriNetIO.read(path.getAbsolutePath());
             } catch (JAXBException | UnparsableException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
     }
@@ -548,7 +552,7 @@ public class ReachabilityGraph {
             try {
                 Files.copy(temporary, path, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
     }

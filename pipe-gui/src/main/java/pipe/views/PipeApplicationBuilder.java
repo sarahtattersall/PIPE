@@ -25,11 +25,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public final class PipeApplicationBuilder {
 
+
+    private static final Logger LOGGER = Logger.getLogger(PipeApplicationBuilder.class.getName());
 
     public PipeApplicationView build(PipeApplicationController controller, PipeApplicationModel model) {
         ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, controller);
@@ -345,7 +349,7 @@ public final class PipeApplicationBuilder {
             try {
                 return loadJarExamples(controller, view);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
         JMenu exampleMenu = new JMenu("Examples");
@@ -358,7 +362,7 @@ public final class PipeApplicationBuilder {
                 addMenuItem(exampleMenu, new ExampleFileAction(entry, view, controller));
             }
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return exampleMenu;
     }

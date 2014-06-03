@@ -12,11 +12,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author pere
  */
 public class PlaceEditorPanel extends javax.swing.JPanel {
+    private static final Logger LOGGER = Logger.getLogger(PlaceEditorPanel.class.getName());
+
     private final PetriNetController netController;
 
     private final PlaceController placeController;
@@ -341,7 +345,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
                 newTokenCounts.clear();
                 return newTokenCounts;
             } catch (HeadlessException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
                 JOptionPane.showMessageDialog(null, "Please enter a positive integer greater or equal to 0.",
                         "Invalid entry", JOptionPane.ERROR_MESSAGE);
                 newTokenCounts.clear();

@@ -9,10 +9,10 @@ import java.awt.BorderLayout;
 public class StatusBar extends JPanel {
 
     /* Provides the appropriate text for the mode that the user is in */
-    public static final String textforDrawing =
+    public static final String TEXT_FOR_DRAWING =
             "Drawing Mode: Click on a button to start adding components to the " + "Editor";
 
-    public static final String textforAnimation =
+    public static final String TEXT_FOR_ANIMATION =
             "Animation Mode: Red transitions are enabled, click a transition to " + "fire it";
 
     private final JLabel label;
@@ -20,7 +20,7 @@ public class StatusBar extends JPanel {
 
     public StatusBar() {
         super();
-        label = new JLabel(textforDrawing); // got to put something in there
+        label = new JLabel(TEXT_FOR_DRAWING); // got to put something in there
         this.setLayout(new BorderLayout(0, 0));
         this.add(label);
     }
@@ -72,7 +72,7 @@ public class StatusBar extends JPanel {
                 break;
 
             case GUIConstants.DRAW:
-                changeText(textforDrawing);
+                changeText(TEXT_FOR_DRAWING);
                 break;
 
             case GUIConstants.ANNOTATION:

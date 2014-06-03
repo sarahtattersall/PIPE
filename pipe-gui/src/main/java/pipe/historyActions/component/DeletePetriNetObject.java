@@ -9,6 +9,8 @@ import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import javax.swing.undo.AbstractUndoableEdit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -16,6 +18,8 @@ import javax.swing.undo.AbstractUndoableEdit;
  */
 public class DeletePetriNetObject
         extends AbstractUndoableEdit {
+
+    private static final Logger LOGGER = Logger.getLogger(DeletePetriNetObject.class.getName());
 
     private PetriNetComponent component;
     private final PetriNet petriNet;
@@ -38,7 +42,7 @@ public class DeletePetriNetObject
         try {
             petriNet.remove(component);
         } catch (PetriNetComponentException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -50,7 +54,7 @@ public class DeletePetriNetObject
         try {
             petriNet.add(component);
         } catch (PetriNetComponentException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 

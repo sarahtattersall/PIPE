@@ -35,12 +35,12 @@ public abstract class JarUtilities {
    public static List<JarEntry> getJarEntries(JarFile jarFile, String directory) {
       Enumeration<JarEntry> enumeration = jarFile.entries();
       List<JarEntry> nets = new ArrayList<>();
-      directory = directory + System.getProperty("file.separator");
+      String separatedDirectory = directory + File.separator;
       
       while (enumeration.hasMoreElements()) {
          JarEntry je = (JarEntry)enumeration.nextElement();
          String s = je.toString();
-         if ((s.contains(directory)) && (s.length() > directory.length())){
+         if ((s.contains(separatedDirectory)) && (s.length() > separatedDirectory.length())){
             nets.add(je);
          }
       }
