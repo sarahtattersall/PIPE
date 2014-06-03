@@ -16,7 +16,7 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     protected final PetriNetController petriNetController;
 
-    protected String _id;
+    protected String id;
 
     /**
      * Parent that this component is contained in.
@@ -35,13 +35,10 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     boolean _selectable;
 
-    private boolean _draggable;
-
     public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller, Container parent) {
-        _id = id;
+        this.id = id;
         this.parent = parent;
         _selectable = true;
-        _draggable = true;
         _copyPasteable = true;
         _ignoreSelection = false;
         bounds = new Rectangle();
@@ -50,6 +47,11 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         this.model = model;
         this.petriNetController = controller;
     }
+
+    /**
+     * Any code that must be executed in order to perform a component delete
+     */
+    public abstract void componentSpecificDelete();
 
     @Override
     public int hashCode() {
@@ -74,34 +76,30 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         return true;
     }
 
-    public String getId() {
-        return _id;
+    public final String getId() {
+        return id;
     }
 
-    public void setId(String idInput) {
-        _id = idInput;
+    public final void setId(String idInput) {
+        id = idInput;
     }
 
-    public T getModel() {
+    public final T getModel() {
         return model;
     }
 
-    public boolean isDraggable() {
-        return _draggable;
-    }
-
-    public void setDraggable(boolean allow) {
-        _draggable = allow;
+    public final void setDraggable(boolean allow) {
     }
 
     @Override
-    public void delete() {
+    public final void delete() {
+        componentSpecificDelete();
         _deleted = true;
         removeFromContainer();
         removeAll();
     }
 
-    protected void removeFromContainer() {
+    protected final void removeFromContainer() {
         Container c = getParent();
 
         if (c != null) {
@@ -114,14 +112,14 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         return COMPONENT_DRAW_OFFSET;
     }
 
-    public PetriNetController getPetriNetController() {
+    public final PetriNetController getPetriNetController() {
         return petriNetController;
     }
 
     /**
      * @return true if model selected
      */
-    public boolean isSelected() {
+    public final boolean isSelected() {
         return petriNetController.isSelected(model);
     }
 }

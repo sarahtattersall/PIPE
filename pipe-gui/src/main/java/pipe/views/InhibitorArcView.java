@@ -33,6 +33,11 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
 
     @Override
+    public void addToContainer(Container container) {
+        updatePath();
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -65,5 +70,10 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
         }
 
         g2.setTransform(reset);
+    }
+
+    @Override
+    public void componentSpecificDelete() {
+        //Nothing to do
     }
 }

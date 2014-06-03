@@ -259,11 +259,6 @@ public class PlaceView extends ConnectableView<Place> {
     }
 
 
-    @Override
-    public void toggleAttributesVisible() {
-        _attributesVisible = !_attributesVisible;
-    }
-
     private boolean isTagged() {
         return false;
     }

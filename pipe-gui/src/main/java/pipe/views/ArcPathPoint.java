@@ -204,12 +204,7 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
     }
 
     @Override
-    public ArcPoint getModel() {
-        return model;
-    }
-
-    @Override
-    public void delete() {// Won't delete if only two points left. General delete.
+    public void componentSpecificDelete() {// Won't delete if only two points left. General delete.
         if (isDeleteable()) {
             if (getArcPath().getArc().isSelected()) {
                 return;
@@ -248,12 +243,6 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
                 g2.draw(shape);
             }
         }
-    }
-
-    //TODO: WORK OUT HOW TO SELECT THESE?
-    @Override
-    public boolean isSelected() {
-        return false;
     }
 
     public boolean isDeleteable() {

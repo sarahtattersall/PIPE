@@ -27,7 +27,7 @@ public class AbstractDatum {
      *
      * @return true if the id has been changed
      */
-    public boolean hasBeenSet() {
+    public final boolean hasBeenSet() {
         return !this.id.equals("");
     }
 

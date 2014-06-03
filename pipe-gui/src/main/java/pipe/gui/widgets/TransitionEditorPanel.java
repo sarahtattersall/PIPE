@@ -3,14 +3,7 @@ package pipe.gui.widgets;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionController;
 import pipe.utilities.gui.GuiUtils;
-import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.Arc;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.NormalRate;
-import uk.ac.imperial.pipe.models.petrinet.Rate;
-import uk.ac.imperial.pipe.models.petrinet.RateParameter;
-import uk.ac.imperial.pipe.models.petrinet.RateType;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.parsers.EvalVisitor;
 import uk.ac.imperial.pipe.parsers.FunctionalResults;
 import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
@@ -80,7 +73,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      * OK butotn for setting changes
      */
     private final JButton okButton = new JButton();
-
 
 
     /**
@@ -613,11 +605,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
      */
     private boolean canSetName() {
         String newName = nameTextField.getText();
-        if (!newName.equals(transitionController.getName())) {
-            if (!netController.isUniqueName(newName)) {
-                showErrorMessage("There is already a transition named " + newName);
-                return false;
-            }
+        if (!newName.equals(transitionController.getName()) && !netController.isUniqueName(newName)) {
+            showErrorMessage("There is already a transition named " + newName);
+            return false;
         }
         return true;
     }
@@ -655,11 +645,13 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     }
 
     private boolean canSetRate() {
-        PetriNetWeightParser parser = new PetriNetWeightParser(new EvalVisitor(netController.getPetriNet()), netController.getPetriNet());
+        PetriNetWeightParser parser =
+                new PetriNetWeightParser(new EvalVisitor(netController.getPetriNet()), netController.getPetriNet());
         FunctionalResults<Double> result = parser.evaluateExpression(weightRateTextField.getText());
         if (result.hasErrors()) {
             String concatenated = concatenateErrors(result.getErrors());
-            showErrorMessage("Functional rate expression is invalid. Please check your function. Errors are:" + concatenated);
+            showErrorMessage(
+                    "Functional rate expression is invalid. Please check your function. Errors are:" + concatenated);
             return false;
         }
         double rate = result.getResult();
@@ -677,7 +669,6 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     }
 
     /**
-     *
      * @param errors
      * @return errors concatenated via a new line
      */
@@ -843,16 +834,16 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         focusLost(weightRateTextField);
     }
 
-//    private void createWindow() {
-//        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
-//        TransitionFunctionEditor feditor =
-//                new TransitionFunctionEditor(this, guiDialog, transitionController, netController.getPetriNet());
-//        guiDialog.add(feditor);
-//        guiDialog.setSize(270, 230);
-//        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
-//        guiDialog.setVisible(true);
-//        guiDialog.dispose();
-//    }
+    //    private void createWindow() {
+    //        EscapableDialog guiDialog = new EscapableDialog(ApplicationSettings.getApplicationView(), "PIPE2", true);
+    //        TransitionFunctionEditor feditor =
+    //                new TransitionFunctionEditor(this, guiDialog, transitionController, netController.getPetriNet());
+    //        guiDialog.add(feditor);
+    //        guiDialog.setSize(270, 230);
+    //        guiDialog.setLocationRelativeTo(ApplicationSettings.getApplicationView());
+    //        guiDialog.setVisible(true);
+    //        guiDialog.dispose();
+    //    }
 
     private void setUpImmediateTransition() {
         immediateRadioButton.setSelected(true);

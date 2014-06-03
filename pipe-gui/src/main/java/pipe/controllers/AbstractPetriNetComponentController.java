@@ -30,7 +30,7 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
         this.listener = listener;
     }
 
-    public void setId(String newName) {
+    public final void setId(String newName) {
         String oldName = component.getId();
         if (!oldName.equals(newName)) {
             component.setId(newName);
@@ -43,7 +43,7 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
      *
      * @param edit
      */
-    protected void registerUndoableEdit(UndoableEdit edit) {
+    protected final void registerUndoableEdit(UndoableEdit edit) {
         if (registerMultipleEdits) {
             multipleEdits.add(edit);
         } else {
@@ -58,7 +58,7 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
      * You will need to call finishMultipleEdits() to commit these changes to
      * the undo listener
      */
-    public void startMultipleEdits() {
+    public final void startMultipleEdits() {
         multipleEdits.clear();
         registerMultipleEdits = true;
     }
@@ -67,7 +67,7 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
      * Commits any edits that have been registered via registerUndoableEdit since
      * startMultipleEdits was called to the listener
      */
-    public void finishMultipleEdits() {
+    public final void finishMultipleEdits() {
         registerMultipleEdits = false;
         if (!multipleEdits.isEmpty()) {
             registerUndoableEdit(new MultipleEdit(multipleEdits));

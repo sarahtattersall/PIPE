@@ -22,7 +22,7 @@ import java.beans.PropertyChangeListener;
  * @param <T> Model target type
  */
 public abstract class ArcView<S extends Connectable, T extends Connectable>
-        extends AbstractPetriNetViewComponent<Arc<S, T>> implements Cloneable {
+        extends AbstractPetriNetViewComponent<Arc<S, T>> {
     /**
      * Bounds of arc need to be grown in order to avoid clipping problems.
      * This value achieves it.
@@ -54,7 +54,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Repopulates the path with the models points
      */
-    private void updatePath() {
+    protected void updatePath() {
         addIntermediatePoints();
         arcPath.createPath();
         arcPath.addPointsToGui(getParent());
@@ -73,12 +73,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Registers listeners for the arc model and it's source and target models
      */
-    private void registerModelListeners() {
+    private final void registerModelListeners() {
         addArcChangeListener();
         addSourceTargetConnectableListener();
     }
 
-    public void setMouseListener(MouseInputAdapter arcHandler) {
+    public final void setMouseListener(MouseInputAdapter arcHandler) {
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
         addMouseMotionListener(arcHandler);
@@ -88,7 +88,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Loops through points adding them to the path if they don't already
      * exist
      */
-    private void addIntermediatePoints() {
+    private final void addIntermediatePoints() {
         int index = 0;
         for (ArcPoint arcPoint : model.getArcPoints()) {
             if (!arcPath.contains(arcPoint)) {
@@ -102,7 +102,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Listens for intermediate points being added/deleted
      * Will call a redraw of the existing points
      */
-    private void addArcChangeListener() {
+    private final void addArcChangeListener() {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -122,7 +122,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Listens to the source/target changing position
      */
-    private void addSourceTargetConnectableListener() {
+    private final void addSourceTargetConnectableListener() {
         PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -139,14 +139,14 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Updates all arc points displayed based on their positions
      * in the model
      */
-    private void updateAllPoints() {
+    private final void updateAllPoints() {
         updatePath();
         updateBounds();
     }
 
 
     @Override
-    public boolean contains(int x, int y) {
+    public final boolean contains(int x, int y) {
         Point2D.Double point = new Point2D.Double(x + arcPath.getBounds().getX() - getComponentDrawOffset() -
                 ZOOM_GROW, y + arcPath.getBounds().getY() - getComponentDrawOffset() -
                 ZOOM_GROW);
@@ -163,17 +163,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
         return getId();
     }
 
-    @Override
-    public String getId() {
-        return model.getId();
-    }
-
     //TODO: DELETE
-    public void updateArcPosition() {
+    public final void updateArcPosition() {
         //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
         //        addPathSourceLocation(points.first.x, points.first.y);
         //        setTargetLocation(points.second.x, points.second.y);
@@ -186,25 +181,16 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         //        arcPath.createPath();
     }
 
-    @Override
-    public void addToContainer(Container container) {
-        updatePath();
-    }
 
-    public ArcPath getArcPath() {
+    public final ArcPath getArcPath() {
         return arcPath;
     }
 
     public abstract String getType();
 
-    public void removeFromView() {
-        arcPath.forceHidePoints();
-        removeFromContainer();
-    }
-
 
     // Accessor function to check whether or not the Arc is tagged
-    public boolean isTagged() {
+    public final boolean isTagged() {
         return false;
     }
 }

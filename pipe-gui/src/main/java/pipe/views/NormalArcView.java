@@ -52,8 +52,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     @Override
-    public void delete() {
-        super.delete();
+    public void componentSpecificDelete() {
         for (NameLabel label : weightLabel) {
             removeLabelFromParentContainer(label);
         }
@@ -123,20 +122,12 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     @Override
     public void addToContainer(Container container) {
-        super.addToContainer(container);
+        updatePath();
         updateWeights();
     }
 
     @Override public String getType() {
         return type;
-    }
-
-    /**
-     * Accessor function to check whether or not the Arc is tagged
-     */
-    @Override
-    public boolean isTagged() {
-        return tagged;
     }
 
     /**

@@ -3,10 +3,10 @@
  */
 package pipe.views;
 
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.constants.GUIConstants;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.ArcPathPointHandler;
 import pipe.historyActions.HistoryItem;
 import pipe.utilities.gui.GuiUtils;
@@ -40,6 +40,8 @@ public class ArcPath implements Shape, Cloneable {
 
     private final PetriNetController petriNetController;
 
+    private final PipeApplicationModel applicationModel;
+
     /**
      * Graphical representation of the path
      */
@@ -57,241 +59,12 @@ public class ArcPath implements Shape, Cloneable {
 
     private int _transitionAngle;
 
-    private final PipeApplicationModel applicationModel;
-
     public ArcPath(ArcView<? extends Connectable, ? extends Connectable> arcView, PetriNetController petriNetController,
                    PipeApplicationModel applicationModel) {
         this.arcView = arcView;
         this.petriNetController = petriNetController;
         this.applicationModel = applicationModel;
         _transitionAngle = 0;
-    }
-
-    /**
-     * Moves the path to the first point specified on the arc
-     */
-    private void setStartingPoint(ArcPathPoint point) {
-        path.moveTo(point.getPoint().getX(), point.getPoint().getY());
-    }
-
-    /**
-     * Creates a straight line
-     *
-     * @param point point to create line to
-     */
-    private void createStraightPoint(ArcPathPoint point) {
-        path.lineTo(point.getPoint().getX(), point.getPoint().getY());
-    }
-
-    private void createCurvedPoint(ArcPathPoint point) {
-        path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x, point.getControl().y,
-                point.getPoint().getX(), point.getPoint().getY());
-    }
-
-    /**
-     * Sets the midpoint which is used to relocate the arcs label
-     *
-     * @param length path length
-     */
-    private void setMidPoint(double length) {
-        ArcPathPoint currentPoint = pathPoints.get(0);
-        if (getEndIndex() < 2) {
-            midPoint.x = (pathPoints.get(0).getPoint().getX() + pathPoints.get(1).getPoint().getX()) * 0.5;
-            midPoint.y = (pathPoints.get(0).getPoint().getY() + pathPoints.get(1).getPoint().getY()) * 0.5;
-        } else {
-            double acc = 0;
-            double percent = 0;
-            ArcPathPoint previousPoint = currentPoint;
-            for (int point = 1; point < pathPoints.size(); point++) {
-                previousPoint = currentPoint;
-                currentPoint = pathPoints.get(point);
-
-                double inc = getLength(currentPoint.getPoint(), previousPoint.getPoint());
-                double halfLength = length / 2.0;
-                if ((acc + inc > halfLength)) {
-                    percent = (halfLength - acc) / inc;
-                    break;
-                }
-                acc += inc;
-            }
-
-            midPoint.x = previousPoint.getPoint().getX() + (float) (
-                    (currentPoint.getPoint().getX() - previousPoint.getPoint().getX()) * percent);
-            midPoint.y = previousPoint.getPoint().getY() + (float) (
-                    (currentPoint.getPoint().getY() - previousPoint.getPoint().getY()) * percent);
-        }
-    }
-
-    public void createPath() {
-        setControlPoints();
-
-        path.reset();
-
-        ArcPathPoint currentPoint = pathPoints.get(0);
-        setStartingPoint(currentPoint);
-
-        double length = 0;
-        for (int point = 1; point <= getEndIndex(); point++) {
-            ArcPathPoint previousPoint = currentPoint;
-            currentPoint = pathPoints.get(point);
-
-            if (!currentPoint.isCurved()) {
-                createStraightPoint(currentPoint);
-            } else if (currentPoint.isCurved()) {
-                createCurvedPoint(currentPoint);
-            }
-            length += getLength(currentPoint.getPoint(), previousPoint.getPoint());
-        }
-        setMidPoint(length);
-        shape = stroke.createStrokedShape(this);
-        proximityShape = proximityStroke.createStrokedShape(this);
-    }
-
-    private void setControlPoints() {
-        setCurveControlPoints(); //must be in this order
-        setStraightControlPoints();
-        setEndControlPoints();
-    }
-
-    /* returns a control point for curve CD with incoming vector AB*/
-    private Point2D.Double getControlPoint(Point2D A, Point2D B, Point2D C, Point2D D) {
-        Point2D.Double p = new Point2D.Double(0, 0);
-
-        double modAB = getLength(A, B);
-        double modCD = getLength(C, D);
-
-        double ABx = (B.getX() - A.getX()) / modAB;
-        double ABy = (B.getY() - A.getY()) / modAB;
-
-        if (modAB < 7) {
-            // hack, stops division by zero, modAB can only be this low if the
-            // points are virtually superimposed anyway
-            p = (Point2D.Double) C.clone();
-        } else {
-            p.x = C.getX() + (ABx * modCD / GUIConstants.ARC_CONTROL_POINT_CONSTANT);
-            p.y = C.getY() + (ABy * modCD / GUIConstants.ARC_CONTROL_POINT_CONSTANT);
-        }
-        return p;
-    }
-
-    /**
-     * @param A
-     * @param B
-     * @return modulus of vector A -> B
-     */
-    private double getLength(Point2D A, Point2D B) {
-        double ABx = A.getX() - B.getX();
-        double ABy = A.getY() - B.getY();
-
-        return Math.sqrt(ABx * ABx + ABy * ABy);
-    }
-
-    /* function sets control points for any curved sections of the path */
-    private void setCurveControlPoints() {
-        if (pathPoints.isEmpty()) {
-            return;
-        }
-
-        Cubic[] X, Y;
-
-        for (int c = 1; c < pathPoints.size(); ) {
-            int curveStartIndex;
-            int curveEndIndex = 0;
-            ArcPathPoint currentPoint = pathPoints.get(c);
-
-            if (currentPoint.isCurved()) {
-                curveStartIndex = c - 1;
-
-                for (; c < pathPoints.size() && currentPoint.isCurved(); c++) {
-                    currentPoint = pathPoints.get(c);
-                    curveEndIndex = c;
-                }
-
-            /* calculate a cubic for each section of the curve */
-                int lengthOfCurve = curveEndIndex - curveStartIndex;
-                int k1;
-                int x[] = new int[lengthOfCurve + 2];
-                int y[] = new int[lengthOfCurve + 2];
-
-                for (k1 = 0; k1 <= (curveEndIndex - curveStartIndex); k1++) {
-                    x[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getX();
-                    y[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getY();
-                }
-                x[k1] = x[k1 - 1];
-                y[k1] = y[k1 - 1];
-
-                X = calcNaturalCubic(k1, x);
-                Y = calcNaturalCubic(k1, y);
-
-                for (int k2 = 1; k2 <= lengthOfCurve; k2++) {
-                    currentPoint = pathPoints.get(k2 + curveStartIndex);
-                    currentPoint.setControl1(X[k2 - 1].getX1(), Y[k2 - 1].getX1());
-                    currentPoint.setControl2(X[k2 - 1].getX2(), Y[k2 - 1].getX2());
-                }
-            } else {
-                c++;
-            }
-        }
-    }
-
-    /* fuction sets the control points for any straight sections and for smooth
-     * intersection between straight and curved sections */
-    private void setStraightControlPoints() {
-
-        ArcPathPoint myPreviousButOnePoint;
-
-        for (int c = 1; c <= getEndIndex(); c++) {
-            ArcPathPoint previousPoint = pathPoints.get(c - 1);
-            ArcPathPoint currentPoint = pathPoints.get(c);
-
-            if (!currentPoint.isCurved()) {
-                currentPoint.setControl1(
-                        getControlPoint(previousPoint.getPoint(), currentPoint.getPoint(), previousPoint.getPoint(),
-                                currentPoint.getPoint()));
-                currentPoint.setControl(
-                        getControlPoint(currentPoint.getPoint(), previousPoint.getPoint(), currentPoint.getPoint(),
-                                previousPoint.getPoint()));
-            } else {
-                if (c > 1 && !previousPoint.isCurved()) {
-                    myPreviousButOnePoint = pathPoints.get(c - 2);
-                    currentPoint.setControl1(getControlPoint(myPreviousButOnePoint.getPoint(), previousPoint.getPoint(),
-                            previousPoint.getPoint(), currentPoint.getPoint()));
-                }
-                if (c < getEndIndex()) {
-                    ArcPathPoint nextPoint = pathPoints.get(c + 1);
-                    if (!nextPoint.isCurved()) {
-                        currentPoint.setControl(
-                                getControlPoint(nextPoint.getPoint(), currentPoint.getPoint(), currentPoint.getPoint(),
-                                        previousPoint.getPoint()));
-                    }
-                }
-            }
-        }
-    }
-
-    private void setEndControlPoints() {
-        PetriNetComponentVisitor endPointVisitor = new ArcConnectableVisitor();
-        Connectable source = getArc().getModel().getSource();
-        try {
-            source.accept(endPointVisitor);
-        } catch (PetriNetComponentException e) {
-            GuiUtils.displayErrorMessage(null, e.getMessage());
-        }
-    }
-
-    private ArcPathPoint createPoint(ArcPoint point) {
-        PropertyChangeListener listener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-
-                createPath();
-                arcView.updateBounds();
-                arcView.repaint();
-            }
-        };
-        point.addPropertyChangeListener(listener);
-        return new ArcPathPoint(point, this, petriNetController, arcView.getParent());
-
     }
 
     /**
@@ -309,7 +82,6 @@ public class ArcPath implements Shape, Cloneable {
         }
         return false;
     }
-
 
     public void deletePoint(ArcPoint point) {
         ArcPathPoint pointView = null;
@@ -446,6 +218,319 @@ public class ArcPath implements Shape, Cloneable {
         return proximityShape.contains(p);
     }
 
+    public void delete() {  // Michael: Tells the arc points to remove themselves
+        while (!pathPoints.isEmpty()) {
+            pathPoints.get(0).kill(); // force delete of ALL points
+        }
+    }
+
+    public String[][] getArcPathDetails() {
+        int length = getEndIndex() + 1;
+        String[][] details = new String[length][3];
+
+        int x, y;
+        for (int c = 0; c < length; c++) {
+            x = pathPoints.get(c).getX();
+            details[c][0] = String.valueOf(x);
+            y = pathPoints.get(c).getY();
+            details[c][1] = String.valueOf(y);
+            details[c][2] = String.valueOf(pathPoints.get(c).isCurved());
+        }
+        return details;
+    }
+
+    public void set_transitionAngle(int angle) {
+        _transitionAngle = angle;
+        _transitionAngle %= 360;
+    }
+
+    //TODO: REIMPLEMENT
+    public HistoryItem insertPointAt(Point2D.Double mouseposition, boolean flag) {
+        //        int wantedpoint = findPoint(mouseposition);
+        //
+        //        // wantedpoint is now the index of the first point in the pair of arc
+        //        // points marking the segment to be split. So we have all we need to
+        //        // insert the new point at the given position.
+        //        ArcPathPoint newPoint = new ArcPathPoint(mouseposition, flag, this);
+        //        insertPoint(wantedpoint + 1, newPoint);
+        //        createPath();
+        //        parent.updateArcPosition();
+        //
+        //        return new AddArcPathPoint(this.getArc(), newPoint);
+        return null;
+    }
+
+    /**
+     * @param point point to add to path
+     * @param index position in the path
+     */
+    public void insertIntermediatePoint(ArcPoint point, int index) {
+        insertPoint(index, createPoint(point));
+    }
+
+    /**
+     * insertPoint()
+     * Inserts a new point into the Array List of path points
+     * at the specified index and shifts all the following points along
+     *
+     * @param index
+     * @param newpoint
+     * @author Nadeem
+     */
+    public void insertPoint(int index, ArcPathPoint newpoint) {
+        pathPoints.add(index, newpoint);
+        addPointsToGui(arcView.getParent());
+    }
+
+    private ArcPathPoint createPoint(ArcPoint point) {
+        PropertyChangeListener listener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
+                createPath();
+                arcView.updateBounds();
+                arcView.repaint();
+            }
+        };
+        point.addPropertyChangeListener(listener);
+        return new ArcPathPoint(point, this, petriNetController, arcView.getParent());
+
+    }
+
+    public void addPointsToGui(Container petriNetTab) {
+        if (petriNetTab == null) {
+            return; //Parent has not yet been added
+        }
+
+        pathPoints.get(0).setDraggable(false);
+        pathPoints.get(pathPoints.size() - 1).setDraggable(false);
+
+        for (ArcPathPoint point : pathPoints) {
+            point.setVisible(false);
+
+            // Check whether the point has already been added to the gui
+            // as addPointsToGui() may have been called after the user
+            // split an existing point. If this is the case, we don't want
+            // to add all the points again along with new action listeners,
+            // we just want to add the new point.
+            // Nadeem 21/06/2005
+            //            if (petriNetTab.getIndexOf(point) < 0) {
+            petriNetTab.add(point);
+
+            //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
+            ArcController<? extends Connectable, ? extends Connectable> arcController =
+                    petriNetController.getArcController(arcView.getModel());
+            ArcPathPointHandler pointHandler =
+                    new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController, applicationModel);
+
+            if (point.getMouseListeners().length == 0) {
+                point.addMouseListener(pointHandler);
+            }
+
+            if (point.getMouseMotionListeners().length == 0) {
+                point.addMouseMotionListener(pointHandler);
+            }
+
+            if (point.getMouseWheelListeners().length == 0) {
+                point.addMouseWheelListener(pointHandler);
+            }
+        }
+    }
+
+    public void createPath() {
+        setControlPoints();
+
+        path.reset();
+
+        ArcPathPoint currentPoint = pathPoints.get(0);
+        setStartingPoint(currentPoint);
+
+        double length = 0;
+        for (int point = 1; point <= getEndIndex(); point++) {
+            ArcPathPoint previousPoint = currentPoint;
+            currentPoint = pathPoints.get(point);
+
+            if (!currentPoint.isCurved()) {
+                createStraightPoint(currentPoint);
+            } else if (currentPoint.isCurved()) {
+                createCurvedPoint(currentPoint);
+            }
+            length += getLength(currentPoint.getPoint(), previousPoint.getPoint());
+        }
+        setMidPoint(length);
+        shape = stroke.createStrokedShape(this);
+        proximityShape = proximityStroke.createStrokedShape(this);
+    }
+
+    private void setControlPoints() {
+        setCurveControlPoints(); //must be in this order
+        setStraightControlPoints();
+        setEndControlPoints();
+    }
+
+    /**
+     * Moves the path to the first point specified on the arc
+     */
+    private void setStartingPoint(ArcPathPoint point) {
+        path.moveTo(point.getPoint().getX(), point.getPoint().getY());
+    }
+
+    /**
+     * Creates a straight line
+     *
+     * @param point point to create line to
+     */
+    private void createStraightPoint(ArcPathPoint point) {
+        path.lineTo(point.getPoint().getX(), point.getPoint().getY());
+    }
+
+    private void createCurvedPoint(ArcPathPoint point) {
+        path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x, point.getControl().y,
+                point.getPoint().getX(), point.getPoint().getY());
+    }
+
+    /**
+     * @param A
+     * @param B
+     * @return modulus of vector A -> B
+     */
+    private double getLength(Point2D A, Point2D B) {
+        double ABx = A.getX() - B.getX();
+        double ABy = A.getY() - B.getY();
+
+        return Math.sqrt(ABx * ABx + ABy * ABy);
+    }
+
+    /**
+     * Sets the midpoint which is used to relocate the arcs label
+     *
+     * @param length path length
+     */
+    private void setMidPoint(double length) {
+        ArcPathPoint currentPoint = pathPoints.get(0);
+        if (getEndIndex() < 2) {
+            midPoint.x = (pathPoints.get(0).getPoint().getX() + pathPoints.get(1).getPoint().getX()) * 0.5;
+            midPoint.y = (pathPoints.get(0).getPoint().getY() + pathPoints.get(1).getPoint().getY()) * 0.5;
+        } else {
+            double acc = 0;
+            double percent = 0;
+            ArcPathPoint previousPoint = currentPoint;
+            for (int point = 1; point < pathPoints.size(); point++) {
+                previousPoint = currentPoint;
+                currentPoint = pathPoints.get(point);
+
+                double inc = getLength(currentPoint.getPoint(), previousPoint.getPoint());
+                double halfLength = length / 2.0;
+                if ((acc + inc > halfLength)) {
+                    percent = (halfLength - acc) / inc;
+                    break;
+                }
+                acc += inc;
+            }
+
+            midPoint.x = previousPoint.getPoint().getX() + (float) (
+                    (currentPoint.getPoint().getX() - previousPoint.getPoint().getX()) * percent);
+            midPoint.y = previousPoint.getPoint().getY() + (float) (
+                    (currentPoint.getPoint().getY() - previousPoint.getPoint().getY()) * percent);
+        }
+    }
+
+    /* function sets control points for any curved sections of the path */
+    private void setCurveControlPoints() {
+        if (pathPoints.isEmpty()) {
+            return;
+        }
+
+        Cubic[] X, Y;
+
+        for (int c = 1; c < pathPoints.size(); ) {
+            int curveStartIndex;
+            int curveEndIndex = 0;
+            ArcPathPoint currentPoint = pathPoints.get(c);
+
+            if (currentPoint.isCurved()) {
+                curveStartIndex = c - 1;
+
+                for (; c < pathPoints.size() && currentPoint.isCurved(); c++) {
+                    currentPoint = pathPoints.get(c);
+                    curveEndIndex = c;
+                }
+
+            /* calculate a cubic for each section of the curve */
+                int lengthOfCurve = curveEndIndex - curveStartIndex;
+                int k1;
+                int x[] = new int[lengthOfCurve + 2];
+                int y[] = new int[lengthOfCurve + 2];
+
+                for (k1 = 0; k1 <= (curveEndIndex - curveStartIndex); k1++) {
+                    x[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getX();
+                    y[k1] = (int) (pathPoints.get(curveStartIndex + k1)).getPoint().getY();
+                }
+                x[k1] = x[k1 - 1];
+                y[k1] = y[k1 - 1];
+
+                X = calcNaturalCubic(k1, x);
+                Y = calcNaturalCubic(k1, y);
+
+                for (int k2 = 1; k2 <= lengthOfCurve; k2++) {
+                    currentPoint = pathPoints.get(k2 + curveStartIndex);
+                    currentPoint.setControl1(X[k2 - 1].getX1(), Y[k2 - 1].getX1());
+                    currentPoint.setControl2(X[k2 - 1].getX2(), Y[k2 - 1].getX2());
+                }
+            } else {
+                c++;
+            }
+        }
+    }
+
+    /* fuction sets the control points for any straight sections and for smooth
+     * intersection between straight and curved sections */
+    private void setStraightControlPoints() {
+
+        ArcPathPoint myPreviousButOnePoint;
+
+        for (int c = 1; c <= getEndIndex(); c++) {
+            ArcPathPoint previousPoint = pathPoints.get(c - 1);
+            ArcPathPoint currentPoint = pathPoints.get(c);
+
+            if (!currentPoint.isCurved()) {
+                currentPoint.setControl1(
+                        getControlPoint(previousPoint.getPoint(), currentPoint.getPoint(), previousPoint.getPoint(),
+                                currentPoint.getPoint())
+                );
+                currentPoint.setControl(
+                        getControlPoint(currentPoint.getPoint(), previousPoint.getPoint(), currentPoint.getPoint(),
+                                previousPoint.getPoint())
+                );
+            } else {
+                if (c > 1 && !previousPoint.isCurved()) {
+                    myPreviousButOnePoint = pathPoints.get(c - 2);
+                    currentPoint.setControl1(getControlPoint(myPreviousButOnePoint.getPoint(), previousPoint.getPoint(),
+                            previousPoint.getPoint(), currentPoint.getPoint()));
+                }
+                if (c < getEndIndex()) {
+                    ArcPathPoint nextPoint = pathPoints.get(c + 1);
+                    if (!nextPoint.isCurved()) {
+                        currentPoint.setControl(
+                                getControlPoint(nextPoint.getPoint(), currentPoint.getPoint(), currentPoint.getPoint(),
+                                        previousPoint.getPoint())
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    private void setEndControlPoints() {
+        PetriNetComponentVisitor endPointVisitor = new ArcConnectableVisitor();
+        Connectable source = getArc().getModel().getSource();
+        try {
+            source.accept(endPointVisitor);
+        } catch (PetriNetComponentException e) {
+            GuiUtils.displayErrorMessage(null, e.getMessage());
+        }
+    }
+
     private Cubic[] calcNaturalCubic(int n, int[] x) {
         float[] gamma = new float[n + 1];
         float[] delta = new float[n + 1];
@@ -489,115 +574,29 @@ public class ArcPath implements Shape, Cloneable {
         return C;
     }
 
-    public void delete() {  // Michael: Tells the arc points to remove themselves
-        while (!pathPoints.isEmpty()) {
-            pathPoints.get(0).kill(); // force delete of ALL points
-        }
-    }
+    /* returns a control point for curve CD with incoming vector AB*/
+    private Point2D.Double getControlPoint(Point2D A, Point2D B, Point2D C, Point2D D) {
+        Point2D.Double p = new Point2D.Double(0, 0);
 
-    public String[][] getArcPathDetails() {
-        int length = getEndIndex() + 1;
-        String[][] details = new String[length][3];
+        double modAB = getLength(A, B);
+        double modCD = getLength(C, D);
 
-        int x, y;
-        for (int c = 0; c < length; c++) {
-            x = pathPoints.get(c).getX();
-            details[c][0] = String.valueOf(x);
-            y = pathPoints.get(c).getY();
-            details[c][1] = String.valueOf(y);
-            details[c][2] = String.valueOf(pathPoints.get(c).isCurved());
+        double ABx = (B.getX() - A.getX()) / modAB;
+        double ABy = (B.getY() - A.getY()) / modAB;
+
+        if (modAB < 7) {
+            // hack, stops division by zero, modAB can only be this low if the
+            // points are virtually superimposed anyway
+            p = (Point2D.Double) C.clone();
+        } else {
+            p.x = C.getX() + (ABx * modCD / GUIConstants.ARC_CONTROL_POINT_CONSTANT);
+            p.y = C.getY() + (ABy * modCD / GUIConstants.ARC_CONTROL_POINT_CONSTANT);
         }
-        return details;
+        return p;
     }
 
     public ArcView<? extends Connectable, ? extends Connectable> getArc() {
         return arcView;
-    }
-
-    public void set_transitionAngle(int angle) {
-        _transitionAngle = angle;
-        _transitionAngle %= 360;
-    }
-
-    /**
-     * insertPoint()
-     * Inserts a new point into the Array List of path points
-     * at the specified index and shifts all the following points along
-     *
-     * @param index
-     * @param newpoint
-     * @author Nadeem
-     */
-    public void insertPoint(int index, ArcPathPoint newpoint) {
-        pathPoints.add(index, newpoint);
-        addPointsToGui(arcView.getParent());
-    }
-
-    public void addPointsToGui(Container petriNetTab) {
-        if (petriNetTab == null) {
-            return; //Parent has not yet been added
-        }
-
-        pathPoints.get(0).setDraggable(false);
-        pathPoints.get(pathPoints.size() - 1).setDraggable(false);
-
-        for (ArcPathPoint point : pathPoints) {
-            point.setVisible(false);
-
-            // Check whether the point has already been added to the gui
-            // as addPointsToGui() may have been called after the user
-            // split an existing point. If this is the case, we don't want
-            // to add all the points again along with new action listeners,
-            // we just want to add the new point.
-            // Nadeem 21/06/2005
-//            if (petriNetTab.getIndexOf(point) < 0) {
-            if (true) {
-                petriNetTab.add(point);
-
-                //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
-                ArcController<? extends Connectable, ? extends Connectable> arcController =
-                        petriNetController.getArcController(arcView.getModel());
-                ArcPathPointHandler pointHandler =
-                        new ArcPathPointHandler(petriNetTab, point, petriNetController, arcController, applicationModel);
-
-                if (point.getMouseListeners().length == 0) {
-                    point.addMouseListener(pointHandler);
-                }
-
-                if (point.getMouseMotionListeners().length == 0) {
-                    point.addMouseMotionListener(pointHandler);
-                }
-
-                if (point.getMouseWheelListeners().length == 0) {
-                    point.addMouseWheelListener(pointHandler);
-                }
-            }
-        }
-    }
-
-    //TODO: REIMPLEMENT
-    public HistoryItem insertPointAt(Point2D.Double mouseposition, boolean flag) {
-        //        int wantedpoint = findPoint(mouseposition);
-        //
-        //        // wantedpoint is now the index of the first point in the pair of arc
-        //        // points marking the segment to be split. So we have all we need to
-        //        // insert the new point at the given position.
-        //        ArcPathPoint newPoint = new ArcPathPoint(mouseposition, flag, this);
-        //        insertPoint(wantedpoint + 1, newPoint);
-        //        createPath();
-        //        parent.updateArcPosition();
-        //
-        //        return new AddArcPathPoint(this.getArc(), newPoint);
-        return null;
-    }
-
-    /**
-     *
-     * @param point point to add to path
-     * @param index position in the path
-     */
-    public void insertIntermediatePoint(ArcPoint point, int index) {
-        insertPoint(index, createPoint(point));
     }
 
     public void clear() {
@@ -610,7 +609,7 @@ public class ArcPath implements Shape, Cloneable {
     /**
      * Visitor interface that visits Places and Transitions
      */
-    private static interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {
+    private interface ConnectableVisitor extends PlaceVisitor, TransitionVisitor {
     }
 
 

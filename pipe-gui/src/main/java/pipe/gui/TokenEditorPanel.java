@@ -206,12 +206,10 @@ public class TokenEditorPanel extends JPanel {
             if (col == NAME_COL) { // The name column has been changed
                 id = (String) value;
                 for (int i = 0; i < modifiedData.size(); i++) {
-                    if (i != row) {
-                        if (modifiedData.get(i).id.equals(value)) {
+                    if (i != row && modifiedData.get(i).id.equals(value)) {
                             JOptionPane.showMessageDialog(new JPanel(), "Another token exists with that name",
                                     "Warning", JOptionPane.WARNING_MESSAGE);
                             return;
-                        }
                     }
                 }
             } else {

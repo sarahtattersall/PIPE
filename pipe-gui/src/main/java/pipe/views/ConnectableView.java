@@ -72,11 +72,11 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     /**
      * Updates label position according to the Connectable location
      */
-    private void updateLabelLocation() {
+    private final void updateLabelLocation() {
         nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
     }
 
-    protected void updateBounds() {
+    protected final void updateBounds() {
         setBounds(model.getX(), model.getY(), model.getWidth() + getComponentDrawOffset(), model.getHeight() + getComponentDrawOffset());
 
         //TODO: THIS IS A DIRTY HACK IN ORDER TO GET DRAGGIGN WHEN ZOOMED WORKING
@@ -87,34 +87,18 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
         return model.getName();
     }
 
     @Override
-    public String getId() {
-        return model.getId();
-    }
-
-    @Override
-    public void setId(String idInput) {
-        _id = idInput;
-    }
-
-    @Override
-    public T getModel() {
-        return model;
-    }
-
-    @Override
-    public void delete() {
+    public final void componentSpecificDelete() {
         if (getParent() != null) {
             getParent().remove(nameLabel);
         }
-        super.delete();
     }
 
-    protected void addLabelToContainer(Container container) {
+    protected final void addLabelToContainer(Container container) {
         container.add(nameLabel);
         nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
         LabelHandler labelHandler = new LabelHandler(nameLabel, this);
@@ -123,19 +107,10 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         nameLabel.addMouseWheelListener(labelHandler);
     }
 
-    void setCentre(double x, double y) {
+    protected final void setCentre(double x, double y) {
         //        setPositionX(x - (getWidth() / 2.0));
         //        setPositionY(y - (getHeight() / 2.0));
         //        update();
     }
 
-    public boolean getAttributesVisible() {
-        return _attributesVisible;
-    }
-
-    public void setAttributesVisible(boolean flag) {
-        _attributesVisible = flag;
-    }
-
-    public abstract void toggleAttributesVisible();
 }

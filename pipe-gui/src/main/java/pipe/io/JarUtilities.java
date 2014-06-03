@@ -9,6 +9,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -31,9 +32,9 @@ public abstract class JarUtilities {
    }
 
    
-   public static ArrayList<JarEntry> getJarEntries(JarFile jarFile, String directory) {
+   public static List<JarEntry> getJarEntries(JarFile jarFile, String directory) {
       Enumeration<JarEntry> enumeration = jarFile.entries();
-      ArrayList <JarEntry> nets = new ArrayList<>();
+      List<JarEntry> nets = new ArrayList<>();
       directory = directory + System.getProperty("file.separator");
       
       while (enumeration.hasMoreElements()) {

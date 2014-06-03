@@ -3,11 +3,11 @@ package pipe.views;
 import org.jfree.util.ShapeUtilities;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -18,7 +18,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     private boolean _enabled;
 
-    public TransitionView(Transition model, PetriNetController controller, Container parent, MouseInputAdapter transitionHandler, MouseInputAdapter animationHandler) {
+    public TransitionView(Transition model, PetriNetController controller, Container parent, MouseInputAdapter transitionHandler, MouseListener animationHandler) {
         super(model.getId(), model, controller, parent, new Rectangle2D.Double(0, 0, model.getWidth(),
                 model.getHeight()));
         setChangeListener();
@@ -34,17 +34,15 @@ public class TransitionView extends ConnectableView<Transition> {
 
     }
 
-    private void setMouseListener(MouseInputAdapter transitionHandler, MouseInputAdapter animationHandler) {
+    private void setMouseListener(MouseInputAdapter transitionHandler, MouseListener animationHandler) {
         addMouseListener(transitionHandler);
         addMouseMotionListener(transitionHandler);
         addMouseWheelListener(transitionHandler);
-
         addMouseListener(animationHandler);
-
     }
 
 
-    public void rotate(int angleInc) {
+    public final void rotate(int angleInc) {
         ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(), new Double(model.getCentre().getY()).floatValue());
 //        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
 //                model.getHeight() / 2));
@@ -55,14 +53,20 @@ public class TransitionView extends ConnectableView<Transition> {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
-                if (name.equals(Transition.PRIORITY_CHANGE_MESSAGE) || name.equals(Transition.RATE_CHANGE_MESSAGE)) {
-                    repaint();
-                } else if (name.equals(Transition.ANGLE_CHANGE_MESSAGE) || name.equals(Transition.TIMED_CHANGE_MESSAGE)
-                        || name.equals(Transition.INFINITE_SEVER_CHANGE_MESSAGE)) {
-                    repaint();
-                } else if (name.equals(Transition.ENABLED_CHANGE_MESSAGE) || name.equals(
-                        Transition.DISABLED_CHANGE_MESSAGE)) {
-                    repaint();
+                switch (name) {
+                    case Transition.PRIORITY_CHANGE_MESSAGE:
+                    case Transition.RATE_CHANGE_MESSAGE:
+                        repaint();
+                        break;
+                    case Transition.ANGLE_CHANGE_MESSAGE:
+                    case Transition.TIMED_CHANGE_MESSAGE:
+                    case Transition.INFINITE_SEVER_CHANGE_MESSAGE:
+                        repaint();
+                        break;
+                    case Transition.ENABLED_CHANGE_MESSAGE:
+                    case Transition.DISABLED_CHANGE_MESSAGE:
+                        repaint();
+                        break;
                 }
             }
         });
@@ -148,16 +152,6 @@ public class TransitionView extends ConnectableView<Transition> {
 //        changeToolTipText();
     }
 
-    @Override
-    void setCentre(double x, double y) {
-        super.setCentre(x, y);
-        update();
-    }
-
-    @Override
-    public void toggleAttributesVisible() {
-        _attributesVisible = !_attributesVisible;
-    }
 
     public boolean isInfiniteServer() {
         return model.isInfiniteServer();
@@ -165,11 +159,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     public boolean isTimed() {
         return model.isTimed();
-    }
-
-    public int getPriority() {
-        return model.
-                getPriority();
     }
 
     /**
@@ -195,11 +184,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     public void setModel(Transition model) {
         this.model = model;
-    }
-
-    //TODO: DELETE
-    public HistoryItem groupTransitions() {
-        return null;
     }
 
 }

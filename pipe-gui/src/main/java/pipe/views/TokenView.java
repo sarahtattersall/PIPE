@@ -1,6 +1,5 @@
 package pipe.views;
 
-import pipe.controllers.TokenController;
 import uk.ac.imperial.pipe.exceptions.TokenLockedException;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 
@@ -16,7 +15,7 @@ import java.util.Observable;
 public class TokenView extends Observable  {
     private Token _model;  // Steve Doubleday was final, but changed for replace(tokenView)
 
-    public TokenView(TokenController controller, Token model) {
+    public TokenView(Token model) {
         _model = model;
     }
 

@@ -26,7 +26,7 @@ public abstract class AbstractSaveAction extends GuiAction {
     }
 
     //TODO: Move out into save actions
-    protected void saveAsOperation() {
+    protected final void saveAsOperation() {
 
 
         //        if (getCurrentPetriNetView().hasFunctionalRatesOrWeights()) {
@@ -64,18 +64,9 @@ public abstract class AbstractSaveAction extends GuiAction {
     /**
      * Saves the petri net out to file
      *
-     * @param path location of file to save to
-     */
-    protected void saveNet(String path) {
-        saveNet(new File(path));
-    }
-
-    /**
-     * Saves the petri net out to file
-     *
      * @param file file path to save petri net to
      */
-    protected void saveNet(File file) {
+    protected final void saveNet(File file) {
         try {
             pipeApplicationController.saveAsCurrentPetriNet(file);
         } catch (ParserConfigurationException | TransformerException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

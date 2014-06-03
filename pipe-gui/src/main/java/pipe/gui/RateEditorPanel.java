@@ -78,7 +78,8 @@ public class RateEditorPanel extends JPanel {
 
         /**
          * Updates the table the values added.
-         * @param value new value
+         *
+         * @param value    new value
          * @param rowIndex index of row changed
          * @param colIndex index of column changed
          */
@@ -99,7 +100,6 @@ public class RateEditorPanel extends JPanel {
         }
 
         /**
-         *
          * Checks the following conditions:
          * - Name is not empty
          * - Rate value is not empty
@@ -126,18 +126,25 @@ public class RateEditorPanel extends JPanel {
                     showWarning("The rate value cannot be empty");
                     return false;
                 }
-                if (!datum.id.isEmpty()) {
-                    if (!isValidRate(datum.id, datum.expression)) {
-                        return false;
-                    }
+                if (!datum.id.isEmpty() && !isValidRate(datum.id, datum.expression)) {
+                    return false;
                 }
             }
             return true;
         }
 
         /**
+         * Shows a warning to the user as a dialog
          *
+         * @param warningMessage message to show
+         */
+        private void showWarning(String warningMessage) {
+            JOptionPane.showMessageDialog(new JPanel(), warningMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+
+        /**
          * Pops up an error if the rate is invalid
+         *
          * @param rate
          * @return if rate is valid or not
          */
@@ -148,14 +155,6 @@ public class RateEditorPanel extends JPanel {
                 return false;
             }
             return true;
-        }
-
-        /**
-         * Shows a warning to the user as a dialog
-         * @param warningMessage message to show
-         */
-        private void showWarning(String warningMessage) {
-            JOptionPane.showMessageDialog(new JPanel(), warningMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
         @Override
@@ -182,17 +181,6 @@ public class RateEditorPanel extends JPanel {
                 this.expression = expression;
             }
 
-            public boolean hasBeenSet() {
-                return !this.id.equals("");
-            }
-
-            @Override
-            public int hashCode() {
-                int result = id != null ? id.hashCode() : 0;
-                result = 31 * result + (expression != null ? expression.hashCode() : 0);
-                return result;
-            }
-
             @Override
             public boolean equals(Object o) {
                 if (this == o) {
@@ -212,6 +200,13 @@ public class RateEditorPanel extends JPanel {
                 }
 
                 return true;
+            }
+
+            @Override
+            public int hashCode() {
+                int result = id != null ? id.hashCode() : 0;
+                result = 31 * result + (expression != null ? expression.hashCode() : 0);
+                return result;
             }
         }
     }

@@ -128,11 +128,6 @@ public class AnnotationView extends Note {
     }
 
     @Override
-    public Annotation getModel() {
-        return model;
-    }
-
-    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -168,6 +163,11 @@ public class AnnotationView extends Note {
     @Override
     public void addToContainer(Container container) {
         // Do nothing on add
+    }
+
+    @Override
+    public void componentSpecificDelete() {
+        //Nothing to do
     }
 
     /**

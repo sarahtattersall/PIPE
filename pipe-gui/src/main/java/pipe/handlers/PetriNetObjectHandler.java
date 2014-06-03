@@ -18,8 +18,7 @@ import java.awt.event.MouseEvent;
  *
  * @author unknown
  */
-public class PetriNetObjectHandler<T extends PetriNetComponent>
-        extends javax.swing.event.MouseInputAdapter {
+public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.swing.event.MouseInputAdapter {
     // justSelected: set to true on press, and false on release;
     static boolean justSelected = false;
 
@@ -38,7 +37,8 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
     boolean enablePopup = false;
 
     // constructor passing in all required objects
-    PetriNetObjectHandler(Container contentPane, T component, PetriNetController controller, PipeApplicationModel applicationModel) {
+    PetriNetObjectHandler(Container contentPane, T component, PetriNetController controller,
+                          PipeApplicationModel applicationModel) {
         this.contentPane = contentPane;
         this.component = component;
         petriNetController = controller;
@@ -100,15 +100,13 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
             return;
         }
 
-        if (applicationModel.getMode() == GUIConstants.SELECT) {
-            if (!justSelected) {
-                if (e.isShiftDown()) {
-                    petriNetController.deselect(component);
-                } else {
-                    SelectionManager selectionManager = petriNetController.getSelectionManager();
-                    selectionManager.clearSelection();
-                    petriNetController.deselect(component);
-                }
+        if (applicationModel.getMode() == GUIConstants.SELECT && !justSelected) {
+            if (e.isShiftDown()) {
+                petriNetController.deselect(component);
+            } else {
+                SelectionManager selectionManager = petriNetController.getSelectionManager();
+                selectionManager.clearSelection();
+                petriNetController.deselect(component);
             }
         }
         justSelected = false;
@@ -125,17 +123,14 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
         }
 
         if (applicationModel.getMode() == GUIConstants.SELECT) {
-            if (component.isDraggable()) {
-                if (!isDragging) {
-                    isDragging = true;
-                    dragManager.saveStartingDragCoordinates();
-                }
-            }
-            if (!e.isConsumed()) {
-                dragManager.drag(e.getPoint());
+            if (component.isDraggable() && !isDragging) {
+                isDragging = true;
+                dragManager.saveStartingDragCoordinates();
             }
         }
+        if (!e.isConsumed()) {
+            dragManager.drag(e.getPoint());
+        }
     }
-
-    //NOU-PERE: eliminat mouseWheelMoved
 }
+
