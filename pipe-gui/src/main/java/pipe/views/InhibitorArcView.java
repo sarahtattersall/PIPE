@@ -18,7 +18,7 @@ import java.awt.geom.AffineTransform;
  */
 public class InhibitorArcView extends ArcView<Place, Transition> {
 
-    private final static String TYPE = "inhibitor";
+    private static final String TYPE = "inhibitor";
 
     private ArcHead arcHead = new InhibitorArcHead();
 
@@ -48,7 +48,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
         g2.translate(getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getX(),
                 getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
@@ -63,7 +63,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
         arcHead.draw(g2);
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);

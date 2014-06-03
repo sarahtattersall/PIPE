@@ -8,10 +8,10 @@ import java.awt.Font;
 
 public class NameLabel extends JTextArea {
 
-    private String _name;
-    private String _text;
-    private double _positionX;
-    private double _positionY;
+    private String name;
+    private String text;
+    private double positionX;
+    private double positionY;
 
     public NameLabel() {
         this("", 0, 0);
@@ -19,10 +19,10 @@ public class NameLabel extends JTextArea {
 
     public NameLabel(String name, double nameOffsetX, double nameOffsetY) {
         super(name);
-        _name = name;
-        _positionX = nameOffsetX;
-        _positionY = nameOffsetY;
-        _text = "";
+        this.name = name;
+        positionX = nameOffsetX;
+        positionY = nameOffsetY;
+        text = "";
         Font font = new Font("Dialog", Font.BOLD, 10);
         setFont(getFont()
                 .deriveFont(GUIConstants.LABEL_DEFAULT_FONT_SIZE));
@@ -40,8 +40,8 @@ public class NameLabel extends JTextArea {
     }
 
     public void setPosition(double x, double y) {
-        _positionX = x;
-        _positionY = y;
+        positionX = x;
+        positionY = y;
         updatePosition();
     }
 
@@ -53,29 +53,29 @@ public class NameLabel extends JTextArea {
     }
 
     public void updatePosition() {
-        setBounds((int) (_positionX - getPreferredSize().width), (int) (_positionY - GUIConstants.NAMELABEL_OFFSET), (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight());
+        setBounds((int) (positionX - getPreferredSize().width), (int) (positionY - GUIConstants.NAMELABEL_OFFSET), (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight());
     }
 
 
     public double getPositionX() {
-        return _positionX;
+        return positionX;
     }
 
     public double getPositionY() {
-        return _positionY;
+        return positionY;
     }
 
     public void setName(String nameInput) {
-        _name = nameInput;
-        setText(_text);
+        name = nameInput;
+        setText(text);
         updateSize();
     }
 
     @Override
     public void setText(String s) {
-        _text = s;
-        if (_name != null) {
-            super.setText(_name + s);
+        text = s;
+        if (name != null) {
+            super.setText(name + s);
         } else {
             super.setText(s);
         }

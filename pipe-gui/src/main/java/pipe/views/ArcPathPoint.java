@@ -58,7 +58,7 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
     private ArcPath arcPath;
 
     private void setup() {
-        _copyPasteable = false; //we can't copy & paste indivial arc points!
+        copyPasteable = false; //we can't copy & paste indivial arc points!
     }
 
     public void setPointLocation(double x, double y) {
@@ -214,7 +214,7 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
-        if (!_ignoreSelection) {
+        if (!ignoreSelection) {
             Graphics2D g2 = (Graphics2D) g;
 
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

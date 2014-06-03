@@ -20,18 +20,14 @@ import java.util.Map;
 
 public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T>  {
     private ArcHead arcHead = new NormalHead();
-    private final static String TYPE = "normal";
+    private static final String TYPE = "normal";
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
     // bidirectional arc?
     private boolean joined = false;
-    // Whether or not exists an inverse arc
-    private NormalArcView<S, T> _inverse = null;
-    private Boolean tagged = false;
 
     public NormalArcView(Arc<S, T> model,
                          PetriNetController controller, Container parent, MouseInputAdapter handler, PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);
-        setTagged(model.isTagged());
         addConnectableListener();
         for (NameLabel label : weightLabel) {
             getParent().add(label);
@@ -130,28 +126,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         return TYPE;
     }
 
-    /**
-     * Accessor function to set whether or not the Arc is tagged
-     *
-     * @param flag
-     */
-    public final void setTagged(boolean flag) {
-        /** Set the timed transition attribute (for GSPNs) */
-
-        tagged = flag;
-
-        // If it becomes tagged we must remove any existing weight....
-        // ...and thus we can reuse the weightLabel to display that it's
-        // tagged!!!
-        // Because remember that a tagged arc must have a weight of 1...
-        /*
-         * if (tagged) { //weight = 1; weightLabel.setText("TAG");
-		 * setWeightLabelPosition(); weightLabel.updateSize(); } else {
-		 * weightLabel.setText((weight > 1)?Integer.toString(weight) : ""); }
-		 */
-        repaint();
-    }
-
 
     @Override
     public void paintComponent(Graphics g) {
@@ -165,7 +139,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
                 getComponentDrawOffset() + ZOOM_GROW - arcPath.getBounds().getY());
 
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
@@ -186,7 +160,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         g2.setColor(java.awt.Color.WHITE);
 
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);

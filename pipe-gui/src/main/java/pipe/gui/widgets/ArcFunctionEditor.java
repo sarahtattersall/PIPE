@@ -22,7 +22,7 @@ import java.util.List;
 public class ArcFunctionEditor extends JPanel {
     private PetriNet petriNet;
 
-    private EscapableDialog _rootPane;
+    private EscapableDialog rootPane;
 
     private ArcController<?, ?> arcController;
 
@@ -37,7 +37,7 @@ public class ArcFunctionEditor extends JPanel {
                              ArcController<?, ?> arcController, String token) {
         this.weightEditorPanel = weightEditorPanel;
         this.petriNet = petriNet;
-        _rootPane = guiDialog;
+        rootPane = guiDialog;
         this.arcController = arcController;
         this.token = token;
         init();
@@ -106,7 +106,7 @@ public class ArcFunctionEditor extends JPanel {
     }
 
     private void exit() {
-        _rootPane.setVisible(false);
+        rootPane.setVisible(false);
     }
 
     /**
@@ -124,7 +124,7 @@ public class ArcFunctionEditor extends JPanel {
         return builder.toString();
     }
 
-    private class ArcOKAction implements ActionListener {
+    private final class ArcOKAction implements ActionListener {
 
         private final JTextArea function;
 

@@ -12,7 +12,7 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     public static final int COMPONENT_DRAW_OFFSET = 5;
 
-    protected static boolean _ignoreSelection;
+    protected static boolean ignoreSelection = false;
 
     protected final PetriNetController petriNetController;
 
@@ -23,27 +23,26 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
      */
     protected final Container parent;
 
-    protected boolean _copyPasteable;
+    protected boolean copyPasteable;
 
     protected Rectangle bounds;
 
-    protected boolean _deleted;
+    protected boolean deleted;
 
-    protected boolean _markedAsDeleted;
+    protected boolean markedAsDeleted;
 
     protected T model;
 
-    protected boolean _selectable;
+    protected boolean selectable;
 
     public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller, Container parent) {
         this.id = id;
         this.parent = parent;
-        _selectable = true;
-        _copyPasteable = true;
-        _ignoreSelection = false;
+        selectable = true;
+        copyPasteable = true;
         bounds = new Rectangle();
-        _deleted = false;
-        _markedAsDeleted = false;
+        deleted = false;
+        markedAsDeleted = false;
         this.model = model;
         this.petriNetController = controller;
     }
@@ -94,7 +93,7 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
     @Override
     public final void delete() {
         componentSpecificDelete();
-        _deleted = true;
+        deleted = true;
         removeFromContainer();
         removeAll();
     }

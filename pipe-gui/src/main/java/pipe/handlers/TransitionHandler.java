@@ -1,7 +1,7 @@
 package pipe.handlers;
 
-import pipe.controllers.PetriNetController;
 import pipe.actions.gui.PipeApplicationModel;
+import pipe.controllers.PetriNetController;
 import pipe.gui.widgets.EscapableDialog;
 import pipe.gui.widgets.TransitionEditorPanel;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
@@ -17,41 +17,40 @@ import java.awt.event.MouseWheelEvent;
 /**
  * Class used to implement methods corresponding to mouse events on transitions.
  */
-public class TransitionHandler 
-        extends ConnectableHandler<Transition>
-{
-  
-   
-   public TransitionHandler(Container contentpane, Transition obj, PetriNetController controller, PipeApplicationModel applicationModel) {
-      super(contentpane, obj, controller, applicationModel);
-   }
+public class TransitionHandler extends ConnectableHandler<Transition> {
 
-   
-   @Override
-   public void mouseWheelMoved (MouseWheelEvent e) {
-   }
-   
-   
-   /** 
-    * Creates the popup menu that the user will see when they right click on a 
-    * component 
-    */
-   @Override
-   protected JPopupMenu getPopup(MouseEvent e) {
-      int index = 0;
-      JPopupMenu popup = super.getPopup(e);
-      JMenuItem menuItem = new JMenuItem("Edit Transition");
-      menuItem.addActionListener(new ActionListener(){
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            showEditor();
-         }
-      });
-      popup.insert(menuItem, index++);
 
-      popup.insert(new JPopupMenu.Separator(), index);
-      return popup;
-   }
+    public TransitionHandler(Container contentpane, Transition obj, PetriNetController controller,
+                             PipeApplicationModel applicationModel) {
+        super(contentpane, obj, controller, applicationModel);
+    }
+
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+    }
+
+
+    /**
+     * Creates the popup menu that the user will see when they right click on a
+     * component
+     */
+    @Override
+    protected JPopupMenu getPopup(MouseEvent e) {
+        int index = 0;
+        JPopupMenu popup = super.getPopup(e);
+        JMenuItem menuItem = new JMenuItem("Edit Transition");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showEditor();
+            }
+        });
+        popup.insert(menuItem, index++);
+
+        popup.insert(new JPopupMenu.Separator(), index);
+        return popup;
+    }
 
     public void showEditor() {
         Window window = SwingUtilities.getWindowAncestor(contentPane);

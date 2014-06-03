@@ -13,10 +13,10 @@ import java.util.Observable;
  * Used to display tokens as dots/numbers on the petri net in a place
  */
 public class TokenView extends Observable  {
-    private Token _model;  // Steve Doubleday was final, but changed for replace(tokenView)
+    private Token model;  // Steve Doubleday was final, but changed for replace(tokenView)
 
     public TokenView(Token model) {
-        _model = model;
+        this.model = model;
     }
 
     public void update(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
@@ -47,11 +47,11 @@ public class TokenView extends Observable  {
     }
 
     public Color getColor() {
-        return _model.getColor();
+        return model.getColor();
     }
 
     public void setColor(Color colour) {
-        _model.setColor(colour);
+        model.setColor(colour);
     }
 
     private void paintAsAnOval(Graphics canvas, Insets insets, int tempTotalMarking, int currentMarking) {
@@ -94,7 +94,7 @@ public class TokenView extends Observable  {
     }
 
     public Token getModel() {
-        return _model;
+        return model;
     }
 
 
@@ -108,11 +108,11 @@ public class TokenView extends Observable  {
     }
 
     public String getID() {
-        return _model.getId();
+        return model.getId();
     }
 
     public void setID(String id) {
-        _model.setId(id);
+        model.setId(id);
     }
 
     /**
@@ -158,9 +158,9 @@ public class TokenView extends Observable  {
         StringBuilder builder = new StringBuilder();
         builder.append("TokenView:");
         builder.append(" Id=");
-        builder.append(_model.getId());
+        builder.append(model.getId());
         builder.append(", Color=");
-        builder.append(_model.getColor());
+        builder.append(model.getColor());
         return builder.toString();
     }
 }

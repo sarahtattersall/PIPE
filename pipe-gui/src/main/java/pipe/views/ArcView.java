@@ -32,7 +32,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Actual visible path
      */
-    final protected ArcPath arcPath;
+    protected final ArcPath arcPath;
 
     /**
      * true if arc is not hidden when a bidirectional arc is used
@@ -123,16 +123,16 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Listens to the source/target changing position
      */
     private final void addSourceTargetConnectableListener() {
-        PropertyChangeListener changeListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String name = evt.getPropertyName();
-                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-                }
-            }
-        };
-        model.getSource().addPropertyChangeListener(changeListener);
-        model.getTarget().addPropertyChangeListener(changeListener);
+//        PropertyChangeListener changeListener = new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//                String name = evt.getPropertyName();
+//                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
+//                }
+//            }
+//        };
+//        model.getSource().addPropertyChangeListener(changeListener);
+//        model.getTarget().addPropertyChangeListener(changeListener);
     }
 
     /**

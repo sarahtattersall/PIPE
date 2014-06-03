@@ -39,7 +39,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      */
     private final Grid grid = new Grid();
 
-    public File _appFile;
+    public File appFile;
 
     public PetriNetTab() {
         setLayout(null);
@@ -63,7 +63,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     @Override
     public void update(Observable o, Object diffObj) {
-        if ((diffObj instanceof AbstractPetriNetViewComponent) && (diffObj != null)) {
+        if ((diffObj instanceof AbstractPetriNetViewComponent)) {
             AbstractPetriNetViewComponent<?> component = (AbstractPetriNetViewComponent<?>) diffObj;
             addNewPetriNetComponent(component);
         }

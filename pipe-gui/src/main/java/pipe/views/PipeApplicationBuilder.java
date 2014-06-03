@@ -4,10 +4,10 @@ import pipe.actions.ZoomAction;
 import pipe.actions.gui.*;
 import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PIPEConstants;
 import pipe.gui.PetriNetTab;
-import pipe.controllers.SelectionManager;
 import pipe.gui.ToggleButton;
 
 import javax.swing.*;
@@ -61,7 +61,9 @@ public final class PipeApplicationBuilder {
     private PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
                                            PipeApplicationController controller, ZoomUI zoomUI) {
         ComponentEditorManager componentEditorManager = new ComponentEditorManager(controller);
-        SimpleUndoListener undoListener = new SimpleUndoListener(componentEditorManager.redoAction, componentEditorManager.undoAction, controller);
+        SimpleUndoListener undoListener =
+                new SimpleUndoListener(componentEditorManager.redoAction, componentEditorManager.undoAction,
+                        controller);
         ComponentCreatorManager componentCreatorManager = new ComponentCreatorManager(undoListener, model, controller);
         AnimateActionManager animateActionManager = new AnimateActionManager(model, controller);
         PetriNetEditorManager editorManager = new PetriNetEditorManager(view, controller);
@@ -87,10 +89,43 @@ public final class PipeApplicationBuilder {
                 exportPSAction, exportTNAction);
     }
 
+    private JToolBar getDrawingToolBar(PIPEComponents pipeComponents, PipeApplicationView view) {
+        JToolBar drawingToolBar = new JToolBar();
+        drawingToolBar.setFloatable(false);
+
+        addButton(drawingToolBar, pipeComponents.selectAction);
+        drawingToolBar.addSeparator();
+        for (GuiAction action : pipeComponents.componentCreatorManager.getActions()) {
+            addButton(drawingToolBar, action);
+        }
+        drawingToolBar.addSeparator();
+
+        for (GuiAction action : pipeComponents.tokenActionManager.getActions()) {
+            addButton(drawingToolBar, action);
+        }
+
+        addTokenClassComboBox(drawingToolBar, pipeComponents.chooseTokenClassAction, view);
+        addButton(drawingToolBar, pipeComponents.unfoldAction);
+        drawingToolBar.addSeparator();
+        return drawingToolBar;
+    }
+
+    private JToolBar getAnimationToolBar(PIPEComponents pipeComponents) {
+        JToolBar animationToolBar = new JToolBar();
+        animationToolBar.setFloatable(false);
+
+        for (GuiAction action : pipeComponents.animateActionManager.getAnimateActions()) {
+            addButton(animationToolBar, action);
+        }
+        animationToolBar.setVisible(false);
+        return animationToolBar;
+    }
+
     /**
      * @return the toolbar that holds actions for editing and creating Petri nets with PIPE
      */
-    private JToolBar getToolBar(PipeApplicationView view, PIPEComponents pipeComponents, String[] examples, JToolBar drawingToolBar, JToolBar animationToolBar) {
+    private JToolBar getToolBar(PipeApplicationView view, PIPEComponents pipeComponents, String[] examples,
+                                JToolBar drawingToolBar, JToolBar animationToolBar) {
 
 
         JToolBar toolBar = new JToolBar();
@@ -119,10 +154,8 @@ public final class PipeApplicationBuilder {
         }
 
 
-
         toolBar.addSeparator();
         toolBar.add(drawingToolBar);
-
 
 
         toolBar.add(animationToolBar);
@@ -134,86 +167,6 @@ public final class PipeApplicationBuilder {
         }
 
         return toolBar;
-    }
-
-    private JToolBar getAnimationToolBar(PIPEComponents pipeComponents) {
-        JToolBar animationToolBar = new JToolBar();
-        animationToolBar.setFloatable(false);
-
-        for (GuiAction action : pipeComponents.animateActionManager.getAnimateActions()) {
-            addButton(animationToolBar, action);
-        }
-        animationToolBar.setVisible(false);
-        return animationToolBar;
-    }
-
-    private JToolBar getDrawingToolBar(PIPEComponents pipeComponents, PipeApplicationView view) {
-        JToolBar drawingToolBar = new JToolBar();
-        drawingToolBar.setFloatable(false);
-
-        addButton(drawingToolBar, pipeComponents.selectAction);
-        drawingToolBar.addSeparator();
-        for (GuiAction action : pipeComponents.componentCreatorManager.getActions()) {
-            addButton(drawingToolBar, action);
-        }
-        drawingToolBar.addSeparator();
-
-        for (GuiAction action : pipeComponents.tokenActionManager.getActions()) {
-            addButton(drawingToolBar, action);
-        }
-
-        addTokenClassComboBox(drawingToolBar, pipeComponents.chooseTokenClassAction, view);
-        addButton(drawingToolBar, pipeComponents.unfoldAction);
-        drawingToolBar.addSeparator();
-        return drawingToolBar;
-    }
-
-    private void addButton(JToolBar toolBar, GuiAction action) {
-        if (action.getValue("selected") != null) {
-            toolBar.add(new ToggleButton(action));
-        } else {
-            toolBar.add(action);
-        }
-    }
-
-    /**
-     * Adds a zoom combo box to the toolbar
-     *  @param toolBar the JToolBar to add the button to
-     * @param action  the action that the ZoomComboBox performs
-     * @param view
-     */
-    private void addZoomComboBox(JToolBar toolBar, Action action, String[] zoomExamples, PipeApplicationView view) {
-        Dimension zoomComboBoxDimension = new Dimension(65, 28);
-        JComboBox<String> zoomComboBox = new JComboBox<>(zoomExamples);
-        zoomComboBox.setEditable(true);
-        zoomComboBox.setSelectedItem("100%");
-        zoomComboBox.setMaximumRowCount(zoomExamples.length);
-        zoomComboBox.setMaximumSize(zoomComboBoxDimension);
-        zoomComboBox.setMinimumSize(zoomComboBoxDimension);
-        zoomComboBox.setPreferredSize(zoomComboBoxDimension);
-        zoomComboBox.setAction(action);
-        view.registerZoom(zoomComboBox);
-        toolBar.add(zoomComboBox);
-    }
-
-
-    /**
-     * Creates and adds the token view combo box to the view
-     *  @param toolBar the JToolBar to add the combo box to
-     * @param action  the action that the tokenClassComboBox performs when selected
-     * @param view
-     */
-    private void addTokenClassComboBox(JToolBar toolBar, Action action, PipeApplicationView view) {
-        String[] tokenClassChoices = new String[]{"Default"};
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
-        JComboBox<String> tokenClassComboBox = new JComboBox<>(model);
-        tokenClassComboBox.setEditable(true);
-        tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
-        tokenClassComboBox.setMaximumRowCount(100);
-        tokenClassComboBox.setEditable(false);
-        tokenClassComboBox.setAction(action);
-        view.register(tokenClassComboBox);
-        toolBar.add(tokenClassComboBox);
     }
 
     private JMenuBar buildMenu(PIPEComponents pipeComponents, PipeApplicationView view,
@@ -318,6 +271,93 @@ public final class PipeApplicationBuilder {
         return menuBar;
     }
 
+    private void setTabChangeListener(PipeApplicationView view, final PipeApplicationController controller,
+                                      final PIPEComponents pipeComponents, final JToolBar drawingToolBar,
+                                      final JToolBar animationToolBar) {
+        view.setTabChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                PetriNetController petriNetController = controller.getActivePetriNetController();
+                enableActions(pipeComponents, !petriNetController.isInAnimationMode(), drawingToolBar,
+                        animationToolBar);
+            }
+        });
+    }
+
+    private void listenForAnimationMode(final PIPEComponents pipeComponents, final PipeApplicationModel model,
+                                        final PipeApplicationController applicationController,
+                                        final JToolBar drawingToolBar, final JToolBar animationToolBar) {
+        model.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(PipeApplicationModel.TOGGLE_ANIMATION_MODE)) {
+                    boolean oldMode = (boolean) evt.getOldValue();
+                    boolean newMode = (boolean) evt.getNewValue();
+                    if (oldMode != newMode) {
+                        setAnimationMode(model, pipeComponents, drawingToolBar, animationToolBar, newMode);
+                    }
+                } else if (evt.getPropertyName().equals(PipeApplicationModel.TYPE_ACTION_CHANGE_MESSAGE)) {
+                    PetriNetTab petriNetTab = applicationController.getActiveTab();
+                    if (petriNetTab != null) {
+                        petriNetTab.setCursorType("crosshair");
+                        SelectionManager selectionManager =
+                                applicationController.getActivePetriNetController().getSelectionManager();
+                        selectionManager.disableSelection();
+                    }
+                }
+            }
+        });
+    }
+
+    private void addButton(JToolBar toolBar, GuiAction action) {
+        if (action.getValue("selected") != null) {
+            toolBar.add(new ToggleButton(action));
+        } else {
+            toolBar.add(action);
+        }
+    }
+
+    /**
+     * Creates and adds the token view combo box to the view
+     *
+     * @param toolBar the JToolBar to add the combo box to
+     * @param action  the action that the tokenClassComboBox performs when selected
+     * @param view
+     */
+    private void addTokenClassComboBox(JToolBar toolBar, Action action, PipeApplicationView view) {
+        String[] tokenClassChoices = new String[]{"Default"};
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(tokenClassChoices);
+        JComboBox<String> tokenClassComboBox = new JComboBox<>(model);
+        tokenClassComboBox.setEditable(true);
+        tokenClassComboBox.setSelectedItem(tokenClassChoices[0]);
+        tokenClassComboBox.setMaximumRowCount(100);
+        tokenClassComboBox.setEditable(false);
+        tokenClassComboBox.setAction(action);
+        view.register(tokenClassComboBox);
+        toolBar.add(tokenClassComboBox);
+    }
+
+    /**
+     * Adds a zoom combo box to the toolbar
+     *
+     * @param toolBar the JToolBar to add the button to
+     * @param action  the action that the ZoomComboBox performs
+     * @param view
+     */
+    private void addZoomComboBox(JToolBar toolBar, Action action, String[] zoomExamples, PipeApplicationView view) {
+        Dimension zoomComboBoxDimension = new Dimension(65, 28);
+        JComboBox<String> zoomComboBox = new JComboBox<>(zoomExamples);
+        zoomComboBox.setEditable(true);
+        zoomComboBox.setSelectedItem("100%");
+        zoomComboBox.setMaximumRowCount(zoomExamples.length);
+        zoomComboBox.setMaximumSize(zoomComboBoxDimension);
+        zoomComboBox.setMinimumSize(zoomComboBoxDimension);
+        zoomComboBox.setPreferredSize(zoomComboBoxDimension);
+        zoomComboBox.setAction(action);
+        view.registerZoom(zoomComboBox);
+        toolBar.add(zoomComboBox);
+    }
+
     /**
      * Adds the action to the menu item
      *
@@ -373,10 +413,40 @@ public final class PipeApplicationBuilder {
     private void addZoomMenuItems(JMenu zoomMenu, String[] zoomExamples) {
         int i = 0;
         for (String zoomExample : zoomExamples) {
-            JMenuItem newItem = new JMenuItem(new ZoomAction(zoomExample, "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
+            JMenuItem newItem = new JMenuItem(
+                    new ZoomAction(zoomExample, "Select zoom percentage", i < 10 ? "ctrl shift " + i : ""));
             zoomMenu.add(newItem);
             i++;
         }
+    }
+
+    private void enableActions(PIPEComponents pipeComponents, boolean editMode, Component drawingToolBar,
+                               Component animationToolBar) {
+        if (editMode) {
+            drawingToolBar.setVisible(true);
+            animationToolBar.setVisible(false);
+            pipeComponents.componentEditorManager.enableActions();
+            pipeComponents.componentCreatorManager.enableActions();
+            pipeComponents.tokenActionManager.enableActions();
+            pipeComponents.editorManager.enableActions();
+            pipeComponents.animateActionManager.disableActions();
+        } else {
+            drawingToolBar.setVisible(false);
+            animationToolBar.setVisible(true);
+            pipeComponents.componentEditorManager.disableActions();
+            pipeComponents.componentCreatorManager.disableActions();
+            pipeComponents.tokenActionManager.disableActions();
+            pipeComponents.editorManager.disableActions();
+            pipeComponents.animateActionManager.enableActions();
+        }
+
+        pipeComponents.selectAction.setEnabled(editMode);
+    }
+
+    public void setAnimationMode(PipeApplicationModel model, PIPEComponents pipeComponents, JToolBar drawingToolBar,
+                                 JToolBar animationToolBar, boolean animateMode) {
+        enableActions(pipeComponents, !animateMode, drawingToolBar, animationToolBar);
+        model.setEditionAllowed(!animateMode);
     }
 
     /**
@@ -413,7 +483,7 @@ public final class PipeApplicationBuilder {
     /**
      * Components needed to build pipe tool bars and menus
      */
-    private static class PIPEComponents {
+    private final static class PIPEComponents {
         public final ChooseTokenClassAction chooseTokenClassAction;
 
         public final ComponentEditorManager componentEditorManager;
@@ -481,71 +551,6 @@ public final class PipeApplicationBuilder {
             this.exportPSAction = exportPSAction;
             this.exportTNAction = exportTNAction;
         }
-    }
-
-    private void setTabChangeListener(PipeApplicationView view, final PipeApplicationController controller,
-                                      final PIPEComponents pipeComponents, final JToolBar drawingToolBar,
-                                      final JToolBar animationToolBar) {
-        view.setTabChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                PetriNetController petriNetController = controller.getActivePetriNetController();
-                enableActions(pipeComponents, !petriNetController.isInAnimationMode(), drawingToolBar, animationToolBar);
-            }
-        });
-    }
-
-    private void listenForAnimationMode(final PIPEComponents pipeComponents, final PipeApplicationModel model,
-                                        final PipeApplicationController applicationController, final JToolBar drawingToolBar,
-                                        final JToolBar animationToolBar) {
-        model.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(PipeApplicationModel.TOGGLE_ANIMATION_MODE)) {
-                    boolean oldMode = (boolean) evt.getOldValue();
-                    boolean newMode = (boolean) evt.getNewValue();
-                    if (oldMode != newMode) {
-                        setAnimationMode(model, pipeComponents, drawingToolBar, animationToolBar, newMode);
-                    }
-                } else if (evt.getPropertyName().equals(PipeApplicationModel.TYPE_ACTION_CHANGE_MESSAGE)) {
-                    PetriNetTab petriNetTab = applicationController.getActiveTab();
-                    if (petriNetTab != null) {
-                        petriNetTab.setCursorType("crosshair");
-                        SelectionManager selectionManager = applicationController.getActivePetriNetController().getSelectionManager();
-                        selectionManager.disableSelection();
-                    }
-                }
-            }
-        });
-    }
-
-    public void setAnimationMode(PipeApplicationModel model, PIPEComponents pipeComponents,JToolBar drawingToolBar, JToolBar animationToolBar, boolean animateMode) {
-        enableActions(pipeComponents, !animateMode, drawingToolBar, animationToolBar);
-        model.setEditionAllowed(!animateMode);
-    }
-
-
-    private void enableActions(PIPEComponents pipeComponents, boolean editMode, Component drawingToolBar,
-                               Component animationToolBar) {
-        if (editMode) {
-            drawingToolBar.setVisible(true);
-            animationToolBar.setVisible(false);
-            pipeComponents.componentEditorManager.enableActions();
-            pipeComponents.componentCreatorManager.enableActions();
-            pipeComponents.tokenActionManager.enableActions();
-            pipeComponents.editorManager.enableActions();
-            pipeComponents.animateActionManager.disableActions();
-        } else {
-            drawingToolBar.setVisible(false);
-            animationToolBar.setVisible(true);
-            pipeComponents.componentEditorManager.disableActions();
-            pipeComponents.componentCreatorManager.disableActions();
-            pipeComponents.tokenActionManager.disableActions();
-            pipeComponents.editorManager.disableActions();
-            pipeComponents.animateActionManager.enableActions();
-        }
-
-        pipeComponents.selectAction.setEnabled(editMode);
     }
 }
 

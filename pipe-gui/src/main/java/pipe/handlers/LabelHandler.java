@@ -13,27 +13,27 @@ public class LabelHandler
         extends javax.swing.event.MouseInputAdapter {
         //implements java.awt.event.MouseWheelListener { NOU-PERE, i rename aquesta classe a NameLabelHand
    
-   private final ConnectableView _obj;
+   private final ConnectableView obj;
    
    private final NameLabel nl;
    
    private Point dragInit = new Point();
    
    
-   public LabelHandler(NameLabel _nl, ConnectableView _obj) {
-      this._obj = _obj;
+   public LabelHandler(NameLabel _nl, ConnectableView obj) {
+      this.obj = obj;
       nl = _nl;
    }
    
    
    public void mouseClicked(MouseEvent e) {
-      _obj.dispatchEvent(e);
+      obj.dispatchEvent(e);
    }
    
    
    public void mousePressed(MouseEvent e) {
       dragInit = e.getPoint(); //
-      dragInit = javax.swing.SwingUtilities.convertPoint(nl, dragInit, _obj);
+      dragInit = javax.swing.SwingUtilities.convertPoint(nl, dragInit, obj);
    }
   
 
@@ -43,7 +43,7 @@ public class LabelHandler
          return;
       }
       
-      Point p = javax.swing.SwingUtilities.convertPoint(nl, e.getPoint(), _obj);
+      Point p = javax.swing.SwingUtilities.convertPoint(nl, e.getPoint(), obj);
       //obj.setNameOffsetX((e.getXOnScreen() - dragInit.x)); //causes exception in Windows!
       //obj.setNameOffsetY((e.getYOnScreen() - dragInit.y)); //causes exception in Windows!
       //dragInit = e.getLocationOnScreen(); //causes exception in Windows!
@@ -54,7 +54,7 @@ public class LabelHandler
    }   
    
    public void mouseWheelMoved(MouseWheelEvent e) {
-      _obj.dispatchEvent(e);
+      obj.dispatchEvent(e);
    }
    
 }

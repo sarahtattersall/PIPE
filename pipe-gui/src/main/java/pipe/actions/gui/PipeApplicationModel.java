@@ -15,13 +15,32 @@ public class PipeApplicationModel implements Serializable {
 
     public static final String TYPE_ACTION_CHANGE_MESSAGE = "Type action change";
 
-    private final String[] zoomExamples = new String[]{"40%", "60%", "80%", "100%", "120%", "140%", "160%", "180%", "200%", "300%"};
-    private final String _name;
-    private boolean editionAllowed = true;
-    private int mode;
-    private int old_mode;
-
     protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+
+    private final String[] zoomExamples =
+            new String[]{"40%", "60%", "80%", "100%", "120%", "140%", "160%", "180%", "200%", "300%"};
+
+    private final String name;
+
+    private boolean editionAllowed = true;
+
+    private int mode;
+
+    private int oldMode;
+
+    /**
+     * Determines if PIPE is viewing in animation mode or not
+     */
+    private boolean inAnimationMode;
+
+    /**
+     * Type that is currently selected on the petrinet
+     */
+    private CreateAction selectedType;
+
+    public PipeApplicationModel(String version) {
+        name = "PIPE: Platform Independent Petri Net Editor " + version;
+    }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
@@ -43,27 +62,12 @@ public class PipeApplicationModel implements Serializable {
         }
     }
 
-    /**
-     * Determines if PIPE is viewing in animation mode or not
-     */
-    private boolean inAnimationMode;
-
-    /**
-     * Type that is currently selected on the petrinet
-     */
-    private CreateAction selectedType;
-
-    public PipeApplicationModel(String version) {
-        _name = "PIPE: Platform Independent Petri Net Editor " + version;
-    }
-
-
     public String[] getZoomExamples() {
         return zoomExamples;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public boolean isEditionAllowed() {
@@ -75,12 +79,16 @@ public class PipeApplicationModel implements Serializable {
     }
 
     public void resetMode() {
-        setMode(old_mode);
+        setMode(oldMode);
     }
 
     public void enterFastMode(int _mode) {
-        old_mode = mode;
+        oldMode = mode;
         setMode(_mode);
+    }
+
+    public int getMode() {
+        return mode;
     }
 
     public void setMode(int _mode) {
@@ -90,11 +98,6 @@ public class PipeApplicationModel implements Serializable {
             mode = _mode;
         }
     }
-
-    public int getMode() {
-        return mode;
-    }
-
 
     public void selectTypeAction(CreateAction action) {
         CreateAction old = this.selectedType;

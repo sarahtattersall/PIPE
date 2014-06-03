@@ -14,17 +14,17 @@ import java.beans.PropertyChangeListener;
 
 
 public class TransitionView extends ConnectableView<Transition> {
-    public boolean _highlighted;
+    public boolean highlighted;
 
-    private boolean _enabled;
+    private boolean enabled;
 
     public TransitionView(Transition model, PetriNetController controller, Container parent, MouseInputAdapter transitionHandler, MouseListener animationHandler) {
         super(model.getId(), model, controller, parent, new Rectangle2D.Double(0, 0, model.getWidth(),
                 model.getHeight()));
         setChangeListener();
 
-        _enabled = false;
-        _highlighted = false;
+        enabled = false;
+        highlighted = false;
 
         rotate(model.getAngle());
         //TODO: DEBUG WHY CANT CALL THIS IN CONSTRUCTOR
@@ -74,16 +74,16 @@ public class TransitionView extends ConnectableView<Transition> {
 
     @Override
     public boolean isEnabled() {
-        return _enabled;
+        return enabled;
     }
 
     @Override
     public void setEnabled(boolean status) {
-        if (_enabled && !status) {
+        if (enabled && !status) {
 //            _delayValid = false;
         }
 
-        _enabled = status;
+        enabled = status;
 
     }
 
@@ -98,7 +98,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setColor(GUIConstants.SELECTION_FILL_COLOUR);
         } else {
             g2.setColor(GUIConstants.ELEMENT_FILL_COLOUR);
@@ -112,7 +112,7 @@ public class TransitionView extends ConnectableView<Transition> {
                     Paint pen = g2.getPaint();
                     if (highlightView()) {
                         g2.setPaint(GUIConstants.ENABLED_TRANSITION_COLOUR);
-                    } else if (isSelected() && !_ignoreSelection) {
+                    } else if (isSelected() && !ignoreSelection) {
                         g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
                     } else {
                         g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);
@@ -127,7 +127,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
         if (highlightView()) {
             g2.setPaint(GUIConstants.ENABLED_TRANSITION_COLOUR);
-        } else if (isSelected() && !_ignoreSelection) {
+        } else if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);

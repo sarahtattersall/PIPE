@@ -155,7 +155,7 @@ public final class ArcAction extends CreateAction {
     }
 
 
-    private class ArcViewKeyListener implements KeyListener {
+    private final class ArcViewKeyListener implements KeyListener {
 
         private final PetriNetTab tab;
 

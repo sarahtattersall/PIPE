@@ -20,7 +20,7 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
     /**
      * Maximum number of items to be shown
      */
-    protected final static int DATA_SIZE = 100;
+    protected static final int DATA_SIZE = 100;
 
 
     /**
@@ -37,12 +37,12 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
     /**
      * Names of columns in table to appear in order
      */
-    protected String[] COLUMN_NAMES;
+    protected String[] columnNames;
 
 
     @Override
     public final String getColumnName(int col) {
-        return COLUMN_NAMES[col];
+        return columnNames[col];
     }
 
 
@@ -64,7 +64,7 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
 
     @Override
     public final int getColumnCount() {
-        return COLUMN_NAMES.length;
+        return columnNames.length;
     }
 
     /**

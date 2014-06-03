@@ -57,14 +57,14 @@ public class ArcPath implements Shape, Cloneable {
 
     private Shape proximityShape = PROXIMITY_STROKE.createStrokedShape(this);
 
-    private int _transitionAngle;
+    private int transitionAngle;
 
     public ArcPath(ArcView<? extends Connectable, ? extends Connectable> arcView, PetriNetController petriNetController,
                    PipeApplicationModel applicationModel) {
         this.arcView = arcView;
         this.petriNetController = petriNetController;
         this.applicationModel = applicationModel;
-        _transitionAngle = 0;
+        transitionAngle = 0;
     }
 
     /**
@@ -230,11 +230,6 @@ public class ArcPath implements Shape, Cloneable {
             details[c][2] = String.valueOf(pathPoints.get(c).isCurved());
         }
         return details;
-    }
-
-    public void set_transitionAngle(int angle) {
-        _transitionAngle = angle;
-        _transitionAngle %= 360;
     }
 
     //TODO: REIMPLEMENT
@@ -435,8 +430,8 @@ public class ArcPath implements Shape, Cloneable {
         }
 
         Cubic[] X, Y;
-
-        for (int c = 1; c < pathPoints.size(); ) {
+          int c = 1;
+        while (c < pathPoints.size()) {
             int curveStartIndex;
             int curveEndIndex = 0;
             ArcPathPoint currentPoint = pathPoints.get(c);
@@ -610,7 +605,7 @@ public class ArcPath implements Shape, Cloneable {
         @Override
         public void visit(Place place) {
             if (pathPoints.get(getEndIndex()).isCurved()) {
-                double angle = Math.toRadians(_transitionAngle);
+                double angle = Math.toRadians(transitionAngle);
                 ArcPathPoint myPoint = pathPoints.get(getEndIndex());
                 ArcPathPoint myLastPoint = pathPoints.get(getEndIndex() - 1);
                 float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())
@@ -627,7 +622,7 @@ public class ArcPath implements Shape, Cloneable {
         @Override
         public void visit(Transition transition) {
             if (pathPoints.get(1).isCurved()) {
-                double angle = Math.toRadians(_transitionAngle);
+                double angle = Math.toRadians(transitionAngle);
                 ArcPathPoint myPoint = pathPoints.get(1);
                 ArcPathPoint myLastPoint = pathPoints.get(0);
                 float distance = (float) getLength(myPoint.getPoint(), myLastPoint.getPoint())

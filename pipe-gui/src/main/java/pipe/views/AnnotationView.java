@@ -138,7 +138,7 @@ public final class AnnotationView extends Note {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_FILL_COLOUR);
             g2.fill(noteRect);
             if (drawBorder) {
@@ -228,7 +228,7 @@ public final class AnnotationView extends Note {
 
         public final int typeMask;
 
-        private int SIZE = 3;
+        private static final int SIZE = 3;
 
         private Rectangle shape;
 
@@ -263,7 +263,7 @@ public final class AnnotationView extends Note {
         public void paintOnCanvas(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setTransform(prova);
-            if (isSelected() && !AbstractPetriNetViewComponent._ignoreSelection) {
+            if (isSelected() && !AbstractPetriNetViewComponent.ignoreSelection) {
                 g2.translate(this.getLocation().x, this.getLocation().y);
                 shape = new Rectangle(0, 0, 2 * SIZE, 2 * SIZE);
                 g2.fill(shape);

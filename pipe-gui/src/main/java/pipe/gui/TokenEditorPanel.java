@@ -124,10 +124,10 @@ public class TokenEditorPanel extends JPanel {
      */
     public static class TableModel extends AbstractComponentTableModel<Datum> {
 
-        private final static int NAME_COL = 0;
+        private static final int NAME_COL = 0;
 
         public TableModel(PetriNetController petriNetController) {
-            COLUMN_NAMES = new String[]{"Token Name Details", "Token Colour"};
+            columnNames = new String[]{"Token Name Details", "Token Colour"};
             for (Token token : petriNetController.getNetTokens()) {
                 Datum initial = new Datum(token.getId(), token.getColor());
                 modifiedData.add(new Datum(initial, token.getId(), token.getColor()));

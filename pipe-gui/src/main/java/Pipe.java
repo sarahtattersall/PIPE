@@ -25,13 +25,12 @@ public final class Pipe {
     }
 
     protected static Runnable pipeRunnable() {
-        Runnable runnable = new Runnable() {
+        return new Runnable() {
+            @Override
             public void run() {
-                @SuppressWarnings("unused")
                 Pipe pipe = new Pipe("v5.0.0");
             }
         };
-        return runnable;
     }
 
     protected static void runPipeForTesting() throws InterruptedException, InvocationTargetException {

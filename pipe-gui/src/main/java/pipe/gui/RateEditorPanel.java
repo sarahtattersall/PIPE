@@ -65,7 +65,7 @@ public class RateEditorPanel extends JPanel {
 
         public RateModel(PetriNetController petriNetController) {
             this.petriNetController = petriNetController;
-            COLUMN_NAMES = new String[]{"Name", "Value"};
+            columnNames = new String[]{"Name", "Value"};
             for (RateParameter rateParameter : petriNetController.getRateParameters()) {
                 Datum initial = new Datum(rateParameter.getId(), rateParameter.getExpression());
                 modifiedData.add(new Datum(initial, rateParameter.getId(), rateParameter.getExpression()));
@@ -168,7 +168,7 @@ public class RateEditorPanel extends JPanel {
         /**
          * Holds rate parameter information in the table
          */
-        public class Datum extends AbstractDatum {
+        public final class Datum extends AbstractDatum {
             public String expression;
 
             private Datum(String id, String expression) {

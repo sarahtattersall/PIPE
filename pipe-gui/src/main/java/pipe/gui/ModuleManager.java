@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  */
 public class ModuleManager {
 
-    private final static String LOAD_NODE_STRING = "Find IModule";
+    private static final String LOAD_NODE_STRING = "Find IModule";
 
     private static final Logger LOGGER = Logger.getLogger(ModuleManager.class.getName());
 
@@ -56,7 +56,7 @@ public class ModuleManager {
 
     private DefaultTreeModel treeModel;
 
-    private DefaultMutableTreeNode load_modules;
+    private DefaultMutableTreeNode loadModules;
 
 
     public ModuleManager(Component view, PipeApplicationController controller) {
@@ -117,7 +117,7 @@ public class ModuleManager {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Analysis Module Manager");
 
         // create root children
-        load_modules = new DefaultMutableTreeNode("Available Modules");
+        loadModules = new DefaultMutableTreeNode("Available Modules");
 
         MutableTreeNode add_modules = new DefaultMutableTreeNode(LOAD_NODE_STRING);
 
@@ -128,7 +128,7 @@ public class ModuleManager {
             addClassToTree(clazz);
         }
 
-        root.add(load_modules);
+        root.add(loadModules);
         root.add(add_modules);
 
         treeModel = new DefaultTreeModel(root);
@@ -223,9 +223,9 @@ public class ModuleManager {
             if (modNode.getChildCount() == 1) {
                 Object m = ((DefaultMutableTreeNode) modNode.getFirstChild()).
                         getUserObject();
-                load_modules.add(new DefaultMutableTreeNode(m));
+                loadModules.add(new DefaultMutableTreeNode(m));
             } else {
-                load_modules.add(modNode);
+                loadModules.add(modNode);
             }
         }
     }

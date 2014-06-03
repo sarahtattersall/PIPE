@@ -23,7 +23,7 @@ class ColorPicker extends AbstractCellEditor implements ActionListener,
 	private Color currColor;
 	private final JColorChooser colorChooser;
 	private final JDialog dialog;
-	private final static String EDIT_NAME = "edit";
+	private static final String EDIT_NAME = "edit";
 
 	public ColorPicker() {
 		button = new JButton();

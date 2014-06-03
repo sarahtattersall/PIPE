@@ -72,14 +72,14 @@ public class PlaceView extends ConnectableView<Place> {
         }
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setColor(GUIConstants.SELECTION_FILL_COLOUR);
         } else {
             g2.setColor(GUIConstants.ELEMENT_FILL_COLOUR);
         }
         g2.fill(shape);
 
-        if (isSelected() && !_ignoreSelection) {
+        if (isSelected() && !ignoreSelection) {
             g2.setPaint(GUIConstants.SELECTION_LINE_COLOUR);
         } else {
             g2.setPaint(GUIConstants.ELEMENT_LINE_COLOUR);

@@ -56,16 +56,19 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private final PipeApplicationController applicationController;
 
     private final PipeApplicationModel applicationModel;
-    private UndoableEditListener undoListener;
-
 
     public JComboBox<String> zoomComboBox;
 
     public JComboBox<String> tokenClassComboBox;
 
+    private UndoableEditListener undoListener;
+
     private JScrollPane scroller;
 
     private List<JLayer<JComponent>> wrappedPetrinetTabs = new ArrayList<>();
+
+    private Map<PetriNetTab, AnimationHistoryView> histories = new HashMap<>();
+
 
     public PipeApplicationView(ZoomManager zoomManager, final PipeApplicationController applicationController,
                                PipeApplicationModel applicationModel) {
@@ -98,7 +101,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                     PetriNetTab petriNetTab = getCurrentTab();
                     if (petriNetTab != null) {
                         petriNetTab.setCursorType("crosshair");
-                        SelectionManager selectionManager = applicationController.getActivePetriNetController().getSelectionManager();
+                        SelectionManager selectionManager =
+                                applicationController.getActivePetriNetController().getSelectionManager();
                         selectionManager.disableSelection();
                     }
                 }
@@ -140,17 +144,17 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         setVisible(true);
         applicationModel.setMode(GUIConstants.SELECT);
         //TODO: DO YOU NEED TO DO THIS?
-//        selectAction.actionPerformed(null);
+        //        selectAction.actionPerformed(null);
 
         setTabChangeListener();
 
         setZoomChangeListener();
     }
 
-
     public void setUndoListener(UndoableEditListener listener) {
         undoListener = listener;
     }
+
     @Override
     public final void setTitle(String title) {
         String name = applicationModel.getName();
@@ -185,8 +189,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void setTabChangeListener(ChangeListener listener) {
         frameForPetriNetTabs.addChangeListener(listener);
     }
-
-
 
     public PetriNetTab getCurrentTab() {
         int index = frameForPetriNetTabs.getSelectedIndex();
@@ -326,6 +328,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     /**
      * Sets pipes menu
+     *
      * @param menu
      */
     public void setMenu(JMenuBar menu) {
@@ -361,15 +364,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void actionPerformed(ActionEvent e) {
 
         JOptionPane.showMessageDialog(this, "PIPE: Platform Independent Petri Net Ediror\n\n" + "Authors:\n" +
-                "2003: Jamie Bloom, Clare Clark, Camilla Clifford, Alex Duncan, Haroun Khan and Manos Papantoniou\n" +
-                "2004: Tom Barnwell, Michael Camacho, Matthew Cook, Maxim Gready, Peter Kyme and Michail Tsouchlaris\n"
-                +
-                "2005: Nadeem Akharware\n" + "????: Tim Kimber, Ben Kirby, Thomas Master, Matthew Worthington\n" +
-                "????: Pere Bonet Bonet (Universitat de les Illes Balears)\n" +
-                "????: Marc Meli\u00E0 Aguil\u00F3 (Universitat de les Illes Balears)\n" +
-                "2010: Alex Charalambous (Imperial College London)\n" +
-                "2011: Jan Vlasak (Imperial College London)\n\n" + "http://pipe2.sourceforge.net/", "About PIPE",
-                JOptionPane.INFORMATION_MESSAGE);
+                        "2003: Jamie Bloom, Clare Clark, Camilla Clifford, Alex Duncan, Haroun Khan and Manos Papantoniou\n"
+                        +
+                        "2004: Tom Barnwell, Michael Camacho, Matthew Cook, Maxim Gready, Peter Kyme and Michail Tsouchlaris\n"
+                        +
+                        "2005: Nadeem Akharware\n" + "????: Tim Kimber, Ben Kirby, Thomas Master, Matthew Worthington\n"
+                        +
+                        "????: Pere Bonet Bonet (Universitat de les Illes Balears)\n" +
+                        "????: Marc Meli\u00E0 Aguil\u00F3 (Universitat de les Illes Balears)\n" +
+                        "2010: Alex Charalambous (Imperial College London)\n" +
+                        "2011: Jan Vlasak (Imperial College London)\n\n" + "http://pipe2.sourceforge.net/",
+                "About PIPE", JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     //TODO: Find out if this actually ever gets called
@@ -386,12 +392,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     //TODO: ADD ZOOMING
     public void addNewTab(String name, PetriNetTab tab) {
 
-        JScrollPane tabScroller = new JScrollPane(tab,  ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane tabScroller = new JScrollPane(tab, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         tabScroller.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-//        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
-//        wrappedPetrinetTabs.add(jLayer);
+        //        JLayer<JComponent> jLayer = new JLayer<>(tab, zoomUI);
+        //        wrappedPetrinetTabs.add(jLayer);
 
         petriNetTabs.add(tab);
         frameForPetriNetTabs.addTab(name, tabScroller);
@@ -400,7 +406,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public File getFile() {
         PetriNetTab petriNetTab = petriNetTabs.get(frameForPetriNetTabs.getSelectedIndex());
-        return petriNetTab._appFile;
+        return petriNetTab.appFile;
     }
 
     public void removeCurrentTab() {
@@ -434,7 +440,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 if (msg.equals(PetriNet.PETRI_NET_NAME_CHANGE_MESSAGE)) {
                     PetriNetName name = (PetriNetName) evt.getNewValue();
                     updateSelectedTabName(name.getName());
-                } else if (msg.equals(PetriNet.NEW_TOKEN_CHANGE_MESSAGE) || msg.equals(PetriNet.DELETE_TOKEN_CHANGE_MESSAGE)) {
+                } else if (msg.equals(PetriNet.NEW_TOKEN_CHANGE_MESSAGE) || msg.equals(
+                        PetriNet.DELETE_TOKEN_CHANGE_MESSAGE)) {
                     refreshTokenClassChoices();
                 }
             }
@@ -458,16 +465,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         addNewTab(petriNet.getNameValue(), petriNetTab);
     }
 
-    private Map<PetriNetTab, AnimationHistoryView> histories = new HashMap<>();
-
     private URL getImageURL(String name) {
-        return this.getClass().getResource(
-                PIPEConstants.IMAGE_PATH + name);
+        return this.getClass().getResource(PIPEConstants.IMAGE_PATH + name);
     }
 
     public void register(JComboBox<String> tokenClassComboBox) {
         this.tokenClassComboBox = tokenClassComboBox;
     }
+
     public void registerZoom(JComboBox<String> zoomComboBox) {
         this.zoomComboBox = zoomComboBox;
     }

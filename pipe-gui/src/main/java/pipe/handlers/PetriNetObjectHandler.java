@@ -22,7 +22,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
     // justSelected: set to true on press, and false on release;
     private static boolean justSelected = false;
 
-    final protected Container contentPane;
+    protected final Container contentPane;
 
     protected final PetriNetController petriNetController;
 
