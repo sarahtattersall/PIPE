@@ -5,8 +5,8 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.event.UndoableEditListener;
 
-public class AnnotationController extends AbstractPetriNetComponentController<Annotation> {
-    protected AnnotationController(Annotation component, UndoableEditListener listener) {
+public final class AnnotationController extends AbstractPetriNetComponentController<Annotation> {
+    public AnnotationController(Annotation component, UndoableEditListener listener) {
         super(component, listener);
     }
 

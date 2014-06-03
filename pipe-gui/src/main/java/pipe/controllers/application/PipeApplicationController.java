@@ -3,7 +3,7 @@ package pipe.controllers.application;
 import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.*;
 import pipe.gui.PetriNetTab;
-import pipe.historyActions.AnimationHistory;
+import pipe.historyActions.AnimationHistoryImpl;
 import uk.ac.imperial.pipe.animation.PetriNetAnimator;
 import uk.ac.imperial.pipe.models.manager.PetriNetManager;
 import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
@@ -61,7 +61,7 @@ public class PipeApplicationController {
     //TODO: THIS IS RATHER UGLY, too many params but better than what was here before
     public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener,
                             PropertyChangeListener zoomListener) {
-        AnimationHistory animationHistory = new AnimationHistory();
+        AnimationHistoryImpl animationHistory = new AnimationHistoryImpl();
         animationHistory.addObserver(historyObserver);
         GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory, this);
 

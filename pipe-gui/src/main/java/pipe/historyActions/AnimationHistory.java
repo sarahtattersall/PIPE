@@ -1,112 +1,43 @@
 package pipe.historyActions;
 
-
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
-/**
- * AnimationHistory for an individual PetriNet
- */
-public class AnimationHistory extends Observable {
-    /**
-     * List to hold transitions fired in their order
-     * Used for going back/forward in time
-     */
-    private List<Transition> firingSequence = new ArrayList<>();
-
-    /**
-     * Current index of the firingSequence;
-     * Initialised to -1 so when the first item is added it points to zero
-     */
-    private int currentPosition = -1;
-
-
+public interface AnimationHistory {
     /**
      * Cannot step forward if head of the list
-     * @return
+     * @return true if stepping forward within the animation is allowed, that is if there are transition firings to redo
      */
-    public boolean isStepForwardAllowed() {
-        return currentPosition < firingSequence.size() - 1;
-    }
-
+    boolean isStepForwardAllowed();
 
     /**
      * Can step back if currentPosition points to any transitions
-     * @return
+     * @return  true if stepping backward within the animation is allowed, that is if there are transition firings to undo
      */
-    public boolean isStepBackAllowed() {
-        return currentPosition >= 0;
-    }
+    boolean isStepBackAllowed();
 
-    public void stepForward() {
-        if (isStepForwardAllowed()) {
-            currentPosition++;
-            flagChanged();
-        }
-    }
+    /**
+     * Steps forward
+     */
+    void stepForward();
 
-
-    public void stepBackwards() {
-        if (isStepBackAllowed()) {
-            currentPosition--;
-            flagChanged();
-        }
-    }
+    void stepBackwards();
 
     /**
      * Remove all steps past the current step
      */
-    public void clearStepsForward() {
-        if (currentPosition >= -1 && currentPosition + 1 < firingSequence.size()) {
-            while (firingSequence.size() > currentPosition + 1) {
-                firingSequence.remove(firingSequence.size() - 1);
-            }
-        }
-    }
+    void clearStepsForward();
 
-    public List<Transition> getFiringSequence() {
-        return firingSequence;
-    }
+    List<Transition> getFiringSequence();
 
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
+    int getCurrentPosition();
 
-    public void addHistoryItem(Transition transition) {
-        firingSequence.add(transition);
-        currentPosition++;
-        flagChanged();
-    }
+    void addHistoryItem(Transition transition);
 
-    public Transition getCurrentTransition() {
-        if (currentPosition >= 0) {
-            return firingSequence.get(currentPosition);
-        }
-        throw new RuntimeException("No transitions in history");
-    }
+    Transition getCurrentTransition();
 
-    public Transition getTransition(int index) {
-        if (index <= firingSequence.size()) {
-            return firingSequence.get(index);
-        }
-        throw new RuntimeException("Index is greater than number of transitions stored");
-    }
+    Transition getTransition(int index);
 
-    public void clear() {
-        currentPosition = -1;
-        firingSequence.clear();
-        flagChanged();
-    }
-
-    /**
-     * Rolls the setting changed and notifying observers into one method call.
-     * It tells Observers that it has changed
-     */
-    private void flagChanged() {
-        setChanged();
-        notifyObservers();
-    }
+    void clear();
 }

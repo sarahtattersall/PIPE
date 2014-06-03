@@ -12,7 +12,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 /**
  * Responsible for changing the value of a single token in a place
  */
-public class ChangePlaceTokens extends AbstractUndoableEdit
+public final class ChangePlaceTokens extends AbstractUndoableEdit
 {
 
     private final Place place;

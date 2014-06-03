@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 
-public class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation> {
+public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation> {
 
 
     public AnnotationNoteHandler(Container contentpane, Annotation note, PetriNetController controller,  PipeApplicationModel applicationModel) {

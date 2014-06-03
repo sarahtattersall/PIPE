@@ -23,7 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
-public class ArcAction extends CreateAction {
+public final class ArcAction extends CreateAction {
 
     private final ArcSourceVisitor sourceVisitor;
 

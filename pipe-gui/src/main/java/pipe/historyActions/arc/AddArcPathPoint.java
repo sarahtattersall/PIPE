@@ -46,13 +46,13 @@ public class AddArcPathPoint<S extends Connectable, T extends Connectable> exten
     }
 
     @Override
-    public void undo() {
+    public final void undo() {
         super.undo();
         arc.removeIntermediatePoint(point);
     }
 
     @Override
-    public void redo() {
+    public final void redo() {
         super.redo();
         arc.addIntermediatePoint(point);
     }

@@ -18,12 +18,12 @@ public class AnimationHistoryTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-    private AnimationHistory history;
+    private AnimationHistoryImpl history;
     private Observer observer;
 
     @Before
     public void setUp() {
-        history = new AnimationHistory();
+        history = new AnimationHistoryImpl();
         observer = mock(Observer.class);
     }
 

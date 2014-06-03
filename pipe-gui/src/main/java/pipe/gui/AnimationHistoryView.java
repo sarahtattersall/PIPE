@@ -1,6 +1,7 @@
 package pipe.gui;
 
 import pipe.historyActions.AnimationHistory;
+import pipe.historyActions.AnimationHistoryImpl;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
@@ -15,9 +16,9 @@ import java.util.logging.Logger;
 /**
  * Class to represent the history of the net animation
  */
-public class AnimationHistoryView
+public final class AnimationHistoryView
         extends JTextPane implements Observer {
-    private static final Logger LOGGER = Logger.getLogger(AnimationHistory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AnimationHistoryImpl.class.getName());
 
     private final String initText;
     private final Document doc;
@@ -68,7 +69,7 @@ public class AnimationHistoryView
 
     @Override
     public void update(Observable observable, Object o) {
-        if (observable.getClass().equals(AnimationHistory.class)) {
+        if (observable.getClass().equals(AnimationHistoryImpl.class)) {
             AnimationHistory history = (AnimationHistory) observable;
             updateText(history.getCurrentPosition(), history.getFiringSequence());
         }

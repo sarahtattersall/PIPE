@@ -35,7 +35,7 @@ public class AddPetriNetObject extends AbstractUndoableEdit {
 
     /** */
     @Override
-    public void undo() {
+    public final void undo() {
         super.undo();
         try {
             petriNet.remove(component);
@@ -47,7 +47,7 @@ public class AddPetriNetObject extends AbstractUndoableEdit {
 
     /** */
     @Override
-    public void redo() {
+    public final void redo() {
         super.redo();
         try {
             petriNet.add(component);
@@ -57,7 +57,7 @@ public class AddPetriNetObject extends AbstractUndoableEdit {
     }
 
 
-    public String toString() {
+    public final String toString() {
         return super.toString() + " \"" + component + "\"";
     }
 

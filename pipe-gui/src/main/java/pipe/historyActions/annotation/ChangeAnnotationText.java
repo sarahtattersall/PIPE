@@ -12,7 +12,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 /**
  * Undoable Edit for changing an annotations text
  */
-public class ChangeAnnotationText extends AbstractUndoableEdit {
+public final class ChangeAnnotationText extends AbstractUndoableEdit {
 
 
     private final Annotation annotation;

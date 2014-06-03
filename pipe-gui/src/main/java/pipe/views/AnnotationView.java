@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AnnotationView extends Note {
+public final class AnnotationView extends Note {
 
     private static final long serialVersionUID = 1L;
 

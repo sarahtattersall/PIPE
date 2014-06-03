@@ -12,7 +12,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-public class AnnotationAction extends CreateAction {
+public final class AnnotationAction extends CreateAction {
 
     public static final int WIDTH = 100;
 

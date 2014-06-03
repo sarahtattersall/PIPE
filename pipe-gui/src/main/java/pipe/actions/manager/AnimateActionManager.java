@@ -5,7 +5,7 @@ import pipe.controllers.application.PipeApplicationController;
 
 import java.util.Arrays;
 
-public class AnimateActionManager implements ActionManager {
+public final class AnimateActionManager implements ActionManager {
     private final GuiAction toggleAnimationAction;
 
     private final StepBackwardAction stepbackwardAction;

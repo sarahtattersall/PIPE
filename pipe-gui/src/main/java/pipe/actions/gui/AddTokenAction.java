@@ -17,7 +17,7 @@ public class AddTokenAction extends TokenAction {
     }
 
     @Override
-    protected void performTokenAction(PlaceController placeController, String token) {
+    protected final void performTokenAction(PlaceController placeController, String token) {
         Map<String, Integer> tokenCount = new HashMap<>();
         tokenCount.put(token, placeController.getTokenCount(token) + 1);
         setTokenCounts(placeController, tokenCount);

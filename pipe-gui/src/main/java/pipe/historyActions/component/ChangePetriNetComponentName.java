@@ -11,7 +11,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 /**
  * @author corveau
  */
-public class ChangePetriNetComponentName extends AbstractUndoableEdit {
+public final class ChangePetriNetComponentName extends AbstractUndoableEdit {
 
     private final String oldName;
 
