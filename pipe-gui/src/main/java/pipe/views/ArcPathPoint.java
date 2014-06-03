@@ -57,8 +57,11 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
      */
     private ArcPath arcPath;
 
+    /**
+     * Sets copyPastable to false because we cant copy paste individual arc points
+     */
     private void setup() {
-        copyPasteable = false; //we can't copy & paste indivial arc points!
+        copyPasteable = false;
     }
 
     public void setPointLocation(double x, double y) {
@@ -150,7 +153,7 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     @Override
     public void addToContainer(Container container) {
-
+        // Nothing needed
     }
 
     @Override
@@ -199,8 +202,11 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
         return true;
     }
 
+    /**
+     * Performs a delete only if there are more than two points left after deleting this one
+     */
     @Override
-    public void componentSpecificDelete() {// Won't delete if only two points left. General delete.
+    public void componentSpecificDelete() {
         if (isDeleteable()) {
             if (getArcPath().getArc().isSelected()) {
                 return;
@@ -243,11 +249,12 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     public boolean isDeleteable() {
         int i = getIndex();
-        return (i > 0 && i != arcPath.getNumPoints() - 1);
+        return i > 0 && i != arcPath.getNumPoints() - 1;
     }
 
-    public void kill() {        // delete without the safety check :)
-        super.removeFromContainer(); // called internally by ArcPoint and parent ArcPath
+    public void kill() {
+        // called internally by ArcPoint and parent ArcPath
+        super.removeFromContainer();
         //        arcPath.deletePoint(this);
         super.delete();
     }

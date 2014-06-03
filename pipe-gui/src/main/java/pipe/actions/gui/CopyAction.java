@@ -1,10 +1,9 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

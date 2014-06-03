@@ -1,7 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

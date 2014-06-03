@@ -4,8 +4,8 @@ import pipe.controllers.PetriNetController;
 import pipe.historyActions.component.AddPetriNetObject;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -15,8 +15,9 @@ import java.awt.event.MouseEvent;
  */
 public abstract class TransitionAction extends CreateAction {
 
-    public TransitionAction(String name, String tooltip, int key, int modifiers, PipeApplicationModel applicationModel) {
-        super(name,  tooltip, key, modifiers, applicationModel);
+    public TransitionAction(String name, String tooltip, int key, int modifiers,
+                            PipeApplicationModel applicationModel) {
+        super(name, tooltip, key, modifiers, applicationModel);
     }
 
     @Override

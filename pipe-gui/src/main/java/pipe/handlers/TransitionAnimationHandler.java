@@ -24,7 +24,7 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (petriNetController.isInAnimationMode() && SwingUtilities.isLeftMouseButton(e) && (transition.isEnabled())) {
+        if (petriNetController.isInAnimationMode() && SwingUtilities.isLeftMouseButton(e) && transition.isEnabled()) {
             GUIAnimator animator = petriNetController.getAnimator();
             animator.fireTransition(transition);
 

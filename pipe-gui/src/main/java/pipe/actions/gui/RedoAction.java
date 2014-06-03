@@ -15,7 +15,7 @@ public class RedoAction extends GuiAction {
     private final UndoAction undoAction;
 
     public RedoAction(PipeApplicationController applicationController, UndoAction undoAction) {
-        super("Redo", "Redo (Ctrl-Y)",  KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        super("Redo", "Redo (Ctrl-Y)", KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
         this.undoAction = undoAction;
     }

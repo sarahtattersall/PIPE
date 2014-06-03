@@ -19,7 +19,8 @@ public abstract class AbstractSaveAction extends GuiAction {
 
     private final FileDialog fileDialog;
 
-    public AbstractSaveAction(String name, String tooltip, int key, int modifiers, PipeApplicationController pipeApplicationController, FileDialog fileDialog) {
+    public AbstractSaveAction(String name, String tooltip, int key, int modifiers,
+                              PipeApplicationController pipeApplicationController, FileDialog fileDialog) {
         super(name, tooltip, key, modifiers);
         this.pipeApplicationController = pipeApplicationController;
         this.fileDialog = fileDialog;
@@ -49,19 +50,6 @@ public abstract class AbstractSaveAction extends GuiAction {
     }
 
     /**
-     * Append XML extension onto file if it is missing
-     * @param file
-     * @return file with extension
-     */
-    private File ensureExtension(File file) {
-        String ext = FilenameUtils.getExtension(file.getAbsolutePath());
-        if (ext.isEmpty()) {
-            return new File(file.getAbsolutePath() + ".xml");
-        }
-        return file;
-    }
-
-    /**
      * Saves the petri net out to file
      *
      * @param file file path to save petri net to
@@ -72,5 +60,19 @@ public abstract class AbstractSaveAction extends GuiAction {
         } catch (ParserConfigurationException | TransformerException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             GuiUtils.displayErrorMessage(null, e.getMessage());
         }
+    }
+
+    /**
+     * Append XML extension onto file if it is missing
+     *
+     * @param file
+     * @return file with extension
+     */
+    private File ensureExtension(File file) {
+        String ext = FilenameUtils.getExtension(file.getAbsolutePath());
+        if (ext.isEmpty()) {
+            return new File(file.getAbsolutePath() + ".xml");
+        }
+        return file;
     }
 }

@@ -67,6 +67,8 @@ public class TransitionView extends ConnectableView<Transition> {
                     case Transition.DISABLED_CHANGE_MESSAGE:
                         repaint();
                         break;
+                    default:
+                        break;
                 }
             }
         });

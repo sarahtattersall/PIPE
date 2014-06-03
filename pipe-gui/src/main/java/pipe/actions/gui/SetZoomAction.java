@@ -1,10 +1,9 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.ZoomController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
 
 import java.awt.event.ActionEvent;

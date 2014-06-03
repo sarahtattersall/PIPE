@@ -1,8 +1,8 @@
 package pipe.actions.gui;
 
+import pipe.controllers.GUIAnimator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.controllers.GUIAnimator;
 
 import java.awt.event.ActionEvent;
 
@@ -19,19 +19,16 @@ public class MultiRandomAnimateAction extends AnimateAction {
     }
 
 
-
     @Override
     public void actionPerformed(ActionEvent event) {
 
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         GUIAnimator animator = petriNetController.getAnimator();
-        if(animator.getNumberSequences() > 0)
-        {
-            animator.setNumberSequences(0); // stop animation
+        if (animator.getNumberSequences() > 0) {
+            // stop animation
+            animator.setNumberSequences(0);
             setSelected(false);
-        }
-        else
-        {
+        } else {
             stepbackwardAction.setEnabled(true);
             setSelected(true);
             animator.startRandomFiring();

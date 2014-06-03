@@ -1,7 +1,6 @@
 package pipe.controllers;
 
 import com.google.common.collect.Sets;
-import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
 import pipe.utilities.gui.GuiUtils;
@@ -179,7 +178,7 @@ public class GUIAnimator {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             PetriNetController controller = applicationController.getActivePetriNetController();
-            if ((getNumberSequences() < 1) || !controller.isInAnimationMode()) {
+            if (getNumberSequences() < 1 || !controller.isInAnimationMode()) {
                 timer.stop();
                 return;
             }

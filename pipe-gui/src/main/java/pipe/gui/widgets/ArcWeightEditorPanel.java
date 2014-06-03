@@ -194,7 +194,6 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         for (JTextField inputtedWeight : inputtedWeights) {
             String expr = inputtedWeight.getText();
             if (expr.isEmpty()) {
-                System.err.println("Error in functional rates expression.");
                 String message = " Expression is invalid. Please check your function.";
                 String title = "Error";
                 JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);

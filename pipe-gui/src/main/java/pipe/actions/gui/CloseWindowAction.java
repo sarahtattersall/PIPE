@@ -1,6 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
@@ -22,8 +21,9 @@ public class CloseWindowAction extends GuiAction {
         if (!applicationController.hasCurrentPetriNetChanged()) {
             applicationController.removeActiveTab();
         } else {
-            int result = JOptionPane.showConfirmDialog(null,  "Do you really want to close this Petri net? It has unsaved changes.",
-                    "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            int result = JOptionPane.showConfirmDialog(null,
+                    "Do you really want to close this Petri net? It has unsaved changes.", "Confirm Exit",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 applicationController.removeActiveTab();
             }

@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 public class SpecifyRateParameterAction extends GuiAction {
     private static final Logger LOGGER = Logger.getLogger(SpecifyRateParameterAction.class.getName());
+
     private final PipeApplicationController pipeApplicationController;
 
     private RateEditorPanel rateEditorPanel;
@@ -102,6 +103,7 @@ public class SpecifyRateParameterAction extends GuiAction {
                 setVisible(false);
             }
         }
+
         /**
          * Removes any data deleted from the table if it was in the Petri net
          * when table loaded
@@ -130,6 +132,7 @@ public class SpecifyRateParameterAction extends GuiAction {
 
         /**
          * Performs an update on the table data items
+         *
          * @param data list of data in the table
          */
         private void updateFromTable(Iterable<RateEditorPanel.RateModel.Datum> data) {
@@ -140,8 +143,8 @@ public class SpecifyRateParameterAction extends GuiAction {
                     AbstractDatum initial = modified.initial;
                     if (!modified.equals(initial) && modified.hasBeenSet()) {
                         try {
-                            RateParameterController rateController = petriNetController.getRateParameterController(
-                                    initial.id);
+                            RateParameterController rateController =
+                                    petriNetController.getRateParameterController(initial.id);
                             rateController.startMultipleEdits();
                             rateController.setId(modified.id);
                             rateController.setRate(modified.expression);
@@ -151,7 +154,8 @@ public class SpecifyRateParameterAction extends GuiAction {
                         }
                     }
                 } else if (modified.hasBeenSet()) {
-                    RateParameter rateParameter = new FunctionalRateParameter(modified.expression, modified.id, modified.id);
+                    RateParameter rateParameter =
+                            new FunctionalRateParameter(modified.expression, modified.id, modified.id);
                     try {
                         petriNetController.getPetriNet().add(rateParameter);
                         undoableEdits.add(new AddPetriNetObject(rateParameter, petriNetController.getPetriNet()));

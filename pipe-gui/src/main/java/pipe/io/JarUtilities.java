@@ -20,38 +20,38 @@ import java.util.zip.ZipEntry;
  */
 public abstract class JarUtilities {
 
-   
-   public static boolean isJarFile(URL url) {
-       return url != null && url.toString().startsWith("jar:file:");
 
-   }
+    public static boolean isJarFile(URL url) {
+        return url != null && url.toString().startsWith("jar:file:");
 
-   
-   public static String getJarName(URL url) {
-      return url.toString().substring(9, url.toString().indexOf("!/"));
-   }
+    }
 
-   
-   public static List<JarEntry> getJarEntries(JarFile jarFile, String directory) {
-      Enumeration<JarEntry> enumeration = jarFile.entries();
-      List<JarEntry> nets = new ArrayList<>();
-      String separatedDirectory = directory + File.separator;
-      
-      while (enumeration.hasMoreElements()) {
-         JarEntry je = (JarEntry)enumeration.nextElement();
-         String s = je.toString();
-         if ((s.contains(separatedDirectory)) && (s.length() > separatedDirectory.length())){
-            nets.add(je);
-         }
-      }
-      return nets;
-   }
 
-   
-   public static File getFile(ZipEntry entry) {
-      URL urlJarEntry  = Thread.currentThread().getContextClassLoader().
-                 getResource(entry.getName());
-      return new File (urlJarEntry.toString());      
-   }
-   
+    public static String getJarName(URL url) {
+        return url.toString().substring(9, url.toString().indexOf("!/"));
+    }
+
+
+    public static List<JarEntry> getJarEntries(JarFile jarFile, String directory) {
+        Enumeration<JarEntry> enumeration = jarFile.entries();
+        List<JarEntry> nets = new ArrayList<>();
+        String separatedDirectory = directory + File.separator;
+
+        while (enumeration.hasMoreElements()) {
+            JarEntry je = (JarEntry) enumeration.nextElement();
+            String s = je.toString();
+            if ((s.contains(separatedDirectory)) && (s.length() > separatedDirectory.length())) {
+                nets.add(je);
+            }
+        }
+        return nets;
+    }
+
+
+    public static File getFile(ZipEntry entry) {
+        URL urlJarEntry = Thread.currentThread().getContextClassLoader().
+                getResource(entry.getName());
+        return new File(urlJarEntry.toString());
+    }
+
 }

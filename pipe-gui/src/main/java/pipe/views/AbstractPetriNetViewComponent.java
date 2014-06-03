@@ -87,9 +87,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         return model;
     }
 
-    public final void setDraggable(boolean allow) {
-    }
-
     @Override
     public final void delete() {
         componentSpecificDelete();

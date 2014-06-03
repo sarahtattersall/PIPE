@@ -1,10 +1,10 @@
 package pipe.actions.gui;
 
-import pipe.controllers.PetriNetController;
-import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.DragManager;
-import pipe.gui.PetriNetTab;
+import pipe.controllers.PetriNetController;
 import pipe.controllers.SelectionManager;
+import pipe.controllers.application.PipeApplicationController;
+import pipe.gui.PetriNetTab;
 import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
@@ -27,13 +27,15 @@ public class SelectAction extends CreateAction {
 
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
+        // No action needed
 
     }
 
     @Override
     public <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController) {
         if (!petriNetController.isSelected(connectable)) {
-            SelectionManager selectionManager = pipeApplicationController.getActivePetriNetController().getSelectionManager();
+            SelectionManager selectionManager =
+                    pipeApplicationController.getActivePetriNetController().getSelectionManager();
             selectionManager.clearSelection();
         }
         petriNetController.select(connectable);
@@ -47,7 +49,8 @@ public class SelectAction extends CreateAction {
         super.actionPerformed(e);
         if (pipeApplicationView.areAnyTabsDisplayed()) {
             PetriNetTab petriNetTab = pipeApplicationView.getCurrentTab();
-            SelectionManager selectionManager = pipeApplicationController.getActivePetriNetController().getSelectionManager();
+            SelectionManager selectionManager =
+                    pipeApplicationController.getActivePetriNetController().getSelectionManager();
             selectionManager.enableSelection();
             petriNetTab.setCursorType("arrow");
         }

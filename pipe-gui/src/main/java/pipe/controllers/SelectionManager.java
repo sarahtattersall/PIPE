@@ -138,7 +138,7 @@ public class SelectionManager extends javax.swing.JComponent
     @Override
     public void mousePressed(MouseEvent e) {
         startPoint = e.getPoint();
-        if (e.getButton() == MouseEvent.BUTTON1 && !(e.isControlDown())) {
+        if (e.getButton() == MouseEvent.BUTTON1 && !e.isControlDown()) {
             isSelecting = true;
             petriNetTab.setLayer(this, GUIConstants.SELECTION_LAYER_OFFSET);
             selectionRectangle.setRect(startPoint.getX(), startPoint.getY(), 0, 0);

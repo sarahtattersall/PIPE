@@ -58,7 +58,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * @param zoomMin       minimum allowed zoom value
      * @param controller
      */
-    public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin, PipeApplicationController controller) {
+    public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin,
+                  PipeApplicationController controller) {
         zoom = startingScale;
         this.zoomAmount = zoomAmount;
         this.zoomMax = zoomMax;
@@ -76,6 +77,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Transforms zoomed mouse events to their unzoomed coordinates
+     *
      * @param e
      * @param l
      */
@@ -124,7 +126,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     @Override
-    protected void processMouseWheelEvent(MouseWheelEvent e,JLayer<? extends JComponent> l) {
+    protected void processMouseWheelEvent(MouseWheelEvent e, JLayer<? extends JComponent> l) {
+        //No action needed
     }
 
     @Override
@@ -151,17 +154,15 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         changeSupport.removePropertyChangeListener(listener);
     }
 
-    @Override
+    private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
+        return getComponentClickedOn(l, event) != null;
+    }    @Override
     public void zoomOut() {
         if (canZoomOut()) {
             double old = zoom;
             zoom -= zoomAmount;
             changeSupport.firePropertyChange(ZOOM_OUT_CHANGE_MESSAGE, old, zoom);
         }
-    }
-
-    private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
-        return getComponentClickedOn(l, event) != null;
     }
 
     /**
@@ -198,17 +199,19 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         return SwingUtilities.convertMouseEvent(e.getComponent(), e, tab);
     }
 
-    @Override
-    public int getPercentageZoom() {
-        return (int) (zoom * 100);
-    }
-
     private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {
         Point coordinates = zoomedXY(mouseEvent);
         return new MouseEvent(component, mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiers(),
                 coordinates.x, coordinates.y, mouseEvent.getClickCount(), mouseEvent.isPopupTrigger(),
                 mouseEvent.getButton());
     }
+
+    @Override
+    public int getPercentageZoom() {
+        return (int) (zoom * 100);
+    }
+
+
 
     @Override
     public double getScale() {

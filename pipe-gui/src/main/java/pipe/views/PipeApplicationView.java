@@ -137,7 +137,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
                 new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, moduleAndAnimationHistoryFrame, frameForPetriNetTabs);
         pane.setContinuousLayout(true);
         pane.setOneTouchExpandable(true);
-        pane.setBorder(null); // avoid multiple borders
+        // avoid multiple borders
+        pane.setBorder(null);
         pane.setDividerSize(8);
         getContentPane().add(pane);
 
@@ -262,7 +263,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
      * called from other sources, a duplicate ZoomAction is not called
      */
     public void updateZoomCombo() {
-        ActionListener zoomComboListener = (zoomComboBox.getActionListeners())[0];
+        ActionListener zoomComboListener = zoomComboBox.getActionListeners()[0];
         zoomComboBox.removeActionListener(zoomComboListener);
 
         String zoomPercentage = zoomManager.getPercentageZoom() + "%";
@@ -295,7 +296,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private void createAnimationViewPane() {
         AnimationHistoryView animationHistoryView = histories.get(getCurrentTab());
         scroller = new JScrollPane(animationHistoryView);
-        scroller.setBorder(new EmptyBorder(0, 0, 0, 0)); // make it less bad on XP
+        scroller.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         moduleAndAnimationHistoryFrame.setBottomComponent(scroller);
 
@@ -426,12 +427,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     public void registerNewPetriNet(PetriNet petriNet) {
-        PropertyChangeListener zoomListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                updateZoomCombo();
-            }
-        };
+
 
         petriNet.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -456,6 +452,12 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         PetriNetTab petriNetTab = new PetriNetTab();
         histories.put(petriNetTab, animationHistoryView);
 
+        PropertyChangeListener zoomListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                updateZoomCombo();
+            }
+        };
         applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         petriNetTab.setMouseHandler(

@@ -88,6 +88,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        // No action
     }
 
 }

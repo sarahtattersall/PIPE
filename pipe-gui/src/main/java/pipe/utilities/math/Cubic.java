@@ -26,7 +26,7 @@ public class Cubic {
 
    // Return second control point coordinate (calculated from coefficients)
    public float getX2() {
-      return ((c + 2*b + 3*a)/3);
+      return (c + 2*b + 3*a)/3;
    }
 
 

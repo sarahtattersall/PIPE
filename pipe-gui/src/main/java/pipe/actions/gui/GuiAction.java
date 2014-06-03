@@ -22,30 +22,17 @@ import java.net.URL;
  *         Toggleable actions store the toggle state in a way that allows ChangeListeners
  *         to be notified of changes
  */
-public abstract class GuiAction
-        extends AbstractAction
-{
+public abstract class GuiAction extends AbstractAction {
 
     public static final String SELECTED = "selected";
 
     protected UndoableEditListener listener;
 
 
-    // Set the UndoableEditListener.
-    public void addUndoableEditListener(UndoableEditListener l) {
-        listener = l; //TODO: Should ideally throw an exception if listener != null
-    }
-
-    // Remove the UndoableEditListener.
-    public void removeUndoableEditListener(UndoableEditListener l) {
-        listener = null;
-    }
-
     /**
-     *
-     * @param name image name
-     * @param tooltip tooltip message
-     * @param key {@link java.awt.event.KeyEvent} key
+     * @param name      image name
+     * @param tooltip   tooltip message
+     * @param key       {@link java.awt.event.KeyEvent} key
      * @param modifiers e.g. ctrl/shift obtained from {@link java.awt.event.InputEvent}
      */
     protected GuiAction(String name, String tooltip, int key, int modifiers) {
@@ -57,62 +44,56 @@ public abstract class GuiAction
     protected GuiAction(String name, String tooltip) {
         super(name);
         URL iconURL = this.getClass().getResource(PIPEConstants.IMAGE_PATH + name + ".png");
-        if(iconURL != null)
-        {
+        if (iconURL != null) {
             putValue(SMALL_ICON, new ImageIcon(iconURL));
         }
 
-        if(tooltip != null)
-        {
+        if (tooltip != null) {
             putValue(SHORT_DESCRIPTION, tooltip);
         }
     }
 
-    protected GuiAction(String name, String tooltip, String keystroke)
-    {
-
-        this(name, tooltip);
-        if(keystroke != null)
-        {
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(keystroke));
-        }
-    }
-
-
-    protected GuiAction(String name, String tooltip, String keystroke,
-                        boolean toggleable)
-    {
+    protected GuiAction(String name, String tooltip, String keystroke, boolean toggleable) {
         this(name, tooltip, keystroke);
         putValue(SELECTED, Boolean.FALSE);
     }
 
+    protected GuiAction(String name, String tooltip, String keystroke) {
 
-    public boolean isSelected()
-    {
+        this(name, tooltip);
+        if (keystroke != null) {
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(keystroke));
+        }
+    }
+
+    // Set the UndoableEditListener.
+    public void addUndoableEditListener(UndoableEditListener l) {
+        listener = l; //TODO: Should ideally throw an exception if listener != null
+    }
+
+    // Remove the UndoableEditListener.
+    public void removeUndoableEditListener(UndoableEditListener l) {
+        listener = null;
+    }
+
+    public boolean isSelected() {
         Boolean b = (Boolean) getValue(SELECTED);
 
-        if(b != null)
-        {
-            return b.booleanValue();
-        }
-        return false; // default
+        return b != null && b;
     }
 
 
-    public void setSelected(boolean selected)
-    {
+    public void setSelected(boolean selected) {
         Boolean b = (Boolean) getValue(SELECTED);
 
-        if(b != null)
-        {
+        if (b != null) {
             putValue(SELECTED, Boolean.valueOf(selected));
         }
     }
 
     protected void registerUndoEvent(UndoableEdit edit) {
         if (listener != null) {
-            listener.undoableEditHappened(new UndoableEditEvent(this,
-                    edit));
+            listener.undoableEditHappened(new UndoableEditEvent(this, edit));
         }
     }
 

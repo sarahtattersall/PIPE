@@ -1,8 +1,8 @@
 package pipe.actions.gui;
 
+import pipe.controllers.GUIAnimator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.controllers.GUIAnimator;
 
 import java.awt.event.ActionEvent;
 
@@ -13,6 +13,7 @@ public class StepForwardAction extends AnimateAction {
     private final PipeApplicationController applicationController;
 
     private StepBackwardAction stepBackwardAction;
+
     public StepForwardAction(String name, String tooltip, String keystroke,
                              PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
@@ -22,7 +23,6 @@ public class StepForwardAction extends AnimateAction {
     public void registerStepBack(StepBackwardAction stepBackwardAction) {
         this.stepBackwardAction = stepBackwardAction;
     }
-
 
 
     @Override

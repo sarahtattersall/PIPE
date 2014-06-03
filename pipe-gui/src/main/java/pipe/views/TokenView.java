@@ -13,7 +13,7 @@ import java.util.Observable;
  * Used to display tokens as dots/numbers on the petri net in a place
  */
 public class TokenView extends Observable  {
-    private Token model;  // Steve Doubleday was final, but changed for replace(tokenView)
+    private Token model;
 
     public TokenView(Token model) {
         this.model = model;
@@ -98,21 +98,8 @@ public class TokenView extends Observable  {
     }
 
 
-    //TODO: DELETE
-    public int getCurrentMarking() {
-        return 0;
-    }
-
-    //TODO: DELETE
-    public void setCurrentMarking(int marking) {
-    }
-
     public String getID() {
         return model.getId();
-    }
-
-    public void setID(String id) {
-        model.setId(id);
     }
 
     /**
@@ -148,9 +135,8 @@ public class TokenView extends Observable  {
     private String normalize(String target) {
         if (target == null) {
             return "";
-        } else {
-            return target.trim().toLowerCase();
         }
+        return target.trim().toLowerCase();
     }
 
     @Override

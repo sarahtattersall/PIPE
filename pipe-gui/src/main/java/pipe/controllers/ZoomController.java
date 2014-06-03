@@ -70,7 +70,7 @@ public class ZoomController implements Serializable {
     }
 
     private void setPercent(int newPercent) {
-        if ((newPercent >= GUIConstants.ZOOM_MIN) && (newPercent <= GUIConstants.ZOOM_MAX)) {
+        if (newPercent >= GUIConstants.ZOOM_MIN && newPercent <= GUIConstants.ZOOM_MAX) {
             percent = newPercent;
         }
     }

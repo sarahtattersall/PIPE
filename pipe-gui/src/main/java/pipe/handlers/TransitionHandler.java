@@ -28,6 +28,7 @@ public class TransitionHandler extends ConnectableHandler<Transition> {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        //No action needed
     }
 
 

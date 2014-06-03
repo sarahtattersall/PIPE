@@ -42,8 +42,8 @@ public final class AnnotationView extends Note {
     private void setMouseHandler(MouseInputAdapter handler) {
         addMouseListener(handler);
         addMouseMotionListener(handler);
-        note.addMouseListener(handler);
-        note.addMouseMotionListener(handler);
+        noteText.addMouseListener(handler);
+        noteText.addMouseMotionListener(handler);
     }
 
     @Override
@@ -189,7 +189,6 @@ public final class AnnotationView extends Note {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            setDraggable(false);
             point.isPressed = true;
             point.repaint();
             start = e.getPoint();
@@ -197,7 +196,6 @@ public final class AnnotationView extends Note {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            setDraggable(true);
             point.isPressed = false;
             updateBounds();
             point.repaint();

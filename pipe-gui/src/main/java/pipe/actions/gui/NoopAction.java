@@ -18,11 +18,11 @@ public class NoopAction extends CreateAction {
 
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
-
+        // Noop
     }
 
     @Override
     public <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController) {
-
+        // Noop
     }
 }

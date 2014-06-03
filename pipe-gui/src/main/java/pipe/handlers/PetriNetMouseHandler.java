@@ -64,6 +64,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        // No action needed
     }
 
     @Override

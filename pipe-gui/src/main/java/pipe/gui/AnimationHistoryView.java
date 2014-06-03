@@ -46,7 +46,7 @@ public final class AnimationHistoryView
             for (Transition transition : firingSequence) {
                 String id = transition.getId();
                 doc.insertString(doc.getLength(), "\n" + id,
-                        (count == historyPosition) ? emph : regular);
+                        count == historyPosition ? emph : regular);
                 count++;
             }
         } catch (BadLocationException b) {

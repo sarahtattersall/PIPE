@@ -249,7 +249,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
     }
 
     private void markingSpinnerStateChanged(javax.swing.event.ChangeEvent evt,
-                                            int posInList) {//GEN-FIRST:event_markingSpinnerStateChanged
+                                            int posInList) {
 /*      Integer capacity = (Integer)capacitySpinner.getValue();
       int totalMarkings = 0;
       for(JSpinner inputtedMarking:inputtedMarkings){
@@ -262,7 +262,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         	 inputtedMarkings.get(posInList).setValue(markingOfCurrentSpinner - overMarkingLimit);
          }
       }*/
-    }//GEN-LAST:event_markingSpinnerStateChanged
+    }
 
     private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {

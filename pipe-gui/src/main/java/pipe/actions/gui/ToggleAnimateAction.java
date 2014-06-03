@@ -1,8 +1,8 @@
 package pipe.actions.gui;
 
+import pipe.controllers.GUIAnimator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.controllers.GUIAnimator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,8 +21,8 @@ public class ToggleAnimateAction extends AnimateAction {
      */
     private final ActionListener noopAction;
 
-    public ToggleAnimateAction(String name, String tooltip, String keystroke,
-                               PipeApplicationModel applicationModel, PipeApplicationController applicationController) {
+    public ToggleAnimateAction(String name, String tooltip, String keystroke, PipeApplicationModel applicationModel,
+                               PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
         this.applicationModel = applicationModel;
         this.applicationController = applicationController;

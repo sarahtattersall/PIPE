@@ -4,8 +4,8 @@ import pipe.controllers.PetriNetController;
 import pipe.historyActions.component.AddPetriNetObject;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
-import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 import java.awt.Point;
 import java.awt.event.InputEvent;

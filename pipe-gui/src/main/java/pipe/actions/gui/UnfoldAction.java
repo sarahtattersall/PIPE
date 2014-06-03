@@ -23,8 +23,9 @@ public class UnfoldAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        GuiUtils.displayErrorMessage(null, "Currently unfolding a Petri net is not supported due to errors found in the PIPE 4 implementation. We hope to fix them soon!");
-//        PetriNetController controller = pipeApplicationController.getActivePetriNetController();
+        GuiUtils.displayErrorMessage(null,
+                "Currently unfolding a Petri net is not supported due to errors found in the PIPE 4 implementation. We hope to fix them soon!");
+        //        PetriNetController controller = pipeApplicationController.getActivePetriNetController();
 
         //TODO: SHOW MESSAGES
         //        if(controller.getNetTokens().size() > 1 && controller.hasFunctionalRatesOrWeights()){
@@ -40,10 +41,10 @@ public class UnfoldAction extends GuiAction {
         //					"Information", JOptionPane.INFORMATION_MESSAGE);
         //        }
 
-//        PetriNet petriNet = controller.getPetriNet();
-//        Expander expander = new Expander(petriNet);
-//        PetriNet unfolded = expander.unfold();
+        //        PetriNet petriNet = controller.getPetriNet();
+        //        Expander expander = new Expander(petriNet);
+        //        PetriNet unfolded = expander.unfold();
         //TODO: REIMPLEMENT
-//        pipeApplicationController.createNewTab(unfolded, pipeApplicationView);
+        //        pipeApplicationController.createNewTab(unfolded, pipeApplicationView);
     }
 }

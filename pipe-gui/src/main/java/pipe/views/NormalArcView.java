@@ -16,9 +16,13 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T>  {
+    private static final Logger LOGGER = Logger.getLogger(NormalArcView.class.getName());
+
     private ArcHead arcHead = new NormalHead();
     private static final String TYPE = "normal";
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
@@ -67,8 +71,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     protected void setWeightLabelPosition() {
-        int originalX = (int) (arcPath.midPoint.x);
-        int originalY = (int) (arcPath.midPoint.y) - 10;
+        int originalX = (int) arcPath.midPoint.x;
+        int originalY = (int) arcPath.midPoint.y - 10;
         int x = originalX;
         int y = originalY;
         int yCount = 0;
@@ -103,7 +107,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
                 Token token = petriNetController.getToken(tokenId);
                 label.setColor(token.getColor());
             } catch (PetriNetComponentNotFoundException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
                 label.setColor(Color.BLACK);
             } label.updateSize();
             weightLabel.add(label);

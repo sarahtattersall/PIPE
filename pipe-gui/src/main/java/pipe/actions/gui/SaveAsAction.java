@@ -2,7 +2,7 @@ package pipe.actions.gui;
 
 import pipe.controllers.application.PipeApplicationController;
 
-import java.awt.*;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

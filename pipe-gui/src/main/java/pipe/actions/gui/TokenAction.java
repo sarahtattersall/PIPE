@@ -14,13 +14,6 @@ public abstract class TokenAction extends CreateAction {
         super(name, tooltip, key, modifiers, applicationModel);
     }
 
-    /**
-     * Subclasses should perform their relevant action on the token e.g. add/delete
-     * @param placeController
-     * @param token
-     */
-    protected abstract void performTokenAction(PlaceController placeController, String token);
-
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         // Do nothing unless clicked a connectable
@@ -37,9 +30,16 @@ public abstract class TokenAction extends CreateAction {
     }
 
     /**
+     * Subclasses should perform their relevant action on the token e.g. add/delete
      *
+     * @param placeController
+     * @param token
+     */
+    protected abstract void performTokenAction(PlaceController placeController, String token);
+
+    /**
      * Sets the place to contain counts.
-     *
+     * <p/>
      * Creates a new history edit
      *
      * @param placeController

@@ -26,17 +26,20 @@ public class LabelHandler
    }
    
    
+   @Override
    public void mouseClicked(MouseEvent e) {
       obj.dispatchEvent(e);
    }
    
    
+   @Override
    public void mousePressed(MouseEvent e) {
       dragInit = e.getPoint(); //
       dragInit = javax.swing.SwingUtilities.convertPoint(nl, dragInit, obj);
    }
   
 
+   @Override
    public void mouseDragged(MouseEvent e){
       // 
       if (!SwingUtilities.isLeftMouseButton(e)){
@@ -53,6 +56,7 @@ public class LabelHandler
 //      _obj.update();
    }   
    
+   @Override
    public void mouseWheelMoved(MouseWheelEvent e) {
       obj.dispatchEvent(e);
    }

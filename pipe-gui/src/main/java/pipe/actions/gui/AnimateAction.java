@@ -1,7 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
-
 import java.awt.event.ActionEvent;
 
 public abstract class AnimateAction extends GuiAction {

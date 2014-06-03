@@ -1,8 +1,8 @@
 package pipe.actions.gui;
 
+import pipe.controllers.GUIAnimator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.controllers.GUIAnimator;
 
 import java.awt.event.ActionEvent;
 
@@ -15,8 +15,8 @@ public class RandomAnimateAction extends AnimateAction {
     private final StepBackwardAction stepBackwardAction;
 
     public RandomAnimateAction(String name, String tooltip, String keystroke,
-                               PipeApplicationController applicationController,
-                               StepForwardAction stepForwardAction, StepBackwardAction stepBackwardAction) {
+                               PipeApplicationController applicationController, StepForwardAction stepForwardAction,
+                               StepBackwardAction stepBackwardAction) {
         super(name, tooltip, keystroke);
         this.applicationController = applicationController;
         this.stepForwardAction = stepForwardAction;

@@ -11,7 +11,7 @@ public class DeleteArcPathPointAction extends AbstractAction {
 
     private final ArcController<?, ?> arcController;
 
-    public DeleteArcPathPointAction(ArcPoint component, ArcController<?,?> arcController) {
+    public DeleteArcPathPointAction(ArcPoint component, ArcController<?, ?> arcController) {
         this.component = component;
         this.arcController = arcController;
     }

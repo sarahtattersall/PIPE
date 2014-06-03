@@ -42,7 +42,8 @@ public class SpecifyTokenAction extends GuiAction {
 
     private ActionEvent forcedAction;
 
-    public SpecifyTokenAction(PipeApplicationController pipeApplicationController, PipeApplicationView applicationView) {
+    public SpecifyTokenAction(PipeApplicationController pipeApplicationController,
+                              PipeApplicationView applicationView) {
         super("SpecifyTokenClasses", "Specify tokens (ctrl-shift-T)", KeyEvent.VK_T,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_DOWN_MASK);
         this.pipeApplicationController = pipeApplicationController;
@@ -60,6 +61,11 @@ public class SpecifyTokenAction extends GuiAction {
             buildTokenGuiClasses();
             finishBuildingGui();
         }
+    }
+
+    public void buildTokenGuiClasses() {
+        tokenEditorPanel = new TokenEditorPanel(pipeApplicationController.getActivePetriNetController());
+        guiDialog = new TokenDialog("Tokens", true, tokenEditorPanel);
     }
 
     public void finishBuildingGui() {
@@ -96,11 +102,6 @@ public class SpecifyTokenAction extends GuiAction {
         forcedAction = null;
     }
 
-    public void buildTokenGuiClasses() {
-        tokenEditorPanel = new TokenEditorPanel(pipeApplicationController.getActivePetriNetController());
-        guiDialog = new TokenDialog("Tokens", true, tokenEditorPanel);
-    }
-
     /**
      * @author Alex Charalambous, June 2010: ColorDrawer, ColorPicker,
      *         TokenPanel and TokenDialog are four classes used
@@ -110,7 +111,7 @@ public class SpecifyTokenAction extends GuiAction {
 
     public class TokenDialog<T extends PetriNetComponent> extends JDialog implements ActionListener {
 
-        private final Logger LOGGER = Logger.getLogger(TokenDialog.class.getName());
+        private final Logger logger = Logger.getLogger(TokenDialog.class.getName());
 
         private TokenEditorPanel tokenEditorPanel;
 
@@ -137,7 +138,7 @@ public class SpecifyTokenAction extends GuiAction {
 
         /**
          * Removes tokens from the Petri net.
-         *
+         * <p/>
          * Creates error message if a token cannot be removed for some reason, for
          * example if places still contain tokens of its type. It will apply all other
          * changes.
@@ -163,7 +164,7 @@ public class SpecifyTokenAction extends GuiAction {
                         GuiUtils.displayErrorMessage(null, messageBuilder.toString());
                     } catch (PetriNetComponentNotFoundException e) {
 
-                        LOGGER.log(Level.SEVERE, e.getMessage());
+                        logger.log(Level.SEVERE, e.getMessage());
                     }
                 }
             }
@@ -194,7 +195,7 @@ public class SpecifyTokenAction extends GuiAction {
                         Token token = petriNetController.getToken(modified.id);
                         undoableEdits.add(new AddPetriNetObject(token, petriNetController.getPetriNet()));
                     } catch (PetriNetComponentNotFoundException e) {
-                        LOGGER.log(Level.SEVERE, e.getMessage());
+                        logger.log(Level.SEVERE, e.getMessage());
                     }
 
                 }

@@ -20,7 +20,7 @@ public class StatusBar extends JPanel {
 
     public StatusBar() {
         super();
-        label = new JLabel(TEXT_FOR_DRAWING); // got to put something in there
+        label = new JLabel(TEXT_FOR_DRAWING);
         this.setLayout(new BorderLayout(0, 0));
         this.add(label);
     }

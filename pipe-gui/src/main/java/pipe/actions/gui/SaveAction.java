@@ -16,8 +16,7 @@ import java.io.File;
 public class SaveAction extends AbstractSaveAction {
 
     public SaveAction(PipeApplicationController pipeApplicationController, FileDialog fileChooser) {
-        super("Save", "Save", KeyEvent.VK_S, InputEvent.META_DOWN_MASK, pipeApplicationController,
-                fileChooser);
+        super("Save", "Save", KeyEvent.VK_S, InputEvent.META_DOWN_MASK, pipeApplicationController, fileChooser);
     }
 
     @Override
@@ -61,7 +60,8 @@ public class SaveAction extends AbstractSaveAction {
         }
 
         @Override
-        public void visit(NormalPetriNetName name) {
+        public void visit(NormalPetriNetName name){
+            // No action needed
         }
     }
 
@@ -77,6 +77,7 @@ public class SaveAction extends AbstractSaveAction {
         /**
          * Determines if the petri net needs a save as call by
          * visiting the name item
+         *
          * @param petriNet
          * @return if a save as should be performed
          */
@@ -93,6 +94,7 @@ public class SaveAction extends AbstractSaveAction {
         /**
          * If the name is a normal name it does not yet have a file representation
          * and so a save as is needed
+         *
          * @param name
          */
         @Override

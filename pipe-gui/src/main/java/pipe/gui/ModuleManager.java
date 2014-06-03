@@ -200,7 +200,7 @@ public class ModuleManager {
             } else if (o instanceof ModuleClassContainer) {
                 installedModules.remove(((ModuleClassContainer) o).returnClass());
             } else {
-                System.err.println("Don't know how to delete class for " + o.getClass());
+                LOGGER.log(Level.INFO, "Don't know how to delete class for " + o.getClass());
             }
             removeModuleFromTree(removeNode);
             moduleTree.expandPath(moduleTree.getPathForRow(1));

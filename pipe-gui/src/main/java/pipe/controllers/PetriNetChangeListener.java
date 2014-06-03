@@ -111,6 +111,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction(PetriNet.NEW_RATE_PARAMETER_CHANGE_MESSAGE)
     private void newRate(PropertyChangeEvent propertyChangeEvent) {
+        //TODO: ?
 
     }
 
@@ -121,11 +122,6 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
         AnnotationView view = builder.build(petriNetTab, applicationModel);
         petriNetTab.addNewPetriNetComponent(view);
-
-    }
-
-    @EventAction("newStateGroup")
-    private void newStateGroup(PropertyChangeEvent propertyChangeEvent) {
 
     }
 
@@ -152,6 +148,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
 
     @EventAction(PetriNet.DELETE_RATE_PARAMETER_CHANGE_MESSAGE)
     private void deleteRate(PropertyChangeEvent propertyChangeEvent) {
+        //TODO: ?
     }
 
     @EventAction(PetriNet.DELETE_ANNOTATION_CHANGE_MESSAGE)
@@ -160,17 +157,12 @@ public class PetriNetChangeListener implements PropertyChangeListener {
         petriNetTab.deletePetriNetComponent(annotation.getId());
     }
 
-    @EventAction("deleteStateGroup")
-    private void deleteStateGroup(PropertyChangeEvent propertyChangeEvent) {
-
-    }
-
 
     /**
      * This interface is for annotating methods with their change event
      */
-    @Retention(RetentionPolicy.RUNTIME) // Make this annotation accessible at runtime via reflection.
-    @Target({ElementType.METHOD})       // This annotation can only be applied to class methods.
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
     private @interface EventAction {
         /**
          * @return the events property name to listen out for

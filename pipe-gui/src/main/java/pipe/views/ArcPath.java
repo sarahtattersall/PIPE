@@ -8,7 +8,6 @@ import pipe.constants.GUIConstants;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
 import pipe.handlers.ArcPathPointHandler;
-import pipe.historyActions.HistoryItem;
 import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.math.Cubic;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
@@ -213,39 +212,9 @@ public class ArcPath implements Shape, Cloneable {
 
     public void delete() {  // Michael: Tells the arc points to remove themselves
         while (!pathPoints.isEmpty()) {
-            pathPoints.get(0).kill(); // force delete of ALL points
+            // force delete of ALL points
+            pathPoints.get(0).kill();
         }
-    }
-
-    public String[][] getArcPathDetails() {
-        int length = getEndIndex() + 1;
-        String[][] details = new String[length][3];
-
-        int x, y;
-        for (int c = 0; c < length; c++) {
-            x = pathPoints.get(c).getX();
-            details[c][0] = String.valueOf(x);
-            y = pathPoints.get(c).getY();
-            details[c][1] = String.valueOf(y);
-            details[c][2] = String.valueOf(pathPoints.get(c).isCurved());
-        }
-        return details;
-    }
-
-    //TODO: REIMPLEMENT
-    public HistoryItem insertPointAt(Point2D.Double mouseposition, boolean flag) {
-        //        int wantedpoint = findPoint(mouseposition);
-        //
-        //        // wantedpoint is now the index of the first point in the pair of arc
-        //        // points marking the segment to be split. So we have all we need to
-        //        // insert the new point at the given position.
-        //        ArcPathPoint newPoint = new ArcPathPoint(mouseposition, flag, this);
-        //        insertPoint(wantedpoint + 1, newPoint);
-        //        createPath();
-        //        parent.updateArcPosition();
-        //
-        //        return new AddArcPathPoint(this.getArc(), newPoint);
-        return null;
     }
 
     /**
@@ -287,11 +256,10 @@ public class ArcPath implements Shape, Cloneable {
 
     public void addPointsToGui(Container petriNetTab) {
         if (petriNetTab == null) {
-            return; //Parent has not yet been added
+            //Parent has not yet been added
+            return;
         }
 
-        pathPoints.get(0).setDraggable(false);
-        pathPoints.get(pathPoints.size() - 1).setDraggable(false);
 
         for (ArcPathPoint point : pathPoints) {
             point.setVisible(false);
@@ -351,7 +319,8 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     private void setControlPoints() {
-        setCurveControlPoints(); //must be in this order
+        //must be in this order
+        setCurveControlPoints();
         setStraightControlPoints();
         setEndControlPoints();
     }
@@ -409,7 +378,7 @@ public class ArcPath implements Shape, Cloneable {
 
                 double inc = getLength(currentPoint.getPoint(), previousPoint.getPoint());
                 double halfLength = length / 2.0;
-                if ((acc + inc > halfLength)) {
+                if (acc + inc > halfLength) {
                     percent = (halfLength - acc) / inc;
                     break;
                 }
@@ -429,8 +398,9 @@ public class ArcPath implements Shape, Cloneable {
             return;
         }
 
-        Cubic[] X, Y;
-          int c = 1;
+        Cubic[] X;
+        Cubic[] Y;
+        int c = 1;
         while (c < pathPoints.size()) {
             int curveStartIndex;
             int curveEndIndex = 0;

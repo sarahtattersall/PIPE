@@ -63,7 +63,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     @Override
     public void update(Observable o, Object diffObj) {
-        if ((diffObj instanceof AbstractPetriNetViewComponent)) {
+        if (diffObj instanceof AbstractPetriNetViewComponent) {
             AbstractPetriNetViewComponent<?> component = (AbstractPetriNetViewComponent<?>) diffObj;
             addNewPetriNetComponent(component);
         }
@@ -159,6 +159,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     public void setMetaDown(boolean down) {
+        //TODO: DELETE
     }
 
     public void drag(Point dragStart, Point dragEnd) {

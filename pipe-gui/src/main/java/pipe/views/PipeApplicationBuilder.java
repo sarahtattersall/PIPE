@@ -129,7 +129,8 @@ public final class PipeApplicationBuilder {
 
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);// Inhibit toolbar floating
+        // Inhibit toolbar floating
+        toolBar.setFloatable(false);
 
 
         for (GuiAction action : pipeComponents.editorManager.getActions()) {
@@ -258,7 +259,8 @@ public final class PipeApplicationBuilder {
         helpMenu.setMnemonic('H');
 
         JMenuItem aboutItem = helpMenu.add("About PIPE");
-        aboutItem.addActionListener(view); // Help - About is implemented
+        // Help - About is implemented
+        aboutItem.addActionListener(view);
         // differently
         aboutItem.setIcon(new ImageIcon(getImageURL("About.png")));
 
@@ -483,7 +485,7 @@ public final class PipeApplicationBuilder {
     /**
      * Components needed to build pipe tool bars and menus
      */
-    private final static class PIPEComponents {
+    private static final class PIPEComponents {
         public final ChooseTokenClassAction chooseTokenClassAction;
 
         public final ComponentEditorManager componentEditorManager;

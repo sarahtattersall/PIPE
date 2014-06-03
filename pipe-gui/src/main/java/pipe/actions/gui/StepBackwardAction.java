@@ -1,8 +1,8 @@
 package pipe.actions.gui;
 
+import pipe.controllers.GUIAnimator;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
-import pipe.controllers.GUIAnimator;
 
 import java.awt.event.ActionEvent;
 
@@ -16,8 +16,7 @@ public class StepBackwardAction extends AnimateAction {
     private final StepForwardAction stepForwardAction;
 
     public StepBackwardAction(String name, String tooltip, String keystroke,
-                              PipeApplicationController applicationController,
-                              StepForwardAction stepForwardAction) {
+                              PipeApplicationController applicationController, StepForwardAction stepForwardAction) {
         super(name, tooltip, keystroke);
         this.applicationController = applicationController;
         this.stepForwardAction = stepForwardAction;

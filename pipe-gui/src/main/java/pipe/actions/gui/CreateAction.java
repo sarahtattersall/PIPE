@@ -1,8 +1,6 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.actions.gui.PipeApplicationModel;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import java.awt.event.ActionEvent;

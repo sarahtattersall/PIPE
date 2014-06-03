@@ -20,7 +20,8 @@ public class ChooseTokenClassAction extends GuiAction {
 
     private final PipeApplicationController applicationController;
 
-    public ChooseTokenClassAction(PipeApplicationView pipeApplicationView, PipeApplicationController applicationController) {
+    public ChooseTokenClassAction(PipeApplicationView pipeApplicationView,
+                                  PipeApplicationController applicationController) {
         super("chooseTokenClass", "Select current token");
         this.pipeApplicationView = pipeApplicationView;
         this.applicationController = applicationController;

@@ -1,6 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.parsers.UnparsableException;

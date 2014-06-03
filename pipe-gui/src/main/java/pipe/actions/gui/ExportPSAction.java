@@ -1,7 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -16,7 +14,7 @@ public class ExportPSAction extends GuiAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        Export.exportGuiView(tab, Export.POSTSCRIPT, view.getCurrentPetriNetView());
+        //        Export.exportGuiView(tab, Export.POSTSCRIPT, view.getCurrentPetriNetView());
     }
 
 }

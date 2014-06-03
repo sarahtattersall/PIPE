@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 public class UndoAction extends GuiAction {
 
     private final PipeApplicationController applicationController;
+
     private RedoAction redoAction;
 
     public UndoAction(PipeApplicationController applicationController) {
@@ -20,6 +21,7 @@ public class UndoAction extends GuiAction {
 
     /**
      * Register a redo action to this undo actions
+     *
      * @param redoAction
      */
     public void registerRedoAction(RedoAction redoAction) {

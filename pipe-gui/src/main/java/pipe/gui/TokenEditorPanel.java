@@ -203,7 +203,7 @@ public class TokenEditorPanel extends JPanel {
             String id = modifiedData.get(row).id;
             Color color = modifiedData.get(row).color;
 
-            if (col == NAME_COL) { // The name column has been changed
+            if (col == NAME_COL) {
                 id = (String) value;
                 for (int i = 0; i < modifiedData.size(); i++) {
                     if (i != row && modifiedData.get(i).id.equals(value)) {
@@ -237,13 +237,6 @@ public class TokenEditorPanel extends JPanel {
 
             modifiedData.get(row).id = id;
             modifiedData.get(row).color = color;
-        }
-
-        /**
-         * Applies the changes to the actual model
-         */
-        public void setChanges() {
-
         }
 
         /**
