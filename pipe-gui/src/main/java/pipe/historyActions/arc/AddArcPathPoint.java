@@ -12,8 +12,6 @@ public class AddArcPathPoint<S extends Connectable, T extends Connectable> exten
 
     private final ArcPoint point;
 
-    private int index;
-
     public AddArcPathPoint(Arc<S, T> arc, ArcPoint point) {
         this.arc = arc;
         this.point = point;

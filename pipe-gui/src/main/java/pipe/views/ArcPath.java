@@ -192,8 +192,6 @@ public class ArcPath implements Shape, Cloneable {
             return;
         }
 
-        ArcPathPoint firstPoint = pathPoints.get(0);
-
         Cubic[] X, Y;
 
         for (int c = 1; c < pathPoints.size(); ) {
@@ -600,30 +598,6 @@ public class ArcPath implements Shape, Cloneable {
      */
     public void insertIntermediatePoint(ArcPoint point, int index) {
         insertPoint(index, createPoint(point));
-    }
-
-    private int findPoint(Point2D mouseposition) {
-        // An array to store all the distances from the midpoints
-        double[] distances = new double[pathPoints.size() - 1];
-
-        // Calculate the midpoints and distances to them
-        for (int index = 0; index < (pathPoints.size() - 1); index++) {
-            ArcPathPoint first = pathPoints.get(index);
-            ArcPathPoint second = pathPoints.get(index + 1);
-            Point2D.Double midpoint = first.getMidPoint(second);
-            distances[index] = midpoint.distance(mouseposition);
-        }
-
-        // Now determine the shortest midpoint
-        double shortest = distances[0];
-        int wantedpoint = 0;
-        for (int index = 0; index < pathPoints.size() - 1; index++) {
-            if (distances[index] < shortest) {
-                shortest = distances[index];
-                wantedpoint = index;
-            }
-        }
-        return wantedpoint;
     }
 
     public void clear() {

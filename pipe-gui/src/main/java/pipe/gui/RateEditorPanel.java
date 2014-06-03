@@ -60,8 +60,6 @@ public class RateEditorPanel extends JPanel {
 
         private static final int ID_COL = 0;
 
-        private static final int VALUE_COL = 1;
-
         private final PetriNetController petriNetController;
 
 

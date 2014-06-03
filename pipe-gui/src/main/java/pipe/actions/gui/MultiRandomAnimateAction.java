@@ -9,17 +9,12 @@ import java.awt.event.ActionEvent;
 public class MultiRandomAnimateAction extends AnimateAction {
     private final GuiAction stepbackwardAction;
 
-    private final GuiAction stepforwardAction;
-
     private final PipeApplicationController applicationController;
 
-    public MultiRandomAnimateAction(String name, String tooltip, String keystroke,
-                                    GuiAction stepbackwardAction,
-                                    GuiAction stepforwardAction,
+    public MultiRandomAnimateAction(String name, String tooltip, String keystroke, GuiAction stepbackwardAction,
                                     PipeApplicationController applicationController) {
         super(name, tooltip, keystroke);
         this.stepbackwardAction = stepbackwardAction;
-        this.stepforwardAction = stepforwardAction;
         this.applicationController = applicationController;
     }
 

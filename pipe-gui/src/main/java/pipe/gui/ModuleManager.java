@@ -16,7 +16,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -163,7 +162,6 @@ public class ModuleManager
 
     public JTree getModuleTree()
     {
-        URL modulesDirURL = Thread.currentThread().getContextClassLoader().getResource("pipe" + System.getProperty("file.separator") + "modules" + System.getProperty("file.separator"));
 
         Collection<Class<? extends GuiModule>> classes = new ArrayList<>();
 //        if(JarUtilities.isJarFile(modulesDirURL))
@@ -370,7 +368,6 @@ public class ModuleManager
                     }
                     else if(nodeObj == LOAD_NODE_STRING)
                     {
-                        DefaultMutableTreeNode newNode;
 
                         //Create a file chooser
                         JFileChooser fc = new JFileChooser();

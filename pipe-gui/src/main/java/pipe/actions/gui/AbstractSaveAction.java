@@ -1,14 +1,12 @@
 package pipe.actions.gui;
 
 import org.apache.commons.io.FilenameUtils;
-import pipe.actions.gui.GuiAction;
-import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.utilities.gui.GuiUtils;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.awt.*;
+import java.awt.FileDialog;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
@@ -29,10 +27,8 @@ public abstract class AbstractSaveAction extends GuiAction {
 
     //TODO: Move out into save actions
     protected void saveAsOperation() {
-        PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
 
 
-        boolean saveFunctional = false;
         //        if (getCurrentPetriNetView().hasFunctionalRatesOrWeights()) {
         //        if (false) {
         //            if (JOptionPane.showConfirmDialog(null, "This net has functional rates or weights expressions. \r\n" +

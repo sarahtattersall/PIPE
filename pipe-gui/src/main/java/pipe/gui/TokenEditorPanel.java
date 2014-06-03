@@ -126,8 +126,6 @@ public class TokenEditorPanel extends JPanel {
 
         private final static int NAME_COL = 0;
 
-        private final static int COLOR_COL = 1;
-
         public TableModel(PetriNetController petriNetController) {
             COLUMN_NAMES = new String[]{"Token Name Details", "Token Colour"};
             for (Token token : petriNetController.getNetTokens()) {

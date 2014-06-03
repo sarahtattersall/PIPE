@@ -12,11 +12,11 @@ import java.awt.event.ActionEvent;
 
 public class EditAnnotationBorderAction extends AbstractAction {
 
-    private final Annotation annotation;
+//    private final Annotation annotation;
 
 
     public EditAnnotationBorderAction(Annotation annotation) {
-        this.annotation = annotation;
+        //this.annotation = annotation;
     }
 
     /**

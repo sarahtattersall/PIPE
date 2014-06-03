@@ -96,7 +96,6 @@ public class TransitionFunctionEditor extends JPanel {
 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTextArea ta = new JTextArea(20, 10);
 
                 String help = "Operators supported:\r\n" +
                         "+\r\n" +
@@ -117,7 +116,6 @@ public class TransitionFunctionEditor extends JPanel {
                 //						.showMessageDialog((Component) evt.getSource(), jsp);
 
                 //String message = " Functional rate expression is invalid. Please check your function.";
-                String title = "Info";
                 JOptionPane.showMessageDialog(null,
                         help);//, title, JOptionPane.YES_NO_OPTION);
             }

@@ -9,11 +9,8 @@ import java.awt.event.KeyEvent;
 public class ZoomInAction extends GuiAction {
 
 
-    private final ZoomManager zoomManager;
-
     public ZoomInAction(ZoomManager zoomManager) {
         super("Zoom in", "Zoom in by 10% ", KeyEvent.VK_PLUS, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-        this.zoomManager = zoomManager;
     }
 
     @Override

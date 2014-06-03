@@ -6,7 +6,6 @@ import pipe.controllers.PetriNetController;
 import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
-import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -160,21 +159,6 @@ public class TransitionView extends ConnectableView<Transition> {
         _attributesVisible = !_attributesVisible;
     }
 
-    private void changeToolTipText() {
-        if (this.isTimed()) {
-            setToolTipText("r = " + model.getRate());
-        } else {
-            setToolTipText("\u03c0 = " + this.getPriority() + "; w = " + model.getRate());
-        }
-    }
-
-    private void showErrorMessage() {
-        String message =
-                "Errors in marking-dependent transition rate expression." + "\r\n The computation should be aborted";
-        String title = "Error";
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.YES_NO_OPTION);
-    }
-
     public boolean isInfiniteServer() {
         return model.isInfiniteServer();
     }
@@ -211,35 +195,6 @@ public class TransitionView extends ConnectableView<Transition> {
 
     public void setModel(Transition model) {
         this.model = model;
-    }
-
-    private int showWithTimeout(JOptionPane pane, Component parent, String title) {
-        final JDialog dialog = pane.createDialog(parent, title);
-        Thread timeoutThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    sleep(2000);
-                } catch (InterruptedException ex) {
-                }
-                javax.swing.SwingUtilities.invokeLater(new Runnable() //   from the event dispatch
-                {
-                    @Override
-                    public void run() {
-                        dialog.setVisible(false);
-                    }
-                });            //   thread
-            }
-        };
-        timeoutThread.start();
-        dialog.setVisible(true);
-        Object selection = pane.getValue();                      // We get to this point when
-        int result = JOptionPane.CLOSED_OPTION;                   // (1) The user makes a selection
-        if (selection != null && selection instanceof Integer)        // or (2) the timeout thread closes
-        {
-            result = ((Integer) selection).intValue();             // the dialog.
-        }
-        return result;
     }
 
     //TODO: DELETE

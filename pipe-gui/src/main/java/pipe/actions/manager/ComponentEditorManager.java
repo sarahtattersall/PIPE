@@ -44,8 +44,6 @@ public class ComponentEditorManager implements ActionManager {
      */
     public final RedoAction redoAction;
 
-    private final PipeApplicationController controller;
-
     private Map<GuiAction, Boolean> editEnabledStatus = new HashMap<>();
 
     /**
@@ -54,7 +52,6 @@ public class ComponentEditorManager implements ActionManager {
      * @param controller PIPE application controller
      */
     public ComponentEditorManager(PipeApplicationController controller) {
-        this.controller = controller;
         copyAction = new CopyAction(controller);
         pasteAction = new PasteAction(controller);
         cutAction = new CutAction(controller);

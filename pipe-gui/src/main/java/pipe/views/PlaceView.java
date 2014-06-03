@@ -285,7 +285,6 @@ public class PlaceView extends ConnectableView<Place> {
     public boolean contains(int x, int y) {
 
         //TODO: WORK OUT WHAT THIS DOES
-        ArcView someArcView = null;//ApplicationSettings.getApplicationView().getCurrentTab()._createArcView;
         //        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
         //            if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
         //                    place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {

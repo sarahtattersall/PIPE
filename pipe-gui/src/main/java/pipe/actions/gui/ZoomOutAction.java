@@ -8,11 +8,8 @@ import java.awt.event.KeyEvent;
 
 public class ZoomOutAction extends GuiAction {
 
-    private final ZoomManager zoomManager;
-
     public ZoomOutAction(ZoomManager zoomManager) {
         super("Zoom out", "Zoom out by 10% ", KeyEvent.VK_MINUS, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-        this.zoomManager = zoomManager;
     }
 
     @Override

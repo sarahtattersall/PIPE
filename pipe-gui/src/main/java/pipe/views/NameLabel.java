@@ -4,7 +4,6 @@ import pipe.constants.GUIConstants;
 
 import javax.swing.*;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 
 public class NameLabel extends JTextArea {
@@ -54,7 +53,6 @@ public class NameLabel extends JTextArea {
     }
 
     public void updatePosition() {
-        Dimension dimension = getPreferredSize();
         setBounds((int) (_positionX - getPreferredSize().width), (int) (_positionY - GUIConstants.NAMELABEL_OFFSET), (int) getPreferredSize().getWidth(), (int) getPreferredSize().getHeight());
     }
 

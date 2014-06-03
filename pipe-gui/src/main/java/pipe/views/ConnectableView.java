@@ -48,7 +48,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     }
 
     private void addChangeListener() {
-        final ConnectableView view = this;
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {

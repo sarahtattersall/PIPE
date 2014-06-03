@@ -24,7 +24,8 @@ public class AnimateActionManager implements ActionManager {
         stepforwardAction.registerStepBack(stepbackwardAction);
         randomAction =
                 new RandomAnimateAction("Random", "Randomly fire a transition", "5", applicationController, stepforwardAction, stepbackwardAction);
-        multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", stepbackwardAction, stepforwardAction, applicationController);
+        multipleRandomAction = new MultiRandomAnimateAction("Animate", "Randomly fire a number of transitions", "7", stepbackwardAction,
+                applicationController);
     }
 
     @Override

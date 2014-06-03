@@ -405,7 +405,6 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void removeTab(int index) {
         if (frameForPetriNetTabs.getTabCount() > 0) {
-            PetriNetTab tab = petriNetTabs.get(index);
             petriNetTabs.remove(index);
             frameForPetriNetTabs.remove(index);
         }

@@ -156,7 +156,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     public void setMetaDown(boolean down) {
-        boolean metaDown = down;
     }
 
     public void drag(Point dragStart, Point dragEnd) {

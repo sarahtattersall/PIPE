@@ -9,15 +9,13 @@ public class Cubic {
    private final float a;
     private final float b;
     private final float c;
-    private final float d;
 
 
-   public Cubic(float _a, float _b, float _c, float _d) {
+    public Cubic(float _a, float _b, float _c, float _d) {
       a = _a;
       b = _b;
       c = _c;
-      d = _d;
-   }
+    }
 
 
    // Return first control point coordinate (calculated from coefficients)

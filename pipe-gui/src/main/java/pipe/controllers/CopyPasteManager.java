@@ -71,9 +71,6 @@ public class CopyPasteManager extends javax.swing.JComponent
      */
     private boolean pasteInProgress = false;
 
-    //TODO: DELETE
-    private int zoom;
-
     /**
      * Components to paste when paste is clicked.
      * These are set when copied

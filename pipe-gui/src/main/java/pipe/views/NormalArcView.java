@@ -167,21 +167,6 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     }
 
-    private void updateArc(boolean isJoined) {
-        inView = true;
-        _inverse.inView = !isJoined;
-
-        if (isJoined) {
-            _inverse.removeFromView();
-//            TransitionView transitionView = this.getTransition();
-//            transitionView.removeFromArc(_inverse);
-//            transitionView.removeArcCompareObject(_inverse);
-//            transitionView.updateConnected();
-            joined = isJoined;
-        }
-        updateWeightLabel();
-    }
-
 
     @Override
     public void paintComponent(Graphics g) {
