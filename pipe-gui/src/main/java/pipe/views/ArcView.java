@@ -73,7 +73,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Registers listeners for the arc model and it's source and target models
      */
-    private final void registerModelListeners() {
+    private void registerModelListeners() {
         addArcChangeListener();
         addSourceTargetConnectableListener();
     }
@@ -88,7 +88,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Loops through points adding them to the path if they don't already
      * exist
      */
-    private final void addIntermediatePoints() {
+    private void addIntermediatePoints() {
         int index = 0;
         for (ArcPoint arcPoint : model.getArcPoints()) {
             if (!arcPath.contains(arcPoint)) {
@@ -102,7 +102,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Listens for intermediate points being added/deleted
      * Will call a redraw of the existing points
      */
-    private final void addArcChangeListener() {
+    private void addArcChangeListener() {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -122,7 +122,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     /**
      * Listens to the source/target changing position
      */
-    private final void addSourceTargetConnectableListener() {
+    private void addSourceTargetConnectableListener() {
 //        PropertyChangeListener changeListener = new PropertyChangeListener() {
 //            @Override
 //            public void propertyChange(PropertyChangeEvent evt) {
@@ -139,7 +139,7 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      * Updates all arc points displayed based on their positions
      * in the model
      */
-    private final void updateAllPoints() {
+    private void updateAllPoints() {
         updatePath();
         updateBounds();
     }

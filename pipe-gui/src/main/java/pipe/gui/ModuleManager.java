@@ -46,6 +46,8 @@ public class ModuleManager {
 
     private static final Logger LOGGER = Logger.getLogger(ModuleManager.class.getName());
 
+    public static final String PIPE_GUI_PLUGIN_CONCRETE_PACKAGE = "pipe.gui.plugin.concrete";
+
     private final Set<Class<?>> installedModules;
 
     private final PipeApplicationController controller;
@@ -69,48 +71,9 @@ public class ModuleManager {
     public JTree getModuleTree() {
 
         Collection<Class<? extends GuiModule>> classes = new ArrayList<>();
-        //        if(JarUtilities.isJarFile(modulesDirURL))
-        //        {
-        //            try
-        //            {
-        //                JarFile jarFile = new JarFile(JarUtilities.getJarName(modulesDirURL));
-        //                ArrayList<JarEntry> modules = JarUtilities.getJarEntries(jarFile, "modules");
-        //
-        //                for(JarEntry module : modules)
-        //                {
-        //                    if(module.getName().toLowerCase().endsWith(".class"))
-        //                    {
-        //
-        //                        Class<?> pluginClass = ModuleLoader.importModule(module);
-        //                        if(pluginClass != null)
-        //                        {
-        //                            classes.add(pluginClass);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            catch(IOException ex)
-        //            {
-        //                ex.printStackTrace();
-        //            }
-        //        }
-        //        else
-        File dir = getModuleDir();
 
         // get the names of all the classes that are confirmed to be modules
-        Collection<Class<? extends GuiModule>> names = getModuleClasses(dir);
-
-            /*
-             * temporarily get rid of the modules that needs web servers for calculation
-             */
-        //            try {
-        //				names.remove(Class.forName("pipe.modules.steadyStateCloud.SteadyState"));
-        //				names.remove(Class.forName("pipe.modules.passage.Passage"));
-        //				names.remove(Class.forName("pipe.modules.passageTimeForTaggedNet.Passage"));
-        //			} catch (ClassNotFoundException e) {
-        //				TODO Auto-generated catch block
-        //				e.printStackTrace();
-        //			}
+        Collection<Class<? extends GuiModule>> names = getModuleClasses();
         classes.addAll(names);
 
         // create the root node
@@ -146,40 +109,17 @@ public class ModuleManager {
     }
 
     /**
-     * Returns the directory under which the module properties files
-     * will be found. At present this is the bin/cfg directory.
-     * <p/>
-     * Matthew - modified to access module folder directly
-     *
-     * @return
-     */
-    private File getModuleDir() {
-        File modLocation = new File(ExtFileManager.getClassRoot(this.getClass()), File.pathSeparator + "pipe" +
-                File.pathSeparator + "plugin"
-        );
-
-        if (!modLocation.exists()) {
-            System.out.println("Unable to find Module directory: " + modLocation.getPath());
-        }
-        return modLocation;
-    }
-
-    /**
      * Finds all the fully qualified (ie: full package names) module classnames
      * by recursively searching the rootDirectories
      *
-     * @param rootDir The root directory to start searching from
-     *                <p/>
-     *                Matthew - created class filters and now cycle through the module directory
-     *                dynamically loading all compliant pipe module class files.
      * @return
      */
     //only load attempt to add .class files
-    private Collection<Class<? extends GuiModule>> getModuleClasses(File rootDir) {
+    private Collection<Class<? extends GuiModule>> getModuleClasses() {
         Collection<Class<? extends GuiModule>> results = new ArrayList<>();
         try {
             ClassPath classPath = ClassPath.from(this.getClass().getClassLoader());
-            ImmutableSet<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("pipe.gui.plugin.concrete");
+            ImmutableSet<ClassPath.ClassInfo> set = classPath.getTopLevelClasses(PIPE_GUI_PLUGIN_CONCRETE_PACKAGE);
             for (ClassPath.ClassInfo classInfo : set) {
                 Class<?> clazz = classInfo.load();
                 if (GuiModule.class.isAssignableFrom(clazz)) {

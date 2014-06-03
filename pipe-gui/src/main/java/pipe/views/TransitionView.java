@@ -79,12 +79,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     @Override
     public void setEnabled(boolean status) {
-        if (enabled && !status) {
-//            _delayValid = false;
-        }
-
         enabled = status;
-
     }
 
     public void update() {

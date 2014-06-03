@@ -47,7 +47,7 @@ public final class AnnotationView extends Note {
     }
 
     @Override
-    public final void updateBounds() {
+    public void updateBounds() {
         super.updateBounds();
         // TOP-LEFT
         dragPoints.get(0).setLocation(noteRect.getMinX(), noteRect.getMinY());
