@@ -148,10 +148,6 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
         control.y = _y;
     }
 
-    void hidePoint() {
-        super.removeFromContainer();
-    }
-
     @Override
     public void addToContainer(Container container) {
 

@@ -235,7 +235,7 @@ public class ModuleManager {
      *
      * @param newNode The node to be removed.
      */
-    void removeModuleFromTree(MutableTreeNode newNode) {
+    private void removeModuleFromTree(MutableTreeNode newNode) {
         treeModel.removeNodeFromParent(newNode);
         treeModel.reload();
     }
@@ -245,7 +245,7 @@ public class ModuleManager {
      * Action object that can be used to remove a module from the ModuleTree
      */
     class RemoveModuleAction extends AbstractAction {
-        final DefaultMutableTreeNode removeNode;
+        private final DefaultMutableTreeNode removeNode;
 
         RemoveModuleAction(TreePath path) {
             removeNode = (DefaultMutableTreeNode) path.getLastPathComponent();

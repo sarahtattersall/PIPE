@@ -23,7 +23,7 @@ public class TokenView extends Observable  {
         paint(canvas, insets, offset, tempTotalMarking, currentMarking);
     }
 
-    void paint(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
+    private void paint(Graphics canvas, Insets insets, int offset, int tempTotalMarking, int currentMarking) {
         if (tempTotalMarking > 5) {
             paintAsANumber(canvas, insets, offset, currentMarking);
         } else {
@@ -31,7 +31,7 @@ public class TokenView extends Observable  {
         }
     }
 
-    void paintAsANumber(Graphics canvas, Insets insets, int offset, int currentMarking) {
+    private void paintAsANumber(Graphics canvas, Insets insets, int offset, int currentMarking) {
         int x = insets.left;
         int y = insets.top;
         canvas.setColor(getColor());
@@ -54,7 +54,7 @@ public class TokenView extends Observable  {
         _model.setColor(colour);
     }
 
-    void paintAsAnOval(Graphics canvas, Insets insets, int tempTotalMarking, int currentMarking) {
+    private void paintAsAnOval(Graphics canvas, Insets insets, int tempTotalMarking, int currentMarking) {
         int x = insets.left;
         int y = insets.top;
         canvas.setColor(getColor());

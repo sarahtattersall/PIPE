@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
  */
 public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.swing.event.MouseInputAdapter {
     // justSelected: set to true on press, and false on release;
-    static boolean justSelected = false;
+    private static boolean justSelected = false;
 
     final protected Container contentPane;
 
@@ -28,13 +28,13 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
 
     protected final PipeApplicationModel applicationModel;
 
-    final T component;
+    protected final T component;
 
-    final DragManager dragManager;
+    protected final DragManager dragManager;
 
-    boolean isDragging = false;
+    protected boolean isDragging = false;
 
-    boolean enablePopup = false;
+    protected boolean enablePopup = false;
 
     // constructor passing in all required objects
     PetriNetObjectHandler(Container contentPane, T component, PetriNetController controller,

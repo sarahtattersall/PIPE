@@ -9,7 +9,7 @@ class TangibleStateNode extends DefaultNode {
     private final String label;
     private String toolTip;
 
-    static final JPowerGraphColor BG_COLOR = new JPowerGraphColor(255, 102, 102);
+    private static final JPowerGraphColor BG_COLOR = new JPowerGraphColor(255, 102, 102);
     private static final JPowerGraphColor TEXT_COLOR = JPowerGraphColor.BLACK;
     private static final ShapeNodePainter SHAPE_NODE_PAINTER = new ShapeNodePainter(
             ShapeNodePainter.ELLIPSE, BG_COLOR, BG_COLOR, TEXT_COLOR);

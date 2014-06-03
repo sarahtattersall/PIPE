@@ -120,13 +120,6 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
-    //
-    public void forceHidePoints() {
-        for (ArcPathPoint pathPoint : pathPoints) {
-            pathPoint.hidePoint();
-        }
-    }
-
     public void setPointVisibilityLock(boolean lock) {
         pointLock = lock;
     }

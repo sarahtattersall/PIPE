@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
  */
 public class UnfoldAction extends GuiAction {
 
-    final PipeApplicationController pipeApplicationController;
+    private final PipeApplicationController pipeApplicationController;
 
     public UnfoldAction(PipeApplicationController pipeApplicationController) {
         super("unfoldAction", "Unfold Petri Net", KeyEvent.VK_U,

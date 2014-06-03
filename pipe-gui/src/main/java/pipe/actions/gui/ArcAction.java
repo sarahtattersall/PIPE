@@ -139,9 +139,9 @@ public final class ArcAction extends CreateAction {
      */
     private static class ArcCreatorVisitor implements PlaceVisitor, TransitionVisitor {
 
-        Place place = null;
+        private Place place = null;
 
-        Transition transition = null;
+        private Transition transition = null;
 
         @Override
         public void visit(Place place) {

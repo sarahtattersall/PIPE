@@ -202,7 +202,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      * Listen to changes in x/y
      */
     private class ChangeListener implements PlaceVisitor, TransitionVisitor {
-        PropertyChangeListener updateListener = new PropertyChangeListener() {
+        private PropertyChangeListener updateListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 String name = evt.getPropertyName();

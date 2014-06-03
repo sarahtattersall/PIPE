@@ -9,22 +9,13 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/* $Author$
- * $Date$ */
-
-/* $Author$
- * $Date$ */
-
-/* $Author$
- * $Date$ */
-
 
 /**
  * ModuleMethod encapsulates information about a module method  and is designed
- * to be used as a userobject in nodes in a JTree.
+ * to be used as a user object in nodes in a JTree.
  * In this case for nodes representing module methods.
  */
-class ModuleMethod
+public class ModuleMethod
 {
 
     private static final Logger LOGGER = Logger.getLogger(ModuleMethod.class.getName());
@@ -60,7 +51,7 @@ class ModuleMethod
         name = _name;
     }
 
-    void execute(PetriNet petriNet)
+    public void execute(PetriNet petriNet)
     {
         try
         {

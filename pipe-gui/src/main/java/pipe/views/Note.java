@@ -18,18 +18,18 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
     /**
      * Text note to appear on screen
      */
-    final JTextArea note = new JTextArea();
+    protected final JTextArea note = new JTextArea();
 
     /**
      * Rectangular border for the note
      */
-    final RectangularShape noteRect = new Rectangle();
+    protected final RectangularShape noteRect = new Rectangle();
 
-    boolean drawBorder = true;
+    protected boolean drawBorder = true;
 
-    private int originalX;
+    protected int originalX;
 
-    private int originalY;
+    protected int originalY;
 
 
     Note(Annotation model, PetriNetController controller, Container parent) {
@@ -110,7 +110,7 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         return note.getHeight();
     }
 
-    void adjustTop(int dy) {
+    public void adjustTop(int dy) {
         if (note.getPreferredSize().height <= (note.getHeight() - dy)) {
             note.setSize(new Dimension(note.getWidth(), note.getHeight() - dy));
             setLocation(getX(), getY() + dy);
@@ -118,13 +118,13 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         }
     }
 
-    void adjustBottom(int dy) {
+    public void adjustBottom(int dy) {
         if (note.getPreferredSize().height <= (note.getHeight() + dy)) {
             note.setSize(new Dimension(note.getWidth(), note.getHeight() + dy));
         }
     }
 
-    void adjustLeft(int dx) {
+    public void adjustLeft(int dx) {
         if (GUIConstants.ANNOTATION_MIN_WIDTH <= (note.getWidth() - dx)) {
             note.setSize(new Dimension(note.getWidth() - dx, note.getHeight()));
             setLocation(getX() + dx, getY());
@@ -132,7 +132,7 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         }
     }
 
-    void adjustRight(int dx) {
+    public void adjustRight(int dx) {
         if (GUIConstants.ANNOTATION_MIN_WIDTH <= (note.getWidth() + dx)) {
             note.setSize(new Dimension(note.getWidth() + dx, note.getHeight()));
         }

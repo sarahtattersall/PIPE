@@ -1,6 +1,5 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
@@ -11,7 +10,7 @@ import java.awt.event.KeyEvent;
 
 public class ExitAction extends GuiAction {
 
-    Frame application;
+    private Frame application;
 
     private final PipeApplicationController pipeApplicationController;
 

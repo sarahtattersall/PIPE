@@ -167,7 +167,7 @@ public class PlaceView extends ConnectableView<Place> {
      * @param count       number of token ovals to paint
      * @param tokenNumber token number
      */
-    void paintOvalTokens(Graphics2D g2, Insets insets, Color color, int count, int tokenNumber) {
+    private void paintOvalTokens(Graphics2D g2, Insets insets, Color color, int count, int tokenNumber) {
         int x = insets.left;
         int y = insets.top;
         g2.setColor(color);
@@ -239,7 +239,7 @@ public class PlaceView extends ConnectableView<Place> {
      * @param count  number of tokens to represent
      * @param offset offset of textual representation relative to the place
      */
-    void paintTextualTokens(Graphics2D g2, Insets insets, Color color, int count, int offset) {
+    private void paintTextualTokens(Graphics2D g2, Insets insets, Color color, int count, int offset) {
         int x = insets.left;
         int y = insets.top;
         g2.setColor(color);
@@ -258,7 +258,7 @@ public class PlaceView extends ConnectableView<Place> {
         return model.getCapacity();
     }
 
-    boolean hasCapacity() {
+    private boolean hasCapacity() {
         return model.getCapacity() > 0;
     }
 

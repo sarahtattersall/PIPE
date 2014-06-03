@@ -388,13 +388,13 @@ public class CopyPasteManager extends javax.swing.JComponent
      * Needed to create a class so that the visitor can change the values
      */
     private static class Location {
-        double bottom = 0;
+        private double bottom = 0;
 
-        double right = 0;
+        private double right = 0;
 
-        double top = Double.MAX_VALUE;
+        private double top = Double.MAX_VALUE;
 
-        double left = Double.MAX_VALUE;
+        private double left = Double.MAX_VALUE;
     }
 
     private static class LocationVisitor implements PlaceTransitionVisitor {

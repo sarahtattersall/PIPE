@@ -25,12 +25,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      */
     protected final Shape shape;
 
-    boolean _attributesVisible = false;
-
-    ConnectableView(T model, Shape shape) {
-        this("", model, shape);
-    }
-
     private ConnectableView(String id, T model, Shape shape) {
         this(id, model, null, null, shape);
     }

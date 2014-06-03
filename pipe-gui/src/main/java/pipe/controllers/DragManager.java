@@ -1,19 +1,10 @@
 package pipe.controllers;
 
-import pipe.controllers.PetriNetController;
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.MovePetriNetObject;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
-import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.PlaceablePetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.Annotation;
-import uk.ac.imperial.pipe.models.petrinet.AnnotationVisitor;
 import uk.ac.imperial.pipe.models.petrinet.*;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.PlaceVisitor;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
-import uk.ac.imperial.pipe.models.petrinet.TransitionVisitor;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.UndoableEdit;
@@ -37,7 +28,7 @@ public class DragManager {
      * All selected items locations at the start of a drag
      * Mapping of id -> location
      */
-    Map<String, Point2D> startingCoordinates = new HashMap<>();
+    private Map<String, Point2D> startingCoordinates = new HashMap<>();
 
     public DragManager(PetriNetController petriNetController) {
         this.petriNetController = petriNetController;
@@ -123,7 +114,7 @@ public class DragManager {
     private static class CoordinateSaver
             implements ArcVisitor, ArcPointVisitor, PlaceVisitor, TransitionVisitor, AnnotationVisitor {
 
-        Map<PlaceablePetriNetComponent, Point2D> savedCoordinates = new HashMap<>();
+        private Map<PlaceablePetriNetComponent, Point2D> savedCoordinates = new HashMap<>();
 
         @Override
         public void visit(Annotation annotation) {
