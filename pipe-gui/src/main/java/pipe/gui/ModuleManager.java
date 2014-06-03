@@ -50,7 +50,7 @@ public class ModuleManager
     private JTree moduleTree;
     private DefaultTreeModel treeModel;
     private DefaultMutableTreeNode load_modules;
-    private final String loadNodeString = "Find IModule";
+    private final static String LOAD_NODE_STRING = "Find IModule";
     private final Component parent;
 
 
@@ -219,7 +219,7 @@ public class ModuleManager
         // create root children
         load_modules = new DefaultMutableTreeNode("Available Modules");
 
-        MutableTreeNode add_modules = new DefaultMutableTreeNode(loadNodeString);
+        MutableTreeNode add_modules = new DefaultMutableTreeNode(LOAD_NODE_STRING);
 
         // iterate over the class names and create a node for each
         for (Class<? extends GuiModule> clazz : classes) {
@@ -368,7 +368,7 @@ public class ModuleManager
                         PetriNet petriNet = controller.getActivePetriNetController().getPetriNet();
                         ((ModuleMethod) nodeObj).execute(petriNet);
                     }
-                    else if(nodeObj == loadNodeString)
+                    else if(nodeObj == LOAD_NODE_STRING)
                     {
                         DefaultMutableTreeNode newNode;
 

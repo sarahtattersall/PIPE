@@ -20,7 +20,7 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
     /**
      * Maximum number of items to be shown
      */
-    protected final int DATA_SIZE = 100;
+    protected final static int DATA_SIZE = 100;
 
 
     /**

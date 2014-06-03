@@ -23,13 +23,13 @@ class ColorPicker extends AbstractCellEditor implements ActionListener,
 	private Color currColor;
 	private final JColorChooser colorChooser;
 	private final JDialog dialog;
-	private final String edit = "edit";
+	private final static String EDIT_NAME = "edit";
 
 	public ColorPicker() {
 		button = new JButton();
 		button.setBorderPainted(false);
 		button.addActionListener(this);
-		button.setActionCommand(edit);
+		button.setActionCommand(EDIT_NAME);
 
 		// Dialog brought up by button:
 		colorChooser = new JColorChooser();
@@ -47,7 +47,7 @@ class ColorPicker extends AbstractCellEditor implements ActionListener,
 		return button;
 	}
 	public void actionPerformed(ActionEvent e) {
-		if (edit.equals(e.getActionCommand())) {
+		if (EDIT_NAME.equals(e.getActionCommand())) {
 			colorChooser.setColor(currColor);
 			button.setBackground(currColor);
 			dialog.setVisible(true);

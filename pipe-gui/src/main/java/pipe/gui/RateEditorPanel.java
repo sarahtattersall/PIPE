@@ -58,9 +58,9 @@ public class RateEditorPanel extends JPanel {
     public class RateModel extends AbstractComponentTableModel<RateModel.Datum> {
 
 
-        private final int ID_COL = 0;
+        private static final int ID_COL = 0;
 
-        private final int VALUE_COL = 1;
+        private static final int VALUE_COL = 1;
 
         private final PetriNetController petriNetController;
 
