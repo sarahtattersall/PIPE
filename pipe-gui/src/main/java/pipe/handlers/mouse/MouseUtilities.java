@@ -11,5 +11,5 @@ public interface MouseUtilities {
      * @param event
      * @return true if left mouse pressed
      */
-    public boolean isLeftMouse(MouseEvent event);
+    boolean isLeftMouse(MouseEvent event);
 }

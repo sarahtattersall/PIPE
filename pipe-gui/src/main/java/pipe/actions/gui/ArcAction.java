@@ -94,6 +94,7 @@ public class ArcAction extends CreateAction {
         temporaryArcView.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
+                //Do nothing on type
             }
 
             @Override
@@ -118,6 +119,7 @@ public class ArcAction extends CreateAction {
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
+                //Do nothing on key release
             }
         });
 
@@ -163,7 +165,7 @@ public class ArcAction extends CreateAction {
     /**
      * Sets place and transition properties accordingly
      */
-    private class ArcCreatorVisitor implements PlaceVisitor, TransitionVisitor {
+    private static class ArcCreatorVisitor implements PlaceVisitor, TransitionVisitor {
 
         Place place = null;
 

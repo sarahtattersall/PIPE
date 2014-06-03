@@ -189,15 +189,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         g2d.draw(pasteRectangle);
     }
 
-    private void updateSize(Rectangle pasteRectangle, int zoom, int newZoom) {
-        //        ZoomController zoomController = petriNetTab.getZoomController();
-        int realWidth = pasteRectangle.width;
-        int realHeight = pasteRectangle.height;
-
-        //        pasteRectangle.setSize((int) (realWidth * zoomController.getScaleFactor()),
-        //                (int) (realHeight * zoomController.getScaleFactor()));
-    }
-
     /**
      * Dragging the mouse on the screen updates the location of the
      * paste rectangle
@@ -412,7 +403,7 @@ public class CopyPasteManager extends javax.swing.JComponent
      * Used for creating anonymous classes that only visit
      * Places and Transition
      */
-    private static interface PlaceTransitionVisitor extends PlaceVisitor, TransitionVisitor {
+    private interface PlaceTransitionVisitor extends PlaceVisitor, TransitionVisitor {
 
     }
 
@@ -420,7 +411,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Used for creating anonymous classes that visit non connectable classes
      */
-    private static interface NonConnectableVisitor extends AnnotationVisitor, ArcVisitor, TokenVisitor {
+    private interface NonConnectableVisitor extends AnnotationVisitor, ArcVisitor, TokenVisitor {
 
     }
 

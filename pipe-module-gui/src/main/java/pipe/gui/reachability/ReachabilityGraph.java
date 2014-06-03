@@ -15,10 +15,8 @@ import net.sourceforge.jpowergraph.swing.manipulator.SwingPopupDisplayer;
 import net.sourceforge.jpowergraph.swtswinginteraction.color.JPowerGraphColor;
 import pipe.reachability.algorithm.*;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
-import pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer;
-import pipe.reachability.algorithm.state.SimpleVanishingExplorer;
-import pipe.reachability.algorithm.state.StateSpaceExplorer;
 import uk.ac.imperial.io.*;
+import uk.ac.imperial.pipe.exceptions.InvalidRateException;
 import uk.ac.imperial.pipe.io.PetriNetIOImpl;
 import uk.ac.imperial.pipe.io.PetriNetReader;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
@@ -36,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -268,14 +265,14 @@ public class ReachabilityGraph {
             temporaryTransitions = getTransitionsPath();
             temporaryStates = getStatesPath();
 
-            PetriNet petriNet = (useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet);
+            PetriNet petriNet = useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet;
             if (petriNet != null) {
                 generateStateSpace(stateWriter, temporaryTransitions, temporaryStates, petriNet);
                 processBinaryResults(stateWriter, temporaryTransitions, temporaryStates);
             }
 
 
-        } catch (TimelessTrapException | IOException | InterruptedException | ExecutionException e) {
+        } catch (InvalidRateException | TimelessTrapException | IOException | InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -526,7 +523,7 @@ public class ReachabilityGraph {
      * @throws InterruptedException
      */
     private void generateStateSpace(StateWriter stateWriter, Path transitions, Path states, PetriNet petriNet)
-            throws IOException, TimelessTrapException, ExecutionException, InterruptedException {
+            throws IOException, TimelessTrapException, ExecutionException, InvalidRateException, InterruptedException {
         try (OutputStream transitionStream = Files.newOutputStream(transitions);
              OutputStream stateStream = Files.newOutputStream(states)) {
             try (Output transitionOutput = new Output(transitionStream);
@@ -565,7 +562,7 @@ public class ReachabilityGraph {
      * @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
      */
     private void writeStateSpace(StateWriter stateWriter, Output transitionOutput, Output stateOutput, PetriNet petriNet)
-            throws TimelessTrapException, ExecutionException, InterruptedException, IOException {
+            throws TimelessTrapException, ExecutionException, InterruptedException, IOException, InvalidRateException {
         StateProcessor processor = new StateIOProcessor(stateWriter, transitionOutput, stateOutput);
         ExplorerUtilities explorerUtilites = getExplorerUtilities(petriNet);
         VanishingExplorer vanishingExplorer = getVanishingExplorer(explorerUtilites);
@@ -601,36 +598,6 @@ public class ReachabilityGraph {
             return new SimpleVanishingExplorer();
         }
         return new OnTheFlyVanishingExplorer(explorerUtilities);
-    }
-
-    /**
-     * Loads a petri net into the defaultPetriNet field
-     */
-    private void loadDefaultPetriNet() {
-        try {
-            PetriNetReader petriNetIO = new PetriNetIOImpl();
-            URL resource = getClass().getResource("/simple_vanishing.xml");
-            defaultPetriNet = petriNetIO.read(resource.getPath());
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        } catch (UnparsableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Return settings string for inserting a vertex into a graph.
-     * <p/>
-     * Tangible states are blue whilst vanishing states are red.
-     *
-     * @param state
-     * @return settings string
-     */
-    private String getColor(ClassifiedState state) {
-        if (state.isTangible()) {
-            return "fillColor=#99CCFF";
-        }
-        return "fillColor=#FF8566";
     }
 
     private void createUIComponents() {

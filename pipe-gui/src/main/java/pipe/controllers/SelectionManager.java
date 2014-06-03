@@ -127,13 +127,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (e.isControlDown()) {
-            if (e.getWheelRotation() > 0) {
-                //            petriNetTab.zoomIn();
-            } else {
-                //            petriNetTab.zoomOut();
-            }
-        }
+        // Not used
     }
 
     @Override

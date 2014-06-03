@@ -119,13 +119,16 @@ public class RateEditorPanel extends JPanel {
                     if (!isValidRate(datum.id, datum.expression)) {
                         return false;
                     }
-                } else if (datum.id.isEmpty() && !datum.expression.isEmpty()) {
+                }
+                if (datum.id.isEmpty() && !datum.expression.isEmpty()) {
                     showWarning("The rate name cannot be empty");
                     return false;
-                } else if (!datum.id.isEmpty() && datum.expression.isEmpty()) {
+                }
+                if (!datum.id.isEmpty() && datum.expression.isEmpty()) {
                     showWarning("The rate value cannot be empty");
                     return false;
-                } else if (!datum.id.isEmpty()) {
+                }
+                if (!datum.id.isEmpty()) {
                     if (!isValidRate(datum.id, datum.expression)) {
                         return false;
                     }

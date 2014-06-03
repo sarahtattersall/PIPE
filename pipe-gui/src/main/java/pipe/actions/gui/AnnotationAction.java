@@ -36,8 +36,8 @@ public class AnnotationAction extends CreateAction {
 
     private Annotation getAnnotation(Point point, PetriNetController petriNetController) {
 
-        int x = new Double(point.getX()).intValue();
-        int y = new Double(point.getY()).intValue();
+        int x = (int) point.getX();
+        int y = (int) point.getY();
         Annotation annotation = new AnnotationImpl(x, y, "Enter text here", 100, 50, true);
 
         PetriNet petriNet = petriNetController.getPetriNet();

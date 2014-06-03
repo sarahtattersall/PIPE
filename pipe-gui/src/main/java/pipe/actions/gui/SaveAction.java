@@ -70,7 +70,7 @@ public class SaveAction extends AbstractSaveAction {
      * Visits PetriNetName possible classes and detemrines if the save action
      * should be a save as action
      */
-    private class SaveAsVisitor implements NormalNameVisitor, FileNameVisitor {
+    private static class SaveAsVisitor implements NormalNameVisitor, FileNameVisitor {
 
         private boolean saveAs = false;
 

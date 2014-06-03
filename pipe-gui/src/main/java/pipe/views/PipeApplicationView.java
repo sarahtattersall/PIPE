@@ -1,12 +1,12 @@
 package pipe.views;
 
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.actions.gui.ZoomManager;
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.SelectionManager;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.*;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.PetriNetMouseHandler;
 import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.utilities.gui.GuiUtils;
@@ -32,12 +32,11 @@ import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.Serializable;
 import java.net.URL;
 import java.util.*;
 
 
-public class PipeApplicationView extends JFrame implements ActionListener, Observer, Serializable {
+public class PipeApplicationView extends JFrame implements ActionListener, Observer {
 
 
     public final StatusBar statusBar;
@@ -410,7 +409,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     public void removeTab(int index) {
-        if ((frameForPetriNetTabs.getTabCount() > 0)) {
+        if (frameForPetriNetTabs.getTabCount() > 0) {
             PetriNetTab tab = petriNetTabs.get(index);
             petriNetTabs.remove(index);
             frameForPetriNetTabs.remove(index);
@@ -447,8 +446,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         try {
             animationHistoryView = new AnimationHistoryView("Animation History");
         } catch (BadLocationException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         PetriNetTab petriNetTab = new PetriNetTab();
         histories.put(petriNetTab, animationHistoryView);

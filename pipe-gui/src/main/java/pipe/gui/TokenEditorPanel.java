@@ -71,6 +71,55 @@ public class TokenEditorPanel extends JPanel {
     }
 
     /**
+     * Private class to hold the data in the table.
+     */
+    public static class Datum extends AbstractDatum {
+
+        /**
+         * Color of the token
+         */
+        public Color color;
+
+        public Datum(String name, Color color) {
+            super(name);
+            this.color = color;
+        }
+
+        public Datum(Datum initial, String name, Color color) {
+            super(initial, name);
+            this.color = color;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Datum)) {
+                return false;
+            }
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            Datum datum = (Datum) o;
+
+            if (!color.equals(datum.color)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + color.hashCode();
+            return result;
+        }
+    }
+
+    /**
      * TableModel for editing the Tokens
      */
     public class TableModel extends AbstractComponentTableModel<Datum> {
@@ -128,11 +177,19 @@ public class TokenEditorPanel extends JPanel {
             }
         }
 
-                @Override
-                public Class<?> getColumnClass(int c) {
-                        return getValueAt(0, c).getClass();
-                    }
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
 
+        @Override
+        public Object getValueAt(int row, int col) {
+            if (col == NAME_COL) {
+                return modifiedData.get(row).id;
+            }
+            return modifiedData.get(row).color;
+
+        }
 
         /**
          * Sets modifiedData with the new value
@@ -193,15 +250,6 @@ public class TokenEditorPanel extends JPanel {
 
         }
 
-        @Override
-        public Object getValueAt(int row, int col) {
-            if (col == NAME_COL) {
-                return modifiedData.get(row).id;
-            } else {
-                return modifiedData.get(row).color;
-            }
-        }
-
         /**
          * Checks to see if all the tokens in the table are valid.
          * If they are not it will print the relevant error message for the first
@@ -211,52 +259,6 @@ public class TokenEditorPanel extends JPanel {
          */
         public boolean isValid() {
             return true;
-        }
-    }
-
-    /**
-     * Private class to hold the data in the table.
-     */
-    public class Datum extends AbstractDatum {
-
-        public Color color;
-
-        public Datum(String name, Color color) {
-            super(name);
-            this.color = color;
-        }
-
-        public Datum(Datum initial, String name, Color color) {
-            super(initial, name);
-            this.color = color;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof Datum)) {
-                return false;
-            }
-            if (!super.equals(o)) {
-                return false;
-            }
-
-            Datum datum = (Datum) o;
-
-            if (!color.equals(datum.color)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = super.hashCode();
-            result = 31 * result + color.hashCode();
-            return result;
         }
     }
 

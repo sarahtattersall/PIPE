@@ -6,27 +6,43 @@ package pipe.gui;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
+/**
+ * Extension filter for filtering files
+ */
 public class ExtensionFilter 
         extends FileFilter {
 
-   private final String myExtensionString;  // The extension we will accept
-   private final String myExtensionDesc;    // A description of its meaning
+    /**
+     * Accepted extension
+     */
+   private final String extensionString;
+
+    /**
+     * Description of the extension
+     */
+   private final String extensionDescription;
 
    
    public ExtensionFilter(String ext, String desc) {
-      myExtensionString = ext.toLowerCase();
-      myExtensionDesc = desc;
+      extensionString = ext.toLowerCase();
+      extensionDescription = desc;
+   }
+
+
+    /**
+     *
+     * @param f
+     * @return true if we will accept the file
+     */
+   @Override
+   public boolean accept(File f) {
+       return f.isDirectory() || f.getName().toLowerCase().endsWith(extensionString);
    }
 
    
-   public boolean accept(File f) {
-      return f.isDirectory() 
-             || f.getName().toLowerCase().endsWith(myExtensionString);
-   }	// Don't want directories, especially ones which end with the desired extension!
-
-   
+   @Override
    public String getDescription() {
-      return myExtensionDesc;
+      return extensionDescription;
    }
 
 }

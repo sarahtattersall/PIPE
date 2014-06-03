@@ -4,7 +4,10 @@ import pipe.gui.plugin.GuiModule;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /* $Author$
  * $Date$ */
@@ -23,6 +26,8 @@ import java.lang.reflect.Method;
  */
 class ModuleMethod
 {
+
+    private static final Logger LOGGER = Logger.getLogger(ModuleMethod.class.getName());
 
     private final Method modMeth;
     private final Class<? extends GuiModule> clazz;
@@ -69,11 +74,8 @@ class ModuleMethod
             // invoke the name method for display
             modMeth.invoke(moduleObj, petriNet);
 
-        }
-        catch(Exception e)
-        {
-            System.out.println("Error in module method invocation:" + e.toString());
-            e.printStackTrace();
+        } catch (IllegalAccessException | NoSuchMethodException | SecurityException | InvocationTargetException | InstantiationException | IllegalArgumentException e) {
+            LOGGER.log(Level.SEVERE, "Error in module method invocation: " + e.getMessage());
         }
     }
 

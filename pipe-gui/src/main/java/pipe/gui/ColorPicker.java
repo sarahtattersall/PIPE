@@ -37,16 +37,19 @@ class ColorPicker extends AbstractCellEditor implements ActionListener,
 				colorChooser, this, null);
 	}
 	
-	public Object getCellEditorValue() {
+	@Override
+    public Object getCellEditorValue() {
 		return currColor;
 	}
 
-	public Component getTableCellEditorComponent(JTable table, Object value,
+	@Override
+    public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		currColor = (Color) value;
 		return button;
 	}
-	public void actionPerformed(ActionEvent e) {
+	@Override
+    public void actionPerformed(ActionEvent e) {
 		if (EDIT_NAME.equals(e.getActionCommand())) {
 			colorChooser.setColor(currColor);
 			button.setBackground(currColor);
@@ -55,7 +58,7 @@ class ColorPicker extends AbstractCellEditor implements ActionListener,
 			// Renderer re-appears.
 			fireEditingStopped();
 
-		} else { //OK Pressed
+		} else {
 			currColor = colorChooser.getColor();
 		}
 	}

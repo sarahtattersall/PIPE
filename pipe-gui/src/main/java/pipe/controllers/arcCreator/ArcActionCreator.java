@@ -40,5 +40,5 @@ public interface ArcActionCreator {
      * @param <T>
      * @return
      */
-    public <S extends Connectable, T extends Connectable> boolean canCreate(S source, T target);
+    <S extends Connectable, T extends Connectable> boolean canCreate(S source, T target);
 }

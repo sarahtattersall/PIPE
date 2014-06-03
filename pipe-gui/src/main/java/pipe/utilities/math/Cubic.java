@@ -1,11 +1,15 @@
 package pipe.utilities.math;
 
+/**
+ * Cubic that uses the logic
+ * a + b*u + c*u^2 + d*u^3
+ */
 public class Cubic {
 
    private final float a;
     private final float b;
     private final float c;
-    private final float d;         /* a + b*u + c*u^2 + d*u^3 */
+    private final float d;
 
 
    public Cubic(float _a, float _b, float _c, float _d) {
@@ -18,7 +22,7 @@ public class Cubic {
 
    // Return first control point coordinate (calculated from coefficients)
    public float getX1() {
-      return ((b + 3*a)/3);
+      return (b + 3*a)/3;
    }
    
 
@@ -27,12 +31,5 @@ public class Cubic {
       return ((c + 2*b + 3*a)/3);
    }
 
-
-   /** evaluate cubic
-    * @param u
-    * @return*/
-   public float eval(float u) {
-      return (((d*u) + c)*u + b)*u + a;
-   }
 
 }

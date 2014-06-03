@@ -26,6 +26,8 @@ public abstract class GuiAction
         extends AbstractAction
 {
 
+    public static final String SELECTED = "selected";
+
     protected UndoableEditListener listener;
 
 
@@ -81,13 +83,13 @@ public abstract class GuiAction
                         boolean toggleable)
     {
         this(name, tooltip, keystroke);
-        putValue("selected", Boolean.FALSE);
+        putValue(SELECTED, Boolean.FALSE);
     }
 
 
     public boolean isSelected()
     {
-        Boolean b = (Boolean) getValue("selected");
+        Boolean b = (Boolean) getValue(SELECTED);
 
         if(b != null)
         {
@@ -99,12 +101,11 @@ public abstract class GuiAction
 
     public void setSelected(boolean selected)
     {
-        Boolean b = (Boolean) getValue("selected");
+        Boolean b = (Boolean) getValue(SELECTED);
 
         if(b != null)
         {
-            putValue("selected", null);
-            putValue("selected", Boolean.valueOf(selected));
+            putValue(SELECTED, Boolean.valueOf(selected));
         }
     }
 

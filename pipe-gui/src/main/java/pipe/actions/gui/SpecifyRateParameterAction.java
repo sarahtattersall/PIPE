@@ -1,9 +1,8 @@
 package pipe.actions.gui;
 
-import pipe.actions.gui.GuiAction;
 import pipe.controllers.PetriNetController;
-import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.RateParameterController;
+import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.AbstractDatum;
 import pipe.gui.RateEditorPanel;
 import pipe.historyActions.MultipleEdit;
@@ -27,8 +26,11 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SpecifyRateParameterAction extends GuiAction {
+    private static final Logger LOGGER = Logger.getLogger(SpecifyRateParameterAction.class.getName());
     private final PipeApplicationController pipeApplicationController;
 
     private RateEditorPanel rateEditorPanel;
@@ -115,7 +117,8 @@ public class SpecifyRateParameterAction extends GuiAction {
                         UndoableEdit historyItem = new DeletePetriNetObject(rateParameter, petriNet);
                         undoableEdits.add(historyItem);
                         petriNet.removeRateParameter(rateParameter);
-                    } catch (PetriNetComponentNotFoundException ignored) {
+                    } catch (PetriNetComponentNotFoundException e) {
+                        LOGGER.log(Level.SEVERE, e.getMessage());
                     }
                 }
             }

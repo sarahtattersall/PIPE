@@ -172,14 +172,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return model.getId();
     }
 
-    /**
-     * Method to clone an Arc object
-     */
-    @Override
-    public AbstractPetriNetViewComponent clone() {
-        return super.clone();
-    }
-
     //TODO: DELETE
     public void updateArcPosition() {
         //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();

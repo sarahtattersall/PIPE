@@ -45,22 +45,6 @@ public class PlaceView extends ConnectableView<Place> {
         });
     }
 
-    /**
-     * Used to quickly calculate the total marking of this place and sums up the
-     * marking of each token class.
-     *
-     * @return the total number of tokens in the place
-     */
-    public int getTotalMarking() {
-        return model.getNumberOfTokensStored();
-    }
-
-
-    @Override
-    public void delete() {
-        super.delete();
-        //ApplicationSettings.getApplicationView().getCurrentPetriNetView().deletePlace(this.getId());
-    }
 
     /**
      * Paints the Place component taking into account the n q12[umber of tokens from

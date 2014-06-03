@@ -1,16 +1,15 @@
 package pipe.handlers;
 
 import pipe.actions.gui.DeletePetriNetComponentAction;
-import pipe.constants.GUIConstants;
-import pipe.controllers.PetriNetController;
-import pipe.controllers.DragManager;
-import pipe.controllers.SelectionManager;
 import pipe.actions.gui.PipeApplicationModel;
+import pipe.constants.GUIConstants;
+import pipe.controllers.DragManager;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.Container;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 /**
@@ -37,12 +36,6 @@ public class PetriNetObjectHandler<T extends PetriNetComponent>
     boolean isDragging = false;
 
     boolean enablePopup = false;
-
-    Point dragInit = new Point();
-
-    private int totalX = 0;
-
-    private int totalY = 0;
 
     // constructor passing in all required objects
     PetriNetObjectHandler(Container contentPane, T component, PetriNetController controller, PipeApplicationModel applicationModel) {

@@ -259,8 +259,8 @@ public class PetriNetController implements IController, Serializable {
      * @param selectionRectangle bounds for selection
      */
     private void selectPlaceable(PlaceablePetriNetComponent placeable, Rectangle selectionRectangle) {
-        int x = new Double(placeable.getX()).intValue();
-        int y = new Double(placeable.getY()).intValue();
+        int x = placeable.getX();
+        int y = placeable.getY();
         Rectangle rectangle = new Rectangle(x, y, placeable.getHeight(), placeable.getWidth());
         if (selectionRectangle.intersects(rectangle)) {
             select(placeable);

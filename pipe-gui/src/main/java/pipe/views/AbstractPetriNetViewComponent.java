@@ -1,20 +1,14 @@
 package pipe.views;
 
 import pipe.controllers.PetriNetController;
-import pipe.historyActions.HistoryItem;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 import javax.swing.*;
 import java.awt.Container;
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
-import java.util.EventListener;
 
 
-public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements Cloneable, PetriNetViewComponent {
+public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements PetriNetViewComponent {
 
     public static final int COMPONENT_DRAW_OFFSET = 5;
 
@@ -55,10 +49,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         _markedAsDeleted = false;
         this.model = model;
         this.petriNetController = controller;
-    }
-
-    public static void ignoreSelection(boolean ignore) {
-        _ignoreSelection = ignore;
     }
 
     @Override
@@ -119,47 +109,6 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         }
     }
 
-    //TODO: REMOVE
-    public HistoryItem setPNObjectName(String name) {
-        //        String oldName = this.getName();
-        //        this.setId(name);
-        //        this.setName(name);
-        //        return new PetriNetObjectName(this, oldName, name);
-        return null;
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-    }
-
-    @Override
-    public AbstractPetriNetViewComponent<T> clone() {
-        try {
-            AbstractPetriNetViewComponent<T> pnCopy = (AbstractPetriNetViewComponent<T>) super.clone();
-
-            EventListener[] mouseListeners = pnCopy.getListeners(MouseListener.class);
-            for (EventListener mouseListener2 : mouseListeners) {
-                pnCopy.removeMouseListener((MouseListener) mouseListener2);
-            }
-
-            mouseListeners = pnCopy.getListeners(MouseMotionListener.class);
-
-            for (EventListener mouseListener1 : mouseListeners) {
-                pnCopy.removeMouseMotionListener((MouseMotionListener) mouseListener1);
-            }
-
-            mouseListeners = pnCopy.getListeners(MouseWheelListener.class);
-
-            for (EventListener mouseListener : mouseListeners) {
-                pnCopy.removeMouseWheelListener((MouseWheelListener) mouseListener);
-            }
-
-            return pnCopy;
-        } catch (CloneNotSupportedException e) {
-            throw new Error(e);
-        }
-    }
 
     protected static int getComponentDrawOffset() {
         return COMPONENT_DRAW_OFFSET;

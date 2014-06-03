@@ -68,7 +68,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     @Override
     public void paint(Graphics g, JComponent c) {
-        System.out.println("PAINT :)");
         g.clearRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
         Graphics2D g2 = (Graphics2D) g;
         g2.scale(zoom, zoom);
@@ -126,7 +125,6 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     @Override
     protected void processMouseWheelEvent(MouseWheelEvent e,JLayer<? extends JComponent> l) {
-        System.out.println("Mouse wheel event");
     }
 
     @Override

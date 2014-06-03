@@ -5,10 +5,10 @@
 package pipe.gui;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.IOException;
+import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 final class ExtFileManager {
@@ -16,6 +16,7 @@ final class ExtFileManager {
     private static URLClassLoader cLoader = null;
 
 
+    private static final Logger LOGGER = Logger.getLogger(ExtFileManager.class.getName());
     private ExtFileManager() {
     }
 
@@ -25,8 +26,8 @@ final class ExtFileManager {
 
         try {
             c = cLoader.loadClass(className);
-        } catch (Exception e) {
-            System.err.println("Failed to load Class " + className);
+        } catch (ClassNotFoundException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return c;
     }
@@ -40,15 +41,12 @@ final class ExtFileManager {
         addSearchPath(path);
         if (name.endsWith(".class")) {
             name = name.substring(0, name.length() - 6);
-            System.err.println("Class NameDetails = " + name);
             try {
                 myClass = cLoader.loadClass(name);
-            } catch (Exception e) {
-                System.err.println("Class " + name + " wasn't loaded.");
+            } catch (ClassNotFoundException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
-        URL[] myPaths = cLoader.getURLs();
-
         return myClass;
     }
 
@@ -58,8 +56,8 @@ final class ExtFileManager {
             try {
                 URL[] pathURLs = {p.getCanonicalFile().toURI().toURL()};
                 addSearchPath(pathURLs);
-            } catch (Exception e) {
-                System.err.println("Failed to add path: URI.toURL generated an error.");
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Failed to add path: URI.toURL generated an error." + e.getMessage());
             }
         }
     }

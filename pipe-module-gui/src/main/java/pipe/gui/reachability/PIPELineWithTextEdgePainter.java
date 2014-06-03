@@ -44,7 +44,7 @@ public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends Lin
 
         String text = edge.getText();
 
-        Point2D midpoint = new Point2D.Double((from.x + 2 * to.x) / 3, ((from.y + 2 * to.y) / 3));
+        Point2D midpoint = new Point2D.Double((from.x + 2 * to.x) / 3, (from.y + 2 * to.y) / 3);
 
         double slopeTop = from.y - to.y;
         double slopeBottom = from.x - to.x;

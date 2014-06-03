@@ -160,14 +160,9 @@ public class AnnotationView extends Note {
         }
     }
 
-    public void changeBackground() {
-        fillNote = !fillNote;
-        note.setOpaque(fillNote);
-    }
-
     @Override
     public void addToContainer(Container container) {
-
+        // Do nothing on add
     }
 
     /**

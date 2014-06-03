@@ -134,7 +134,8 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     /**
      * Accessor function to check whether or not the Arc is tagged
      */
-    @Override public boolean isTagged() {
+    @Override
+    public boolean isTagged() {
         return tagged;
     }
 
@@ -143,7 +144,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
      *
      * @param flag
      */
-    public void setTagged(boolean flag) {
+    public final void setTagged(boolean flag) {
         /** Set the timed transition attribute (for GSPNs) */
 
         tagged = flag;

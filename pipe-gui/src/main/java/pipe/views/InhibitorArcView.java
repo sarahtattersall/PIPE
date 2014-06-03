@@ -20,7 +20,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
     private final static String type = "inhibitor";
 
-    ArcHead arcHead = new InhibitorArcHead();
+    private ArcHead arcHead = new InhibitorArcHead();
 
     public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller, Container parent, MouseInputAdapter handler, PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);

@@ -63,9 +63,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
             Method method = eventMethods.get(name);
             try {
                 method.invoke(this, propertyChangeEvent);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }

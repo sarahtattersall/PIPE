@@ -136,8 +136,7 @@ public class PipeApplicationController {
         try {
             manager.createFromFile(file);
         } catch (JAXBException e) {
-            e.printStackTrace();
-            throw new UnparsableException("Could not initialise Petri net reader!");
+            throw new UnparsableException("Could not initialise Petri net reader!", e);
         }
     }
 
@@ -156,8 +155,7 @@ public class PipeApplicationController {
         try {
             manager.savePetriNet(petriNet, outFile);
         } catch (JAXBException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to write!");
+            throw new RuntimeException("Failed to write!", e);
         }
         petriNetController.save();
     }

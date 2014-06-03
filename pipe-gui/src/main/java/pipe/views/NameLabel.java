@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
-public class NameLabel extends JTextArea implements Cloneable {
+public class NameLabel extends JTextArea {
 
     private String _name;
     private String _text;
@@ -84,13 +84,4 @@ public class NameLabel extends JTextArea implements Cloneable {
         updateSize();
     }
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

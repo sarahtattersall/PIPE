@@ -23,15 +23,6 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
 
     private final JRootPane rootPane;
 
-    private final ChangeListener changeListener = new javax.swing.event.ChangeListener() {
-        public void stateChanged(javax.swing.event.ChangeEvent evt) {
-            JSpinner spinner = (JSpinner) evt.getSource();
-            JSpinner.NumberEditor numberEditor = ((JSpinner.NumberEditor) spinner.getEditor());
-            numberEditor.getTextField().setBackground(new Color(255, 255, 255));
-            spinner.removeChangeListener(this);
-        }
-    };
-
     private javax.swing.JLabel capacity0Label = new javax.swing.JLabel();
 
     private javax.swing.JSpinner capacitySpinner = new javax.swing.JSpinner();

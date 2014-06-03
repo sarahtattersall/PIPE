@@ -64,13 +64,6 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (!e.isControlDown()) {
-        } else {
-            //            if(e.getWheelRotation() > 0)
-            //                petriNetTab.zoomIn();
-            //            else
-            //                petriNetTab.zoomOut();
-        }
     }
 
     @Override

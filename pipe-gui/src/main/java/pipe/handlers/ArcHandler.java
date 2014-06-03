@@ -62,52 +62,15 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         return popup;
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        //       if (!ApplicationSettings.getApplicationModel().isEditionAllowed()){
-        //         return;
-        //      }
-        //      if (e.getClickCount() == 2){
-        //         ArcView arcView = (ArcView) component;
-        //         if (e.isControlDown()){
-        //             ApplicationSettings.getApplicationView().getCurrentTab().getHistoryManager().addNewEdit(
-        //                    arcView.getArcPath().insertPointAt(
-        //                            new Point2D.Float(arcView.getX() + e.getX(),
-        //                            arcView.getY() + e.getY()), e.isAltDown()));
-        //         } else {
-        //            arcView.getSource().select();
-        //            arcView.getTarget().select();
-        //            justSelected = true;
-        //         }
-        //      }
-    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        //       switch (ApplicationSettings.getApplicationModel().getMode()) {
-        //         case Constants.SELECT:
-        //            if (!isDragging){
-        //               break;
-        //            }
-        //            ArcView currentObject = (ArcView) component;
-        //            Point oldLocation = currentObject.getLocation();
-        //            // Calculate translation in mouse
-        //            int transX = Grid.getModifiedValue(e.getX() - dragInit.x);
-        //            int transY = Grid.getModifiedY(e.getY() - dragInit.y);
-        //            ((PetriNetTab)contentPane).getSelectionObject().translateSelection(
-        //                     transX, transY);
-        //            dragInit.translate(
-        //                     -(currentObject.getLocation().x - oldLocation.x - transX),
-        //                     -(currentObject.getLocation().y - oldLocation.y - transY));
-        //      }
+        //Do nothing on mouse drag
     }
 
-    // Alex Charalambous: No longer does anything since you can't simply increment
-    // the weight of the arc because multiple weights for multiple colours exist
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-
+        //Do nothing on mouse wheel move
     }
 
     public void showEditor() {

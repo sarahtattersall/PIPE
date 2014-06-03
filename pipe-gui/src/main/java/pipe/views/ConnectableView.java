@@ -7,7 +7,6 @@ import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import javax.swing.*;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Graphics;
 import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -114,18 +113,6 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
             getParent().remove(nameLabel);
         }
         super.delete();
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-    }
-
-    // TODO: DELETE
-    @Override
-    public AbstractPetriNetViewComponent clone() {
-        AbstractPetriNetViewComponent<?> pnCopy = super.clone();
-        return pnCopy;
     }
 
     protected void addLabelToContainer(Container container) {

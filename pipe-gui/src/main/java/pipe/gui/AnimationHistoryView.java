@@ -8,6 +8,8 @@ import javax.swing.text.*;
 import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -15,6 +17,7 @@ import java.util.Observer;
  */
 public class AnimationHistoryView
         extends JTextPane implements Observer {
+    private static final Logger LOGGER = Logger.getLogger(AnimationHistory.class.getName());
 
     private final String initText;
     private final Document doc;
@@ -46,7 +49,7 @@ public class AnimationHistoryView
                 count++;
             }
         } catch (BadLocationException b) {
-            System.err.println(b.toString());
+            LOGGER.log(Level.SEVERE, b.getMessage());
         }
     }
 
