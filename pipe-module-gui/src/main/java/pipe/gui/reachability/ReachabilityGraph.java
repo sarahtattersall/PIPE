@@ -588,8 +588,8 @@ public class ReachabilityGraph {
     }
 
     /**
-     * Vanishing explorer is either a {@link pipe.reachability.algorithm.state.SimpleVanishingExplorer} if
-     * vanishing states are to be included in the graph, else it is {@link pipe.reachability.algorithm.state.OnTheFlyVanishingExplorer}
+     * Vanishing explorer is either a {@link pipe.reachability.algorithm.SimpleVanishingExplorer} if
+     * vanishing states are to be included in the graph, else it is {@link pipe.reachability.algorithm.OnTheFlyVanishingExplorer}
      *
      * @param explorerUtilities
      */
