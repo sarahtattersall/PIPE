@@ -129,7 +129,8 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
             }
         }
         if (!e.isConsumed()) {
-            dragManager.drag(e.getPoint());
+            MouseEvent newEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e, contentPane);
+            dragManager.drag(newEvent.getPoint());
         }
     }
 }

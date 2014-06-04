@@ -20,23 +20,45 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S,T>  {
+public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S, T> {
     private static final Logger LOGGER = Logger.getLogger(NormalArcView.class.getName());
 
-    private ArcHead arcHead = new NormalHead();
     private static final String TYPE = "normal";
+
     private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
+
+    private ArcHead arcHead = new NormalHead();
+
     // bidirectional arc?
     private boolean joined = false;
 
-    public NormalArcView(Arc<S, T> model,
-                         PetriNetController controller, Container parent, MouseInputAdapter handler, PipeApplicationModel applicationModel) {
+    public NormalArcView(Arc<S, T> model, PetriNetController controller, Container parent, MouseInputAdapter handler,
+                         PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);
         addConnectableListener();
+        addSourceTargetConnectableListener();
         for (NameLabel label : weightLabel) {
             getParent().add(label);
         }
     }
+
+    /**
+     * Listens to the source/target changing position
+     */
+    private void addSourceTargetConnectableListener() {
+        PropertyChangeListener changeListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                String name = evt.getPropertyName();
+                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
+                    updateWeights();
+                }
+            }
+        };
+        model.getSource().addPropertyChangeListener(changeListener);
+        model.getTarget().addPropertyChangeListener(changeListener);
+    }
+
 
     private void addConnectableListener() {
         PropertyChangeListener listener = new PropertyChangeListener() {
@@ -62,31 +84,18 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         getParent().remove(label);
     }
 
+    @Override
+    public void addToContainer(Container container) {
+        updatePath();
+        updateWeights();
+    }
+
     private void updateWeights() {
         removeCurrentWeights();
         createWeightLabels();
         setWeightLabelPosition();
 
         addWeightLabelsToContainer(getParent());
-    }
-
-    protected void setWeightLabelPosition() {
-        int originalX = (int) arcPath.midPoint.x;
-        int originalY = (int) arcPath.midPoint.y - 10;
-        int x = originalX;
-        int y = originalY;
-        int yCount = 0;
-
-        for (NameLabel label : weightLabel) {
-            if (yCount >= 4) {
-                y = originalY;
-                x += 17;
-                yCount = 0;
-            }
-            label.setPosition(x + label.getWidth() / 2 - 4, y);
-            y += 10;
-            yCount++;
-        }
     }
 
     private void removeCurrentWeights() {
@@ -109,8 +118,28 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             } catch (PetriNetComponentNotFoundException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage());
                 label.setColor(Color.BLACK);
-            } label.updateSize();
+            }
+            label.updateSize();
             weightLabel.add(label);
+        }
+    }
+
+    protected void setWeightLabelPosition() {
+        int originalX = (int) arcPath.midPoint.x;
+        int originalY = (int) arcPath.midPoint.y - 10;
+        int x = originalX;
+        int y = originalY;
+        int yCount = 0;
+
+        for (NameLabel label : weightLabel) {
+            if (yCount >= 4) {
+                y = originalY;
+                x += 17;
+                yCount = 0;
+            }
+            label.setPosition(x + label.getWidth() / 2 - 4, y);
+            y += 10;
+            yCount++;
         }
     }
 
@@ -121,12 +150,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     @Override
-    public void addToContainer(Container container) {
-        updatePath();
-        updateWeights();
-    }
-
-    @Override public String getType() {
+    public String getType() {
         return TYPE;
     }
 

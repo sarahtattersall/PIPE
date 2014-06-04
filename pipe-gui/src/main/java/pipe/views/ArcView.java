@@ -75,7 +75,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     private void registerModelListeners() {
         addArcChangeListener();
-        addSourceTargetConnectableListener();
     }
 
     public final void setMouseListener(MouseInputAdapter arcHandler) {
@@ -117,22 +116,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
             }
         };
         model.addPropertyChangeListener(listener);
-    }
-
-    /**
-     * Listens to the source/target changing position
-     */
-    private void addSourceTargetConnectableListener() {
-//        PropertyChangeListener changeListener = new PropertyChangeListener() {
-//            @Override
-//            public void propertyChange(PropertyChangeEvent evt) {
-//                String name = evt.getPropertyName();
-//                if (name.equals(Connectable.X_CHANGE_MESSAGE) || name.equals(Connectable.Y_CHANGE_MESSAGE)) {
-//                }
-//            }
-//        };
-//        model.getSource().addPropertyChangeListener(changeListener);
-//        model.getTarget().addPropertyChangeListener(changeListener);
     }
 
     /**
