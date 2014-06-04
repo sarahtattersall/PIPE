@@ -203,14 +203,15 @@ public class ArcPath implements Shape, Cloneable {
         return path.getPathIterator(arg0, arg1);
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Shape#contains(java.awt.geom.Point2D)
-     */
+
     public boolean proximityContains(Point2D p) {
         return proximityShape.contains(p);
     }
 
-    public void delete() {  // Michael: Tells the arc points to remove themselves
+    /**
+     * Tells the arc points to remove themselves
+     */
+    public void delete() {
         while (!pathPoints.isEmpty()) {
             // force delete of ALL points
             pathPoints.get(0).kill();

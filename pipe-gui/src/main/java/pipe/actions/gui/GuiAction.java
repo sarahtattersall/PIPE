@@ -68,7 +68,8 @@ public abstract class GuiAction extends AbstractAction {
 
     // Set the UndoableEditListener.
     public void addUndoableEditListener(UndoableEditListener l) {
-        listener = l; //TODO: Should ideally throw an exception if listener != null
+        //TODO: Should ideally throw an exception if listener != null
+        listener = l;
     }
 
     // Remove the UndoableEditListener.

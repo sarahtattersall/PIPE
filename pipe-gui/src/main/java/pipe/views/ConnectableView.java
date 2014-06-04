@@ -101,10 +101,4 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         nameLabel.addMouseWheelListener(labelHandler);
     }
 
-    protected final void setCentre(double x, double y) {
-        //        setPositionX(x - (getWidth() / 2.0));
-        //        setPositionY(y - (getHeight() / 2.0));
-        //        update();
-    }
-
 }

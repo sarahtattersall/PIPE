@@ -34,7 +34,7 @@ public class LabelHandler
    
    @Override
    public void mousePressed(MouseEvent e) {
-      dragInit = e.getPoint(); //
+      dragInit = e.getPoint();
       dragInit = javax.swing.SwingUtilities.convertPoint(nl, dragInit, obj);
    }
   
@@ -45,16 +45,9 @@ public class LabelHandler
       if (!SwingUtilities.isLeftMouseButton(e)){
          return;
       }
-      
-      Point p = javax.swing.SwingUtilities.convertPoint(nl, e.getPoint(), obj);
-      //obj.setNameOffsetX((e.getXOnScreen() - dragInit.x)); //causes exception in Windows!
-      //obj.setNameOffsetY((e.getYOnScreen() - dragInit.y)); //causes exception in Windows!
-      //dragInit = e.getLocationOnScreen(); //causes exception in Windows!
-//      _obj.setNameOffsetX((p.x - dragInit.x));
-//      _obj.setNameOffsetY((p.y - dragInit.y));
-      dragInit = p;
-//      _obj.update();
-   }   
+
+       dragInit = SwingUtilities.convertPoint(nl, e.getPoint(), obj);
+   }
    
    @Override
    public void mouseWheelMoved(MouseWheelEvent e) {

@@ -35,12 +35,15 @@ public class PIPESwingContextMenuListener
    }
    
    
+   @Override
    public void fillNodeContextMenu(final Node theNode, JPopupMenu theMenu) {
-       //
+       // Noop
    }
    
    
+   @Override
    public void fillEdgeContextMenu(final Edge theEdge, JPopupMenu theMenu) {
+       // Noop
    }
    
 }
