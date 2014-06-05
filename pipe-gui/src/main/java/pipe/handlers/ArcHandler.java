@@ -95,7 +95,5 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         guiDialog.setLocationRelativeTo(null);
 
         guiDialog.setVisible(true);
-
-        guiDialog.dispose();
     }
 }
