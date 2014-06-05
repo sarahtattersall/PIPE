@@ -64,7 +64,6 @@ public class TransitionHandler extends ConnectableHandler<Transition> {
         guiDialog.pack();
         guiDialog.setLocationRelativeTo(null);
         guiDialog.setVisible(true);
-        guiDialog.dispose();
     }
 
 
