@@ -8,14 +8,30 @@ import java.awt.Container;
 import java.awt.Rectangle;
 
 
+/**
+ * Abstract view component
+ * @param <T> underlying Petri net component model
+ */
 public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent> extends JComponent implements PetriNetViewComponent {
 
+    /**
+     * x, y offset from the model position
+     */
     public static final int COMPONENT_DRAW_OFFSET = 5;
 
+    /**
+     * If ignore selection = true then the component should not be selected
+     */
     protected static boolean ignoreSelection = false;
 
+    /**
+     * Controller for the Petri net that the Petri net component is housed in
+     */
     protected final PetriNetController petriNetController;
 
+    /**
+     * Petri net component id
+     */
     protected String id;
 
     /**
@@ -23,18 +39,45 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
      */
     protected final Container parent;
 
+    /**
+     * true if the item can be copy and pasted
+     */
     protected boolean copyPasteable;
 
+    /**
+     * View item bounds
+     */
     protected Rectangle bounds;
 
+    /**
+     * True if this view has been deleted
+     */
     protected boolean deleted;
 
+    /**
+     * Legacy mark as deleted code
+     */
+    @Deprecated
     protected boolean markedAsDeleted;
 
+    /**
+     * Underlying model
+     */
     protected T model;
 
+    /**
+     * True if the component is selectable
+     */
+    @Deprecated
     protected boolean selectable;
 
+    /**
+     * Constructor
+     * @param id component id
+     * @param model model
+     * @param controller Petri net controller that the model belongs to
+     * @param parent Parent of the view
+     */
     public AbstractPetriNetViewComponent(String id, T model, PetriNetController controller, Container parent) {
         this.id = id;
         this.parent = parent;
@@ -75,18 +118,24 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         return true;
     }
 
+    /**
+     * @return model id
+     */
     public final String getId() {
         return id;
     }
 
-    public final void setId(String idInput) {
-        id = idInput;
-    }
-
+    /**
+     *
+     * @return underlying model
+     */
     public final T getModel() {
         return model;
     }
 
+    /**
+     * Delete the view
+     */
     @Override
     public final void delete() {
         componentSpecificDelete();
@@ -95,6 +144,9 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
         removeAll();
     }
 
+    /**
+     * Remove the view from its container
+     */
     protected final void removeFromContainer() {
         Container c = getParent();
 
@@ -104,12 +156,12 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
     }
 
 
+    /**
+     *
+     * @return the x, y draw offset
+     */
     protected static int getComponentDrawOffset() {
         return COMPONENT_DRAW_OFFSET;
-    }
-
-    public final PetriNetController getPetriNetController() {
-        return petriNetController;
     }
 
     /**

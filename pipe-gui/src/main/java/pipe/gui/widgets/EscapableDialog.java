@@ -9,20 +9,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- *
- * @author Pere Bonet
  * Dialog that closes itself on escape key pressed
  */
 public class EscapableDialog 
         extends JDialog{
-   
-   /** Creates a new instance of EscapableDialog
-    * @param frame
-    * @param string
-    * @param modal*/
-   public EscapableDialog(Frame frame, String string, boolean modal) {
-      super(frame, string, modal);
-   }
 
 
     /** Creates a new instance of EscapableDialog
@@ -33,6 +23,13 @@ public class EscapableDialog
         super(window, title);
     }
 
+    /**
+     *
+     * Creates a root pane and allows it to close on exit
+     *
+     * @return root pane
+     */
+   @Override
    protected JRootPane createRootPane() {
       JRootPane rootPane = new JRootPane();
       KeyStroke stroke = KeyStroke.getKeyStroke("ESCAPE");

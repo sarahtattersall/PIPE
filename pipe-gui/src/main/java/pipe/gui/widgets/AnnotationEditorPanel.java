@@ -9,8 +9,14 @@ import javax.swing.*;
  */
 public class AnnotationEditorPanel extends javax.swing.JPanel {
 
+    /**
+     * Annotation controller
+     */
     private final AnnotationController annotationController;
 
+    /**
+     * New text area
+     */
     private javax.swing.JTextArea textArea;
 
     /**
@@ -95,18 +101,26 @@ public class AnnotationEditorPanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     * Sets the text of the annotation
+     * @param evt
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         annotationController.setText(textArea.getText());
-        //TODO: USE ANNOTATION CONTROLLER INSTEAD AND AFF HISTORY ITEM
         exit();
     }
 
+    /**
+     * Exits the annotation editor
+     */
     private void exit() {
-        //Provisional!
         getRootPane().getParent().setVisible(false);
-//        this.getParent().getParent().getParent().getParent().setVisible(false);
     }
 
+    /**
+     * Cancels the annotation editor, leaving the text unchanged
+     * @param evt
+     */
     private void cancelButtonActionPerformed(
             java.awt.event.ActionEvent evt) {
         exit();

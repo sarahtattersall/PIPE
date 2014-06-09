@@ -7,6 +7,9 @@ import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import javax.swing.*;
 import java.awt.FileDialog;
 
+/**
+ * State Space module that is dynamically loaded into the GUI
+ */
 public class StateSpaceModule implements GuiModule {
     @Override
     public void start(PetriNet petriNet) {

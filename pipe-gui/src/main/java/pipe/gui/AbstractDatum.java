@@ -12,12 +12,25 @@ public class AbstractDatum {
      * and it maps directly to some initial datum
      */
     public AbstractDatum initial = null;
+
+    /**
+     * Datum id
+     */
     public String id;
 
+    /**
+     * Constructor
+     * @param id
+     */
     AbstractDatum(String id) {
         this.id = id;
     }
 
+    /**
+     * Constructor
+     * @param initial
+     * @param id
+     */
     AbstractDatum(AbstractDatum initial, String id) {
         this.id = id;
         this.initial = initial;

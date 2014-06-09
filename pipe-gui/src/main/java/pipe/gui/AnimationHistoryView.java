@@ -18,15 +18,42 @@ import java.util.logging.Logger;
  */
 public final class AnimationHistoryView
         extends JTextPane implements Observer {
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(AnimationHistoryImpl.class.getName());
 
+    /**
+     * Text to display initially
+     */
     private final String initText;
+
+    /**
+     * History document
+     */
     private final Document doc;
+
+    /**
+     * Emphasis
+     */
     private Style emph;
+
+    /**
+     * Bold
+     */
     private Style bold;
+
+    /**
+     * Regular
+     */
     private Style regular;
 
 
+    /**
+     * Constructor
+     * @param text initally displayed text
+     * @throws javax.swing.text.BadLocationException
+     */
     public AnimationHistoryView(String text) throws
             javax.swing.text.BadLocationException {
         initText = text;
@@ -54,6 +81,9 @@ public final class AnimationHistoryView
         }
     }
 
+    /**
+     * Initialise bold, emph and regular styles
+     */
     private void initStyles() {
         Style def = StyleContext.getDefaultStyleContext().getStyle(
                 StyleContext.DEFAULT_STYLE);
@@ -67,6 +97,11 @@ public final class AnimationHistoryView
         StyleConstants.setBold(bold, true);
     }
 
+    /**
+     * Listen for animation actions and update the history accordingly
+     * @param observable
+     * @param o
+     */
     @Override
     public void update(Observable observable, Object o) {
         if (observable.getClass().equals(AnimationHistoryImpl.class)) {

@@ -13,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 
 /**
+ * Abstract connectable view for connectable models
  * @param <T> Connectable model
  */
 public abstract class ConnectableView<T extends Connectable> extends AbstractPetriNetViewComponent<T>
@@ -25,10 +26,14 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      */
     protected final Shape shape;
 
-    private ConnectableView(String id, T model, Shape shape) {
-        this(id, model, null, null, shape);
-    }
-
+    /**
+     * Constructor
+     * @param id
+     * @param model
+     * @param controller
+     * @param parent
+     * @param shape
+     */
     ConnectableView(String id, T model, PetriNetController controller, Container parent, Shape shape) {
         super(id, model, controller, parent);
         this.shape = shape;

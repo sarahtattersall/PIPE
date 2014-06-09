@@ -35,6 +35,9 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     private static final int SIZE_OFFSET = 1;
 
+    /**
+     * Size of the point
+     */
     private static final int SIZE = 3;
 
     /**
@@ -68,6 +71,13 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
         setBounds((int) x - SIZE, (int) y - SIZE, 2 * SIZE + SIZE_OFFSET, 2 * SIZE + SIZE_OFFSET);
     }
 
+    /**
+     * Constructor
+     * @param point
+     * @param arcPath
+     * @param petriNetController
+     * @param parent
+     */
     public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController, Container parent) {
         super("", point, petriNetController, parent);
         setup();

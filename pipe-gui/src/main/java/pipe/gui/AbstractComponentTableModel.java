@@ -40,6 +40,11 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
     protected String[] columnNames;
 
 
+    /**
+     *
+     * @param col
+     * @return the name for the column
+     */
     @Override
     public final String getColumnName(int col) {
         return columnNames[col];
@@ -57,11 +62,19 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
         return true;
     }
 
+    /**
+     *
+     * @return number of rows
+     */
     @Override
     public final int getRowCount() {
         return modifiedData.size();
     }
 
+    /**
+     *
+     * @return number of columns
+     */
     @Override
     public final int getColumnCount() {
         return columnNames.length;
@@ -75,10 +88,18 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
         return datum.initial != null;
     }
 
+    /**
+     *
+     * @return table data
+     */
     public final List<D> getTableData() {
         return modifiedData;
     }
 
+    /**
+     * Deletes the row from the model
+     * @param row
+     */
     public final void deleteRow(int row) {
         if (isExistingDatum(modifiedData.get(row))) {
             deletedData.add(modifiedData.get(row));
@@ -88,10 +109,22 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
         fireTableRowsDeleted(row, row);
     }
 
+    /**
+     *
+     * @return all deleted rows
+     */
     public final Collection<D> getDeletedData() {
         return deletedData;
     }
 
+    /**
+     *
+     * Updates the value in the table a (rowIndex, colIndex) with value
+     *
+     * @param value
+     * @param rowIndex
+     * @param colIndex
+     */
     @Override
     public final void setValueAt(Object value, int rowIndex, int colIndex) {
         D datum = modifiedData.get(rowIndex);

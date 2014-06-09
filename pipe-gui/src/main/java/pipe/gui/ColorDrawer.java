@@ -12,10 +12,6 @@ import java.awt.*;
  * toolbar).
  */
 public class ColorDrawer extends JLabel implements TableCellRenderer {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private Border selectedBorder = null;
 	private Border unselectedBorder = null;
 	private boolean bordered = true;

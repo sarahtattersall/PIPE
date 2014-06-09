@@ -19,11 +19,23 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Editor for modifying arc properties
+ */
 public class ArcFunctionEditor extends JPanel {
+    /**
+     * Petri net arc belongs to
+     */
     private PetriNet petriNet;
 
+    /**
+     * dialog for messages
+     */
     private EscapableDialog rootPane;
 
+    /**
+     * Arc controller
+     */
     private ArcController<?, ?> arcController;
 
     /**
@@ -31,8 +43,19 @@ public class ArcFunctionEditor extends JPanel {
      */
     private String token;
 
+    /**
+     * Editor pannel
+     */
     private ArcWeightEditorPanel weightEditorPanel;
 
+    /**
+     * Constructor
+     * @param weightEditorPanel
+     * @param guiDialog
+     * @param petriNet
+     * @param arcController
+     * @param token currently selected token
+     */
     public ArcFunctionEditor(ArcWeightEditorPanel weightEditorPanel, EscapableDialog guiDialog, PetriNet petriNet,
                              ArcController<?, ?> arcController, String token) {
         this.weightEditorPanel = weightEditorPanel;
@@ -43,6 +66,9 @@ public class ArcFunctionEditor extends JPanel {
         init();
     }
 
+    /**
+     * Initialises the editor
+     */
     private void init() {
         final JTextArea function = new JTextArea();
         function.setText(arcController.getWeightForToken(token));
@@ -105,6 +131,9 @@ public class ArcFunctionEditor extends JPanel {
 
     }
 
+    /**
+     * Exits the editor
+     */
     private void exit() {
         rootPane.setVisible(false);
     }
@@ -124,14 +153,30 @@ public class ArcFunctionEditor extends JPanel {
         return builder.toString();
     }
 
+    /**
+     * Action perfomed when OK is pressed on the arc editor.
+     *
+     * Saves the properties
+     */
     private final class ArcOKAction implements ActionListener {
 
+        /**
+         * functional expression
+         */
         private final JTextArea function;
 
+        /**
+         * Constructor
+         * @param function arc functional expression
+         */
         private ArcOKAction(JTextArea function) {
             this.function = function;
         }
 
+        /**
+         * Tries to parse the functional expression to determine its validity
+         * @param e
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             String func = function.getText();

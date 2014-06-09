@@ -16,27 +16,57 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author pere
+ * Panel for editing place properties
  */
 public class PlaceEditorPanel extends javax.swing.JPanel {
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(PlaceEditorPanel.class.getName());
 
+    /**
+     * Petri net controller that the place belongs to
+     */
     private final PetriNetController netController;
 
+    /**
+     * Place controller
+     */
     private final PlaceController placeController;
 
+    /**
+     * Graphical root pane
+     */
     private final JRootPane rootPane;
 
+    /**
+     * Capacity label
+     */
     private javax.swing.JLabel capacity0Label = new javax.swing.JLabel();
 
+    /**
+     * Capacity spinner for changing the place capacity
+     */
     private javax.swing.JSpinner capacitySpinner = new javax.swing.JSpinner();
 
+    /**
+     * Place name text field
+     */
     private javax.swing.JTextField nameTextField = new javax.swing.JTextField();
 
+    /**
+     * OK button that will perform changes when pressed
+     */
     private javax.swing.JButton okButton = new javax.swing.JButton();
 
+    /**
+     * Place tokens
+     */
     private List<JSpinner> inputtedMarkings = new LinkedList<>();
 
+    /**
+     * Token ids
+     */
     private List<String> inputtedTokenClassNames = new LinkedList<>();
 
 
@@ -54,6 +84,9 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    /**
+     * Initialises the editor view
+     */
     private void initComponents() {
         setLayout(new java.awt.GridBagLayout());
         JPanel placeEditorPanel = createPlaceEditorPanel();
@@ -130,6 +163,12 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     * initialises the capacity label. If he capacity is set to 0 it reminds users
+     * that a capacity of 0 imposes no restrictions.
+     * @param placeEditorPanel
+     * @param row
+     */
     private void initializeCapacity0Label(JPanel placeEditorPanel, int row) {
         capacity0Label.setText("(no capacity restriction)    ");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -146,6 +185,11 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         setCapacityVisible(placeController.getCapacity());
     }
 
+    /**
+     * Initialises the capacity spinner
+     * @param placeEditorPanel
+     * @param row
+     */
     private void initializeCapacitySpinner(JPanel placeEditorPanel, int row) {
         capacitySpinner.setModel(new SpinnerNumberModel(placeController.getCapacity(), 0, Integer.MAX_VALUE, 1));
         capacitySpinner.setMinimumSize(new Dimension(50, 20));
@@ -164,6 +208,10 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         placeEditorPanel.add(capacitySpinner, capacityConstraints);
     }
 
+    /**
+     * Creates the editor panel
+     * @return
+     */
     private JPanel createPlaceEditorPanel() {
         GridBagConstraints gridBagConstraints;
         JPanel placeEditorPanel = new JPanel();
@@ -184,6 +232,11 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         return placeEditorPanel;
     }
 
+    /**
+     * initialises the capacity label
+     * @param placeEditorPanel
+     * @param row
+     */
     private void initializeCapacityLabel(JPanel placeEditorPanel, int row) {
         GridBagConstraints gridBagConstraints;
         JLabel capacityLabel = new JLabel();
@@ -196,6 +249,11 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         placeEditorPanel.add(capacityLabel, gridBagConstraints);
     }
 
+    /**
+     * Initialises the cancel button. When cancel is pressed the window exits and no changes
+     * are saved
+     * @param buttonPanel
+     */
     private void initializeCancelButton(JPanel buttonPanel) {
         GridBagConstraints gridBagConstraints;
         JButton cancelButton = new JButton();
@@ -214,6 +272,10 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         buttonPanel.add(cancelButton, gridBagConstraints);
     }
 
+    /**
+     * Initialises the name text field to the place name
+     * @param placeEditorPanel
+     */
     private void initializeNameTextField(JPanel placeEditorPanel) {
         nameTextField.setText(placeController.getName());
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -223,6 +285,10 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         placeEditorPanel.add(nameTextField, gridBagConstraints);
     }
 
+    /**
+     * Initialises the OK button action, this will save the settings to the place
+     * @param buttonPanel
+     */
     private void initializeOkButton(JPanel buttonPanel) {
         okButton.setText("OK");
         okButton.setMaximumSize(new Dimension(75, 25));
@@ -248,6 +314,13 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         buttonPanel.add(okButton, gridBagConstraints);
     }
 
+    /**
+     * If the marking spinner changes then more tokens are added to the place
+     *
+     * This feature is not currently implemented
+     * @param evt
+     * @param posInList
+     */
     private void markingSpinnerStateChanged(javax.swing.event.ChangeEvent evt,
                                             int posInList) {
 /*      Integer capacity = (Integer)capacitySpinner.getValue();
@@ -264,12 +337,19 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
       }*/
     }
 
+    /**
+     * Performs the ok action
+     * @param evt
+     */
     private void okButtonKeyPressed(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
             doOK();
         }
     }
 
+    /**
+     * Saves the changes to the place controller
+     */
     private void doOK() {
 
         Map<String, Integer> newTokenValues = getNewTokenValues();
@@ -286,10 +366,18 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         }
     }
 
+    /**
+     *
+     * @return true
+     */
     private boolean canSetCapacity() {
         return true;
     }
 
+    /**
+     *
+     * @return the capacity spinner value
+     */
     private Double getCapacitySpinnerValue() {
         return (Double) capacitySpinner.getValue();
     }
@@ -368,18 +456,33 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
         return sum;
     }
 
+    /**
+     * Performs the OK event
+     * @param evt
+     */
     private void okButtonHandler(java.awt.event.ActionEvent evt) {
         doOK();
     }
 
+    /**
+     * Exits the dialog
+     */
     private void exit() {
         rootPane.getParent().setVisible(false);
     }
 
+    /**
+     * Exits the dialog
+     * @param evt
+     */
     private void cancelButtonHandler(java.awt.event.ActionEvent evt) {
         exit();
     }
 
+    /**
+     * Listens for changes in the capacity spinner
+     * @param evt
+     */
     private void capacitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {
         Double capacity = (Double) capacitySpinner.getValue();
         setCapacityVisible(capacity);

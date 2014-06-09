@@ -22,7 +22,12 @@ public class ExtensionFilter
      */
    private final String extensionDescription;
 
-   
+
+    /**
+     * Constructor
+     * @param ext
+     * @param desc
+     */
    public ExtensionFilter(String ext, String desc) {
       extensionString = ext.toLowerCase();
       extensionDescription = desc;
@@ -39,7 +44,11 @@ public class ExtensionFilter
        return f.isDirectory() || f.getName().toLowerCase().endsWith(extensionString);
    }
 
-   
+
+    /**
+     *
+     * @return a short description about the extension type
+     */
    @Override
    public String getDescription() {
       return extensionDescription;

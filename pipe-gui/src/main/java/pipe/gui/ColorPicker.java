@@ -15,10 +15,7 @@ import java.awt.event.ActionListener;
 
 class ColorPicker extends AbstractCellEditor implements ActionListener,
 		TableCellEditor {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
 	private final JButton button;
 	private Color currColor;
 	private final JColorChooser colorChooser;
