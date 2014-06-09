@@ -16,8 +16,14 @@ import java.beans.PropertyChangeSupport;
  */
 public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
+    /**
+     * Message fired on a zoom out
+     */
     public static final String ZOOM_OUT_CHANGE_MESSAGE = "zoomOut";
 
+    /**
+     * Message fired on a zoom in
+     */
     public static final String ZOOM_IN_CHANGE_MESSAGE = "zoomIn";
 
     /**
@@ -67,6 +73,11 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         this.controller = controller;
     }
 
+    /**
+     * Paints the component with the current zoom scale
+     * @param g
+     * @param c
+     */
     @Override
     public void paint(Graphics g, JComponent c) {
         g.clearRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
@@ -107,6 +118,11 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         }
     }
 
+    /**
+     * Translates the event to a zoomed event point
+     * @param e
+     * @param l
+     */
     @Override
     protected void processMouseMotionEvent(MouseEvent e, JLayer<? extends JComponent> l) {
         MouseEvent localEvent = translateToLayerCoordinates(e, l);
@@ -125,11 +141,20 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         e.consume();
     }
 
+    /**
+     * Noop action
+     * @param e
+     * @param l
+     */
     @Override
     protected void processMouseWheelEvent(MouseWheelEvent e, JLayer<? extends JComponent> l) {
         //No action needed
     }
 
+    /**
+     * Install the UI
+     * @param c
+     */
     @Override
     public void installUI(JComponent c) {
         super.installUI(c);
@@ -137,6 +162,10 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         jlayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
     }
 
+    /**
+     * Uninstall the UI
+     * @param c
+     */
     @Override
     public void uninstallUI(JComponent c) {
         JLayer<? extends JComponent> jlayer = (JLayer<? extends JComponent>) c;
@@ -144,19 +173,38 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         super.uninstallUI(c);
     }
 
+    /**
+     * Add a listener for zoom updates
+     * @param listener
+     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
     }
 
+    /**
+     * Remove a listener from the zoom UI
+     * @param listener
+     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);
     }
 
+    /**
+     *
+     * @param event
+     * @param l
+     * @return true if the event is within the component bounds
+     */
     private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
         return getComponentClickedOn(l, event) != null;
-    }    @Override
+    }
+
+    /**
+     * Perform a zoom out of the canvas
+     */
+    @Override
     public void zoomOut() {
         if (canZoomOut()) {
             double old = zoom;
@@ -199,6 +247,12 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
         return SwingUtilities.convertMouseEvent(e.getComponent(), e, tab);
     }
 
+    /**
+     *
+     * @param component
+     * @param mouseEvent
+     * @return translated mouse click event
+     */
     private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {
         Point coordinates = zoomedXY(mouseEvent);
         return new MouseEvent(component, mouseEvent.getID(), mouseEvent.getWhen(), mouseEvent.getModifiers(),
@@ -206,25 +260,39 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
                 mouseEvent.getButton());
     }
 
+    /**
+     *
+     * @return the zoom scale as a percentage e.g. 20%, 100%, 120%
+     */
     @Override
     public int getPercentageZoom() {
         return (int) (zoom * 100);
     }
 
 
-
+    /**
+     *
+     * @return the scale of the zoom e.g. 0.2, 1.0, 1.2
+     */
     @Override
     public double getScale() {
         return zoom;
     }
 
 
+    /**
+     *
+     * @return true if can zoom out any further
+     */
     @Override
     public boolean canZoomOut() {
         return zoom - zoomAmount >= zoomMin;
     }
 
 
+    /**
+     * Performs the zoom in on the canvas
+     */
     @Override
     public void zoomIn() {
         if (canZoomIn()) {
@@ -235,6 +303,10 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
 
+    /**
+     *
+     * @return true if can zoom in any further
+     */
     @Override
     public boolean canZoomIn() {
         return zoom + zoomAmount <= zoomMax;

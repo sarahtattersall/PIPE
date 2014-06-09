@@ -13,14 +13,10 @@ import java.net.URL;
 
 
 /**
- * GuiAction class
+ * Abstract action which all PIPE GUI actions should subclass. These
+ * actions should be buttons on the PIPE tool bar
  *
- * @author Maxim and others
- *         <p/>
- *         Handles loading icon based on action name and setting up other stuff
- *         <p/>
- *         Toggleable actions store the toggle state in a way that allows ChangeListeners
- *         to be notified of changes
+ * This class is responsible for loading the images of the button
  */
 public abstract class GuiAction extends AbstractAction {
 
@@ -30,6 +26,10 @@ public abstract class GuiAction extends AbstractAction {
 
 
     /**
+     *
+     * Constructor loading the image and setting the tool tip mssage.
+     * It sets the keyboard shortcut of the action to that specified
+     *
      * @param name      image name
      * @param tooltip   tooltip message
      * @param key       {@link java.awt.event.KeyEvent} key
@@ -37,10 +37,16 @@ public abstract class GuiAction extends AbstractAction {
      */
     protected GuiAction(String name, String tooltip, int key, int modifiers) {
         this(name, tooltip);
-
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(key, modifiers));
     }
 
+    /**
+     *
+     * Constructor loading the image and setting the tooltip message.
+     * It does not provide a keyboard shortcut
+     * @param name image name
+     * @param tooltip tooltip message
+     */
     protected GuiAction(String name, String tooltip) {
         super(name);
         URL iconURL = this.getClass().getResource(PIPEConstants.IMAGE_PATH + name + ".png");
@@ -53,11 +59,14 @@ public abstract class GuiAction extends AbstractAction {
         }
     }
 
-    protected GuiAction(String name, String tooltip, String keystroke, boolean toggleable) {
-        this(name, tooltip, keystroke);
-        putValue(SELECTED, Boolean.FALSE);
-    }
-
+    /**
+     *
+     * Constructor loading the image and setting the tooltip message.
+     * It sets the short cut to the specified keystrol and the accelerator key
+     * @param name image name
+     * @param tooltip tooltip message
+     * @param keystroke shortcut for action
+     */
     protected GuiAction(String name, String tooltip, String keystroke) {
 
         this(name, tooltip);
@@ -66,17 +75,27 @@ public abstract class GuiAction extends AbstractAction {
         }
     }
 
-    // Set the UndoableEditListener.
+    /**
+     * Adds a listener to this action that is interested in undoable actions
+     * @param l
+     */
     public void addUndoableEditListener(UndoableEditListener l) {
         //TODO: Should ideally throw an exception if listener != null
         listener = l;
     }
 
-    // Remove the UndoableEditListener.
+    /**
+     * Removes the listener from this action
+     * @param l
+     */
     public void removeUndoableEditListener(UndoableEditListener l) {
         listener = null;
     }
 
+    /**
+     *
+     * @return true if the action is currently selected
+     */
     public boolean isSelected() {
         Boolean b = (Boolean) getValue(SELECTED);
 
@@ -84,6 +103,10 @@ public abstract class GuiAction extends AbstractAction {
     }
 
 
+    /**
+     *
+     * @param selected true or false for setting the action as selected and not selected accordingly
+     */
     public void setSelected(boolean selected) {
         Boolean b = (Boolean) getValue(SELECTED);
 
@@ -92,6 +115,12 @@ public abstract class GuiAction extends AbstractAction {
         }
     }
 
+    /**
+     *
+     * Notifies the lister that the following undo event has been created.
+     *
+     * @param edit
+     */
     protected void registerUndoEvent(UndoableEdit edit) {
         if (listener != null) {
             listener.undoableEditHappened(new UndoableEditEvent(this, edit));

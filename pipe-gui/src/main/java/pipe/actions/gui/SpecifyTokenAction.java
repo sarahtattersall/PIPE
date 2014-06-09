@@ -31,15 +31,33 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Action used to create, delete and edit tokens in the Petri net
+ */
 public class SpecifyTokenAction extends GuiAction {
+    /**
+     * Main PIPE application controller
+     */
     private final PipeApplicationController pipeApplicationController;
 
+    /**
+     * Main PIPE application view
+     */
     private final PipeApplicationView applicationView;
 
+    /**
+     * Pop up editor panel for the tokens
+     */
     private TokenEditorPanel tokenEditorPanel;
 
+    /**
+     * Pop up dialog
+     */
     private JDialog guiDialog;
 
+    /**
+     * Legacy action, I'm not sure what this is
+     */
     private ActionEvent forcedAction;
 
     public SpecifyTokenAction(PipeApplicationController pipeApplicationController,
@@ -63,11 +81,17 @@ public class SpecifyTokenAction extends GuiAction {
         }
     }
 
+    /**
+     * Creates a new token editor with the tokens from the Petri net
+     */
     public void buildTokenGuiClasses() {
         tokenEditorPanel = new TokenEditorPanel(pipeApplicationController.getActivePetriNetController());
         guiDialog = new TokenDialog("Tokens", true, tokenEditorPanel);
     }
 
+    /**
+     * Provides the set up for what the token editor panel will look like
+     */
     public void finishBuildingGui() {
         guiDialog.setSize(600, 200);
         guiDialog.setLocationRelativeTo(null);
@@ -97,6 +121,9 @@ public class SpecifyTokenAction extends GuiAction {
         }
     }
 
+    /**
+     * Legacy code
+     */
     private void forceContinue() {
         ((TokenDialog) guiDialog).actionPerformed(forcedAction);
         forcedAction = null;
@@ -111,15 +138,31 @@ public class SpecifyTokenAction extends GuiAction {
 
     public class TokenDialog<T extends PetriNetComponent> extends JDialog implements ActionListener {
 
+        /**
+         * Class logger
+         */
         private final Logger logger = Logger.getLogger(TokenDialog.class.getName());
 
+        /**
+         * Editor panel
+         */
         private TokenEditorPanel tokenEditorPanel;
 
+        /**
+         *
+         * @param title token dialog title
+         * @param modal
+         * @param tokenEditorPanel
+         */
         public TokenDialog(String title, boolean modal, TokenEditorPanel tokenEditorPanel) {
             super(applicationView, title, modal);
             this.tokenEditorPanel = tokenEditorPanel;
         }
 
+        /**
+         * Processes the changing of Petri net tokens
+         * @param e
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals("OK")) {
@@ -173,6 +216,10 @@ public class SpecifyTokenAction extends GuiAction {
             }
         }
 
+        /**
+         * Update the Petri net component from the table data item
+         * @param data
+         */
         private void updateFromTable(Iterable<TokenEditorPanel.Datum> data) {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();
             List<UndoableEdit> undoableEdits = new LinkedList<>();

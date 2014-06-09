@@ -13,12 +13,27 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
+/**
+ * Responsible for performing a save action on the Petri net.
+ *
+ * This save action will use the Petri nets underlying file if it exists, or perform a save as action
+ */
 public class SaveAction extends AbstractSaveAction {
 
+    /**
+     * Constructor
+     * @param pipeApplicationController PIPE main appliaction controller
+     * @param fileChooser save file dialog chooser
+     */
     public SaveAction(PipeApplicationController pipeApplicationController, FileDialog fileChooser) {
         super("Save", "Save", KeyEvent.VK_S, InputEvent.META_DOWN_MASK, pipeApplicationController, fileChooser);
     }
 
+    /**
+     * Tries to perform a save action, if the Petri net does not yet have an underlying file associated
+     * with it, a save as will be performed.
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (doSaveAs()) {
@@ -31,6 +46,11 @@ public class SaveAction extends AbstractSaveAction {
     }
 
 
+    /**
+     *
+     * @return true if the Petri net does not yet have an underlying file associated with it. This indicates that
+     * a save as should be performed.
+     */
     protected boolean doSaveAs() {
         PetriNet petriNet = pipeApplicationController.getActivePetriNetController().getPetriNet();
         SaveAsVisitor visitor = new SaveAsVisitor();
@@ -43,6 +63,9 @@ public class SaveAction extends AbstractSaveAction {
      */
     private static class FileNamer implements NormalNameVisitor, FileNameVisitor {
 
+        /**
+         * Petri net file
+         */
         private File file = new File("");
 
         /**
@@ -54,11 +77,19 @@ public class SaveAction extends AbstractSaveAction {
             return file;
         }
 
+        /**
+         * sets the file to the existing Petri net file
+         * @param name
+         */
         @Override
         public void visit(PetriNetFileName name) {
             file = name.getFile();
         }
 
+        /**
+         * Noop operation
+         * @param name
+         */
         @Override
         public void visit(NormalPetriNetName name){
             // No action needed
@@ -72,6 +103,9 @@ public class SaveAction extends AbstractSaveAction {
      */
     private static class SaveAsVisitor implements NormalNameVisitor, FileNameVisitor {
 
+        /**
+         * Determines if a save as should be performed
+         */
         private boolean saveAs = false;
 
         /**
@@ -86,6 +120,10 @@ public class SaveAction extends AbstractSaveAction {
             return saveAs;
         }
 
+        /**
+         * If the Petri net has an existing file then saveAs is set to false
+         * @param name
+         */
         @Override
         public void visit(PetriNetFileName name) {
             saveAs = false;

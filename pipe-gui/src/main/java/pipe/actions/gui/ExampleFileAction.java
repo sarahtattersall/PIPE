@@ -12,13 +12,31 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.zip.ZipEntry;
 
+/**
+ * Class responsible for loading the specified example file in the PIPE petri net example menu
+ */
 public class ExampleFileAction extends GuiAction {
+    /**
+     * File location of the example file
+     */
     private final File filename;
 
+    /**
+     * Parent of this action
+     */
     private final Frame parent;
 
+    /**
+     * PIPE main application controller
+     */
     private final PipeApplicationController applicationController;
 
+    /**
+     *
+     * @param file example PNML file
+     * @param parent parent of this frame
+     * @param applicationController PIPE main application controller
+     */
     public ExampleFileAction(File file, Frame parent, PipeApplicationController applicationController) {
         super(file.getName(), "Open example file \"" + file.getName() + "\"");
         filename = file;
@@ -27,6 +45,12 @@ public class ExampleFileAction extends GuiAction {
         putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(PIPEConstants.IMAGE_PATH + "Net.png")));
     }
 
+    /**
+     *
+     * @param entry example PNML file stored as a ZipEntry in a jar
+     * @param parent parent of this frame
+     * @param applicationController PIPE main application controller
+     */
     public ExampleFileAction(ZipEntry entry, Frame parent, PipeApplicationController applicationController) {
         super(entry.getName().substring(1 + entry.getName().indexOf(System.getProperty("file.separator"))),
                 "Open example file \"" + entry.getName() + "\"");
@@ -36,6 +60,10 @@ public class ExampleFileAction extends GuiAction {
         putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(PIPEConstants.IMAGE_PATH + "Net.png")));
     }
 
+    /**
+     * When performed this action creates a new tab from the specified example Petri net file
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         try {

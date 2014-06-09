@@ -10,16 +10,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Handles the combo box used to select the current token class in use.
+ * Handles the combo box user interactions for selecting tokens. This class is responsible for
+ * updating controllers & models of the selected token.
  */
 public class ChooseTokenClassAction extends GuiAction {
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(ChooseTokenClassAction.class.getName());
 
+    /**
+     * Application view
+     */
     private final PipeApplicationView pipeApplicationView;
 
+    /**
+     * Application controller, used to get the currently selected Petri net
+     */
     private final PipeApplicationController applicationController;
 
+    /**
+     * Constructor for the action
+     * @param pipeApplicationView overall application view
+     * @param applicationController overalll application controller
+     */
     public ChooseTokenClassAction(PipeApplicationView pipeApplicationView,
                                   PipeApplicationController applicationController) {
         super("chooseTokenClass", "Select current token");
@@ -27,6 +42,10 @@ public class ChooseTokenClassAction extends GuiAction {
         this.applicationController = applicationController;
     }
 
+    /**
+     * When a new token is selected this drop dow action selects the token in the controller
+     * @param evt
+     */
     @Override
     public void actionPerformed(ActionEvent evt) {
         String currentSelection = (String) pipeApplicationView.tokenClassComboBox.getSelectedItem();

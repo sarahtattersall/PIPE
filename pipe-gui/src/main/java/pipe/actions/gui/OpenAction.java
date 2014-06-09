@@ -11,19 +11,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
+/**
+ * Opens a PNML Petri net
+ */
 public class OpenAction extends GuiAction {
 
+    /**
+     * Main PIPE application controller
+     */
     private final PipeApplicationController applicationController;
 
 
+    /**
+     * File dialog for selecting a Petri net to load
+     */
     private final FileDialog fileChooser;
 
+    /**
+     * Constructor
+     * @param applicationController Main PIPE application controller
+     * @param fileChooser file dialog responsible for choosing files to load
+     */
     public OpenAction(PipeApplicationController applicationController, FileDialog fileChooser) {
         super("Open", "Open", KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         this.applicationController = applicationController;
         this.fileChooser = fileChooser;
     }
 
+    /**
+     * When this action is performed it shows the file dialog and processes the file selected for loading
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         fileChooser.setVisible(true);

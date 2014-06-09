@@ -6,14 +6,35 @@ import pipe.controllers.application.PipeApplicationController;
 
 import java.awt.event.ActionEvent;
 
+/**
+ * Action responsible for randomly firing a single enabled transition
+ */
 public class RandomAnimateAction extends AnimateAction {
 
+    /**
+     * PIPE main application controller
+     */
     private final PipeApplicationController applicationController;
 
+    /**
+     * Step forward action button
+     */
     private final StepForwardAction stepForwardAction;
 
+    /**
+     * Step backward action button
+     */
     private final StepBackwardAction stepBackwardAction;
 
+    /**
+     *
+     * @param name image name
+     * @param tooltip tooltip message
+     * @param keystroke keyboard short cut
+     * @param applicationController main application controller
+     * @param stepForwardAction
+     * @param stepBackwardAction
+     */
     public RandomAnimateAction(String name, String tooltip, String keystroke,
                                PipeApplicationController applicationController, StepForwardAction stepForwardAction,
                                StepBackwardAction stepBackwardAction) {
@@ -23,6 +44,12 @@ public class RandomAnimateAction extends AnimateAction {
         this.stepBackwardAction = stepBackwardAction;
     }
 
+    /**
+     * Randomly fires one transition in Petri net that is currently in animation mode.
+     *
+     * Enables the step forwards and backwards buttons accordingly.
+     * @param event
+     */
     @Override
     public void actionPerformed(ActionEvent event) {
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
