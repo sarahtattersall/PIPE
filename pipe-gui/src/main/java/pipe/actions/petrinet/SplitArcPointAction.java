@@ -17,17 +17,32 @@ import java.awt.event.ActionEvent;
  */
 public class SplitArcPointAction extends javax.swing.AbstractAction {
 
+    /**
+     * Arc point
+     */
     private final ArcPoint arcPoint;
 
+    /**
+     * Arc controller to add the arc point to
+     */
     private final ArcController<? extends Connectable, ? extends Connectable> arcController;
 
 
+    /**
+     * Constructor
+     * @param arcPoint new arc point
+     * @param arcController arc controller to add the point to
+     */
     public SplitArcPointAction(ArcPoint arcPoint,
                                ArcController<? extends Connectable, ? extends Connectable> arcController) {
         this.arcPoint = arcPoint;
         this.arcController = arcController;
     }
 
+    /**
+     * Adds the arc point as an intermediate point along the arc
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         arcController.splitArcPoint(arcPoint);

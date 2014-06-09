@@ -10,11 +10,18 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 
+/**
+ * Action used to toggle the borderof an annotation
+ */
 public class EditAnnotationBorderAction extends AbstractAction {
 
 //    private final Annotation annotation;
 
 
+    /**
+     * Constructor
+     * @param annotation annotation to toggle border
+     */
     public EditAnnotationBorderAction(Annotation annotation) {
         //this.annotation = annotation;
     }

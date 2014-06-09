@@ -9,20 +9,42 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 
+/**
+ * Stores the actions for modifying a Petri net
+ */
 public class PetriNetEditorManager implements ActionManager {
 
 
-
+    /**
+     * Creates a new Petri net
+     */
     private final GuiAction newPetriNetAction;
 
+    /**
+     * Loads a Petri net from an XML file
+     */
     private final GuiAction openAction;
 
+    /**
+     * Saves a Petri net to an XML file
+     */
     private final GuiAction saveAction;
 
+    /**
+     * Saves a Petri net to a specified XML file
+     */
     private final GuiAction saveAsAction;
 
+    /**
+     * Closes the Petri net tab
+     */
     private GuiAction closeAction;
 
+    /**
+     * Constructor
+     * @param view main PIPE application view
+     * @param applicationController main PIPE application controller
+     */
     public PetriNetEditorManager(PipeApplicationView view, PipeApplicationController applicationController) {
         newPetriNetAction = new NewPetriNetAction(applicationController);
         closeAction = new CloseWindowAction(applicationController);
@@ -47,6 +69,10 @@ public class PetriNetEditorManager implements ActionManager {
         openAction = new OpenAction(applicationController, loadFileDialog);
     }
 
+    /**
+     *
+     * @return actions housed for creating and saving Petri nets
+     */
     @Override
     public Iterable<GuiAction> getActions() {
         return Arrays.asList(newPetriNetAction, openAction, saveAction, saveAsAction,
@@ -54,6 +80,9 @@ public class PetriNetEditorManager implements ActionManager {
 
     }
 
+    /**
+     * Enable actions for swapping into edit mode
+     */
     @Override
     public void enableActions() {
         saveAction.setEnabled(true);
@@ -61,6 +90,9 @@ public class PetriNetEditorManager implements ActionManager {
 
     }
 
+    /**
+     * Disable actions for swapping into animation mode
+     */
     @Override
     public void disableActions() {
         saveAction.setEnabled(false);

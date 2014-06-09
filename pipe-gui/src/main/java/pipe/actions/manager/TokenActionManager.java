@@ -12,15 +12,34 @@ import pipe.views.PipeApplicationView;
 import javax.swing.event.UndoableEditListener;
 import java.util.Arrays;
 
+/**
+ * Houses the actions that are responsible for editing tokens
+ */
 public class TokenActionManager implements ActionManager {
 
 
+    /**
+     * Pop up for editing tokens
+     */
     public final SpecifyTokenAction specifyTokenClasses;
 
+    /**
+     * Action to add a token to a place
+     */
     public CreateAction tokenAction;
 
+    /**
+     * Action to delete a token from a place
+     */
     public CreateAction deleteTokenAction;
 
+    /**
+     * Constructor
+     * @param undoListener undo listener
+     * @param applicationModel PIPE application model
+     * @param applicationController PIPE application controller
+     * @param applicationView PIPE application view
+     */
     public TokenActionManager(UndoableEditListener undoListener, PipeApplicationModel applicationModel,
                               PipeApplicationController applicationController, PipeApplicationView applicationView) {
         tokenAction = new AddTokenAction(applicationModel);
@@ -31,11 +50,18 @@ public class TokenActionManager implements ActionManager {
         specifyTokenClasses.addUndoableEditListener(undoListener);
     }
 
+    /**
+     *
+     * @return all token actions housed
+     */
     @Override
     public Iterable<GuiAction> getActions() {
         return Arrays.asList(tokenAction, deleteTokenAction, specifyTokenClasses);
     }
 
+    /**
+     * Enables the actions that set the number of tokens in a place
+     */
     @Override
     public void enableActions() {
         tokenAction.setEnabled(true);
@@ -43,6 +69,9 @@ public class TokenActionManager implements ActionManager {
 
     }
 
+    /**
+     * Disables the actions that set the number of tokens in a place
+     */
     @Override
     public void disableActions() {
         tokenAction.setEnabled(false);

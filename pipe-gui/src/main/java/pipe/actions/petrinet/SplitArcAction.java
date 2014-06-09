@@ -19,16 +19,32 @@ import java.awt.geom.Point2D;
 public class SplitArcAction
         extends javax.swing.AbstractAction {
 
+    /**
+     * Arc controller
+     */
     private final ArcController<? extends Connectable, ? extends Connectable> arcController;
+
+    /**
+     * Point at which to split the arc
+     */
     private final Point2D.Double point;
 
 
+    /**
+     *
+     * @param arcController arc controller
+     * @param mousePoint point at which to split the arc
+     */
     public SplitArcAction(ArcController<? extends Connectable, ? extends Connectable> arcController, Point mousePoint) {
         this.arcController = arcController;
         point = new Point2D.Double(mousePoint.getX(), mousePoint.getY());
     }
 
 
+    /**
+     * Adds a new arc path point at the specified location
+     * @param arg0
+     */
     @Override
     public void actionPerformed(ActionEvent arg0) {
         arcController.addPoint(point);
