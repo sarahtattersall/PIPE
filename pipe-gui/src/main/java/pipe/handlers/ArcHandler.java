@@ -24,6 +24,13 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         extends PetriNetObjectHandler<Arc<S, T>> {
 
 
+    /**
+     * Constructor
+     * @param contentPane
+     * @param component  underlying Petri net component
+     * @param controller controller of the Petri net the arc belongs to
+     * @param applicationModel main PIPE application model
+     */
     public ArcHandler(Container contentPane, Arc<S, T> component, PetriNetController controller,  PipeApplicationModel applicationModel) {
         super(contentPane, component, controller, applicationModel);
         enablePopup = true;
@@ -63,16 +70,27 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
     }
 
 
+    /**
+     * Noop action
+     * @param e
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         //Do nothing on mouse drag
     }
 
+    /**
+     * Noop action
+     * @param e
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         //Do nothing on mouse wheel move
     }
 
+    /**
+     * Shows the arc editor menu
+     */
     public void showEditor() {
         // Build interface
         Window owner = SwingUtilities.getWindowAncestor(contentPane);

@@ -1,11 +1,11 @@
 package pipe.handlers;
 
 import pipe.actions.gui.CreateAction;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.actions.gui.PipeApplicationModel;
-import pipe.handlers.mouse.MouseUtilities;
 
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -17,28 +17,46 @@ import java.awt.event.MouseWheelEvent;
  * It works out what action is selected (e.g. create new place) and makes this happen.
  */
 public class PetriNetMouseHandler extends MouseInputAdapter {
+    /**
+     * Main PIPE appliaction model
+     */
     private final PipeApplicationModel applicationModel;
 
+    /**
+     * Petri net tab
+     */
     private final PetriNetTab petriNetTab;
 
-    private final MouseUtilities mouseUtilities;
+    /**
+     * Starting location of the petri net components drag
+     */
+    private Point dragStart = new Point(0,0);
 
-    private Point dragStart;
-
+    /**
+     * Main PIPE application controller
+     */
     private PetriNetController petriNetController;
 
-    public PetriNetMouseHandler(PipeApplicationModel applicationModel, MouseUtilities mouseUtilities,
-                                PetriNetController controller, PetriNetTab petriNetTab) {
+    /**
+     *
+     * @param applicationModel main PIPE application model
+     * @param controller main PIPE application controller
+     * @param petriNetTab Petri net tab
+     */
+    public PetriNetMouseHandler(PipeApplicationModel applicationModel, PetriNetController controller, PetriNetTab petriNetTab) {
         super();
         this.applicationModel = applicationModel;
         this.petriNetTab = petriNetTab;
         this.petriNetController = controller;
-        this.mouseUtilities = mouseUtilities;
     }
 
+    /**
+     * Performs the corresponding selected toolbar action on the component
+     * @param event
+     */
     @Override
     public void mousePressed(MouseEvent event) {
-        if (mouseUtilities.isLeftMouse(event)) {
+        if (SwingUtilities.isLeftMouseButton(event)) {
             doAction(event);
         }
     }
@@ -57,21 +75,37 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
         }
     }
 
+    /**
+     * Changes the cursor to a cross hair
+     * @param e
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         petriNetTab.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     }
 
+    /**
+     * Noop
+     * @param e
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         // No action needed
     }
 
+    /**
+     * Sets the starting drag point
+     * @param e
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         petriNetTab.drag(dragStart, e.getPoint());
     }
 
+    /**
+     * Performs the movement action of the toolbar action selected on the component
+     * @param event
+     */
     @Override
     public void mouseMoved(MouseEvent event) {
         doAction(event);

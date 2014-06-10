@@ -13,15 +13,30 @@ import java.awt.event.MouseEvent;
  */
 public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdapter {
 
+    /**
+     * Underlying component
+     */
     private final Transition transition;
 
+    /**
+     * Petri net controller the transition belongs in
+     */
     private final PetriNetController petriNetController;
 
+    /**
+     *
+     * @param transition transition model
+     * @param petriNetController Petri net controller for the Petri net the transition belongs in
+     */
     public TransitionAnimationHandler(Transition transition, PetriNetController petriNetController) {
         this.transition = transition;
         this.petriNetController = petriNetController;
     }
 
+    /**
+     * When clicked this fires the transition if it is enabled in animation mode
+     * @param e
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
         if (petriNetController.isInAnimationMode() && SwingUtilities.isLeftMouseButton(e) && transition.isEnabled()) {

@@ -20,12 +20,23 @@ import java.awt.event.MouseWheelEvent;
 public class TransitionHandler extends ConnectableHandler<Transition> {
 
 
-    public TransitionHandler(Container contentpane, Transition obj, PetriNetController controller,
+    /**
+     * Constructor
+     * @param contentpane parent pane of the transition view
+     * @param transition underlying transition model
+     * @param controller Petri net controller for the Petri net the transition is housed in
+     * @param applicationModel main PIPE application model
+     */
+    public TransitionHandler(Container contentpane, Transition transition, PetriNetController controller,
                              PipeApplicationModel applicationModel) {
-        super(contentpane, obj, controller, applicationModel);
+        super(contentpane, transition, controller, applicationModel);
     }
 
 
+    /**
+     * Noop action
+     * @param e
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         //No action needed
@@ -53,6 +64,9 @@ public class TransitionHandler extends ConnectableHandler<Transition> {
         return popup;
     }
 
+    /**
+     * Displays the editor dialog for the transition
+     */
     public void showEditor() {
         Window window = SwingUtilities.getWindowAncestor(contentPane);
         EscapableDialog guiDialog = new EscapableDialog(window, "PIPE", true);

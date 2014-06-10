@@ -22,21 +22,48 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
     // justSelected: set to true on press, and false on release;
     private static boolean justSelected = false;
 
+    /**
+     * Container of the component
+     */
     protected final Container contentPane;
 
+    /**
+     * Controller for the Petri net the component is contained in
+     */
     protected final PetriNetController petriNetController;
 
+    /**
+     * Main PIPE application model
+     */
     protected final PipeApplicationModel applicationModel;
 
+    /**
+     * Petri net component
+     */
     protected final T component;
 
+    /**
+     * Drag manager for the Petri ent
+     */
     protected final DragManager dragManager;
 
+    /**
+     * true if dragging is taking place
+     */
     protected boolean isDragging = false;
 
+    /**
+     * true if pop ups are enabled
+     */
     protected boolean enablePopup = false;
 
-    // constructor passing in all required objects
+    /**
+     * Constructor
+     * @param contentPane parent pane of the view of the component
+     * @param component Petri net component
+     * @param controller Petri net controller for the Petri net the component is contained in
+     * @param applicationModel main PIPE application model
+     */
     PetriNetObjectHandler(Container contentPane, T component, PetriNetController controller,
                           PipeApplicationModel applicationModel) {
         this.contentPane = contentPane;
@@ -46,6 +73,11 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
         dragManager = petriNetController.getDragManager();
     }
 
+    /**
+     * When the mouse is pressed on a component if editions and pop ups
+     * are allowed then the pop up menu appears
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         if (applicationModel.isEditionAllowed() && enablePopup) {

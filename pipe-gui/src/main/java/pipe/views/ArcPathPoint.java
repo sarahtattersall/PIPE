@@ -168,7 +168,7 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     @Override
     public String getName() {
-        return this.getArcPath().getArc().getName() + " - Point " + this.getIndex();
+        return this.getArcPath().getArc().getModel().getName() + " - Point " + this.getIndex();
     }
 
     public int getIndex() {

@@ -19,11 +19,25 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 
+/**
+ * Arc path point handler
+ */
 public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
 
+    /**
+     * Arc controller that the path point belongs to
+     */
     private final ArcController<?, ?> arcController;
 
+    /**
+     *
+     * @param contentpane
+     * @param arcPathPoint arc path point
+     * @param controller Petri net controller the arc point belongs in
+     * @param arcController arc controller the path point belongs to
+     * @param applicationModel main PIPE application model
+     */
     public ArcPathPointHandler(Container contentpane, ArcPathPoint arcPathPoint, PetriNetController controller,
                                ArcController<?, ?> arcController,  PipeApplicationModel applicationModel) {
         super(contentpane, arcPathPoint.getModel(), controller, applicationModel);
@@ -65,6 +79,10 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
         return popup;
     }
 
+    /**
+     * When the mouse is pressed on the arc point select it
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         ((ArcPathPoint) e.getComponent()).setVisibilityLock(true);
@@ -72,6 +90,10 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
         super.mousePressed(e);
     }
 
+    /**
+     * When the mouse is released on the arc point, deselect it
+     * @param e
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         ((ArcPathPoint) e.getComponent()).setVisibilityLock(false);
@@ -79,6 +101,10 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
         super.mouseReleased(e);
     }
 
+    /**
+     * When the mouse is dragged on an arc point, move it
+     * @param e
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         if (component.isDraggable()) {
@@ -86,6 +112,10 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
         }
     }
 
+    /**
+     * Noop action
+     * @param e
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         // No action

@@ -19,9 +19,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 
+/**
+ * Mouse handler for an annotation
+ */
 public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotation> {
 
 
+    /**
+     * Constructor
+     * @param contentpane
+     * @param note
+     * @param controller
+     * @param applicationModel
+     */
     public AnnotationNoteHandler(Container contentpane, Annotation note, PetriNetController controller,  PipeApplicationModel applicationModel) {
         super(contentpane, note, controller, applicationModel);
         enablePopup = true;
@@ -65,15 +75,11 @@ public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotatio
 
         return popup;
     }
-    //
-    //    @Override
-    //    public void mouseClicked(MouseEvent e) {
-    //        if (!e.getComponent().isEnabled() && (SwingUtilities.isRightMouseButton(e))) {
-    //            viewComponent.enableEditMode();
-    //        }
-    //    }
 
 
+    /**
+     * Shows the editor when right clicking on an annotation
+     */
     private void showEditor() {
         // Build interface
         Window window = SwingUtilities.getWindowAncestor(contentPane);

@@ -18,8 +18,10 @@ import java.io.Serializable;
  */
 public abstract class ConnectableView<T extends Connectable> extends AbstractPetriNetViewComponent<T>
         implements Cloneable, Serializable {
+    /**
+     * Name label for the connectable item
+     */
     protected NameLabel nameLabel;
-
 
     /**
      * Shape of the place on the Petri net
@@ -75,6 +77,9 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
     }
 
+    /**
+     * Changes the displayed bounds of the object relative to its x,y width and height
+     */
     protected final void updateBounds() {
         setBounds(model.getX(), model.getY(), model.getWidth() + getComponentDrawOffset(), model.getHeight() + getComponentDrawOffset());
 
@@ -85,11 +90,9 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         }
     }
 
-    @Override
-    public final String getName() {
-        return model.getName();
-    }
-
+    /**
+     * Performs a connectable specific delete by removing the name label from the parent
+     */
     @Override
     public final void componentSpecificDelete() {
         if (getParent() != null) {
@@ -97,10 +100,14 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
         }
     }
 
+    /**
+     * Adds the name label to the container
+     * @param container
+     */
     protected final void addLabelToContainer(Container container) {
         container.add(nameLabel);
         nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
-        LabelHandler labelHandler = new LabelHandler(nameLabel, this);
+        LabelHandler<T> labelHandler = new LabelHandler<>(nameLabel, this);
         nameLabel.addMouseListener(labelHandler);
         nameLabel.addMouseMotionListener(labelHandler);
         nameLabel.addMouseWheelListener(labelHandler);

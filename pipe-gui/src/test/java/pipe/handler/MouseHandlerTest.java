@@ -47,7 +47,7 @@ public class MouseHandlerTest {
 
     @Before
     public void setup() {
-        handler = new PetriNetMouseHandler(mockModel, mockUtilities, mockController, mockTab);
+        handler = new PetriNetMouseHandler(mockModel, mockController, mockTab);
 
         when(mockEvent.getPoint()).thenReturn(new Point(0, 0));
         when(mockUtilities.isLeftMouse(mockEvent)).thenReturn(true);

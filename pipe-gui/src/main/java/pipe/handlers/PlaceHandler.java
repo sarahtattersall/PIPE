@@ -21,10 +21,24 @@ public class PlaceHandler
         extends ConnectableHandler<Place> {
 
 
+    /**
+     * Constructor
+     * @param contentpane parent pane of the view
+     * @param place place model
+     * @param controller Petri net controller of the Petri net the place belongs to
+     * @param applicationModel main PIPE application model
+     */
     public PlaceHandler(Container contentpane, Place place, PetriNetController controller,  PipeApplicationModel applicationModel) {
         super(contentpane, place, controller, applicationModel);
     }
 
+    /**
+     * Creates the pop up meny for a place containing the options
+     * Edit place
+     *
+     * @param e event
+     * @return the pop up menu for the place
+     */
     @Override
     protected JPopupMenu getPopup(MouseEvent e) {
         int index = 0;
@@ -44,6 +58,9 @@ public class PlaceHandler
         return popup;
     }
 
+    /**
+     * Shows the Place editor dialog where the place components can be edited
+     */
     public void showEditor() {
         // Build interface
         Window window = SwingUtilities.getWindowAncestor(contentPane);

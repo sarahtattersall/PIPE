@@ -16,12 +16,23 @@ public class ConnectableHandler<T extends Connectable>
         extends PetriNetObjectHandler<T> {
 
 
-    // constructor passing in all required objects
+    /**
+     * Constructor
+     * @param contentpane
+     * @param obj underlying Petri net component
+     * @param controller Petri net controller the component belongs to
+     * @param applicationModel main PIPE application model
+     */
     ConnectableHandler(Container contentpane, T obj, PetriNetController controller, PipeApplicationModel applicationModel) {
         super(contentpane, obj, controller, applicationModel);
         enablePopup = true;
     }
 
+    /**
+     * When the mosue is pressed on the Petri net component show the options menu
+     * or select it
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);

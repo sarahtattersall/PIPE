@@ -8,7 +8,6 @@ import pipe.controllers.SelectionManager;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.*;
 import pipe.handlers.PetriNetMouseHandler;
-import pipe.handlers.mouse.SwingMouseUtilities;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
@@ -462,7 +461,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         petriNetTab.setMouseHandler(
-                new PetriNetMouseHandler(applicationModel, new SwingMouseUtilities(), petriNetController, petriNetTab));
+                new PetriNetMouseHandler(applicationModel, petriNetController, petriNetTab));
         petriNetTab.updatePreferredSize();
 
         addNewTab(petriNet.getNameValue(), petriNetTab);

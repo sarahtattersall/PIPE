@@ -2,56 +2,75 @@ package pipe.handlers;
 
 import pipe.views.ConnectableView;
 import pipe.views.NameLabel;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 
-public class LabelHandler 
-        extends javax.swing.event.MouseInputAdapter {
-        //implements java.awt.event.MouseWheelListener { NOU-PERE, i rename aquesta classe a NameLabelHand
-   
-   private final ConnectableView obj;
-   
-   private final NameLabel nl;
-   
-   private Point dragInit = new Point();
-   
-   
-   public LabelHandler(NameLabel _nl, ConnectableView obj) {
-      this.obj = obj;
-      nl = _nl;
-   }
-   
-   
-   @Override
-   public void mouseClicked(MouseEvent e) {
-      obj.dispatchEvent(e);
-   }
-   
-   
-   @Override
-   public void mousePressed(MouseEvent e) {
-      dragInit = e.getPoint();
-      dragInit = javax.swing.SwingUtilities.convertPoint(nl, dragInit, obj);
-   }
-  
+/**
+ * Handler for connectable views name label
+ */
+public class LabelHandler<T extends Connectable> extends javax.swing.event.MouseInputAdapter {
 
-   @Override
-   public void mouseDragged(MouseEvent e){
-      // 
-      if (!SwingUtilities.isLeftMouseButton(e)){
-         return;
-      }
 
-       dragInit = SwingUtilities.convertPoint(nl, e.getPoint(), obj);
-   }
-   
-   @Override
-   public void mouseWheelMoved(MouseWheelEvent e) {
-      obj.dispatchEvent(e);
-   }
-   
+    /**
+     * Connectable the name label refers to
+     */
+    private final ConnectableView<T> connectable;
+
+    /**
+     * Name label for the corresponding connectable
+     */
+    private final NameLabel nameLabel;
+
+
+    /**
+     * Constructor
+     * @param nameLabel name label for the connectable
+     * @param connectable connectable with a name label
+     */
+    public LabelHandler(NameLabel nameLabel, ConnectableView<T> connectable) {
+        this.connectable = connectable;
+        this.nameLabel = nameLabel;
+    }
+
+
+    /**
+     * When clicking on the name label the event is dispatched to its connectable view
+     * @param e
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        connectable.dispatchEvent(e);
+    }
+
+
+    /**
+     * Noop
+     * @param e
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //Noop
+    }
+
+    /**
+     * When the mouse wheel is moved the event is dispatched to its connectable
+     * @param e
+     */
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        connectable.dispatchEvent(e);
+    }
+
+    /**
+     * Noop
+     * @param e
+     */
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        //Noop
+    }
+
 }
