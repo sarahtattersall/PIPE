@@ -14,21 +14,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author corveau
+ * Adds a Petri net component to the Petri net
  */
 public class AddPetriNetObject extends AbstractUndoableEdit {
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(AddPetriNetObject.class.getName());
 
+    /**
+     * New petri net component
+     */
     private final PetriNetComponent component;
 
+    /**
+     * Petri net that houses the component
+     */
     private final PetriNet petriNet;
 
 
     /**
      * Creates a new instance of placeWeightEdit
      *
-     * @param component
-     * @param petriNet
+     * @param component new Petri net component
+     * @param petriNet petri net that houses the component
      */
     public AddPetriNetObject(PetriNetComponent component, PetriNet petriNet) {
         this.component = component;
@@ -36,33 +45,33 @@ public class AddPetriNetObject extends AbstractUndoableEdit {
     }
 
 
-    /** */
+    /**
+     * Removes the component from the Petri net
+     */
     @Override
     public final void undo() {
         super.undo();
         try {
             petriNet.remove(component);
         } catch (PetriNetComponentException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.toString());
         }
     }
 
 
-    /** */
+    /**
+     * Adds the component back to the Petri net
+     */
     @Override
     public final void redo() {
         super.redo();
         try {
             petriNet.add(component);
         } catch (PetriNetComponentException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.toString());
         }
     }
 
-
-    public final String toString() {
-        return super.toString() + " \"" + component + "\"";
-    }
 
     @Override
     public boolean equals(Object o) {

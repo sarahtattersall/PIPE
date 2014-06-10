@@ -9,14 +9,26 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * HistoryItem in charge of whether a {@link Transition} is timed or not
+ * Undo item for changing whether a transition is timed or immediate
  */
 public class TransitionTiming extends AbstractUndoableEdit {
 
+    /**
+     * Underlying transition model
+     */
     private final Transition transition;
 
+    /**
+     * True if timed
+     */
     private final boolean timedValue;
 
+    /**
+     * Constructor
+     *
+     * @param transition underlying transition model
+     * @param timedValue true if timed
+     */
     public TransitionTiming(final Transition transition, final boolean timedValue) {
 
         this.transition = transition;
@@ -51,14 +63,18 @@ public class TransitionTiming extends AbstractUndoableEdit {
         return true;
     }
 
-    /** */
+    /**
+     * Toggles the transition to its previous timed value
+     */
     @Override
     public void undo() {
         super.undo();
         transition.setTimed(!timedValue);
     }
 
-    /** */
+    /**
+     * Toggles the transition to its new timed value
+     */
     @Override
     public void redo() {
         super.redo();

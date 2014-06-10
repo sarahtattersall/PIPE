@@ -4,6 +4,9 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import java.util.List;
 
+/**
+ * History manager for stepping through animation actions when the Petri net is in animation mode
+ */
 public interface AnimationHistory {
     /**
      * Cannot step forward if head of the list
@@ -18,10 +21,13 @@ public interface AnimationHistory {
     boolean isStepBackAllowed();
 
     /**
-     * Steps forward
+     * Steps forward, updating the current item
      */
     void stepForward();
 
+    /**
+     * Steps backward, updating the current item
+     */
     void stepBackwards();
 
     /**
@@ -29,14 +35,36 @@ public interface AnimationHistory {
      */
     void clearStepsForward();
 
+    /**
+     *
+     * @return a list of transitions fired
+     */
     List<Transition> getFiringSequence();
 
+    /**
+     *
+     * @return current position in the firing sequence
+     */
     int getCurrentPosition();
 
+    /**
+     *
+     * Register that this transition has been fired and create a history item for it
+     * @param transition
+     */
     void addHistoryItem(Transition transition);
 
+    /**
+     *
+     * @return transition at current position in the firing sequence
+     */
     Transition getCurrentTransition();
 
+    /**
+     *
+     * @param index
+     * @return transition at this index in the firing sequence
+     */
     Transition getTransition(int index);
 
     void clear();

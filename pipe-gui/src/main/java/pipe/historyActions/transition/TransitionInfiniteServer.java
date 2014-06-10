@@ -13,9 +13,33 @@ import javax.swing.undo.AbstractUndoableEdit;
  */
 public class TransitionInfiniteServer extends AbstractUndoableEdit {
 
+    /**
+     * Underlying transition model
+     */
     private final Transition transition;
 
+    /**
+     * true if infinite server
+     */
     private final boolean value;
+
+    /**
+     * Constructor
+     * @param transition underlying transition model
+     * @param value true if infinite server
+     */
+    public TransitionInfiniteServer(final Transition transition, final boolean value) {
+
+        this.transition = transition;
+        this.value = value;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = transition != null ? transition.hashCode() : 0;
+        result = 31 * result + (value ? 1 : 0);
+        return result;
+    }
 
     @Override
     public boolean equals(final Object o) {
@@ -38,20 +62,9 @@ public class TransitionInfiniteServer extends AbstractUndoableEdit {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = transition != null ? transition.hashCode() : 0;
-        result = 31 * result + (value ? 1 : 0);
-        return result;
-    }
-
-    public TransitionInfiniteServer(final Transition transition, final boolean value) {
-
-        this.transition = transition;
-        this.value = value;
-    }
-
-    /** */
+    /**
+     * Toggles the transitions server semantics to the previous value
+     */
     @Override
     public void undo() {
         super.undo();
@@ -59,7 +72,9 @@ public class TransitionInfiniteServer extends AbstractUndoableEdit {
     }
 
 
-    /** */
+    /**
+     * Toggles the transitions server semantics to the new value
+     */
     @Override
     public void redo() {
         super.redo();

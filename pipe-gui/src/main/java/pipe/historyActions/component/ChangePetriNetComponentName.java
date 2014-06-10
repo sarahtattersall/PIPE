@@ -9,17 +9,32 @@ import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * @author corveau
+ * Undo/Redo action for changing a Petri net components name/id
  */
 public final class ChangePetriNetComponentName extends AbstractUndoableEdit {
 
+    /**
+     * Old name
+     */
     private final String oldName;
 
+    /**
+     * name name
+     */
     private final String newName;
 
+    /**
+     * Petri net component
+     */
     private final PetriNetComponent component;
 
 
+    /**
+     *
+     * @param component component whose name will change
+     * @param oldName old component name
+     * @param newName new component name
+     */
     public ChangePetriNetComponentName(PetriNetComponent component, String oldName, String newName) {
         this.component = component;
         this.oldName = oldName;
@@ -58,7 +73,9 @@ public final class ChangePetriNetComponentName extends AbstractUndoableEdit {
         return true;
     }
 
-    /** */
+    /**
+     *  Sets the component id to the old name
+     */
     @Override
     public void undo() {
         super.undo();
@@ -66,7 +83,9 @@ public final class ChangePetriNetComponentName extends AbstractUndoableEdit {
     }
 
 
-    /** */
+    /**
+     * Sets the component id to the new name
+     */
     @Override
     public void redo() {
         super.redo();

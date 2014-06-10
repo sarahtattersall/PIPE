@@ -30,18 +30,30 @@ public class SetRateParameter extends AbstractUndoableEdit {
      */
     private final Rate newRate;
 
+    /**
+     * Constructor
+     * @param transition underlying transition model
+     * @param oldRate old transition rate
+     * @param newRate new transition rate
+     */
     public SetRateParameter(Transition transition, Rate oldRate, Rate newRate) {
         this.transition = transition;
         this.oldRate = oldRate;
         this.newRate = newRate;
     }
 
+    /**
+     * Set the transition rate to the old rate
+     */
     @Override
     public void undo() {
         super.undo();
         transition.setRate(oldRate);
     }
 
+    /**
+     * Set hte transition rate to the new rate
+     */
     @Override
     public void redo() {
         super.redo();

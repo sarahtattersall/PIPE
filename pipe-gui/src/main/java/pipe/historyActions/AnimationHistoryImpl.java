@@ -26,6 +26,7 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
 
     /**
      * Cannot step forward if head of the list
+     *
      * @return true if stepping forward within the animation is allowed, that is if there are transition firings to redo
      */
     @Override
@@ -36,7 +37,8 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
 
     /**
      * Can step back if currentPosition points to any transitions
-     * @return  true if stepping backward within the animation is allowed, that is if there are transition firings to undo
+     *
+     * @return true if stepping backward within the animation is allowed, that is if there are transition firings to undo
      */
     @Override
     public boolean isStepBackAllowed() {
@@ -44,7 +46,7 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
     }
 
     /**
-     * Steps forward
+     * Steps forward firing the transition associated with the latest action
      */
     @Override
     public void stepForward() {
@@ -55,6 +57,9 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
     }
 
 
+    /**
+     * Steps backwards updating the current transition highlighted in the list
+     */
     @Override
     public void stepBackwards() {
         if (isStepBackAllowed()) {
@@ -75,16 +80,28 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
         }
     }
 
+    /**
+     *
+     * @return list of transitions in the firing sequence
+     */
     @Override
     public List<Transition> getFiringSequence() {
         return firingSequence;
     }
 
+    /**
+     *
+     * @return current position in the firing sequence
+     */
     @Override
     public int getCurrentPosition() {
         return currentPosition;
     }
 
+    /**
+     * Add a transition to the head of the firing sequence
+     * @param transition
+     */
     @Override
     public void addHistoryItem(Transition transition) {
         firingSequence.add(transition);
@@ -92,6 +109,10 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
         flagChanged();
     }
 
+    /**
+     *
+     * @return transition at current position in the firing sequence
+     */
     @Override
     public Transition getCurrentTransition() {
         if (currentPosition >= 0) {
@@ -100,6 +121,11 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
         throw new RuntimeException("No transitions in history");
     }
 
+    /**
+     *
+     * @param index
+     * @return transition at the given index in the firing sequence
+     */
     @Override
     public Transition getTransition(int index) {
         if (index <= firingSequence.size()) {
@@ -108,6 +134,9 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
         throw new RuntimeException("Index is greater than number of transitions stored");
     }
 
+    /**
+     * Clears the firing sequence
+     */
     @Override
     public void clear() {
         currentPosition = -1;

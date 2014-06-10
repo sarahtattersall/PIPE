@@ -14,13 +14,27 @@ import javax.swing.undo.AbstractUndoableEdit;
  */
 public final class ChangeAnnotationText extends AbstractUndoableEdit {
 
-
+    /**
+     * Underlying annotation model
+     */
     private final Annotation annotation;
 
+    /**
+     * Old annotation text
+     */
     private final String oldText;
 
+    /**
+     * new annotation text
+     */
     private final String newText;
 
+    /**
+     * Constructor
+     * @param annotation underlying model
+     * @param oldText old annotaton text
+     * @param newText new annotation text
+     */
     public ChangeAnnotationText(Annotation annotation, String oldText, String newText) {
 
         this.annotation = annotation;

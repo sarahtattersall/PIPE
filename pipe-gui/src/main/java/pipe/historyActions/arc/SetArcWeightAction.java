@@ -15,11 +15,33 @@ import javax.swing.undo.AbstractUndoableEdit;
  */
 public class SetArcWeightAction<S extends Connectable, T extends Connectable> extends AbstractUndoableEdit {
 
+    /**
+     * Arc model
+     */
     private final Arc<S,T> arc;
+
+    /**
+     * Token id for the weight
+     */
     private final String token;
+
+    /**
+     * New functional weight for the specified token id
+     */
     private final String newWeight;
+
+    /**
+     * Old functional weight for the specfied token id
+     */
     private final String oldWeight;
 
+    /**
+     *
+     * @param arc model whose weight has changed
+     * @param token token id for the weight of the arc
+     * @param oldWeight old arc functional weight for the token id
+     * @param newWeight new arc functional weight for the token id
+     */
     public SetArcWeightAction(Arc<S, T> arc, String token, String oldWeight, String newWeight) {
 
         this.arc = arc;
@@ -28,13 +50,18 @@ public class SetArcWeightAction<S extends Connectable, T extends Connectable> ex
         this.newWeight = newWeight;
     }
 
+    /**
+     * Sets the arc's token id weight to the old functional weight
+     */
     @Override
     public void undo() {
         super.undo();
         arc.setWeight(token, oldWeight);
     }
 
-    /** */
+    /**
+     * Sets the arc's token id weight to the new functional weight
+     */
     @Override
     public void redo() {
         super.redo();

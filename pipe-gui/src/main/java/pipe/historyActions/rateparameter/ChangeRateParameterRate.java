@@ -25,6 +25,31 @@ public class ChangeRateParameterRate extends AbstractUndoableEdit {
      */
     private final String previousExpression;
 
+    /**
+     * Value the expression has been changed to
+     */
+    private final String newExpression;
+
+    /**
+     * Constructor
+     * @param rateParameter underlying model
+     * @param previousExpression previous expression of the rate parameter
+     * @param newExpression new expression of the rate parameter
+     */
+    public ChangeRateParameterRate(RateParameter rateParameter, String previousExpression, String newExpression) {
+        this.rateParameter = rateParameter;
+        this.previousExpression = previousExpression;
+        this.newExpression = newExpression;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = rateParameter.hashCode();
+        result = 31 * result + previousExpression.hashCode();
+        result = 31 * result + newExpression.hashCode();
+        return result;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -49,33 +74,18 @@ public class ChangeRateParameterRate extends AbstractUndoableEdit {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = rateParameter.hashCode();
-        result = 31 * result + previousExpression.hashCode();
-        result = 31 * result + newExpression.hashCode();
-        return result;
-    }
-
     /**
-
-     * Value the expression has been changed to
+     * Sets the rate parameters expression to the previous expression
      */
-    private final String newExpression;
-
-    public ChangeRateParameterRate(RateParameter rateParameter, String previousExpression, String newExpression) {
-        this.rateParameter = rateParameter;
-        this.previousExpression = previousExpression;
-        this.newExpression = newExpression;
-    }
-
     @Override
     public void undo() {
         super.undo();
         rateParameter.setExpression(previousExpression);
     }
 
-    /** */
+    /**
+     * Sets the rate parameters expression to the new expression
+     */
     @Override
     public void redo() {
         super.redo();
