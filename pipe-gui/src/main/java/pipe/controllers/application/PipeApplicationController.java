@@ -20,6 +20,10 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+/**
+ * Pipes main application controller.
+ * It houses the Petri net controllers of open tabs and is responsible for the creation of Petri nets
+ */
 public class PipeApplicationController {
 
     /**
@@ -27,6 +31,9 @@ public class PipeApplicationController {
      */
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<>();
 
+    /**
+     * Main PIPE application model
+     */
     private final PipeApplicationModel applicationModel;
 
     /**
@@ -39,6 +46,10 @@ public class PipeApplicationController {
      */
     private PetriNetTab activeTab;
 
+    /**
+     * Constructor
+     * @param applicationModel Main PIPE application model
+     */
     public PipeApplicationController(PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
     }
@@ -58,6 +69,15 @@ public class PipeApplicationController {
         manager.createNewPetriNet();
     }
 
+
+    /**
+     * Register the tab to the Petri net
+     * @param net Petri net
+     * @param tab tab which houses the graphical petri net components
+     * @param historyObserver listener for stepback/forward events in animation
+     * @param undoListener listener for undo/redo events
+     * @param zoomListener listener for zoom events
+     */
     //TODO: THIS IS RATHER UGLY, too many params but better than what was here before
     public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener,
                             PropertyChangeListener zoomListener) {
@@ -82,6 +102,10 @@ public class PipeApplicationController {
         initialiseNet(net, changeListener);
     }
 
+    /**
+     *
+     * @param tab the active tab - this is the tab that is currently being displayed in the view
+     */
     public void setActiveTab(PetriNetTab tab) {
         this.activeTab = tab;
     }
@@ -132,6 +156,11 @@ public class PipeApplicationController {
         }
     }
 
+    /**
+     * Loads and creates a Petri net located at the given file
+     * @param file location of the XML file which contains a PNML representation of a Petri net
+     * @throws UnparsableException
+     */
     public void createNewTabFromFile(File file) throws UnparsableException {
         try {
             manager.createFromFile(file);
@@ -140,12 +169,15 @@ public class PipeApplicationController {
         }
     }
 
-    //TODO: DELETE
-    public boolean isPasteEnabled() {
-        return false;
-        //        return copyPasteManager.pasteEnabled();
-    }
-
+    /**
+     * Save the currently displayed petri net to the specified file
+     * @param outFile location to save the Petri net
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     */
     public void saveAsCurrentPetriNet(File outFile)
             throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException,
             InvocationTargetException {
@@ -160,6 +192,10 @@ public class PipeApplicationController {
         petriNetController.save();
     }
 
+    /**
+     *
+     * @return the active Petri net controller
+     */
     public PetriNetController getActivePetriNetController() {
         return netControllers.get(activeTab);
     }

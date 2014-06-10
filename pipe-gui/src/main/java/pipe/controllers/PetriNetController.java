@@ -1,22 +1,10 @@
 package pipe.controllers;
 
-import pipe.controllers.interfaces.IController;
-import pipe.gui.*;
+import pipe.gui.PetriNetTab;
 import pipe.historyActions.component.DeletePetriNetObject;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.petrinet.Connectable;
-import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.PlaceablePetriNetComponent;
-import uk.ac.imperial.pipe.models.petrinet.Annotation;
-import uk.ac.imperial.pipe.models.petrinet.Arc;
-import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.RateParameter;
-import uk.ac.imperial.pipe.models.petrinet.ColoredToken;
-import uk.ac.imperial.pipe.models.petrinet.Token;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.*;
 import uk.ac.imperial.pipe.naming.PlaceNamer;
 import uk.ac.imperial.pipe.naming.TransitionNamer;
 import uk.ac.imperial.pipe.naming.UniqueNamer;
@@ -36,7 +24,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
 
-public class PetriNetController implements IController, Serializable {
+public class PetriNetController implements Serializable {
 
     /**
      * Responsible for zooming of the current Petri net

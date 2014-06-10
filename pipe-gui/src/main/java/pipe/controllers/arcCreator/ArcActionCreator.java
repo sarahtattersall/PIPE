@@ -11,7 +11,8 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 import java.util.List;
 
 /**
- * This c
+ * This class determines if arcs can be created from and to Petri net components and
+ * is responsible for creating the inbound/outbound arc models
  */
 public interface ArcActionCreator {
     /**
