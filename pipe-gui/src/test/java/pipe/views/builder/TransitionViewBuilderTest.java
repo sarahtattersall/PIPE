@@ -61,7 +61,6 @@ public class TransitionViewBuilderTest {
         //This - 5 comes from updating the bounds. Its a variable set in PetriNetViewComponent
         rect.grow(5, 5);
         assertEquals(transition.getId(), transitionView.getId());
-        assertEquals(transition.getName(), transitionView.getName());
         assertEquals(transition.getAngle(), transitionView.getAngle());
         assertEquals(transition.isTimed(), transitionView.isTimed());
         assertEquals(transition.isInfiniteServer(), transitionView.isInfiniteServer());
