@@ -2,7 +2,7 @@ package pipe.actions.gui;
 
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PIPEConstants;
-import pipe.io.JarUtilities;
+import pipe.utilities.io.JarUtilities;
 import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 

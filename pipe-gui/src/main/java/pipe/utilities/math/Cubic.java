@@ -6,11 +6,29 @@ package pipe.utilities.math;
  */
 public class Cubic {
 
+    /**
+     * a in cubic expression
+     */
    private final float a;
+
+    /**
+     * b in cubic expression
+     */
     private final float b;
+
+    /**
+     * c in cubic expression
+     */
     private final float c;
 
 
+    /**
+     * Cubic expression constructor
+     * @param _a a in expression
+     * @param _b b in expression
+     * @param _c c in expression
+     * @param _d unused
+     */
     public Cubic(float _a, float _b, float _c, float _d) {
       a = _a;
       b = _b;
