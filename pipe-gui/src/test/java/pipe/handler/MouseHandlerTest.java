@@ -55,13 +55,6 @@ public class MouseHandlerTest {
     }
 
     @Test
-    public void callsDoActionIfNotAnimating() {
-        when(mockController.isInAnimationMode()).thenReturn(false);
-        handler.mousePressed(mockEvent);
-        verify(mockAction).doAction(mockEvent, mockController);
-    }
-
-    @Test
     public void doesNoActionIfAnimating() {
         when(mockModel.isInAnimationMode()).thenReturn(true);
         handler.mousePressed(mockEvent);
