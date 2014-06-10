@@ -10,10 +10,25 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import java.awt.Container;
 
+/**
+ * Builds the view representation of an inhibitor arc
+ */
 public class InhibitorArcViewBuilder {
+    /**
+     * Underlying arc model
+     */
     private final Arc<Place, Transition> arc;
+
+    /**
+     * Controller for the Petri net the arc belongs to
+     */
     private final PetriNetController controller;
 
+    /**
+     *
+     * @param arc underlying arc model
+     * @param controller controller for the Petri net the arc belongs to
+     */
     public InhibitorArcViewBuilder(Arc<Place, Transition> arc, PetriNetController controller) {
         this.arc = arc;
         this.controller = controller;

@@ -56,6 +56,9 @@ public class CopyPasteManager extends javax.swing.JComponent
      */
     private final PetriNet petriNet;
 
+    /**
+     * Main PIPE application controller
+     */
     private final PipeApplicationController applicationController;
 
     /**
@@ -63,6 +66,9 @@ public class CopyPasteManager extends javax.swing.JComponent
      */
     private final Point rectangleOrigin = new Point();
 
+    /**
+     * Listener for undoable events being created
+     */
     private final UndoableEditListener listener;
 
     /**
@@ -78,6 +84,14 @@ public class CopyPasteManager extends javax.swing.JComponent
     private Collection<PetriNetComponent> pasteComponents = new ArrayList<>();
 
 
+    /**
+     * Constructor
+     *
+     * @param listener              undoable event listener, used to register undo events to
+     * @param petriNetTab           current Petri net tab
+     * @param net                   underlying Petri net displayed on the Petri net tab
+     * @param applicationController main application controller
+     */
     public CopyPasteManager(UndoableEditListener listener, PetriNetTab petriNetTab, PetriNet net,
                             PipeApplicationController applicationController) {
         this.petriNetTab = petriNetTab;
@@ -86,7 +100,6 @@ public class CopyPasteManager extends javax.swing.JComponent
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
-        //        zoom = petriNetTab.getZoom();
         this.listener = listener;
 
     }
@@ -133,6 +146,9 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Update the bounds which this object can be displayed at
+     */
     private void updateBounds() {
         if (pasteInProgress) {
             PetriNetTab activeTab = applicationController.getActiveTab();
@@ -140,6 +156,9 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * @return if it is possible to perform a paste action
+     */
     public boolean pasteEnabled() {
         return !pasteComponents.isEmpty();
     }
@@ -196,11 +215,21 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Noop action on click
+     *
+     * @param e
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
         //Not needed
     }
 
+    /**
+     * Performs the paste action
+     *
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         petriNetTab.updatePreferredSize();
@@ -211,16 +240,31 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Noop action
+     *
+     * @param e
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         // Not needed
     }
 
+    /**
+     * Noop action
+     *
+     * @param e
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
         // Not needed
     }
 
+    /**
+     * Noop action
+     *
+     * @param e
+     */
     @Override
     public void mouseExited(MouseEvent e) {
         // Not needed
@@ -263,6 +307,9 @@ public class CopyPasteManager extends javax.swing.JComponent
         createPasteHistoryItem(pasteVisitor.getCreatedComponents());
     }
 
+    /**
+     * @return a collection of the connectable items to paste
+     */
     private Collection<Connectable> getConnectablesToPaste() {
         final Collection<Connectable> connectables = new LinkedList<>();
         PetriNetComponentVisitor connectableVisitor = new PlaceTransitionVisitor() {
@@ -339,16 +386,31 @@ public class CopyPasteManager extends javax.swing.JComponent
         listener.undoableEditHappened(new UndoableEditEvent(this, new MultipleEdit(undoableEditList)));
     }
 
+    /**
+     * Noop action
+     *
+     * @param e
+     */
     @Override
     public void keyTyped(KeyEvent e) {
         // Not needed
     }
 
+    /**
+     * Noop action
+     *
+     * @param e
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         // Not needed
     }
 
+    /**
+     * Noop action
+     *
+     * @param e
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -356,11 +418,21 @@ public class CopyPasteManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Cancel the paste. This will stop the paste rectangle being displayed but will
+     * keep the copied items selected for future pastes
+     */
     public void cancelPaste() {
         PetriNetTab tab = applicationController.getActiveTab();
         cancelPaste(tab);
     }
 
+    /**
+     * Cancel the paste. This will stop the paste rectangle being displayed but will
+     * keep the copied items selected for future pastes
+     *
+     * @param view tab on which the paste is taking place
+     */
     void cancelPaste(PetriNetTab view) {
         pasteInProgress = false;
         view.repaint();
@@ -388,23 +460,50 @@ public class CopyPasteManager extends javax.swing.JComponent
      * Needed to create a class so that the visitor can change the values
      */
     private static class Location {
+        /**
+         * Bottom location
+         */
         private double bottom = 0;
 
+        /**
+         * Right of the rectangle
+         */
         private double right = 0;
 
+        /**
+         * Top of the rectangle
+         */
         private double top = Double.MAX_VALUE;
 
+        /**
+         * Left of the rectangle
+         */
         private double left = Double.MAX_VALUE;
     }
 
+    /**
+     * Used to set the bounds of the rectagle displayed when copy pasting
+     */
     private static class LocationVisitor implements PlaceTransitionVisitor {
+        /**
+         * Location of the rectangle
+         */
         private final Location location = new Location();
 
+        /**
+         * Adjusts the bounds to include the position of the place
+         * @param place
+         */
         @Override
         public void visit(Place place) {
             adjustLocation(place);
         }
 
+        /**
+         * Changes the bounds of the rectangle to include the connectable
+         * @param connectable
+         * @param <T>
+         */
         private <T extends Connectable> void adjustLocation(T connectable) {
             if (connectable.getX() < location.left) {
                 location.left = connectable.getX();
@@ -420,6 +519,10 @@ public class CopyPasteManager extends javax.swing.JComponent
             }
         }
 
+        /**
+         * Adjusts the bounds of the rectangle to include the position of the transition
+         * @param transition
+         */
         @Override
         public void visit(Transition transition) {
             adjustLocation(transition);

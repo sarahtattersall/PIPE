@@ -7,9 +7,18 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import java.awt.Container;
 
+/**
+ * Builds an annotation view representation of the annotation
+ */
 public final class AnnotationViewBuilder {
+    /**
+     * Underlying model
+     */
     private final Annotation annotation;
 
+    /**
+     * Controller of the Petri net the annotation belongs to
+     */
     private final PetriNetController controller;
 
     public AnnotationViewBuilder(Annotation annotation, PetriNetController controller) {

@@ -20,16 +20,38 @@ import java.util.Set;
  */
 public class GUIAnimator {
 
+    /**
+     * Timer used for spacing between random transition firings
+     */
     private final Timer timer = new Timer(0, new TimedTransitionActionListener());
 
+    /**
+     * Petri net animator
+     */
     private final Animator animator;
 
+    /**
+     * Petri net animation history which is responsible
+     * for displaying the fired transitions and stepping forwards/backwards
+     */
     private final AnimationHistory animationHistory;
 
+    /**
+     * Main PIPE application controller
+     */
     private final PipeApplicationController applicationController;
 
+    /**
+     * Number of transitions fired in the current sequence
+     */
     private int numberSequences = 0;
 
+    /**
+     * Constructor
+     * @param animator Petri net animator
+     * @param animationHistory History for animation
+     * @param applicationController Pipe main application controller
+     */
     public GUIAnimator(Animator animator, AnimationHistory animationHistory,
                        PipeApplicationController applicationController) {
         this.animator = animator;
@@ -50,6 +72,13 @@ public class GUIAnimator {
     }
 
     /**
+     * Saves the current tokens in places
+     */
+    private void saveCurrentTokenState() {
+        animator.saveState();
+    }
+
+    /**
      * Computes transitions which need to be disabled because they are no longer enabled and
      * those that need to be enabled because they have been newly enabled.
      */
@@ -64,12 +93,8 @@ public class GUIAnimator {
     }
 
     /**
-     * Saves the current tokens in places
+     * Starts a random firing sequence for the specified number of transitions
      */
-    private void saveCurrentTokenState() {
-        animator.saveState();
-    }
-
     public void startRandomFiring() {
         animationHistory.clearStepsForward();
         if (getNumberSequences() > 0) {
@@ -88,10 +113,18 @@ public class GUIAnimator {
         }
     }
 
+    /**
+     *
+     * @return the number of transitions in the sequence
+     */
     public synchronized int getNumberSequences() {
         return numberSequences;
     }
 
+    /**
+     *
+     * @param numberSequences set the number of transitions in the sequene
+     */
     public synchronized void setNumberSequences(int numberSequences) {
         this.numberSequences = numberSequences;
     }
@@ -146,10 +179,18 @@ public class GUIAnimator {
         }
     }
 
+    /**
+     *
+     * @return true if a step forward can happen in the animation history
+     */
     public boolean isStepForwardAllowed() {
         return animationHistory.isStepForwardAllowed();
     }
 
+    /**
+     *
+     * @return true if a step backward can happen in the animation history
+     */
     public boolean isStepBackAllowed() {
         return animationHistory.isStepBackAllowed();
     }
@@ -174,7 +215,16 @@ public class GUIAnimator {
         }
     }
 
+    /**
+     * Listens for the timer to run down to 0 and then performs the action
+     */
     private class TimedTransitionActionListener implements ActionListener {
+        /**
+         * When the timer runs down to zero this will be triggered.
+         *
+         * It performs a random firing of a single transition
+         * @param actionEvent
+         */
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             PetriNetController controller = applicationController.getActivePetriNetController();

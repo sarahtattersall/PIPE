@@ -12,11 +12,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller responsible for interacting with a place Petri net component
+ */
 public class PlaceController extends AbstractPetriNetComponentController<Place> {
 
+    /**
+     * Underlying model
+     */
     private final Place place;
 
-
+    /**
+     * Constructor
+     * @param place underling model
+     * @param listener listener for undo event creation
+     */
     public PlaceController(Place place, UndoableEditListener listener) {
         super(place, listener);
         this.place = place;
@@ -62,14 +72,26 @@ public class PlaceController extends AbstractPetriNetComponentController<Place> 
     }
 
 
+    /**
+     *
+     * @return the place capacity
+     */
     public int getCapacity() {
         return place.getCapacity();
     }
 
+    /**
+     *
+     * @return the place name
+     */
     public String getName() {
         return place.getName();
     }
 
+    /**
+     *
+     * @return if the place has a capacity restriction
+     */
     public boolean hasCapacityRestriction() {
         return place.hasCapacityRestriction();
     }

@@ -10,9 +10,22 @@ import javax.swing.undo.UndoableEdit;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Abstract parent class of component controllers.
+ *
+ * Contains a set of methods that is common to them all and is responsible for registering
+ * undo edits.
+ * @param <T> component model class
+ */
 public abstract class AbstractPetriNetComponentController<T extends PetriNetComponent> {
+    /**
+     * Underlying model
+     */
     protected final T component;
 
+    /**
+     * Listener for undo/redo actions being created
+     */
     protected final UndoableEditListener listener;
 
     /**
@@ -25,16 +38,26 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
      */
     private List<UndoableEdit> multipleEdits = new LinkedList<>();
 
+    /**
+     * Constructor
+     * @param component underlying Petri net controller
+     * @param listener undo listener
+     */
     protected AbstractPetriNetComponentController(T component, UndoableEditListener listener) {
         this.component = component;
         this.listener = listener;
     }
 
-    public final void setId(String newName) {
-        String oldName = component.getId();
-        if (!oldName.equals(newName)) {
-            component.setId(newName);
-            registerUndoableEdit(new ChangePetriNetComponentName(component, oldName, newName));
+    /**
+     *
+     *
+     * @param newId new id for the Petri net, must be unique
+     */
+    public final void setId(String newId) {
+        String oldId = component.getId();
+        if (!oldId.equals(newId)) {
+            component.setId(newId);
+            registerUndoableEdit(new ChangePetriNetComponentName(component, oldId, newId));
         }
     }
 
