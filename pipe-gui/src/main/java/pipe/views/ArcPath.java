@@ -31,14 +31,29 @@ public class ArcPath implements Shape, Cloneable {
 
     private static final Stroke STROKE = new BasicStroke(GUIConstants.ARC_PATH_SELECTION_WIDTH);
 
+    /**
+     * The midpoint along the arc, used to display the arc weights here if necessary
+     */
     public final Point2D.Double midPoint = new Point2D.Double();
 
+    /**
+     * Points along the arc path
+     */
     private final List<ArcPathPoint> pathPoints = new ArrayList<>();
 
+    /**
+     * Parent view who the points belong to
+     */
     private final ArcView<? extends Connectable, ? extends Connectable> arcView;
 
+    /**
+     * Petri net controller for which the arc belongs to
+     */
     private final PetriNetController petriNetController;
 
+    /**
+     * Main PIPE application model
+     */
     private final PipeApplicationModel applicationModel;
 
     /**
@@ -56,8 +71,18 @@ public class ArcPath implements Shape, Cloneable {
 
     private Shape proximityShape = PROXIMITY_STROKE.createStrokedShape(this);
 
+    /**
+     * Angle at which to meet a transition
+     */
     private int transitionAngle;
 
+    /**
+     * Constructor
+     *
+     * @param arcView            arc who these points belong to
+     * @param petriNetController Petri net controller for which the underlying arc belongs to
+     * @param applicationModel   main PIPE application model
+     */
     public ArcPath(ArcView<? extends Connectable, ? extends Connectable> arcView, PetriNetController petriNetController,
                    PipeApplicationModel applicationModel) {
         this.arcView = arcView;
@@ -82,6 +107,11 @@ public class ArcPath implements Shape, Cloneable {
         return false;
     }
 
+    /**
+     * Remove the point from the graphical representation of the path
+     *
+     * @param point
+     */
     public void deletePoint(ArcPoint point) {
         ArcPathPoint pointView = null;
         for (ArcPathPoint p : pathPoints) {
@@ -95,18 +125,32 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
+    /**
+     * @return number of arc points in the path
+     */
     public int getNumPoints() {
         return pathPoints.size();
     }
 
+    /**
+     * @param index
+     * @return the location of the point at this index, or null if it does not exist
+     */
     public Point2D getPoint(int index) {
         return pathPoints.get(index).getPoint();
     }
 
+    /**
+     * @param index
+     * @return the point at this index or null if it does not exist
+     */
     public ArcPathPoint getPathPoint(int index) {
         return pathPoints.get(index);
     }
 
+    /**
+     * Graphically show the points along the path
+     */
     public void showPoints() {
         if (!pointLock) {
             for (ArcPathPoint pathPoint : pathPoints) {
@@ -115,80 +159,120 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
+    /**
+     * @param lock true if points should always be shown on the canvas
+     */
     public void setPointVisibilityLock(boolean lock) {
         pointLock = lock;
     }
 
+    /**
+     * Hide all points on the canvas
+     */
     public void hidePoints() {
         if (!pointLock) {
             for (ArcPathPoint pathPoint : pathPoints) {
-                ArcPathPoint currentPoint = pathPoint;
-                if (!currentPoint.isSelected()) {
-                    currentPoint.setVisible(false);
+                if (!pathPoint.isSelected()) {
+                    pathPoint.setVisible(false);
                 }
             }
         }
     }
 
-    /* modified to use control points, ensures a curve hits a place tangetially */
-    public double getEndAngle() {
-        if (getEndIndex() > 0) {
-            return pathPoints.get(getEndIndex()).getAngle(pathPoints.get(getEndIndex()).getControl());
-        }
-        return 0;
-    }
-
-    public int getEndIndex() {
-        return pathPoints.size() - 1;
-    }
-
+    /**
+     * @return the angle at which the arc leaves its source
+     */
     public double getStartAngle() {
+
         if (getEndIndex() > 0) {
             return pathPoints.get(0).getAngle(pathPoints.get(1).getControl());
         }
         return 0;
     }
 
+    /**
+     * @return the index of the last item in the path points
+     */
+    public int getEndIndex() {
+        return pathPoints.size() - 1;
+    }
+
+    /**
+     * Used because there is no layout manager for the canvas
+     *
+     * @return the bounds of the arc path
+     */
     @Override
     public Rectangle getBounds() {
         return path.getBounds();
     }
 
-    @Override
-    public Rectangle2D getBounds2D() {
-        return null;
-    }
 
+    /**
+     * @param x
+     * @param y
+     * @return false, no point is contained within this arc
+     */
     @Override
-    public boolean contains(double arg0, double arg1) {
+    public boolean contains(double x, double y) {
         return false;
     }
 
+    /**
+     * @param point
+     * @return true if the point intersects the shape
+     */
     @Override
-    public boolean contains(Point2D p) {
-        return shape.contains(p);
+    public boolean contains(Point2D point) {
+        return shape.contains(point);
     }
 
+    /**
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @param arg3
+     * @return false
+     */
     @Override
     public boolean intersects(double arg0, double arg1, double arg2, double arg3) {
         return false;
     }
 
+    /**
+     * @param rect
+     * @return true if the rectange intersects the shape
+     */
     @Override
-    public boolean intersects(Rectangle2D r) {
-        return shape.intersects(r);
+    public boolean intersects(Rectangle2D rect) {
+        return shape.intersects(rect);
     }
 
+    /**
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @param arg3
+     * @return false
+     */
     @Override
     public boolean contains(double arg0, double arg1, double arg2, double arg3) {
         return false;
     }
 
+    /**
+     * @param rect
+     * @return false
+     */
     @Override
-    public boolean contains(Rectangle2D arg0) {
+    public boolean contains(Rectangle2D rect) {
         return false;
     }
 
+    /**
+     * @param arg0
+     * @return an iterator for the path
+     */
     @Override
     public PathIterator getPathIterator(AffineTransform arg0) {
         return path.getPathIterator(arg0);
@@ -236,6 +320,10 @@ public class ArcPath implements Shape, Cloneable {
         addPointsToGui(arcView.getParent());
     }
 
+    /**
+     * @param point
+     * @return a graphical point at the underlying point models location
+     */
     private ArcPathPoint createPoint(ArcPoint point) {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
@@ -251,6 +339,11 @@ public class ArcPath implements Shape, Cloneable {
 
     }
 
+    /**
+     * Add all graphical arc points to the Petri net tab
+     *
+     * @param petriNetTab
+     */
     public void addPointsToGui(Container petriNetTab) {
         if (petriNetTab == null) {
             //Parent has not yet been added
@@ -290,6 +383,9 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
+    /**
+     * Creates the path layout using the path points set
+     */
     public void createPath() {
         setControlPoints();
 
@@ -315,6 +411,9 @@ public class ArcPath implements Shape, Cloneable {
         proximityShape = PROXIMITY_STROKE.createStrokedShape(this);
     }
 
+    /**
+     * Set the control points for the Bezier curves
+     */
     private void setControlPoints() {
         //must be in this order
         setCurveControlPoints();
@@ -338,6 +437,11 @@ public class ArcPath implements Shape, Cloneable {
         path.lineTo(point.getPoint().getX(), point.getPoint().getY());
     }
 
+    /**
+     * Creates a curved line
+     *
+     * @param point point to create curve to
+     */
     private void createCurvedPoint(ArcPathPoint point) {
         path.curveTo(point.getControl1().x, point.getControl1().y, point.getControl().x, point.getControl().y,
                 point.getPoint().getX(), point.getPoint().getY());
@@ -476,6 +580,9 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
+    /**
+     * Set the control points for the end of the arc
+     */
     private void setEndControlPoints() {
         PetriNetComponentVisitor endPointVisitor = new ArcConnectableVisitor();
         Connectable source = getArc().getModel().getSource();
@@ -486,22 +593,26 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
+    /**
+     * We solve the equation
+     * [2 1       ] [D[0]]   [3(x[1] - x[0])  ]
+     * |1 4 1     | |D[1]|   |3(x[2] - x[0])  |
+     * |  1 4 1   | | .  | = |      .         |
+     * |    ..... | | .  |   |      .         |
+     * |     1 4 1| | .  |   |3(x[n] - x[n-2])|
+     * [       1 2] [D[n]]   [3(x[n] - x[n-1])]
+     * <p/>
+     * by using row operations to convert the matrix to upper triangular
+     * and then back substitution.  The D[i] are the derivatives at the knots.
+     *
+     * @param n
+     * @param x
+     * @return a natural cubic for the Bezier curve
+     */
     private Cubic[] calcNaturalCubic(int n, int[] x) {
         float[] gamma = new float[n + 1];
         float[] delta = new float[n + 1];
         float[] D = new float[n + 1];
-
-      /* We solve the equation
-         [2 1       ] [D[0]]   [3(x[1] - x[0])  ]
-         |1 4 1     | |D[1]|   |3(x[2] - x[0])  |
-         |  1 4 1   | | .  | = |      .         |
-         |    ..... | | .  |   |      .         |
-         |     1 4 1| | .  |   |3(x[n] - x[n-2])|
-         [       1 2] [D[n]]   [3(x[n] - x[n-1])]
-
-         by using row operations to convert the matrix to upper triangular
-         and then back sustitution.  The D[i] are the derivatives at the knots.
-       */
 
         gamma[0] = 1.0f / 2.0f;
         for (int i = 1; i < n; i++) {
@@ -550,10 +661,16 @@ public class ArcPath implements Shape, Cloneable {
         return p;
     }
 
+    /**
+     * @return arc view associated with this point
+     */
     public ArcView<? extends Connectable, ? extends Connectable> getArc() {
         return arcView;
     }
 
+    /**
+     * Removes all path points
+     */
     public void clear() {
         for (ArcPathPoint pathPoint : pathPoints) {
             pathPoint.kill();
