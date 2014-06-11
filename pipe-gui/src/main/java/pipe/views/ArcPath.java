@@ -207,6 +207,11 @@ public class ArcPath implements Shape, Cloneable {
         return path.getBounds();
     }
 
+    @Override
+    public Rectangle2D getBounds2D() {
+        return null;
+    }
+
 
     /**
      * @param x
