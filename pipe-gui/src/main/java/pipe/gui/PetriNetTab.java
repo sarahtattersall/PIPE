@@ -25,8 +25,15 @@ import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The main canvas that the {@link pipe.views.PetriNetViewComponent}s appear on
+ * It is a tab in the main applicaiton
+ */
 public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(PetriNetTab.class.getName());
 
     /**
@@ -39,8 +46,17 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
      */
     private final Grid grid = new Grid();
 
+    /**
+     * Legacy file for the saving of the underlying Petri net
+     */
+    @Deprecated
     public File appFile;
 
+    /**
+     * Constructor
+     *
+     * Sets no layout manager to acheive an (x,y) layout
+     */
     public PetriNetTab() {
         setLayout(null);
         setOpaque(true);
@@ -51,6 +67,12 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     }
 
+    /**
+     *
+     * Register the zoom listener to the Petri net tab
+     *
+     * @param zoomController zoom listener
+     */
     public void addZoomListener(ZoomController zoomController) {
         zoomController.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -61,6 +83,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
 
+    /**
+     * Legacy update method
+     * @param o
+     * @param diffObj
+     */
     @Override
     public void update(Observable o, Object diffObj) {
         if (diffObj instanceof AbstractPetriNetViewComponent) {
@@ -70,6 +97,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     /**
+     * Adds the Petri net component to this canvas
      * @param component to add to petri net view
      */
     public void addNewPetriNetComponent(AbstractPetriNetViewComponent<?> component) {
@@ -77,6 +105,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
             component.addToContainer(this);
     }
 
+    /**
+     * Add the Petri net component to this canvas
+     * @param component
+     */
     public void add(AbstractPetriNetViewComponent<?> component) {
         registerLocationChangeListener(component.getModel());
 
@@ -87,6 +119,9 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         //        repaint();
     }
 
+    /**
+     * Update the preferred size of the canvas and grid that is displayed on it
+     */
     public void updatePreferredSize() {
         Component[] components = getComponents();
         Dimension d = new Dimension(0, 0);
@@ -127,6 +162,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
+    /**
+     * Prints the Petri net tab
+     * @param g
+     * @param pageFormat
+     * @param pageIndex
+     * @return
+     * @throws PrinterException
+     */
     @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
         if (pageIndex > 0) {
@@ -139,6 +182,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         return Printable.PAGE_EXISTS;
     }
 
+    /**
+     * Paints the underlying grid on the canvas
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -148,6 +195,14 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
+    /**
+     * Set the cursor type. Options are:
+     * - arrow
+     * - crosshair
+     * - move
+     * @param type cursor type
+     */
+    //TODO These should be an enum
     public void setCursorType(String type) {
         if (type.equals("arrow")) {
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -158,10 +213,21 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
+    /**
+     * Set meta down. Since there is no documentation for this the functionality
+     * has been depricated and it no longer does anything
+     * @param down
+     */
+    @Deprecated
     public void setMetaDown(boolean down) {
         //TODO: DELETE
     }
 
+    /**
+     * Updates the canvas boundary when dragging is taking place
+     * @param dragStart
+     * @param dragEnd
+     */
     public void drag(Point dragStart, Point dragEnd) {
         if (dragStart == null) {
             return;
@@ -179,6 +245,10 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         scrollRectToVisible(r);
     }
 
+    /**
+     * Remove the component with this id from the canvas
+     * @param id
+     */
     public void deletePetriNetComponent(String id) {
         PetriNetViewComponent component = petriNetComponents.get(id);
         if (component != null) {
@@ -189,10 +259,18 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         repaint();
     }
 
+    /**
+     *
+     * @return Grid displayed on the canvas
+     */
     public Grid getGrid() {
         return grid;
     }
 
+    /**
+     *
+     * @param handler specifies how the canvas should behave to mouse events
+     */
     public void setMouseHandler(MouseInputAdapter handler) {
         addMouseListener(handler);
         addMouseMotionListener(handler);
@@ -200,9 +278,13 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     }
 
     /**
-     * Listen to changes in x/y
+     * Used to set the bounds of the canvas so that it will expand if components go out of bound
      */
     private class ChangeListener implements PlaceVisitor, TransitionVisitor {
+        /**
+         * Listens to (x,y) changes in components and updates the canvas width
+         * if a place/transition goes out of the current bounds
+         */
         private PropertyChangeListener updateListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -224,11 +306,19 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
             }
         };
 
+        /**
+         * Add the update listener to the place
+         * @param place
+         */
         @Override
         public void visit(Place place) {
             place.addPropertyChangeListener(updateListener);
         }
 
+        /**
+         * Add the update listener to the transition
+         * @param transition
+         */
         @Override
         public void visit(Transition transition) {
             transition.addPropertyChangeListener(updateListener);

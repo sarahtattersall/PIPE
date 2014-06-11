@@ -21,12 +21,23 @@ public final class ModuleLoader {
      */
     private static final String IMODULE_LOCATION = "pipe.modules.interfaces.IModule";
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(ModuleLoader.class.getName());
 
 
+    /**
+     * Private constructor for the static class
+     */
     private ModuleLoader() {
     }
 
+    /**
+     * Jar to include as a module
+     * @param modFile
+     * @return
+     */
     public static Class<?> importModule(File modFile) {
         Class<?> modClass = null;
 
@@ -47,6 +58,7 @@ public final class ModuleLoader {
         }
         return modClass;
     }
+
 
     private static String getClassName(File moduleFile) {
         String filename;
@@ -69,6 +81,11 @@ public final class ModuleLoader {
         return filename;
     }
 
+    /**
+     *
+     * @param modClass
+     * @return true if the class is a module
+     */
     private static boolean isModule(Class<?> modClass) {
         for (Class<?> anInterface : modClass.getInterfaces()) {
             if (anInterface.getName().equals(IMODULE_LOCATION)) {

@@ -41,8 +41,14 @@ public class PetriNetController implements Serializable {
      */
     private final PetriNet petriNet;
 
+    /**
+     * Listener for tool bar actions that create undoable actions
+     */
     private final UndoableEditListener undoListener;
 
+    /**
+     * Tab that the Petri net is shown on
+     */
     private final PetriNetTab petriNetTab;
 
     /**
@@ -87,6 +93,9 @@ public class PetriNetController implements Serializable {
      */
     private String fileName = "";
 
+    /**
+     * Copy of the last saved version of the Petri net
+     */
     private PetriNet lastSavedNet;
 
     /**
@@ -99,6 +108,15 @@ public class PetriNetController implements Serializable {
      */
     private SelectionManager selectionManager;
 
+    /**
+     * Constructor
+     * @param model underlying Petri net
+     * @param undoListener undo listener for tool bar buttons undo actions
+     * @param animator Petri net animator
+     * @param copyPasteManager copy paste manager for the Petri net
+     * @param zoomController zoom controller for the Petri net
+     * @param petriNetTab tab this Petri net is displayed on
+     */
     public PetriNetController(PetriNet model, UndoableEditListener undoListener, GUIAnimator animator,
                               CopyPasteManager copyPasteManager, ZoomController zoomController,
                               PetriNetTab petriNetTab) {
@@ -131,14 +149,6 @@ public class PetriNetController implements Serializable {
         return placeNamer.getName();
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     /**
      * @return A unique name for a transition in the current petri net
      */
@@ -146,14 +156,26 @@ public class PetriNetController implements Serializable {
         return transitionNamer.getName();
     }
 
+    /**
+     *
+     * @param component
+     * @return true if this component is selected on the canvas
+     */
     public boolean isSelected(PetriNetComponent component) {
         return selectedComponents.contains(component);
     }
 
+    /**
+     * unselect the component on the canvas
+     * @param component
+     */
     public void deselect(PetriNetComponent component) {
         selectedComponents.remove(component);
     }
 
+    /**
+     * Deselect all canvas componentns
+     */
     public void deselectAll() {
         selectedComponents.clear();
     }
@@ -235,6 +257,10 @@ public class PetriNetController implements Serializable {
         return path;
     }
 
+    /**
+     * Select the Petri net component on the canvas
+     * @param component
+     */
     public void select(PetriNetComponent component) {
         selectedComponents.add(component);
     }
@@ -300,10 +326,21 @@ public class PetriNetController implements Serializable {
         petriNet.addToken(token);
     }
 
+    /**
+     *
+     * @return all tokens in the Petri net
+     */
     public Collection<Token> getNetTokens() {
         return petriNet.getTokens();
     }
 
+    /**
+     * Update the token with the specified name and color
+     * @param currentTokenName
+     * @param name
+     * @param color
+     * @throws PetriNetComponentNotFoundException
+     */
     public void updateToken(String currentTokenName, String name, Color color)
             throws PetriNetComponentNotFoundException {
         Token token = petriNet.getComponent(currentTokenName, Token.class);
@@ -315,32 +352,69 @@ public class PetriNetController implements Serializable {
         }
     }
 
+    /**
+     *
+     * @return underlying Petri net model
+     */
+    //TODO: Shouldnt expose this!
     public PetriNet getPetriNet() {
         return petriNet;
     }
 
+    /**
+     * @param arc
+     * @param <S>
+     * @param <T>
+     * @return controller for the model
+     */
     public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
         return new ArcController<>(arc, this, undoListener);
     }
 
+    /**
+     *
+     * @param place
+     * @return controller for the place
+     */
     public PlaceController getPlaceController(Place place) {
         return new PlaceController(place, undoListener);
     }
 
+    /**
+     *
+     * @param annotation
+     * @return controller for the annotation
+     */
     public AnnotationController getAnnotationController(Annotation annotation) {
        return new AnnotationController(annotation, undoListener);
     }
 
+    /**
+     *
+     * @param transition
+     * @return controller for the transition
+     */
     public TransitionController getTransitionController(final Transition transition) {
         return new TransitionController(transition, undoListener);
     }
 
+    /**
+     *
+     * @param rateParameter
+     * @return contrioller for the rate paramter
+     * @throws PetriNetComponentNotFoundException
+     */
     public RateParameterController getRateParameterController(final String rateParameter)
             throws PetriNetComponentNotFoundException {
         RateParameter parameter = petriNet.getComponent(rateParameter, RateParameter.class);
         return new RateParameterController(parameter, petriNet, undoListener);
     }
 
+    /**
+     * Selected token on the drop down menu
+     * @param tokenName
+     * @throws PetriNetComponentNotFoundException
+     */
     public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {
         selectedToken = tokenName;
     }
@@ -354,67 +428,131 @@ public class PetriNetController implements Serializable {
         return petriNet.getComponent(name, Token.class);
     }
 
+    /**
+     * Copy all components that are selected
+     */
     public void copySelection() {
         copyPasteManager.copy(selectedComponents);
     }
 
+    /**
+     *
+     * @return true if a paste has been enabled
+     */
     public boolean isCopyInProgress() {
         return copyPasteManager.pasteEnabled();
     }
 
+    /**
+     * Cancels the current paste
+     */
     public void cancelPaste() {
         copyPasteManager.cancelPaste();
     }
 
+    /**
+     *
+     * The selected token can then be used to add tokens to places
+     *
+     * @return the current token on the drop down menu
+     */
     public String getSelectedToken() {
         return selectedToken;
     }
 
+    /**
+     *
+     * @return the animator of the Petri net
+     */
     public GUIAnimator getAnimator() {
         return animator;
     }
 
+    /**
+     *
+     * @return the zoom controller of the Petri net
+     */
     public ZoomController getZoomController() {
         return zoomController;
     }
 
+    /**
+     * Paste the copied items onto the Petri net
+     */
     public void paste() {
         copyPasteManager.showPasteRectangle();
     }
 
+    /**
+     *
+     * @return Petri net drag manager
+     */
     public DragManager getDragManager() {
         return dragManager;
     }
 
+    /**
+     *
+     * @return rate parameters in the Petri net
+     */
     public Collection<RateParameter> getRateParameters() {
         return petriNet.getRateParameters();
     }
 
-    public boolean isUniqueName(String newName) {
-        return placeNamer.isUniqueName(newName) && transitionNamer.isUniqueName(newName);
+    /**
+     *
+     * @param id
+     * @return true if this id does not exist inthe Petri net
+     */
+    public boolean isUniqueName(String id) {
+        return placeNamer.isUniqueName(id) && transitionNamer.isUniqueName(id);
     }
 
+    /**
+     *
+     * @return true if the Petri net has changed since it was last saved/loaded
+     */
     public boolean hasChanged() {
         return !petriNet.equals(lastSavedNet);
     }
 
+    /**
+     * Take a clone of the Petri net
+     */
     public void save() {
         lastSavedNet = ClonePetriNet.clone(petriNet);
     }
 
+    /**
+     *
+     * @param expr
+     * @return parsed functional expression in relation to the Petri nets current state
+     */
     public FunctionalResults<Double> parseFunctionalExpression(String expr) {
         return petriNet.parseExpression(expr);
     }
 
+    /**
+     *
+     * @return Petri nets undo manager
+     */
     public UndoManager getUndoManager() {
         return undoManager;
     }
 
 
+    /**
+     *
+     * @return all selected components
+     */
     public Set<PetriNetComponent> getSelectedComponents() {
         return selectedComponents;
     }
 
+    /**
+     *
+     * @return Petri net undo listener
+     */
     public UndoableEditListener getUndoListener() {
         return undoListener;
     }
@@ -429,10 +567,18 @@ public class PetriNetController implements Serializable {
         return animateMode;
     }
 
+    /**
+     *
+     * @return if the Petri net should be displayed in animation mode on the canvas
+     */
     public boolean isInAnimationMode() {
         return animateMode;
     }
 
+    /**
+     *
+     * @return Petri net selection manager
+     */
     public SelectionManager getSelectionManager() {
         return selectionManager;
     }

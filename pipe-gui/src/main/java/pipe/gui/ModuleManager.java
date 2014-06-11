@@ -42,25 +42,57 @@ import java.util.logging.Logger;
  */
 public class ModuleManager {
 
+    /**
+     * Load text
+     */
     private static final String LOAD_NODE_STRING = "Find IModule";
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(ModuleManager.class.getName());
 
+    /**
+     * PIPE Gui concrete models package
+     */
     public static final String PIPE_GUI_PLUGIN_CONCRETE_PACKAGE = "pipe.gui.plugin.concrete";
 
+    /**
+     * All modules that have been found in the PIPE_GUI_PLUGIN_CONCRETE_PACKAGE
+     */
     private final Set<Class<?>> installedModules;
 
+    /**
+     * Main PIPE application controller
+     */
     private final PipeApplicationController controller;
 
+    /**
+     * Parent of the module loader
+     */
     private final Component parent;
 
+    /**
+     * Module tree
+     */
     private JTree moduleTree;
 
+    /**
+     * Tree model
+     */
     private DefaultTreeModel treeModel;
 
+    /**
+     * Loaded modules
+     */
     private DefaultMutableTreeNode loadModules;
 
 
+    /**
+     * Constructor
+     * @param view view on which the modules should be displayed
+     * @param controller main PIPE appliaction controller
+     */
     public ModuleManager(Component view, PipeApplicationController controller) {
         this.controller = controller;
 
@@ -255,7 +287,10 @@ public class ModuleManager {
                 }
             }
         }
-
+        /**
+         * Show the menu popup to run the module
+         * @param e
+         */
         @Override
         public void mousePressed(MouseEvent e) {
             if (e.isPopupTrigger()) {
@@ -263,6 +298,10 @@ public class ModuleManager {
             }
         }
 
+        /**
+         * Show the menu popup to run the module
+         * @param e
+         */
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.isPopupTrigger()) {
@@ -270,6 +309,10 @@ public class ModuleManager {
             }
         }
 
+        /**
+         * Show the menu for the modules
+         * @param e
+         */
         private void showPopupMenu(MouseEvent e) {
             TreePath selPath = moduleTree.getPathForLocation(e.getX(), e.getY());
 

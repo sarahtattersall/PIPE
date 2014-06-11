@@ -18,33 +18,61 @@ import java.awt.event.MouseWheelEvent;
 public class SelectionManager extends javax.swing.JComponent
         implements java.awt.event.MouseListener, java.awt.event.MouseWheelListener, java.awt.event.MouseMotionListener {
 
+    /**
+     * Color to paint selection highlighter
+     */
     private static final Color SELECTION_COLOR = new Color(0, 0, 255, 24);
 
+    /**
+     * Outline of the selection handeller
+     */
     private static final Color SELECTION_COLOR_OUTLINE = new Color(0, 0, 100);
 
+    /**
+     * Area of selection
+     */
     private final Rectangle selectionRectangle = new Rectangle(-1, -1);
 
+    /**
+     * Tab that selection is taking place on
+     */
     private final PetriNetTab petriNetTab;
 
+    /**
+     * Petri net controller for the underlying Petri net
+     */
     private final PetriNetController petriNetController;
 
-    private final DragManager dragManager;
-
+    /**
+     * Start point of selection
+     */
     private Point startPoint;
 
+    /**
+     * true if currently selecting items
+     */
     private boolean isSelecting;
 
+    /**
+     * Legacy enabled
+     */
     private boolean enabled = true;
 
+    /**
+     * Constructor
+     * @param controller Petri net controller
+     */
     public SelectionManager(PetriNetController controller) {
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
         this.petriNetTab = controller.getPetriNetTab();
         this.petriNetController = controller;
-        dragManager = controller.getDragManager();
     }
 
+    /**
+     * Enable the selection
+     */
     public void enableSelection() {
         if (!enabled) {
             petriNetTab.add(this);
@@ -53,12 +81,20 @@ public class SelectionManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Update the displayed selection rectangle bounds
+     *
+     * Used because there is no layout manager for the canvas
+     */
     public void updateBounds() {
         if (enabled) {
             setBounds(0, 0, petriNetTab.getWidth(), petriNetTab.getHeight());
         }
     }
 
+    /**
+     * Disable the selected items
+     */
     public void disableSelection() {
         if (enabled) {
             petriNetTab.remove(this);
@@ -66,6 +102,10 @@ public class SelectionManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Paint a blue rectangle over the selected area
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -76,6 +116,10 @@ public class SelectionManager extends javax.swing.JComponent
         g2d.draw(selectionRectangle);
     }
 
+    /**
+     * Update the selected area
+     * @param e
+     */
     @Override
     public void mouseDragged(MouseEvent e) {
         if (isSelecting) {
@@ -92,6 +136,10 @@ public class SelectionManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Select the items that interact with the selection area
+     * @param e
+     */
     private void processSelection(MouseEvent e) {
         if (!e.isShiftDown()) {
             clearSelection();
@@ -100,12 +148,17 @@ public class SelectionManager extends javax.swing.JComponent
         petriNetController.select(selectionRectangle);
     }
 
+    /**
+     * Deselect all components
+     */
     public void clearSelection() {
         petriNetController.deselectAll();
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+
+    /**
+     * Noop
+     * @param e
      */
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -121,20 +174,32 @@ public class SelectionManager extends javax.swing.JComponent
      */
     private void handleOutOfBoundsDrag(MouseEvent e) {
         if (!e.isConsumed()) {
-            dragManager.drag(e.getPoint());
+            petriNetController.getDragManager().drag(e.getPoint());
         }
     }
 
+    /**
+     * Noop
+     * @param e
+     */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         // Not used
     }
 
+    /**
+     * Noop
+     * @param e
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
         // Not needed
     }
 
+    /**
+     * Select all items falling within the selected area
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         startPoint = e.getPoint();
@@ -148,6 +213,12 @@ public class SelectionManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     *
+     * Reset the selection area
+     *
+     * @param e
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         if (isSelecting) {
@@ -160,11 +231,19 @@ public class SelectionManager extends javax.swing.JComponent
         }
     }
 
+    /**
+     * Noop
+     * @param e
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
         // Not needed
     }
 
+    /**
+     * Noop
+     * @param e
+     */
     @Override
     public void mouseExited(MouseEvent e) {
         // Not needed

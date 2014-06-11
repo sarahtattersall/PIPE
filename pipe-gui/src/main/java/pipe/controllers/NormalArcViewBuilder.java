@@ -8,11 +8,25 @@ import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import java.awt.Container;
 
+/**
+ * Builder class to build the view for a normal arc
+ */
 public class NormalArcViewBuilder {
+    /**
+     * Underlying arc model
+     */
     private final Arc<? extends Connectable, ? extends Connectable> arc;
 
+    /**
+     * Petri net controller for the Petri net the arc belongs to
+     */
     private final PetriNetController controller;
 
+    /**
+     *
+     * @param arc underlying arc model
+     * @param controller Petri net controller for the Petri net the arc belongs to
+     */
     public NormalArcViewBuilder(Arc<? extends Connectable, ? extends Connectable> arc, PetriNetController controller) {
         this.arc = arc;
         this.controller = controller;

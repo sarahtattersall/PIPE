@@ -11,13 +11,15 @@ import java.util.logging.Logger;
 
 
 /**
- * ModuleMethod encapsulates information about a module method  and is designed
- * to be used as a user object in nodes in a JTree.
- * In this case for nodes representing module methods.
+ * This class represents a module dynamically loaded at run-time
+ * and is repsonsible for executing the module
  */
 public class ModuleMethod
 {
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(ModuleMethod.class.getName());
 
     private final Method modMeth;
@@ -46,11 +48,19 @@ public class ModuleMethod
     }
 
 
+    /**
+     *
+     * @param _name method name
+     */
     public void setName(String _name)
     {
         name = _name;
     }
 
+    /**
+     * Executes the module.
+     * @param petriNet the current Petri net to pass into the {@link pipe.gui.plugin.GuiModule}
+     */
     public void execute(PetriNet petriNet)
     {
         try
@@ -74,7 +84,7 @@ public class ModuleMethod
     /**
      * @return Returns the modClass.
      */
-    public Class getModClass()
+    public Class<?> getModClass()
     {
         return clazz;
     }

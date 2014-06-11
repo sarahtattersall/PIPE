@@ -5,19 +5,32 @@ import pipe.constants.GUIConstants;
 import javax.swing.*;
 import java.awt.BorderLayout;
 
-/* Status Bar to let users know what to do*/
+/**
+ * Status Bar to let users know what to do
+ * */
 public class StatusBar extends JPanel {
 
-    /* Provides the appropriate text for the mode that the user is in */
+    /**
+     *  Provides the appropriate text for the mode that the user is in
+     */
     public static final String TEXT_FOR_DRAWING =
             "Drawing Mode: Click on a button to start adding components to the " + "Editor";
 
+    /**
+     * Provides the text for animation
+     */
     public static final String TEXT_FOR_ANIMATION =
             "Animation Mode: Red transitions are enabled, click a transition to " + "fire it";
 
+    /**
+     * Label on which text is displayed
+     */
     private final JLabel label;
 
 
+    /**
+     * Default constructor, performs the set up
+     */
     public StatusBar() {
         super();
         label = new JLabel(TEXT_FOR_DRAWING);
@@ -25,6 +38,11 @@ public class StatusBar extends JPanel {
         this.add(label);
     }
 
+    /**
+     * Deprecated
+     * @param type
+     */
+    @Deprecated
     public void changeText(int type) {
         switch (type) {
             case GUIConstants.PLACE:
@@ -102,6 +120,10 @@ public class StatusBar extends JPanel {
         }
     }
 
+    /**
+     * Change the text on the status bar
+     * @param newText
+     */
     public void changeText(String newText) {
         label.setText(newText);
     }

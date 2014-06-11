@@ -16,20 +16,44 @@ import java.awt.geom.GeneralPath;
  */
 public class Grid {
 
+    /**
+     * Color for the grid
+     */
     private static final Color GRID_COLOR = new Color(240, 240, 255);
 
+    /**
+     * Spacing between grid items
+     */
     private float gridSpacing = GUIConstants.PLACE_TRANSITION_HEIGHT / 2;
 
+    /**
+     * Graphical grid display
+     */
     private GeneralPath gridDisplay;
 
+    /**
+     * True if the grid should be displayed
+     */
     private boolean enabled = true;
 
+    /**
+     * Height of the overall grid
+     */
     private int gridHeight;
 
+    /**
+     * Width of the overall gird
+     */
     private int gridWidth;
 
+    /**
+     * Grid count
+     */
     private int gridCount = 1;
 
+    /**
+     * Increment the grid size
+     */
     public void increment() {
         gridCount++;
         gridCount %= 4;
@@ -42,24 +66,42 @@ public class Grid {
         }
     }
 
+    /**
+     * Disable the grid from showing
+     */
     public void disableGrid() {
         if (enabled) {
             enabled = false;
         }
     }
 
+    /**
+     * Set the grid to be displayed
+     */
     public void enableGrid() {
         enabled = true;
     }
 
+    /**
+     * Set the spacing between the grid items
+     * @param spacing
+     */
     private void setGridSpacing(double spacing) {
         gridSpacing = (float) (spacing * GUIConstants.PLACE_TRANSITION_HEIGHT);
     }
 
+    /**
+     *
+     * @return true if the grid should be displayed
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Set the size to that of the parent boundaries
+     * @param parent
+     */
     public void updateSize(Container parent) {
         if (enabled) {
             gridHeight = parent.getHeight();
@@ -68,6 +110,9 @@ public class Grid {
         }
     }
 
+    /**
+     * Create the path of the grid
+     */
     private void createGrid() {
         gridDisplay = new GeneralPath();
 
@@ -81,6 +126,10 @@ public class Grid {
         }
     }
 
+    /**
+     * Draw the grid on the parent using the graphics
+     * @param g
+     */
     public void drawGrid(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
@@ -89,11 +138,4 @@ public class Grid {
     }
 
 
-    public int getModifiedValue(double value) {
-        if (!enabled) {
-            return (int) value;
-        }
-        return (int) (Math.round(value / gridSpacing) * gridSpacing);
-
-    }
 }
