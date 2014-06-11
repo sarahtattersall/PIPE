@@ -95,10 +95,6 @@ public class ArcPath implements Shape, Cloneable {
         }
     }
 
-    public void updateArc() {
-        arcView.updateArcPosition();
-    }
-
     public int getNumPoints() {
         return pathPoints.size();
     }

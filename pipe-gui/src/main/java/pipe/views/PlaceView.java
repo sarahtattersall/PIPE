@@ -21,15 +21,31 @@ import java.util.logging.Logger;
  */
 public class PlaceView extends ConnectableView<Place> {
 
-
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(PlaceView.class.getName());
 
+    /**
+     * Constructor
+     * @param model underlying model
+     * @param parent parent of the view
+     * @param controller Petri net controller of the Petri net the model is housed in
+     * @param placeHandler mouse input handler for describing how this view responds to mouse events
+     */
     public PlaceView(Place model, Container parent, PetriNetController controller, MouseInputAdapter placeHandler) {
         super(model.getId(), model, controller, parent, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
         setChangeListener();
         setMouseListener(placeHandler);
     }
 
+
+    /**
+     *
+     * Sets the view mouse listeners
+     *
+     * @param placeHandler mouse input handler for describing how this view responds to mouse events
+     */
     private void setMouseListener(MouseInputAdapter placeHandler) {
         this.addMouseListener(placeHandler);
         this.addMouseWheelListener(placeHandler);
@@ -65,7 +81,7 @@ public class PlaceView extends ConnectableView<Place> {
 
         if (hasCapacity()) {
             g2.setStroke(new BasicStroke(2.0f));
-            setToolTipText("k = " + this.getCapacity());
+            setToolTipText("k = " + model.getCapacity());
         } else {
             g2.setStroke(new BasicStroke(1.0f));
             setToolTipText("k = \u221E");
@@ -254,32 +270,38 @@ public class PlaceView extends ConnectableView<Place> {
         }
     }
 
-    public int getCapacity() {
-        return model.getCapacity();
-    }
-
+    /**
+     *
+     * @return true if the underlying model has a capacity
+     */
     private boolean hasCapacity() {
         return model.getCapacity() > 0;
     }
 
 
+    /**
+     *
+     * @return if the place is tagged
+     */
     private boolean isTagged() {
         return false;
     }
 
+    /**
+     * Adds the place id label to the container
+     * @param container to add itself to
+     */
     @Override
     public void addToContainer(Container container) {
         addLabelToContainer(container);
     }
 
-    public Double getMarkingOffsetXObject() {
-        return model.getMarkingXOffset();
-    }
-
-    public Double getMarkingOffsetYObject() {
-        return model.getMarkingYOffset();
-    }
-
+    /**
+     *
+     * @param x
+     * @param y
+     * @return true if (x,y) is contained within the place bounds
+     */
     @Override
     public boolean contains(int x, int y) {
 

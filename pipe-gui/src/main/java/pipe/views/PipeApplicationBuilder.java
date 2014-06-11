@@ -30,11 +30,24 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * Builder class to set up the properties of the PIPE main application window
+ * <p/>
+ * This class does a bit too much, but it took the logic out of the {@link pipe.views.PipeApplicationView} class itself
+ */
 public final class PipeApplicationBuilder {
 
-
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(PipeApplicationBuilder.class.getName());
 
+    /**
+     *
+     * @param controller
+     * @param model
+     * @return created PipeApplicationView
+     */
     public PipeApplicationView build(PipeApplicationController controller, PipeApplicationModel model) {
         ZoomUI zoomUI = new ZoomUI(1, 0.1, 3, 0.4, controller);
         PipeApplicationView view = new PipeApplicationView(zoomUI, controller, model);
@@ -58,6 +71,15 @@ public final class PipeApplicationBuilder {
     }
 
 
+    /**
+     * Creates all the components that should go in the view
+     * This contains the tool bars, menu bars, canvas etc.
+     * @param view
+     * @param model
+     * @param controller
+     * @param zoomUI
+     * @return
+     */
     private PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
                                            PipeApplicationController controller, ZoomUI zoomUI) {
         ComponentEditorManager componentEditorManager = new ComponentEditorManager(controller);
@@ -89,6 +111,12 @@ public final class PipeApplicationBuilder {
                 exportPSAction, exportTNAction);
     }
 
+    /**
+     *
+     * @param pipeComponents
+     * @param view
+     * @return tool bar involved in drawing and all its actions
+     */
     private JToolBar getDrawingToolBar(PIPEComponents pipeComponents, PipeApplicationView view) {
         JToolBar drawingToolBar = new JToolBar();
         drawingToolBar.setFloatable(false);
@@ -110,6 +138,11 @@ public final class PipeApplicationBuilder {
         return drawingToolBar;
     }
 
+    /**
+     *
+     * @param pipeComponents
+     * @return tool bar involved in animation and all its actions
+     */
     private JToolBar getAnimationToolBar(PIPEComponents pipeComponents) {
         JToolBar animationToolBar = new JToolBar();
         animationToolBar.setFloatable(false);
@@ -170,6 +203,14 @@ public final class PipeApplicationBuilder {
         return toolBar;
     }
 
+    /**
+     *
+     * @param pipeComponents
+     * @param view
+     * @param controller
+     * @param zoomActions
+     * @return PIPE menu with all its items
+     */
     private JMenuBar buildMenu(PIPEComponents pipeComponents, PipeApplicationView view,
                                PipeApplicationController controller, String[] zoomActions) {
         JMenuBar menuBar = new JMenuBar();
@@ -273,6 +314,14 @@ public final class PipeApplicationBuilder {
         return menuBar;
     }
 
+    /**
+     * Action performed in the application view when tabs are changed
+     * @param view
+     * @param controller
+     * @param pipeComponents
+     * @param drawingToolBar
+     * @param animationToolBar
+     */
     private void setTabChangeListener(PipeApplicationView view, final PipeApplicationController controller,
                                       final PIPEComponents pipeComponents, final JToolBar drawingToolBar,
                                       final JToolBar animationToolBar) {
@@ -286,6 +335,17 @@ public final class PipeApplicationBuilder {
         });
     }
 
+    /**
+     * Listens to the pipe application model for changes in animation mode and toggles this change in the view
+     * showing the animation tool bar instead of the drawing tool bar.
+     *
+     * It disables other tool bars that are visible.
+     * @param pipeComponents
+     * @param model
+     * @param applicationController
+     * @param drawingToolBar
+     * @param animationToolBar
+     */
     private void listenForAnimationMode(final PIPEComponents pipeComponents, final PipeApplicationModel model,
                                         final PipeApplicationController applicationController,
                                         final JToolBar drawingToolBar, final JToolBar animationToolBar) {
@@ -311,6 +371,11 @@ public final class PipeApplicationBuilder {
         });
     }
 
+    /**
+     * Add a button to the tool bar
+     * @param toolBar tool bar to add the button to
+     * @param action button to add to the tool bar
+     */
     private void addButton(JToolBar toolBar, GuiAction action) {
         if (action.getValue("selected") != null) {
             toolBar.add(new ToggleButton(action));
@@ -422,6 +487,13 @@ public final class PipeApplicationBuilder {
         }
     }
 
+    /**
+     * Enable actions for edit or animation mode
+     * @param pipeComponents
+     * @param editMode true if in edit mode, false animation mode
+     * @param drawingToolBar
+     * @param animationToolBar
+     */
     private void enableActions(PIPEComponents pipeComponents, boolean editMode, Component drawingToolBar,
                                Component animationToolBar) {
         if (editMode) {
@@ -445,6 +517,14 @@ public final class PipeApplicationBuilder {
         pipeComponents.selectAction.setEnabled(editMode);
     }
 
+    /**
+     * Sets the animation mode and enables the correct actions and tool bars
+     * @param model
+     * @param pipeComponents
+     * @param drawingToolBar
+     * @param animationToolBar
+     * @param animateMode
+     */
     public void setAnimationMode(PipeApplicationModel model, PIPEComponents pipeComponents, JToolBar drawingToolBar,
                                  JToolBar animationToolBar, boolean animateMode) {
         enableActions(pipeComponents, !animateMode, drawingToolBar, animationToolBar);
@@ -460,6 +540,15 @@ public final class PipeApplicationBuilder {
         return jar.getPath().endsWith(".jar");
     }
 
+    /**
+     * Loads the examples embedded within the PIPE jar appliaction.
+     *
+     * This method will be called if the uber-jar is running
+     * @param controller
+     * @param view
+     * @return
+     * @throws IOException
+     */
     private JMenu loadJarExamples(PipeApplicationController controller, PipeApplicationView view) throws IOException {
         JMenu exampleMenu = new JMenu("Examples");
 
@@ -486,44 +575,123 @@ public final class PipeApplicationBuilder {
      * Components needed to build pipe tool bars and menus
      */
     private static final class PIPEComponents {
+        /**
+         * Drop down token chooser
+         */
         public final ChooseTokenClassAction chooseTokenClassAction;
 
+        /**
+         * Holds all actions for editing the Petri net
+         */
         public final ComponentEditorManager componentEditorManager;
 
+        /**
+         * Listener for undo action creation
+         */
         public final SimpleUndoListener undoListener;
 
+        /**
+         * Holds all actions for creating components
+         */
         public final ComponentCreatorManager componentCreatorManager;
 
+        /**
+         * Holds all actions for animating the Petri net
+         */
         public final AnimateActionManager animateActionManager;
 
+        /**
+         * Holds actions for io/delete etc of a Petri net and its components
+         */
         public final PetriNetEditorManager editorManager;
 
+        /**
+         * Holds token editing actions
+         */
         public final TokenActionManager tokenActionManager;
 
+        /**
+         * The print action
+         */
         public final PrintAction printAction;
 
+        /**
+         * The export to PNG action
+         */
         public final ExportPNGAction exportPNGAction;
 
+        /**
+         * Select action for selecting items on the currently displayed canvas
+         */
         public final SelectAction selectAction;
 
+        /**
+         * Exit action, for quitting PIPE
+         */
         public final ExitAction exitAction;
 
+        /**
+         * Zoom action for specifing the zoom in the drop down
+         */
         public final SetZoomAction zoomAction;
 
+        /**
+         * Unfold action, for turning a colored Petri net into a single token Petri net
+         */
         public final UnfoldAction unfoldAction;
 
+        /**
+         * Zoom out action
+         */
         public final ZoomOutAction zoomOutAction;
 
+        /**
+         * Zoom in action
+         */
         public final ZoomInAction zoomInAction;
 
+        /**
+         * Toggle the grid width and height
+         */
         public final GridAction toggleGrid;
 
+        /**
+         * Import a module action
+         */
         public final ImportAction importAction;
 
+        /**
+         * Export the Petri net to a postscript
+         */
         public final ExportPSAction exportPSAction;
 
+        /**
+         * Export the Petri net to a TN
+         */
         public final ExportTNAction exportTNAction;
 
+        /**
+         * Constructor
+         * @param chooseTokenClassAction
+         * @param componentEditorManager
+         * @param undoListener
+         * @param componentCreatorManager
+         * @param animateActionManager
+         * @param editorManager
+         * @param tokenActionManager
+         * @param printAction
+         * @param exportPNGAction
+         * @param selectAction
+         * @param exitAction
+         * @param zoomAction
+         * @param unfoldAction
+         * @param zoomOutAction
+         * @param zoomInAction
+         * @param toggleGrid
+         * @param importAction
+         * @param exportPSAction
+         * @param exportTNAction
+         */
         private PIPEComponents(ChooseTokenClassAction chooseTokenClassAction,
                                ComponentEditorManager componentEditorManager, SimpleUndoListener undoListener,
                                ComponentCreatorManager componentCreatorManager,

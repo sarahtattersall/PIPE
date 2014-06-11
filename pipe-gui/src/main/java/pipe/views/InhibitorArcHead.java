@@ -6,9 +6,24 @@ import java.awt.*;
  * Draws a round circle to represent inhibitor arc heads
  */
 public class InhibitorArcHead implements ArcHead {
+    /**
+     * Width of the oval
+     */
     private static final int OVAL_WIDTH = 8;
+
+    /**
+     * Height of the oval
+     */
     private static final int OVAL_HEIGHT = 8;
+
+    /**
+     * x location relative to 0 of the oval
+     */
     private static final int OVAL_X = -OVAL_WIDTH;
+
+    /**
+     * y location relative to 0 of the oval
+     */
     private static final int OVAL_Y = -OVAL_HEIGHT/2;
 
     /**

@@ -41,17 +41,4 @@ public class AnnotationViewBuilderTest {
         AnnotationView annotationView = builder.build(parent, model);
         assertEquals(annotation, annotationView.getModel());
     }
-
-    @Test
-    public void correctlySetsParameters()
-    {
-        AnnotationView annotationView = builder.build(parent, model);
-        //TODO: Work out waht the view is doing to x & y?
-//        assertEquals(annotation.getX(), annotationNote._positionX, DOUBLE_DELTA);
-//        assertEquals(annotation.getY(), annotationNote._positionY, DOUBLE_DELTA);
-//        assertEquals(annotation.getHeight(), annotationNote.getHeight(), DOUBLE_DELTA);
-//        assertEquals(annotation.getWidth(), annotationNote.getWidth(), DOUBLE_DELTA);
-        assertEquals(annotation.hasBorder(), annotationView.isShowingBorder());
-        assertEquals(annotation.getText(), annotationView.getNoteText());
-    }
 }

@@ -46,6 +46,9 @@ public abstract class AbstractPetriNetViewComponent<T extends PetriNetComponent>
 
     /**
      * View item bounds
+     *
+     * Used because the canvas has no layout manager
+     *
      */
     protected Rectangle bounds;
 

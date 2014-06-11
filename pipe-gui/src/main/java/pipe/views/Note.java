@@ -25,13 +25,28 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
      */
     protected final RectangularShape noteRect = new Rectangle();
 
+    /**
+     * True if a border should be displayed when painting the component
+     */
     protected boolean drawBorder = true;
 
+    /**
+     * Initial x point
+     */
     protected int originalX;
 
+    /**
+     * Initial y point
+     */
     protected int originalY;
 
 
+    /**
+     * Constructor
+     * @param model underlying model
+     * @param controller Petri net controller for the Petri net the annotation is house in
+     * @param parent parent of this view
+     */
     Note(Annotation model, PetriNetController controller, Container parent) {
         super(model.getId(), model, controller, parent);
         initialise(model.getX(), model.getY());
@@ -39,6 +54,11 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         noteText.setSize(model.getWidth(), model.getHeight());
     }
 
+    /**
+     * Initalise with an (x,y) location
+     * @param x
+     * @param y
+     */
     private void initialise(int x, int y) {
         originalX = x;
         originalY = y;
@@ -66,6 +86,9 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
 
     /**
      * Calculates the BoundsOffsets used for setBounds() method
+     *
+     * Implemented because the canvas has no layout manager
+     *
      */
     public void updateBounds() {
         int newHeight = noteText.getPreferredSize().height;
@@ -90,26 +113,10 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
     }
 
 
-    public boolean isShowingBorder() {
-        return drawBorder;
-    }
-
-    public JTextArea getNote() {
-        return noteText;
-    }
-
-    public String getNoteText() {
-        return noteText.getText();
-    }
-
-    public int getNoteWidth() {
-        return noteText.getWidth();
-    }
-
-    public int getNoteHeight() {
-        return noteText.getHeight();
-    }
-
+    /**
+     * Adjust the top vertical of the annotation
+     * @param dy y offset
+     */
     public void adjustTop(int dy) {
         if (noteText.getPreferredSize().height <= noteText.getHeight() - dy) {
             noteText.setSize(new Dimension(noteText.getWidth(), noteText.getHeight() - dy));
@@ -118,12 +125,20 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         }
     }
 
+    /**
+     * Adjust the bottom vertical of the annotation
+     * @param dy y offset
+     */
     public void adjustBottom(int dy) {
         if (noteText.getPreferredSize().height <= noteText.getHeight() + dy) {
             noteText.setSize(new Dimension(noteText.getWidth(), noteText.getHeight() + dy));
         }
     }
 
+    /**
+     * Adjust the left horizontal of the annotation
+     * @param dx x offset
+     */
     public void adjustLeft(int dx) {
         if (GUIConstants.ANNOTATION_MIN_WIDTH <= noteText.getWidth() - dx) {
             noteText.setSize(new Dimension(noteText.getWidth() - dx, noteText.getHeight()));
@@ -132,12 +147,22 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         }
     }
 
+    /**
+     * Adjust the right horizontal of the annotation
+     * @param dx x offset
+     */
     public void adjustRight(int dx) {
         if (GUIConstants.ANNOTATION_MIN_WIDTH <= noteText.getWidth() + dx) {
             noteText.setSize(new Dimension(noteText.getWidth() + dx, noteText.getHeight()));
         }
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @return true if (x,y) intersects with the annotation
+     */
     @Override
     public boolean contains(int x, int y) {
         return noteRect.contains(x, y);
@@ -147,17 +172,13 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
         return noteText.getText();
     }
 
+    /**
+     * Set the text for the annotation
+     * @param text
+     */
     public void setText(String text) {
         noteText.setText(text);
         noteText.setSize(noteText.getPreferredSize());
-    }
-
-    public int getOriginalX() {
-        return originalX;
-    }
-
-    public int getOriginalY() {
-        return originalY;
     }
 
 }

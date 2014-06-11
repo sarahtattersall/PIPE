@@ -5,15 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.TransitionViewBuilder;
 import pipe.gui.PetriNetTab;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.TransitionView;
 import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
-
-import java.awt.Rectangle;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,24 +44,6 @@ public class TransitionViewBuilderTest {
     {
         TransitionView transitionView = builder.build(parent, model);
         assertEquals(transition, transitionView.getModel());
-    }
-
-    @Test
-    public void correctlySetsViewAttributes()
-    {
-        transition.setX(200);
-        TransitionView transitionView = builder.build(parent, model);
-
-        //TODO: SHOULDNT REALLY USE HEIGHT x HEIGHT ITS CONFUSING, its because the transition is actually a square
-        // element only partly drawn.
-        Rectangle rect = new Rectangle((int)transition.getX(), (int)transition.getY(), transition.getHeight(), transition.getHeight());
-
-        //This - 5 comes from updating the bounds. Its a variable set in PetriNetViewComponent
-        rect.grow(5, 5);
-        assertEquals(transition.getId(), transitionView.getId());
-        assertEquals(transition.getAngle(), transitionView.getAngle());
-        assertEquals(transition.isTimed(), transitionView.isTimed());
-        assertEquals(transition.isInfiniteServer(), transitionView.isInfiniteServer());
     }
 
 }

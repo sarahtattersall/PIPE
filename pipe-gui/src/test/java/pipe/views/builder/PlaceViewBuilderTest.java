@@ -48,9 +48,6 @@ public class PlaceViewBuilderTest {
     {
         place.setX(200);
         PlaceView view = builder.build(parent, model);
-        assertEquals(place.getCapacity(), view.getCapacity());
-        assertEquals(place.getMarkingXOffset(), view.getMarkingOffsetXObject(), DOUBLE_DELTA);
-        assertEquals(place.getMarkingYOffset(), view.getMarkingOffsetYObject(), DOUBLE_DELTA);
         assertEquals(place.getId(), view.getId());
     }
 }

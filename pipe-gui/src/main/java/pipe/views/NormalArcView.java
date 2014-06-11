@@ -25,7 +25,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     private static final String TYPE = "normal";
 
-    private final Collection<NameLabel> weightLabel = new LinkedList<NameLabel>();
+    private final Collection<TextLabel> weightLabel = new LinkedList<TextLabel>();
 
     private ArcHead arcHead = new NormalHead();
 
@@ -37,7 +37,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         super(model, controller, parent, handler, applicationModel);
         addConnectableListener();
         addSourceTargetConnectableListener();
-        for (NameLabel label : weightLabel) {
+        for (TextLabel label : weightLabel) {
             getParent().add(label);
         }
     }
@@ -75,12 +75,12 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     @Override
     public void componentSpecificDelete() {
-        for (NameLabel label : weightLabel) {
+        for (TextLabel label : weightLabel) {
             removeLabelFromParentContainer(label);
         }
     }
 
-    private void removeLabelFromParentContainer(NameLabel label) {
+    private void removeLabelFromParentContainer(TextLabel label) {
         getParent().remove(label);
     }
 
@@ -99,7 +99,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     private void removeCurrentWeights() {
-        for (NameLabel name : weightLabel) {
+        for (TextLabel name : weightLabel) {
             removeLabelFromParentContainer(name);
         }
         weightLabel.clear();
@@ -110,8 +110,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         for (Map.Entry<String, String> entry : weights.entrySet()) {
             String weight = entry.getValue();
             String tokenId = entry.getKey();
-            NameLabel label = new NameLabel();
-            label.setText(weight);
+            TextLabel label = new TextLabel(weight);
             try {
                 Token token = petriNetController.getToken(tokenId);
                 label.setColor(token.getColor());
@@ -131,7 +130,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         int y = originalY;
         int yCount = 0;
 
-        for (NameLabel label : weightLabel) {
+        for (TextLabel label : weightLabel) {
             if (yCount >= 4) {
                 y = originalY;
                 x += 17;
@@ -144,14 +143,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
     private void addWeightLabelsToContainer(Container container) {
-        for (NameLabel label : weightLabel) {
+        for (TextLabel label : weightLabel) {
             container.add(label);
         }
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
     }
 
 

@@ -1,7 +1,7 @@
 package pipe.handlers;
 
 import pipe.views.ConnectableView;
-import pipe.views.NameLabel;
+import pipe.views.TextLabel;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import java.awt.event.MouseEvent;
@@ -22,17 +22,17 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
     /**
      * Name label for the corresponding connectable
      */
-    private final NameLabel nameLabel;
+    private final TextLabel textLabel;
 
 
     /**
      * Constructor
-     * @param nameLabel name label for the connectable
+     * @param textLabel name label for the connectable
      * @param connectable connectable with a name label
      */
-    public LabelHandler(NameLabel nameLabel, ConnectableView<T> connectable) {
+    public LabelHandler(TextLabel textLabel, ConnectableView<T> connectable) {
         this.connectable = connectable;
-        this.nameLabel = nameLabel;
+        this.textLabel = textLabel;
     }
 
 

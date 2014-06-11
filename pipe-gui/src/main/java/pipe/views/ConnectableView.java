@@ -21,7 +21,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     /**
      * Name label for the connectable item
      */
-    protected NameLabel nameLabel;
+    protected TextLabel textLabel;
 
     /**
      * Shape of the place on the Petri net
@@ -43,11 +43,14 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
 
         int x = (int) (model.getX() + model.getNameXOffset());
         int y = (int) (model.getX() + model.getNameXOffset());
-        nameLabel = new NameLabel(model.getName(), x, y);
+        textLabel = new TextLabel(model.getName(), x, y);
         addChangeListener();
         updateBounds();
     }
 
+    /**
+     * Adds x, y and id change listeners to the underlying model which redraw the connectable when changed
+     */
     private void addChangeListener() {
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -62,8 +65,8 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
                 } else if (name.equals(Connectable.ID_CHANGE_MESSAGE) || name.equals(Connectable.NAME_CHANGE_MESSAGE)) {
                     //TODO: NAMELABEL SHOULD LISTEN?
                     String newName = (String) propertyChangeEvent.getNewValue();
-                    nameLabel.setName(newName);
-                    nameLabel.repaint();
+                    textLabel.setName(newName);
+                    textLabel.repaint();
                 }
             }
 
@@ -74,11 +77,14 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      * Updates label position according to the Connectable location
      */
     private final void updateLabelLocation() {
-        nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
+        textLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
     }
 
     /**
      * Changes the displayed bounds of the object relative to its x,y width and height
+     *
+     * Implemented because the canvas has no layout manager
+     *
      */
     protected final void updateBounds() {
         setBounds(model.getX(), model.getY(), model.getWidth() + getComponentDrawOffset(), model.getHeight() + getComponentDrawOffset());
@@ -96,7 +102,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     @Override
     public final void componentSpecificDelete() {
         if (getParent() != null) {
-            getParent().remove(nameLabel);
+            getParent().remove(textLabel);
         }
     }
 
@@ -105,12 +111,12 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      * @param container
      */
     protected final void addLabelToContainer(Container container) {
-        container.add(nameLabel);
-        nameLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
-        LabelHandler<T> labelHandler = new LabelHandler<>(nameLabel, this);
-        nameLabel.addMouseListener(labelHandler);
-        nameLabel.addMouseMotionListener(labelHandler);
-        nameLabel.addMouseWheelListener(labelHandler);
+        container.add(textLabel);
+        textLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
+        LabelHandler<T> labelHandler = new LabelHandler<>(textLabel, this);
+        textLabel.addMouseListener(labelHandler);
+        textLabel.addMouseMotionListener(labelHandler);
+        textLabel.addMouseWheelListener(labelHandler);
     }
 
 }

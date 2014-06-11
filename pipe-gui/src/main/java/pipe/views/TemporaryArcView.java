@@ -21,8 +21,14 @@ import static java.lang.Math.max;
  * @param <T> source class
  */
 public class TemporaryArcView<T extends Connectable> extends JComponent {
+    /**
+     * Arc source, this source was clicked on to initialse the drawing of the remporary arc
+     */
     private T source;
 
+    /**
+     * Head shown when drawing the arc
+     */
     private final ArcHead arcHead;
 
     /**
@@ -37,12 +43,20 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
     private List<ArcPoint> intermediatePoints = new ArrayList<>();
 
     /**
-     * Maximum intermediate point for setting rectangle bounds
+     * Maximum intermediate point seen so far for setting rectangle x bounds
      */
     private double maxX;
 
+    /**
+     * Maximum intermediate point seen so far for setting rectangle y bounds
+     */
     private double maxY;
 
+    /**
+     * Constructor
+     * @param source start point of the arc
+     * @param arcHead head to draw on the temporary arc
+     */
     public TemporaryArcView(T source, ArcHead arcHead) {
         super();
         this.source = source;
@@ -61,6 +75,10 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         maxY = max(maxY, point.getY());
     }
 
+    /**
+     *
+     * @param end 2D end point
+     */
     public void setEnd(Point2D end) {
         this.end = end;
         updateMax(end);
@@ -76,16 +94,29 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         setBounds(0, 0, x, y);
     }
 
+    /**
+     * Add this point to the arc when its created
+     * @param point
+     */
     public void addIntermediatePoint(ArcPoint point) {
         intermediatePoints.add(point);
         updateMax(point.getPoint());
         updateBounds();
     }
 
+    /**
+     *
+     * @return the source model of this arc
+     */
     public T getSourceConnectable() {
         return source;
     }
 
+
+    /**
+     * Paints the temporary arc with straight arc points and the specified head
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -130,6 +161,10 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         return false;
     }
 
+    /**
+     *
+     * @return the very last point of the temporary arc path points
+     */
     public Point2D getLastPoint() {
         if (!intermediatePoints.isEmpty()) {
             return intermediatePoints.get(intermediatePoints.size() - 1).getPoint();
@@ -137,6 +172,10 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
         return source.getCentre();
     }
 
+    /**
+     *
+     * @return all intermediate path points created whilst creating the arc
+     */
     public List<ArcPoint> getIntermediatePoints() {
         return intermediatePoints;
     }

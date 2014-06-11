@@ -19,18 +19,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * View representation of the annotation Petri net component
+ */
 public final class AnnotationView extends Note {
 
-    private static final long serialVersionUID = 1L;
-
+    /**
+     * The number of points defined that can be dragged on the annotation to increase
+     * its size
+     */
     public static final int NO_DRAG_POINTS = 8;
 
+    /**
+     * Drag point locations on the annotation
+     */
     private final List<ResizePoint> dragPoints = new ArrayList<>(NO_DRAG_POINTS);
 
-    private boolean fillNote = true;
-
+    /**
+     * Affine transform for drawing purposes. This transform is applied
+     * to the rectange and can be used to rotate, stretch etc the annotation
+     */
     private AffineTransform prova = new AffineTransform();
 
+    /**
+     * Constructor
+     * @param annotation underlying annotation model
+     * @param controller Petri net controller for the Petri net the annotation belongs to
+     * @param parent parent container of this view
+     * @param handler how the annotation will handle mouse events
+     */
     public AnnotationView(Annotation annotation, PetriNetController controller, Container parent, MouseInputAdapter handler) {
         super(annotation, controller, parent);
         addChangeListener(annotation);
@@ -39,6 +56,10 @@ public final class AnnotationView extends Note {
         updateBounds();
     }
 
+    /**
+     * Registers the handler to this view
+     * @param handler how the annotation will handle mouse events
+     */
     private void setMouseHandler(MouseInputAdapter handler) {
         addMouseListener(handler);
         addMouseMotionListener(handler);
@@ -46,6 +67,11 @@ public final class AnnotationView extends Note {
         noteText.addMouseMotionListener(handler);
     }
 
+    /**
+     * Update the (x,y) and width height boundary of this view
+     *
+     * Implemented because the canvas has no layout manager
+     */
     @Override
     public void updateBounds() {
         super.updateBounds();
@@ -127,6 +153,10 @@ public final class AnnotationView extends Note {
         }
     }
 
+    /**
+     * Paints the annotation and its text using the graphics
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -147,6 +177,10 @@ public final class AnnotationView extends Note {
             }
         } else {
             g2.setPaint(GUIConstants.ELEMENT_FILL_COLOUR);
+            /*
+
+     */
+            boolean fillNote = true;
             if (fillNote) {
                 g2.fill(noteRect);
             }
@@ -160,14 +194,21 @@ public final class AnnotationView extends Note {
         }
     }
 
+    /**
+     * Noop
+     * @param container to add itself to
+     */
     @Override
     public void addToContainer(Container container) {
-        // Do nothing on add
+        //Noop
     }
 
+    /**
+     * Noop
+     */
     @Override
     public void componentSpecificDelete() {
-        //Nothing to do
+        //Noop
     }
 
     /**
@@ -180,13 +221,24 @@ public final class AnnotationView extends Note {
          */
         private final ResizePoint point;
 
+        /**
+         * Start point of resizing
+         */
         private Point start;
 
 
+        /**
+         * Constructor
+         * @param point the point to perform the resize to
+         */
         public ResizePointHandler(ResizePoint point) {
             this.point = point;
         }
 
+        /**
+         * When the mouse is pressed on the point repaint it and set the start location
+         * @param e
+         */
         @Override
         public void mousePressed(MouseEvent e) {
             point.isPressed = true;
@@ -194,6 +246,10 @@ public final class AnnotationView extends Note {
             start = e.getPoint();
         }
 
+        /**
+         * When the mouse is pressed on the point repaint it
+         * @param e
+         */
         @Override
         public void mouseReleased(MouseEvent e) {
             point.isPressed = false;
@@ -201,6 +257,10 @@ public final class AnnotationView extends Note {
             point.repaint();
         }
 
+        /**
+         * When the mouse is dragged, drag the point using the set start point when the mouse was pressed
+         * @param e
+         */
         @Override
         public void mouseDragged(MouseEvent e) {
             point.drag(e.getX() - start.x, e.getY() - start.y);
@@ -216,22 +276,47 @@ public final class AnnotationView extends Note {
      */
     public class ResizePoint extends javax.swing.JComponent {
 
+        /**
+         * Top horizontal of the annotation box
+         */
         private static final int TOP = 1;
 
+        /**
+         * Bottom horizontal of the annotation box
+         */
         private static final int BOTTOM = 2;
 
+        /**
+         * Left vertical of the annotation box
+         */
         private static final int LEFT = 4;
 
+        /**
+         * Right vertical of the annotation box
+         */
         private static final int RIGHT = 8;
 
         public final int typeMask;
 
+        /**
+         * Size of the point
+         */
         private static final int SIZE = 3;
 
+        /**
+         * Graphical representation of each point
+         */
         private Rectangle shape;
 
+        /**
+         * True if the point has been pressed
+         */
         private boolean isPressed = false;
 
+        /**
+         * Constructor
+         * @param type
+         */
         public ResizePoint(int type) {
             setOpaque(false);
             setBounds(-SIZE - 1, -SIZE - 1, 2 * SIZE + GUIConstants.ANNOTATION_SIZE_OFFSET + 1,
@@ -239,10 +324,20 @@ public final class AnnotationView extends Note {
             typeMask = type;
         }
 
+        /**
+         * Set the x,y location of the point
+         * @param x
+         * @param y
+         */
         public void setLocation(double x, double y) {
             super.setLocation((int) (x - SIZE), (int) (y - SIZE));
         }
 
+        /**
+         * Drag the point by x, y
+         * @param x
+         * @param y
+         */
         private void drag(int x, int y) {
             if ((typeMask & TOP) == TOP) {
                 adjustTop(y);
@@ -258,6 +353,10 @@ public final class AnnotationView extends Note {
             }
         }
 
+        /**
+         * Paint the point on the canvas
+         * @param g
+         */
         public void paintOnCanvas(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setTransform(prova);

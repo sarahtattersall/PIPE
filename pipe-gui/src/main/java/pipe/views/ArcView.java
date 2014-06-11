@@ -34,11 +34,6 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
      */
     protected final ArcPath arcPath;
 
-    /**
-     * true if arc is not hidden when a bidirectional arc is used
-     */
-    protected boolean inView = true;
-
     public ArcView(Arc<S, T> model, PetriNetController controller, Container parent,
                    MouseInputAdapter arcHandler,
                    PipeApplicationModel applicationModel) {
@@ -77,6 +72,10 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         addArcChangeListener();
     }
 
+    /**
+     * Register the mouse handler to this view
+     * @param arcHandler handler to determine what the arc does on mouse events
+     */
     public final void setMouseListener(MouseInputAdapter arcHandler) {
         addMouseListener(arcHandler);
         addMouseWheelListener(arcHandler);
@@ -128,6 +127,12 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     }
 
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @return true if (x,y) intersect the arc path
+     */
     @Override
     public final boolean contains(int x, int y) {
         Point2D.Double point = new Point2D.Double(x + arcPath.getBounds().getX() - getComponentDrawOffset() -
@@ -145,31 +150,14 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         return arcPath.contains(point);
     }
 
-    @Override
-    public final String getName() {
-        return getId();
-    }
 
-    //TODO: DELETE
-    public final void updateArcPosition() {
-        //Pair<Point2D.Double, Point2D.Double> points = getArcStartAndEnd();
-        //        addPathSourceLocation(points.first.x, points.first.y);
-        //        setTargetLocation(points.second.x, points.second.y);
-        //        if (_source != null) {
-        //            _source.updateEndPoint(this);
-        //        }
-        //        if (_target != null) {
-        //            _target.updateEndPoint(this);
-        //        }
-        //        arcPath.createPath();
-    }
-
-
+    /**
+     *
+     * @return the graphical arc path which displays the arc and its points
+     */
     public final ArcPath getArcPath() {
         return arcPath;
     }
-
-    public abstract String getType();
 
 
     // Accessor function to check whether or not the Arc is tagged

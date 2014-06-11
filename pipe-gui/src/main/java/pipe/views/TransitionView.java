@@ -13,17 +13,30 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 
+/**
+ * View representation of a transition component
+ */
 public class TransitionView extends ConnectableView<Transition> {
+    /**
+     * True if the transition view has been selected
+     */
     public boolean highlighted;
 
-    private boolean enabled;
-
-    public TransitionView(Transition model, PetriNetController controller, Container parent, MouseInputAdapter transitionHandler, MouseListener animationHandler) {
-        super(model.getId(), model, controller, parent, new Rectangle2D.Double(0, 0, model.getWidth(),
-                model.getHeight()));
+    /**
+     * Constructor
+     *
+     * @param model             underlying transition model
+     * @param controller        Petri net controller of the Petri net the transition is housed in
+     * @param parent            parent of the view
+     * @param transitionHandler mouse listener actions for the transition when in edit mode
+     * @param animationHandler  mouse listener actions for the transition when in animation mode
+     */
+    public TransitionView(Transition model, PetriNetController controller, Container parent,
+                          MouseInputAdapter transitionHandler, MouseListener animationHandler) {
+        super(model.getId(), model, controller, parent,
+                new Rectangle2D.Double(0, 0, model.getWidth(), model.getHeight()));
         setChangeListener();
 
-        enabled = false;
         highlighted = false;
 
         rotate(model.getAngle());
@@ -34,20 +47,9 @@ public class TransitionView extends ConnectableView<Transition> {
 
     }
 
-    private void setMouseListener(MouseInputAdapter transitionHandler, MouseListener animationHandler) {
-        addMouseListener(transitionHandler);
-        addMouseMotionListener(transitionHandler);
-        addMouseWheelListener(transitionHandler);
-        addMouseListener(animationHandler);
-    }
-
-
-    public final void rotate(int angleInc) {
-        ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(), new Double(model.getCentre().getY()).floatValue());
-//        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
-//                model.getHeight() / 2));
-    }
-
+    /**
+     * Listen for property changes of the underlying mode and trigger a repaint
+     */
     private void setChangeListener() {
         model.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -74,20 +76,37 @@ public class TransitionView extends ConnectableView<Transition> {
         });
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+    /**
+     * Rotate the transition
+     *
+     * Currently doesnt work
+     * @param angleInc
+     */
+    public final void rotate(int angleInc) {
+        ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(),
+                new Double(model.getCentre().getY()).floatValue());
+        //        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
+        //                model.getHeight() / 2));
     }
 
-    @Override
-    public void setEnabled(boolean status) {
-        enabled = status;
+    /**
+     * Register the mouse listeners to this view
+     *
+     * @param transitionHandler mouse listener actions for the transition when in edit mode
+     * @param animationHandler  mouse listener actions for the transition when in animation mode
+     */
+    private void setMouseListener(MouseInputAdapter transitionHandler, MouseListener animationHandler) {
+        addMouseListener(transitionHandler);
+        addMouseMotionListener(transitionHandler);
+        addMouseWheelListener(transitionHandler);
+        addMouseListener(animationHandler);
     }
 
-    public void update() {
-        this.repaint();
-    }
 
+    /**
+     * Paints the transition, if the model is enabled it will paint the transition in red
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -146,16 +165,7 @@ public class TransitionView extends ConnectableView<Transition> {
             g2.draw(shape);
             g2.fill(shape);
         }
-//        changeToolTipText();
-    }
-
-
-    public boolean isInfiniteServer() {
-        return model.isInfiniteServer();
-    }
-
-    public boolean isTimed() {
-        return model.isTimed();
+        //        changeToolTipText();
     }
 
     /**
@@ -165,22 +175,24 @@ public class TransitionView extends ConnectableView<Transition> {
         return model.isEnabled() && petriNetController.isInAnimationMode();
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @return true if (x,y) intersects with the transition
+     */
+    @Override
+    public boolean contains(int x, int y) {
+        return shape.contains(x, y);
+    }
+
+    /**
+     * Adds the name label to the container
+     * @param container to add itself to
+     */
     @Override
     public void addToContainer(Container container) {
         addLabelToContainer(container);
-    }
-
-    public int getAngle() {
-        return model.getAngle();
-    }
-
-    @Override
-    public boolean contains(int x, int y) {
-        return shape.contains(x,y);
-    }
-
-    public void setModel(Transition model) {
-        this.model = model;
     }
 
 }

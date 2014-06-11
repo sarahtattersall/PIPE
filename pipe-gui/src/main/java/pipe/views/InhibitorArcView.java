@@ -13,30 +13,41 @@ import java.awt.geom.AffineTransform;
 
 
 /**
- * @author Pere Bonet
- * @version 1.0
+ * View of an inhibitor arc that connects places to transitions
  */
 public class InhibitorArcView extends ArcView<Place, Transition> {
 
-    private static final String TYPE = "inhibitor";
-
+    /**
+     * The graphical representation of the arc head
+     */
     private ArcHead arcHead = new InhibitorArcHead();
 
+    /**
+     * Constructor
+     * @param model underlying inhibitor arc
+     * @param controller Petri net controller for the Petri net the arc is house in
+     * @param parent parent of this view
+     * @param handler mouse action handler when mouse events are performed on the arc
+     * @param applicationModel main PIPE application model
+     */
     public InhibitorArcView(Arc<Place, Transition> model, PetriNetController controller, Container parent, MouseInputAdapter handler, PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);
     }
 
-    @Override
-    public String getType() {
-        return TYPE;
-    }
 
-
+    /**
+     * When the arc is added to the container the inhibitor view will add the arc path points to it
+     * @param container to add itself to
+     */
     @Override
     public void addToContainer(Container container) {
         updatePath();
     }
 
+    /**
+     * Paints the arc and its path using the arcHead
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -72,6 +83,9 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
         g2.setTransform(reset);
     }
 
+    /**
+     * Noop
+     */
     @Override
     public void componentSpecificDelete() {
         //Nothing to do

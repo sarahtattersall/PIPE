@@ -222,7 +222,6 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
                 return;
             }
             kill();
-            arcPath.updateArc();
         }
     }
 

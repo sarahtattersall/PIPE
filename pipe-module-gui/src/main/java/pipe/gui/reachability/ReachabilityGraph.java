@@ -324,7 +324,12 @@ public class ReachabilityGraph {
             Collection<Record> records = readResults(stateReader, transitionInput);
             Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
             updateTextResults(records);
-            updateGraph(records, stateMap);
+            if (records.size() < 100) {
+                updateGraph(records, stateMap);
+            } else {
+                //TODO: SHOW MESSAGE
+                LOGGER.log(Level.INFO, "Too big to display");
+            }
         }
     }
 
