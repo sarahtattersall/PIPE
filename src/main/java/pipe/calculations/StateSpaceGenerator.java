@@ -13,19 +13,13 @@ import pipe.io.ReachabilityGraphFileHeader;
 import pipe.io.StateRecord;
 import pipe.io.TransitionRecord;
 import pipe.utilities.math.Matrix;
-import pipe.views.ArcView;
-import pipe.views.MarkingView;
-import pipe.views.PetriNetView;
-import pipe.views.PlaceView;
-import pipe.views.TransitionView;
+import pipe.views.*;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
-import java.util.Vector;
 
 /**
  * @author Nadeem
@@ -400,7 +394,7 @@ public class StateSpaceGenerator {
 		/* Phase I ends */
 
 		/*
-		 * Phase II Perform state space exploration, eliminating vanishing
+		 * Phase II Perform state space exploration, eliminating vanishing          `
 		 * states
 		 */
 		System.out.println("Beginning Phase II: Exploring state space...");
@@ -843,7 +837,6 @@ public class StateSpaceGenerator {
 	 * @param test
 	 *            The state to look for
 	 * @param es
-	 * @param exploredStates
 	 *            The hashtable to check for the state
 	 * @return
 	 */
@@ -942,8 +935,6 @@ public class StateSpaceGenerator {
 	 * @param pnmlData
 	 * @param s
 	 * @param sprime
-	 * @param v
-	 * @param vprime
 	 * @return double - the probability
 	 */
 	private static double rate(PetriNetView pnmlData, State s, State sprime) {
@@ -1051,8 +1042,6 @@ public class StateSpaceGenerator {
 	 * @param s
 	 * @param sprime
 	 * @param firedTransition
-	 * @param v
-	 * @param vprime
 	 * @return double - the probability
 	 */
 	private static double prob(PetriNetView pnmlData, State s, State sprime,

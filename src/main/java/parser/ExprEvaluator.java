@@ -1,29 +1,26 @@
 package parser;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.sourceforge.jeval.EvaluationException;
 import net.sourceforge.jeval.Evaluator;
-
 import pipe.gui.ApplicationSettings;
 import pipe.views.MarkingView;
 import pipe.views.PetriNetView;
 import pipe.views.PlaceView;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ExprEvaluator{
-	
+
 	private PetriNetView _pnmldata;
-	
-	
+
+
 	public ExprEvaluator(){
 		_pnmldata=ApplicationSettings.getApplicationView().getCurrentPetriNetView();
 	}
-	
+
 	public Double parseAndEvalExprForTransition(String expr) throws EvaluationException{
 		String lexpr=new String(expr.replaceAll("\\s",""));
 		Iterator iterator = _pnmldata.getPetriNetObjects();
@@ -32,7 +29,7 @@ public class ExprEvaluator{
 		if (iterator != null) {
 			while (iterator.hasNext()) {
 				pn = iterator.next();
-				
+
 				//we parse the places with their number of tokens
 				if (pn instanceof PlaceView) {
 					lexpr = findAndReplaceCapacity(lexpr, pn);
@@ -55,24 +52,24 @@ public class ExprEvaluator{
 			throw e;
 			//e.printStackTrace();
 		}
-		
+
 		Double dresult = Double.parseDouble(result);
 		return dresult;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param expr
 	 * @param tokenId
 	 * @return -1 indicates the result value is not an integer
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public int parseAndEvalExpr(String expr, String tokenId) throws Exception{
-		
+
 		if(!validFloatAndDivision(expr)){
 			return -2;
 		}
-		
+
 		String lexpr=new String(expr.replaceAll("\\s",""));
 		Iterator iterator = _pnmldata.getPetriNetObjects();
 		Object pn;
@@ -80,23 +77,23 @@ public class ExprEvaluator{
 		if (iterator != null) {
 			while (iterator.hasNext()) {
 				pn = iterator.next();
-				
+
 				//we parse the places with their number of tokens
 				if (pn instanceof PlaceView) {
 					lexpr = findAndReplaceCapacity(lexpr, pn);
 					name=((PlaceView) pn).getName().replaceAll("\\s","");
 					name = ("#("+name+")");
-					
-					
+
+
 //					if(lexpr.toLowerCase().contains(name.toLowerCase()+"/") ||lexpr.toLowerCase().contains(name.toLowerCase()+" /")||
 //							lexpr.toLowerCase().contains("/"+name.toLowerCase()) || lexpr.toLowerCase().contains("/ "+name.toLowerCase())){
 //						throw new MarkingDividedByNumberException();
 //					}
-					
-					
+
+
 					if(lexpr.toLowerCase().contains(name.toLowerCase())){
 						LinkedList<MarkingView> markings = ((PlaceView) pn).getCurrentMarkingView();
-						int numOfToken=0; 
+						int numOfToken=0;
 						for(MarkingView marking : markings){
 							if (marking.getToken().getID().equals(tokenId)){
 								numOfToken=marking.getCurrentMarking();
@@ -120,11 +117,11 @@ public class ExprEvaluator{
 			throw ee;
 		}
 //		if(dresult % 1 ==0){
-//			
+//
 //		}
 		Double dresult = Double.parseDouble(result);
 //		if(!(dresult % 1 == 1)){
-//			
+//
 //		}
 //		if(dresult<1){
 //			return 1;
@@ -137,7 +134,7 @@ public class ExprEvaluator{
 		//return Math.ceil(dresult);
 		return (int)Math.round(dresult); //dresult.intValue();
 	}
-	
+
 	private String findAndReplaceCapacity(String expr, Object pn){
 		String temp = "cap("+((PlaceView) pn).getName().replaceAll("\\s","")+")";
 		if(expr.toLowerCase().contains(temp.toLowerCase())){
@@ -146,9 +143,9 @@ public class ExprEvaluator{
 		}
 		return expr;
 	}
-	
+
 	private boolean validFloatAndDivision(String raw) {
-		
+
 	    Pattern p = Pattern.compile(".*ceil\\(.*[0-9]*\\.+[0-9]+.*\\).*");
 	    Pattern p2 = Pattern.compile(".*[0-9]*\\.+[0-9]+.*");
 	    Matcher m = p.matcher(raw);
@@ -160,8 +157,8 @@ public class ExprEvaluator{
 
 	    if((m1.find() && !m.find() && !m3.find())){
 	    	return false;
-	    }	    
-	   
+	    }
+
 		Pattern p1 = Pattern.compile(".*ceil\\(.*/.*\\).*");
 	    m=p1.matcher(raw);
 	    Pattern p5 = Pattern.compile(".*floor\\(.*/.*\\).*");
@@ -169,10 +166,10 @@ public class ExprEvaluator{
 	    if(!m.find()&&!m1.find()&&raw.contains("/")){
 	    	return false;
 	    }
-	    
-	    	    
+
+
 
 	    return true;
 	}
-	
+
 }

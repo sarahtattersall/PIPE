@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -30,7 +29,7 @@ public class SteadyStateSolver {
       // A sparse matrix containing the transition probabilities between
       // tangible states.
       LinkedList[] Qprime = createSparseMatrix(rgfile);
-      return gaussSiedel(Qprime);
+      return  gaussSiedel(Qprime);
    }
 
    
@@ -174,6 +173,7 @@ public class SteadyStateSolver {
       double aii = 1.0;
       System.out.println("Solving steady state distribution...");
       System.out.println("Please wait, it could take some time...");
+       long startTime = System.nanoTime();
       while (!plausible) {
          for (int row = 0; row < numrows; row++) {
             iterator = A[row].iterator();
@@ -218,7 +218,7 @@ public class SteadyStateSolver {
              }
          }
       }
-      System.out.println("The steady state solution has been calculated.");
+
       // Now normalise the steady state vector
       sum = 0;
        for(double aX : x)
@@ -228,7 +228,12 @@ public class SteadyStateSolver {
       for (int i = 0; i < x.length; i++) {
          x[i] /= sum;
       }
-      return x;
+       long endTime = System.nanoTime();
+       long duration = endTime - startTime;
+       System.out.println("The steady state solution has been calculated in " + duration + " nanoseconds");
+
+       return x;
+
    }
    
    
