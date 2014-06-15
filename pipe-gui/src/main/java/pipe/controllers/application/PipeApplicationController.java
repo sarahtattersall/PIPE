@@ -17,6 +17,7 @@ import javax.xml.transform.TransformerException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -164,7 +165,7 @@ public class PipeApplicationController {
     public void createNewTabFromFile(File file) throws UnparsableException {
         try {
             manager.createFromFile(file);
-        } catch (JAXBException e) {
+        } catch (FileNotFoundException | JAXBException e) {
             throw new UnparsableException("Could not initialise Petri net reader!", e);
         }
     }
