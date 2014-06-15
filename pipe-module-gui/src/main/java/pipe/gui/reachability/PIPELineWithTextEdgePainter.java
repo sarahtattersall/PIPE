@@ -22,11 +22,24 @@ import java.awt.geom.Point2D;
 public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends LineEdgePainter<T> {
 
 
+    /**
+     * Constructor
+     * @param dragging
+     * @param normal
+     * @param isDashedLine
+     */
     public PIPELineWithTextEdgePainter(JPowerGraphColor dragging, JPowerGraphColor normal, boolean isDashedLine) {
         super(dragging, normal, isDashedLine);
     }
 
 
+    /**
+     * Displays the edge and text on the graph
+     * @param graphPane
+     * @param g
+     * @param edge
+     * @param theSubGraphHighlighter
+     */
     @Override
     public void paintEdge(JGraphPane graphPane, JPowerGraphGraphics g, T edge,
                           SubGraphHighlighter theSubGraphHighlighter) {
@@ -91,6 +104,15 @@ public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends Lin
     }
 
 
+    /**
+     * Paints an arrow in the correct direction
+     * @param g
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param isDashedLine
+     */
     public static void paintArrow(JPowerGraphGraphics g, int x1, int y1, int x2, int y2, boolean isDashedLine) {
         double middleX = (x1 + 2 * x2) / 3;
         double middleY = (y1 + 2 * y2) / 3;

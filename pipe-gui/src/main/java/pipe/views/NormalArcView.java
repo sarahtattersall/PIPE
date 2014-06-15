@@ -20,18 +20,41 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+/**
+ * Normal arc view
+ * @param <S> source model
+ * @param <T> target model
+ */
 public class NormalArcView<S extends Connectable, T extends Connectable> extends ArcView<S, T> {
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(NormalArcView.class.getName());
 
-    private static final String TYPE = "normal";
-
+    /**
+     * Weight labels to display
+     */
     private final Collection<TextLabel> weightLabel = new LinkedList<TextLabel>();
 
+    /**
+     * Graphical arc head
+     */
     private ArcHead arcHead = new NormalHead();
 
-    // bidirectional arc?
+    /**
+     * joined if it displays two directional arcs sharing the opposite source and targets
+     */
+    @Deprecated
     private boolean joined = false;
 
+    /**
+     * Constructor
+     * @param model underlying normal arc
+     * @param controller Petri ent controller for the Petri net that houses the arc
+     * @param parent view parent
+     * @param handler mouse event handler
+     * @param applicationModel PIPE main appliaction model
+     */
     public NormalArcView(Arc<S, T> model, PetriNetController controller, Container parent, MouseInputAdapter handler,
                          PipeApplicationModel applicationModel) {
         super(model, controller, parent, handler, applicationModel);
@@ -60,6 +83,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
 
+    /**
+     * Adds a listener to the the arc listening for a change in the arc weights
+     */
     private void addConnectableListener() {
         PropertyChangeListener listener = new PropertyChangeListener() {
             @Override
@@ -73,6 +99,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         model.addPropertyChangeListener(listener);
     }
 
+    /**
+     * Paints the weight label on the parent
+     */
     @Override
     public void componentSpecificDelete() {
         for (TextLabel label : weightLabel) {
@@ -80,16 +109,27 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         }
     }
 
+    /**
+     * Removes the weight labels from the parent
+     * @param label
+     */
     private void removeLabelFromParentContainer(TextLabel label) {
         getParent().remove(label);
     }
 
+    /**
+     * When added to the container it updates the paths and weights
+     * @param container to add itself to
+     */
     @Override
     public void addToContainer(Container container) {
         updatePath();
         updateWeights();
     }
 
+    /**
+     * Creates and paints the weights in the center of the arc
+     */
     private void updateWeights() {
         removeCurrentWeights();
         createWeightLabels();
@@ -98,6 +138,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         addWeightLabelsToContainer(getParent());
     }
 
+    /**
+     * Removes the weights from the arc
+     */
     private void removeCurrentWeights() {
         for (TextLabel name : weightLabel) {
             removeLabelFromParentContainer(name);
@@ -105,6 +148,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         weightLabel.clear();
     }
 
+    /**
+     * Creates token weight labels
+     */
     private void createWeightLabels() {
         Map<String, String> weights = model.getTokenWeights();
         for (Map.Entry<String, String> entry : weights.entrySet()) {
@@ -123,6 +169,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         }
     }
 
+    /**
+     * Set the position of the weight labels to the middle of the arc
+     */
     protected void setWeightLabelPosition() {
         int originalX = (int) arcPath.midPoint.x;
         int originalY = (int) arcPath.midPoint.y - 10;
@@ -142,6 +191,10 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         }
     }
 
+    /**
+     * Add weight labels to the container
+     * @param container
+     */
     private void addWeightLabelsToContainer(Container container) {
         for (TextLabel label : weightLabel) {
             container.add(label);
@@ -149,6 +202,10 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     }
 
 
+    /**
+     * Paints the arc
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

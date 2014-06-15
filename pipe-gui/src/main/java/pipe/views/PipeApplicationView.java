@@ -37,13 +37,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+/**
+ * Main class application view
+ */
 public class PipeApplicationView extends JFrame implements ActionListener, Observer {
 
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(PipeApplicationView.class.getName());
 
+    /**
+     * Status bar for useful messages
+     */
     public final StatusBar statusBar;
 
+    /**
+     * Zoom managager
+     */
     private final ZoomManager zoomManager;
 
     private final JSplitPane moduleAndAnimationHistoryFrame;

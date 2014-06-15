@@ -15,11 +15,24 @@ import java.awt.event.MouseEvent;
  */
 public abstract class TransitionAction extends CreateAction {
 
+    /**
+     * Constructor
+     * @param name
+     * @param tooltip
+     * @param key
+     * @param modifiers
+     * @param applicationModel
+     */
     public TransitionAction(String name, String tooltip, int key, int modifiers,
                             PipeApplicationModel applicationModel) {
         super(name, tooltip, key, modifiers, applicationModel);
     }
 
+    /**
+     * When the cnavas is clicked on a new transition is created
+     * @param event              mouse event
+     * @param petriNetController controller for the petri net
+     */
     @Override
     public void doAction(MouseEvent event, PetriNetController petriNetController) {
         if (event.getClickCount() > 0) {
@@ -31,11 +44,22 @@ public abstract class TransitionAction extends CreateAction {
         }
     }
 
+    /**
+     * Noop action
+     * @param connectable        item clicked
+     * @param petriNetController controller for the petri net
+     */
     @Override
     public void doConnectableAction(Connectable connectable, PetriNetController petriNetController) {
         // Do nothing if clicked on existing connectable
     }
 
+    /**
+     *
+     * @param point
+     * @param petriNetController
+     * @return new transition  at the (x,y) of point
+     */
     private Transition newTransition(Point point, PetriNetController petriNetController) {
         //TODO: MOVE THIS OUT TO CONTROLLER, ALSO NEED TO ADD TO PETRINET MODEL...
         String id = getNetTransitionName(petriNetController);
@@ -51,10 +75,19 @@ public abstract class TransitionAction extends CreateAction {
         return transition;
     }
 
+    /**
+     *
+     * @param petriNetController
+     * @return unique transition name
+     */
     private String getNetTransitionName(PetriNetController petriNetController) {
         return petriNetController.getUniqueTransitionName();
     }
 
+    /**
+     *
+     * @return true if timed
+     */
     protected abstract boolean isTimed();
 
 }

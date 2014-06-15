@@ -161,6 +161,14 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
 
     // Accessor function to check whether or not the Arc is tagged
+
+    /**
+     *
+     * This should return if the arc is tagged for the tagging module but
+     * the functionality has not been implemented
+     *
+     * @return false
+     */
     public final boolean isTagged() {
         return false;
     }

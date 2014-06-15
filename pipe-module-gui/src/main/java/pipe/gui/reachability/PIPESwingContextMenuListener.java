@@ -33,14 +33,24 @@ public class PIPESwingContextMenuListener
            Integer[] theZoomLevels, Integer[] theRotateAngles) {
       super(theGraph, theLensSet, theZoomLevels, theRotateAngles);
    }
-   
-   
+
+
+    /**
+     * Noop
+     * @param theNode
+     * @param theMenu
+     */
    @Override
    public void fillNodeContextMenu(final Node theNode, JPopupMenu theMenu) {
        // Noop
    }
-   
-   
+
+
+    /**
+     * Noop
+     * @param theEdge
+     * @param theMenu
+     */
    @Override
    public void fillEdgeContextMenu(final Edge theEdge, JPopupMenu theMenu) {
        // Noop

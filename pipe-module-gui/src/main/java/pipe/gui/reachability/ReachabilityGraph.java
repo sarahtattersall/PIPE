@@ -20,7 +20,6 @@ import uk.ac.imperial.pipe.exceptions.InvalidRateException;
 import uk.ac.imperial.pipe.io.PetriNetIOImpl;
 import uk.ac.imperial.pipe.io.PetriNetReader;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
-import uk.ac.imperial.pipe.parsers.UnparsableException;
 import uk.ac.imperial.state.ClassifiedState;
 import uk.ac.imperial.state.Record;
 
@@ -30,10 +29,7 @@ import java.awt.Container;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,8 +42,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * GUI class used to display and run the results of reachability and coverability classes
+ */
 public class ReachabilityGraph {
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(ReachabilityGraph.class.getName());
 
     /**
@@ -183,6 +185,10 @@ public class ReachabilityGraph {
         setUp();
     }
 
+    /**
+     * Main method for running this externally without PIPE
+     * @param args
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame("ReachabilityGraph");
         FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
@@ -193,9 +199,13 @@ public class ReachabilityGraph {
         frame.setVisible(true);
     }
 
+    /**
+     * Set up action listeners
+     */
     private void setUp() {
         JPanel pane = setupGraph();
         resultsPanel.add(pane);
+
 
         goButton.addActionListener(new ActionListener() {
             @Override
@@ -277,10 +287,13 @@ public class ReachabilityGraph {
 
 
         } catch (InvalidRateException | TimelessTrapException | IOException | InterruptedException | ExecutionException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.toString());
         }
     }
 
+    /**
+     * Loads a reachability graph from binary files
+     */
     private void loadResults() {
         try {
             KryoStateIO stateWriter = new KryoStateIO();
@@ -461,7 +474,7 @@ public class ReachabilityGraph {
     }
 
     /**
-     * Copies the temporary files to a permenant loaction
+     * Copies the temporary files to a permanent loaction
      */
     private void saveBinaryFiles() {
         if (temporaryStates != null && temporaryTransitions != null) {
@@ -485,7 +498,7 @@ public class ReachabilityGraph {
                 petriNetNameLabel.setText(path.getName());
                 PetriNetReader petriNetIO = new PetriNetIOImpl();
                 lastLoadedPetriNet = petriNetIO.read(path.getAbsolutePath());
-            } catch (JAXBException | UnparsableException e) {
+            } catch (JAXBException | FileNotFoundException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
@@ -609,9 +622,10 @@ public class ReachabilityGraph {
         return new OnTheFlyVanishingExplorer(explorerUtilities);
     }
 
-    private void createUIComponents() {
-    }
-
+    /**
+     *
+     * @return main panel of the GUI
+     */
     public Container getMainPanel() {
         return panel1;
     }

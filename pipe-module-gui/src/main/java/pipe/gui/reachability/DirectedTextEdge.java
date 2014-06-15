@@ -97,6 +97,10 @@ public class DirectedTextEdge implements Edge {
         this.from = from;
     }
 
+    /**
+     *
+     * @return text to display on edge
+     */
     public String getText() {
         return text;
     }

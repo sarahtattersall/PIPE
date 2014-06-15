@@ -18,8 +18,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller for the underlying arc model
+ * @param <S> source model
+ * @param <T> target model
+ */
 public class ArcController<S extends Connectable, T extends Connectable> extends AbstractPetriNetComponentController<Arc<S, T>>
 {
+    /**
+     * Underlying model
+     */
     private final Arc<S, T> arc;
 
     /**
@@ -29,6 +37,12 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     //      does not know anything about the petri net in which it resides
     private final PetriNetController petriNetController;
 
+    /**
+     * Constructor
+     * @param arc underlying model
+     * @param petriNetController Petri net controller for the Petri net the arc is housed in
+     * @param listener undo event listener
+     */
     ArcController(Arc<S, T> arc, PetriNetController petriNetController, UndoableEditListener listener) {
         super(arc, listener);
         this.arc = arc;
@@ -72,6 +86,11 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         return value % 1 != 0;
     }
 
+    /**
+     * Loop through the weights and throw an exception if its not valid
+     * @param weights
+     * @throws UnparsableException
+     */
     private void throwExceptionIfWeightsNotValid(Map<String, String> weights) throws UnparsableException {
         for (Map.Entry<String, String> entry : weights.entrySet()) {
             throwExceptionIfWeightNotValid(entry.getValue());
@@ -92,6 +111,11 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         return new SetArcWeightAction<>(arc, token, oldWeight, expr);
     }
 
+    /**
+     * Set the new token weights
+     * @param newWeights map token id -> functional expression
+     * @throws UnparsableException
+     */
     public void setWeights(Map<String, String> newWeights) throws UnparsableException {
         throwExceptionIfWeightsNotValid(newWeights);
         List<UndoableEdit> edits = new LinkedList<>();
@@ -101,19 +125,36 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         registerUndoableEdit(new MultipleEdit(edits));
     }
 
+    /**
+     *
+     * @param token
+     * @return functional expression for the token
+     */
     public String getWeightForToken(String token) {
         return arc.getWeightForToken(token);
     }
 
+    /**
+     *
+     * @return target model
+     */
     public Connectable getTarget() {
         return arc.getTarget();
     }
 
+    /**
+     * Toggle arc point between straight and curved
+     * @param arcPoint
+     */
     public void toggleArcPointType(ArcPoint arcPoint) {
         arcPoint.setCurved(!arcPoint.isCurved());
         registerUndoableEdit(new ArcPathPointType(arcPoint));
     }
 
+    /**
+     * Add another arc point between this point and the next
+     * @param arcPoint
+     */
     public void splitArcPoint(ArcPoint arcPoint) {
         ArcPoint nextPoint = arc.getNextPoint(arcPoint);
 
@@ -127,12 +168,20 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
         registerUndoableEdit(splitEdit);
     }
 
+    /**
+     * Add an arc point at this location
+     * @param point
+     */
     public void addPoint(Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
         arc.addIntermediatePoint(newPoint);
         registerUndoableEdit(new AddArcPathPoint<>(arc, newPoint));
     }
 
+    /**
+     * Delete this arc point
+     * @param point
+     */
     public void deletePoint(ArcPoint point) {
         arc.removeIntermediatePoint(point);
         registerUndoableEdit(new DeleteArcPathPoint<>(arc, point));
