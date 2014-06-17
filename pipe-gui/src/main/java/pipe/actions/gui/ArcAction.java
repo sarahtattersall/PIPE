@@ -20,8 +20,14 @@ import java.util.logging.Logger;
 
 public final class ArcAction extends CreateAction {
 
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(ArcAction.class.getName());
 
+    /**
+     * Visits the source to determine if we can start the arc type here
+     */
     private final ArcSourceVisitor sourceVisitor;
 
     private final ArcActionCreator arcCreator;

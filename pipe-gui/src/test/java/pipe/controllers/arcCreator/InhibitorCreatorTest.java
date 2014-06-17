@@ -21,6 +21,8 @@ import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -60,6 +62,20 @@ public class InhibitorCreatorTest {
 
         InboundArc expected = new InboundInhibitorArc(source, transition);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void canCreatePlaceToTransition() {
+        Transition transition = new DiscreteTransition("T0");
+        Place place = new DiscretePlace("P0");
+        assertTrue(creator.canCreate(place, transition));
+    }
+
+    @Test
+    public void canCreateTransitionToPlace() {
+        Transition transition = new DiscreteTransition("T0");
+        Place place = new DiscretePlace("P0");
+        assertFalse(creator.canCreate(transition, place));
     }
 
 }
