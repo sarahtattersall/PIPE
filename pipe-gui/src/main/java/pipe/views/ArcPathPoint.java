@@ -264,7 +264,5 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
     public void kill() {
         // called internally by ArcPoint and parent ArcPath
         super.removeFromContainer();
-        //        arcPath.deletePoint(this);
-        super.delete();
     }
 }

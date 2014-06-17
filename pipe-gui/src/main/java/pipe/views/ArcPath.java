@@ -299,7 +299,9 @@ public class ArcPath implements Shape, Cloneable {
     public void delete() {
         while (!pathPoints.isEmpty()) {
             // force delete of ALL points
-            pathPoints.get(0).kill();
+//            pathPoints.get(0).kill();
+            ArcPathPoint remove = pathPoints.remove(0);
+            remove.kill();
         }
     }
 

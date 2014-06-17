@@ -151,6 +151,11 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
     }
 
 
+    @Override
+    public void componentSpecificDelete() {
+        arcPath.delete();
+    }
+
     /**
      *
      * @return the graphical arc path which displays the arc and its points

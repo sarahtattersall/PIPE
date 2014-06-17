@@ -82,12 +82,4 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
         g2.setTransform(reset);
     }
-
-    /**
-     * Noop
-     */
-    @Override
-    public void componentSpecificDelete() {
-        //Nothing to do
-    }
 }

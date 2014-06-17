@@ -104,6 +104,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
      */
     @Override
     public void componentSpecificDelete() {
+        super.componentSpecificDelete();
         for (TextLabel label : weightLabel) {
             removeLabelFromParentContainer(label);
         }
