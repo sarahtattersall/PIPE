@@ -7,6 +7,7 @@ import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import javax.swing.*;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -26,7 +27,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     /**
      * Shape of the place on the Petri net
      */
-    protected final Shape shape;
+    protected Shape shape;
 
     /**
      * Constructor
@@ -87,7 +88,10 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      *
      */
     protected final void updateBounds() {
-        setBounds(model.getX(), model.getY(), model.getWidth() + getComponentDrawOffset(), model.getHeight() + getComponentDrawOffset());
+        Rectangle bounds = shape.getBounds();
+        Rectangle newBounds = new Rectangle((int)(model.getCentre().getX() + bounds.getX()), (int)(model.getCentre().getY() + bounds.getY()), (int) bounds.getWidth() + getComponentDrawOffset(), (int)bounds.getHeight() + getComponentDrawOffset()) ;
+        setBounds(newBounds);
+//        setBounds(model.getX(), model.getY(), model.getWidth() + getComponentDrawOffset(), model.getHeight() + getComponentDrawOffset());
 
         //TODO: THIS IS A DIRTY HACK IN ORDER TO GET DRAGGIGN WHEN ZOOMED WORKING
         Component root = SwingUtilities.getRoot(this);

@@ -34,9 +34,13 @@ public class PlaceView extends ConnectableView<Place> {
      * @param placeHandler mouse input handler for describing how this view responds to mouse events
      */
     public PlaceView(Place model, Container parent, PetriNetController controller, MouseInputAdapter placeHandler) {
-        super(model.getId(), model, controller, parent, new Ellipse2D.Double(0, 0, model.getWidth(), model.getHeight()));
+        super(model.getId(), model, controller, parent, new Ellipse2D.Double(-model.getWidth()/2, -model.getHeight()/2, model.getWidth(), model.getHeight()));
         setChangeListener();
         setMouseListener(placeHandler);
+
+        Rectangle bounds = shape.getBounds();
+        Rectangle newBounds = new Rectangle((int)(model.getCentre().getX() + bounds.getX()), (int)(model.getCentre().getY() + bounds.getY()), (int) bounds.getWidth() + getComponentDrawOffset(), (int)bounds.getHeight() + getComponentDrawOffset());
+        setBounds(newBounds);
     }
 
 
@@ -77,7 +81,8 @@ public class PlaceView extends ConnectableView<Place> {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
 
-//        g2.translate(getComponentDrawOffset(), getComponentDrawOffset());
+        Rectangle bounds = shape.getBounds();
+        g2.translate(bounds.getWidth()/2, bounds.getHeight()/2);
 
         if (hasCapacity()) {
             g2.setStroke(new BasicStroke(2.0f));
@@ -294,39 +299,6 @@ public class PlaceView extends ConnectableView<Place> {
     @Override
     public void addToContainer(Container container) {
         addLabelToContainer(container);
-    }
-
-    /**
-     *
-     * @param x
-     * @param y
-     * @return true if (x,y) is contained within the place bounds
-     */
-    @Override
-    public boolean contains(int x, int y) {
-
-        //TODO: WORK OUT WHAT THIS DOES
-        //        if (someArcView != null) { // Must be drawing a new Arc if non-NULL.
-        //            if ((proximityPlace.contains((int) unZoomedX, (int) unZoomedY) ||
-        //                    place.contains((int) unZoomedX, (int) unZoomedY)) && areNotSameType(someArcView.getSource())) {
-        //                // assume we are only snapping the target...
-        //                if (someArcView.getTarget() != this) {
-        //                    someArcView.setTarget(this);
-        //                }
-        //                someArcView.updateArcPosition();
-        //                return true;
-        //            } else {
-        //                if (someArcView.getTarget() == this) {
-        //                    if (!ConnectableHandler.isMouseDown()) {
-        //                        someArcView.setTarget(null);
-        //                        updateConnected();
-        //                    }
-        //                }
-        //                return false;
-        //            }
-        //        } else {
-        return shape.contains(x, y);
-        //        }
     }
 
 }

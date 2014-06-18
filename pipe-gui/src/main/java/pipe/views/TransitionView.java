@@ -22,6 +22,7 @@ public class TransitionView extends ConnectableView<Transition> {
      */
     public boolean highlighted;
 
+    public Shape unrotated;
     /**
      * Constructor
      *
@@ -34,7 +35,8 @@ public class TransitionView extends ConnectableView<Transition> {
     public TransitionView(Transition model, PetriNetController controller, Container parent,
                           MouseInputAdapter transitionHandler, MouseListener animationHandler) {
         super(model.getId(), model, controller, parent,
-                new Rectangle2D.Double(0, 0, model.getWidth(), model.getHeight()));
+                new Rectangle2D.Double(-model.getWidth()/2, -model.getHeight()/2, model.getWidth(), model.getHeight()));
+        unrotated = new Rectangle2D.Double(-model.getWidth()/2, -model.getHeight()/2, model.getWidth(), model.getHeight());
         setChangeListener();
 
         highlighted = false;
@@ -61,6 +63,8 @@ public class TransitionView extends ConnectableView<Transition> {
                         repaint();
                         break;
                     case Transition.ANGLE_CHANGE_MESSAGE:
+                        int angle = (int) propertyChangeEvent.getNewValue();
+                        rotate(angle);
                     case Transition.TIMED_CHANGE_MESSAGE:
                     case Transition.INFINITE_SEVER_CHANGE_MESSAGE:
                         repaint();
@@ -83,10 +87,10 @@ public class TransitionView extends ConnectableView<Transition> {
      * @param angleInc
      */
     public final void rotate(int angleInc) {
-        ShapeUtilities.rotateShape(shape, Math.toRadians(angleInc), new Double(model.getCentre().getX()).floatValue(),
-                new Double(model.getCentre().getY()).floatValue());
-        //        shape.transform(AffineTransform.getRotateInstance(Math.toRadians(angleInc), model.getHeight() / 2,
-        //                model.getHeight() / 2));
+        shape = ShapeUtilities.rotateShape(unrotated, Math.toRadians(angleInc), 0,0);
+        Rectangle bounds = shape.getBounds();
+        Rectangle newBounds = new Rectangle((int)(model.getCentre().getX() + bounds.getX()), (int)(model.getCentre().getY() + bounds.getY()), (int) bounds.getWidth() + getComponentDrawOffset(), (int)bounds.getHeight() + getComponentDrawOffset()) ;
+        setBounds(newBounds);
     }
 
     /**
@@ -111,8 +115,33 @@ public class TransitionView extends ConnectableView<Transition> {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        Rectangle rect = shape.getBounds();
+        g2.translate(rect.getWidth()/2, rect.getHeight()/2);
+//        g2.translate(model.getCentre().getX(), model.getCentre().getY());
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//
+//        GeneralPath path = new GeneralPath();
+//        path.append(shape, false);
+//        System.out.println(model.getId() + " " + model.getAngle());
+//        path.transform(AffineTransform.getRotateInstance(Math.toRadians(model.getAngle()),(model.getWidth() +getComponentDrawOffset() )/2, (model.getHeight() + getComponentDrawOffset())/2));
+//
+//        Rectangle rectangle = path.getBounds();
+//        Rectangle shapeBounds = shape.getBounds();
+//        Rectangle translated = new Rectangle(model.getX(), model.getY(), model.getWidth(), model.getHeight());
+//        Shape s = ShapeUtilities.rotateShape(translated, Math.toRadians(model.getAngle()), (model.getWidth() +getComponentDrawOffset() )/2, (model.getHeight() + getComponentDrawOffset())/2);
+//        System.out.println(shapeBounds);
+//        System.out.println(rectangle);
+//        System.out.println("SHAPRE " + translated);
+//        System.out.println("Translated shape" + s.getBounds());
+//        GeneralPath path2 = new GeneralPath();
+//        path2.append(translated, false);
+//        path2.transform(AffineTransform.getRotateInstance(Math.toRadians(model.getAngle()), model.getCentre().getX(),
+//                model.getCentre().getY()));
+//        System.out.println("PATH2 bounds" + path2.getBounds());
+//
+//        Rectangle path2Bounds = path2.getBounds();
+//        setBounds((int)path2Bounds.getX(), (int)path2Bounds.getY(), (int)path2Bounds.getWidth() + getComponentDrawOffset(), (int)path2Bounds.getHeight() + getComponentDrawOffset());
 
         if (isSelected() && !ignoreSelection) {
             g2.setColor(GUIConstants.SELECTION_FILL_COLOUR);
@@ -173,17 +202,6 @@ public class TransitionView extends ConnectableView<Transition> {
      */
     private boolean highlightView() {
         return model.isEnabled() && petriNetController.isInAnimationMode();
-    }
-
-    /**
-     *
-     * @param x
-     * @param y
-     * @return true if (x,y) intersects with the transition
-     */
-    @Override
-    public boolean contains(int x, int y) {
-        return shape.contains(x, y);
     }
 
     /**
