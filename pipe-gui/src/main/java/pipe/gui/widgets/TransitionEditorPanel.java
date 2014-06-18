@@ -406,10 +406,11 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         transitionEditorPanel.add(rotationLabel, gridBagConstraints);
 
         rotationComboBox.setModel(
-                new javax.swing.DefaultComboBoxModel<>(new String[]{"", "+45\u00B0", "+90\u00B0", "-45\u00B0"}));
+                new javax.swing.DefaultComboBoxModel<>(new String[]{"", "+45\u00B0", "+90\u00B0", "-45\u00B0", "0\u00B0"}));
         rotationComboBox.setMaximumSize(new java.awt.Dimension(70, 20));
         rotationComboBox.setMinimumSize(new java.awt.Dimension(70, 20));
         rotationComboBox.setPreferredSize(new java.awt.Dimension(70, 20));
+        setSelectedRotation();
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 6;
@@ -526,6 +527,28 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 8, 3);
         add(buttonPanel, gridBagConstraints);
+    }
+
+    private void setSelectedRotation() {
+        int index;
+        switch (transitionController.getAngle()) {
+            case 45:
+                index = 1;
+                break;
+            case 90:
+                index = 2;
+                break;
+            case -45:
+                index = 3;
+                break;
+            case 0:
+                index = 4;
+                break;
+            default:
+                index = 0;
+                break;
+        }
+        rotationComboBox.setSelectedIndex(index);
     }
 
     /**
@@ -726,6 +749,9 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
                     break;
                 case 3:
                     angle = 135;
+                    break;
+                case 4:
+                    angle = 0;
                     break;
                 default:
                     break;
