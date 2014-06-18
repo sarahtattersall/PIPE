@@ -129,6 +129,7 @@ public class PlaceView extends ConnectableView<Place> {
             g2.setTransform(oldTransform);
         }
 
+        g2 = (Graphics2D) g.create();
         paintTokens(g2);
 
         g2.dispose();
