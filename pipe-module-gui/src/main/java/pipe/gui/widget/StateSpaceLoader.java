@@ -30,6 +30,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * JPanel used to load the state space exploration results from Petri nets and binary state space results.
+ */
 public class StateSpaceLoader {
     private static final Logger LOGGER = Logger.getLogger(StateSpaceLoader.class.getName());
 
@@ -38,18 +41,42 @@ public class StateSpaceLoader {
      */
     private final FileDialog loadDialog;
 
+    /**
+     * Enabled if a Petri net is specified, disabled otherwise
+     */
     private JRadioButton useExistingPetriNetRadioButton;
 
+    /**
+     * Name label for the loaded Petri net
+     */
     private JTextField petriNetNameLabel;
 
+    /**
+     * Load from file radio, always enabled. Clicking on this
+     * brings up the file loader
+     */
     private JRadioButton loadPetriNetFromFileRadioButton;
 
+    /**
+     * Main display panel with all the loading options
+     */
     private JPanel mainPanel;
 
+    /**
+     * Binary field label displaying the name of the binary state file loaded
+     */
     private JTextField stateFieldLabel;
 
+    /**
+     * Binary field label displaying the name of the binary transitions file loaded
+     */
     private JTextField transitionFieldLabel;
 
+    /**
+     * Load from binaries radio, always enabled. Clicking on this will
+     * bring up the file loader twice, once for the states binary and
+     * once for the transitions binary.
+     */
     private JRadioButton loadFromBinariesRadio;
 
     /**
@@ -82,21 +109,24 @@ public class StateSpaceLoader {
      */
     private Path binaryStates;
 
+    /**
+     * Sets up the load Petri net options with the "use current Petri net" disabled
+     *
+     * @param loadDialog
+     */
     public StateSpaceLoader(FileDialog loadDialog) {
         this.loadDialog = loadDialog;
+        useExistingPetriNetRadioButton.setEnabled(false);
         setUp();
     }
 
-    public boolean isBinaryLoadChecked() {
-        return loadFromBinariesRadio.isSelected();
-    }
-
-    public PetriNet getPetriNet() {
-        return useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet;
-    }
-
+    /**
+     * Set up the binary radio button action listeners.
+     * Clicking on the load Petri net brings up a since xml file loader
+     * Clicking on the load from binaries brings up two loaders, once for
+     * the states binaries and one for the transition binaries.
+     */
     private void setUp() {
-
         loadPetriNetFromFileRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,7 +140,6 @@ public class StateSpaceLoader {
             }
         });
     }
-
 
     /**
      * Opens the file dialog and saves the selected Petri net into lastLoadedPetriNet
@@ -132,7 +161,6 @@ public class StateSpaceLoader {
             }
         }
     }
-
 
     /**
      * Loads the transition and state binary files into the member variables
@@ -157,30 +185,34 @@ public class StateSpaceLoader {
             binaryStates = Paths.get(file.toURI());
             stateFieldLabel.setText(file.getName());
         } else {
-            return;
+            LOGGER.log(Level.INFO, "No file loaded");
         }
-
-        //        loadResults();
     }
 
+    /**
+     * Sets up the load Petri net options with "use current Petri net" set to
+     * the petriNet parameter
+     *
+     * @param petriNet   current Petri net
+     * @param loadDialog
+     */
+    public StateSpaceLoader(PetriNet petriNet, FileDialog loadDialog) {
+        defaultPetriNet = petriNet;
+        this.loadDialog = loadDialog;
+        setUp();
+    }
+
+    public boolean isBinaryLoadChecked() {
+        return loadFromBinariesRadio.isSelected();
+    }
+
+    public PetriNet getPetriNet() {
+        return useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet;
+    }
 
     public JPanel getMainPanel() {
         return mainPanel;
     }
-    //
-    //    /**
-    //     * Loads a reachability graph from binary files
-    //     */
-    //    private void loadResults() {
-    //        try {
-    //            KryoStateIO stateWriter = new KryoStateIO();
-    //            temporaryTransitions = getTransitionsPath();
-    //            temporaryStates = getStatesPath();
-    //            processBinaryResults(stateWriter, temporaryTransitions, temporaryStates);
-    //        } catch (IOException e) {
-    //            LOGGER.log(Level.SEVERE, e.getMessage());
-    //        }
-    //    }
 
 
     /**
@@ -193,7 +225,7 @@ public class StateSpaceLoader {
     public StateSpaceExplorer.StateSpaceExplorerResults calculateResults(ExplorerCreator creator,
                                                                          VanishingExplorerCreator vanishingCreator)
             throws IOException, InterruptedException, ExecutionException, InvalidRateException, TimelessTrapException {
-        if(loadFromBinariesRadio.isSelected()) {
+        if (loadFromBinariesRadio.isSelected()) {
             return loadFromBinaries();
         } else {
             KryoStateIO stateWriter = new KryoStateIO();
@@ -211,41 +243,17 @@ public class StateSpaceLoader {
         }
     }
 
+    /**
+     * Loads the transitions and states form binaries
+     *
+     * @return
+     * @throws IOException
+     */
     private StateSpaceExplorer.StateSpaceExplorerResults loadFromBinaries() throws IOException {
         KryoStateIO stateWriter = new KryoStateIO();
         temporaryTransitions = getTransitionsPath();
         temporaryStates = getStatesPath();
-        return  processBinaryResults(stateWriter, temporaryTransitions);
-    }
-
-    private StateSpaceExplorer.StateSpaceExplorerResults processBinaryResults(StateReader stateReader, Path transitions) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(transitions);
-             Input transitionInput = new Input(inputStream)) {
-            Collection<Record> records = readResults(stateReader, transitionInput);
-            int transitionCount = getTransitionCount(records);
-            return new StateSpaceExplorer.StateSpaceExplorerResults(transitionCount, records.size());
-        }
-    }
-
-    private int getTransitionCount(Collection<Record> records) {
-        int sum = 0;
-        for (Record record : records) {
-            sum += record.successors.size();
-        }
-        return sum;
-    }
-
-    /**
-     * Reads results of steady state exploration into a collection of records
-     *
-     * @param stateReader
-     * @param input
-     * @return state transitions with rates
-     * @throws IOException
-     */
-    private Collection<Record> readResults(StateReader stateReader, Input input) throws IOException {
-        MultiStateReader reader = new EntireStateReader(stateReader);
-        return reader.readRecords(input);
+        return processBinaryResults(stateWriter, temporaryTransitions);
     }
 
     /**
@@ -263,7 +271,6 @@ public class StateSpaceLoader {
     private Path getStatesPath() throws IOException {
         return loadFromBinariesRadio.isSelected() ? binaryStates : Files.createTempFile("states", ".tmp");
     }
-
 
     /**
      * Writes the state space into transitions and states
@@ -291,6 +298,23 @@ public class StateSpaceLoader {
         }
     }
 
+    /**
+     * Processes the binary results and returns their state space
+     *
+     * @param stateReader
+     * @param transitions
+     * @return
+     * @throws IOException
+     */
+    private StateSpaceExplorer.StateSpaceExplorerResults processBinaryResults(StateReader stateReader, Path transitions)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(transitions);
+             Input transitionInput = new Input(inputStream)) {
+            Collection<Record> records = readResults(stateReader, transitionInput);
+            int transitionCount = getTransitionCount(records);
+            return new StateSpaceExplorer.StateSpaceExplorerResults(transitionCount, records.size());
+        }
+    }
 
     /**
      * Writes the petriNet state space out to a temporary file which is referenced by the objectOutputStream
@@ -313,14 +337,37 @@ public class StateSpaceLoader {
         return stateSpaceExplorer.generate(explorerUtilites.getCurrentState());
     }
 
-    public interface ExplorerCreator {
-        ExplorerUtilities create(PetriNet petriNet);
+    /**
+     * Reads results of steady state exploration into a collection of records
+     *
+     * @param stateReader
+     * @param input
+     * @return state transitions with rates
+     * @throws IOException
+     */
+    private Collection<Record> readResults(StateReader stateReader, Input input) throws IOException {
+        MultiStateReader reader = new EntireStateReader(stateReader);
+        return reader.readRecords(input);
     }
 
-    public interface VanishingExplorerCreator {
-        VanishingExplorer create(ExplorerUtilities utils);
+    /**
+     * @param records
+     * @return the number of transitions in the state space
+     */
+    private int getTransitionCount(Iterable<Record> records) {
+        int sum = 0;
+        for (Record record : records) {
+            sum += record.successors.size();
+        }
+        return sum;
     }
 
+    /**
+     * Loads and processes state space
+     *
+     * @return
+     * @throws IOException
+     */
     public Results loadStateSpace() throws IOException {
         KryoStateIO stateReader = new KryoStateIO();
         try (InputStream inputStream = Files.newInputStream(temporaryTransitions);
@@ -333,7 +380,6 @@ public class StateSpaceLoader {
         }
 
     }
-
 
     /**
      * Reads results of the mapping of an integer state representation to
@@ -349,10 +395,43 @@ public class StateSpaceLoader {
         return reader.readStates(input);
     }
 
+    /**
+     * Used in place of a lambda to create the explorer utilities needed for generating the
+     * state space from a Petri net
+     */
+    public interface ExplorerCreator {
+        ExplorerUtilities create(PetriNet petriNet);
+    }
+
+
+    /**
+     * Used in place of a lambda to create the vanishing utilities needed for
+     * generating the state space from a Petri net
+     */
+    public interface VanishingExplorerCreator {
+        VanishingExplorer create(ExplorerUtilities utils);
+    }
+
+    /**
+     * State space exploration results
+     */
     public class Results {
+        /**
+         * Transition records
+         */
         public final Collection<Record> records;
+
+        /**
+         * Classified state mappings
+         */
         public final Map<Integer, ClassifiedState> stateMappings;
 
+        /**
+         * Constructor
+         *
+         * @param records
+         * @param stateMappings
+         */
         public Results(Collection<Record> records, Map<Integer, ClassifiedState> stateMappings) {
             this.records = records;
             this.stateMappings = stateMappings;

@@ -67,8 +67,26 @@ public class GSPNAnalysis {
 
     private StateSpaceLoader stateSpaceLoader;
 
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
     public GSPNAnalysis(FileDialog fileDialog) {
         stateSpaceLoader = new StateSpaceLoader(fileDialog);
+        setUp();
+    }
+
+    public GSPNAnalysis(PetriNet petriNet, FileDialog fileDialog) {
+        stateSpaceLoader = new StateSpaceLoader(petriNet, fileDialog);
+        setUp();
+    }
+
+
+    /**
+     * Sets up the UI
+     */
+    private void setUp() {
+
         loadPanel.add(stateSpaceLoader.getMainPanel(), 0);
         resultsPanel.add(resultsPane);
         goButton.addActionListener(new ActionListener() {
@@ -78,6 +96,7 @@ public class GSPNAnalysis {
             }
         });
     }
+
 
     /**
      * Loads the steady state and if the number of states is < MAX_DISPLAY_STATES we display steady state information
@@ -244,7 +263,7 @@ public class GSPNAnalysis {
             }
             rows.add(row);
         }
-        places.add(0, "State id");
+        places.add(0, "State");
         addTable(html, rows, places, "State markings for " + token + " token");
     }
 
@@ -314,7 +333,7 @@ public class GSPNAnalysis {
             }
             rows.add(row);
         }
-        places.add(0, "State id");
+        tokens.add(0, "Place");
         addTable(html, rows, tokens, "Average token counts");
     }
 
@@ -333,8 +352,7 @@ public class GSPNAnalysis {
             Double average = throughputs.get(transition);
             rows.add(new TableRow(transition, doubleToString(average)));
         }
-        transitions.add(0, "State id");
-        addTable(html, rows, transitions, "Average transition throughputs");
+        addTable(html, rows, Arrays.asList("Transition", "Throughput"), "Average transition throughputs");
     }
 
     /**
