@@ -66,7 +66,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
                 } else if (name.equals(Connectable.ID_CHANGE_MESSAGE) || name.equals(Connectable.NAME_CHANGE_MESSAGE)) {
                     //TODO: NAMELABEL SHOULD LISTEN?
                     String newName = (String) propertyChangeEvent.getNewValue();
-                    textLabel.setName(newName);
+                    textLabel.setText(newName);
                     textLabel.repaint();
                 }
             }

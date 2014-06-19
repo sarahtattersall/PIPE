@@ -109,11 +109,8 @@ public class TextLabel extends JTextArea {
     @Override
     public void setText(String text) {
         this.text = text;
-        if (name != null) {
-            super.setText(name + text);
-        } else {
-            super.setText(text);
-        }
+        super.setText(text);
+
         updateSize();
     }
 

@@ -65,7 +65,7 @@ public class TransitionController extends AbstractPetriNetComponentController<Tr
      * @return transition name
      */
     public String getName() {
-        return component.getName();
+        return component.getId();
     }
 
     /**

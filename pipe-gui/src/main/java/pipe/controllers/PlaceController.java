@@ -85,7 +85,7 @@ public class PlaceController extends AbstractPetriNetComponentController<Place> 
      * @return the place name
      */
     public String getName() {
-        return place.getName();
+        return place.getId();
     }
 
     /**
