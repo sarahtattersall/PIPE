@@ -355,7 +355,7 @@ public class GSPNAnalysis {
             Double average = throughputs.get(transition);
             rows.add(new TableRow(transition, doubleToString(average)));
         }
-        addTable(html, rows, Arrays.asList("Transition", "Throughput"), "Average transition throughputs");
+        addTable(html, rows, Arrays.asList("Transition", "Throughput"), "Average timed transition throughputs");
     }
 
     /**
