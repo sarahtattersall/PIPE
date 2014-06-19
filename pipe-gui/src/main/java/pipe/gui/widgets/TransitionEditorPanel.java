@@ -538,7 +538,7 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
             case 90:
                 index = 2;
                 break;
-            case -45:
+            case 135:
                 index = 3;
                 break;
             case 0:
