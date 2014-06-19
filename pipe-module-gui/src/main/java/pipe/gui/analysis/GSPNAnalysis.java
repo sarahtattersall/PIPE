@@ -143,7 +143,7 @@ public class GSPNAnalysis {
         } catch (IOException | InterruptedException | ExecutionException | InvalidRateException | TimelessTrapException e) {
             e.printStackTrace();
         } catch (StateSpaceLoaderException e) {
-            JOptionPane.showMessageDialog(mainPanel, e.getMessage(), "GSPN Analaysis Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(mainPanel, e.getMessage(), "GSPN Analysis Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
