@@ -224,7 +224,8 @@ public class StateSpaceLoader {
      */
     public StateSpaceExplorer.StateSpaceExplorerResults calculateResults(ExplorerCreator creator,
                                                                          VanishingExplorerCreator vanishingCreator)
-            throws IOException, InterruptedException, ExecutionException, InvalidRateException, TimelessTrapException {
+            throws IOException, InterruptedException, ExecutionException, InvalidRateException, TimelessTrapException,
+            StateSpaceLoaderException {
         if (loadFromBinariesRadio.isSelected()) {
             return loadFromBinaries();
         } else {
@@ -233,13 +234,19 @@ public class StateSpaceLoader {
             temporaryStates = getStatesPath();
 
             PetriNet petriNet = useExistingPetriNetRadioButton.isSelected() ? defaultPetriNet : lastLoadedPetriNet;
-            if (petriNet != null) {
+            if (petriNet == null) {
+                String message;
+                if (useExistingPetriNetRadioButton.isSelected()) {
+                    message = "Error cannot calculate analysis metrics. Please load a Petri net/binaries.";
+                } else {
+                    message = "Error in loaded Petri net, could not read PNML file.";
+                }
+                throw new StateSpaceLoaderException(message);
+            }
                 ExplorerUtilities explorerUtils = creator.create(petriNet);
                 VanishingExplorer vanishingExplorer = vanishingCreator.create(explorerUtils);
                 return generateStateSpace(stateWriter, temporaryTransitions, temporaryStates, petriNet, explorerUtils,
                         vanishingExplorer);
-            }
-            return null;
         }
     }
 
@@ -249,11 +256,13 @@ public class StateSpaceLoader {
      * @return
      * @throws IOException
      */
-    private StateSpaceExplorer.StateSpaceExplorerResults loadFromBinaries() throws IOException {
-        KryoStateIO stateWriter = new KryoStateIO();
+    private StateSpaceExplorer.StateSpaceExplorerResults loadFromBinaries()
+            throws IOException, StateSpaceLoaderException {
+        StateReader stateReader = new KryoStateIO();
         temporaryTransitions = getTransitionsPath();
         temporaryStates = getStatesPath();
-        return processBinaryResults(stateWriter, temporaryTransitions);
+        return processBinaryResults(stateReader, temporaryTransitions);
+
     }
 
     /**
@@ -307,12 +316,16 @@ public class StateSpaceLoader {
      * @throws IOException
      */
     private StateSpaceExplorer.StateSpaceExplorerResults processBinaryResults(StateReader stateReader, Path transitions)
-            throws IOException {
+            throws IOException, StateSpaceLoaderException {
         try (InputStream inputStream = Files.newInputStream(transitions);
              Input transitionInput = new Input(inputStream)) {
+            try {
             Collection<Record> records = readResults(stateReader, transitionInput);
             int transitionCount = getTransitionCount(records);
             return new StateSpaceExplorer.StateSpaceExplorerResults(transitionCount, records.size());
+            } catch (IOException e) {
+                throw new StateSpaceLoaderException("Could not parse binaries.\nAre you sure they were generated using the PIPE 5 state space explorer module?", e);
+            }
         }
     }
 
@@ -368,15 +381,16 @@ public class StateSpaceLoader {
      * @return
      * @throws IOException
      */
-    public Results loadStateSpace() throws IOException {
+    public Results loadStateSpace() throws StateSpaceLoaderException, IOException {
         KryoStateIO stateReader = new KryoStateIO();
         try (InputStream inputStream = Files.newInputStream(temporaryTransitions);
              InputStream stateInputStream = Files.newInputStream(temporaryStates);
              Input transitionInput = new Input(inputStream);
              Input stateInput = new Input(stateInputStream)) {
-            Collection<Record> records = readResults(stateReader, transitionInput);
-            Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
-            return new Results(records, stateMap);
+                Collection<Record> records = readResults(stateReader, transitionInput);
+                Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
+                return new Results(records, stateMap);
+
         }
 
     }

@@ -3,6 +3,7 @@ package pipe.gui.analysis;
 import org.rendersnake.HtmlCanvas;
 import pipe.gui.widget.HTMLPane;
 import pipe.gui.widget.StateSpaceLoader;
+import pipe.gui.widget.StateSpaceLoaderException;
 import pipe.reachability.algorithm.*;
 import pipe.steadystate.algorithm.ParallelGaussSeidel;
 import pipe.steadystate.algorithm.SteadyStateSolver;
@@ -141,6 +142,8 @@ public class GSPNAnalysis {
 
         } catch (IOException | InterruptedException | ExecutionException | InvalidRateException | TimelessTrapException e) {
             e.printStackTrace();
+        } catch (StateSpaceLoaderException e) {
+            JOptionPane.showMessageDialog(mainPanel, e.getMessage(), "GSPN Analaysis Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
