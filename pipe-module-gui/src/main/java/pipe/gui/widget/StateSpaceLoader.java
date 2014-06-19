@@ -24,6 +24,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -146,6 +147,7 @@ public class StateSpaceLoader {
      * for use when calculating the state space exploration
      */
     private void loadData() {
+        loadDialog.setMode(FileDialog.LOAD);
         loadDialog.setTitle("Select petri net");
         loadDialog.setVisible(true);
 
@@ -166,6 +168,7 @@ public class StateSpaceLoader {
      * Loads the transition and state binary files into the member variables
      */
     private void loadBinaryFiles() {
+        loadDialog.setMode(FileDialog.LOAD);
         loadDialog.setTitle("Load transitions file");
         loadDialog.setVisible(true);
         File[] files = loadDialog.getFiles();
@@ -243,10 +246,10 @@ public class StateSpaceLoader {
                 }
                 throw new StateSpaceLoaderException(message);
             }
-                ExplorerUtilities explorerUtils = creator.create(petriNet);
-                VanishingExplorer vanishingExplorer = vanishingCreator.create(explorerUtils);
-                return generateStateSpace(stateWriter, temporaryTransitions, temporaryStates, petriNet, explorerUtils,
-                        vanishingExplorer);
+            ExplorerUtilities explorerUtils = creator.create(petriNet);
+            VanishingExplorer vanishingExplorer = vanishingCreator.create(explorerUtils);
+            return generateStateSpace(stateWriter, temporaryTransitions, temporaryStates, petriNet, explorerUtils,
+                    vanishingExplorer);
         }
     }
 
@@ -320,11 +323,13 @@ public class StateSpaceLoader {
         try (InputStream inputStream = Files.newInputStream(transitions);
              Input transitionInput = new Input(inputStream)) {
             try {
-            Collection<Record> records = readResults(stateReader, transitionInput);
-            int transitionCount = getTransitionCount(records);
-            return new StateSpaceExplorer.StateSpaceExplorerResults(transitionCount, records.size());
+                Collection<Record> records = readResults(stateReader, transitionInput);
+                int transitionCount = getTransitionCount(records);
+                return new StateSpaceExplorer.StateSpaceExplorerResults(transitionCount, records.size());
             } catch (IOException e) {
-                throw new StateSpaceLoaderException("Could not parse binaries.\nAre you sure they were generated using the PIPE 5 state space explorer module?", e);
+                throw new StateSpaceLoaderException(
+                        "Could not parse binaries.\nAre you sure they were generated using the PIPE 5 state space explorer module?",
+                        e);
             }
         }
     }
@@ -387,9 +392,9 @@ public class StateSpaceLoader {
              InputStream stateInputStream = Files.newInputStream(temporaryStates);
              Input transitionInput = new Input(inputStream);
              Input stateInput = new Input(stateInputStream)) {
-                Collection<Record> records = readResults(stateReader, transitionInput);
-                Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
-                return new Results(records, stateMap);
+            Collection<Record> records = readResults(stateReader, transitionInput);
+            Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
+            return new Results(records, stateMap);
 
         }
 
@@ -407,6 +412,44 @@ public class StateSpaceLoader {
     private Map<Integer, ClassifiedState> readMappings(StateReader stateReader, Input input) throws IOException {
         MultiStateReader reader = new EntireStateReader(stateReader);
         return reader.readStates(input);
+    }
+
+    public void saveBinaryFiles() {
+        if (temporaryStates != null && temporaryTransitions != null) {
+            copyFile(temporaryTransitions, "Select location for temporary transitions");
+            copyFile(temporaryStates, "Select location for temporary states");
+        }
+    }
+
+
+    /**
+     * @param temporary path to copy to new location
+     * @param message   displayed message in save file dialog pop up
+     */
+    private void copyFile(Path temporary, String message) {
+        loadDialog.setMode(FileDialog.SAVE);
+        loadDialog.setTitle(message);
+        loadDialog.setVisible(true);
+
+        File[] files = loadDialog.getFiles();
+        if (files.length > 0) {
+            File file = files[0];
+            Path path = Paths.get(file.toURI());
+            try {
+                Files.copy(temporary, path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage());
+            }
+        }
+    }
+
+    public void addPetriNetRadioListener(ActionListener listener) {
+        loadPetriNetFromFileRadioButton.addActionListener(listener);
+        useExistingPetriNetRadioButton.addActionListener(listener);
+    }
+
+    public void addBinariesListener(ActionListener listener) {
+        loadFromBinariesRadio.addActionListener(listener);
     }
 
     /**

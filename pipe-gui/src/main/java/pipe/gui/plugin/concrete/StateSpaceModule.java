@@ -16,7 +16,7 @@ public class StateSpaceModule implements GuiModule {
         JFrame frame = new JFrame("State Space Explorer");
         FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
         FileDialog saver = new FileDialog(frame, "Save binary transition data", FileDialog.SAVE);
-        frame.setContentPane(new ReachabilityGraph(selector, saver, petriNet).getMainPanel());
+        frame.setContentPane(new ReachabilityGraph(selector, petriNet).getMainPanel());
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
