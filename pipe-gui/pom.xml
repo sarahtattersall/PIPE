@@ -32,12 +32,6 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
-
-        <repository>
-            <id>LocalLibs</id>
-            <name>Imperial</name>
-            <url>file://${project.basedir}/src/local-libs</url>
-        </repository>
     </repositories>
 
     <build>
@@ -296,21 +290,6 @@
             <artifactId>powermock-api-mockito</artifactId>
             <version>1.5.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>jpowergraph-common</artifactId>
-            <version>0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>jpowergraph-swing</artifactId>
-            <version>0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>hadoop</artifactId>
-            <version>0.13.1</version>
         </dependency>
 
     </dependencies>
