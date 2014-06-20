@@ -34,7 +34,7 @@ public class TransitionView extends ConnectableView<Transition> {
      */
     public TransitionView(Transition model, PetriNetController controller, Container parent,
                           MouseInputAdapter transitionHandler, MouseListener animationHandler) {
-        super(model.getId(), model, controller, parent,
+        super(model.getId(), model, controller, controller.getTransitionController(model), parent,
                 new Rectangle2D.Double(-model.getWidth()/2, -model.getHeight()/2, model.getWidth(), model.getHeight()));
         unrotated = new Rectangle2D.Double(-model.getWidth()/2, -model.getHeight()/2, model.getWidth(), model.getHeight());
         setChangeListener();

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 /**
  * Transition controller responsible for editing the underlying transition Petri net component
  */
-public class TransitionController extends AbstractPetriNetComponentController<Transition> {
+public class TransitionController extends AbstractConnectableController<Transition> {
 
     /**
      * Constructor

@@ -6,10 +6,10 @@
 package pipe.handlers;
 
 import pipe.actions.gui.DeleteArcPathPointAction;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.actions.petrinet.SplitArcPointAction;
 import pipe.controllers.ArcController;
 import pipe.controllers.PetriNetController;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.ArcPathPoint;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.Container;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Point2D;
 
 
 /**
@@ -87,6 +88,9 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
     public void mousePressed(MouseEvent e) {
         ((ArcPathPoint) e.getComponent()).setVisibilityLock(true);
         petriNetController.select(component);
+        MouseEvent newEvent = SwingUtilities.convertMouseEvent(e.getComponent(), e, contentPane);
+        Point2D.Double point = new Point2D.Double(newEvent.getX(), newEvent.getY());
+        dragManager.setDragStart(point);
         super.mousePressed(e);
     }
 

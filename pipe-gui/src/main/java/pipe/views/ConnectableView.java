@@ -1,5 +1,6 @@
 package pipe.views;
 
+import pipe.controllers.AbstractConnectableController;
 import pipe.controllers.PetriNetController;
 import pipe.handlers.LabelHandler;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
@@ -24,6 +25,8 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      */
     protected TextLabel textLabel;
 
+    private final AbstractConnectableController<T> componentController;
+
     /**
      * Shape of the place on the Petri net
      */
@@ -37,8 +40,9 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
      * @param parent
      * @param shape
      */
-    ConnectableView(String id, T model, PetriNetController controller, Container parent, Shape shape) {
+    ConnectableView(String id, T model, PetriNetController controller, AbstractConnectableController<T> componentController, Container parent, Shape shape) {
         super(id, model, controller, parent);
+        this.componentController = componentController;
         this.shape = shape;
         setLocation(model.getX(), model.getY());
 
@@ -117,7 +121,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
     protected final void addLabelToContainer(Container container) {
         container.add(textLabel);
         textLabel.setPosition(model.getX() + model.getNameXOffset(), model.getY() + model.getNameYOffset());
-        LabelHandler<T> labelHandler = new LabelHandler<>(textLabel, this);
+        LabelHandler<T> labelHandler = new LabelHandler<>(textLabel, this, componentController);
         textLabel.addMouseListener(labelHandler);
         textLabel.addMouseMotionListener(labelHandler);
         textLabel.addMouseWheelListener(labelHandler);

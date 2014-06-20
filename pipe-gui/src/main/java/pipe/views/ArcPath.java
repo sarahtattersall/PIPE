@@ -368,7 +368,7 @@ public class ArcPath implements Shape, Cloneable {
             // we just want to add the new point.
             // Nadeem 21/06/2005
             //            if (petriNetTab.getIndexOf(point) < 0) {
-            petriNetTab.add(point);
+            petriNetTab.add(point, new Integer(300));
 
             //TODO SEPERATE HANDLERS INTO THOSE THAT NEED THE CONTROLLER!
             ArcController<? extends Connectable, ? extends Connectable> arcController =

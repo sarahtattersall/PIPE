@@ -1,9 +1,12 @@
 package pipe.handlers;
 
+import pipe.controllers.AbstractConnectableController;
 import pipe.views.ConnectableView;
 import pipe.views.TextLabel;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
+import javax.swing.*;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
@@ -19,6 +22,8 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
      */
     private final ConnectableView<T> connectable;
 
+    private final AbstractConnectableController<T> controller;
+
     /**
      * Name label for the corresponding connectable
      */
@@ -29,31 +34,15 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
      * Constructor
      * @param textLabel name label for the connectable
      * @param connectable connectable with a name label
+     * @param controller
      */
-    public LabelHandler(TextLabel textLabel, ConnectableView<T> connectable) {
+    public LabelHandler(TextLabel textLabel, ConnectableView<T> connectable,
+                        AbstractConnectableController<T> controller) {
         this.connectable = connectable;
         this.textLabel = textLabel;
+        this.controller = controller;
     }
 
-
-    /**
-     * When clicking on the name label the event is dispatched to its connectable view
-     * @param e
-     */
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        connectable.dispatchEvent(e);
-    }
-
-
-    /**
-     * Noop
-     * @param e
-     */
-    @Override
-    public void mousePressed(MouseEvent e) {
-        //Noop
-    }
 
     /**
      * When the mouse wheel is moved the event is dispatched to its connectable
@@ -65,12 +54,13 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
     }
 
     /**
-     * Noop
+     * Drags the components name label
      * @param e
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        //Noop
+        Point point = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), connectable.getParent());
+        controller.moveNameLabel(point);
     }
 
 }

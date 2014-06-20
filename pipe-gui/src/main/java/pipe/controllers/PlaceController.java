@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Controller responsible for interacting with a place Petri net component
  */
-public class PlaceController extends AbstractPetriNetComponentController<Place> {
+public class PlaceController extends AbstractConnectableController<Place> {
 
     /**
      * Underlying model
