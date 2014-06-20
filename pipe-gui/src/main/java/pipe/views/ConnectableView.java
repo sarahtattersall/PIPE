@@ -44,7 +44,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
 
         int x = (int) (model.getX() + model.getNameXOffset());
         int y = (int) (model.getX() + model.getNameXOffset());
-        textLabel = new TextLabel(model.getName(), x, y);
+        textLabel = new TextLabel(model.getId(), x, y);
         addChangeListener();
         updateBounds();
     }
