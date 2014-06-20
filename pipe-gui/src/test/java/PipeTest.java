@@ -1,6 +1,5 @@
 import org.junit.Before;
 import org.junit.Test;
-import pipe.actions.gui.GuiAction;
 import pipe.views.PipeApplicationView;
 
 import javax.swing.*;
@@ -145,17 +144,6 @@ public class PipeTest {
     protected Action getActionForMenuItem(JMenu menu, int selection) {
         JMenuItem item = menu.getItem(selection);
         return item.getAction();
-    }
-
-
-
-    private void checkButton(String name, int index) {
-        if (name == null) {
-            assertTrue("expecting separator", (toolbar.getComponent(index) instanceof javax.swing.JToolBar.Separator));
-        } else {
-            AbstractButton button = ((AbstractButton) toolbar.getComponent(index));
-            assertEquals(name, name, ((GuiAction) button.getAction()).getValue("Name"));
-        }
     }
 }
 
