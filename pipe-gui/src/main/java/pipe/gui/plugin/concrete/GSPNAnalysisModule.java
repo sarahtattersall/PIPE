@@ -18,7 +18,7 @@ public class GSPNAnalysisModule implements GuiModule {
         FileDialog selector = new FileDialog(frame, "Select petri net", FileDialog.LOAD);
 
         frame.setContentPane(new GSPNAnalysis(petriNet, selector).getMainPanel());
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
     }
