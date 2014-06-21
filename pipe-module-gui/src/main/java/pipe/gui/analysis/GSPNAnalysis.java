@@ -66,6 +66,10 @@ public class GSPNAnalysis {
 
     private JPanel loadPanel;
 
+    private JPanel generatePanel;
+
+    private JTextField numberOfThreadsText;
+
     private StateSpaceLoader stateSpaceLoader;
 
     public JPanel getMainPanel() {
@@ -104,6 +108,7 @@ public class GSPNAnalysis {
      */
     private void showSteadyState() {
         try {
+            int threads = Integer.valueOf(numberOfThreadsText.getText());
             StateSpaceExplorer.StateSpaceExplorerResults results =
                     stateSpaceLoader.calculateResults(new StateSpaceLoader.ExplorerCreator() {
                                                           @Override
@@ -115,7 +120,7 @@ public class GSPNAnalysis {
                                                           public VanishingExplorer create(ExplorerUtilities utils) {
                                                               return new OnTheFlyVanishingExplorer(utils);
                                                           }
-                                                      }
+                                                      }, threads
                     );
 
             HtmlCanvas html = new HtmlCanvas();

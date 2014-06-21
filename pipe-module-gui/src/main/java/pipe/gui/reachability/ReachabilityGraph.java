@@ -84,6 +84,10 @@ public class ReachabilityGraph {
 
     private JPanel stateLoadingPanel;
 
+    private JPanel generatePanel;
+
+    private JTextField numberOfThreadsText;
+
 
     private DefaultGraph graph = new DefaultGraph();
 
@@ -189,6 +193,7 @@ public class ReachabilityGraph {
      */
     private void calculateResults() {
         try {
+            int threads = Integer.valueOf(numberOfThreadsText.getText());
             StateSpaceExplorer.StateSpaceExplorerResults results =
                     stateSpaceLoader.calculateResults(new StateSpaceLoader.ExplorerCreator() {
                                                           @Override
@@ -200,7 +205,7 @@ public class ReachabilityGraph {
                                                           public VanishingExplorer create(ExplorerUtilities utils) {
                                                               return getVanishingExplorer(utils);
                                                           }
-                                                      }
+                                                      }, threads
                     );
             updateTextResults(results.numberOfStates, results.processedTransitions);
             if (results.numberOfStates <= MAX_STATES_TO_DISPLAY) {

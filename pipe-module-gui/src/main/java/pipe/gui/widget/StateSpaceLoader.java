@@ -6,6 +6,7 @@ import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
 import pipe.reachability.algorithm.VanishingExplorer;
+import pipe.reachability.algorithm.parallel.MassiveParallelStateSpaceExplorer;
 import pipe.reachability.algorithm.sequential.SequentialStateSpaceExplorer;
 import uk.ac.imperial.io.*;
 import uk.ac.imperial.pipe.exceptions.InvalidRateException;
@@ -35,7 +36,15 @@ import java.util.logging.Logger;
  * JPanel used to load the state space exploration results from Petri nets and binary state space results.
  */
 public class StateSpaceLoader {
+    /**
+     * Class logger
+     */
     private static final Logger LOGGER = Logger.getLogger(StateSpaceLoader.class.getName());
+
+    /**
+     * Number of states to explore before reducing and writing out
+     */
+    private static final int STATES_PER_THREAD = 100;
 
     /**
      * For loading Petri nets to explore
@@ -226,7 +235,7 @@ public class StateSpaceLoader {
      * which is displayed to the user
      */
     public StateSpaceExplorer.StateSpaceExplorerResults calculateResults(ExplorerCreator creator,
-                                                                         VanishingExplorerCreator vanishingCreator)
+                                                                         VanishingExplorerCreator vanishingCreator, int threads)
             throws IOException, InterruptedException, ExecutionException, InvalidRateException, TimelessTrapException,
             StateSpaceLoaderException {
         if (loadFromBinariesRadio.isSelected()) {
@@ -249,7 +258,7 @@ public class StateSpaceLoader {
             ExplorerUtilities explorerUtils = creator.create(petriNet);
             VanishingExplorer vanishingExplorer = vanishingCreator.create(explorerUtils);
             return generateStateSpace(stateWriter, temporaryTransitions, temporaryStates, petriNet, explorerUtils,
-                    vanishingExplorer);
+                    vanishingExplorer, threads);
         }
     }
 
@@ -290,6 +299,7 @@ public class StateSpaceLoader {
      * @param stateWriter
      * @param transitions
      * @param states
+     * @param threads number of worker threads to use
      * @throws IOException
      * @throws TimelessTrapException
      * @throws ExecutionException
@@ -298,14 +308,15 @@ public class StateSpaceLoader {
     private StateSpaceExplorer.StateSpaceExplorerResults generateStateSpace(StateWriter stateWriter, Path transitions,
                                                                             Path states, PetriNet petriNet,
                                                                             ExplorerUtilities explorerUtils,
-                                                                            VanishingExplorer vanishingExplorer)
+                                                                            VanishingExplorer vanishingExplorer,
+                                                                            int threads)
             throws IOException, TimelessTrapException, ExecutionException, InvalidRateException, InterruptedException {
         try (OutputStream transitionStream = Files.newOutputStream(transitions);
              OutputStream stateStream = Files.newOutputStream(states)) {
             try (Output transitionOutput = new Output(transitionStream);
                  Output stateOutput = new Output(stateStream)) {
                 return writeStateSpace(stateWriter, transitionOutput, stateOutput, petriNet, explorerUtils,
-                        vanishingExplorer);
+                        vanishingExplorer, threads);
             }
         }
     }
@@ -341,18 +352,25 @@ public class StateSpaceLoader {
      * @param transitionOutput  stream to write state space to
      * @param stateOutput       stream to write state integer mappings to
      * @param explorerUtilites
+     * @param threads number of worker threads to use
      * @param vanishingExplorer @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
      */
     private StateSpaceExplorer.StateSpaceExplorerResults writeStateSpace(StateWriter stateWriter,
                                                                          Output transitionOutput, Output stateOutput,
                                                                          PetriNet petriNet,
                                                                          ExplorerUtilities explorerUtilites,
-                                                                         VanishingExplorer vanishingExplorer)
+                                                                         VanishingExplorer vanishingExplorer, int threads)
             throws TimelessTrapException, ExecutionException, InterruptedException, IOException, InvalidRateException {
         StateProcessor processor = new StateIOProcessor(stateWriter, transitionOutput, stateOutput);
-        StateSpaceExplorer stateSpaceExplorer =
-                new SequentialStateSpaceExplorer(explorerUtilites, vanishingExplorer, processor);
+        StateSpaceExplorer stateSpaceExplorer = getStateSpaceExplorer(explorerUtilites, vanishingExplorer, processor, threads);
         return stateSpaceExplorer.generate(explorerUtilites.getCurrentState());
+    }
+
+    private StateSpaceExplorer getStateSpaceExplorer( ExplorerUtilities explorerUtilites, VanishingExplorer vanishingExplorer, StateProcessor stateProcessor, int threads) {
+        if (threads == 1) {
+            return new SequentialStateSpaceExplorer(explorerUtilites, vanishingExplorer, stateProcessor);
+        }
+        return new  MassiveParallelStateSpaceExplorer(explorerUtilites, vanishingExplorer, stateProcessor, threads, STATES_PER_THREAD);
     }
 
     /**
@@ -395,9 +413,7 @@ public class StateSpaceLoader {
             Collection<Record> records = readResults(stateReader, transitionInput);
             Map<Integer, ClassifiedState> stateMap = readMappings(stateReader, stateInput);
             return new Results(records, stateMap);
-
         }
-
     }
 
     /**
