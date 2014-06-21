@@ -6,6 +6,7 @@ import net.sourceforge.jpowergraph.defaults.DefaultGraph;
 import net.sourceforge.jpowergraph.layout.Layouter;
 import net.sourceforge.jpowergraph.layout.spring.SpringLayoutStrategy;
 import net.sourceforge.jpowergraph.lens.*;
+import net.sourceforge.jpowergraph.manipulator.dragging.DraggingManipulator;
 import net.sourceforge.jpowergraph.manipulator.popup.PopupManipulator;
 import net.sourceforge.jpowergraph.swing.SwingJGraphPane;
 import net.sourceforge.jpowergraph.swing.SwingJGraphScrollPane;
@@ -153,11 +154,14 @@ public class ReachabilityGraph {
         lensSet.addLens(new RotateLens());
         lensSet.addLens(new TranslateLens());
         lensSet.addLens(new ZoomLens());
-        lensSet.addLens(new CursorLens());
+        CursorLens draggingLens = new CursorLens();
+        lensSet.addLens(draggingLens);
         lensSet.addLens(new TooltipLens());
         lensSet.addLens(new LegendLens());
         lensSet.addLens(new NodeSizeLens());
         pane.setLens(lensSet);
+
+        pane.addManipulator(new DraggingManipulator(draggingLens, -1));
         pane.addManipulator(new PopupManipulator(pane, (TooltipLens) lensSet.getFirstLensOfType(TooltipLens.class)));
 
 
