@@ -12,6 +12,7 @@ import net.sourceforge.jpowergraph.swing.SwingJGraphPane;
 import net.sourceforge.jpowergraph.swing.SwingJGraphScrollPane;
 import net.sourceforge.jpowergraph.swing.manipulator.SwingPopupDisplayer;
 import net.sourceforge.jpowergraph.swtswinginteraction.color.JPowerGraphColor;
+import pipe.gui.widget.GenerateResultsForm;
 import pipe.gui.widget.StateSpaceLoader;
 import pipe.gui.widget.StateSpaceLoaderException;
 import pipe.reachability.algorithm.*;
@@ -53,11 +54,6 @@ public class ReachabilityGraph {
     private JPanel panel1;
 
     /**
-     * Used to start state space generation
-     */
-    private JButton goButton;
-
-    /**
      * Contains the graph based results of state space exploration
      */
     private JPanel resultsPanel;
@@ -84,6 +80,7 @@ public class ReachabilityGraph {
 
     private JPanel stateLoadingPanel;
 
+    private JPanel generatePanel;
 
     private DefaultGraph graph = new DefaultGraph();
 
@@ -130,18 +127,19 @@ public class ReachabilityGraph {
 //
         stateSpaceLoader.addPetriNetRadioListener(enableListener);
         stateSpaceLoader.addBinariesListener(disableListener);
-        goButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculateResults();
-            }
-        });
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveBinaryFiles();
             }
         });
+        GenerateResultsForm resultsForm = new GenerateResultsForm(new GenerateResultsForm.GoAction() {
+            @Override
+            public void go(int threads) {
+                calculateResults(threads);
+            }
+        });
+        generatePanel.add(resultsForm.getPanel());
     }
 
     /**
@@ -186,8 +184,9 @@ public class ReachabilityGraph {
      * <p/>
      * These results are then read in and turned into a graphical representation using mxGraph
      * which is displayed to the user
+     * @param threads number of threads to use to explore the state space
      */
-    private void calculateResults() {
+    private void calculateResults(int threads) {
         try {
             StateSpaceExplorer.StateSpaceExplorerResults results =
                     stateSpaceLoader.calculateResults(new StateSpaceLoader.ExplorerCreator() {
@@ -200,7 +199,7 @@ public class ReachabilityGraph {
                                                           public VanishingExplorer create(ExplorerUtilities utils) {
                                                               return getVanishingExplorer(utils);
                                                           }
-                                                      }
+                                                      }, threads
                     );
             updateTextResults(results.numberOfStates, results.processedTransitions);
             if (results.numberOfStates <= MAX_STATES_TO_DISPLAY) {
