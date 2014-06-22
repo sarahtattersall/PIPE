@@ -227,16 +227,18 @@ public class PipeApplicationController {
     }
 
     /**
-     * Removes the active tab from display.
+     * Removes the active tab from display if it exists.
      * Note active tab must be removed from netControllers before the petri net is removed
      * from the manager because the manager will fire a message which causes the active tab
      * to be swapped to the new open tab
      */
     public void removeActiveTab() {
-        PetriNetController controller = netControllers.get(activeTab);
-        netControllers.remove(activeTab);
-        PetriNet petriNet = controller.getPetriNet();
-        manager.remove(petriNet);
+        if (activeTab != null) {
+            PetriNetController controller = netControllers.get(activeTab);
+            netControllers.remove(activeTab);
+            PetriNet petriNet = controller.getPetriNet();
+            manager.remove(petriNet);
+        }
     }
 
     /**
