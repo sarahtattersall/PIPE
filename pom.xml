@@ -4,7 +4,7 @@
     <groupId>uk.ac.imperial</groupId>
     <artifactId>PIPE</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.0</version>
+    <version>5.0.1-SNAPSHOT</version>
     <name>PIPE Parent Project</name>
 
     <properties>
@@ -14,7 +14,7 @@
 
     <scm>
         <developerConnection>scm:git:git@github.com:sarahtattersall/PIPE.git</developerConnection>
-      <tag>PIPE-5.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <modules>
