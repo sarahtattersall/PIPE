@@ -1,6 +1,7 @@
 package pipe.gui.analysis;
 
 import org.rendersnake.HtmlCanvas;
+import pipe.gui.widget.GenerateResultsForm;
 import pipe.gui.widget.HTMLPane;
 import pipe.gui.widget.StateSpaceLoader;
 import pipe.gui.widget.StateSpaceLoaderException;
@@ -16,8 +17,6 @@ import uk.ac.imperial.state.Record;
 
 import javax.swing.*;
 import java.awt.FileDialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -68,24 +67,12 @@ public class GSPNAnalysis {
 
     private JPanel generatePanel;
 
-    private JTextField numberOfThreadsText;
-
     private StateSpaceLoader stateSpaceLoader;
-
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
 
     public GSPNAnalysis(FileDialog fileDialog) {
         stateSpaceLoader = new StateSpaceLoader(fileDialog);
         setUp();
     }
-
-    public GSPNAnalysis(PetriNet petriNet, FileDialog fileDialog) {
-        stateSpaceLoader = new StateSpaceLoader(petriNet, fileDialog);
-        setUp();
-    }
-
 
     /**
      * Sets up the UI
@@ -94,21 +81,20 @@ public class GSPNAnalysis {
 
         loadPanel.add(stateSpaceLoader.getMainPanel(), 0);
         resultsPanel.add(resultsPane);
-        goButton.addActionListener(new ActionListener() {
+        GenerateResultsForm generateResultsForm = new GenerateResultsForm(new GenerateResultsForm.GoAction() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                showSteadyState();
+            public void go(int threads) {
+                showSteadyState(threads);
             }
         });
+        generatePanel.add(generateResultsForm.getPanel());
     }
-
 
     /**
      * Loads the steady state and if the number of states is < MAX_DISPLAY_STATES we display steady state information
      */
-    private void showSteadyState() {
+    private void showSteadyState(int threads) {
         try {
-            int threads = Integer.valueOf(numberOfThreadsText.getText());
             StateSpaceExplorer.StateSpaceExplorerResults results =
                     stateSpaceLoader.calculateResults(new StateSpaceLoader.ExplorerCreator() {
                                                           @Override
@@ -122,29 +108,7 @@ public class GSPNAnalysis {
                                                           }
                                                       }, threads
                     );
-
-            HtmlCanvas html = new HtmlCanvas();
-            html.html().head();
-            html.style(type("text/css").media("screen")).content(HTML_STYLE);
-            html._head();
-            html.body();
-
-
-            if (results.numberOfStates < MAX_DISPLAY_STATES) {
-                StateSpaceLoader.Results stateSpace = stateSpaceLoader.loadStateSpace();
-                solveSteadyState(stateSpace.records, stateSpace.stateMappings, html);
-            } else {
-                html.write("State space is too large to show tabular results");
-                html.br();
-                html.write("Number of states: " + results.numberOfStates);
-                html.br();
-                html.write("Number of transitions: " + results.processedTransitions);
-            }
-
-            html._body()._html();
-            resultsPane.setText(html.toHtml());
-
-
+            displayResultsOnCanvas(results);
         } catch (IOException | InterruptedException | ExecutionException | InvalidRateException | TimelessTrapException e) {
             e.printStackTrace();
         } catch (StateSpaceLoaderException e) {
@@ -152,8 +116,31 @@ public class GSPNAnalysis {
         }
     }
 
+
+    private void displayResultsOnCanvas(StateSpaceExplorer.StateSpaceExplorerResults results)
+            throws IOException, StateSpaceLoaderException {
+        HtmlCanvas html = new HtmlCanvas();
+        html.html().head();
+        html.style(type("text/css").media("screen")).content(HTML_STYLE);
+        html._head();
+        html.body();
+        if (results.numberOfStates < MAX_DISPLAY_STATES) {
+            StateSpaceLoader.Results stateSpace = stateSpaceLoader.loadStateSpace();
+            solveSteadyState(stateSpace.records, stateSpace.stateMappings, html);
+        } else {
+            html.write("State space is too large to show tabular results");
+            html.br();
+            html.write("Number of states: " + results.numberOfStates);
+            html.br();
+            html.write("Number of transitions: " + results.processedTransitions);
+        }
+        html._body()._html();
+        resultsPane.setText(html.toHtml());
+    }
+
     /**
      * Solves the steady state and adds the results to the html canvas
+     *
      * @param records
      * @param stateMappings
      * @param html
@@ -179,6 +166,7 @@ public class GSPNAnalysis {
 
     /**
      * Displays the state mappings for each token
+     *
      * @param html
      * @param stateMappings
      * @throws IOException
@@ -192,6 +180,7 @@ public class GSPNAnalysis {
 
     /**
      * Displays the steady state information in a table
+     *
      * @param html
      * @param steadyState
      * @throws IOException
@@ -206,10 +195,10 @@ public class GSPNAnalysis {
 
     /**
      * Display Performance analysis metrics for the steady state
-     *
+     * <p/>
      * Displays:
-     *  - the average number of tokens on each place
-     *  - the average transition  throughput if loaded from a Petri net
+     * - the average number of tokens on each place
+     * - the average transition  throughput if loaded from a Petri net
      *
      * @param html
      * @param steadyState
@@ -231,7 +220,6 @@ public class GSPNAnalysis {
     }
 
     /**
-     *
      * @param states
      * @return a sorted list of tokens contained within the states
      */
@@ -249,7 +237,6 @@ public class GSPNAnalysis {
     }
 
     /**
-     *
      * @param html
      * @param stateMappings
      * @param token
@@ -276,7 +263,6 @@ public class GSPNAnalysis {
     }
 
     /**
-     *
      * @param value
      * @return string representation rounded to 3 decimal places
      */
@@ -320,6 +306,7 @@ public class GSPNAnalysis {
     /**
      * Creates and adds to the html canvas a table for each token colour
      * containing the average number of tokens in the place
+     *
      * @param averageTokens
      * @param html
      * @throws IOException
@@ -347,6 +334,7 @@ public class GSPNAnalysis {
 
     /**
      * Creates and displays a table for the given throughputs
+     *
      * @param throughputs
      * @param html
      * @throws IOException
@@ -364,7 +352,6 @@ public class GSPNAnalysis {
     }
 
     /**
-     *
      * @param stateMappings
      * @return a list of places in the state mappings
      */
@@ -373,6 +360,11 @@ public class GSPNAnalysis {
         places.addAll(stateMappings.values().iterator().next().getPlaces());
         Collections.sort(places);
         return places;
+    }
+
+    public GSPNAnalysis(PetriNet petriNet, FileDialog fileDialog) {
+        stateSpaceLoader = new StateSpaceLoader(petriNet, fileDialog);
+        setUp();
     }
 
     /**
@@ -388,6 +380,10 @@ public class GSPNAnalysis {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
     }
 
     /**
