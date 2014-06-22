@@ -315,8 +315,7 @@ public final class PipeApplicationBuilder {
     }
 
     /**
-     * Action performed in the application view when tabs are changed.
-     * We first check to see if there is a tab active and if so enable its actions
+     * Action performed in the application view when tabs are changed
      * @param view
      * @param controller
      * @param pipeComponents
@@ -329,11 +328,9 @@ public final class PipeApplicationBuilder {
         view.setTabChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                if (controller.getActiveTab() != null) {
-                    PetriNetController petriNetController = controller.getActivePetriNetController();
-                    enableActions(pipeComponents, !petriNetController.isInAnimationMode(), drawingToolBar,
-                            animationToolBar);
-                }
+                PetriNetController petriNetController = controller.getActivePetriNetController();
+                enableActions(pipeComponents, !petriNetController.isInAnimationMode(), drawingToolBar,
+                        animationToolBar);
             }
         });
     }
