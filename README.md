@@ -11,7 +11,7 @@ in distributed systems and to learn more about Petri nets, you can start by read
 project report available [here](http://pipe2.sourceforge.net/docs.html).
 
 ## How to cite PIPE ###
-If you use PIPE in your research, we would be greatful if you would cite the relevant publications:
+If you use PIPE in your research, we would be grateful if you would cite the relevant publications:
 * N.J. Dingle, W.J. Knottenbelt and T. Suto. [PIPE2: A Tool for the Performance Evaluation of Generalised Stochastic Petri Nets](http://www.doc.ic.ac.uk/~wjk/publications/dingle-knottenbelt-suto-per-2009.pdf) (PDF format). *ACM SIGMETRICS Performance Evaluation Review* (Special Issue on Tools for Computer Performance Modelling and Reliability Analysis), Vol. 36(4), March 2009, pp. 34-39.
 * P. Bonet, [C.M. Llado](http://dmi.uib.es/~cllado/), R. Puijaner and [W.J. Knottenbelt](http://www.doc.ic.ac.uk/~wjk/). [PIPE v2.5: A Petri Net Tool for Performance Modelling](http://www.doc.ic.ac.uk/~wjk/publications/bonet-llado-knottenbelt-puijaner-clei-2007.pdf) (PDF format). *Proc. 23rd Latin American Conference on Informatics (CLEI 2007)*, San Jose, Costa Rica, October 2007.
 
