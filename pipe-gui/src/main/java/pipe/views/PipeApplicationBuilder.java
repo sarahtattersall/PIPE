@@ -328,9 +328,11 @@ public final class PipeApplicationBuilder {
         view.setTabChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                PetriNetController petriNetController = controller.getActivePetriNetController();
-                enableActions(pipeComponents, !petriNetController.isInAnimationMode(), drawingToolBar,
-                        animationToolBar);
+                if (controller.getActiveTab() != null) {
+                    PetriNetController petriNetController = controller.getActivePetriNetController();
+                    enableActions(pipeComponents, !petriNetController.isInAnimationMode(), drawingToolBar,
+                            animationToolBar);
+                }
             }
         });
     }
