@@ -16,6 +16,9 @@ public class GenerateResultsForm {
     private static final String THREADS_ERROR_MESSAGE =
             "Error! Please enter a valid number of threads between 1-" + MAX_THREADS;
 
+    /**
+     * Action to perform when the go button is pressed
+     */
     private final GoAction goAction;
 
     /**
