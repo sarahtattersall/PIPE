@@ -14,7 +14,6 @@ import java.awt.geom.Point2D;
  * This class is used to split an arc in two at the
  * point the user clicks the mouse button.
  *
- * @author Pere Bonet (after Nadeem)
  */
 public class SplitArcAction
         extends javax.swing.AbstractAction {
