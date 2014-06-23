@@ -6,6 +6,7 @@ import pipe.actions.manager.*;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.SelectionManager;
 import pipe.controllers.application.PipeApplicationController;
+import pipe.gui.LayoutAction;
 import pipe.gui.PIPEConstants;
 import pipe.gui.PetriNetTab;
 import pipe.gui.ToggleButton;
@@ -104,11 +105,12 @@ public final class PipeApplicationBuilder {
         UnfoldAction unfoldAction = new UnfoldAction(controller);
         SelectAction selectAction = new SelectAction(model, view, controller);
         ExitAction exitAction = new ExitAction(view, controller);
+        LayoutAction layoutAction = new LayoutAction(controller);
         ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(view, controller);
         return new PIPEComponents(chooseTokenClassAction, componentEditorManager, undoListener, componentCreatorManager,
                 animateActionManager, editorManager, tokenActionManager, printAction, exportPNGAction, selectAction,
                 exitAction, zoomAction, unfoldAction, zoomOutAction, zoomInAction, toggleGrid, importAction,
-                exportPSAction, exportTNAction);
+                exportPSAction, exportTNAction, layoutAction);
     }
 
     /**
@@ -134,6 +136,7 @@ public final class PipeApplicationBuilder {
 
         addTokenClassComboBox(drawingToolBar, pipeComponents.chooseTokenClassAction, view);
         addButton(drawingToolBar, pipeComponents.unfoldAction);
+        addButton(drawingToolBar, pipeComponents.layoutAction);
         drawingToolBar.addSeparator();
         return drawingToolBar;
     }
@@ -642,6 +645,8 @@ public final class PipeApplicationBuilder {
          */
         public final UnfoldAction unfoldAction;
 
+        public final LayoutAction layoutAction;
+
         /**
          * Zoom out action
          */
@@ -702,7 +707,7 @@ public final class PipeApplicationBuilder {
                                ExportPNGAction exportPNGAction, SelectAction selectAction, ExitAction exitAction,
                                SetZoomAction zoomAction, UnfoldAction unfoldAction, ZoomOutAction zoomOutAction,
                                ZoomInAction zoomInAction, GridAction toggleGrid, ImportAction importAction,
-                               ExportPSAction exportPSAction, ExportTNAction exportTNAction) {
+                               ExportPSAction exportPSAction, ExportTNAction exportTNAction, LayoutAction layoutAction) {
             this.chooseTokenClassAction = chooseTokenClassAction;
             this.componentEditorManager = componentEditorManager;
             this.undoListener = undoListener;
@@ -722,6 +727,7 @@ public final class PipeApplicationBuilder {
             this.importAction = importAction;
             this.exportPSAction = exportPSAction;
             this.exportTNAction = exportTNAction;
+            this.layoutAction = layoutAction;
         }
     }
 }
