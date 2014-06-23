@@ -5,6 +5,7 @@ import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.Token;
 
@@ -34,7 +35,12 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
     /**
      * Weight labels to display
      */
-    private final Collection<TextLabel> weightLabel = new LinkedList<TextLabel>();
+    private final Collection<TextLabel> weightLabel = new LinkedList<>();
+
+    /**
+     * Listens for changes in intermediate points x, y and updates the weights accordingly
+     */
+    private final WeightLabelListener weightListener = new WeightLabelListener();
 
     /**
      * Graphical arc head
@@ -62,6 +68,9 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         addSourceTargetConnectableListener();
         for (TextLabel label : weightLabel) {
             getParent().add(label);
+        }
+        for (ArcPoint arcPoint : model.getArcPoints()) {
+            arcPoint.addPropertyChangeListener(weightListener);
         }
     }
 
@@ -92,6 +101,14 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 String name = propertyChangeEvent.getPropertyName();
                 if (name.equals(Arc.WEIGHT_CHANGE_MESSAGE)) {
+                    updateWeights();
+                } if (name.equals(Arc.NEW_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
+                    ArcPoint point = (ArcPoint) propertyChangeEvent.getNewValue();
+                    point.addPropertyChangeListener(weightListener);
+                    updateWeights();
+                } if (name.equals(Arc.DELETE_INTERMEDIATE_POINT_CHANGE_MESSAGE)) {
+                    ArcPoint point = (ArcPoint) propertyChangeEvent.getOldValue();
+                    point.removePropertyChangeListener(weightListener);
                     updateWeights();
                 }
             }
@@ -249,5 +266,24 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
         arcHead.draw(g2);
 
         g2.transform(reset);
+    }
+
+    /**
+     * Weight label listener for updating the arc weight label location if arc points change
+     */
+    private class WeightLabelListener implements PropertyChangeListener {
+
+        /**
+         * If the event fired is an arc point (x,y) location change then the
+         * weights label location is recalculated
+         * @param evt
+         */
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            String name = evt.getPropertyName();
+            if (name.equals(ArcPoint.UPDATE_LOCATION_CHANGE_MESSAGE)) {
+                updateWeights();
+            }
+        }
     }
 }
