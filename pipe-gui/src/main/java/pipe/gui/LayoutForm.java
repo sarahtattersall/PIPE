@@ -41,7 +41,13 @@ public class LayoutForm {
 
     private JRadioButton horizontalRadioButton;
 
-    public LayoutForm(PetriNet petriNet) {
+    /**
+     * Action called when the layout is changed
+     */
+    private final ChangeAction changeAction;
+
+    public LayoutForm(PetriNet petriNet, ChangeAction changeAction) {
+        this.changeAction = changeAction;
         hierarchicalPanel.setVisible(true);
         organicPanel.setVisible(false);
         intraCellSpacingSlider.setValue(150);
@@ -73,6 +79,7 @@ public class LayoutForm {
                         parallelEdgeSlider.getValue(), intraCellSpacingSlider.getValue(), orientation);
                 break;
         }
+        changeAction.changed(petriNet);
     }
 
     private int getOrientation() {
@@ -98,5 +105,12 @@ public class LayoutForm {
 
     public Component getMainPanel() {
         return panel1;
+    }
+
+    /**
+     * Called when the layout is changed
+     */
+    public interface ChangeAction {
+        void changed(PetriNet petriNet);
     }
 }

@@ -66,6 +66,7 @@ public final class PipeApplicationBuilder {
                 pipeComponents.exitAction.tryToExit();
             }
         });
+        pipeComponents.layoutAction.addUndoableEditListener(pipeComponents.undoListener);
         setTabChangeListener(view, controller, pipeComponents, drawingToolBar, animationToolBar);
         listenForAnimationMode(pipeComponents, model, controller, drawingToolBar, animationToolBar);
         return view;
