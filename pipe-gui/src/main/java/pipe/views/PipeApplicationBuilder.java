@@ -105,7 +105,7 @@ public final class PipeApplicationBuilder {
         UnfoldAction unfoldAction = new UnfoldAction(controller);
         SelectAction selectAction = new SelectAction(model, view, controller);
         ExitAction exitAction = new ExitAction(view, controller);
-        LayoutAction layoutAction = new LayoutAction(controller);
+        LayoutAction layoutAction = new LayoutAction(controller, view);
         ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(view, controller);
         return new PIPEComponents(chooseTokenClassAction, componentEditorManager, undoListener, componentCreatorManager,
                 animateActionManager, editorManager, tokenActionManager, printAction, exportPNGAction, selectAction,
