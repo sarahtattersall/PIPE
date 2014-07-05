@@ -1,16 +1,5 @@
 package pipe.gui.widgets;
 
-import pipe.controllers.ArcController;
-import uk.ac.imperial.pipe.animation.AnimationUtils;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
-import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.parsers.FunctionalResults;
-import uk.ac.imperial.pipe.parsers.FunctionalWeightParser;
-import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
-import uk.ac.imperial.pipe.parsers.StateEvalVisitor;
-import uk.ac.imperial.state.State;
-
-import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -18,6 +7,22 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import pipe.controllers.ArcController;
+import uk.ac.imperial.pipe.models.petrinet.ExecutablePetriNet;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
+import uk.ac.imperial.pipe.parsers.FunctionalWeightParser;
+import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
+import uk.ac.imperial.pipe.parsers.StateEvalVisitor;
 
 /**
  * Editor for modifying arc properties
@@ -177,6 +182,8 @@ public class ArcFunctionEditor extends JPanel {
          * Tries to parse the functional expression to determine its validity
          * @param e
          */
+        //TODO refactor to ExecutablePetriNet 
+        //TODO test me!
         @Override
         public void actionPerformed(ActionEvent e) {
             String func = function.getText();
@@ -184,10 +191,12 @@ public class ArcFunctionEditor extends JPanel {
                 exit();
                 return;
             }
-
-            State state = AnimationUtils.getState(petriNet);
-            StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);
-            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, petriNet);
+            ExecutablePetriNet executablePetriNet = petriNet.makeExecutablePetriNet();
+            StateEvalVisitor evalVisitor = new StateEvalVisitor(executablePetriNet, executablePetriNet.getCurrentState());
+            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, executablePetriNet);
+//            State state = AnimationUtils.getState(petriNet);
+//            StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);
+//            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, petriNet);
             FunctionalResults<Double> results = parser.evaluateExpression(func);
             if (!results.hasErrors()) {
                 weightEditorPanel.setWeight(func, token);
