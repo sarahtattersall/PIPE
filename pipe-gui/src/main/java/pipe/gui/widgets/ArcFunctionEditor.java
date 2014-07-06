@@ -16,13 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import pipe.controllers.ArcController;
-import uk.ac.imperial.pipe.models.petrinet.ExecutablePetriNet;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.parsers.FunctionalResults;
 import uk.ac.imperial.pipe.parsers.FunctionalWeightParser;
-import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
-import uk.ac.imperial.pipe.parsers.StateEvalVisitor;
 
 /**
  * Editor for modifying arc properties
@@ -182,8 +179,8 @@ public class ArcFunctionEditor extends JPanel {
          * Tries to parse the functional expression to determine its validity
          * @param e
          */
-        //TODO refactor to ExecutablePetriNet 
-        //TODO test me!
+        //TODO does this need access to current state; if not, just invoke petriNet.parseExpression(expr); 
+        //TODO test actionPerformed
         @Override
         public void actionPerformed(ActionEvent e) {
             String func = function.getText();
@@ -191,9 +188,10 @@ public class ArcFunctionEditor extends JPanel {
                 exit();
                 return;
             }
-            ExecutablePetriNet executablePetriNet = petriNet.makeExecutablePetriNet();
-            StateEvalVisitor evalVisitor = new StateEvalVisitor(executablePetriNet, executablePetriNet.getCurrentState());
-            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, executablePetriNet);
+//            ExecutablePetriNet executablePetriNet = petriNet.makeExecutablePetriNet();
+//            StateEvalVisitor evalVisitor = new StateEvalVisitor(executablePetriNet, executablePetriNet.getCurrentState());
+            FunctionalWeightParser<Double> parser = petriNet.makeExecutablePetriNet().getFunctionalWeightParserForCurrentState(); 
+//            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, executablePetriNet);
 //            State state = AnimationUtils.getState(petriNet);
 //            StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);
 //            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, petriNet);

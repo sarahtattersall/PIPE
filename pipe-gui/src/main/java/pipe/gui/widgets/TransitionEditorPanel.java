@@ -1,14 +1,5 @@
 package pipe.gui.widgets;
 
-import pipe.controllers.PetriNetController;
-import pipe.controllers.TransitionController;
-import pipe.utilities.gui.GuiUtils;
-import uk.ac.imperial.pipe.models.petrinet.*;
-import uk.ac.imperial.pipe.parsers.EvalVisitor;
-import uk.ac.imperial.pipe.parsers.FunctionalResults;
-import uk.ac.imperial.pipe.parsers.PetriNetWeightParser;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -17,6 +8,31 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+
+import pipe.controllers.PetriNetController;
+import pipe.controllers.TransitionController;
+import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.NormalRate;
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.Rate;
+import uk.ac.imperial.pipe.models.petrinet.RateParameter;
+import uk.ac.imperial.pipe.models.petrinet.RateType;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
+import uk.ac.imperial.pipe.parsers.FunctionalResults;
 
 /**
  * Panel for editing a transitions properties
@@ -666,11 +682,12 @@ public class TransitionEditorPanel extends javax.swing.JPanel {
     private boolean canSetPriority() {
         return !timedRadioButton.isSelected();
     }
-
+    //TODO test canSetRate()
     private boolean canSetRate() {
-        PetriNetWeightParser parser =
-                new PetriNetWeightParser(new EvalVisitor(netController.getPetriNet()), netController.getPetriNet());
-        FunctionalResults<Double> result = parser.evaluateExpression(weightRateTextField.getText());
+//        PetriNetWeightParser parser =
+//                new PetriNetWeightParser(new EvalVisitor(netController.getPetriNet()), netController.getPetriNet());
+//        FunctionalResults<Double> result = parser.evaluateExpression(weightRateTextField.getText());
+        FunctionalResults<Double> result = netController.getPetriNet().parseExpression(weightRateTextField.getText());
         if (result.hasErrors()) {
             String concatenated = concatenateErrors(result.getErrors());
             showErrorMessage(
