@@ -190,7 +190,7 @@ public class ArcFunctionEditor extends JPanel {
             }
 //            ExecutablePetriNet executablePetriNet = petriNet.makeExecutablePetriNet();
 //            StateEvalVisitor evalVisitor = new StateEvalVisitor(executablePetriNet, executablePetriNet.getCurrentState());
-            FunctionalWeightParser<Double> parser = petriNet.makeExecutablePetriNet().getFunctionalWeightParserForCurrentState(); 
+            FunctionalWeightParser<Double> parser = petriNet.getExecutablePetriNet().getFunctionalWeightParserForCurrentState(); 
 //            FunctionalWeightParser<Double> parser = new PetriNetWeightParser(evalVisitor, executablePetriNet);
 //            State state = AnimationUtils.getState(petriNet);
 //            StateEvalVisitor evalVisitor = new StateEvalVisitor(petriNet, state);

@@ -85,7 +85,7 @@ public class PipeApplicationController {
         AnimationHistoryImpl animationHistory = new AnimationHistoryImpl();
         animationHistory.addObserver(historyObserver);
 //        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory, this);
-        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net.makeExecutablePetriNet()), animationHistory, this);
+        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net.getExecutablePetriNet()), animationHistory, this);
 
         CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
 
