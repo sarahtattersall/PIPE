@@ -378,8 +378,8 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
      *
      * @return the capacity spinner value
      */
-    private Double getCapacitySpinnerValue() {
-        return (Double) capacitySpinner.getValue();
+    private int getCapacitySpinnerValue() {
+        return (int) capacitySpinner.getValue();
     }
 
     /**
