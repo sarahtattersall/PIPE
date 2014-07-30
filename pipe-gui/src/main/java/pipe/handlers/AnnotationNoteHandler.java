@@ -97,7 +97,6 @@ public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotatio
         guiDialog.setResizable(false);
         guiDialog.setVisible(true);
 
-        guiDialog.dispose();
     }
 
 }
