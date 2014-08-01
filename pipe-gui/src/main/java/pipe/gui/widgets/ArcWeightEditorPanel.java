@@ -237,7 +237,6 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
         guiDialog.setVisible(true);
-        guiDialog.dispose();
     }
 
     public void setWeight(String func, String id) {
