@@ -231,13 +231,12 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
     public void createEditorWindow(String token) {
         Window window = SwingUtilities.getWindowAncestor(rootPane);
-        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE5", true);
         ArcFunctionEditor feditor =
                 new ArcFunctionEditor(this, guiDialog, petriNetController.getPetriNet(), arcController, token);
         guiDialog.add(feditor);
         guiDialog.setSize(270, 230);
         guiDialog.setVisible(true);
-        guiDialog.dispose();
     }
 
     public void setWeight(String func, String id) {
