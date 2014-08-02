@@ -484,6 +484,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void capacitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {
+        
         int capacity = (int) capacitySpinner.getValue();
         setCapacityVisible(capacity);
     }
