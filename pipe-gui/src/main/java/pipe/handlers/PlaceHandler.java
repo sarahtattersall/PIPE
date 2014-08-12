@@ -64,7 +64,7 @@ public class PlaceHandler
     public void showEditor() {
         // Build interface
         Window window = SwingUtilities.getWindowAncestor(contentPane);
-        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE2", true);
+        EscapableDialog guiDialog = new EscapableDialog(window, "PIPE5", true);
 
         Container contentPane = guiDialog.getContentPane();
 

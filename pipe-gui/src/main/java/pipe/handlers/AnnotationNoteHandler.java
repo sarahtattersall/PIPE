@@ -5,9 +5,8 @@
 */
 package pipe.handlers;
 
-import pipe.actions.EditAnnotationBorderAction;
-import pipe.controllers.PetriNetController;
 import pipe.actions.gui.PipeApplicationModel;
+import pipe.controllers.PetriNetController;
 import pipe.gui.widgets.AnnotationEditorPanel;
 import pipe.gui.widgets.EscapableDialog;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
@@ -54,14 +53,14 @@ public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotatio
         });
         menuItem.setText("Edit text");
         popup.insert(menuItem, popupIndex++);
-
-        menuItem = new JMenuItem(new EditAnnotationBorderAction(component));
-        if (component.hasBorder()) {
-            menuItem.setText("Disable Border");
-        } else {
-            menuItem.setText("Enable Border");
-        }
-        popup.insert(menuItem, popupIndex++);
+//
+//        menuItem = new JMenuItem(new EditAnnotationBorderAction(component));
+//        if (component.hasBorder()) {
+//            menuItem.setText("Disable Border");
+//        } else {
+//            menuItem.setText("Enable Border");
+//        }
+//        popup.insert(menuItem, popupIndex++);
 
         //      menuItem = new JMenuItem(
         //              new EditAnnotationBackgroundAction((AnnotationNote) component));
@@ -97,7 +96,6 @@ public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotatio
         guiDialog.setResizable(false);
         guiDialog.setVisible(true);
 
-        guiDialog.dispose();
     }
 
 }
