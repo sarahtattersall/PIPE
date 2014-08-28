@@ -1,8 +1,10 @@
 package pipe.gui.rcat;
 
+import pipe.gui.widget.RCATForm;
 import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
 import uk.ac.imperial.pipe.models.petrinet.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,9 +21,9 @@ public class BuildingBlockCreator {
      * @return
      * @throws PetriNetComponentException
      */
-    public Collection<Collection<Place>> splitIntoBuildingBlocks(PetriNet petriNet) throws PetriNetComponentException {
+    public Collection<BuildingBlock> splitIntoBuildingBlocks(PetriNet petriNet) throws PetriNetComponentException {
 
-        Collection<Collection<Place>> listOfBuildingBlocks = new HashSet<>();
+        Collection<BuildingBlock> listOfBuildingBlocks = new HashSet<>();
 
         RcatPlaceVisitor rcatPlaceVisitor = new RcatPlaceVisitor(petriNet);
         Collection<Place> visitedPlaces = rcatPlaceVisitor.visitedPlaces;
@@ -29,11 +31,11 @@ public class BuildingBlockCreator {
         for(Place place: petriNet.getPlaces()){
             if(! visitedPlaces.contains(place)){
                 place.accept(rcatPlaceVisitor);
-                Collection<Place> buildingBlock = rcatPlaceVisitor.buildingBlock.getPlaces();
+                BuildingBlock buildingBlock = rcatPlaceVisitor.buildingBlock;
                 listOfBuildingBlocks.add(buildingBlock);
             }
-
         }
+
         return listOfBuildingBlocks;
 
     }
@@ -96,8 +98,27 @@ public class BuildingBlockCreator {
                 bbPlaces.add(neighbour);
             }
 
-            //TODO: add transitions to BB.
-            buildingBlock = new BuildingBlock(bbPlaces, new HashSet<Transition>());
+            buildingBlock = new BuildingBlock(bbPlaces, getAllTransitionsInBuildingBlock(bbPlaces));
+        }
+
+        /**
+         * gets all the transitions in a building block
+         * @param places in the building block
+         * @return all the transitions in each place in a Building Block
+         */
+        public Collection<Transition> getAllTransitionsInBuildingBlock(Collection<Place> places){
+            Collection<Transition> allTrans = new HashSet<>();
+            for(Place place: places){
+                for(Arc arc: petriNet.getArcs()){
+                    if(place.equals(arc.getSource())){
+                        allTrans.add((Transition)arc.getTarget());
+                    }
+                    if(place.equals(arc.getTarget())){
+                        allTrans.add((Transition)arc.getSource());
+                    }
+                }
+            }
+            return allTrans;
         }
 
         /**
@@ -132,6 +153,7 @@ public class BuildingBlockCreator {
             }
             return neighbours;
         }
+
 
     }
 
