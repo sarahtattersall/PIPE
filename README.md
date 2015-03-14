@@ -7,6 +7,7 @@ PIPE 5 is currently in beta stage due to an entire re-write of the back end and 
 ### New (March, 2015) ###
 
 This branch is an alpha version that supports hierarchical Petri nets and external interfaces ([details](https://github.com/sjdayday/PIPECore/wiki)).  It is under sporadic development, and is not a stable release.  To use it, you will need the hierarchical-nets branches of [PIPE](https://github.com/sarahtattersall/PIPE/tree/hierarchical-nets) and [PIPECore](https://github.com/sarahtattersall/PIPECore/tree/hierarchical-nets).  It consists of business logic in the PIPECore project (plus a few compatibility changes in PIPE), and does not yet have user interface support.  If you have questions, open an issue. 
+ 
 
 ## About PIPE ##
 PIPE is an open source, platform independent tool for creating, simulating and analysing Petri nets including 
