@@ -1,5 +1,25 @@
 package pipe.actions.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.undo.UndoableEdit;
+
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.AbstractDatum;
@@ -16,20 +36,6 @@ import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 import uk.ac.imperial.pipe.models.petrinet.Token;
-
-import javax.swing.*;
-import javax.swing.undo.UndoableEdit;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Action used to create, delete and edit tokens in the Petri net
@@ -199,15 +205,14 @@ public class SpecifyTokenAction extends GuiAction {
                         petriNet.removeToken(token);
                         UndoableEdit historyItem = new DeletePetriNetObject(token, petriNet);
                         undoableEdits.add(historyItem);
+                    } catch (PetriNetComponentNotFoundException e) {
+                    	logger.log(Level.SEVERE, e.getMessage());
                     } catch (PetriNetComponentException e) {
                         StringBuilder messageBuilder = new StringBuilder();
                         messageBuilder.append(e.getMessage());
                         messageBuilder.append("\n");
                         messageBuilder.append("All other changes will be applied but this token will not be deleted!");
                         GuiUtils.displayErrorMessage(null, messageBuilder.toString());
-                    } catch (PetriNetComponentNotFoundException e) {
-
-                        logger.log(Level.SEVERE, e.getMessage());
                     }
                 }
             }
