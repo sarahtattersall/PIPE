@@ -3,7 +3,7 @@
     <parent>
         <artifactId>PIPE</artifactId>
         <groupId>uk.ac.imperial</groupId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -28,7 +28,16 @@
             </snapshots>
         </repository>
 
+        <repository>
+            <id>PIPECore-mvn-repo</id>
+            <url>https://raw.github.com/sjdayday/PIPECore/mvn-repo/</url> <!-- only for 1.1.0-SNAPSHOT -->
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
 
+<!--
         <repository>
             <id>PIPECore-mvn-repo</id>
             <url>https://raw.github.com/sarahtattersall/PIPECore/mvn-repo/</url>
@@ -37,6 +46,7 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+-->
 
         <repository>
             <id>PIPEAnalysis-mvn-repo</id>
@@ -47,11 +57,6 @@
             </snapshots>
         </repository>
 
-        <repository>
-            <id>rendersnake-repo</id>
-            <name>Repository for rendersnake</name>
-            <url>http://rendersnake.googlecode.com/svn/repo</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -59,7 +64,7 @@
         <dependency>
             <groupId>org.rendersnake</groupId>
             <artifactId>rendersnake</artifactId>
-            <version>1.7.3</version>
+            <version>1.9.0</version>
         </dependency>
 
         <dependency>
@@ -142,6 +147,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>ideauidesigner-maven-plugin</artifactId>
+                <version>1.0-beta-1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -177,6 +183,41 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.codehaus.mojo
+        								</groupId>
+        								<artifactId>
+        									ideauidesigner-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[1.0-beta-1,)
+        								</versionRange>
+        								<goals>
+        									<goal>javac2</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 
 
