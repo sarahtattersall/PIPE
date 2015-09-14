@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.imperial</groupId>
         <artifactId>PIPE</artifactId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>PIPE-gui</artifactId>
@@ -17,7 +17,7 @@
     <repositories>
         <repository>
             <id>PIPECore-mvn-repo</id>
-            <url>https://raw.github.com/sjdayday/PIPECore/mvn-repo/</url> <!-- only for 1.0.3-SNAPSHOT -->
+            <url>https://raw.github.com/sjdayday/PIPECore/mvn-repo/</url> <!-- only for 1.1.0-SNAPSHOT -->
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -152,13 +152,13 @@
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-module-gui</artifactId>
-            <version>5.0.1-SNAPSHOT</version>
+            <version>5.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-core</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
         </dependency>
 
 
