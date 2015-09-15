@@ -3,7 +3,7 @@
     <parent>
         <artifactId>PIPE</artifactId>
         <groupId>uk.ac.imperial</groupId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -67,13 +67,13 @@
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-analysis</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.imperial</groupId>
             <artifactId>pipe-markov-chain</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
 
         <dependency>
