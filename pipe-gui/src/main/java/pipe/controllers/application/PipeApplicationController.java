@@ -18,6 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -187,7 +188,7 @@ public class PipeApplicationController {
 
         try {
             manager.savePetriNet(petriNet, outFile);
-        } catch (JAXBException e) {
+        } catch (JAXBException | IOException e) {
             throw new RuntimeException("Failed to write!", e);
         }
         petriNetController.save();

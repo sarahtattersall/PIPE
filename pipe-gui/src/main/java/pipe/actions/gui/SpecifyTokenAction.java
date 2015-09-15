@@ -199,15 +199,14 @@ public class SpecifyTokenAction extends GuiAction {
                         petriNet.removeToken(token);
                         UndoableEdit historyItem = new DeletePetriNetObject(token, petriNet);
                         undoableEdits.add(historyItem);
+                    } catch (PetriNetComponentNotFoundException e) {
+                    	logger.log(Level.SEVERE, e.getMessage());
                     } catch (PetriNetComponentException e) {
                         StringBuilder messageBuilder = new StringBuilder();
                         messageBuilder.append(e.getMessage());
                         messageBuilder.append("\n");
                         messageBuilder.append("All other changes will be applied but this token will not be deleted!");
                         GuiUtils.displayErrorMessage(null, messageBuilder.toString());
-                    } catch (PetriNetComponentNotFoundException e) {
-
-                        logger.log(Level.SEVERE, e.getMessage());
                     }
                 }
             }
