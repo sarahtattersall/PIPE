@@ -3,13 +3,16 @@
  */
 package pipe.actions.gui;
 
-import pipe.gui.PIPEConstants;
+import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
-import java.net.URL;
+
+import pipe.gui.PipeResourceLocator;
 
 
 /**
@@ -49,10 +52,13 @@ public abstract class GuiAction extends AbstractAction {
      */
     protected GuiAction(String name, String tooltip) {
         super(name);
-        URL iconURL = this.getClass().getResource(PIPEConstants.IMAGE_PATH + name + ".png");
-        if (iconURL != null) {
-            putValue(SMALL_ICON, new ImageIcon(iconURL));
-        }
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		try {
+			URL iconURL = locator.getImage(name);
+			putValue(SMALL_ICON, new ImageIcon(iconURL));
+		} catch (RuntimeException e) {
+			// some actions don't have icons; ignore
+		}
 
         if (tooltip != null) {
             putValue(SHORT_DESCRIPTION, tooltip);
