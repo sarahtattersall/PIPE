@@ -28,7 +28,7 @@ public final class Pipe {
         return new Runnable() {
             @Override
             public void run() {
-                new Pipe("v5.0.1");
+                new Pipe("v5.0.2");
             }
         };
     }

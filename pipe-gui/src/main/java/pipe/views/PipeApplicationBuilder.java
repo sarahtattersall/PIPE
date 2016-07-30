@@ -1,19 +1,5 @@
 package pipe.views;
 
-import pipe.actions.ZoomAction;
-import pipe.actions.gui.*;
-import pipe.actions.manager.*;
-import pipe.controllers.PetriNetController;
-import pipe.controllers.SelectionManager;
-import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.LayoutAction;
-import pipe.gui.PIPEConstants;
-import pipe.gui.PetriNetTab;
-import pipe.gui.ToggleButton;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -30,6 +16,52 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import pipe.actions.ZoomAction;
+import pipe.actions.gui.ChooseTokenClassAction;
+import pipe.actions.gui.ExampleFileAction;
+import pipe.actions.gui.ExitAction;
+import pipe.actions.gui.ExportPNGAction;
+import pipe.actions.gui.ExportPSAction;
+import pipe.actions.gui.ExportTNAction;
+import pipe.actions.gui.GridAction;
+import pipe.actions.gui.GuiAction;
+import pipe.actions.gui.ImportAction;
+import pipe.actions.gui.PipeApplicationModel;
+import pipe.actions.gui.PrintAction;
+import pipe.actions.gui.SelectAction;
+import pipe.actions.gui.SetZoomAction;
+import pipe.actions.gui.UnfoldAction;
+import pipe.actions.gui.ZoomInAction;
+import pipe.actions.gui.ZoomOutAction;
+import pipe.actions.gui.ZoomUI;
+import pipe.actions.manager.AnimateActionManager;
+import pipe.actions.manager.ComponentCreatorManager;
+import pipe.actions.manager.ComponentEditorManager;
+import pipe.actions.manager.PetriNetEditorManager;
+import pipe.actions.manager.SimpleUndoListener;
+import pipe.actions.manager.TokenActionManager;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
+import pipe.controllers.application.PipeApplicationController;
+import pipe.gui.LayoutAction;
+import pipe.gui.PetriNetTab;
+import pipe.gui.ToggleButton;
+import pipe.gui.PipeResourceLocator;
 
 /**
  * Builder class to set up the properties of the PIPE main application window
@@ -233,7 +265,7 @@ public final class PipeApplicationBuilder {
 
 
         JMenu exportMenu = new JMenu("Export");
-        exportMenu.setIcon(new ImageIcon(getImageURL("Export.png")));
+        exportMenu.setIcon(new ImageIcon(getImageURL("Export")));
         addMenuItem(exportMenu, pipeComponents.exportPNGAction);
         addMenuItem(exportMenu, pipeComponents.exportPSAction);
         addMenuItem(exportMenu, pipeComponents.exportTNAction);
@@ -282,7 +314,7 @@ public final class PipeApplicationBuilder {
         viewMenu.setMnemonic('V');
 
         JMenu zoomMenu = new JMenu("Zoom");
-        zoomMenu.setIcon(new ImageIcon(getImageURL("Zoom.png")));
+        zoomMenu.setIcon(new ImageIcon(getImageURL("Zoom")));
         addZoomMenuItems(zoomMenu, zoomActions);
 
         addMenuItem(viewMenu, pipeComponents.zoomOutAction);
@@ -307,7 +339,7 @@ public final class PipeApplicationBuilder {
         // Help - About is implemented
         aboutItem.addActionListener(view);
         // differently
-        aboutItem.setIcon(new ImageIcon(getImageURL("About.png")));
+        aboutItem.setIcon(new ImageIcon(getImageURL("About")));
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
@@ -448,10 +480,11 @@ public final class PipeApplicationBuilder {
 
     /**
      * @param name file name of image
-     * @return quantified path of image
+     * @return path of image as URL
      */
     private URL getImageURL(String name) {
-        return this.getClass().getResource(PIPEConstants.IMAGE_PATH + name);
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		return locator.getImage(name);
     }
 
     /**
@@ -466,8 +499,9 @@ public final class PipeApplicationBuilder {
             }
         }
         JMenu exampleMenu = new JMenu("Examples");
-        exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
-        URL examplesDirURL = this.getClass().getResource(PIPEConstants.EXAMPLES_PATH);
+        exampleMenu.setIcon(new ImageIcon(getImageURL("Example")));
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		URL examplesDirURL = locator.getExamplePath();
         try {
             URI uri = examplesDirURL.toURI();
             File directory = new File(uri);

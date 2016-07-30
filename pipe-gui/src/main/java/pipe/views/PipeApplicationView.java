@@ -126,7 +126,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             LOGGER.log(Level.SEVERE, e.getMessage());
         }
 
-        this.setIconImage(new ImageIcon(getImageURL("icon.png")).getImage());
+        this.setIconImage(new ImageIcon(getImageURL("icon")).getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 80 / 100, screenSize.height * 80 / 100);
@@ -484,7 +484,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     private URL getImageURL(String name) {
-        return this.getClass().getResource(PIPEConstants.IMAGE_PATH + name);
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		return locator.getImage(name);
     }
 
     public void register(JComboBox<String> tokenClassComboBox) {
