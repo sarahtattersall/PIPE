@@ -24,9 +24,9 @@ public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends Lin
 
     /**
      * Constructor
-     * @param dragging
-     * @param normal
-     * @param isDashedLine
+     * @param dragging dragging
+     * @param normal normal
+     * @param isDashedLine true if dashed
      */
     public PIPELineWithTextEdgePainter(JPowerGraphColor dragging, JPowerGraphColor normal, boolean isDashedLine) {
         super(dragging, normal, isDashedLine);
@@ -35,10 +35,10 @@ public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends Lin
 
     /**
      * Displays the edge and text on the graph
-     * @param graphPane
-     * @param g
-     * @param edge
-     * @param theSubGraphHighlighter
+     * @param graphPane graph pane
+     * @param g graphics
+     * @param edge edge
+     * @param theSubGraphHighlighter highlighter 
      */
     @Override
     public void paintEdge(JGraphPane graphPane, JPowerGraphGraphics g, T edge,
@@ -106,12 +106,12 @@ public class PIPELineWithTextEdgePainter<T extends DirectedTextEdge> extends Lin
 
     /**
      * Paints an arrow in the correct direction
-     * @param g
-     * @param x1
-     * @param y1
-     * @param x2
-     * @param y2
-     * @param isDashedLine
+     * @param g graphics
+     * @param x1 coordinate
+     * @param y1 coordinate
+     * @param x2 coordinate
+     * @param y2 coordinate
+     * @param isDashedLine true if dashed 
      */
     public static void paintArrow(JPowerGraphGraphics g, int x1, int y1, int x2, int y2, boolean isDashedLine) {
         double middleX = (x1 + 2 * x2) / 3;
