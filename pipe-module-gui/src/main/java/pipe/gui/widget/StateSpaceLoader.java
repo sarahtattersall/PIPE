@@ -2,6 +2,7 @@ package pipe.gui.widget;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
 import pipe.reachability.algorithm.ExplorerUtilities;
 import pipe.reachability.algorithm.StateSpaceExplorer;
 import pipe.reachability.algorithm.TimelessTrapException;
@@ -18,6 +19,7 @@ import uk.ac.imperial.state.Record;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
+
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -122,7 +124,7 @@ public class StateSpaceLoader {
     /**
      * Sets up the load Petri net options with the "use current Petri net" disabled
      *
-     * @param loadDialog
+     * @param loadDialog dialog
      */
     public StateSpaceLoader(FileDialog loadDialog) {
         this.loadDialog = loadDialog;
@@ -206,7 +208,7 @@ public class StateSpaceLoader {
      * the petriNet parameter
      *
      * @param petriNet   current Petri net
-     * @param loadDialog
+     * @param loadDialog dialog
      */
     public StateSpaceLoader(PetriNet petriNet, FileDialog loadDialog) {
         defaultPetriNet = petriNet;
@@ -230,9 +232,20 @@ public class StateSpaceLoader {
     /**
      * Calculates the steady state exploration of a Petri net and stores its results
      * in a temporary file.
-     * <p/>
+     * <p>
      * These results are then read in and turned into a graphical representation using mxGraph
      * which is displayed to the user
+     * </p>
+     * @param creator  explorer creator
+     * @param vanishingCreator vanishing creator
+     * @param threads across which to spread work
+     * @return state space explorer results 
+     * @throws TimelessTrapException unable to exit cyclic vanishing state
+     * @throws InterruptedException  thread interrupted
+     * @throws ExecutionException task aborted due to exception
+     * @throws IOException error doing IO
+     * @throws InvalidRateException functional rate expression invalid
+     * @throws StateSpaceLoaderException if error during loading from binaries 
      */
     public StateSpaceExplorer.StateSpaceExplorerResults calculateResults(ExplorerCreator creator,
                                                                          VanishingExplorerCreator vanishingCreator, int threads)
@@ -263,10 +276,12 @@ public class StateSpaceLoader {
     }
 
     /**
-     * Loads the transitions and states form binaries
+     * Loads the transitions and states from binaries
      *
-     * @return
-     * @throws IOException
+     * @return state space explorer results 
+     * @throws IOException if IO error
+     * @throws StateSpaceLoaderException if error during loading from binaries 
+     * @return state space explorer results 
      */
     private StateSpaceExplorer.StateSpaceExplorerResults loadFromBinaries()
             throws IOException, StateSpaceLoaderException {
@@ -279,7 +294,7 @@ public class StateSpaceLoader {
 
     /**
      * @return Path for state space transitions
-     * @throws IOException
+     * @throws IOException if IO error occurs 
      */
     private Path getTransitionsPath() throws IOException {
         return loadFromBinariesRadio.isSelected() ? binaryTransitions : Files.createTempFile("transitions", ".tmp");
@@ -287,7 +302,7 @@ public class StateSpaceLoader {
 
     /**
      * @return Path for state space states
-     * @throws IOException
+     * @throws IOException if IO error occurs 
      */
     private Path getStatesPath() throws IOException {
         return loadFromBinariesRadio.isSelected() ? binaryStates : Files.createTempFile("states", ".tmp");
@@ -296,14 +311,16 @@ public class StateSpaceLoader {
     /**
      * Writes the state space into transitions and states
      *
-     * @param stateWriter
-     * @param transitions
-     * @param states
+     * @param stateWriter writer
+     * @param transitions to write
+     * @param states to write
      * @param threads number of worker threads to use
-     * @throws IOException
-     * @throws TimelessTrapException
-     * @throws ExecutionException
-     * @throws InterruptedException
+     * @return state space explorer results 
+     * @throws TimelessTrapException unable to exit cyclic vanishing state
+     * @throws InterruptedException  thread interrupted
+     * @throws ExecutionException task aborted due to exception
+     * @throws IOException error doing IO
+     * @throws InvalidRateException functional rate expression invalid
      */
     private StateSpaceExplorer.StateSpaceExplorerResults generateStateSpace(StateWriter stateWriter, Path transitions,
                                                                             Path states, PetriNet petriNet,
@@ -324,10 +341,11 @@ public class StateSpaceLoader {
     /**
      * Processes the binary results and returns their state space
      *
-     * @param stateReader
-     * @param transitions
-     * @return
-     * @throws IOException
+     * @param stateReader reader 
+     * @param transitions to process
+     * @return state space explorer results 
+     * @throws IOException if IO error
+     * @throws StateSpaceLoaderException if error during loading from binaries 
      */
     private StateSpaceExplorer.StateSpaceExplorerResults processBinaryResults(StateReader stateReader, Path transitions)
             throws IOException, StateSpaceLoaderException {
@@ -351,9 +369,15 @@ public class StateSpaceLoader {
      * @param stateWriter       format in which to write the results to
      * @param transitionOutput  stream to write state space to
      * @param stateOutput       stream to write state integer mappings to
-     * @param explorerUtilites
+     * @param explorerUtilites  explorer utilities
      * @param threads number of worker threads to use
-     * @param vanishingExplorer @throws TimelessTrapException if the state space cannot be generated due to cyclic vanishing states
+     * @param vanishingExplorer 
+     * @return state space explorer results 
+     * @throws TimelessTrapException unable to exit cyclic vanishing state
+     * @throws InterruptedException  thread interrupted
+     * @throws ExecutionException task aborted due to exception
+     * @throws IOException error doing IO
+     * @throws InvalidRateException functional rate expression invalid
      */
     private StateSpaceExplorer.StateSpaceExplorerResults writeStateSpace(StateWriter stateWriter,
                                                                          Output transitionOutput, Output stateOutput,
@@ -376,10 +400,10 @@ public class StateSpaceLoader {
     /**
      * Reads results of steady state exploration into a collection of records
      *
-     * @param stateReader
-     * @param input
+     * @param stateReader reader 
+     * @param input to process
      * @return state transitions with rates
-     * @throws IOException
+     * @throws IOException error doing IO
      */
     private Collection<Record> readResults(StateReader stateReader, Input input) throws IOException {
         MultiStateReader reader = new EntireStateReader(stateReader);
@@ -387,7 +411,7 @@ public class StateSpaceLoader {
     }
 
     /**
-     * @param records
+     * @param records to process
      * @return the number of transitions in the state space
      */
     private int getTransitionCount(Iterable<Record> records) {
@@ -401,8 +425,9 @@ public class StateSpaceLoader {
     /**
      * Loads and processes state space
      *
-     * @return
-     * @throws IOException
+     * @return results
+     * @throws IOException error doing IO
+     * @throws StateSpaceLoaderException if error during loading from binaries 
      */
     public Results loadStateSpace() throws StateSpaceLoaderException, IOException {
         KryoStateIO stateReader = new KryoStateIO();
@@ -420,10 +445,10 @@ public class StateSpaceLoader {
      * Reads results of the mapping of an integer state representation to
      * the Classified State it represents
      *
-     * @param stateReader
-     * @param input
+     * @param stateReader reader 
+     * @param input to process
      * @return state mappings
-     * @throws IOException
+     * @throws IOException error doing IO
      */
     private Map<Integer, ClassifiedState> readMappings(StateReader stateReader, Input input) throws IOException {
         MultiStateReader reader = new EntireStateReader(stateReader);
@@ -502,8 +527,8 @@ public class StateSpaceLoader {
         /**
          * Constructor
          *
-         * @param records
-         * @param stateMappings
+         * @param records of results
+         * @param stateMappings state mappings 
          */
         public Results(Collection<Record> records, Map<Integer, ClassifiedState> stateMappings) {
             this.records = records;

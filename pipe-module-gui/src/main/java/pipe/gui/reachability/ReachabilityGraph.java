@@ -90,7 +90,7 @@ public class ReachabilityGraph {
     /**
      * When selecting use current Petri net the petri net used will be
      *
-     * @param loadDialog
+     * @param loadDialog dialog
      * @param petriNet   current petri net
      */
 
@@ -145,6 +145,7 @@ public class ReachabilityGraph {
     /**
      * Sets up the graph and returns the JPanel to add to
      * the resultsPanel
+     * @return panel
      */
     private JPanel setupGraph() {
         SwingJGraphPane pane = new SwingJGraphPane(graph);
@@ -181,9 +182,10 @@ public class ReachabilityGraph {
     /**
      * Calculates the steady state exploration of a Petri net and stores its results
      * in a temporary file.
-     * <p/>
+     * <p>
      * These results are then read in and turned into a graphical representation using mxGraph
      * which is displayed to the user
+     * </p>
      * @param threads number of threads to use to explore the state space
      */
     private void calculateResults(int threads) {
@@ -225,7 +227,7 @@ public class ReachabilityGraph {
      * Creates the explorer utilities based upon whether the coverability or reachability graph
      * is being generate
      *
-     * @param petriNet
+     * @param petriNet to be displayed
      * @return explorer utilities for generating state space
      */
     private ExplorerUtilities getExplorerUtilities(PetriNet petriNet) {
@@ -241,7 +243,8 @@ public class ReachabilityGraph {
      * Vanishing explorer is either a {@link pipe.reachability.algorithm.SimpleVanishingExplorer} if
      * vanishing states are to be included in the graph, else it is {@link pipe.reachability.algorithm.OnTheFlyVanishingExplorer}
      *
-     * @param explorerUtilities
+     * @param explorerUtilities utilities for analysis 
+     * @return vanishing explorer
      */
     private VanishingExplorer getVanishingExplorer(ExplorerUtilities explorerUtilities) {
         if (includeVanishingStatesCheckBox.isSelected()) {
@@ -266,7 +269,7 @@ public class ReachabilityGraph {
      * Updates the mxGraph to display the records
      *
      * @param records  state transitions from a processed Petri net
-     * @param stateMap
+     * @param stateMap map of stated
      */
     private void updateGraph(Iterable<Record> records, Map<Integer, ClassifiedState> stateMap) {
         graph.clear();
@@ -277,7 +280,7 @@ public class ReachabilityGraph {
     }
 
     /**
-     * @param stateMap
+     * @param stateMap map of states
      * @return All nodes to be added to the graph
      */
     private Map<Integer, Node> getNodes(Map<Integer, ClassifiedState> stateMap) {
@@ -293,9 +296,9 @@ public class ReachabilityGraph {
     /**
      * All edges to be added to the graph
      *
-     * @param records
-     * @param nodes
-     * @return
+     * @param records to add
+     * @param nodes to add
+     * @return edges 
      */
     private Collection<Edge> getEdges(Iterable<Record> records, Map<Integer, Node> nodes) {
         Collection<Edge> edges = new ArrayList<>();
@@ -335,7 +338,7 @@ public class ReachabilityGraph {
     /**
      * Constructor deactivates use current petri net radio button since none is supplied.
      *
-     * @param loadDialog
+     * @param loadDialog file dialog
      */
     public ReachabilityGraph(FileDialog loadDialog) {
         stateSpaceLoader = new StateSpaceLoader(loadDialog);
@@ -345,7 +348,7 @@ public class ReachabilityGraph {
     /**
      * Main method for running this externally without PIPE
      *
-     * @param args
+     * @param args command line arguments 
      */
     public static void main(String[] args) {
         JFrame frame = new JFrame("ReachabilityGraph");

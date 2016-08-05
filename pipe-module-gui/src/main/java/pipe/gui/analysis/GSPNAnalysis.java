@@ -277,7 +277,7 @@ public class GSPNAnalysis {
      * @param tableRows table rows, these should all be the same lenght
      * @param headers   table headers
      * @param title     itle of the table
-     * @throws IOException
+     * @throws IOException if IO error occurs 
      */
     public void addTable(HtmlCanvas html, List<TableRow> tableRows, List<String> headers, String title)
             throws IOException {
@@ -370,7 +370,7 @@ public class GSPNAnalysis {
     /**
      * Main method for running this externally without PIPE
      *
-     * @param args
+     * @param args command line arguments 
      */
     public static void main(String[] args) {
         JFrame frame = new JFrame("Steady state results");
@@ -396,7 +396,7 @@ public class GSPNAnalysis {
         List<String> cells = new ArrayList<>();
 
         /**
-         * @param cells
+         * @param cells to add 
          */
         public TableRow(String... cells) {
             this.cells.addAll(Arrays.asList(cells));
@@ -418,7 +418,7 @@ public class GSPNAnalysis {
         /**
          * Append this value onto the cells, that is this value will become the last column
          *
-         * @param cell
+         * @param cell to add 
          */
         public void addCell(String cell) {
             cells.add(cell);
