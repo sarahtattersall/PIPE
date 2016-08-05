@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 /**
  * Sets the drop down zoom action
  */
+@SuppressWarnings("serial")
 public class SetZoomAction extends GuiAction {
 
     /**
@@ -40,7 +41,7 @@ public class SetZoomAction extends GuiAction {
 
     /**
      * Sets the zoom combo box selected percentage and performs a zoom action.
-     * @param actionEvent
+     * @param actionEvent event 
      */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {

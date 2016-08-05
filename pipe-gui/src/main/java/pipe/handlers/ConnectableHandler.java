@@ -18,7 +18,7 @@ public class ConnectableHandler<T extends Connectable>
 
     /**
      * Constructor
-     * @param contentpane
+     * @param contentpane content pane
      * @param obj underlying Petri net component
      * @param controller Petri net controller the component belongs to
      * @param applicationModel main PIPE application model
@@ -31,7 +31,7 @@ public class ConnectableHandler<T extends Connectable>
     /**
      * When the mosue is pressed on the Petri net component show the options menu
      * or select it
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mousePressed(MouseEvent e) {

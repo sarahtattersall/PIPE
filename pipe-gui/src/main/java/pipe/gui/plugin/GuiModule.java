@@ -9,7 +9,7 @@ public interface GuiModule {
 
     /**
      * Start a module using optionally the current Petri net
-     * @param petriNet
+     * @param petriNet to start
      */
     void start(PetriNet petriNet);
 

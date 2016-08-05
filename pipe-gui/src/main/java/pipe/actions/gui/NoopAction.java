@@ -11,10 +11,11 @@ import java.awt.event.MouseEvent;
  * Noop class. Does nothing when clicking anywhere
  * Useful for when toggling in and out of animation mode
  */
+@SuppressWarnings("serial")
 public class NoopAction extends CreateAction {
     /**
      * Constructor
-     * @param applicationModel
+     * @param applicationModel PIPE application model
      */
     public NoopAction(PipeApplicationModel applicationModel) {
         super("Noop", "Noop", KeyEvent.VK_N, InputEvent.ALT_DOWN_MASK, applicationModel);
@@ -34,7 +35,7 @@ public class NoopAction extends CreateAction {
      * Performs a noop
      * @param connectable        item clicked
      * @param petriNetController controller for the petri net
-     * @param <T>
+     * @param <T> type 
      */
     @Override
     public <T extends Connectable> void doConnectableAction(T connectable, PetriNetController petriNetController) {

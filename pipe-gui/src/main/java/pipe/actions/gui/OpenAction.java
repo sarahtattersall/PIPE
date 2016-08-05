@@ -5,6 +5,7 @@ import pipe.utilities.gui.GuiUtils;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
+
 import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,7 @@ import java.io.File;
 /**
  * Opens a PNML Petri net
  */
+@SuppressWarnings("serial")
 public class OpenAction extends GuiAction {
 
     /**
@@ -40,7 +42,7 @@ public class OpenAction extends GuiAction {
 
     /**
      * When this action is performed it shows the file dialog and processes the file selected for loading
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

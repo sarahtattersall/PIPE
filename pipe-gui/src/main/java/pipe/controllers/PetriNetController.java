@@ -16,6 +16,7 @@ import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
+
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -24,6 +25,7 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.*;
 
+@SuppressWarnings("serial")
 public class PetriNetController implements Serializable {
 
     /**
@@ -158,7 +160,7 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param component
+     * @param component to check for selection 
      * @return true if this component is selected on the canvas
      */
     public boolean isSelected(PetriNetComponent component) {
@@ -167,7 +169,7 @@ public class PetriNetController implements Serializable {
 
     /**
      * unselect the component on the canvas
-     * @param component
+     * @param component to unselect 
      */
     public void deselect(PetriNetComponent component) {
         selectedComponents.remove(component);
@@ -184,6 +186,7 @@ public class PetriNetController implements Serializable {
      * Translates any components that are selected using a TranslationVisitor
      *
      * @param translation translation distance
+     * @throws PetriNetComponentException if component is not found 
      */
     public void translateSelected(Point translation) throws PetriNetComponentException {
         PetriNetComponentVisitor translationVisitor = new TranslationVisitor(translation, selectedComponents);
@@ -259,7 +262,7 @@ public class PetriNetController implements Serializable {
 
     /**
      * Select the Petri net component on the canvas
-     * @param component
+     * @param component to select 
      */
     public void select(PetriNetComponent component) {
         selectedComponents.add(component);
@@ -283,6 +286,8 @@ public class PetriNetController implements Serializable {
 
     /**
      * Deletes selection and adds to history manager
+     * @return list of edits performed 
+     * @throws PetriNetComponentException if component not found 
      */
     public List<UndoableEdit> deleteSelection() throws PetriNetComponentException {
         List<UndoableEdit> edits = new LinkedList<>();
@@ -299,6 +304,7 @@ public class PetriNetController implements Serializable {
      *
      * @param component
      * @return AbstractUndoableEdit created for deleting the component
+     * @throws PetriNetComponentException if component not found 
      */
     private UndoableEdit deleteComponent(PetriNetComponent component) throws PetriNetComponentException {
         petriNet.remove(component);
@@ -310,6 +316,7 @@ public class PetriNetController implements Serializable {
      *
      * @param component to delete
      * @return AbstractUndableEdit created
+     * @throws PetriNetComponentException if component not found 
      */
     public UndoableEdit delete(PetriNetComponent component) throws PetriNetComponentException {
         return deleteComponent(component);
@@ -318,8 +325,8 @@ public class PetriNetController implements Serializable {
     /**
      * Adds a new token to the petrinet
      *
-     * @param name
-     * @param color
+     * @param name of the token
+     * @param color of the token 
      */
     public void createNewToken(String name, Color color) {
         Token token = new ColoredToken(name, color);
@@ -336,10 +343,10 @@ public class PetriNetController implements Serializable {
 
     /**
      * Update the token with the specified name and color
-     * @param currentTokenName
-     * @param name
-     * @param color
-     * @throws PetriNetComponentNotFoundException
+     * @param currentTokenName current name
+     * @param name new token name
+     * @param color of the token
+     * @throws PetriNetComponentNotFoundException if token not found 
      */
     public void updateToken(String currentTokenName, String name, Color color)
             throws PetriNetComponentNotFoundException {
@@ -362,9 +369,9 @@ public class PetriNetController implements Serializable {
     }
 
     /**
-     * @param arc
-     * @param <S>
-     * @param <T>
+     * @param arc arc
+     * @param <S> source
+     * @param <T> target 
      * @return controller for the model
      */
     public <S extends Connectable, T extends Connectable> ArcController<S, T> getArcController(Arc<S, T> arc) {
@@ -373,7 +380,7 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param place
+     * @param place current place 
      * @return controller for the place
      */
     public PlaceController getPlaceController(Place place) {
@@ -382,7 +389,7 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param annotation
+     * @param annotation current annotation
      * @return controller for the annotation
      */
     public AnnotationController getAnnotationController(Annotation annotation) {
@@ -391,7 +398,7 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param transition
+     * @param transition current transition 
      * @return controller for the transition
      */
     public TransitionController getTransitionController(final Transition transition) {
@@ -400,9 +407,9 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param rateParameter
-     * @return contrioller for the rate paramter
-     * @throws PetriNetComponentNotFoundException
+     * @param rateParameter current rate parameter
+     * @return controller for the rate parameter
+     * @throws PetriNetComponentNotFoundException if not found 
      */
     public RateParameterController getRateParameterController(final String rateParameter)
             throws PetriNetComponentNotFoundException {
@@ -412,8 +419,8 @@ public class PetriNetController implements Serializable {
 
     /**
      * Selected token on the drop down menu
-     * @param tokenName
-     * @throws PetriNetComponentNotFoundException
+     * @param tokenName selected
+     * @throws PetriNetComponentNotFoundException if not found 
      */
     public void selectToken(String tokenName) throws PetriNetComponentNotFoundException {
         selectedToken = tokenName;
@@ -422,7 +429,7 @@ public class PetriNetController implements Serializable {
     /**
      * @param name token name to find
      * @return Token from PetriNet
-     * @throw RuntimeException if the token does not exist
+     * @throws PetriNetComponentNotFoundException if the token does not exist
      */
     public Token getToken(String name) throws PetriNetComponentNotFoundException {
         return petriNet.getComponent(name, Token.class);
@@ -501,8 +508,8 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param id
-     * @return true if this id does not exist inthe Petri net
+     * @param id of the component 
+     * @return true if this id does not exist in the Petri net
      */
     public boolean isUniqueName(String id) {
         return placeNamer.isUniqueName(id) && transitionNamer.isUniqueName(id);
@@ -525,7 +532,7 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * @param expr
+     * @param expr functional expression to parse 
      * @return parsed functional expression in relation to the Petri nets current state
      */
     public FunctionalResults<Double> parseFunctionalExpression(String expr) {
@@ -559,7 +566,7 @@ public class PetriNetController implements Serializable {
 
     /**
      *
-     * Toggles aniamtion from false -> true or true -> false
+     * Toggles animation from false -&gt; true or true -&gt; false
      * @return new mode
      */
     public boolean toggleAnimation() {

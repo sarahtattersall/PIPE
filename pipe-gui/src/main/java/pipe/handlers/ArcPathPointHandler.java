@@ -33,7 +33,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
     /**
      *
-     * @param contentpane
+     * @param contentpane content pane 
      * @param arcPathPoint arc path point
      * @param controller Petri net controller the arc point belongs in
      * @param arcController arc controller the path point belongs to
@@ -82,7 +82,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
     /**
      * When the mouse is pressed on the arc point select it
-     * @param e
+     * @param e mouse event
      */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -96,7 +96,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
     /**
      * When the mouse is released on the arc point, deselect it
-     * @param e
+     * @param e mouse event
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -107,7 +107,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
     /**
      * When the mouse is dragged on an arc point, move it
-     * @param e
+     * @param e mouse event
      */
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -118,7 +118,7 @@ public class ArcPathPointHandler extends PetriNetObjectHandler<ArcPoint> {
 
     /**
      * Noop action
-     * @param e
+     * @param e mouse event
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {

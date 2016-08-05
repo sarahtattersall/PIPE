@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 /**
  * Performs a zoom out of the Petri net canvas
  */
+@SuppressWarnings("serial")
 public class ZoomOutAction extends GuiAction {
 
     /**
@@ -25,7 +26,7 @@ public class ZoomOutAction extends GuiAction {
      *
      * This action has currently been disabled due to bugs in the zoom functionality so instead
      * it displays an error message
-     * @param actionEvent
+     * @param actionEvent event 
      */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {

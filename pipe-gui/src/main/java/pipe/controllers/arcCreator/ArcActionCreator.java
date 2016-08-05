@@ -17,29 +17,29 @@ import java.util.List;
 public interface ArcActionCreator {
     /**
      * Creates an inbound arc
-     * @param source
-     * @param target
-     * @param arcPoints
-     * @return
+     * @param source of the arc
+     * @param target of the arc
+     * @param arcPoints on the arc
+     * @return inbound arc
      */
     InboundArc createInboundArc(Place source, Transition target, List<ArcPoint> arcPoints);
 
     /**
      * Creates an outbound arc
-     * @param target
-     * @param source
-     * @param arcPoints
-     * @return
+     * @param target of the arc
+     * @param source of the arc
+     * @param arcPoints on the arc
+     * @return outbound arc
      */
     OutboundArc createOutboundArc(Place target, Transition source, List<ArcPoint> arcPoints);
 
     /**
      * Return true if can create an arc from source to target
-     * @param source
-     * @param target
-     * @param <S>
-     * @param <T>
-     * @return
+     * @param source of the arc
+     * @param target of the arc
+     * @param <S> source
+     * @param <T> target
+     * @return true if the arc can be created 
      */
     <S extends Connectable, T extends Connectable> boolean canCreate(S source, T target);
 }

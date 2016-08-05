@@ -11,8 +11,9 @@ import java.util.logging.Logger;
 
 /**
  * Handles the combo box user interactions for selecting tokens. This class is responsible for
- * updating controllers & models of the selected token.
+ * updating controllers and models of the selected token.
  */
+@SuppressWarnings("serial")
 public class ChooseTokenClassAction extends GuiAction {
 
     /**
@@ -44,7 +45,7 @@ public class ChooseTokenClassAction extends GuiAction {
 
     /**
      * When a new token is selected this drop dow action selects the token in the controller
-     * @param evt
+     * @param evt event 
      */
     @Override
     public void actionPerformed(ActionEvent evt) {

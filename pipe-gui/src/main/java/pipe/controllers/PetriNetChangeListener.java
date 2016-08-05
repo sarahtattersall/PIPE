@@ -30,7 +30,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
     private static final Logger LOGGER = Logger.getLogger(PetriNetChangeListener.class.getName());
 
     /**
-     * Pipe appliaction model, needed for building items so that
+     * Pipe application model, needed for building items so that
      * the listeners can do the correct thing
      */
     private final PipeApplicationModel applicationModel;
@@ -80,7 +80,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
      * its corresponding registered method to be called
      *
      * If no method exists for the message it will go unpassed
-     * @param propertyChangeEvent
+     * @param propertyChangeEvent property change event 
      */
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {

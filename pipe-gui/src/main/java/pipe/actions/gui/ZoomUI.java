@@ -5,6 +5,7 @@ import pipe.gui.PetriNetTab;
 
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
@@ -14,6 +15,7 @@ import java.beans.PropertyChangeSupport;
  * Zoom UI which intercepts mouse presses on a zoomed panel and transforms them to their
  * correct location
  */
+@SuppressWarnings("serial")
 public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
@@ -62,7 +64,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
      * @param zoomAmount    amount to zoom in/out by
      * @param zoomMax       maximum allowed zoom value
      * @param zoomMin       minimum allowed zoom value
-     * @param controller
+     * @param controller    controller 
      */
     public ZoomUI(double startingScale, double zoomAmount, double zoomMax, double zoomMin,
                   PipeApplicationController controller) {
@@ -75,8 +77,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Paints the component with the current zoom scale
-     * @param g
-     * @param c
+     * @param g graphics
+     * @param c component
      */
     @Override
     public void paint(Graphics g, JComponent c) {
@@ -89,8 +91,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     /**
      * Transforms zoomed mouse events to their unzoomed coordinates
      *
-     * @param e
-     * @param l
+     * @param e event 
+     * @param l component 
      */
     @Override
     protected void processMouseEvent(MouseEvent e, JLayer<? extends JComponent> l) {
@@ -120,8 +122,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Translates the event to a zoomed event point
-     * @param e
-     * @param l
+     * @param e mouse event
+     * @param l component 
      */
     @Override
     protected void processMouseMotionEvent(MouseEvent e, JLayer<? extends JComponent> l) {
@@ -143,8 +145,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Noop action
-     * @param e
-     * @param l
+     * @param e mouse event
+     * @param l component
      */
     @Override
     protected void processMouseWheelEvent(MouseWheelEvent e, JLayer<? extends JComponent> l) {
@@ -153,7 +155,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Install the UI
-     * @param c
+     * @param c component
      */
     @Override
     public void installUI(JComponent c) {
@@ -164,7 +166,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Uninstall the UI
-     * @param c
+     * @param c component 
      */
     @Override
     public void uninstallUI(JComponent c) {
@@ -175,7 +177,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Add a listener for zoom updates
-     * @param listener
+     * @param listener to add
      */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -184,7 +186,7 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      * Remove a listener from the zoom UI
-     * @param listener
+     * @param listener to remove
      */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -193,8 +195,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      *
-     * @param event
-     * @param l
+     * @param event mouse event
+     * @param l component 
      * @return true if the event is within the component bounds
      */
     private boolean clickNotOutOfBounds(MouseEvent event, JLayer<? extends JComponent> l) {
@@ -237,8 +239,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
     }
 
     /**
-     * @param e
-     * @param layer
+     * @param e  mouse event 
+     * @param layer component 
      * @return a new event with x y pointing to the coordinate space of the layer
      * rather than the whole application
      */
@@ -249,8 +251,8 @@ public class ZoomUI extends LayerUI<JComponent> implements ZoomManager {
 
     /**
      *
-     * @param component
-     * @param mouseEvent
+     * @param component clicked
+     * @param mouseEvent mouse event 
      * @return translated mouse click event
      */
     private MouseEvent getNewMouseClickEvent(Component component, MouseEvent mouseEvent) {

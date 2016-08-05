@@ -4,11 +4,13 @@ import pipe.controllers.ArcController;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 
 /**
  * Action used to delete points on an arc path
  */
+@SuppressWarnings("serial")
 public class DeleteArcPathPointAction extends AbstractAction {
     /**
      * Point to delete
@@ -32,7 +34,7 @@ public class DeleteArcPathPointAction extends AbstractAction {
 
     /**
      * Deletes the point from the arc
-     * @param actionEvent
+     * @param actionEvent event 
      */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {

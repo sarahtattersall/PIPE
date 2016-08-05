@@ -37,7 +37,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     private static final Logger LOGGER = Logger.getLogger(PetriNetTab.class.getName());
 
     /**
-     * Map of components in the tab with id -> component
+     * Map of components in the tab with id -&gt; component
      */
     private final Map<String, PetriNetViewComponent> petriNetComponents = new HashMap<>();
 
@@ -85,8 +85,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Legacy update method
-     * @param o
-     * @param diffObj
+     * @param o observable 
+     * @param diffObj object to add
      */
     @Override
     public void update(Observable o, Object diffObj) {
@@ -107,7 +107,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Add the Petri net component to this canvas
-     * @param component
+     * @param component to add
      */
     public void add(AbstractPetriNetViewComponent<?> component) {
         registerLocationChangeListener(component.getModel());
@@ -148,9 +148,9 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      *
-     * Registeres a location listener on the Petri net component
+     * Registers a location listener on the Petri net component
      *
-     * @param component
+     * @param component for which a listener will be registered
      */
     private void registerLocationChangeListener(PetriNetComponent component) {
 
@@ -164,11 +164,11 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Prints the Petri net tab
-     * @param g
-     * @param pageFormat
-     * @param pageIndex
-     * @return
-     * @throws PrinterException
+     * @param g graphics
+     * @param pageFormat page format
+     * @param pageIndex index
+     * @return printer return code 
+     * @throws PrinterException if error in printing 
      */
     @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
@@ -184,7 +184,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Paints the underlying grid on the canvas
-     * @param g
+     * @param g graphics 
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -215,8 +215,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Set meta down. Since there is no documentation for this the functionality
-     * has been depricated and it no longer does anything
-     * @param down
+     * has been deprecated and it no longer does anything
+     * @param down flag
      */
     @Deprecated
     public void setMetaDown(boolean down) {
@@ -225,8 +225,8 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Updates the canvas boundary when dragging is taking place
-     * @param dragStart
-     * @param dragEnd
+     * @param dragStart start of drag
+     * @param dragEnd end of drag
      */
     public void drag(Point dragStart, Point dragEnd) {
         if (dragStart == null) {
@@ -247,7 +247,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
     /**
      * Remove the component with this id from the canvas
-     * @param id
+     * @param id to remove 
      */
     public void deletePetriNetComponent(String id) {
         PetriNetViewComponent component = petriNetComponents.get(id);
@@ -308,7 +308,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
         /**
          * Add the update listener to the place
-         * @param place
+         * @param place for which to add listener
          */
         @Override
         public void visit(Place place) {
@@ -317,7 +317,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
 
         /**
          * Add the update listener to the transition
-         * @param transition
+         * @param transition for which to add listener
          */
         @Override
         public void visit(Transition transition) {

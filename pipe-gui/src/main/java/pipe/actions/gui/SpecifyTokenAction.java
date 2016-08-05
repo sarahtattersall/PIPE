@@ -40,6 +40,7 @@ import uk.ac.imperial.pipe.models.petrinet.Token;
 /**
  * Action used to create, delete and edit tokens in the Petri net
  */
+@SuppressWarnings("serial")
 public class SpecifyTokenAction extends GuiAction {
     /**
      * Main PIPE application controller
@@ -77,7 +78,7 @@ public class SpecifyTokenAction extends GuiAction {
     /**
      * Pops up to change the petri net tokens if there is an active petri net
      *
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -157,8 +158,8 @@ public class SpecifyTokenAction extends GuiAction {
         /**
          *
          * @param title token dialog title
-         * @param modal
-         * @param tokenEditorPanel
+         * @param modal dialog 
+         * @param tokenEditorPanel panel 
          */
         public TokenDialog(String title, boolean modal, TokenEditorPanel tokenEditorPanel) {
             super(applicationView, title, modal);
@@ -167,7 +168,7 @@ public class SpecifyTokenAction extends GuiAction {
 
         /**
          * Processes the changing of Petri net tokens
-         * @param e
+         * @param e event 
          */
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -187,11 +188,11 @@ public class SpecifyTokenAction extends GuiAction {
 
         /**
          * Removes tokens from the Petri net.
-         * <p/>
+         * <p>
          * Creates error message if a token cannot be removed for some reason, for
          * example if places still contain tokens of its type. It will apply all other
          * changes.
-         *
+         * </p>
          * @param deletedData contains Datum items that were deleted from the table
          */
         private void removeDeletedData(Iterable<TokenEditorPanel.Datum> deletedData) {
@@ -223,7 +224,7 @@ public class SpecifyTokenAction extends GuiAction {
 
         /**
          * Update the Petri net component from the table data item
-         * @param data
+         * @param data for update 
          */
         private void updateFromTable(Iterable<TokenEditorPanel.Datum> data) {
             PetriNetController petriNetController = pipeApplicationController.getActivePetriNetController();

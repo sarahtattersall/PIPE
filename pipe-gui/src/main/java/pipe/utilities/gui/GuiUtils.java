@@ -17,6 +17,7 @@ public final class GuiUtils {
      *
      * Pops up error message dialog
      *
+     * @param parent component 
      * @param message error message
      */
     public static void displayErrorMessage(Component parent, String message) {

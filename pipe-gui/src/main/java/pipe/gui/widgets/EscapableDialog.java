@@ -5,20 +5,23 @@
 package pipe.gui.widgets;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
  * Dialog that closes itself on escape key pressed
  */
+@SuppressWarnings("serial")
 public class EscapableDialog 
         extends JDialog{
 
 
     /** Creates a new instance of EscapableDialog
-     * @param window
-     * @param title
-     * @param modal*/
+     * @param window dialog window
+     * @param title of dialog
+     * @param modal true if modal 
+     * */
     public EscapableDialog(Window window, String title, boolean modal) {
         super(window, title);
     }

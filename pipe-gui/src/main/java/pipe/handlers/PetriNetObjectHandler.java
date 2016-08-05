@@ -76,7 +76,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
     /**
      * When the mouse is pressed on a component if editions and pop ups
      * are allowed then the pop up menu appears
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -102,8 +102,8 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
      * Creates the popup menu that the user will see when they right click on a
      * component
      *
-     * @param e
-     * @return
+     * @param e mouse event
+     * @return popup menu 
      */
     protected JPopupMenu getPopup(MouseEvent e) {
         JPopupMenu popup = new JPopupMenu();
@@ -146,6 +146,7 @@ public class PetriNetObjectHandler<T extends PetriNetComponent> extends javax.sw
 
     /**
      * Handler for dragging objects around
+     * @param e mouse event 
      */
     @Override
     public void mouseDragged(MouseEvent e) {

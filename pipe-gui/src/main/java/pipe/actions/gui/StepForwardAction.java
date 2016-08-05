@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 /**
  * Steps forward in the animation sequence, i.e. redoes the last transition fired when clicked
  */
+@SuppressWarnings("serial")
 public class StepForwardAction extends AnimateAction {
     /**
      * Main PIPE application controller
@@ -35,7 +36,7 @@ public class StepForwardAction extends AnimateAction {
 
     /**
      * Register a step back action. When a redo is performed this action will be enabled
-     * @param stepBackwardAction
+     * @param stepBackwardAction action
      */
     public void registerStepBack(StepBackwardAction stepBackwardAction) {
         this.stepBackwardAction = stepBackwardAction;
@@ -44,7 +45,7 @@ public class StepForwardAction extends AnimateAction {
 
     /**
      * Performs an redo and enables the step back action if it is set
-     * @param event
+     * @param event event 
      */
     @Override
     public void actionPerformed(ActionEvent event) {

@@ -3,14 +3,17 @@ package pipe.views;
 import pipe.constants.GUIConstants;
 
 import javax.swing.*;
+
 import java.awt.Color;
 import java.awt.Font;
 
 /**
  * Text label for displaying component information on the canvas
- * <p/>
+ * <p>
  * This can be used for component ids, arc weights and so on
+ * </p>
  */
+@SuppressWarnings("serial")
 public class TextLabel extends JTextArea {
 
     /**
@@ -76,8 +79,8 @@ public class TextLabel extends JTextArea {
     /**
      * Set the coordinates of the label
      *
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate 
      */
     public void setPosition(double x, double y) {
         positionX = x;
