@@ -50,7 +50,7 @@ public interface AnimationHistory {
     /**
      *
      * Register that this transition has been fired and create a history item for it
-     * @param transition
+     * @param transition that was added 
      */
     void addHistoryItem(Transition transition);
 
@@ -62,7 +62,7 @@ public interface AnimationHistory {
 
     /**
      *
-     * @param index
+     * @param index of the transition 
      * @return transition at this index in the firing sequence
      */
     Transition getTransition(int index);

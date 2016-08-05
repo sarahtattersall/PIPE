@@ -11,6 +11,7 @@ import uk.ac.imperial.pipe.parsers.StateEvalVisitor;
 import uk.ac.imperial.state.State;
 
 import javax.swing.*;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -22,6 +23,7 @@ import java.util.List;
 /**
  * Editor for modifying arc properties
  */
+@SuppressWarnings("serial")
 public class ArcFunctionEditor extends JPanel {
     /**
      * Petri net arc belongs to
@@ -44,16 +46,16 @@ public class ArcFunctionEditor extends JPanel {
     private String token;
 
     /**
-     * Editor pannel
+     * Editor panel
      */
     private ArcWeightEditorPanel weightEditorPanel;
 
     /**
      * Constructor
-     * @param weightEditorPanel
-     * @param guiDialog
-     * @param petriNet
-     * @param arcController
+     * @param weightEditorPanel panel
+     * @param guiDialog dialog
+     * @param petriNet Petr net
+     * @param arcController controller 
      * @param token currently selected token
      */
     public ArcFunctionEditor(ArcWeightEditorPanel weightEditorPanel, EscapableDialog guiDialog, PetriNet petriNet,
@@ -67,7 +69,7 @@ public class ArcFunctionEditor extends JPanel {
     }
 
     /**
-     * Initialises the editor
+     * Initializes the editor
      */
     private void init() {
         final JTextArea function = new JTextArea();
@@ -141,9 +143,9 @@ public class ArcFunctionEditor extends JPanel {
     /**
      * Concatenates a list of errors into a single string
      *
-     * @param errors
+     * @param errors to be concatenated 
      * @return single string representation of the error, which is just the errors
-     * appended together and seperated via a comma.
+     * appended together and separated via a comma.
      */
     private String concatenateErrors(List<String> errors) {
         StringBuilder builder = new StringBuilder();
@@ -154,7 +156,7 @@ public class ArcFunctionEditor extends JPanel {
     }
 
     /**
-     * Action perfomed when OK is pressed on the arc editor.
+     * Action performed when OK is pressed on the arc editor.
      *
      * Saves the properties
      */
@@ -175,7 +177,7 @@ public class ArcFunctionEditor extends JPanel {
 
         /**
          * Tries to parse the functional expression to determine its validity
-         * @param e
+         * @param e event 
          */
         @Override
         public void actionPerformed(ActionEvent e) {

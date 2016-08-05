@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 public interface MouseUtilities {
     /**
      *
-     * @param event
+     * @param event mouse event 
      * @return true if left mouse pressed
      */
     boolean isLeftMouse(MouseEvent event);

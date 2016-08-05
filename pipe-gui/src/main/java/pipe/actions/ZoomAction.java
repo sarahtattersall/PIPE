@@ -8,13 +8,14 @@ import java.awt.event.ActionEvent;
 /**
  * Zoom action for zooming in and out of the canvas
  */
+@SuppressWarnings("serial")
 public class ZoomAction extends GuiAction
 {
     /**
      * Constructor
-     * @param name
-     * @param tooltip
-     * @param keystroke
+     * @param name of the action
+     * @param tooltip for the action
+     * @param keystroke shortcut
      */
     public ZoomAction(String name, String tooltip, String keystroke)
     {
@@ -26,7 +27,7 @@ public class ZoomAction extends GuiAction
      *
      * This action is currently unsupported due to bugs in the zoom functionality. Instead an error
      * message is displayed
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e)

@@ -100,7 +100,7 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
 
     /**
      * Add a transition to the head of the firing sequence
-     * @param transition
+     * @param transition to be added 
      */
     @Override
     public void addHistoryItem(Transition transition) {
@@ -123,7 +123,7 @@ public final class AnimationHistoryImpl extends Observable implements AnimationH
 
     /**
      *
-     * @param index
+     * @param index of the transition 
      * @return transition at the given index in the firing sequence
      */
     @Override

@@ -21,6 +21,7 @@ import pipe.gui.PipeResourceLocator;
  *
  * This class is responsible for loading the images of the button
  */
+@SuppressWarnings("serial")
 public abstract class GuiAction extends AbstractAction {
 
     public static final String SELECTED = "selected";
@@ -83,7 +84,7 @@ public abstract class GuiAction extends AbstractAction {
 
     /**
      * Adds a listener to this action that is interested in undoable actions
-     * @param l
+     * @param l listener
      */
     public void addUndoableEditListener(UndoableEditListener l) {
         //TODO: Should ideally throw an exception if listener != null
@@ -92,7 +93,7 @@ public abstract class GuiAction extends AbstractAction {
 
     /**
      * Removes the listener from this action
-     * @param l
+     * @param l listener
      */
     public void removeUndoableEditListener(UndoableEditListener l) {
         listener = null;
@@ -125,7 +126,7 @@ public abstract class GuiAction extends AbstractAction {
      *
      * Notifies the lister that the following undo event has been created.
      *
-     * @param edit
+     * @param edit event 
      */
     protected void registerUndoEvent(UndoableEdit edit) {
         if (listener != null) {

@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 /**
  * Action that when pressed creates a new Petri net in a new tab
  */
+@SuppressWarnings("serial")
 public class NewPetriNetAction extends GuiAction {
 
 
@@ -29,7 +30,7 @@ public class NewPetriNetAction extends GuiAction {
     /**
      * Creates an empty Petri net. This in turn triggers a new tab to be displayed with
      * the blank Petri net.
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

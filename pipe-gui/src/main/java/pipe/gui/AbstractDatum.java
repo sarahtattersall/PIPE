@@ -7,9 +7,10 @@ public class AbstractDatum {
     /**
      * Mapping to an initial datum item
      * This may be null if the Datum was not originally a token in the Petri net
-     * <p/>
+     * <p>
      * It will contain a value if the data is a modified datum
      * and it maps directly to some initial datum
+     * </p>
      */
     public AbstractDatum initial = null;
 
@@ -20,7 +21,7 @@ public class AbstractDatum {
 
     /**
      * Constructor
-     * @param id
+     * @param id of the datum 
      */
     AbstractDatum(String id) {
         this.id = id;
@@ -28,8 +29,8 @@ public class AbstractDatum {
 
     /**
      * Constructor
-     * @param initial
-     * @param id
+     * @param initial value
+     * @param id of the datum 
      */
     AbstractDatum(AbstractDatum initial, String id) {
         this.id = id;

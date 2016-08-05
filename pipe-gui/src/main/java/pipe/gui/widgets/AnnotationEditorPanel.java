@@ -7,6 +7,7 @@ import javax.swing.*;
 /**
  * Annotation panel used to change text of the annotation
  */
+@SuppressWarnings("serial")
 public class AnnotationEditorPanel extends javax.swing.JPanel {
 
     /**
@@ -21,6 +22,7 @@ public class AnnotationEditorPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form ParameterPanel
+     * @param annotationController controller for annotations 
      */
     public AnnotationEditorPanel(AnnotationController annotationController) {
         this.annotationController = annotationController;
@@ -103,7 +105,7 @@ public class AnnotationEditorPanel extends javax.swing.JPanel {
 
     /**
      * Sets the text of the annotation
-     * @param evt
+     * @param evt text event 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {
         annotationController.setText(textArea.getText());
@@ -119,7 +121,7 @@ public class AnnotationEditorPanel extends javax.swing.JPanel {
 
     /**
      * Cancels the annotation editor, leaving the text unchanged
-     * @param evt
+     * @param evt cancel event 
      */
     private void cancelButtonActionPerformed(
             java.awt.event.ActionEvent evt) {

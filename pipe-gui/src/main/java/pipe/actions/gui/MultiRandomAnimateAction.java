@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
  * This action is responsible for firing multiple random enabled
  * transitions when animation mode is on
  */
+@SuppressWarnings("serial")
 public class MultiRandomAnimateAction extends AnimateAction {
     /**
      * Step backward action, used to set its availability when a step forward has been performed.
@@ -39,7 +40,7 @@ public class MultiRandomAnimateAction extends AnimateAction {
 
     /**
      * Fires the specified number of enabled transitions
-     * @param event
+     * @param event event 
      */
     @Override
     public void actionPerformed(ActionEvent event) {

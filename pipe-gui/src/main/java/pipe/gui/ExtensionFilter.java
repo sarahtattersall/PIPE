@@ -25,8 +25,8 @@ public class ExtensionFilter
 
     /**
      * Constructor
-     * @param ext
-     * @param desc
+     * @param ext extension
+     * @param desc description 
      */
    public ExtensionFilter(String ext, String desc) {
       extensionString = ext.toLowerCase();
@@ -36,7 +36,7 @@ public class ExtensionFilter
 
     /**
      *
-     * @param f
+     * @param f file 
      * @return true if we will accept the file
      */
    @Override

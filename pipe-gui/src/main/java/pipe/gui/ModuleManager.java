@@ -289,7 +289,7 @@ public class ModuleManager {
         }
         /**
          * Show the menu popup to run the module
-         * @param e
+         * @param e mouse event 
          */
         @Override
         public void mousePressed(MouseEvent e) {
@@ -300,7 +300,7 @@ public class ModuleManager {
 
         /**
          * Show the menu popup to run the module
-         * @param e
+         * @param e mouse event 
          */
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -311,7 +311,7 @@ public class ModuleManager {
 
         /**
          * Show the menu for the modules
-         * @param e
+         * @param e mouse event 
          */
         private void showPopupMenu(MouseEvent e) {
             TreePath selPath = moduleTree.getPathForLocation(e.getX(), e.getY());

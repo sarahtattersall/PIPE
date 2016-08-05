@@ -15,6 +15,7 @@ import java.awt.event.MouseWheelEvent;
  * @author Peter Kyme, Michael Camacho
  *         Class to handle selection rectangle functionality
  */
+@SuppressWarnings("serial")
 public class SelectionManager extends javax.swing.JComponent
         implements java.awt.event.MouseListener, java.awt.event.MouseWheelListener, java.awt.event.MouseMotionListener {
 
@@ -104,7 +105,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Paint a blue rectangle over the selected area
-     * @param g
+     * @param g graphics
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -118,7 +119,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Update the selected area
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -138,7 +139,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Select the items that interact with the selection area
-     * @param e
+     * @param e mouse event 
      */
     private void processSelection(MouseEvent e) {
         if (!e.isShiftDown()) {
@@ -158,7 +159,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Noop
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -180,7 +181,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Noop
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -189,7 +190,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Noop
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -198,7 +199,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Select all items falling within the selected area
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -217,7 +218,7 @@ public class SelectionManager extends javax.swing.JComponent
      *
      * Reset the selection area
      *
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -233,7 +234,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Noop
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseEntered(MouseEvent e) {
@@ -242,7 +243,7 @@ public class SelectionManager extends javax.swing.JComponent
 
     /**
      * Noop
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseExited(MouseEvent e) {

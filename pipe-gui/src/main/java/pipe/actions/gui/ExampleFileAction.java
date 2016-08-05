@@ -16,6 +16,7 @@ import uk.ac.imperial.pipe.parsers.UnparsableException;
 /**
  * Class responsible for loading the specified example file in the PIPE petri net example menu
  */
+@SuppressWarnings("serial")
 public class ExampleFileAction extends GuiAction {
     /**
      * File location of the example file
@@ -65,7 +66,7 @@ public class ExampleFileAction extends GuiAction {
 
     /**
      * When performed this action creates a new tab from the specified example Petri net file
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

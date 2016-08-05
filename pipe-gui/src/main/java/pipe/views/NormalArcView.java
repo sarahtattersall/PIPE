@@ -222,7 +222,7 @@ public class NormalArcView<S extends Connectable, T extends Connectable> extends
 
     /**
      * Paints the arc
-     * @param g
+     * @param g graphics 
      */
     @Override
     public void paintComponent(Graphics g) {

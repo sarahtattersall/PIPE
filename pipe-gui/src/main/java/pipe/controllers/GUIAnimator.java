@@ -63,8 +63,9 @@ public class GUIAnimator {
      * Saves the current petri net token counts for restoring later.
      * When exit animation mode we expect the petri net to return to
      * it's original state, hence this method must be called before animating.
-     * <p/>
+     * <p>
      * Also marks the enabled transitions in the petri net.
+     * </p>
      */
     public void startAnimation() {
         saveCurrentTokenState();
@@ -142,7 +143,7 @@ public class GUIAnimator {
      * object, enables transitions after the recent firing, and properly displays
      * the transitions.
      *
-     * @param transition
+     * @param transition to be fired 
      */
     public void fireTransition(Transition transition) {
         Set<Transition> previouslyEnabled = animator.getEnabledTransitions();

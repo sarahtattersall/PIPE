@@ -53,6 +53,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
      * Sets the weight for the current arc
      * @param token token id
      * @param expr weight for the associated token on the underlying arc
+     * @throws UnparsableException if the weight could not be parsed or is not an integer
      */
     public void setWeight(String token, String expr) throws UnparsableException {
         throwExceptionIfWeightNotValid(expr);
@@ -79,7 +80,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      *
-     * @param value
+     * @param value to evaluate 
      * @return true if the value was an integer
      */
     private boolean valueIsNotInteger(double value) {
@@ -89,7 +90,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
     /**
      * Loop through the weights and throw an exception if its not valid
      * @param weights
-     * @throws UnparsableException
+     * @throws UnparsableException if the weight could not be parsed or is not an integer
      */
     private void throwExceptionIfWeightsNotValid(Map<String, String> weights) throws UnparsableException {
         for (Map.Entry<String, String> entry : weights.entrySet()) {
@@ -113,8 +114,8 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Set the new token weights
-     * @param newWeights map token id -> functional expression
-     * @throws UnparsableException
+     * @param newWeights map token id -&gt;  functional expression
+     * @throws UnparsableException if the weight could not be parsed or is not an integer
      */
     public void setWeights(Map<String, String> newWeights) throws UnparsableException {
         throwExceptionIfWeightsNotValid(newWeights);
@@ -127,7 +128,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      *
-     * @param token
+     * @param token to evaluate 
      * @return functional expression for the token
      */
     public String getWeightForToken(String token) {
@@ -144,7 +145,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Toggle arc point between straight and curved
-     * @param arcPoint
+     * @param arcPoint to be toggled 
      */
     public void toggleArcPointType(ArcPoint arcPoint) {
         arcPoint.setCurved(!arcPoint.isCurved());
@@ -153,7 +154,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Add another arc point between this point and the next
-     * @param arcPoint
+     * @param arcPoint at which to split 
      */
     public void splitArcPoint(ArcPoint arcPoint) {
         ArcPoint nextPoint = arc.getNextPoint(arcPoint);
@@ -170,7 +171,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Add an arc point at this location
-     * @param point
+     * @param point to add
      */
     public void addPoint(Point2D point) {
         ArcPoint newPoint = new ArcPoint(point, false);
@@ -180,7 +181,7 @@ public class ArcController<S extends Connectable, T extends Connectable> extends
 
     /**
      * Delete this arc point
-     * @param point
+     * @param point to delete
      */
     public void deletePoint(ArcPoint point) {
         arc.removeIntermediatePoint(point);

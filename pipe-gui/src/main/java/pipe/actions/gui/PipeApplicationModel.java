@@ -8,6 +8,7 @@ import java.io.Serializable;
  * This class contains information about the underlying state of the application
  * For example whether it is in animation mode and what action is currently selected
  */
+@SuppressWarnings("serial")
 public class PipeApplicationModel implements Serializable {
     /**
      * Message fired when animation mode is toggled
@@ -70,7 +71,7 @@ public class PipeApplicationModel implements Serializable {
 
     /**
      * Adds a listener for changes in this model.
-     * @param listener
+     * @param listener to add
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
@@ -78,7 +79,7 @@ public class PipeApplicationModel implements Serializable {
 
     /**
      * Remove a listener from this model
-     * @param listener
+     * @param listener to remove 
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);
@@ -150,14 +151,10 @@ public class PipeApplicationModel implements Serializable {
     /**
      *
      * Set the current GUIAction mode
-     * @param _mode
+     * @param mode for GUI actions 
      */
-    public void setMode(int _mode) {
-
-        // Don't bother unless new mode is different.
-        if (mode != _mode) {
-            mode = _mode;
-        }
+    public void setMode(int mode) {
+        this.mode = mode; 
     }
 
     /**

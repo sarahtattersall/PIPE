@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 /**
  * Action responsible for randomly firing a single enabled transition
  */
+@SuppressWarnings("serial")
 public class RandomAnimateAction extends AnimateAction {
 
     /**
@@ -32,8 +33,8 @@ public class RandomAnimateAction extends AnimateAction {
      * @param tooltip tooltip message
      * @param keystroke keyboard short cut
      * @param applicationController main application controller
-     * @param stepForwardAction
-     * @param stepBackwardAction
+     * @param stepForwardAction forward
+     * @param stepBackwardAction backward 
      */
     public RandomAnimateAction(String name, String tooltip, String keystroke,
                                PipeApplicationController applicationController, StepForwardAction stepForwardAction,
@@ -48,7 +49,7 @@ public class RandomAnimateAction extends AnimateAction {
      * Randomly fires one transition in Petri net that is currently in animation mode.
      *
      * Enables the step forwards and backwards buttons accordingly.
-     * @param event
+     * @param event event 
      */
     @Override
     public void actionPerformed(ActionEvent event) {

@@ -10,6 +10,7 @@ import java.io.Serializable;
 /**
  * Zoom controller repsonsible for zooming in and out of a Petri net tab
  */
+@SuppressWarnings("serial")
 public class ZoomController implements Serializable {
 
     /**
@@ -34,7 +35,7 @@ public class ZoomController implements Serializable {
      *
      * Add a listener to be triggered when zooming in and out
      *
-     * @param listener
+     * @param listener to add
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
@@ -42,7 +43,7 @@ public class ZoomController implements Serializable {
 
     /**
      * Removes the listener from this controller
-     * @param listener
+     * @param listener to remove 
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.removePropertyChangeListener(listener);

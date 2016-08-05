@@ -10,6 +10,7 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 
 import javax.swing.event.MouseInputAdapter;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -22,6 +23,7 @@ import java.util.List;
 /**
  * View representation of the annotation Petri net component
  */
+@SuppressWarnings("serial")
 public final class AnnotationView extends Note {
 
     /**
@@ -96,8 +98,8 @@ public final class AnnotationView extends Note {
 
 
     /**
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate 
      * @return true if (x, y) intersect annotation location
      */
     @Override
@@ -155,7 +157,7 @@ public final class AnnotationView extends Note {
 
     /**
      * Paints the annotation and its text using the graphics
-     * @param g
+     * @param g graphics 
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -237,7 +239,7 @@ public final class AnnotationView extends Note {
 
         /**
          * When the mouse is pressed on the point repaint it and set the start location
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mousePressed(MouseEvent e) {
@@ -248,7 +250,7 @@ public final class AnnotationView extends Note {
 
         /**
          * When the mouse is pressed on the point repaint it
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -259,7 +261,7 @@ public final class AnnotationView extends Note {
 
         /**
          * When the mouse is dragged, drag the point using the set start point when the mouse was pressed
-         * @param e
+         * @param e mouse event
          */
         @Override
         public void mouseDragged(MouseEvent e) {
@@ -315,7 +317,7 @@ public final class AnnotationView extends Note {
 
         /**
          * Constructor
-         * @param type
+         * @param type of point
          */
         public ResizePoint(int type) {
             setOpaque(false);
@@ -326,8 +328,8 @@ public final class AnnotationView extends Note {
 
         /**
          * Set the x,y location of the point
-         * @param x
-         * @param y
+         * @param x coordinate 
+         * @param y coordinate
          */
         public void setLocation(double x, double y) {
             super.setLocation((int) (x - SIZE), (int) (y - SIZE));
@@ -335,8 +337,8 @@ public final class AnnotationView extends Note {
 
         /**
          * Drag the point by x, y
-         * @param x
-         * @param y
+         * @param x coordinate
+         * @param y coordinate 
          */
         private void drag(int x, int y) {
             if ((typeMask & TOP) == TOP) {
@@ -355,7 +357,7 @@ public final class AnnotationView extends Note {
 
         /**
          * Paint the point on the canvas
-         * @param g
+         * @param g graphics 
          */
         public void paintOnCanvas(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;

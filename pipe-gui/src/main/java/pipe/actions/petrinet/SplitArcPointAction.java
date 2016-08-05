@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
  * This class is used to split a point on an arc into two to  allow the arc to
  * be manipulated further.
  */
+@SuppressWarnings("serial")
 public class SplitArcPointAction extends javax.swing.AbstractAction {
 
     /**
@@ -41,7 +42,7 @@ public class SplitArcPointAction extends javax.swing.AbstractAction {
 
     /**
      * Adds the arc point as an intermediate point along the arc
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
