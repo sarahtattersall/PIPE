@@ -11,9 +11,11 @@ import java.util.Map;
 /**
  * Abstract action responsible for adding and deleting tokens to places
  */
+@SuppressWarnings("serial")
 public abstract class TokenAction extends CreateAction {
+	
 
-    /**
+	/**
      *
      * @param name image name
      * @param tooltip tooltip message
@@ -53,18 +55,18 @@ public abstract class TokenAction extends CreateAction {
     /**
      * Subclasses should perform their relevant action on the token e.g. add/delete
      *
-     * @param placeController
-     * @param token
+     * @param placeController controller for places
+     * @param token token
      */
     protected abstract void performTokenAction(PlaceController placeController, String token);
 
     /**
      * Sets the place to contain counts.
-     * <p/>
+     * <p>
      * Creates a new history edit
-     *
-     * @param placeController
-     * @param counts
+     * </p>
+     * @param placeController controller for places
+     * @param counts for the place 
      */
     protected void setTokenCounts(PlaceController placeController, Map<String, Integer> counts) {
         placeController.setTokenCounts(counts);

@@ -42,7 +42,7 @@ public interface ZoomManager {
 
     /**
      * Add a lister for zooming actions
-     * @param listener
+     * @param listener for zoom actions 
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 }

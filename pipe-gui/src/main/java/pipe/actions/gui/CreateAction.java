@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
  * This action is responsible for the actions that lead to creating components on the
  * Petri net canvas
  */
+@SuppressWarnings("serial")
 public abstract class CreateAction extends GuiAction {
 
     /**
@@ -53,7 +54,7 @@ public abstract class CreateAction extends GuiAction {
     /**
      * When this action is clicked on the tool bar it sets the subclass to be the currently
      * selected action in the application model.
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -35,7 +35,7 @@ public class TransitionHandler extends ConnectableHandler<Transition> {
 
     /**
      * Noop action
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -46,6 +46,8 @@ public class TransitionHandler extends ConnectableHandler<Transition> {
     /**
      * Creates the popup menu that the user will see when they right click on a
      * component
+     * @param e mouse event
+     * @return popup menu  
      */
     @Override
     protected JPopupMenu getPopup(MouseEvent e) {

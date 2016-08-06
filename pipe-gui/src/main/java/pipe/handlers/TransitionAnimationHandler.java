@@ -35,7 +35,7 @@ public class TransitionAnimationHandler extends javax.swing.event.MouseInputAdap
 
     /**
      * When clicked this fires the transition if it is enabled in animation mode
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseClicked(MouseEvent e) {

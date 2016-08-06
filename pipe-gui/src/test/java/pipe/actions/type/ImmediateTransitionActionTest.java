@@ -62,7 +62,7 @@ public class ImmediateTransitionActionTest {
         action.doAction(mockEvent, mockController);
 
         verify(mockNet).addTransition(
-                argThat(new HasMultiple<>(new HasXY(point.getX(), point.getY()), new HasTimed(false))));
+                argThat(new HasMultiple<Transition>(new HasXY<Transition>(point.getX(), point.getY()), new HasTimed(false))));
     }
 
     @Test

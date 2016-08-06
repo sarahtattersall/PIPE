@@ -18,7 +18,7 @@ import java.awt.event.MouseWheelEvent;
  */
 public class PetriNetMouseHandler extends MouseInputAdapter {
     /**
-     * Main PIPE appliaction model
+     * Main PIPE application model
      */
     private final PipeApplicationModel applicationModel;
 
@@ -52,7 +52,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     /**
      * Performs the corresponding selected toolbar action on the component
-     * @param event
+     * @param event mouse event 
      */
     @Override
     public void mousePressed(MouseEvent event) {
@@ -77,7 +77,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     /**
      * Changes the cursor to a cross hair
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -86,7 +86,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     /**
      * Noop
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -95,7 +95,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     /**
      * Sets the starting drag point
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -104,7 +104,7 @@ public class PetriNetMouseHandler extends MouseInputAdapter {
 
     /**
      * Performs the movement action of the toolbar action selected on the component
-     * @param event
+     * @param event mouse event 
      */
     @Override
     public void mouseMoved(MouseEvent event) {

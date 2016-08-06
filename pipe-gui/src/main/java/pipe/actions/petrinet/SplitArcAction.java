@@ -15,6 +15,7 @@ import java.awt.geom.Point2D;
  * point the user clicks the mouse button.
  *
  */
+@SuppressWarnings("serial")
 public class SplitArcAction
         extends javax.swing.AbstractAction {
 
@@ -42,7 +43,7 @@ public class SplitArcAction
 
     /**
      * Adds a new arc path point at the specified location
-     * @param arg0
+     * @param arg0 event 
      */
     @Override
     public void actionPerformed(ActionEvent arg0) {

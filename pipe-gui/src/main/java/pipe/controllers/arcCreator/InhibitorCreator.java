@@ -10,16 +10,17 @@ import java.util.logging.Logger;
 
 /**
  * Determines if an inhibitor arc can be created.
- * <p/>
+ * <p>
  * The logic for creating an inhibitor arc is that it can only connect from a place to a transition
+ * </p>
  */
 public class InhibitorCreator implements ArcActionCreator {
 
     private static final Logger LOGGER = Logger.getLogger(InhibitorCreator.class.getName());
 
     /**
-     * @param source
-     * @param target
+     * @param source of the arc
+     * @param target of the arc
      * @param arcPoints any point that should be added along the arc
      * @return inbound arc from the place to the transition
      */
@@ -31,9 +32,9 @@ public class InhibitorCreator implements ArcActionCreator {
     }
 
     /**
-     * @param target
-     * @param source
-     * @param arcPoints
+     * @param target of the arc
+     * @param source of the arc
+     * @param arcPoints points to be added 
      * @return null since no arc can exist
      */
     @Override
@@ -42,11 +43,11 @@ public class InhibitorCreator implements ArcActionCreator {
     }
 
     /**
-     * @param source
-     * @param target
+     * @param source of the arc
+     * @param target of the arc
      * @param <S>    source connectable of the arc
      * @param <T>    target connectable of the arc
-     * @return true if the arc is connecting from place -> transition. False otherwise
+     * @return true if the arc is connecting from place -&gt; transition. False otherwise
      */
     @Override
     public <S extends Connectable, T extends Connectable> boolean canCreate(S source, T target) {

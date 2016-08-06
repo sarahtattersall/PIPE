@@ -7,6 +7,7 @@ import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
 
 import javax.swing.event.MouseInputAdapter;
+
 import java.awt.Container;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -14,13 +15,14 @@ import java.beans.PropertyChangeListener;
 
 /**
  * This class contains the common methods for different arc types.
- * <p/>
+ * <p>
  * At present when arc points are modified the whole arc is redrawn. At some point
  * in the future it would be good if they're more dynamic than this.
- *
+ * </p>
  * @param <S> Model source type
  * @param <T> Model target type
  */
+@SuppressWarnings("serial")
 public abstract class ArcView<S extends Connectable, T extends Connectable>
         extends AbstractPetriNetViewComponent<Arc<S, T>> {
     /**
@@ -129,8 +131,8 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
 
     /**
      *
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate 
      * @return true if (x,y) intersect the arc path
      */
     @Override

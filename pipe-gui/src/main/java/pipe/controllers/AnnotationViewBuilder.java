@@ -28,7 +28,8 @@ public final class AnnotationViewBuilder {
 
     /**
      *
-     * @param parent
+     * @param parent container 
+     * @param model of the application 
      * @return a new annotation view who belongs in the specified parent
      */
     public AnnotationView build(Container parent, PipeApplicationModel model) {

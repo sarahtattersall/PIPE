@@ -20,7 +20,7 @@ public abstract class JarUtilities {
 
     /**
      *
-     * @param entry
+     * @param entry zip entry 
      * @return file associated with the zip entry
      */
     public static File getFile(ZipEntry entry) {

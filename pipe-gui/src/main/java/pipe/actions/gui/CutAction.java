@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 /**
  * Performs the cut action for cut, copy and paste.
  */
+@SuppressWarnings("serial")
 public class CutAction extends GuiAction {
     /**
      * Application controller
@@ -32,7 +33,7 @@ public class CutAction extends GuiAction {
      * When this event is called it copies and deletes the selected items.
      *
      * It creates an multi undo action for the cut componentds.
-     * @param actionEvent
+     * @param actionEvent event 
      */
     @Override
     public void actionPerformed(final ActionEvent actionEvent) {

@@ -25,7 +25,7 @@ public class SaveAsAction extends AbstractSaveAction {
     /**
      * Performs a save as operation, opening the file dialog and saving the Petri net
      * to the specified location.
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

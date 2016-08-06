@@ -16,6 +16,7 @@ import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -26,13 +27,14 @@ import java.util.List;
 
 
 /**
- * Class to handle copy & paste functionality
+ * Class to handle copy and paste functionality
  */
+@SuppressWarnings("serial")
 public class CopyPasteManager extends javax.swing.JComponent
         implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.event.KeyListener {
 
     /**
-     * Colour of rectange displayed when pasting
+     * Colour of rectangle displayed when pasting
      */
     private static final Paint PASTE_COLOR = new Color(155, 155, 155, 100);
 
@@ -218,7 +220,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action on click
      *
-     * @param e
+     * @param e mouse click event 
      */
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -228,7 +230,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Performs the paste action
      *
-     * @param e
+     * @param e mouse pressed event 
      */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -243,7 +245,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action
      *
-     * @param e
+     * @param e mouse released event 
      */
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -253,7 +255,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action
      *
-     * @param e
+     * @param e mouse entered event 
      */
     @Override
     public void mouseEntered(MouseEvent e) {
@@ -263,7 +265,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action
      *
-     * @param e
+     * @param e mouse exited event 
      */
     @Override
     public void mouseExited(MouseEvent e) {
@@ -272,10 +274,10 @@ public class CopyPasteManager extends javax.swing.JComponent
 
     /**
      * Paste pastes the new objects into the petriNet specified in consturction.
-     * <p/>
+     * <p>
      * It first pastes the connectables, and then other components. This ordering is important
      * and will ensure that arcs are created with the right components.
-     *
+     * </p>
      * @param petriNetTab petri net tab to paste items to
      */
     private void paste(PetriNetTab petriNetTab) {
@@ -389,7 +391,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action
      *
-     * @param e
+     * @param e key typed event 
      */
     @Override
     public void keyTyped(KeyEvent e) {
@@ -399,7 +401,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action
      *
-     * @param e
+     * @param e key pressed event 
      */
     @Override
     public void keyPressed(KeyEvent e) {
@@ -409,7 +411,7 @@ public class CopyPasteManager extends javax.swing.JComponent
     /**
      * Noop action
      *
-     * @param e
+     * @param e key released event 
      */
     @Override
     public void keyReleased(KeyEvent e) {
@@ -501,8 +503,8 @@ public class CopyPasteManager extends javax.swing.JComponent
 
         /**
          * Changes the bounds of the rectangle to include the connectable
-         * @param connectable
-         * @param <T>
+         * @param connectable being bounded 
+         * @param <T> type of the connectable
          */
         private <T extends Connectable> void adjustLocation(T connectable) {
             if (connectable.getX() < location.left) {
@@ -521,7 +523,7 @@ public class CopyPasteManager extends javax.swing.JComponent
 
         /**
          * Adjusts the bounds of the rectangle to include the position of the transition
-         * @param transition
+         * @param transition to be included in the bounds 
          */
         @Override
         public void visit(Transition transition) {

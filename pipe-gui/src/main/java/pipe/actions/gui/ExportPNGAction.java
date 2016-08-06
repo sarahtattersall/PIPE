@@ -4,9 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+import pipe.utilities.gui.GuiUtils;
+
 /**
  * Exports the Petri net as a PNG
  */
+@SuppressWarnings("serial")
 public class ExportPNGAction extends GuiAction {
     /**
      * Constructor
@@ -20,10 +23,13 @@ public class ExportPNGAction extends GuiAction {
      * Saves the Petri net as a PNG when selected.
      *
      * Currently this feature has not been implemented.
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        //TODO
+        //TODO implement export PNG 
+        GuiUtils.displayErrorMessage(null,
+                "Export as PNG is currently not supported in this version.\n Please file an issue if it is particularly important to you.");
+
     }
 }

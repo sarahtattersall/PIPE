@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 /**
  * Unfolds a coloured Petri net to an ordinary Petri net.
  */
+@SuppressWarnings("serial")
 public class UnfoldAction extends GuiAction {
 
     /**
@@ -33,7 +34,7 @@ public class UnfoldAction extends GuiAction {
      *
      * This functionality has not yet been implemented.
      *
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

@@ -1,12 +1,14 @@
 package pipe.gui;
 
 import javax.swing.*;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
  * A toggleable button
  */
+@SuppressWarnings("serial")
 public class ToggleButton extends JToggleButton implements PropertyChangeListener {
     /**
      * Constructor
@@ -24,7 +26,7 @@ public class ToggleButton extends JToggleButton implements PropertyChangeListene
     /**
      * Performs action on press event
      *
-     * @param evt
+     * @param evt event 
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

@@ -27,7 +27,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
 
     /**
      * Constructor
-     * @param contentPane
+     * @param contentPane content pane 
      * @param component  underlying Petri net component
      * @param controller controller of the Petri net the arc belongs to
      * @param applicationModel main PIPE application model
@@ -40,6 +40,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
     /**
      * Creates the popup menu that the user will see when they right click on a
      * component
+     * @param e mouse event 
      */
     @Override
     public JPopupMenu getPopup(MouseEvent e) {
@@ -74,7 +75,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
 
     /**
      * Noop action
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -83,7 +84,7 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
 
     /**
      * Noop action
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -117,3 +118,4 @@ public class ArcHandler<S extends Connectable, T extends Connectable>
         guiDialog.setVisible(true);
     }
 }
+

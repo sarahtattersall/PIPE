@@ -26,10 +26,10 @@ public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotatio
 
     /**
      * Constructor
-     * @param contentpane
-     * @param note
-     * @param controller
-     * @param applicationModel
+     * @param contentpane content pane
+     * @param note note
+     * @param controller Petri net controller
+     * @param applicationModel application model 
      */
     public AnnotationNoteHandler(Container contentpane, Annotation note, PetriNetController controller,  PipeApplicationModel applicationModel) {
         super(contentpane, note, controller, applicationModel);
@@ -39,6 +39,7 @@ public final class AnnotationNoteHandler extends PetriNetObjectHandler<Annotatio
     /**
      * Creates the popup menu that the user will see when they right click on a
      * component
+     * @param e mouse event 
      */
     @Override
     public JPopupMenu getPopup(MouseEvent e) {

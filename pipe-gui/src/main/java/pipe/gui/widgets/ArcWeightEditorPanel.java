@@ -7,6 +7,7 @@ import uk.ac.imperial.pipe.models.petrinet.Token;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
+
 import java.awt.Dimension;
 import java.awt.Window;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 /**
  * This class deals with editing the weight of an arc
  */
+@SuppressWarnings("serial")
 public class ArcWeightEditorPanel extends javax.swing.JPanel {
 
     private final PetriNetController petriNetController;
@@ -34,8 +36,9 @@ public class ArcWeightEditorPanel extends javax.swing.JPanel {
     /**
      * Creates new form Arc Weight Editor
      *
-     * @param rootPane
+     * @param rootPane root pane
      * @param arcController controller for modifying arc
+     * @param petriNetController Petri net controller 
      */
     public ArcWeightEditorPanel(JRootPane rootPane, PetriNetController petriNetController,
                                 ArcController<?, ?> arcController) {

@@ -161,7 +161,7 @@ public class PipeApplicationController {
     /**
      * Loads and creates a Petri net located at the given file
      * @param file location of the XML file which contains a PNML representation of a Petri net
-     * @throws UnparsableException
+     * @throws UnparsableException if the file cannot be parsed 
      */
     public void createNewTabFromFile(File file) throws UnparsableException {
         try {
@@ -174,11 +174,11 @@ public class PipeApplicationController {
     /**
      * Save the currently displayed petri net to the specified file
      * @param outFile location to save the Petri net
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws ParserConfigurationException configuration error 
+     * @throws TransformerException transformer error 
+     * @throws IllegalAccessException illegal access
+     * @throws NoSuchMethodException method not found 
+     * @throws InvocationTargetException invocation error 
      */
     public void saveAsCurrentPetriNet(File outFile)
             throws ParserConfigurationException, TransformerException, IllegalAccessException, NoSuchMethodException,

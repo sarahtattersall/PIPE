@@ -22,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -40,6 +41,7 @@ import java.util.logging.Logger;
 /**
  * Main class application view
  */
+@SuppressWarnings("serial")
 public class PipeApplicationView extends JFrame implements ActionListener, Observer {
 
 
@@ -126,7 +128,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             LOGGER.log(Level.SEVERE, e.getMessage());
         }
 
-        this.setIconImage(new ImageIcon(getImageURL("icon.png")).getImage());
+        this.setIconImage(new ImageIcon(getImageURL("icon")).getImage());
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width * 80 / 100, screenSize.height * 80 / 100);
@@ -341,7 +343,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     /**
      * Sets pipes menu
      *
-     * @param menu
+     * @param menu for PIPE 
      */
     public void setMenu(JMenuBar menu) {
         setJMenuBar(menu);
@@ -363,6 +365,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     /**
      * Sets the default behaviour for exit for both Windows/Linux/Mac OS X
+     * @param adapter for exit action 
      */
     public void setExitAction(WindowListener adapter) {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -484,7 +487,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     }
 
     private URL getImageURL(String name) {
-        return this.getClass().getResource(PIPEConstants.IMAGE_PATH + name);
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		return locator.getImage(name);
     }
 
     public void register(JComboBox<String> tokenClassComboBox) {

@@ -2,15 +2,18 @@ package pipe.gui.widget;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 
 /**
  * A HTML pane to display results of analysis on.
- * <p/>
+ * <p>
  * Largely taken from PIPE 4
+ * </p>
  */
+@SuppressWarnings("serial")
 public class HTMLPane extends JPanel {
 
     /**

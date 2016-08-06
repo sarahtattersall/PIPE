@@ -4,6 +4,7 @@ import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.undo.UndoManager;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -11,6 +12,7 @@ import java.awt.event.KeyEvent;
 /**
  * Action used to perform an undo whilst in edit more
  */
+@SuppressWarnings("serial")
 public class UndoAction extends GuiAction {
 
     /**
@@ -36,7 +38,7 @@ public class UndoAction extends GuiAction {
     /**
      * Register a redo action to this undo actions
      *
-     * @param redoAction
+     * @param redoAction redo action
      */
     public void registerRedoAction(RedoAction redoAction) {
         this.redoAction = redoAction;
@@ -44,7 +46,7 @@ public class UndoAction extends GuiAction {
 
     /**
      * Perform an undo and enable the redo action if it has been set
-     * @param actionEvent
+     * @param actionEvent event 
      */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {

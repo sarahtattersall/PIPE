@@ -6,6 +6,7 @@ import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.*;
 import javax.swing.text.*;
+
 import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 /**
  * Class to represent the history of the net animation
  */
+@SuppressWarnings("serial")
 public final class AnimationHistoryView
         extends JTextPane implements Observer {
     /**
@@ -52,7 +54,7 @@ public final class AnimationHistoryView
     /**
      * Constructor
      * @param text initally displayed text
-     * @throws javax.swing.text.BadLocationException
+     * @throws javax.swing.text.BadLocationException invalid location 
      */
     public AnimationHistoryView(String text) throws
             javax.swing.text.BadLocationException {
@@ -64,6 +66,8 @@ public final class AnimationHistoryView
 
     /**
      * Method reinserts the text highlighting the currentItem
+     * @param historyPosition position 
+     * @param firingSequence firing sequence 
      */
     private void updateText(int historyPosition, Iterable<Transition> firingSequence) {
         int count = 0;
@@ -99,8 +103,8 @@ public final class AnimationHistoryView
 
     /**
      * Listen for animation actions and update the history accordingly
-     * @param observable
-     * @param o
+     * @param observable component 
+     * @param o associated object 
      */
     @Override
     public void update(Observable observable, Object o) {

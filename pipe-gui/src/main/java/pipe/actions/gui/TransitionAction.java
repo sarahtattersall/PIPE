@@ -13,15 +13,16 @@ import java.awt.event.MouseEvent;
 /**
  * Abstract class to created timed/untimed transactions
  */
+@SuppressWarnings("serial")
 public abstract class TransitionAction extends CreateAction {
 
     /**
      * Constructor
-     * @param name
-     * @param tooltip
-     * @param key
-     * @param modifiers
-     * @param applicationModel
+     * @param name of the action
+     * @param tooltip for the action 
+     * @param key keyboard shortcut 
+     * @param modifiers of the action 
+     * @param applicationModel for PIPE
      */
     public TransitionAction(String name, String tooltip, int key, int modifiers,
                             PipeApplicationModel applicationModel) {
@@ -56,8 +57,8 @@ public abstract class TransitionAction extends CreateAction {
 
     /**
      *
-     * @param point
-     * @param petriNetController
+     * @param point coordinate 
+     * @param petriNetController controller 
      * @return new transition  at the (x,y) of point
      */
     private Transition newTransition(Point point, PetriNetController petriNetController) {
@@ -77,7 +78,7 @@ public abstract class TransitionAction extends CreateAction {
 
     /**
      *
-     * @param petriNetController
+     * @param petriNetController controller 
      * @return unique transition name
      */
     private String getNetTransitionName(PetriNetController petriNetController) {
