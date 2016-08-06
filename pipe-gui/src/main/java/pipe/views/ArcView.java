@@ -93,8 +93,8 @@ public abstract class ArcView<S extends Connectable, T extends Connectable>
         for (ArcPoint arcPoint : model.getArcPoints()) {
             if (!arcPath.contains(arcPoint)) {
                 arcPath.insertIntermediatePoint(arcPoint, index);
+                index++;
             }
-            index++;
         }
     }
 
