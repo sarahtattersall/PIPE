@@ -4,7 +4,7 @@
     <groupId>uk.ac.imperial</groupId>
     <artifactId>PIPE</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.2</version>
+    <version>5.0.3-SNAPSHOT</version>
     <name>PIPE Parent Project</name>
 
     <properties>
@@ -18,7 +18,7 @@
     	   -Dgithub.site.repositoryOwner=sjdayday release:prepare
     	 -->
         <developerConnection>scm:git:git@github.com:${github.site.repositoryOwner}/PIPE.git</developerConnection>
-        <tag>PIPE--5.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
 
