@@ -116,7 +116,7 @@ public abstract class ConnectableView<T extends Connectable> extends AbstractPet
 
     /**
      * Adds the name label to the container
-     * @param container
+     * @param container to add label to 
      */
     protected final void addLabelToContainer(Container container) {
         container.add(textLabel);

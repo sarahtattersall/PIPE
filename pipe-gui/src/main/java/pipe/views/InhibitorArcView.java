@@ -46,7 +46,7 @@ public class InhibitorArcView extends ArcView<Place, Transition> {
 
     /**
      * Paints the arc and its path using the arcHead
-     * @param g
+     * @param g graphics 
      */
     @Override
     public void paintComponent(Graphics g) {

@@ -1,6 +1,7 @@
 package pipe.gui;
 
 import javax.swing.table.AbstractTableModel;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.List;
  *
  * @param <D> table row datum item
  */
+@SuppressWarnings("serial")
 public abstract class AbstractComponentTableModel<D extends AbstractDatum> extends AbstractTableModel {
 
     /**
@@ -42,7 +44,7 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
 
     /**
      *
-     * @param col
+     * @param col column 
      * @return the name for the column
      */
     @Override
@@ -53,8 +55,8 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
 
     /**
      *
-     * @param row
-     * @param col
+     * @param row of the table
+     * @param col column of the table
      * @return true for all cells
      */
     @Override
@@ -98,7 +100,7 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
 
     /**
      * Deletes the row from the model
-     * @param row
+     * @param row of the table 
      */
     public final void deleteRow(int row) {
         if (isExistingDatum(modifiedData.get(row))) {
@@ -121,9 +123,9 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
      *
      * Updates the value in the table a (rowIndex, colIndex) with value
      *
-     * @param value
-     * @param rowIndex
-     * @param colIndex
+     * @param value of the cell
+     * @param rowIndex index in row
+     * @param colIndex index in column
      */
     @Override
     public final void setValueAt(Object value, int rowIndex, int colIndex) {
@@ -141,9 +143,9 @@ public abstract class AbstractComponentTableModel<D extends AbstractDatum> exten
      *
      * Inherited method for updating the actual item
      *
-     * @param value
-     * @param rowIndex
-     * @param colIndex
+     * @param value of the cell 
+     * @param rowIndex index in row
+     * @param colIndex index in column 
      */
     protected abstract void updateTableAt(Object value, int rowIndex, int colIndex);
 

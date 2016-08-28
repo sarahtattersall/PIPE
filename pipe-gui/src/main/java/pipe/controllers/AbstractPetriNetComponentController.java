@@ -64,7 +64,7 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
     /**
      * Registers the edit with the listener
      *
-     * @param edit
+     * @param edit to register 
      */
     protected final void registerUndoableEdit(UndoableEdit edit) {
         if (registerMultipleEdits) {
@@ -77,9 +77,10 @@ public abstract class AbstractPetriNetComponentController<T extends PetriNetComp
     /**
      * Any changes made to the Petri net controller will be built up as a
      * multiple edit.
-     * <p/>
+     * <p>
      * You will need to call finishMultipleEdits() to commit these changes to
      * the undo listener
+     * </p>
      */
     public final void startMultipleEdits() {
         multipleEdits.clear();

@@ -5,6 +5,7 @@ import uk.ac.imperial.pipe.models.petrinet.Connectable;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
 
 import javax.swing.*;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
@@ -20,6 +21,7 @@ import static java.lang.Math.max;
  *
  * @param <T> source class
  */
+@SuppressWarnings("serial")
 public class TemporaryArcView<T extends Connectable> extends JComponent {
     /**
      * Arc source, this source was clicked on to initialse the drawing of the remporary arc
@@ -96,7 +98,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
 
     /**
      * Add this point to the arc when its created
-     * @param point
+     * @param point to add
      */
     public void addIntermediatePoint(ArcPoint point) {
         intermediatePoints.add(point);
@@ -115,7 +117,7 @@ public class TemporaryArcView<T extends Connectable> extends JComponent {
 
     /**
      * Paints the temporary arc with straight arc points and the specified head
-     * @param g
+     * @param g graphics 
      */
     @Override
     public void paintComponent(Graphics g) {

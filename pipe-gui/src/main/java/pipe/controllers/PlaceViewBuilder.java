@@ -23,7 +23,7 @@ public class PlaceViewBuilder {
 
     /**
      *
-     * @param place Underlying plac model
+     * @param place Underlying place model
      * @param controller Petri net controller for the Petri net that the place is housed in
      */
     public PlaceViewBuilder(Place place, PetriNetController controller) {

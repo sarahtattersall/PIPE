@@ -6,6 +6,7 @@ import uk.ac.imperial.pipe.models.petrinet.Annotation;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
+
 import java.awt.*;
 import java.awt.geom.RectangularShape;
 
@@ -14,6 +15,7 @@ import java.awt.geom.RectangularShape;
  * This abstract class is the base class for AnnotationNote class and for
  * Parameter class
  */
+@SuppressWarnings("serial")
 public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
     /**
      * Text note to appear on screen
@@ -49,17 +51,17 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
      */
     Note(Annotation model, PetriNetController controller, Container parent) {
         super(model.getId(), model, controller, parent);
-        initialise(model.getX(), model.getY());
+        initialize(model.getX(), model.getY());
         noteText.setText(model.getText());
         noteText.setSize(model.getWidth(), model.getHeight());
     }
 
     /**
-     * Initalise with an (x,y) location
-     * @param x
-     * @param y
+     * Initialize with an (x,y) location
+     * @param x coordinate
+     * @param y coordinate 
      */
-    private void initialise(int x, int y) {
+    private void initialize(int x, int y) {
         originalX = x;
         originalY = y;
 
@@ -159,8 +161,8 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
 
     /**
      *
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate
      * @return true if (x,y) intersects with the annotation
      */
     @Override
@@ -174,7 +176,7 @@ public abstract class Note extends AbstractPetriNetViewComponent<Annotation> {
 
     /**
      * Set the text for the annotation
-     * @param text
+     * @param text of the annotation 
      */
     public void setText(String text) {
         noteText.setText(text);

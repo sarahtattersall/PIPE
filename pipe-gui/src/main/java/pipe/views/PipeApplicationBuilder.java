@@ -1,19 +1,5 @@
 package pipe.views;
 
-import pipe.actions.ZoomAction;
-import pipe.actions.gui.*;
-import pipe.actions.manager.*;
-import pipe.controllers.PetriNetController;
-import pipe.controllers.SelectionManager;
-import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.LayoutAction;
-import pipe.gui.PIPEConstants;
-import pipe.gui.PetriNetTab;
-import pipe.gui.ToggleButton;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -31,10 +17,57 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import pipe.actions.ZoomAction;
+import pipe.actions.gui.ChooseTokenClassAction;
+import pipe.actions.gui.ExampleFileAction;
+import pipe.actions.gui.ExitAction;
+import pipe.actions.gui.ExportPNGAction;
+import pipe.actions.gui.ExportPSAction;
+import pipe.actions.gui.ExportTNAction;
+import pipe.actions.gui.GridAction;
+import pipe.actions.gui.GuiAction;
+import pipe.actions.gui.ImportAction;
+import pipe.actions.gui.PipeApplicationModel;
+import pipe.actions.gui.PrintAction;
+import pipe.actions.gui.SelectAction;
+import pipe.actions.gui.SetZoomAction;
+import pipe.actions.gui.UnfoldAction;
+import pipe.actions.gui.ZoomInAction;
+import pipe.actions.gui.ZoomOutAction;
+import pipe.actions.gui.ZoomUI;
+import pipe.actions.manager.AnimateActionManager;
+import pipe.actions.manager.ComponentCreatorManager;
+import pipe.actions.manager.ComponentEditorManager;
+import pipe.actions.manager.PetriNetEditorManager;
+import pipe.actions.manager.SimpleUndoListener;
+import pipe.actions.manager.TokenActionManager;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
+import pipe.controllers.application.PipeApplicationController;
+import pipe.gui.LayoutAction;
+import pipe.gui.PetriNetTab;
+import pipe.gui.ToggleButton;
+import pipe.gui.PipeResourceLocator;
+
 /**
  * Builder class to set up the properties of the PIPE main application window
- * <p/>
+ * <p>
  * This class does a bit too much, but it took the logic out of the {@link pipe.views.PipeApplicationView} class itself
+ * </p>
  */
 public final class PipeApplicationBuilder {
 
@@ -45,8 +78,8 @@ public final class PipeApplicationBuilder {
 
     /**
      *
-     * @param controller
-     * @param model
+     * @param controller application controller 
+     * @param model application model 
      * @return created PipeApplicationView
      */
     public PipeApplicationView build(PipeApplicationController controller, PipeApplicationModel model) {
@@ -76,11 +109,11 @@ public final class PipeApplicationBuilder {
     /**
      * Creates all the components that should go in the view
      * This contains the tool bars, menu bars, canvas etc.
-     * @param view
-     * @param model
-     * @param controller
-     * @param zoomUI
-     * @return
+     * @param view application view
+     * @param model application model
+     * @param controller application controller 
+     * @param zoomUI zoomUI
+     * @return pipe components 
      */
     private PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
                                            PipeApplicationController controller, ZoomUI zoomUI) {
@@ -116,8 +149,8 @@ public final class PipeApplicationBuilder {
 
     /**
      *
-     * @param pipeComponents
-     * @param view
+     * @param pipeComponents PIPE components
+     * @param view application view
      * @return tool bar involved in drawing and all its actions
      */
     private JToolBar getDrawingToolBar(PIPEComponents pipeComponents, PipeApplicationView view) {
@@ -159,6 +192,11 @@ public final class PipeApplicationBuilder {
     }
 
     /**
+     * @param view application view 
+     * @param pipeComponents PIPE components
+     * @param examples of Petri nets
+     * @param drawingToolBar drawing tool bar
+     * @param animationToolBar animation tool bar 
      * @return the toolbar that holds actions for editing and creating Petri nets with PIPE
      */
     private JToolBar getToolBar(PipeApplicationView view, PIPEComponents pipeComponents, String[] examples,
@@ -208,11 +246,10 @@ public final class PipeApplicationBuilder {
     }
 
     /**
-     *
-     * @param pipeComponents
-     * @param view
-     * @param controller
-     * @param zoomActions
+     * @param view application view 
+     * @param pipeComponents PIPE components
+     * @param controller application controller 
+     * @param zoomActions zoom actions 
      * @return PIPE menu with all its items
      */
     private JMenuBar buildMenu(PIPEComponents pipeComponents, PipeApplicationView view,
@@ -233,7 +270,7 @@ public final class PipeApplicationBuilder {
 
 
         JMenu exportMenu = new JMenu("Export");
-        exportMenu.setIcon(new ImageIcon(getImageURL("Export.png")));
+        exportMenu.setIcon(new ImageIcon(getImageURL("Export")));
         addMenuItem(exportMenu, pipeComponents.exportPNGAction);
         addMenuItem(exportMenu, pipeComponents.exportPSAction);
         addMenuItem(exportMenu, pipeComponents.exportTNAction);
@@ -282,7 +319,7 @@ public final class PipeApplicationBuilder {
         viewMenu.setMnemonic('V');
 
         JMenu zoomMenu = new JMenu("Zoom");
-        zoomMenu.setIcon(new ImageIcon(getImageURL("Zoom.png")));
+        zoomMenu.setIcon(new ImageIcon(getImageURL("Zoom")));
         addZoomMenuItems(zoomMenu, zoomActions);
 
         addMenuItem(viewMenu, pipeComponents.zoomOutAction);
@@ -307,7 +344,7 @@ public final class PipeApplicationBuilder {
         // Help - About is implemented
         aboutItem.addActionListener(view);
         // differently
-        aboutItem.setIcon(new ImageIcon(getImageURL("About.png")));
+        aboutItem.setIcon(new ImageIcon(getImageURL("About")));
 
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
@@ -320,12 +357,12 @@ public final class PipeApplicationBuilder {
 
     /**
      * Action performed in the application view when tabs are changed
-     * @param view
-     * @param controller
-     * @param pipeComponents
-     * @param drawingToolBar
-     * @param animationToolBar
-     */
+     * @param controller application controller 
+     * @param view application view 
+     * @param pipeComponents PIPE components
+     * @param drawingToolBar drawing tool bar
+     * @param animationToolBar animation tool bar 
+    */
     private void setTabChangeListener(PipeApplicationView view, final PipeApplicationController controller,
                                       final PIPEComponents pipeComponents, final JToolBar drawingToolBar,
                                       final JToolBar animationToolBar) {
@@ -346,11 +383,11 @@ public final class PipeApplicationBuilder {
      * showing the animation tool bar instead of the drawing tool bar.
      *
      * It disables other tool bars that are visible.
-     * @param pipeComponents
-     * @param model
-     * @param applicationController
-     * @param drawingToolBar
-     * @param animationToolBar
+     * @param model application model 
+     * @param applicationController application controller
+     * @param pipeComponents PIPE components
+     * @param drawingToolBar drawing tool bar
+     * @param animationToolBar animation tool bar 
      */
     private void listenForAnimationMode(final PIPEComponents pipeComponents, final PipeApplicationModel model,
                                         final PipeApplicationController applicationController,
@@ -395,7 +432,7 @@ public final class PipeApplicationBuilder {
      *
      * @param toolBar the JToolBar to add the combo box to
      * @param action  the action that the tokenClassComboBox performs when selected
-     * @param view
+     * @param view  application view 
      */
     private void addTokenClassComboBox(JToolBar toolBar, Action action, PipeApplicationView view) {
         String[] tokenClassChoices = new String[]{"Default"};
@@ -415,7 +452,7 @@ public final class PipeApplicationBuilder {
      *
      * @param toolBar the JToolBar to add the button to
      * @param action  the action that the ZoomComboBox performs
-     * @param view
+     * @param view application view 
      */
     private void addZoomComboBox(JToolBar toolBar, Action action, String[] zoomExamples, PipeApplicationView view) {
         Dimension zoomComboBoxDimension = new Dimension(65, 28);
@@ -434,8 +471,8 @@ public final class PipeApplicationBuilder {
     /**
      * Adds the action to the menu item
      *
-     * @param menu
-     * @param action
+     * @param menu where action is added
+     * @param action to add 
      */
     private void addMenuItem(JMenu menu, Action action) {
         JMenuItem item = menu.add(action);
@@ -448,10 +485,11 @@ public final class PipeApplicationBuilder {
 
     /**
      * @param name file name of image
-     * @return quantified path of image
+     * @return path of image as URL
      */
     private URL getImageURL(String name) {
-        return this.getClass().getResource(PIPEConstants.IMAGE_PATH + name);
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		return locator.getImage(name);
     }
 
     /**
@@ -466,8 +504,9 @@ public final class PipeApplicationBuilder {
             }
         }
         JMenu exampleMenu = new JMenu("Examples");
-        exampleMenu.setIcon(new ImageIcon(getImageURL("Example.png")));
-        URL examplesDirURL = this.getClass().getResource(PIPEConstants.EXAMPLES_PATH);
+        exampleMenu.setIcon(new ImageIcon(getImageURL("Example")));
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		URL examplesDirURL = locator.getExamplePath();
         try {
             URI uri = examplesDirURL.toURI();
             File directory = new File(uri);
@@ -495,10 +534,10 @@ public final class PipeApplicationBuilder {
 
     /**
      * Enable actions for edit or animation mode
-     * @param pipeComponents
+     * @param pipeComponents PIPE components 
      * @param editMode true if in edit mode, false animation mode
-     * @param drawingToolBar
-     * @param animationToolBar
+     * @param drawingToolBar drawing tool bar
+     * @param animationToolBar animation tool bar 
      */
     private void enableActions(PIPEComponents pipeComponents, boolean editMode, Component drawingToolBar,
                                Component animationToolBar) {
@@ -525,11 +564,11 @@ public final class PipeApplicationBuilder {
 
     /**
      * Sets the animation mode and enables the correct actions and tool bars
-     * @param model
-     * @param pipeComponents
-     * @param drawingToolBar
-     * @param animationToolBar
-     * @param animateMode
+     * @param pipeComponents PIPE components 
+     * @param drawingToolBar drawing tool bar
+     * @param animationToolBar animation tool bar 
+     * @param model application model 
+     * @param animateMode true if in animate mode
      */
     public void setAnimationMode(PipeApplicationModel model, PIPEComponents pipeComponents, JToolBar drawingToolBar,
                                  JToolBar animationToolBar, boolean animateMode) {
@@ -547,13 +586,13 @@ public final class PipeApplicationBuilder {
     }
 
     /**
-     * Loads the examples embedded within the PIPE jar appliaction.
+     * Loads the examples embedded within the PIPE jar application.
      *
      * This method will be called if the uber-jar is running
-     * @param controller
-     * @param view
-     * @return
-     * @throws IOException
+     * @param controller application controller 
+     * @param view application view 
+     * @return menu of example 
+     * @throws IOException if file cannot be read 
      */
     private JMenu loadJarExamples(PipeApplicationController controller, PipeApplicationView view) throws IOException {
         JMenu exampleMenu = new JMenu("Examples");
@@ -680,25 +719,25 @@ public final class PipeApplicationBuilder {
 
         /**
          * Constructor
-         * @param chooseTokenClassAction
-         * @param componentEditorManager
-         * @param undoListener
-         * @param componentCreatorManager
-         * @param animateActionManager
-         * @param editorManager
-         * @param tokenActionManager
-         * @param printAction
-         * @param exportPNGAction
-         * @param selectAction
-         * @param exitAction
-         * @param zoomAction
-         * @param unfoldAction
-         * @param zoomOutAction
-         * @param zoomInAction
-         * @param toggleGrid
-         * @param importAction
-         * @param exportPSAction
-         * @param exportTNAction
+         * @param chooseTokenClassAction token action
+         * @param componentEditorManager component editor manager 
+         * @param undoListener undo listener 
+         * @param componentCreatorManager creator manager 
+         * @param animateActionManager animate action manager 
+         * @param editorManager editor manager
+         * @param tokenActionManager token action manager
+         * @param printAction print action
+         * @param exportPNGAction export PNG action
+         * @param selectAction select action
+         * @param exitAction exit action 
+         * @param zoomAction zoom action 
+         * @param unfoldAction unfold action
+         * @param zoomOutAction zoom out action
+         * @param zoomInAction zoom in action 
+         * @param toggleGrid toggle grid
+         * @param importAction import action 
+         * @param exportPSAction export PSA action 
+         * @param exportTNAction export TN action
          */
         private PIPEComponents(ChooseTokenClassAction chooseTokenClassAction,
                                ComponentEditorManager componentEditorManager, SimpleUndoListener undoListener,

@@ -1,11 +1,13 @@
 package pipe.views;
 
 import org.jfree.util.ShapeUtilities;
+
 import pipe.constants.GUIConstants;
 import pipe.controllers.PetriNetController;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 import javax.swing.event.MouseInputAdapter;
+
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
@@ -16,6 +18,7 @@ import java.beans.PropertyChangeListener;
 /**
  * View representation of a transition component
  */
+@SuppressWarnings("serial")
 public class TransitionView extends ConnectableView<Transition> {
     /**
      * True if the transition view has been selected
@@ -83,8 +86,8 @@ public class TransitionView extends ConnectableView<Transition> {
     /**
      * Rotate the transition
      *
-     * Currently doesnt work
-     * @param angle
+     * Currently doesn't work
+     * @param angle to rotate
      */
     public final void rotate(int angle) {
         shape = ShapeUtilities.rotateShape(unrotated, Math.toRadians(angle), 0,0);
@@ -109,7 +112,7 @@ public class TransitionView extends ConnectableView<Transition> {
 
     /**
      * Paints the transition, if the model is enabled it will paint the transition in red
-     * @param g
+     * @param g graphics 
      */
     @Override
     public void paintComponent(Graphics g) {

@@ -3,11 +3,13 @@ package pipe.gui;
 import pipe.constants.GUIConstants;
 
 import javax.swing.*;
+
 import java.awt.BorderLayout;
 
 /**
  * Status Bar to let users know what to do
  * */
+@SuppressWarnings("serial")
 public class StatusBar extends JPanel {
 
     /**
@@ -40,7 +42,7 @@ public class StatusBar extends JPanel {
 
     /**
      * Deprecated
-     * @param type
+     * @param type of change 
      */
     @Deprecated
     public void changeText(int type) {
@@ -122,7 +124,7 @@ public class StatusBar extends JPanel {
 
     /**
      * Change the text on the status bar
-     * @param newText
+     * @param newText new text 
      */
     public void changeText(String newText) {
         label.setText(newText);

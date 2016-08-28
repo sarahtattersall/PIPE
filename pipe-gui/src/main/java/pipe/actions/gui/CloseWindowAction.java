@@ -3,6 +3,7 @@ package pipe.actions.gui;
 import pipe.controllers.application.PipeApplicationController;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -10,6 +11,7 @@ import java.awt.event.KeyEvent;
 /**
  * Action that closes the currently displayed tab
  */
+@SuppressWarnings("serial")
 public class CloseWindowAction extends GuiAction {
 
     /**
@@ -31,7 +33,7 @@ public class CloseWindowAction extends GuiAction {
      *
      * If there have been modifications to the Petri net in the current tab then a confirm
      * dialog is shown asking the user if they really wish to close.
-     * @param e
+     * @param e event
      */
     @Override
     public void actionPerformed(ActionEvent e) {

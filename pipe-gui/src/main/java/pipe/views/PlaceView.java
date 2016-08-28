@@ -19,12 +19,13 @@ import java.util.logging.Logger;
 /**
  * Graphical representation of a Place
  */
-public class PlaceView extends ConnectableView<Place> {
+public class PlaceView extends ConnectableView<Place> implements PropertyChangeListener {
 
     /**
      * Class logger
      */
     private static final Logger LOGGER = Logger.getLogger(PlaceView.class.getName());
+	private boolean repaintedForTesting = false;
 
     /**
      * Constructor
@@ -35,7 +36,7 @@ public class PlaceView extends ConnectableView<Place> {
      */
     public PlaceView(Place model, Container parent, PetriNetController controller, MouseInputAdapter placeHandler) {
         super(model.getId(), model, controller, controller.getPlaceController(model), parent, new Ellipse2D.Double(-model.getWidth()/2, -model.getHeight()/2, model.getWidth(), model.getHeight()));
-        setChangeListener();
+        addListenerToModel(this); 
         setMouseListener(placeHandler);
 
         Rectangle bounds = shape.getBounds();
@@ -60,14 +61,17 @@ public class PlaceView extends ConnectableView<Place> {
      * Listens for changes in the model
      * All changes cause a repaint
      */
-    private void setChangeListener() {
-        model.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                repaint();
-            }
-        });
+    protected void addListenerToModel(PropertyChangeListener listener) {
+    	model.addPropertyChangeListener(listener); 
     }
+    /** 
+     * Any change to the underlying model cause a repaint
+     */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		repaint(); 
+		repaintedForTesting = true; 
+	}
 
 
     /**
@@ -301,6 +305,13 @@ public class PlaceView extends ConnectableView<Place> {
     public void addToContainer(Container container) {
         addLabelToContainer(container);
     }
+
+
+	protected boolean repaintedForTesting() {
+		return repaintedForTesting;
+	}
+
+
 
 }
 

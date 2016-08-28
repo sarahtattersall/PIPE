@@ -95,7 +95,7 @@ public class ArcPath implements Shape, Cloneable {
      * Note: We cannot do this in O(1) time using a HashMap because ArcPoints are
      * mutable objects, meaning that they could change whilst keys in the HashMap
      *
-     * @param point
+     * @param point to be evaluated 
      * @return true if the path contains the point
      */
     public boolean contains(ArcPoint point) {
@@ -110,7 +110,7 @@ public class ArcPath implements Shape, Cloneable {
     /**
      * Remove the point from the graphical representation of the path
      *
-     * @param point
+     * @param point to be deleted 
      */
     public void deletePoint(ArcPoint point) {
         ArcPathPoint pointView = null;
@@ -133,7 +133,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param index
+     * @param index of the point 
      * @return the location of the point at this index, or null if it does not exist
      */
     public Point2D getPoint(int index) {
@@ -141,7 +141,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param index
+     * @param index of the point 
      * @return the point at this index or null if it does not exist
      */
     public ArcPathPoint getPathPoint(int index) {
@@ -214,8 +214,8 @@ public class ArcPath implements Shape, Cloneable {
 
 
     /**
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate
      * @return false, no point is contained within this arc
      */
     @Override
@@ -224,7 +224,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param point
+     * @param point to be evaluated 
      * @return true if the point intersects the shape
      */
     @Override
@@ -233,11 +233,11 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param arg0
-     * @param arg1
-     * @param arg2
-     * @param arg3
-     * @return false
+     * @param arg0 coordinate
+     * @param arg1 coordinate
+     * @param arg2 coordinate
+     * @param arg3 coordinate
+     * @return false always false 
      */
     @Override
     public boolean intersects(double arg0, double arg1, double arg2, double arg3) {
@@ -245,8 +245,8 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param rect
-     * @return true if the rectange intersects the shape
+     * @param rect rectangle
+     * @return true if the rectangle intersects the shape
      */
     @Override
     public boolean intersects(Rectangle2D rect) {
@@ -254,11 +254,11 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param arg0
-     * @param arg1
-     * @param arg2
-     * @param arg3
-     * @return false
+     * @param arg0 coordinate
+     * @param arg1 coordinate
+     * @param arg2 coordinate
+     * @param arg3 coordinate
+     * @return false always false 
      */
     @Override
     public boolean contains(double arg0, double arg1, double arg2, double arg3) {
@@ -266,8 +266,8 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param rect
-     * @return false
+     * @param rect rectangle 
+     * @return false always false 
      */
     @Override
     public boolean contains(Rectangle2D rect) {
@@ -275,7 +275,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param arg0
+     * @param arg0 affine transform
      * @return an iterator for the path
      */
     @Override
@@ -318,8 +318,8 @@ public class ArcPath implements Shape, Cloneable {
      * Inserts a new point into the Array List of path points
      * at the specified index and shifts all the following points along
      *
-     * @param index
-     * @param newpoint
+     * @param index of point in list 
+     * @param newpoint to be added 
      * @author Nadeem
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
@@ -328,7 +328,7 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param point
+     * @param point to be created 
      * @return a graphical point at the underlying point models location
      */
     private ArcPathPoint createPoint(ArcPoint point) {
@@ -349,7 +349,7 @@ public class ArcPath implements Shape, Cloneable {
     /**
      * Add all graphical arc points to the Petri net tab
      *
-     * @param petriNetTab
+     * @param petriNetTab container to add points to 
      */
     public void addPointsToGui(Container petriNetTab) {
         if (petriNetTab == null) {
@@ -430,6 +430,7 @@ public class ArcPath implements Shape, Cloneable {
 
     /**
      * Moves the path to the first point specified on the arc
+     * @param point where path starts 
      */
     private void setStartingPoint(ArcPathPoint point) {
         path.moveTo(point.getPoint().getX(), point.getPoint().getY());
@@ -455,8 +456,8 @@ public class ArcPath implements Shape, Cloneable {
     }
 
     /**
-     * @param A
-     * @param B
+     * @param A first point
+     * @param B second point 
      * @return modulus of vector A -> B
      */
     private double getLength(Point2D A, Point2D B) {
@@ -608,12 +609,12 @@ public class ArcPath implements Shape, Cloneable {
      * |    ..... | | .  |   |      .         |
      * |     1 4 1| | .  |   |3(x[n] - x[n-2])|
      * [       1 2] [D[n]]   [3(x[n] - x[n-1])]
-     * <p/>
+     * <p>
      * by using row operations to convert the matrix to upper triangular
      * and then back substitution.  The D[i] are the derivatives at the knots.
-     *
-     * @param n
-     * @param x
+     * </p>
+     * @param n number of rows 
+     * @param x offset 
      * @return a natural cubic for the Bezier curve
      */
     private Cubic[] calcNaturalCubic(int n, int[] x) {

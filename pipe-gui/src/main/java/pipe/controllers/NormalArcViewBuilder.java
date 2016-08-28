@@ -36,6 +36,8 @@ public class NormalArcViewBuilder {
      * Builds an arc view
      *
      * @param parent the parent of this arc
+     * @param model for application 
+     * @return normal arc view 
      */
     public NormalArcView<Connectable, Connectable> build(Container parent, PipeApplicationModel model) {
 

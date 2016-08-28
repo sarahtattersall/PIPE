@@ -5,13 +5,14 @@ import net.sourceforge.jpowergraph.Node;
 
 /**
  * Creates an edge with with text capabilities
- * <p/>
+ * <p>
  * To be used instead of {@link net.sourceforge.jpowergraph.defaults.DefaultEdge} and {@link net.sourceforge.jpowergraph.defaults.TextEdge}
  * because they consider two edges equal if:
- * from1 = from2 & to1 = to2 OR
- * from1 = to2 & to1 = from2
- * <p/>
+ * from1 = from2 and to1 = to2 OR
+ * from1 = to2 and to1 = from2
+ * </p><p>
  * The second behaviour is not correct in directed edges
+ * </p>
  */
 public class DirectedTextEdge implements Edge {
     private final String text;

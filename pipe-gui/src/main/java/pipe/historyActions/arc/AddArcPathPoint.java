@@ -9,9 +9,10 @@ import javax.swing.undo.AbstractUndoableEdit;
 
 /**
  * Undo/Redo action for adding a point in an arcs path
- * @param <S>
- * @param <T>
+ * @param <S> source
+ * @param <T> target 
  */
+@SuppressWarnings("serial")
 public class AddArcPathPoint<S extends Connectable, T extends Connectable> extends AbstractUndoableEdit {
     /**
      * Arc model to add/remove the point to/from

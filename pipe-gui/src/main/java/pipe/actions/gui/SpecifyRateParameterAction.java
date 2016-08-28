@@ -18,6 +18,7 @@ import uk.ac.imperial.pipe.models.petrinet.RateParameter;
 
 import javax.swing.*;
 import javax.swing.undo.UndoableEdit;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("serial")
 public class SpecifyRateParameterAction extends GuiAction {
     private static final Logger LOGGER = Logger.getLogger(SpecifyRateParameterAction.class.getName());
 
@@ -46,7 +48,7 @@ public class SpecifyRateParameterAction extends GuiAction {
     /**
      * Pops up with an editor for the token rates if there is an active petri net
      *
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

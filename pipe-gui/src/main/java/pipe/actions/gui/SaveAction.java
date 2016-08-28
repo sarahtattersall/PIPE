@@ -18,6 +18,7 @@ import java.io.File;
  *
  * This save action will use the Petri nets underlying file if it exists, or perform a save as action
  */
+@SuppressWarnings("serial")
 public class SaveAction extends AbstractSaveAction {
 
     /**
@@ -32,7 +33,7 @@ public class SaveAction extends AbstractSaveAction {
     /**
      * Tries to perform a save action, if the Petri net does not yet have an underlying file associated
      * with it, a save as will be performed.
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -58,7 +59,7 @@ public class SaveAction extends AbstractSaveAction {
     }
 
     /**
-     * Visits PetriNetName possible classes and detemrines if the save action
+     * Visits PetriNetName possible classes and determines if the save action
      * should be a save as action
      */
     private static class FileNamer implements NormalNameVisitor, FileNameVisitor {
@@ -69,7 +70,7 @@ public class SaveAction extends AbstractSaveAction {
         private File file = new File("");
 
         /**
-         * @param petriNet
+         * @param petriNet to be saved  
          * @return file location and name to save petri net to
          */
         public File getFile(PetriNet petriNet) {
@@ -79,7 +80,7 @@ public class SaveAction extends AbstractSaveAction {
 
         /**
          * sets the file to the existing Petri net file
-         * @param name
+         * @param name of the file 
          */
         @Override
         public void visit(PetriNetFileName name) {
@@ -88,7 +89,7 @@ public class SaveAction extends AbstractSaveAction {
 
         /**
          * Noop operation
-         * @param name
+         * @param name of the file 
          */
         @Override
         public void visit(NormalPetriNetName name){
@@ -98,7 +99,7 @@ public class SaveAction extends AbstractSaveAction {
 
 
     /**
-     * Visits PetriNetName possible classes and detemrines if the save action
+     * Visits PetriNetName possible classes and determines if the save action
      * should be a save as action
      */
     private static class SaveAsVisitor implements NormalNameVisitor, FileNameVisitor {
@@ -112,7 +113,7 @@ public class SaveAction extends AbstractSaveAction {
          * Determines if the petri net needs a save as call by
          * visiting the name item
          *
-         * @param petriNet
+         * @param petriNet to be saved 
          * @return if a save as should be performed
          */
         public boolean shouldSaveAs(PetriNet petriNet) {
@@ -122,7 +123,7 @@ public class SaveAction extends AbstractSaveAction {
 
         /**
          * If the Petri net has an existing file then saveAs is set to false
-         * @param name
+         * @param name of the file 
          */
         @Override
         public void visit(PetriNetFileName name) {
@@ -133,7 +134,7 @@ public class SaveAction extends AbstractSaveAction {
          * If the name is a normal name it does not yet have a file representation
          * and so a save as is needed
          *
-         * @param name
+         * @param name of the file
          */
         @Override
         public void visit(NormalPetriNetName name) {

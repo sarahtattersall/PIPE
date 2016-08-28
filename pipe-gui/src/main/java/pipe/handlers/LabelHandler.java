@@ -34,7 +34,7 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
      * Constructor
      * @param textLabel name label for the connectable
      * @param connectable connectable with a name label
-     * @param controller
+     * @param controller for the connectable 
      */
     public LabelHandler(TextLabel textLabel, ConnectableView<T> connectable,
                         AbstractConnectableController<T> controller) {
@@ -46,7 +46,7 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
 
     /**
      * When the mouse wheel is moved the event is dispatched to its connectable
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -55,7 +55,7 @@ public class LabelHandler<T extends Connectable> extends javax.swing.event.Mouse
 
     /**
      * Drags the components name label
-     * @param e
+     * @param e mouse event 
      */
     @Override
     public void mouseDragged(MouseEvent e) {

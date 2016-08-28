@@ -3,13 +3,16 @@
  */
 package pipe.actions.gui;
 
-import pipe.gui.PIPEConstants;
+import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoableEdit;
-import java.net.URL;
+
+import pipe.gui.PipeResourceLocator;
 
 
 /**
@@ -18,6 +21,7 @@ import java.net.URL;
  *
  * This class is responsible for loading the images of the button
  */
+@SuppressWarnings("serial")
 public abstract class GuiAction extends AbstractAction {
 
     public static final String SELECTED = "selected";
@@ -49,10 +53,13 @@ public abstract class GuiAction extends AbstractAction {
      */
     protected GuiAction(String name, String tooltip) {
         super(name);
-        URL iconURL = this.getClass().getResource(PIPEConstants.IMAGE_PATH + name + ".png");
-        if (iconURL != null) {
-            putValue(SMALL_ICON, new ImageIcon(iconURL));
-        }
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		try {
+			URL iconURL = locator.getImage(name);
+			putValue(SMALL_ICON, new ImageIcon(iconURL));
+		} catch (RuntimeException e) {
+			// some actions don't have icons; ignore
+		}
 
         if (tooltip != null) {
             putValue(SHORT_DESCRIPTION, tooltip);
@@ -77,7 +84,7 @@ public abstract class GuiAction extends AbstractAction {
 
     /**
      * Adds a listener to this action that is interested in undoable actions
-     * @param l
+     * @param l listener
      */
     public void addUndoableEditListener(UndoableEditListener l) {
         //TODO: Should ideally throw an exception if listener != null
@@ -86,7 +93,7 @@ public abstract class GuiAction extends AbstractAction {
 
     /**
      * Removes the listener from this action
-     * @param l
+     * @param l listener
      */
     public void removeUndoableEditListener(UndoableEditListener l) {
         listener = null;
@@ -119,7 +126,7 @@ public abstract class GuiAction extends AbstractAction {
      *
      * Notifies the lister that the following undo event has been created.
      *
-     * @param edit
+     * @param edit event 
      */
     protected void registerUndoEvent(UndoableEdit edit) {
         if (listener != null) {

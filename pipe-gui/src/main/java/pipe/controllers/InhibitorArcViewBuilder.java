@@ -36,6 +36,7 @@ public class InhibitorArcViewBuilder {
 
     /**
      * @param parent, the parent of this arc view
+     * @param model application model 
      * @return an inhibitor arc view
      */
     public InhibitorArcView build(Container parent, PipeApplicationModel model) {

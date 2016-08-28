@@ -100,7 +100,7 @@ public class Grid {
 
     /**
      * Set the size to that of the parent boundaries
-     * @param parent
+     * @param parent container 
      */
     public void updateSize(Container parent) {
         if (enabled) {
@@ -128,7 +128,7 @@ public class Grid {
 
     /**
      * Draw the grid on the parent using the graphics
-     * @param g
+     * @param g graphics 
      */
     public void drawGrid(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

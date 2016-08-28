@@ -1,20 +1,22 @@
 package pipe.actions.gui;
 
-import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.PIPEConstants;
-import pipe.utilities.io.JarUtilities;
-import pipe.utilities.gui.GuiUtils;
-import uk.ac.imperial.pipe.parsers.UnparsableException;
-
-import javax.swing.*;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.zip.ZipEntry;
 
+import javax.swing.ImageIcon;
+
+import pipe.controllers.application.PipeApplicationController;
+import pipe.gui.PipeResourceLocator;
+import pipe.utilities.gui.GuiUtils;
+import pipe.utilities.io.JarUtilities;
+import uk.ac.imperial.pipe.parsers.UnparsableException;
+
 /**
  * Class responsible for loading the specified example file in the PIPE petri net example menu
  */
+@SuppressWarnings("serial")
 public class ExampleFileAction extends GuiAction {
     /**
      * File location of the example file
@@ -42,7 +44,8 @@ public class ExampleFileAction extends GuiAction {
         filename = file;
         this.parent = parent;
         this.applicationController = applicationController;
-        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(PIPEConstants.IMAGE_PATH + "Net.png")));
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		putValue(SMALL_ICON, new ImageIcon(locator.getImage("Net")));
     }
 
     /**
@@ -57,12 +60,13 @@ public class ExampleFileAction extends GuiAction {
         this.parent = parent;
         filename = JarUtilities.getFile(entry);
         this.applicationController = applicationController;
-        putValue(SMALL_ICON, new ImageIcon(this.getClass().getResource(PIPEConstants.IMAGE_PATH + "Net.png")));
+		PipeResourceLocator locator = new PipeResourceLocator(); 
+		putValue(SMALL_ICON, new ImageIcon(locator.getImage("Net")));
     }
 
     /**
      * When performed this action creates a new tab from the specified example Petri net file
-     * @param e
+     * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {

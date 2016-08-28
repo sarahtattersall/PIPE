@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
  * This class represents each point on the arc path graphically.
  * It's old code so the Bezier maths etc. needs to be addressed
  */
+@SuppressWarnings("serial")
 public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     /**
@@ -73,10 +74,10 @@ public class ArcPathPoint extends AbstractPetriNetViewComponent<ArcPoint> {
 
     /**
      * Constructor
-     * @param point
-     * @param arcPath
-     * @param petriNetController
-     * @param parent
+     * @param point on the arc
+     * @param arcPath path of the arc
+     * @param petriNetController Petri net controller
+     * @param parent container
      */
     public ArcPathPoint(ArcPoint point, ArcPath arcPath, PetriNetController petriNetController, Container parent) {
         super("", point, petriNetController, parent);
