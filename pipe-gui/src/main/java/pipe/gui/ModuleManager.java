@@ -144,7 +144,7 @@ public class ModuleManager {
      * Finds all the fully qualified (ie: full package names) module classnames
      * by recursively searching the rootDirectories
      *
-     * @return
+     * @return collection of module classnames 
      */
     //only load attempt to add .class files
     private Collection<Class<? extends GuiModule>> getModuleClasses() {

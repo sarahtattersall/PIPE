@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Action to add a token to a place. The token chosen to add is the ony ehtat is specified in the token
+ * Action to add a token to a place. The token chosen to add is the one that is specified in the token
  * drop down on the tool bar,
  */
 public class AddTokenAction extends TokenAction {

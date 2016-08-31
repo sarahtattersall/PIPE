@@ -12,7 +12,7 @@ import java.awt.Container;
  */
 public class PlaceViewBuilder {
     /**
-     * Underlying plac model
+     * Underlying place model
      */
     private final Place place;
 
