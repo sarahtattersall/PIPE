@@ -116,11 +116,12 @@ public class PipeApplicationController {
     /**
      * This is a little hacky, I'm not sure how to make this better when it's so late
      * If a better implementation is clear please re-write
-     * <p/>
+     * <p>
      * This method invokes the change listener which will create the view objects on the
      * petri net tab
-     *
-     * @param propertyChangeListener
+     * </p>
+     * @param propertyChangeListener listener for changes to the net
+     * @param net Petri net to be created 
      */
     //TODO move to PetriNet:  addListenerForAllComponents(PropertyChangeListener propertyChangeListener)
     private void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {

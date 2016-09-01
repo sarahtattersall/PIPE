@@ -27,9 +27,10 @@ import java.util.logging.Logger;
 
 /**
  * The main canvas that the {@link pipe.views.PetriNetViewComponent}s appear on
- * It is a tab in the main applicaiton
+ * It is a tab in the main application
  */
-public class PetriNetTab extends JLayeredPane implements Observer, Printable {
+@SuppressWarnings("serial")
+public class PetriNetTab extends JLayeredPane implements  Printable { 
 
     /**
      * Class logger
@@ -55,7 +56,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     /**
      * Constructor
      *
-     * Sets no layout manager to acheive an (x,y) layout
+     * Sets no layout manager to achieve an (x,y) layout
      */
     public PetriNetTab() {
         setLayout(null);
@@ -82,19 +83,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         });
     }
 
-
-    /**
-     * Legacy update method
-     * @param o observable 
-     * @param diffObj object to add
-     */
-    @Override
-    public void update(Observable o, Object diffObj) {
-        if (diffObj instanceof AbstractPetriNetViewComponent) {
-            AbstractPetriNetViewComponent<?> component = (AbstractPetriNetViewComponent<?>) diffObj;
-            addNewPetriNetComponent(component);
-        }
-    }
 
     /**
      * Adds the Petri net component to this canvas
@@ -213,15 +201,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
-    /**
-     * Set meta down. Since there is no documentation for this the functionality
-     * has been deprecated and it no longer does anything
-     * @param down flag
-     */
-    @Deprecated
-    public void setMetaDown(boolean down) {
-        //TODO: DELETE
-    }
 
     /**
      * Updates the canvas boundary when dragging is taking place
