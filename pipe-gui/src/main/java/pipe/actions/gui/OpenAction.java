@@ -2,6 +2,7 @@ package pipe.actions.gui;
 
 import pipe.controllers.application.PipeApplicationController;
 import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.io.PetriNetFileException;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class OpenAction extends GuiAction {
             if (file.exists() && file.isFile() && file.canRead()) {
                 try {
                     applicationController.createNewTabFromFile(file);
-                } catch (UnparsableException e1) {
+                } catch (Exception e1) {
                     GuiUtils.displayErrorMessage(null, e1.getMessage());
                 }
             } else {

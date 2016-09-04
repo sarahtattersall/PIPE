@@ -3,6 +3,7 @@ package pipe.actions.gui;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.zip.ZipEntry;
 
 import javax.swing.ImageIcon;
@@ -11,6 +12,8 @@ import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PipeResourceLocator;
 import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.io.JarUtilities;
+import uk.ac.imperial.pipe.exceptions.IncludeException;
+import uk.ac.imperial.pipe.io.PetriNetFileException;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 /**
@@ -72,7 +75,7 @@ public class ExampleFileAction extends GuiAction {
     public void actionPerformed(ActionEvent e) {
         try {
             applicationController.createNewTabFromFile(filename);
-        } catch (UnparsableException e1) {
+        } catch (Exception e1) {
             GuiUtils.displayErrorMessage(parent, e1.getMessage());
         }
     }

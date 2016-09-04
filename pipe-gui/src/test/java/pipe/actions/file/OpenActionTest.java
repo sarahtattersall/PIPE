@@ -8,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import pipe.actions.gui.OpenAction;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.views.PipeApplicationView;
+import uk.ac.imperial.pipe.io.PetriNetFileException;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
 
 import javax.swing.*;
@@ -38,7 +39,7 @@ public class OpenActionTest {
     }
 
     @Test
-    public void actionPerformed() throws UnparsableException {
+    public void actionPerformed() throws Exception {
         File file = mock(File.class);
         when(file.exists()).thenReturn(true);
         when(file.isFile()).thenReturn(true);
