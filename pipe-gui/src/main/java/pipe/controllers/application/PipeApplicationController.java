@@ -97,7 +97,7 @@ public class PipeApplicationController {
         tab.updatePreferredSize();
 
         PropertyChangeListener changeListener =
-                new PetriNetChangeListener(applicationModel, tab, petriNetController);
+                new PetriNetComponentChangeListener(applicationModel, tab, petriNetController);
         net.addPropertyChangeListener(changeListener);
 
         setActiveTab(tab);
