@@ -1,17 +1,13 @@
 package pipe.gui;
 
-import pipe.constants.GUIConstants;
-import pipe.controllers.SelectionManager;
-import pipe.controllers.ZoomController;
-import pipe.views.AbstractPetriNetViewComponent;
-import pipe.views.PetriNetViewComponent;
-import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
-import uk.ac.imperial.pipe.models.petrinet.*;
-import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
-
-import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
@@ -20,16 +16,33 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JLayeredPane;
+import javax.swing.JViewport;
+import javax.swing.event.MouseInputAdapter;
+
+import pipe.constants.GUIConstants;
+import pipe.controllers.SelectionManager;
+import pipe.controllers.ZoomController;
+import pipe.views.AbstractPetriNetViewComponent;
+import pipe.views.PetriNetViewComponent;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentException;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.PlaceVisitor;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
+import uk.ac.imperial.pipe.models.petrinet.TransitionVisitor;
+import uk.ac.imperial.pipe.visitor.component.PetriNetComponentVisitor;
+
 /**
  * The main canvas that the {@link pipe.views.PetriNetViewComponent}s appear on
- * It is a tab in the main applicaiton
+ * It is a tab in the main application
  */
-public class PetriNetTab extends JLayeredPane implements Observer, Printable {
+@SuppressWarnings("serial")
+public class PetriNetTab extends JLayeredPane implements  Printable { 
 
     /**
      * Class logger
@@ -55,7 +68,7 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
     /**
      * Constructor
      *
-     * Sets no layout manager to acheive an (x,y) layout
+     * Sets no layout manager to achieve an (x,y) layout
      */
     public PetriNetTab() {
         setLayout(null);
@@ -82,19 +95,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         });
     }
 
-
-    /**
-     * Legacy update method
-     * @param o observable 
-     * @param diffObj object to add
-     */
-    @Override
-    public void update(Observable o, Object diffObj) {
-        if (diffObj instanceof AbstractPetriNetViewComponent) {
-            AbstractPetriNetViewComponent<?> component = (AbstractPetriNetViewComponent<?>) diffObj;
-            addNewPetriNetComponent(component);
-        }
-    }
 
     /**
      * Adds the Petri net component to this canvas
@@ -213,15 +213,6 @@ public class PetriNetTab extends JLayeredPane implements Observer, Printable {
         }
     }
 
-    /**
-     * Set meta down. Since there is no documentation for this the functionality
-     * has been deprecated and it no longer does anything
-     * @param down flag
-     */
-    @Deprecated
-    public void setMetaDown(boolean down) {
-        //TODO: DELETE
-    }
 
     /**
      * Updates the canvas boundary when dragging is taking place

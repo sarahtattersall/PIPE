@@ -75,7 +75,7 @@ public class PlaceView extends ConnectableView<Place> implements PropertyChangeL
 
 
     /**
-     * Paints the Place component taking into account the n q12[umber of tokens from
+     * Paints the Place component taking into account the number of tokens from
      * the storeCurrentMarking
      *
      * @param g The PositionGraphics object onto which the Place is drawn.

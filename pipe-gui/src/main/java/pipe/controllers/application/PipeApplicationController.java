@@ -5,6 +5,8 @@ import pipe.controllers.*;
 import pipe.gui.PetriNetTab;
 import pipe.historyActions.AnimationHistoryImpl;
 import uk.ac.imperial.pipe.animation.PetriNetAnimator;
+import uk.ac.imperial.pipe.exceptions.IncludeException;
+import uk.ac.imperial.pipe.io.PetriNetFileException;
 import uk.ac.imperial.pipe.models.manager.PetriNetManager;
 import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
 import uk.ac.imperial.pipe.models.petrinet.*;
@@ -83,10 +85,7 @@ public class PipeApplicationController {
     //TODO: THIS IS RATHER UGLY, too many params but better than what was here before
     public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener,
                             PropertyChangeListener zoomListener) {
-        AnimationHistoryImpl animationHistory = new AnimationHistoryImpl();
-        animationHistory.addObserver(historyObserver);
-//        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net), animationHistory, this);
-        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net.getExecutablePetriNet()), animationHistory, this);
+        GUIAnimator animator = buildAnimatorWithHistory(net, historyObserver);
 
         CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
 
@@ -98,12 +97,20 @@ public class PipeApplicationController {
         tab.updatePreferredSize();
 
         PropertyChangeListener changeListener =
-                new PetriNetChangeListener(applicationModel, tab, petriNetController);
+                new PetriNetComponentChangeListener(applicationModel, tab, petriNetController);
         net.addPropertyChangeListener(changeListener);
 
         setActiveTab(tab);
         initialiseNet(net, changeListener);
     }
+
+	protected GUIAnimator buildAnimatorWithHistory(PetriNet net,
+			Observer historyObserver) {
+		AnimationHistoryImpl animationHistory = new AnimationHistoryImpl();
+        animationHistory.addObserver(historyObserver);
+        GUIAnimator animator = new GUIAnimator(new PetriNetAnimator(net.getExecutablePetriNet()), animationHistory, this);
+		return animator;
+	}
 
     /**
      *
@@ -116,11 +123,12 @@ public class PipeApplicationController {
     /**
      * This is a little hacky, I'm not sure how to make this better when it's so late
      * If a better implementation is clear please re-write
-     * <p/>
+     * <p>
      * This method invokes the change listener which will create the view objects on the
      * petri net tab
-     *
-     * @param propertyChangeListener
+     * </p>
+     * @param propertyChangeListener listener for changes to the net
+     * @param net Petri net to be created 
      */
     //TODO move to PetriNet:  addListenerForAllComponents(PropertyChangeListener propertyChangeListener)
     private void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {
@@ -163,12 +171,16 @@ public class PipeApplicationController {
     /**
      * Loads and creates a Petri net located at the given file
      * @param file location of the XML file which contains a PNML representation of a Petri net
-     * @throws UnparsableException if the file cannot be parsed 
+     * @throws UnparsableException if the file cannot be parsed or a rate parameter expression cannot be parsed 
+     * @throws PetriNetFileException if the file does not exist, or is not valid XML, 
+     * or whose highest level tags are not <code>pnml</code> or <code>include</code>   
+     * @throws IncludeException if errors are encountered building an include hierarchy 
+     * @throws FileNotFoundException if one of the referenced files does not exist 
      */
-    public void createNewTabFromFile(File file) throws UnparsableException {
+    public void createNewTabFromFile(File file) throws UnparsableException, PetriNetFileException, FileNotFoundException, IncludeException {
         try {
             manager.createFromFile(file);
-        } catch (FileNotFoundException | JAXBException e) {
+        } catch (JAXBException e) {
             throw new UnparsableException("Could not initialise Petri net reader!", e);
         }
     }

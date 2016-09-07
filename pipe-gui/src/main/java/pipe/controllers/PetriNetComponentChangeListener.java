@@ -19,15 +19,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class listens for changes in PetriNet
+ * This class listens for changes in PetriNet components 
  * and creates/deletes the relevant views as appropriate
  */
-public class PetriNetChangeListener implements PropertyChangeListener {
+public class PetriNetComponentChangeListener implements PropertyChangeListener {
 
     /**
      * Class logger
      */
-    private static final Logger LOGGER = Logger.getLogger(PetriNetChangeListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PetriNetComponentChangeListener.class.getName());
 
     /**
      * Pipe application model, needed for building items so that
@@ -56,7 +56,7 @@ public class PetriNetChangeListener implements PropertyChangeListener {
      * @param petriNetTab Petri net tab
      * @param controller conroller for the Petri net displayed graphically on the tab
      */
-    public PetriNetChangeListener(PipeApplicationModel applicationModel, PetriNetTab petriNetTab, PetriNetController controller) {
+    public PetriNetComponentChangeListener(PipeApplicationModel applicationModel, PetriNetTab petriNetTab, PetriNetController controller) {
         this.applicationModel = applicationModel;
         this.petriNetTab = petriNetTab;
         this.controller = controller;

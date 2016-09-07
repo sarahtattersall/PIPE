@@ -18,6 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
@@ -26,6 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
@@ -41,6 +43,8 @@ import pipe.actions.gui.ExportTNAction;
 import pipe.actions.gui.GridAction;
 import pipe.actions.gui.GuiAction;
 import pipe.actions.gui.ImportAction;
+import pipe.actions.gui.IncludesAction;
+import pipe.actions.gui.InterfaceHelpAction;
 import pipe.actions.gui.PipeApplicationModel;
 import pipe.actions.gui.PrintAction;
 import pipe.actions.gui.SelectAction;
@@ -60,8 +64,9 @@ import pipe.controllers.SelectionManager;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.LayoutAction;
 import pipe.gui.PetriNetTab;
-import pipe.gui.ToggleButton;
 import pipe.gui.PipeResourceLocator;
+import pipe.gui.ToggleButton;
+import uk.ac.imperial.pipe.models.petrinet.IncludeHierarchy;
 
 /**
  * Builder class to set up the properties of the PIPE main application window
@@ -115,7 +120,7 @@ public final class PipeApplicationBuilder {
      * @param zoomUI zoomUI
      * @return pipe components 
      */
-    private PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
+    protected PIPEComponents buildComponents(PipeApplicationView view, PipeApplicationModel model,
                                            PipeApplicationController controller, ZoomUI zoomUI) {
         ComponentEditorManager componentEditorManager = new ComponentEditorManager(controller);
         SimpleUndoListener undoListener =
@@ -141,10 +146,12 @@ public final class PipeApplicationBuilder {
         ExitAction exitAction = new ExitAction(view, controller);
         LayoutAction layoutAction = new LayoutAction(controller, view);
         ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(view, controller);
+        IncludesAction includesAction = new IncludesAction(); 
+        InterfaceHelpAction interfaceHelpAction = new InterfaceHelpAction(); 
         return new PIPEComponents(chooseTokenClassAction, componentEditorManager, undoListener, componentCreatorManager,
                 animateActionManager, editorManager, tokenActionManager, printAction, exportPNGAction, selectAction,
                 exitAction, zoomAction, unfoldAction, zoomOutAction, zoomInAction, toggleGrid, importAction,
-                exportPSAction, exportTNAction, layoutAction);
+                exportPSAction, exportTNAction, layoutAction, includesAction, interfaceHelpAction);
     }
 
     /**
@@ -330,6 +337,8 @@ public final class PipeApplicationBuilder {
         viewMenu.addSeparator();
         addMenuItem(viewMenu, pipeComponents.toggleGrid);
 
+        JMenu interfaceMenu = buildInterfaceMenu(pipeComponents); 
+        
         JMenu animateMenu = new JMenu("Animate");
         animateMenu.setMnemonic('A');
 
@@ -350,12 +359,59 @@ public final class PipeApplicationBuilder {
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
         menuBar.add(drawMenu);
+        menuBar.add(interfaceMenu);
         menuBar.add(animateMenu);
         menuBar.add(helpMenu);
         return menuBar;
     }
 
-    /**
+    protected JMenu buildInterfaceMenu(PIPEComponents pipeComponents) {
+        JMenu interfaceMenu = new JMenu("Interface");
+        interfaceMenu.setMnemonic('I');
+    	addAccessScopeMenu(interfaceMenu); 
+    	addMenuItem(interfaceMenu, pipeComponents.includesAction);
+    	addAvailablePlacesMenu(interfaceMenu);
+    	interfaceMenu.addSeparator(); 
+    	addMenuItem(interfaceMenu, pipeComponents.interfaceHelpAction);
+		return interfaceMenu;
+	}
+
+
+
+
+	private void addAvailablePlacesMenu(JMenu interfaceMenu) {
+		JMenu availablePlacesMenu = new JMenu("Available Places");
+		//TODO  read current include hierarchy to populate 
+    	interfaceMenu.add(availablePlacesMenu);
+
+	}
+
+
+	protected void addAccessScopeMenu(JMenu interfaceMenu) {
+		JMenu accessMenu = new JMenu("Place Access Scope");
+    	ButtonGroup accessGroup = new ButtonGroup(); 
+    	JRadioButtonMenuItem parent = new JRadioButtonMenuItem("Parent");
+    	parent.setEnabled(false); 
+    	accessGroup.add(parent); 
+    	accessMenu.add(parent); 
+    	JRadioButtonMenuItem parents = new JRadioButtonMenuItem("Parents");
+    	parents.setSelected(true); // Parents is default scope
+    	parents.setEnabled(false); 
+    	accessGroup.add(parents); 
+    	accessMenu.add(parents); 
+    	JRadioButtonMenuItem parentsSiblings = new JRadioButtonMenuItem("Parents and Siblings");
+    	parentsSiblings.setEnabled(false); 
+    	accessGroup.add(parentsSiblings); 
+    	accessMenu.add(parentsSiblings); 
+    	JRadioButtonMenuItem all = new JRadioButtonMenuItem("All");
+    	all.setEnabled(false); 
+    	accessGroup.add(all); 
+    	accessMenu.add(all); 
+    	interfaceMenu.add(accessMenu);
+	}
+
+
+	/**
      * Action performed in the application view when tabs are changed
      * @param controller application controller 
      * @param view application view 
@@ -496,20 +552,24 @@ public final class PipeApplicationBuilder {
      * Creates an example file menu based on examples in resources/extras/examples
      */
     private JMenu createExampleFileMenu(PipeApplicationView view, PipeApplicationController controller) {
-        if (isJar()) {
-            try {
-                return loadJarExamples(controller, view);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage());
-            }
-        }
+//        if (isJar()) {
+//            try {
+//                return loadJarExamples(controller, view);
+//            } catch (IOException e) {
+//                LOGGER.log(Level.SEVERE, e.getMessage());
+//            }
+//        }
         JMenu exampleMenu = new JMenu("Examples");
         exampleMenu.setIcon(new ImageIcon(getImageURL("Example")));
 		PipeResourceLocator locator = new PipeResourceLocator(); 
 		URL examplesDirURL = locator.getExamplePath();
+		System.out.println("examplesDirURL: "+examplesDirURL.toString());
         try {
             URI uri = examplesDirURL.toURI();
+            System.out.println("uri : "+uri.toString());
             File directory = new File(uri);
+            System.out.println("dir : "+directory.getAbsolutePath());
+            
             for (File entry : directory.listFiles()) {
                 addMenuItem(exampleMenu, new ExampleFileAction(entry, view, controller));
             }
@@ -619,8 +679,9 @@ public final class PipeApplicationBuilder {
     /**
      * Components needed to build pipe tool bars and menus
      */
-    private static final class PIPEComponents {
-        /**
+    protected static final class PIPEComponents {
+
+		/**
          * Drop down token chooser
          */
         public final ChooseTokenClassAction chooseTokenClassAction;
@@ -718,6 +779,17 @@ public final class PipeApplicationBuilder {
         public final ExportTNAction exportTNAction;
 
         /**
+         * Maintain the include hierarchy
+         */
+		public final IncludesAction includesAction;
+
+		/**
+		 * Show help for interfaces 
+		 */
+        public InterfaceHelpAction interfaceHelpAction;
+
+		
+        /**
          * Constructor
          * @param chooseTokenClassAction token action
          * @param componentEditorManager component editor manager 
@@ -738,8 +810,10 @@ public final class PipeApplicationBuilder {
          * @param importAction import action 
          * @param exportPSAction export PSA action 
          * @param exportTNAction export TN action
+         * @param includesAction maintain {@link IncludeHierarchy}
+         * @param interfaceHelpAction show help for interfaces 
          */
-        private PIPEComponents(ChooseTokenClassAction chooseTokenClassAction,
+        protected PIPEComponents(ChooseTokenClassAction chooseTokenClassAction,
                                ComponentEditorManager componentEditorManager, SimpleUndoListener undoListener,
                                ComponentCreatorManager componentCreatorManager,
                                AnimateActionManager animateActionManager, PetriNetEditorManager editorManager,
@@ -747,7 +821,8 @@ public final class PipeApplicationBuilder {
                                ExportPNGAction exportPNGAction, SelectAction selectAction, ExitAction exitAction,
                                SetZoomAction zoomAction, UnfoldAction unfoldAction, ZoomOutAction zoomOutAction,
                                ZoomInAction zoomInAction, GridAction toggleGrid, ImportAction importAction,
-                               ExportPSAction exportPSAction, ExportTNAction exportTNAction, LayoutAction layoutAction) {
+                               ExportPSAction exportPSAction, ExportTNAction exportTNAction, LayoutAction layoutAction, 
+                               IncludesAction includesAction, InterfaceHelpAction interfaceHelpAction) {
             this.chooseTokenClassAction = chooseTokenClassAction;
             this.componentEditorManager = componentEditorManager;
             this.undoListener = undoListener;
@@ -768,6 +843,8 @@ public final class PipeApplicationBuilder {
             this.exportPSAction = exportPSAction;
             this.exportTNAction = exportTNAction;
             this.layoutAction = layoutAction;
+            this.includesAction = includesAction; 
+            this.interfaceHelpAction = interfaceHelpAction; 
         }
     }
 }

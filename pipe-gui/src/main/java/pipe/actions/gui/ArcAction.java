@@ -174,7 +174,7 @@ public final class ArcAction extends CreateAction {
                 case KeyEvent.VK_META:
                 case KeyEvent.VK_WINDOWS:
                 case KeyEvent.VK_SPACE:
-                    tab.setMetaDown(true);
+//                    tab.setMetaDown(true);
                     break;
 
                 case KeyEvent.VK_ESCAPE:

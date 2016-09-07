@@ -23,7 +23,7 @@ public class SaveAction extends AbstractSaveAction {
 
     /**
      * Constructor
-     * @param pipeApplicationController PIPE main appliaction controller
+     * @param pipeApplicationController PIPE main application controller
      * @param fileChooser save file dialog chooser
      */
     public SaveAction(PipeApplicationController pipeApplicationController, FileDialog fileChooser) {

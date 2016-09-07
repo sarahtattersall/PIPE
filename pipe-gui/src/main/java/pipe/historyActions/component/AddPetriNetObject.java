@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 /**
  * Adds a Petri net component to the Petri net
  */
+@SuppressWarnings("serial")
 public class AddPetriNetObject extends AbstractUndoableEdit {
     /**
      * Class logger

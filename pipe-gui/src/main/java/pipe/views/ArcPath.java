@@ -320,7 +320,6 @@ public class ArcPath implements Shape, Cloneable {
      *
      * @param index of point in list 
      * @param newpoint to be added 
-     * @author Nadeem
      */
     public void insertPoint(int index, ArcPathPoint newpoint) {
         pathPoints.add(index, newpoint);

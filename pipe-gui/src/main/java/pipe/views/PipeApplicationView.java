@@ -1,28 +1,5 @@
 package pipe.views;
 
-import pipe.actions.gui.PipeApplicationModel;
-import pipe.actions.gui.ZoomManager;
-import pipe.constants.GUIConstants;
-import pipe.controllers.PetriNetController;
-import pipe.controllers.SelectionManager;
-import pipe.controllers.application.PipeApplicationController;
-import pipe.gui.*;
-import pipe.handlers.PetriNetMouseHandler;
-import pipe.utilities.gui.GuiUtils;
-import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
-import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
-import uk.ac.imperial.pipe.models.petrinet.PetriNet;
-import uk.ac.imperial.pipe.models.petrinet.Token;
-import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
-
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.text.BadLocationException;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -33,9 +10,60 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.Action;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLayer;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import pipe.actions.gui.PipeApplicationModel;
+import pipe.actions.gui.ZoomManager;
+import pipe.constants.GUIConstants;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
+import pipe.controllers.application.PipeApplicationController;
+import pipe.gui.AnimationHistoryView;
+import pipe.gui.ModuleManager;
+import pipe.gui.PetriNetTab;
+import pipe.gui.PipeResourceLocator;
+import pipe.gui.StatusBar;
+import pipe.handlers.PetriNetMouseHandler;
+import pipe.utilities.gui.GuiUtils;
+import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
+import uk.ac.imperial.pipe.models.petrinet.IncludeHierarchy;
+import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Token;
+import uk.ac.imperial.pipe.runner.PetriNetRunner;
 
 
 /**
@@ -44,25 +72,25 @@ import java.util.logging.Logger;
 @SuppressWarnings("serial")
 public class PipeApplicationView extends JFrame implements ActionListener, Observer {
 
-
-    /**
+	/**
      * Class logger
      */
-    private static final Logger LOGGER = Logger.getLogger(PipeApplicationView.class.getName());
+	private static Logger logger = LogManager.getLogger(PipeApplicationView.class); 
+//    private static final Logger LOGGER = Logger.getLogger(PipeApplicationView.class.getName());
 
     /**
      * Status bar for useful messages
      */
-    public final StatusBar statusBar;
+    public  StatusBar statusBar;
 
     /**
      * Zoom managager
      */
     private final ZoomManager zoomManager;
 
-    private final JSplitPane moduleAndAnimationHistoryFrame;
+    private JSplitPane moduleAndAnimationHistoryFrame;
 
-    private final JTabbedPane frameForPetriNetTabs = new JTabbedPane();
+    protected final JTabbedPane frameForPetriNetTabs = new JTabbedPane();
 
     private final List<PetriNetTab> petriNetTabs = new ArrayList<>();
 
@@ -82,51 +110,27 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     private Map<PetriNetTab, AnimationHistoryView> histories = new HashMap<>();
 
+	protected PetriNetChangeListener petriNetChangeListener;
+
 
     public PipeApplicationView(ZoomManager zoomManager, final PipeApplicationController applicationController,
                                PipeApplicationModel applicationModel) {
         this.zoomManager = zoomManager;
-
+        this.petriNetChangeListener = new PetriNetChangeListener(this); 
         this.applicationModel = applicationModel;
         this.applicationController = applicationController;
-        applicationController.registerToManager(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_PETRI_NET_MESSAGE)) {
-                    PetriNet petriNet = (PetriNet) evt.getNewValue();
-                    registerNewPetriNet(petriNet);
-                } else if (evt.getPropertyName().equals(PetriNetManagerImpl.REMOVE_PETRI_NET_MESSAGE)) {
-                    removeCurrentTab();
-                }
+        applicationController.registerToManager(petriNetChangeListener);
+        applicationModel.addPropertyChangeListener(new PipeApplicationModelChangeListener(applicationController));
+        setTabChangeListener();
 
-            }
-        });
-        applicationModel.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(PipeApplicationModel.TOGGLE_ANIMATION_MODE)) {
-                    boolean oldMode = (boolean) evt.getOldValue();
-                    boolean newMode = (boolean) evt.getNewValue();
-                    if (oldMode != newMode) {
-                        setAnimationMode(newMode);
-                    }
-                } else if (evt.getPropertyName().equals(PipeApplicationModel.TYPE_ACTION_CHANGE_MESSAGE)) {
-                    PetriNetTab petriNetTab = getCurrentTab();
-                    if (petriNetTab != null) {
-                        petriNetTab.setCursorType("crosshair");
-                        SelectionManager selectionManager =
-                                applicationController.getActivePetriNetController().getSelectionManager();
-                        selectionManager.disableSelection();
-                    }
-                }
-            }
-        });
-        setTitle(null);
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-        }
+        buildView(applicationController, applicationModel);
+    }
+
+	protected void buildView(
+			final PipeApplicationController applicationController,
+			PipeApplicationModel applicationModel) {
+		setTitle(null);
+        setLookAndFeel();
 
         this.setIconImage(new ImageIcon(getImageURL("icon")).getImage());
 
@@ -141,7 +145,20 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.setForeground(java.awt.Color.BLACK);
         this.setBackground(java.awt.Color.WHITE);
 
-        ModuleManager moduleManager = new ModuleManager(this, applicationController);
+        buildModuleManagerAndAnimationHistoryFrame(applicationController);
+
+        setVisible(true);
+        applicationModel.setMode(GUIConstants.SELECT);
+        //TODO: DO YOU NEED TO DO THIS?
+        //        selectAction.actionPerformed(null);
+
+
+        setZoomChangeListener();
+	}
+
+	protected void buildModuleManagerAndAnimationHistoryFrame(
+			final PipeApplicationController applicationController) {
+		ModuleManager moduleManager = new ModuleManager(this, applicationController);
         JTree moduleTree = moduleManager.getModuleTree();
         moduleAndAnimationHistoryFrame = new JSplitPane(JSplitPane.VERTICAL_SPLIT, moduleTree, null);
         moduleAndAnimationHistoryFrame.setContinuousLayout(true);
@@ -154,16 +171,18 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         pane.setBorder(null);
         pane.setDividerSize(8);
         getContentPane().add(pane);
+	}
 
-        setVisible(true);
-        applicationModel.setMode(GUIConstants.SELECT);
-        //TODO: DO YOU NEED TO DO THIS?
-        //        selectAction.actionPerformed(null);
-
-        setTabChangeListener();
-
-        setZoomChangeListener();
-    }
+	protected void setLookAndFeel() {
+		try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (IllegalAccessException | ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException e) {
+        	logger.error(e.getMessage()); 
+//            LOGGER.log(Level.SEVERE, e.getMessage());
+        	//TODO fix INFO Log4j appears to be running in a Servlet environment, but there's no log4j-web module available.
+//        	e.printStackTrace();
+        }
+	}
 
     public void setUndoListener(UndoableEditListener listener) {
         undoListener = listener;
@@ -447,44 +466,54 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
     public void registerNewPetriNet(PetriNet petriNet) {
 
+        registerNewNamedTab(petriNet, petriNet.getNameValue());
+    }
+    public void registerNewIncludeHierarchy(IncludeHierarchy include) {
+    	
+    	registerNewNamedTab(include.getPetriNet(), include.getUniqueName());
+    	//TODO associate tab with include in applicationController
+    }
 
-        petriNet.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String msg = evt.getPropertyName();
-                if (msg.equals(PetriNet.PETRI_NET_NAME_CHANGE_MESSAGE)) {
-                    PetriNetName name = (PetriNetName) evt.getNewValue();
-                    updateSelectedTabName(name.getName());
-                } else if (msg.equals(PetriNet.NEW_TOKEN_CHANGE_MESSAGE) || msg.equals(
-                        PetriNet.DELETE_TOKEN_CHANGE_MESSAGE)) {
-                    refreshTokenClassChoices();
-                }
-            }
-        });
+	protected void registerNewNamedTab(PetriNet petriNet, String name) {
+		
+		petriNet.addPropertyChangeListener(petriNetChangeListener);
 
-        AnimationHistoryView animationHistoryView;
-        try {
-            animationHistoryView = new AnimationHistoryView("Animation History");
-        } catch (BadLocationException e) {
-            throw new RuntimeException(e);
-        }
+        AnimationHistoryView animationHistoryView = buildAnimationHistoryView();
+
         PetriNetTab petriNetTab = new PetriNetTab();
         histories.put(petriNetTab, animationHistoryView);
 
-        PropertyChangeListener zoomListener = new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                updateZoomCombo();
-            }
-        };
+        PropertyChangeListener zoomListener = buildZoomListener();
+
         applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
         PetriNetController petriNetController = applicationController.getActivePetriNetController();
         petriNetTab.setMouseHandler(
                 new PetriNetMouseHandler(applicationModel, petriNetController, petriNetTab));
         petriNetTab.updatePreferredSize();
 
-        addNewTab(petriNet.getNameValue(), petriNetTab);
-    }
+        addNewTab(name, petriNetTab);
+	}
+
+
+	protected PropertyChangeListener buildZoomListener() {
+		PropertyChangeListener zoomListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+                updateZoomCombo();
+            }
+        };
+		return zoomListener;
+	}
+
+	protected AnimationHistoryView buildAnimationHistoryView() {
+		AnimationHistoryView animationHistoryView;
+        try {
+            animationHistoryView = new AnimationHistoryView("Animation History");
+        } catch (BadLocationException e) {
+            throw new RuntimeException(e);
+        }
+		return animationHistoryView;
+	}
 
     private URL getImageURL(String name) {
 		PipeResourceLocator locator = new PipeResourceLocator(); 
@@ -498,5 +527,35 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void registerZoom(JComboBox<String> zoomComboBox) {
         this.zoomComboBox = zoomComboBox;
     }
+
+    private class PipeApplicationModelChangeListener implements
+			PropertyChangeListener {
+		private final PipeApplicationController applicationController;
+
+		private PipeApplicationModelChangeListener(
+				PipeApplicationController applicationController) {
+			this.applicationController = applicationController;
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+		    if (evt.getPropertyName().equals(PipeApplicationModel.TOGGLE_ANIMATION_MODE)) {
+		        boolean oldMode = (boolean) evt.getOldValue();
+		        boolean newMode = (boolean) evt.getNewValue();
+		        if (oldMode != newMode) {
+		            setAnimationMode(newMode);
+		        }
+		    } else if (evt.getPropertyName().equals(PipeApplicationModel.TYPE_ACTION_CHANGE_MESSAGE)) {
+		        PetriNetTab petriNetTab = getCurrentTab();
+		        if (petriNetTab != null) {
+		            petriNetTab.setCursorType("crosshair");
+		            SelectionManager selectionManager =
+		                    applicationController.getActivePetriNetController().getSelectionManager();
+		            selectionManager.disableSelection();
+		        }
+		    }
+		}
+	}
+
 }
 
