@@ -32,9 +32,9 @@ public class PipeResourceLocatorTest {
 	public void verifyGetsPaths() {
 		PipeResourceLocator locator = new PipeResourceLocator(); 
 		URL url = locator.getExamplePath();
-		assertTrue(url.getPath().endsWith("/extras/examples/")); 
+		assertTrue(url.getPath().endsWith("/extras/examples")); 
 		url = locator.getImagePath();
-		assertTrue(url.getPath().endsWith("/images/")); 
+		assertTrue(url.getPath().endsWith("/images")); 
 	}
 	@Test
 	public void verifyImageNotFoundTellsWhereWeLooked() {

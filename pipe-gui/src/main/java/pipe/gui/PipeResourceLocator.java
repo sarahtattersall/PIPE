@@ -1,11 +1,12 @@
 package pipe.gui;
 
+import java.io.File;
 import java.net.URL;
 
 public class PipeResourceLocator {
 
-	private static final String EXAMPLE_PATH = "/extras/examples/";
-	private static final String IMAGE_PATH = "/images/";
+	private static final String EXAMPLE_PATH = "/extras/examples";
+	private static final String IMAGE_PATH = "/images";
 	
 	public URL getImage(String image) {
 		return getResource(IMAGE_PATH,image,".png");
@@ -15,7 +16,7 @@ public class PipeResourceLocator {
 	}
 
 	private URL getResource(String path, String resource, String suffix) {
-		URL url = this.getClass().getResource(path+resource+suffix);
+		URL url = this.getClass().getResource(path+File.separator+resource+suffix);
 		if (url != null) return url; 
 		else {
 			url = getResourcePath(path); 

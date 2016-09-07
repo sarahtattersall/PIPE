@@ -563,9 +563,13 @@ public final class PipeApplicationBuilder {
         exampleMenu.setIcon(new ImageIcon(getImageURL("Example")));
 		PipeResourceLocator locator = new PipeResourceLocator(); 
 		URL examplesDirURL = locator.getExamplePath();
+		System.out.println("examplesDirURL: "+examplesDirURL.toString());
         try {
             URI uri = examplesDirURL.toURI();
+            System.out.println("uri : "+uri.toString());
             File directory = new File(uri);
+            System.out.println("dir : "+directory.getAbsolutePath());
+            
             for (File entry : directory.listFiles()) {
                 addMenuItem(exampleMenu, new ExampleFileAction(entry, view, controller));
             }
