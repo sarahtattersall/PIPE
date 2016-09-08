@@ -8,9 +8,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -552,24 +556,20 @@ public final class PipeApplicationBuilder {
      * Creates an example file menu based on examples in resources/extras/examples
      */
     private JMenu createExampleFileMenu(PipeApplicationView view, PipeApplicationController controller) {
-//        if (isJar()) {
-//            try {
-//                return loadJarExamples(controller, view);
-//            } catch (IOException e) {
-//                LOGGER.log(Level.SEVERE, e.getMessage());
-//            }
-//        }
+        if (isJar()) {
+            try {
+                return loadJarExamples(controller, view);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage());
+            }
+        }
         JMenu exampleMenu = new JMenu("Examples");
         exampleMenu.setIcon(new ImageIcon(getImageURL("Example")));
 		PipeResourceLocator locator = new PipeResourceLocator(); 
 		URL examplesDirURL = locator.getExamplePath();
-		System.out.println("examplesDirURL: "+examplesDirURL.toString());
         try {
             URI uri = examplesDirURL.toURI();
-            System.out.println("uri : "+uri.toString());
             File directory = new File(uri);
-            System.out.println("dir : "+directory.getAbsolutePath());
-            
             for (File entry : directory.listFiles()) {
                 addMenuItem(exampleMenu, new ExampleFileAction(entry, view, controller));
             }
@@ -646,7 +646,7 @@ public final class PipeApplicationBuilder {
     }
 
     /**
-     * Loads the examples embedded within the PIPE jar application.
+     * Loads the examples embedded within the PIPE jar application.  
      *
      * This method will be called if the uber-jar is running
      * @param controller application controller 
@@ -667,9 +667,11 @@ public final class PipeApplicationBuilder {
                     break;
                 }
                 String name = e.getName();
-                if (name.startsWith("foo/")) {
-                    addMenuItem(exampleMenu, new ExampleFileAction(e, view, controller));
-      /* Do something with this entry. */
+                if ((name.startsWith(PipeResourceLocator.EXAMPLES)) && 
+                		(name.toLowerCase().endsWith("xml"))) {
+                	String prefixedName = "/"+e.getName();
+                	String filename = name.substring(PipeResourceLocator.EXAMPLES.length()+1);
+                    addMenuItem(exampleMenu, new ExampleFileAction(filename, prefixedName, view, controller));
                 }
             }
         }

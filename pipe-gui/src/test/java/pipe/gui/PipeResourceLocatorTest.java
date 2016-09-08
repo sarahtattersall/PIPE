@@ -1,6 +1,6 @@
 package pipe.gui;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
@@ -9,9 +9,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class PipeResourceLocatorTest {
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
+	@Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    
 	@Test
 	public void verifyGetsImage() {
 		PipeResourceLocator locator = new PipeResourceLocator(); 
