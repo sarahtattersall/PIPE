@@ -4,6 +4,11 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
 
 import javax.swing.ImageIcon;
@@ -12,6 +17,7 @@ import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PipeResourceLocator;
 import pipe.utilities.gui.GuiUtils;
 import pipe.utilities.io.JarUtilities;
+import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.exceptions.IncludeException;
 import uk.ac.imperial.pipe.io.PetriNetFileException;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
@@ -22,9 +28,9 @@ import uk.ac.imperial.pipe.parsers.UnparsableException;
 @SuppressWarnings("serial")
 public class ExampleFileAction extends GuiAction {
     /**
-     * File location of the example file
+     * File name of the example file
      */
-    private final File filename;
+    private String filename;
 
     /**
      * Parent of this action
@@ -35,6 +41,10 @@ public class ExampleFileAction extends GuiAction {
      * PIPE main application controller
      */
     private final PipeApplicationController applicationController;
+    /**
+     * Example file
+     */
+	private File file;
 
     /**
      *
@@ -44,7 +54,7 @@ public class ExampleFileAction extends GuiAction {
      */
     public ExampleFileAction(File file, Frame parent, PipeApplicationController applicationController) {
         super(file.getName(), "Open example file \"" + file.getName() + "\"");
-        filename = file;
+        this.file = file;
         this.parent = parent;
         this.applicationController = applicationController;
 		PipeResourceLocator locator = new PipeResourceLocator(); 
@@ -52,29 +62,40 @@ public class ExampleFileAction extends GuiAction {
     }
 
     /**
-     *
-     * @param entry example PNML file stored as a ZipEntry in a jar
+     * Extracts files from the jar and loads them to directory "examples" in 
+     * the current working directory.  Files are refreshed at each startup of PIPE
+     * @param filename of example PNML file from jar
+     * @param prefixedName name of the example PNML file as classpath resource
      * @param parent parent of this frame
      * @param applicationController PIPE main application controller
      */
-    public ExampleFileAction(ZipEntry entry, Frame parent, PipeApplicationController applicationController) {
-        super(entry.getName().substring(1 + entry.getName().indexOf(System.getProperty("file.separator"))),
-                "Open example file \"" + entry.getName() + "\"");
-        this.parent = parent;
-        filename = JarUtilities.getFile(entry);
-        this.applicationController = applicationController;
-		PipeResourceLocator locator = new PipeResourceLocator(); 
-		putValue(SMALL_ICON, new ImageIcon(locator.getImage("Net")));
-    }
+    public ExampleFileAction(String filename, String prefixedName,
+			Frame parent, PipeApplicationController controller) {
+    	super(filename, "Open example file \"" + filename + "\""); 
+    	this.applicationController = controller;
+    	this.parent = parent;
+    	this.filename = filename; 
+    	InputStream input = getClass().getResourceAsStream(prefixedName);
+    	File dir = new File("examples"); 
+    	if (!dir.exists()) dir.mkdir();
+    	file = new File(dir+File.separator+filename); 
+    	try {
+			Files.copy(input, Paths.get(file.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+    	
+	}
 
-    /**
+	/**
      * When performed this action creates a new tab from the specified example Petri net file
      * @param e event 
      */
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            applicationController.createNewTabFromFile(filename);
+            applicationController.createNewTabFromFile(file);
+            System.out.println("Temporary copy of example file opened: "+file.getAbsolutePath());
         } catch (Exception e1) {
             GuiUtils.displayErrorMessage(parent, e1.getMessage());
         }
