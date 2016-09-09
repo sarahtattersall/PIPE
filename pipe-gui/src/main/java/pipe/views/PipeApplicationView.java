@@ -244,7 +244,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 	        frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
 		}
 		for (int i = 0; i < frameForPetriNetTabs.getChangeListeners().length; i++) {
-			frameForPetriNetTabs.getChangeListeners()[i].stateChanged(new ChangeEvent(this)); 
+			frameForPetriNetTabs.getChangeListeners()[i].stateChanged(new ChangeEvent(frameForPetriNetTabs)); 
 		}
 	}
     
