@@ -1,35 +1,43 @@
 package pipe.actions.type;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.event.UndoableEditListener;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.actions.gui.ArcAction;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.controllers.arcCreator.ArcActionCreator;
 import pipe.gui.PetriNetTab;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.transformers.Contains;
-import pipe.views.PipeApplicationView;
 import pipe.views.InhibitorArcHead;
+import pipe.views.PipeApplicationView;
 import pipe.views.TemporaryArcView;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
-import uk.ac.imperial.pipe.models.petrinet.OutboundArc;
 import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
-import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
-import uk.ac.imperial.pipe.models.petrinet.Transition;
+import uk.ac.imperial.pipe.models.petrinet.OutboundArc;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 import uk.ac.imperial.pipe.visitor.connectable.arc.ArcSourceVisitor;
-
-import javax.swing.event.UndoableEditListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcActionTest {

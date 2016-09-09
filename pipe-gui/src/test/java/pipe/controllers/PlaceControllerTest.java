@@ -1,26 +1,28 @@
 package pipe.controllers;
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.component.ChangePetriNetComponentName;
 import pipe.historyActions.place.ChangePlaceTokens;
 import pipe.historyActions.place.PlaceCapacity;
 import pipe.utilities.transformers.Contains;
 import uk.ac.imperial.pipe.models.petrinet.Place;
-
-import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoableEdit;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PlaceControllerTest {

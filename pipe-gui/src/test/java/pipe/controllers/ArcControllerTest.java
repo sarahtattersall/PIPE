@@ -1,5 +1,21 @@
 package pipe.controllers;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,6 +23,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.historyActions.MultipleEdit;
 import pipe.historyActions.arc.AddArcPathPoint;
 import pipe.historyActions.arc.ArcPathPointType;
@@ -19,13 +36,6 @@ import uk.ac.imperial.pipe.models.petrinet.Place;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
 import uk.ac.imperial.pipe.parsers.FunctionalResults;
 import uk.ac.imperial.pipe.parsers.UnparsableException;
-
-import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoableEdit;
-import java.awt.geom.Point2D;
-import java.util.*;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcControllerTest {

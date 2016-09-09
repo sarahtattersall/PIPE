@@ -1,22 +1,24 @@
 package pipe.actions.type;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.event.UndoableEditListener;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.actions.gui.DeleteTokenAction;
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.PlaceController;
-import pipe.actions.gui.PipeApplicationModel;
 import uk.ac.imperial.pipe.models.petrinet.Place;
-
-import javax.swing.event.UndoableEditListener;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeleteTokenActionTest {

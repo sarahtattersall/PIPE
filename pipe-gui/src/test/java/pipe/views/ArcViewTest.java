@@ -1,22 +1,29 @@
 package pipe.views;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.handlers.ArcHandler;
-import uk.ac.imperial.pipe.models.petrinet.*;
-
-import java.awt.geom.Point2D;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import uk.ac.imperial.pipe.models.petrinet.Arc;
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
+import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
+import uk.ac.imperial.pipe.models.petrinet.Place;
+import uk.ac.imperial.pipe.models.petrinet.Transition;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcViewTest {

@@ -1,10 +1,26 @@
 package pipe.actions.file;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.awt.FileDialog;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.actions.gui.SaveAction;
 import pipe.controllers.PetriNetController;
 import pipe.controllers.application.PipeApplicationController;
@@ -13,16 +29,6 @@ import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.name.NormalPetriNetName;
 import uk.ac.imperial.pipe.models.petrinet.name.PetriNetFileName;
 import uk.ac.imperial.pipe.models.petrinet.name.PetriNetName;
-
-import javax.swing.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.awt.FileDialog;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SaveActionTest {

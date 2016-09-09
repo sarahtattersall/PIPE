@@ -1,9 +1,9 @@
 package pipe.utilities.transformers;
 
-import org.mockito.ArgumentMatcher;
-
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.UndoableEdit;
+
+import org.mockito.ArgumentMatcher;
 
 public class Contains {
     private Contains() {}

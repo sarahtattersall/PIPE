@@ -1,22 +1,29 @@
 package pipe.controllers;
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.historyActions.component.ChangePetriNetComponentName;
-import pipe.historyActions.transition.*;
+import pipe.historyActions.transition.SetRateParameter;
+import pipe.historyActions.transition.TransitionInfiniteServer;
+import pipe.historyActions.transition.TransitionPriority;
+import pipe.historyActions.transition.TransitionRotation;
+import pipe.historyActions.transition.TransitionTiming;
 import pipe.utilities.transformers.Contains;
 import uk.ac.imperial.pipe.models.petrinet.FunctionalRateParameter;
 import uk.ac.imperial.pipe.models.petrinet.NormalRate;
 import uk.ac.imperial.pipe.models.petrinet.Rate;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
-
-import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoableEdit;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransitionControllerTest {

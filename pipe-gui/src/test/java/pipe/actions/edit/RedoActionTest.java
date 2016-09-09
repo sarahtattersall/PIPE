@@ -1,25 +1,28 @@
 package pipe.actions.edit;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.RedoAction;
-import pipe.actions.gui.UndoAction;
-import pipe.controllers.PetriNetController;
-import pipe.controllers.application.PipeApplicationController;
-
-import javax.swing.*;
-import javax.swing.undo.UndoManager;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+import javax.swing.undo.UndoManager;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import pipe.actions.gui.RedoAction;
+import pipe.actions.gui.UndoAction;
+import pipe.controllers.PetriNetController;
+import pipe.controllers.application.PipeApplicationController;
 
 
 @RunWith(MockitoJUnitRunner.class)

@@ -1,18 +1,24 @@
 package pipe.gui;
 
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.controllers.GUIAnimator;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.historyActions.AnimationHistory;
 import uk.ac.imperial.pipe.animation.Animator;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
-
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GUIAnimatorTest {

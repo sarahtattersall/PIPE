@@ -1,20 +1,21 @@
 package pipe.controllers;
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoableEdit;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.historyActions.annotation.ChangeAnnotationText;
 import pipe.utilities.transformers.Contains;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
-
-import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoableEdit;
-
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnnotationControllerTest {

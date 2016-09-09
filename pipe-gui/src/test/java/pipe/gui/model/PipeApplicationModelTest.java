@@ -1,23 +1,25 @@
 package pipe.gui.model;
 
-import matchers.component.PropertyChangeUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.PipeApplicationModel;
-import pipe.actions.gui.CreateAction;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import matchers.component.PropertyChangeUtils;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import pipe.actions.gui.CreateAction;
+import pipe.actions.gui.PipeApplicationModel;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PipeApplicationModelTest {

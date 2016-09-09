@@ -1,15 +1,16 @@
 package pipe.views;
 
-import org.junit.Before;
-import org.junit.Test;
-import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
-import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
-import uk.ac.imperial.pipe.models.petrinet.Place;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
+import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
+import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
+import uk.ac.imperial.pipe.models.petrinet.Place;
 
 public class TemporaryArcViewTest {
     TemporaryArcView<Place> temporaryArcView;

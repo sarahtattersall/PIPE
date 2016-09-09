@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,9 +29,11 @@ import java.util.*;
  * Pipes main application controller.
  * It houses the Petri net controllers of open tabs and is responsible for the creation of Petri nets
  */
-public class PipeApplicationController {
+public class PipeApplicationController implements PropertyChangeListener  {
 
-    /**
+    public static final String KEEP_ROOT_TAB_ACTIVE_MESSAGE = "Keep tab for root include hierarchy active";
+
+	/**
      * Controllers for each tab
      */
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<>();
@@ -46,9 +49,30 @@ public class PipeApplicationController {
     private final PetriNetManager manager = new PetriNetManagerImpl();
 
     /**
+     * List of separate root-level include hierarchies being used by the application
+     */
+    private final List<IncludeHierarchy> rootIncludes = new ArrayList<>();
+
+    /**
      * The current tab displayed in the view
      */
     private PetriNetTab activeTab;
+
+    /**
+     * The current include hierarchy being processed 
+     * (whether root level or any of its children) 
+     */
+	private IncludeHierarchy activeIncludeHierarchy;
+
+	/**
+	 * Count of includes and associated tabs that are still expected to be registered.   
+	 */
+	protected int expectedIncludeCount = 0;
+
+    /**
+     * Support notification of listener (PipeApplicationView) of changes in the application
+     */
+    protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     /**
      * Constructor
@@ -56,6 +80,7 @@ public class PipeApplicationController {
      */
     public PipeApplicationController(PipeApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
+        manager.addPropertyChangeListener(this); 
     }
 
     /**
@@ -64,6 +89,7 @@ public class PipeApplicationController {
      */
     public void registerToManager(PropertyChangeListener listener) {
         manager.addPropertyChangeListener(listener);
+        changeSupport.addPropertyChangeListener(listener); 
     }
 
     /**
@@ -81,28 +107,43 @@ public class PipeApplicationController {
      * @param historyObserver listener for stepback/forward events in animation
      * @param undoListener listener for undo/redo events
      * @param zoomListener listener for zoom events
+     * @return controller for the Petri net associated with this tab
      */
     //TODO: THIS IS RATHER UGLY, too many params but better than what was here before
-    public void registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener,
+    public PetriNetController registerTab(PetriNet net, PetriNetTab tab, Observer historyObserver, UndoableEditListener undoListener,
                             PropertyChangeListener zoomListener) {
         GUIAnimator animator = buildAnimatorWithHistory(net, historyObserver);
 
-        CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
+        CopyPasteManager copyPasteManager = buildCopyPasteManager(net, tab,
+				undoListener);
 
-        ZoomController zoomController = new ZoomController(100);
-        tab.addZoomListener(zoomController);
+        ZoomController zoomController = buildZoomController(tab);
         PetriNetController petriNetController =
                 new PetriNetController(net, undoListener, animator, copyPasteManager, zoomController, tab);
         netControllers.put(tab, petriNetController);
-        tab.updatePreferredSize();
 
         PropertyChangeListener changeListener =
                 new PetriNetComponentChangeListener(applicationModel, tab, petriNetController);
         net.addPropertyChangeListener(changeListener);
-
         setActiveTab(tab);
         initialiseNet(net, changeListener);
+        if (areIncludeAdditionsPending()) {
+        	expectedIncludeCount--;
+        }
+        return petriNetController; 
     }
+
+	protected ZoomController buildZoomController(PetriNetTab tab) {
+		ZoomController zoomController = new ZoomController(100);
+        tab.addZoomListener(zoomController);
+		return zoomController;
+	}
+
+	protected CopyPasteManager buildCopyPasteManager(PetriNet net,
+			PetriNetTab tab, UndoableEditListener undoListener) {
+		CopyPasteManager copyPasteManager = new CopyPasteManager(undoListener, tab, net, this);
+		return copyPasteManager;
+	}
 
 	protected GUIAnimator buildAnimatorWithHistory(PetriNet net,
 			Observer historyObserver) {
@@ -113,11 +154,24 @@ public class PipeApplicationController {
 	}
 
     /**
-     *
-     * @param tab the active tab - this is the tab that is currently being displayed in the view
+     * Determines which tab will be displayed in the view.  Called under two circumstances:
+     * <ul>
+     * <li>User clicks on a particular tab in the view
+     * <li>As each of one or more Petri nets is being loaded.  If multiple Petri nets being loaded, 
+     * as part of loading an IncludeHierarchy, the active tab will be that of the Petri net corresponding to the 
+     * root level of the IncludeHierarchy
+     * </ul> 
+     * @param tab to potentially be made active in the view 
      */
     public void setActiveTab(PetriNetTab tab) {
-        this.activeTab = tab;
+    	if (areIncludeAdditionsPending()) {
+    		if (activeIncludeHierarchy.equals(getPetriNetController(tab).getPetriNet().getIncludeHierarchy())) {
+    			this.activeTab = tab;
+    			changeSupport.firePropertyChange(KEEP_ROOT_TAB_ACTIVE_MESSAGE, null, activeTab);
+    		}
+    	} else {
+    		this.activeTab = tab;
+    	}
     }
 
     /**
@@ -131,7 +185,7 @@ public class PipeApplicationController {
      * @param net Petri net to be created 
      */
     //TODO move to PetriNet:  addListenerForAllComponents(PropertyChangeListener propertyChangeListener)
-    private void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {
+    protected void initialiseNet(PetriNet net, PropertyChangeListener propertyChangeListener) {
         for (Token token : net.getTokens()) {
             PropertyChangeEvent changeEvent =
                     new PropertyChangeEvent(net, PetriNet.NEW_TOKEN_CHANGE_MESSAGE, null, token);
@@ -263,4 +317,36 @@ public class PipeApplicationController {
     public PetriNetTab getActiveTab() {
         return activeTab;
     }
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE)) {
+			addInclude((IncludeHierarchy) evt.getNewValue()); 
+		}
+		
+	}
+
+	private void addInclude(IncludeHierarchy include) {
+		rootIncludes.add(include);
+		activeIncludeHierarchy = include;
+		expectedIncludeCount = include.getMap(IncludeHierarchyMapEnum.INCLUDE_ALL).size(); 
+	}
+
+	public IncludeHierarchy getActiveIncludeHierarchy() {
+		return activeIncludeHierarchy;
+	}
+
+	/**
+	 * @return whether tabs are still to be registered for root or children of activeIncludeHierarchy 
+	 */
+	public boolean areIncludeAdditionsPending() {
+		return (expectedIncludeCount > 0);
+	}
+	/**
+	 * @param petriNetTab for which PetriNetController is to be returned
+	 * @return the PetriNetController for a given PetriNetTab
+	 */
+	protected PetriNetController getPetriNetController(PetriNetTab petriNetTab) {
+		return netControllers.get(petriNetTab); 
+	}
 }
