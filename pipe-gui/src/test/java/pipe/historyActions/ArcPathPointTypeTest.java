@@ -1,11 +1,15 @@
 package pipe.historyActions;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import pipe.historyActions.arc.ArcPathPointType;
 import uk.ac.imperial.pipe.models.petrinet.ArcPoint;
-
-import static org.mockito.Mockito.*;
 
 public class ArcPathPointTypeTest {
     ArcPathPointType item;

@@ -1,17 +1,20 @@
 package pipe.actions.file;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.actions.gui.CloseWindowAction;
 import pipe.controllers.application.PipeApplicationController;
-
-import javax.swing.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CloseActionTest {

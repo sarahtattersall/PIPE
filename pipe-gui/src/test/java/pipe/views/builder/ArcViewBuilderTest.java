@@ -1,26 +1,27 @@
 package pipe.views.builder;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.NormalArcViewBuilder;
 import pipe.controllers.PetriNetController;
 import pipe.gui.PetriNetTab;
-import pipe.actions.gui.PipeApplicationModel;
 import pipe.views.ArcView;
 import uk.ac.imperial.pipe.models.petrinet.Connectable;
+import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
+import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
 import uk.ac.imperial.pipe.models.petrinet.InboundArc;
 import uk.ac.imperial.pipe.models.petrinet.InboundNormalArc;
-import uk.ac.imperial.pipe.models.petrinet.DiscretePlace;
 import uk.ac.imperial.pipe.models.petrinet.Place;
-import uk.ac.imperial.pipe.models.petrinet.DiscreteTransition;
 import uk.ac.imperial.pipe.models.petrinet.Transition;
-
-import java.util.HashMap;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArcViewBuilderTest {

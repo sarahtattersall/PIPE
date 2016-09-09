@@ -1,17 +1,18 @@
 package pipe.actions.file;
 
+import static org.junit.Assert.assertEquals;
+
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.actions.gui.NewPetriNetAction;
 import pipe.controllers.application.PipeApplicationController;
-
-import javax.swing.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewPetriNetActionTest {

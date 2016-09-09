@@ -1,12 +1,22 @@
-import org.junit.Before;
-import org.junit.Test;
-import pipe.views.PipeApplicationView;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import javax.swing.*;
 import java.awt.Container;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.*;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import pipe.views.PipeApplicationView;
 
 public class PipeTest {
 
@@ -156,6 +166,11 @@ public class PipeTest {
 
     @Test
     public void verifyExampleNetLoadsAndAnimates() {
+    	//swallow message about temporary example file being set up 
+    	PrintStream out = System.out;
+    	System.setOut(new PrintStream(new OutputStream() {
+    		@Override public void write(int b) throws IOException {}
+    	}));
         menu = applicationView.getJMenuBar().getMenu(0);
         subMenu = (JMenu) menu.getMenuComponent(11);
         assertEquals("expecting 15 example files",15,subMenu.getItemCount()); 
@@ -164,6 +179,7 @@ public class PipeTest {
         toolbar = (JToolBar) c.getComponent(2);
         AbstractButton animateButton = ((AbstractButton) toolbar.getComponent(20));
         animateButton.getAction().actionPerformed(null);
+        System.setOut(out); 
         //TODO verify we're animated
 //        selectMenuItem(menu, 2);
     }

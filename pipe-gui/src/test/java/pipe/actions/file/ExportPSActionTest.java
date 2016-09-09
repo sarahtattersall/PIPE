@@ -1,14 +1,16 @@
 package pipe.actions.file;
 
-import org.junit.Before;
-import org.junit.Test;
-import pipe.actions.gui.ExportPSAction;
-import pipe.views.PipeApplicationView;
-
-import javax.swing.*;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import pipe.actions.gui.ExportPSAction;
+import pipe.views.PipeApplicationView;
 
 public class ExportPSActionTest {
     ExportPSAction exportPSAction;

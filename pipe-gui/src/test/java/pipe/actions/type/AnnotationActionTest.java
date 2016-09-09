@@ -1,28 +1,33 @@
 package pipe.actions.type;
 
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+
+import javax.swing.event.UndoableEditListener;
+
 import matchers.component.HasAnnotationFields;
 import matchers.component.HasMultiple;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import pipe.actions.gui.AnnotationAction;
-import pipe.controllers.PetriNetController;
 import pipe.actions.gui.PipeApplicationModel;
+import pipe.controllers.PetriNetController;
 import pipe.historyActions.component.AddPetriNetObject;
 import pipe.utilities.transformers.Contains;
 import uk.ac.imperial.pipe.models.petrinet.Annotation;
 import uk.ac.imperial.pipe.models.petrinet.AnnotationImpl;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
-
-import javax.swing.event.UndoableEditListener;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnnotationActionTest {

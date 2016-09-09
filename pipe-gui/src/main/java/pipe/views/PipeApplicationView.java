@@ -63,7 +63,6 @@ import uk.ac.imperial.pipe.exceptions.PetriNetComponentNotFoundException;
 import uk.ac.imperial.pipe.models.petrinet.IncludeHierarchy;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
 import uk.ac.imperial.pipe.models.petrinet.Token;
-import uk.ac.imperial.pipe.runner.PetriNetRunner;
 
 
 /**
@@ -111,6 +110,10 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     private Map<PetriNetTab, AnimationHistoryView> histories = new HashMap<>();
 
 	protected PetriNetChangeListener petriNetChangeListener;
+
+	private boolean forcedActiveTab = false;
+
+	private PetriNetTab forcedTab;
 
 
     public PipeApplicationView(ZoomManager zoomManager, final PipeApplicationController applicationController,
@@ -201,7 +204,14 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             @Override
             public void stateChanged(ChangeEvent e) {
                 PetriNetTab petriNetTab = getCurrentTab();
-                applicationController.setActiveTab(petriNetTab);
+                if (forcedActiveTab) {
+                	if (!applicationController.areIncludeAdditionsPending()) {
+                		forcedActiveTab = false; 
+                		applicationController.setActiveTab(petriNetTab);
+                	}
+                }  else {
+                	applicationController.setActiveTab(petriNetTab);
+                }
 
                 if (areAnyTabsDisplayed()) {
                     PetriNetController controller = applicationController.getActivePetriNetController();
@@ -218,7 +228,27 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             }
         });
     }
-
+	public void forceActiveTab(PetriNetTab tab) {
+		forcedActiveTab = true; 
+		forcedTab = tab; 
+	}
+	//JTabbedPane doc suggests that the stateChanged(ChangeEvent e) method will be called 
+	// whenever the selected index is changed (programmatically), but apparently it is only
+	// called when the user clicks on another tab.  Forcing it to be called whenever the 
+	// we update the frame programmatically, to keep the status in sync.  Probably there's a simpler
+	// way to do this....
+	protected void updateFrameSelectedIndex() {
+		if (forcedActiveTab) {
+			frameForPetriNetTabs.setSelectedIndex(petriNetTabs.indexOf(forcedTab)); 
+		} else {
+	        frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
+		}
+		for (int i = 0; i < frameForPetriNetTabs.getChangeListeners().length; i++) {
+			frameForPetriNetTabs.getChangeListeners()[i].stateChanged(new ChangeEvent(this)); 
+		}
+	}
+    
+    
     public void setTabChangeListener(ChangeListener listener) {
         frameForPetriNetTabs.addChangeListener(listener);
     }
@@ -228,7 +258,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         return getTab(index);
     }
 
-    PetriNetTab getTab(int index) {
+    protected PetriNetTab getTab(int index) {
         if (index < 0 || index >= petriNetTabs.size()) {
             return null;
         }
@@ -435,7 +465,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         petriNetTabs.add(tab);
         frameForPetriNetTabs.addTab(name, tabScroller);
-        frameForPetriNetTabs.setSelectedIndex(petriNetTabs.size() - 1);
+        updateFrameSelectedIndex(); 
     }
 
     public File getFile() {
@@ -450,6 +480,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
     public void removeTab(int index) {
         if (frameForPetriNetTabs.getTabCount() > 0) {
             petriNetTabs.remove(index);
+            //TODO drop this check; this should have been already handled by the PAC.  
             if (index > 0) {
                 applicationController.setActiveTab(petriNetTabs.get(index - 1));
             } else {
@@ -485,8 +516,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 
         PropertyChangeListener zoomListener = buildZoomListener();
 
-        applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
-        PetriNetController petriNetController = applicationController.getActivePetriNetController();
+        PetriNetController petriNetController = applicationController.registerTab(petriNet, petriNetTab, animationHistoryView, undoListener, zoomListener);
         petriNetTab.setMouseHandler(
                 new PetriNetMouseHandler(applicationModel, petriNetController, petriNetTab));
         petriNetTab.updatePreferredSize();
@@ -556,6 +586,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 		    }
 		}
 	}
+
 
 }
 

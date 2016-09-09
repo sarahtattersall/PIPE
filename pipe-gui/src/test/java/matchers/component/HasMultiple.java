@@ -1,11 +1,12 @@
 package matchers.component;
 
-import org.mockito.ArgumentMatcher;
-import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.mockito.ArgumentMatcher;
+
+import uk.ac.imperial.pipe.models.petrinet.PetriNetComponent;
 
 /**
  * Class that can have multiple @link{Has} items for a Connectable type

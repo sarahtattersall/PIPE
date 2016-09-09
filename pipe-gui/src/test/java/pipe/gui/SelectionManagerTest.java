@@ -1,18 +1,22 @@
 package pipe.gui;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import pipe.controllers.PetriNetController;
-import pipe.controllers.SelectionManager;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import pipe.controllers.PetriNetController;
+import pipe.controllers.SelectionManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectionManagerTest {

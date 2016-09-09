@@ -1,24 +1,27 @@
 package pipe.actions.file;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import pipe.actions.gui.OpenAction;
-import pipe.controllers.application.PipeApplicationController;
-import pipe.views.PipeApplicationView;
-import uk.ac.imperial.pipe.io.PetriNetFileException;
-import uk.ac.imperial.pipe.parsers.UnparsableException;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import javax.swing.*;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import pipe.actions.gui.OpenAction;
+import pipe.controllers.application.PipeApplicationController;
+import pipe.views.PipeApplicationView;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpenActionTest {

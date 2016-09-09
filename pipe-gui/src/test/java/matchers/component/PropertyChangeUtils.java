@@ -1,8 +1,8 @@
 package matchers.component;
 
-import org.mockito.ArgumentMatcher;
-
 import java.beans.PropertyChangeEvent;
+
+import org.mockito.ArgumentMatcher;
 
 public class PropertyChangeUtils {
     private PropertyChangeUtils() {
