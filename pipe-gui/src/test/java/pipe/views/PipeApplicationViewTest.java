@@ -19,6 +19,7 @@ import pipe.controllers.GUIAnimator;
 import pipe.controllers.ZoomController;
 import pipe.controllers.application.PipeApplicationController;
 import pipe.gui.PetriNetTab;
+import uk.ac.imperial.pipe.exceptions.IncludeException;
 import uk.ac.imperial.pipe.models.manager.PetriNetManagerImpl;
 import uk.ac.imperial.pipe.models.petrinet.IncludeHierarchy;
 import uk.ac.imperial.pipe.models.petrinet.PetriNet;
@@ -119,17 +120,30 @@ public class PipeApplicationViewTest {
 		assertEquals(0, view.frameForPetriNetTabs.getSelectedIndex()); 
 		assertEquals(view.getTab(0),controller.getActiveTab()); 
 
-    	controller.propertyChange(new PropertyChangeEvent(this, 
-    			PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE, null, include));
+    	loadThreeIncludesIntoView();
+
+    	assertEquals(4, view.frameForPetriNetTabs.getTabCount()); 
+    	assertEquals(1, view.frameForPetriNetTabs.getSelectedIndex()); 
+	}
+	@Test
+	public void verifyActiveTabSetIncludeHierarchySelectedByTreePanel() throws Exception {
+		listener = new PetriNetChangeListener(view);
+		loadThreeIncludesIntoView();		
+		assertEquals(3, view.frameForPetriNetTabs.getTabCount()); 
+		listener.propertyChange(new PropertyChangeEvent(this, 
+				PipeApplicationController.SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY, null, controller.getTab(include.getInclude("b"))));
+		assertEquals(1, view.frameForPetriNetTabs.getSelectedIndex()); 
+	}
+
+	protected void loadThreeIncludesIntoView() throws IncludeException {
+		controller.propertyChange(new PropertyChangeEvent(this, 
+				PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE, null, include));
 		listener.propertyChange(new PropertyChangeEvent(this, 
 				PetriNetManagerImpl.NEW_INCLUDE_HIERARCHY_MESSAGE, null, include));
 		listener.propertyChange(new PropertyChangeEvent(this, 
 				PetriNetManagerImpl.NEW_INCLUDE_HIERARCHY_MESSAGE, null, include.getInclude("b")));
 		listener.propertyChange(new PropertyChangeEvent(this, 
 				PetriNetManagerImpl.NEW_INCLUDE_HIERARCHY_MESSAGE, null, include.getInclude("c")));
-
-    	assertEquals(4, view.frameForPetriNetTabs.getTabCount()); 
-    	assertEquals(1, view.frameForPetriNetTabs.getSelectedIndex()); 
 	}
 	//TODO do we need this test?
 //	@Test

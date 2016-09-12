@@ -3,6 +3,9 @@ package pipe.controllers.application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -35,6 +38,9 @@ public class PipeApplicationControllerTest {
     @Mock
     private PipeApplicationModel model;
 
+    @Mock
+    private PropertyChangeListener listener;    
+    
 	private IncludeHierarchy include;
 
     @Before
@@ -153,5 +159,11 @@ public class PipeApplicationControllerTest {
     	PetriNetController controller2 = applicationController.registerTab(include2.getPetriNet(), rootTab2, null, null, null);
     	assertEquals(rootTab2, applicationController.getActiveTab()); 
     	assertEquals(controller2, applicationController.getActivePetriNetController()); 
+	}
+    @Test
+	public void setActiveIncludeNotifiesListeners() throws Exception {
+    	applicationController.addPropertyChangeListener(listener); 
+    	applicationController.setActiveIncludeHierarchy(include); 
+    	verify(listener, times(2)).propertyChange(any(PropertyChangeEvent.class));
 	}
 }

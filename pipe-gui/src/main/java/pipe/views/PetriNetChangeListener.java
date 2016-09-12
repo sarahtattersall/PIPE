@@ -44,6 +44,9 @@ final class PetriNetChangeListener implements PropertyChangeListener {
 		} else if (msg.equals(PipeApplicationController.KEEP_ROOT_TAB_ACTIVE_MESSAGE)) {
 			 PetriNetTab tab = (PetriNetTab) evt.getNewValue(); 
 			pipeApplicationView.forceActiveTab(tab);   
+		} else if (msg.equals(PipeApplicationController.SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY)) {
+			PetriNetTab tab = (PetriNetTab) evt.getNewValue(); 
+			pipeApplicationView.switchActiveTab(tab);  
 		}
 
 	}

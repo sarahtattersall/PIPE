@@ -123,6 +123,7 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
         this.applicationModel = applicationModel;
         this.applicationController = applicationController;
         applicationController.registerToManager(petriNetChangeListener);
+        applicationController.addPropertyChangeListener(petriNetChangeListener);
         applicationModel.addPropertyChangeListener(new PipeApplicationModelChangeListener(applicationController));
         setTabChangeListener();
 
@@ -228,10 +229,16 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
             }
         });
     }
+	public void switchActiveTab(PetriNetTab tab) {
+		forceActiveTab(tab);
+		updateFrameSelectedIndex(); 
+	}
+
 	public void forceActiveTab(PetriNetTab tab) {
 		forcedActiveTab = true; 
 		forcedTab = tab; 
 	}
+
 	//JTabbedPane doc suggests that the stateChanged(ChangeEvent e) method will be called 
 	// whenever the selected index is changed (programmatically), but apparently it is only
 	// called when the user clicks on another tab.  Forcing it to be called whenever the 
@@ -586,6 +593,8 @@ public class PipeApplicationView extends JFrame implements ActionListener, Obser
 		    }
 		}
 	}
+
+
 
 
 }

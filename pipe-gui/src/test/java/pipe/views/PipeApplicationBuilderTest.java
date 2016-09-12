@@ -49,7 +49,7 @@ public class PipeApplicationBuilderTest {
     public void setUp() {
     	builder = new PipeApplicationBuilder();
     	components = new PipeApplicationBuilder.PIPEComponents(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
-    			new IncludesAction(), new InterfaceHelpAction()); 
+    			new IncludesAction(null, null), new InterfaceHelpAction()); 
     	menu = builder.buildInterfaceMenu(components);
     }
 

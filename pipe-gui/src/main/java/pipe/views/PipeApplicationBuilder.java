@@ -150,7 +150,7 @@ public final class PipeApplicationBuilder {
         ExitAction exitAction = new ExitAction(view, controller);
         LayoutAction layoutAction = new LayoutAction(controller, view);
         ChooseTokenClassAction chooseTokenClassAction = new ChooseTokenClassAction(view, controller);
-        IncludesAction includesAction = new IncludesAction(); 
+        IncludesAction includesAction = new IncludesAction(view, controller); 
         InterfaceHelpAction interfaceHelpAction = new InterfaceHelpAction(); 
         return new PIPEComponents(chooseTokenClassAction, componentEditorManager, undoListener, componentCreatorManager,
                 animateActionManager, editorManager, tokenActionManager, printAction, exportPNGAction, selectAction,
