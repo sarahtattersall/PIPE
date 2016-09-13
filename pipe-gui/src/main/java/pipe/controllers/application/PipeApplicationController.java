@@ -5,6 +5,7 @@ import pipe.controllers.*;
 import pipe.gui.PetriNetTab;
 import pipe.gui.widgets.IncludeHierarchyTreePanel;
 import pipe.historyActions.AnimationHistoryImpl;
+import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.animation.PetriNetAnimator;
 import uk.ac.imperial.pipe.exceptions.IncludeException;
 import uk.ac.imperial.pipe.io.PetriNetFileException;
@@ -37,6 +38,7 @@ public class PipeApplicationController implements PropertyChangeListener  {
 	public static final String NEW_ACTIVE_INCLUDE_HIERARCHY = "New include hierarchy now active";
 
 	public static final String SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY = "Switch tab for new active include hierarchy";
+
 
 	/**
      * Controllers for each tab
@@ -147,6 +149,7 @@ public class PipeApplicationController implements PropertyChangeListener  {
         PropertyChangeListener changeListener =
                 new PetriNetComponentChangeListener(applicationModel, tab, petriNetController);
         net.addPropertyChangeListener(changeListener);
+        mapTabToInclude(tab);
         setActiveTab(tab);
         initialiseNet(net, changeListener);
         if (areIncludeAdditionsPending()) {
@@ -187,20 +190,24 @@ public class PipeApplicationController implements PropertyChangeListener  {
      */
     public void setActiveTab(PetriNetTab tab) {
     	if (areIncludeAdditionsPending()) {
-    		IncludeHierarchy tabInclude = mapTabToInclude(tab);
+    		IncludeHierarchy tabInclude = getInclude(tab);
     		if (activeIncludeHierarchy.equals(tabInclude)) {
     			this.activeTab = tab;
     			changeSupport.firePropertyChange(KEEP_ROOT_TAB_ACTIVE_MESSAGE, null, activeTab);
     		}
     	} else {
     		this.activeTab = tab;
+    		setActiveIncludeHierarchyAndNotifyTreePanel(getInclude(activeTab));
     	}
     }
 
-	protected IncludeHierarchy mapTabToInclude(PetriNetTab tab) {
+	private IncludeHierarchy getInclude(PetriNetTab tab) {
+		return netControllers.get(tab).getPetriNet().getIncludeHierarchy();
+	}
+
+	protected void mapTabToInclude(PetriNetTab tab) {
 		IncludeHierarchy tabInclude = getPetriNetController(tab).getPetriNet().getIncludeHierarchy();
 		includeTabs.put(tabInclude, tab);
-		return tabInclude;
 	}
 
     /**
@@ -371,15 +378,37 @@ public class PipeApplicationController implements PropertyChangeListener  {
 	}
 	/**
 	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
-	 * Called either by selection of a node in the tree panel include hierarchy display or by selecting the corresponding
-	 * tab in the GUI.  Updates listeners whenever the active include hierarchy changes 
+	 * Called either by {@link #setActiveIncludeHierarchyAndNotifyTreePanel(IncludeHierarchy)} or 
+	 * {@link #setActiveIncludeHierarchyAndNotifyView(IncludeHierarchy)} 
+	 * @param include to be made active
+	 */
+	protected void setActiveIncludeHierarchy(IncludeHierarchy include) {
+		activeIncludeHierarchy = include;
+	}
+	/**
+	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
+	 * Called by selecting the corresponding tab in the GUI.  
+	 * Updates include hierarchy tree panel listener whenever the active include hierarchy changes 
 	 * @see IncludeHierarchyTreePanel 
 	 * @param include to be made active
 	 */
-	public void setActiveIncludeHierarchy(IncludeHierarchy include) {
+	public void setActiveIncludeHierarchyAndNotifyTreePanel(IncludeHierarchy include) {
 		if (!include.equals(activeIncludeHierarchy)) {
-			activeIncludeHierarchy = include;
+			setActiveIncludeHierarchy(include);
 			changeSupport.firePropertyChange(NEW_ACTIVE_INCLUDE_HIERARCHY, null, include);
+		}
+	}
+	/**
+	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
+	 * Called by selection of a node in the tree panel include hierarchy display 
+	 * Updates PipeApplicationView listener whenever the active include hierarchy changes 
+	 * @see IncludeHierarchyTreePanel 
+	 * @see PipeApplicationView 
+	 * @param include to be made active
+	 */
+	public void setActiveIncludeHierarchyAndNotifyView(IncludeHierarchy include) {
+		if (!include.equals(activeIncludeHierarchy)) {
+			setActiveIncludeHierarchy(include);
 			changeSupport.firePropertyChange(SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY, null, getTab(include));
 		}
 	}

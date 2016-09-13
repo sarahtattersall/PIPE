@@ -1,7 +1,6 @@
 package pipe.gui.widgets;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
@@ -11,12 +10,14 @@ import java.util.Map;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -48,7 +49,7 @@ public class IncludeHierarchyTreePanel extends JPanel implements TreeSelectionLi
         		tree.getLastSelectedPathComponent();
 	    if (node == null) return;
 	    IncludeHierarchy include = (IncludeHierarchy) node.getUserObject();
-	    controller.setActiveIncludeHierarchy(include); 
+	    controller.setActiveIncludeHierarchyAndNotifyView(include); 
 	}
  
     private void build() {
@@ -137,6 +138,8 @@ public class IncludeHierarchyTreePanel extends JPanel implements TreeSelectionLi
 			TreePath path = new TreePath(node.getPath());
 			tree.setSelectionPath(path);
 			tree.expandPath(path); 
+			expandAllRows();
+
 		}
 	}
 
@@ -162,7 +165,6 @@ public class IncludeHierarchyTreePanel extends JPanel implements TreeSelectionLi
 		return tree;
 	}
 
- 
  
 }
 
