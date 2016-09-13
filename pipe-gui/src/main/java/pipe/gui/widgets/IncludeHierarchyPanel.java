@@ -3,16 +3,20 @@ package pipe.gui.widgets;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import pipe.controllers.application.PipeApplicationController;
@@ -23,14 +27,12 @@ import uk.ac.imperial.pipe.models.petrinet.IncludeHierarchy;
 public class IncludeHierarchyPanel extends JPanel implements PropertyChangeListener {
 
 	private JRootPane rootPane;
-	private PipeApplicationView view;
 	private PipeApplicationController controller;
     /**
      * OK button that will perform changes when pressed
      */
     private javax.swing.JButton okButton = new javax.swing.JButton();
-	private JPanel treePanel;
-	protected JTextField nameTextField = new JTextField();
+	protected JTextField nameTextField = new JTextField("", 20); // force wide text field in layout
 	private JLabel nameLabel;
 	private JLabel uniqueNameLabel;
 	private IncludeHierarchy include;
@@ -42,28 +44,49 @@ public class IncludeHierarchyPanel extends JPanel implements PropertyChangeListe
 	
 	/**
 	 * constructor for non-gui testing
-	 * @param view pipe application view
 	 * @param controller pipe application controller 
 	 */
 
-	public IncludeHierarchyPanel(PipeApplicationView view, PipeApplicationController controller) {
-		this.view = view; 
+	public IncludeHierarchyPanel(PipeApplicationController controller) {
 		this.controller = controller;
 		controller.addPropertyChangeListener(this); 
 		this.include = controller.getActiveIncludeHierarchy(); 
 		buildComponents(); 
 	}
 	public IncludeHierarchyPanel(JRootPane rootPane,
-			PipeApplicationView view, PipeApplicationController controller) {
-		this(view, controller); 
+			PipeApplicationController controller) {
+		this(controller); 
 		this.rootPane = rootPane; 
         this.rootPane.setDefaultButton(okButton);
 	}
 
 	private void buildComponents() {
-		setLayout(new java.awt.GridBagLayout());
-		GridBagConstraints gridBagConstraints;
-		setMinimumSize(new Dimension(500, 300)); 
+		setLayout(new GridLayout(1,0));
+
+		buildTreePanel();
+        JScrollPane treeView = new JScrollPane(treeEditorPanel.getTree());
+        treeView.setBorder(BorderFactory.createTitledBorder("Include Hierarchy"));
+        JPanel holdingPanel = new JPanel();
+        holdingPanel.setLayout(new java.awt.GridBagLayout());
+        GridBagConstraints gridBagConstraints;
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        JScrollPane bottomView = new JScrollPane(holdingPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+
+        Dimension minimumSize = new Dimension(300, 100);
+        treeView.setMinimumSize(minimumSize);
+        treeView.setPreferredSize(new Dimension(500,200));
+        splitPane.setDividerLocation(150); 
+        splitPane.setPreferredSize(new Dimension(500, 300));
+        splitPane.setTopComponent(treeView);
+        splitPane.setBottomComponent(bottomView);
+        splitPane.setEnabled(true); 
+        splitPane.setOneTouchExpandable(true); 
+
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new java.awt.GridBagLayout());
 		gridBagConstraints = new java.awt.GridBagConstraints();
@@ -71,67 +94,21 @@ public class IncludeHierarchyPanel extends JPanel implements PropertyChangeListe
 		gridBagConstraints.gridy = 0;
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-		add(topPanel, gridBagConstraints); 
-
-		treePanel = createTreePanel();
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-		topPanel.add(treePanel, gridBagConstraints);
-
+		holdingPanel.add(topPanel, gridBagConstraints); 
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new java.awt.GridBagLayout());
         editorPanel.setBorder(BorderFactory.createTitledBorder("Include Editor"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-//        add(editorPanel, gridBagConstraints);
 
         buildIncludeNameEditor(editorPanel); 
 
 		topPanel.add(editorPanel, gridBagConstraints);
-//		treePanel.setMinimumSize(new Dimension(400, 200));
-//		gridBagConstraints = new java.awt.GridBagConstraints();
-//		gridBagConstraints.gridx = 0;
-//		gridBagConstraints.gridy = 0;
-////		gridBagConstraints.fill = GridBagConstraints.BOTH;
-//		gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-//		add(treePanel); 
-//		add(treePanel, gridBagConstraints); 
-//		JPanel bottomPanel = new JPanel();
-//		bottomPanel.setLayout(new java.awt.GridBagLayout());
 
-		
-//        
-//        private JPanel createPlaceEditorPanel() {
-//            GridBagConstraints gridBagConstraints;
-//            JPanel placeEditorPanel = new JPanel();
-//            placeEditorPanel.setLayout(new GridBagLayout());
-//
-//
-//            JLabel nameLabel = new JLabel();
-//            nameLabel.setText("NameDetails:");
-//            gridBagConstraints = new GridBagConstraints();
-//            gridBagConstraints.gridx = 0;
-//            gridBagConstraints.gridy = 0;
-//            gridBagConstraints.anchor = GridBagConstraints.EAST;
-//            gridBagConstraints.insets = new Insets(3, 3, 3, 3);
-//            placeEditorPanel.add(nameLabel, gridBagConstraints);
-//
-//            initializeNameTextField(placeEditorPanel);
-//            return placeEditorPanel;
-//        
-//        GridBagConstraints gridBagConstraints;
-//        gridBagConstraints = new java.awt.GridBagConstraints();
-//        gridBagConstraints.gridx = 0;
-//        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-//        add(bottomPanel, gridBagConstraints);
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new java.awt.GridBagLayout());
 		gridBagConstraints = new java.awt.GridBagConstraints();
@@ -139,7 +116,7 @@ public class IncludeHierarchyPanel extends JPanel implements PropertyChangeListe
 		gridBagConstraints.gridy = 1;
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-		add(bottomPanel, gridBagConstraints); 
+		holdingPanel.add(bottomPanel, gridBagConstraints); 
 
 
         JPanel buttonPanel = new JPanel();
@@ -153,70 +130,18 @@ public class IncludeHierarchyPanel extends JPanel implements PropertyChangeListe
         bottomPanel.add(buttonPanel,gridBagConstraints);         
 
         
+//        JEditorPane resultsPane = new JEditorPane();
+//        resultsPane.setEditable(false);
 
-//        GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
-//        gridBagConstraints.gridx = 1;
-//        gridBagConstraints.gridy = 1;
-//        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-//        add(buttonPanel, gridBagConstraints);
-
-// 
-//        //Create the HTML viewing pane.
-        JEditorPane resultsPane = new JEditorPane();
-        resultsPane.setEditable(false);
-////        initHelp();
-//        JScrollPane resultsView = new JScrollPane(resultsPane);
-//// 
-//        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-//        splitPane.setTopComponent(topPanel);
-//        splitPane.setBottomComponent(bottomPanel);
-//// 
-////        Dimension minimumSize = new Dimension(200, 100);
-//////        htmlView.setMinimumSize(minimumSize);
-////        treeView.setMinimumSize(minimumSize);
-//        splitPane.setDividerLocation(200); 
-//        splitPane.setPreferredSize(new Dimension(500, 300));
-////        treeView.setPreferredSize(new Dimension(500, 300));
-//// 
-////        //Add the split pane to this panel.
-//        add(splitPane);
-//        add(treeView); 
-		
-        
-        
-//        gridBagConstraints = new GridBagConstraints();
-//        gridBagConstraints.gridwidth = 2;
-//        gridBagConstraints.anchor = GridBagConstraints.EAST;
-//        gridBagConstraints.insets = new Insets(5, 8, 5, 8);
-//        add(treePanel, gridBagConstraints);
-
+        add(splitPane);
 
 	}
 
     private void buildIncludeNameEditor(JPanel editorPanel) {
-        
-//        okButton.setText("OK");
-//        okButton.setMaximumSize(new Dimension(75, 25));
-//        okButton.setMinimumSize(new Dimension(75, 25));
-//        okButton.setPreferredSize(new Dimension(75, 25));
-//        okButton.addActionListener(new java.awt.event.ActionListener() {
-//            public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                okButtonHandler(evt);
-//            }
-//        });
-//        okButton.addKeyListener(new java.awt.event.KeyAdapter() {
-//            public void keyPressed(java.awt.event.KeyEvent evt) {
-//                okButtonKeyPressed(evt);
-//            }
-//        });
-
-    
         buildIncludeName(editorPanel);
         buildUniqueNameLabel(editorPanel);
         buildFullyQualifiedNameLabel(editorPanel);
         updateValues(); 
-        
-
 	}
 
 	public void updateValues() {
@@ -277,13 +202,8 @@ public class IncludeHierarchyPanel extends JPanel implements PropertyChangeListe
      * Creates the editor panel
      * @return editor panel 
      */
-    private JPanel createTreePanel() {
-        GridBagConstraints gridBagConstraints;
+    private IncludeHierarchyTreePanel buildTreePanel() {
         treeEditorPanel = new IncludeHierarchyTreePanel(controller);
-        treeEditorPanel.setLayout(new GridBagLayout());
-
-        treeEditorPanel.setBorder(BorderFactory.createTitledBorder("Include Hierarchy"));
-
         return treeEditorPanel;
     }
 

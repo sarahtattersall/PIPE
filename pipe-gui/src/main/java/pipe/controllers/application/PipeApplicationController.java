@@ -379,7 +379,7 @@ public class PipeApplicationController implements PropertyChangeListener  {
 	/**
 	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
 	 * Called either by {@link #setActiveIncludeHierarchyAndNotifyTreePanel(IncludeHierarchy)} or 
-	 * {@link #setActiveIncludeHierarchyAndNotifyView(IncludeHierarchy)} 
+	 * {@link #setActiveIncludeHierarchyAndNotifyAll(IncludeHierarchy)} 
 	 * @param include to be made active
 	 */
 	protected void setActiveIncludeHierarchy(IncludeHierarchy include) {
@@ -406,9 +406,9 @@ public class PipeApplicationController implements PropertyChangeListener  {
 	 * @see PipeApplicationView 
 	 * @param include to be made active
 	 */
-	public void setActiveIncludeHierarchyAndNotifyView(IncludeHierarchy include) {
+	public void setActiveIncludeHierarchyAndNotifyAll(IncludeHierarchy include) {
 		if (!include.equals(activeIncludeHierarchy)) {
-			setActiveIncludeHierarchy(include);
+			setActiveIncludeHierarchyAndNotifyTreePanel(include);
 			changeSupport.firePropertyChange(SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY, null, getTab(include));
 		}
 	}

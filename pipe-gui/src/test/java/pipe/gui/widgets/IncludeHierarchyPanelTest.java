@@ -49,7 +49,7 @@ public class IncludeHierarchyPanelTest {
 		//           four
 		//    six 
 		when(controller.getActiveIncludeHierarchy()).thenReturn(includes); 
-		includePanel = new IncludeHierarchyPanel(view, controller);
+		includePanel = new IncludeHierarchyPanel(controller);
 	}
 
 	@Test

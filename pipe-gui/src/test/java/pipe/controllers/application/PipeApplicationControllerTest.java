@@ -180,8 +180,8 @@ public class PipeApplicationControllerTest {
     @Test
 	public void setActiveIncludeForViewNotifiesListeners() throws Exception {
     	applicationController.addPropertyChangeListener(listener); 
-    	applicationController.setActiveIncludeHierarchyAndNotifyView(include); 
-    	verify(listener, times(1)).propertyChange(any(PropertyChangeEvent.class));
+    	applicationController.setActiveIncludeHierarchyAndNotifyAll(include); 
+    	verify(listener, times(2)).propertyChange(any(PropertyChangeEvent.class));
 	}
     @Test
     public void setActiveIncludeForTreePanelNotifiesListeners() throws Exception {

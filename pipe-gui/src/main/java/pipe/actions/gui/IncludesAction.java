@@ -43,7 +43,7 @@ public class IncludesAction extends GuiAction {
 
         // 2 Add Place editor
         contentPane.add(
-                new IncludeHierarchyPanel(guiDialog.getRootPane(), view, controller));
+                new IncludeHierarchyPanel(guiDialog.getRootPane(), controller));
 
         guiDialog.setResizable(false);
 
