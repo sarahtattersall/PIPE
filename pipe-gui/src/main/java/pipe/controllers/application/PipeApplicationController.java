@@ -3,7 +3,9 @@ package pipe.controllers.application;
 import pipe.actions.gui.PipeApplicationModel;
 import pipe.controllers.*;
 import pipe.gui.PetriNetTab;
+import pipe.gui.widgets.IncludeHierarchyTreePanel;
 import pipe.historyActions.AnimationHistoryImpl;
+import pipe.views.PipeApplicationView;
 import uk.ac.imperial.pipe.animation.PetriNetAnimator;
 import uk.ac.imperial.pipe.exceptions.IncludeException;
 import uk.ac.imperial.pipe.io.PetriNetFileException;
@@ -33,10 +35,19 @@ public class PipeApplicationController implements PropertyChangeListener  {
 
     public static final String KEEP_ROOT_TAB_ACTIVE_MESSAGE = "Keep tab for root include hierarchy active";
 
+	public static final String NEW_ACTIVE_INCLUDE_HIERARCHY = "New include hierarchy now active";
+
+	public static final String SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY = "Switch tab for new active include hierarchy";
+
+
 	/**
      * Controllers for each tab
      */
     private final Map<PetriNetTab, PetriNetController> netControllers = new HashMap<>();
+    /**
+     * Tabs for each include
+     */
+    private final Map<IncludeHierarchy, PetriNetTab> includeTabs = new HashMap<>();
 
     /**
      * Main PIPE application model
@@ -89,7 +100,20 @@ public class PipeApplicationController implements PropertyChangeListener  {
      */
     public void registerToManager(PropertyChangeListener listener) {
         manager.addPropertyChangeListener(listener);
-        changeSupport.addPropertyChangeListener(listener); 
+    }
+    /**
+    *
+    * @param listener listens for changes on the Petri net
+    */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.addPropertyChangeListener(listener);
+    }
+    /**
+    *
+    * @param listener current listener listining to the Petri net
+    */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        changeSupport.removePropertyChangeListener(listener);
     }
 
     /**
@@ -125,6 +149,7 @@ public class PipeApplicationController implements PropertyChangeListener  {
         PropertyChangeListener changeListener =
                 new PetriNetComponentChangeListener(applicationModel, tab, petriNetController);
         net.addPropertyChangeListener(changeListener);
+        mapTabToInclude(tab);
         setActiveTab(tab);
         initialiseNet(net, changeListener);
         if (areIncludeAdditionsPending()) {
@@ -165,14 +190,25 @@ public class PipeApplicationController implements PropertyChangeListener  {
      */
     public void setActiveTab(PetriNetTab tab) {
     	if (areIncludeAdditionsPending()) {
-    		if (activeIncludeHierarchy.equals(getPetriNetController(tab).getPetriNet().getIncludeHierarchy())) {
+    		IncludeHierarchy tabInclude = getInclude(tab);
+    		if (activeIncludeHierarchy.equals(tabInclude)) {
     			this.activeTab = tab;
     			changeSupport.firePropertyChange(KEEP_ROOT_TAB_ACTIVE_MESSAGE, null, activeTab);
     		}
     	} else {
     		this.activeTab = tab;
+    		setActiveIncludeHierarchyAndNotifyTreePanel(getInclude(activeTab));
     	}
     }
+
+	private IncludeHierarchy getInclude(PetriNetTab tab) {
+		return netControllers.get(tab).getPetriNet().getIncludeHierarchy();
+	}
+
+	protected void mapTabToInclude(PetriNetTab tab) {
+		IncludeHierarchy tabInclude = getPetriNetController(tab).getPetriNet().getIncludeHierarchy();
+		includeTabs.put(tabInclude, tab);
+	}
 
     /**
      * This is a little hacky, I'm not sure how to make this better when it's so late
@@ -318,15 +354,20 @@ public class PipeApplicationController implements PropertyChangeListener  {
         return activeTab;
     }
 
+    /**
+     * fires when a new include hierarchy has been created.  The hierarchy will be added to the list 
+     * of root includes
+     * @param event that a new root level include message has been received 
+     */
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE)) {
-			addInclude((IncludeHierarchy) evt.getNewValue()); 
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getPropertyName().equals(PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE)) {
+			addIncludeHierarchy((IncludeHierarchy) event.getNewValue()); 
 		}
 		
 	}
 
-	private void addInclude(IncludeHierarchy include) {
+	private void addIncludeHierarchy(IncludeHierarchy include) {
 		rootIncludes.add(include);
 		activeIncludeHierarchy = include;
 		expectedIncludeCount = include.getMap(IncludeHierarchyMapEnum.INCLUDE_ALL).size(); 
@@ -334,6 +375,46 @@ public class PipeApplicationController implements PropertyChangeListener  {
 
 	public IncludeHierarchy getActiveIncludeHierarchy() {
 		return activeIncludeHierarchy;
+	}
+	/**
+	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
+	 * Called either by {@link #setActiveIncludeHierarchyAndNotifyTreePanel(IncludeHierarchy)} or 
+	 * {@link #setActiveIncludeHierarchyAndNotifyAll(IncludeHierarchy)} 
+	 * @param include to be made active
+	 */
+	protected void setActiveIncludeHierarchy(IncludeHierarchy include) {
+		activeIncludeHierarchy = include;
+	}
+	/**
+	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
+	 * Called by selecting the corresponding tab in the GUI.  
+	 * Updates include hierarchy tree panel listener whenever the active include hierarchy changes 
+	 * @see IncludeHierarchyTreePanel 
+	 * @param include to be made active
+	 */
+	public void setActiveIncludeHierarchyAndNotifyTreePanel(IncludeHierarchy include) {
+		if (!include.equals(activeIncludeHierarchy)) {
+			setActiveIncludeHierarchy(include);
+			changeSupport.firePropertyChange(NEW_ACTIVE_INCLUDE_HIERARCHY, null, include);
+		}
+	}
+	/**
+	 * Set which level of the include hierarchy is currently active -- may be the root level or any of the children.
+	 * Called by selection of a node in the tree panel include hierarchy display 
+	 * Updates PipeApplicationView listener whenever the active include hierarchy changes 
+	 * @see IncludeHierarchyTreePanel 
+	 * @see PipeApplicationView 
+	 * @param include to be made active
+	 */
+	public void setActiveIncludeHierarchyAndNotifyAll(IncludeHierarchy include) {
+		if (!include.equals(activeIncludeHierarchy)) {
+			setActiveIncludeHierarchyAndNotifyTreePanel(include);
+			changeSupport.firePropertyChange(SWITCH_TAB_FOR_NEW_ACTIVE_INCLUDE_HIERARCHY, null, getTab(include));
+		}
+	}
+
+	public PetriNetTab getTab(IncludeHierarchy include) {
+		return includeTabs.get(include);
 	}
 
 	/**

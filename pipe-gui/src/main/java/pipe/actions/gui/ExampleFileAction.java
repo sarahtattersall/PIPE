@@ -67,7 +67,7 @@ public class ExampleFileAction extends GuiAction {
      * @param filename of example PNML file from jar
      * @param prefixedName name of the example PNML file as classpath resource
      * @param parent parent of this frame
-     * @param applicationController PIPE main application controller
+     * @param controller PIPE main application controller
      */
     public ExampleFileAction(String filename, String prefixedName,
 			Frame parent, PipeApplicationController controller) {

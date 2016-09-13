@@ -3,6 +3,9 @@ package pipe.controllers.application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -35,6 +38,9 @@ public class PipeApplicationControllerTest {
     @Mock
     private PipeApplicationModel model;
 
+    @Mock
+    private PropertyChangeListener listener;    
+    
 	private IncludeHierarchy include;
 
     @Before
@@ -119,6 +125,23 @@ public class PipeApplicationControllerTest {
     	assertEquals(expectedPetriNet, applicationController.getPetriNetController(tabC).getPetriNet()); 
     }
     @Test
+    public void verifyTabAssociatedWithEachLevelOfIncludeHierarchy() throws Exception {
+    	applicationController.propertyChange(new PropertyChangeEvent(this, 
+    			PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE, null, include));
+    	PetriNet expectedPetriNet = include.getPetriNet(); 
+    	PetriNetTab tabA = new PetriNetTab(); 
+    	applicationController.registerTab(include.getPetriNet(), tabA, null, null, null);
+    	assertEquals(tabA, applicationController.getTab(include)); 
+    	
+    	PetriNetTab tabB = new PetriNetTab(); 
+    	applicationController.registerTab(include.getInclude("b").getPetriNet(), tabB, null, null, null); 
+    	assertEquals(tabB, applicationController.getTab(include.getInclude("b"))); 
+    	
+    	PetriNetTab tabC = new PetriNetTab(); 
+    	applicationController.registerTab(include.getInclude("c").getPetriNet(), tabC, null, null, null); 
+    	assertEquals(tabC, applicationController.getTab(include.getInclude("c"))); 
+    }
+    @Test
     public void verifyActiveTabAndActiveControllerAreThatOfRootLevelOfIncludeHierarchy() throws Exception {
     	applicationController.propertyChange(new PropertyChangeEvent(this, 
     			PetriNetManagerImpl.NEW_ROOT_LEVEL_INCLUDE_HIERARCHY_MESSAGE, null, include));
@@ -154,4 +177,16 @@ public class PipeApplicationControllerTest {
     	assertEquals(rootTab2, applicationController.getActiveTab()); 
     	assertEquals(controller2, applicationController.getActivePetriNetController()); 
 	}
+    @Test
+	public void setActiveIncludeForViewNotifiesListeners() throws Exception {
+    	applicationController.addPropertyChangeListener(listener); 
+    	applicationController.setActiveIncludeHierarchyAndNotifyAll(include); 
+    	verify(listener, times(2)).propertyChange(any(PropertyChangeEvent.class));
+	}
+    @Test
+    public void setActiveIncludeForTreePanelNotifiesListeners() throws Exception {
+    	applicationController.addPropertyChangeListener(listener); 
+    	applicationController.setActiveIncludeHierarchyAndNotifyTreePanel(include); 
+    	verify(listener, times(1)).propertyChange(any(PropertyChangeEvent.class));
+    }
 }
