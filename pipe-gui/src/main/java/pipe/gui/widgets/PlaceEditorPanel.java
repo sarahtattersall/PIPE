@@ -384,7 +384,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
      * @return the capacity spinner value
      */
     private Double getCapacitySpinnerValue() {
-        return (Double) capacitySpinner.getValue();
+        return ((Integer) capacitySpinner.getValue()).doubleValue();
     }
 
     /**
@@ -489,7 +489,7 @@ public class PlaceEditorPanel extends javax.swing.JPanel {
      * @param evt change capacity event 
      */
     private void capacitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {
-        Double capacity = (Double) capacitySpinner.getValue();
+        Double capacity = ((Integer) capacitySpinner.getValue()).doubleValue();
         setCapacityVisible(capacity);
     }
 
