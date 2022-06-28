@@ -201,7 +201,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.7</version>
+            <version>4.1.1</version>
         </dependency>
 
         <dependency>
